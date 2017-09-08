@@ -19,6 +19,9 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,6 +51,9 @@ import org.slf4j.LoggerFactory;
 public class ComputedPersistentIdGenerationStrategy extends AbstractInitializableComponent
         implements PersistentIdGenerationStrategy {
 
+    /** An override trigger to apply to all relying parties. */
+    @Nonnull @NotEmpty public static final String WILDCARD_OVERRIDE = "*";
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedPersistentIdGenerationStrategy.class);
 
@@ -69,10 +75,14 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     /** The encoding to apply to the digest. */
     @Nonnull private Encoding encoding;
     
+    /** Override map to block or re-issue identifiers. */
+    @Nonnull private Map<String,Map<String,String>> exceptionMap;
+    
     /** Constructor. */
     public ComputedPersistentIdGenerationStrategy() {
         algorithm = "SHA";
         encoding = Encoding.BASE64;
+        exceptionMap = Collections.emptyMap();
     }
     
     /**
@@ -137,6 +147,40 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
         
         encoding = Constraint.isNotNull(enc, "Encoding cannot be null");
     }
+    
+    /**
+     * Install map of exceptions that override standard generation.
+     * 
+     * <p>The map is keyed by principal name (or '*' for all), and the values are a map of relying party
+     * to salt overrides. A relying party of '*' applies to all parties. A null mapped value implies that
+     * no value should be generated, while a string value is fed into the computation in place of the default
+     * salt. Specific rules trump wildcarded rules.</p> 
+     * 
+     * @param map exceptions to apply
+     */
+    public void setExceptionMap(@Nullable @NotEmpty final Map<String,Map<String,String>> map) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        if (map == null) {
+            exceptionMap = Collections.emptyMap();
+        } else {
+            exceptionMap = new HashMap<>(map.size());
+            for (final Map.Entry<String,Map<String,String>> entry : map.entrySet()) {
+                final String principal = StringSupport.trimOrNull(entry.getKey());
+                if (principal != null && entry.getValue() != null) {
+                    final Map<String,String> overrides = new HashMap<>(entry.getValue().size());
+                    for (final Map.Entry<String,String> subentry : entry.getValue().entrySet()) {
+                        final String rpname = StringSupport.trimOrNull(subentry.getKey());
+                        if (rpname != null) {
+                            final String override = StringSupport.trimOrNull(subentry.getValue());
+                            overrides.put(rpname, override);
+                        }
+                    }
+                    exceptionMap.put(principal, overrides);
+                }
+            }
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -150,7 +194,6 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
         if (getSalt().length < 16) {
             throw new ComponentInitializationException("Salt must be at least 16 bytes in size");
         }
-
     }
     
     /** {@inheritDoc} */
@@ -159,6 +202,11 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
             @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
             @Nonnull @NotEmpty final String sourceId) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+     
+        final byte[] effectiveSalt = getEffectiveSalt(principalName, relyingPartyId);
+        if (effectiveSalt == null) {
+            throw new SAMLException("Generation blocked by exception rule");
+        }
         
         try {
             final MessageDigest md = MessageDigest.getInstance(algorithm);
@@ -168,9 +216,9 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
             md.update((byte) '!');
 
             if (encoding == Encoding.BASE32) {
-                return Base32Support.encode(md.digest(salt), Base32Support.UNCHUNKED);
+                return Base32Support.encode(md.digest(effectiveSalt), Base32Support.UNCHUNKED);
             } else if (encoding == Encoding.BASE64) {
-                return Base64Support.encode(md.digest(salt), Base64Support.UNCHUNKED);
+                return Base64Support.encode(md.digest(effectiveSalt), Base64Support.UNCHUNKED);
             } else {
                 throw new SAMLException("Desired encoding was not recognized, unable to compute ID");
             }
@@ -178,6 +226,51 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
             log.error("Digest algorithm {} is not supported", algorithm);
             throw new SAMLException("Digest algorithm was not supported, unable to compute ID", e);
         }
+    }
+    
+    /**
+     * Get the effective salt to apply for a particular principal/RP pair, or null to refuse to generate one.
+     * 
+     * @param principalName name of subject
+     * @param relyingPartyId name of relying party scope
+     * 
+     * @return salt to use
+     */
+    @Nullable private byte[] getEffectiveSalt(@Nonnull @NotEmpty final String principalName,
+            @Nonnull @NotEmpty final String relyingPartyId) {
+        
+        Map<String,String> override = exceptionMap.get(principalName);
+        if (override == null) {
+            override = exceptionMap.get(WILDCARD_OVERRIDE);
+        }
+        
+        if (override != null) {
+            if (override.containsKey(relyingPartyId)) {
+                final String s = override.get(relyingPartyId);
+                if (s != null) {
+                    log.debug("Overriding salt for principal '{}' and relying party '{}'", principalName,
+                            relyingPartyId);
+                    return s.getBytes();
+                } else {
+                    log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
+                            principalName, relyingPartyId);
+                    return null;
+                }
+            } else if (override.containsKey(WILDCARD_OVERRIDE)) {
+                final String s = override.get(WILDCARD_OVERRIDE);
+                if (s != null) {
+                    log.debug("Overriding salt for principal '{}' and relying party '{}'", principalName,
+                            relyingPartyId);
+                    return s.getBytes();
+                } else {
+                    log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
+                            principalName, relyingPartyId);
+                    return null;
+                }
+            }
+        }
+        
+        return salt;
     }
     
 }
