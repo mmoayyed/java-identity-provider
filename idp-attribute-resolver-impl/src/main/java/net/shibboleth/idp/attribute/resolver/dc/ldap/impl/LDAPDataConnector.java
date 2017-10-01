@@ -174,10 +174,14 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                 }
             }
         } catch (final Exception e) {
-            log.warn("{} Error inspecting SSL configuration", getLogPrefix(), e);
+            log.debug("{} Error inspecting SSL configuration", getLogPrefix(), e);
         } finally {
             if (conn != null) {
-                conn.close();
+                try {
+                    conn.close();
+                } catch (final Exception e) {
+                    log.debug("{} Error closing LDAP connection", getLogPrefix(), e);
+                }
             }
         }
     }
