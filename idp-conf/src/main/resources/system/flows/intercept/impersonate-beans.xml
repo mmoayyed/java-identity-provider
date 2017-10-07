@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"       
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <import resource="../../../conf/intercept/impersonate-intercept-config.xml" />
+
+    <!-- Simplifies flow definition expressions. -->
+    <alias name="shibboleth.impersonate.PrincipalFunction" alias="PrincipalFunction"/>
+
+    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
+        c:resolverService-ref="shibboleth.AttributeResolverService"
+        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
+        p:principalNameLookupStrategy-ref="FlowScopePrincipalLookup" />
+
+    <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
+        c:filterService-ref="shibboleth.AttributeFilterService"
+        p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
+        p:metadataResolver-ref="shibboleth.MetadataResolver"
+        p:principalNameLookupStrategy-ref="FlowScopePrincipalLookup" />
+
+    <bean id="FlowScopePrincipalLookup" parent="shibboleth.ContextFunctions.Expression"
+        c:outputType="#{T(java.lang.String)}"
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('principalToSpoof')" />
+        
+    <import resource="../../conf/audit-system.xml" />
+    
+    <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext" scope="prototype">
+        <property name="fieldExtractors">
+		    <map>
+		        <entry>
+		            <key>
+		                <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.IMPERSONATED_USERNAME"/>
+		            </key>
+		            <ref bean="FlowScopePrincipalLookup" />
+		        </entry>
+		    </map>
+        </property>
+    </bean>
+
+</beans>

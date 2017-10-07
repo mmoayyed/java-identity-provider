@@ -56,6 +56,9 @@ public final class IdPAuditFields {
     /** Hashed username field. */
     @Nonnull @NotEmpty public static final String HASHED_USERNAME = "HASHEDu";
 
+    /** Impersonating username field. */
+    @Nonnull @NotEmpty public static final String IMPERSONATED_USERNAME = "IMPu";
+    
     /** Attributes field. */
     @Nonnull @NotEmpty public static final String ATTRIBUTES = "attr";
     

@@ -1,0 +1,66 @@
+ <flow xmlns="http://www.springframework.org/schema/webflow"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+       parent="intercept.abstract">
+
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
+    <on-start>
+        <evaluate expression="PrincipalFunction.apply(opensamlProfileRequestContext)" result="flowScope.principalCollection" />
+    </on-start>
+
+    <decision-state id="CanImpersonate">
+        <if test="principalCollection != null and !principalCollection.isEmpty()"
+            then="ImpersonateView" else="proceed" />
+    </decision-state>
+
+    <view-state id="ImpersonateView" view="#{flowRequestContext.activeFlow.id}">
+        <on-render>
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext))" result="viewScope.authenticationContext" />
+            <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.ui.context.RelyingPartyUIContext))" result="viewScope.rpUIContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
+        </on-render>
+        
+        <transition on="proceed" to="CheckForImpersonation" />
+    </view-state>
+    
+    <decision-state id="CheckForImpersonation">
+        <on-entry>
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest().getParameter('principal')" result="flowScope.principalToSpoof" />
+        </on-entry>
+        <if test="principalToSpoof == null or principalToSpoof.length() == 0"
+            then="proceed" else="CheckAllowed" />
+    </decision-state>
+    
+    <decision-state id="CheckAllowed">
+        <if test="principalCollection.contains(principalToSpoof)"
+            then="DoImpersonate" else="ImpersonationViolation" />
+    </decision-state>
+    
+    <action-state id="DoImpersonate">
+        <on-entry>
+            <!-- Clear existing attribute state. -->
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).removeSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext))" />
+        </on-entry>
+        
+        <evaluate expression="PopulateAuditContext" />
+        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="FilterAttributes" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="proceed" />
+    </action-state>
+
+    <end-state id="ImpersonationViolation" />
+
+    <end-state id="proceed" />
+
+    <bean-import resource="../../../system/flows/intercept/impersonate-beans.xml" />
+
+</flow>

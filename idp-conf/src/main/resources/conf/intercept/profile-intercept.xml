@@ -31,6 +31,8 @@
                 <bean id="intercept/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
         
                 <bean id="intercept/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow" />
+                
+                <bean id="intercept/impersonate" parent="shibboleth.InterceptFlow" />
             </list>
         </property>
     </bean>

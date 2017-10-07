@@ -23,6 +23,7 @@
     -->
     <util:map id="shibboleth.LocalEventMap">
         <entry key="ContextCheckDenied" value="true" />
+        <entry key="ImpersonationViolation" value="true" />
         <entry key="AttributeReleaseRejected" value="true" />
         <entry key="TermsRejected" value="true" />
         <entry key="RuntimeException" value="false" />

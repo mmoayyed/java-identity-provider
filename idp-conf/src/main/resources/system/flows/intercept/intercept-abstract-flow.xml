@@ -20,6 +20,7 @@
     <end-state id="AttributeReleaseRejected" />
     <end-state id="TermsRejected" />
     <end-state id="ContextCheckDenied" />
+    <end-state id="ImpersonationViolation" />
     <end-state id="RestartAuthentication" />
     <end-state id="RuntimeException" />
 
@@ -37,6 +38,7 @@
         <transition on="AttributeReleaseRejected" to="AttributeReleaseRejected" />
         <transition on="TermsRejected" to="TermsRejected" />
         <transition on="ContextCheckDenied" to="ContextCheckDenied" />
+        <transition on="ImpersonationViolation" to="ImpersonationViolation" />
         <transition on="RestartAuthentication" to="RestartAuthentication" />
         <transition on="RuntimeException" to="RuntimeException" />
     </global-transitions>
