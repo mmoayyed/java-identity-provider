@@ -25,6 +25,7 @@
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"
+        p:resolutionLabel="intercept/impersonate"
         p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
         p:principalNameLookupStrategy-ref="FlowScopePrincipalLookup" />
 

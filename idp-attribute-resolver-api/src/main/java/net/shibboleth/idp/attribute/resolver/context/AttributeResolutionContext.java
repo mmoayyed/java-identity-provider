@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -68,6 +69,9 @@ public class AttributeResolutionContext extends BaseContext {
     
     /** Whether the resolver should allow for results to come from cache. */
     private boolean allowCachedResults;
+    
+    /** Label distinguishing different "types" of attribute resolution for use in resolver. */
+    @Nullable private String resolutionLabel;
 
     /** Attributes which were resolved and released by the attribute resolver. */
     @Nonnull @NonnullElements private Map<String,IdPAttribute> resolvedAttributes;
@@ -76,7 +80,7 @@ public class AttributeResolutionContext extends BaseContext {
     public AttributeResolutionContext() {
         allowCachedResults = true;
         requestedAttributeNames = new HashSet<>();
-        resolvedAttributes = new HashMap<String,IdPAttribute>();
+        resolvedAttributes = new HashMap<>();
     }
     
     /**
@@ -95,10 +99,43 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param flag flag to set
      * 
+     * @return this context 
+     * 
      * @since 3.3.0
      */
-    public void setAllowCachedResults(final boolean flag) {
+    @Nonnull public AttributeResolutionContext setAllowCachedResults(final boolean flag) {
         allowCachedResults = flag;
+        
+        return this;
+    }
+    
+    /**
+     * Get the optional "contextual" label associated with this attribute resolution.
+     * 
+     * <p>Plugins/scripts/etc. can use this field to connect their behavior back to custom
+     * invocations of the resolver service.</p>
+     * 
+     * @return label
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public String getResolutionLabel() {
+        return resolutionLabel;
+    }
+    
+    /**
+     * Set the optional "contextual" label associated with this attribute resolution.
+     * 
+     * @param label label to set
+     * 
+     * @return this context
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public AttributeResolutionContext setResolutionLabel(@Nullable final String label) {
+        resolutionLabel = StringSupport.trimOrNull(label);
+        
+        return this;
     }
 
     /**
@@ -114,9 +151,13 @@ public class AttributeResolutionContext extends BaseContext {
      * Set the attribute issuer (me) associated with this resolution.
      * 
      * @param value the attribute issuer associated with this resolution.
+     * 
+     * @return this context
      */
-    @Nullable public void setAttributeIssuerID(@Nullable final String value) {
+    @Nullable public AttributeResolutionContext setAttributeIssuerID(@Nullable final String value) {
         attributeIssuerID = value;
+        
+        return this;
     }
 
     /**
@@ -132,9 +173,13 @@ public class AttributeResolutionContext extends BaseContext {
      * Set the attribute recipient (her) associated with this resolution.
      * 
      * @param value the attribute recipient associated with this resolution.
+     * 
+     * @return this context
      */
-    @Nullable public void setAttributeRecipientID(@Nullable final String value) {
+    @Nullable public AttributeResolutionContext setAttributeRecipientID(@Nullable final String value) {
         attributeRecipientID = value;
+        
+        return this;
     }
 
     /**
@@ -150,9 +195,13 @@ public class AttributeResolutionContext extends BaseContext {
      * Get how the principal was authenticated.
      * 
      * @param method The principalAuthenticationMethod to set.
+     * 
+     * @return this context
      */
-    public void setPrincipalAuthenticationMethod(@Nullable final String method) {
+    @Nullable public AttributeResolutionContext setPrincipalAuthenticationMethod(@Nullable final String method) {
         principalAuthenticationMethod = method;
+        
+        return this;
     }
 
     /**
@@ -167,10 +216,14 @@ public class AttributeResolutionContext extends BaseContext {
     /**
      * Get the principal associated with this resolution.
      * 
-     * @param who The principal to set.
+     * @param who the principal to set.
+     * 
+     * @return this context
      */
-    public void setPrincipal(@Nullable final String who) {
+    @Nullable public AttributeResolutionContext setPrincipal(@Nullable final String who) {
         principal = who;
+        
+        return this;
     }
 
     /**
@@ -186,12 +239,17 @@ public class AttributeResolutionContext extends BaseContext {
      * Set the (internal) names of the attributes requested to be resolved.
      * 
      * @param names the (internal) names of the attributes requested to be resolved
+     * 
+     * @return this context
      */
-    public void setRequestedIdPAttributeNames(@Nonnull @NonnullElements final Collection<String> names) {
+    @Nullable public AttributeResolutionContext setRequestedIdPAttributeNames(
+            @Nonnull @NonnullElements final Collection<String> names) {
         Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null");
 
         requestedAttributeNames.clear();
         requestedAttributeNames.addAll(Collections2.filter(names, Predicates.notNull()));
+        
+        return this;
     }
 
     /**
@@ -207,8 +265,11 @@ public class AttributeResolutionContext extends BaseContext {
      * Set the set of resolved attributes.
      * 
      * @param attributes set of resolved attributes
+     * 
+     * @return this context
      */
-    public void setResolvedIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+    @Nullable public AttributeResolutionContext setResolvedIdPAttributes(
+            @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
         resolvedAttributes = new HashMap<>();
 
         if (attributes != null) {
@@ -218,6 +279,8 @@ public class AttributeResolutionContext extends BaseContext {
                 }
             }
         }
+        
+        return this;
     }
 
     /**

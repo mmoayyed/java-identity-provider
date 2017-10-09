@@ -92,6 +92,9 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
     
+    /** Label distinguishing different "types" of attribute resolution for use in resolver. */
+    @Nullable private String resolutionLabel;
+    
     /** Whether to create and populate {@link AttributeResolutionContext}. */
     private boolean createResolutionContext;
 
@@ -224,6 +227,18 @@ public final class ResolveAttributes extends AbstractProfileAction {
         maskFailures = flag;
     }
     
+    
+    /**
+     * Set the optional "contextual" label associated with this attribute resolution.
+     * 
+     * @param label label to set
+     * 
+     * @since 3.4.0
+     */
+    public void setResolutionLabel(@Nullable final String label) {
+        resolutionLabel = StringSupport.trimOrNull(label);
+    }
+    
     /**
      * Set whether to create the {@link AttributeResolutionContext} internally.
      * 
@@ -315,6 +330,8 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     private void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeResolutionContext resolutionContext) {
+        
+        resolutionContext.setResolutionLabel(resolutionLabel);
         
         // Populate requested attributes, if not already set.
         if (resolutionContext.getRequestedIdPAttributeNames() == null
