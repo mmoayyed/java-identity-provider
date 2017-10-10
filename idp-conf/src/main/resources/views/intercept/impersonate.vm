@@ -6,7 +6,6 @@
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 ## profileRequestContext - root of context tree
-## authenticationContext - context with authentication request information
 ## rpUIContext - the context with SP UI information from the metadata
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest

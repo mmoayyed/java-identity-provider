@@ -37,7 +37,7 @@
 
     <bean id="FlowScopePrincipalLookup" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('principalToSpoof')" />
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getRequestScope().get('principalToSpoof')" />
         
     <import resource="../../conf/audit-system.xml" />
     
