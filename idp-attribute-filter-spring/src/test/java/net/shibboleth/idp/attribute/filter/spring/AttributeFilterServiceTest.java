@@ -64,7 +64,7 @@ public class AttributeFilterServiceTest {
      * Instantiate a new service.
      * 
      * @param name service bean name
-     * @param resources configuration resources
+     * @param nativeSpring whether native syntax is used
      * @return the service
      * @throws ServiceException if an error occurs loading the service
      * @throws ComponentInitializationException

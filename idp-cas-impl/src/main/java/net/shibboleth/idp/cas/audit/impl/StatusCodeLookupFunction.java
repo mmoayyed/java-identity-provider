@@ -29,7 +29,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * Looks up the protocol message status code from a CAS protocol message response. The status code is either
- * <code>SUCCESS</code> or one of {@link ProtocolError#getCode()} in the case of failure.
+ * <code>SUCCESS</code> or one of {@link AbstractProtocolResponse#getErrorCode()} in the case of failure.
  *
  * @author Marvin S. Addison
  */

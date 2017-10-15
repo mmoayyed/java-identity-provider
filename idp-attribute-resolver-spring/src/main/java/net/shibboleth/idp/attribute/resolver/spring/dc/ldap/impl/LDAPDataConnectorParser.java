@@ -75,7 +75,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 /**
  * Bean definition Parser for a {@link LDAPDataConnector}. <em>Note</em> That parsing the V2 configuration will set some
- * beans with hard wired defaults. See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
+ * beans with hard wired defaults. See {@link #doV2Parse(Element, ParserContext, BeanDefinitionBuilder)}.
  */
 public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser {
 

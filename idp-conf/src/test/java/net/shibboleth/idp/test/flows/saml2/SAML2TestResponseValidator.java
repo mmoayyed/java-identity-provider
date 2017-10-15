@@ -67,7 +67,7 @@ import org.testng.Assert;
 import com.google.common.net.InetAddresses;
 
 /**
- * SAML 2 {@link #org.opensaml.saml.saml2.core.Response} validator.
+ * SAML 2 {@link Response} validator.
  */
 public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValidator {
 
@@ -207,7 +207,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * </ul>
      * Calls assert methods :
      * <ul>
-     * <li>{@link #assertResponse(Response)}</li>
+     * <li>{@link #assertResponse(org.opensaml.saml.saml2.core.StatusResponseType)}</li>
      * <li>{@link #assertStatus(Status)}</li>
      * <li>{@link #assertAssertions(List)}</li>
      * <li>{@link #assertAssertion(Assertion)}</li>

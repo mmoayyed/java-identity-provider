@@ -37,7 +37,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticPKIXX509CredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.UnsupportedTrustEngineParser;
 
-/** Namespace handler <em>{@value NAMESPACE}</em>. */
+/** Namespace handler for {@link AbstractMetadataProviderParser.SECURITY_NAMESPACE}. */
 public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Credential element name. */

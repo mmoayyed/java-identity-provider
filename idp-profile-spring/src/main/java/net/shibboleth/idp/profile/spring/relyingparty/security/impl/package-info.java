@@ -17,7 +17,7 @@
 
 /**
  * Basis of all parsers in the
- * {@value 
+ * {link 
 net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser#SECURITY_NAMESPACE
 } schema.
  */

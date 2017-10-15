@@ -120,7 +120,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
     
     /**
-     * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
+     * Set a lookup strategy for the {@link #defaultAuthenticationContexts} property.
      *
      * @param strategy  lookup strategy
      * 
