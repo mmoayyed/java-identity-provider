@@ -15,6 +15,7 @@
     <action-state id="DoProfileWork">
         <evaluate expression="VerifyChannelBindings" />
         <evaluate expression="PopulateECPContext" />
+        <evaluate expression="ExtractProxiedRequesters" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="PopulateClientStorageLoadContext" />

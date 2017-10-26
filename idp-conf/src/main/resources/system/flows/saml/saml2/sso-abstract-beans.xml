@@ -53,6 +53,14 @@
     <bean id="ProcessRequestedAuthnContext"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype"
         p:ignoredContexts-ref="#{getObject('shibboleth.IgnoredContexts') != null ? 'shibboleth.IgnoredContexts' : 'shibboleth.DefaultIgnoredContexts'}" />
+
+    <bean id="ExtractProxiedRequesters"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.saml2.binding.impl.ExtractProxiedRequestersHandler" scope="prototype" />
+        </constructor-arg>
+    </bean>
         
     <bean id="ResolveAttributesPredicate"
         class="net.shibboleth.idp.saml.profile.config.logic.ResolveAttributesProfileConfigPredicate" />
