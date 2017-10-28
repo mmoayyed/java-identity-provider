@@ -16,10 +16,7 @@
 
     <bean id="shibboleth.impersonate.PrincipalFunction" class="com.google.common.base.Functions" factory-method="constant">
         <constructor-arg>
-            <list>
-                <value>foo</value>
-                <value>bar</value>
-            </list>
+            <null/>
         </constructor-arg>
     </bean>
     
