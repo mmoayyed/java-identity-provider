@@ -26,7 +26,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link AttributeIssuerPolicyRule}.
+ * Tests for {@link AttributeRequesterPolicyRule}.
  */
 public class AttributeRequesterPolicyRuleTest {
 
