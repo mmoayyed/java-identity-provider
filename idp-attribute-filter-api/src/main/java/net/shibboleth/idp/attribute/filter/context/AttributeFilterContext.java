@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.profile.context.ProxiedRequesterContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -68,9 +69,16 @@ public final class AttributeFilterContext extends BaseContext {
     /** Cache of the metadata context. */
     @Nullable private SAMLMetadataContext requesterMetadataContext;
 
+    /** Cache of the proxied requester context. */
+    @Nullable private ProxiedRequesterContext proxiedRequesterContext;
+
     /** Lookup strategy used to locate the SP's metadata context. */
-    @NonnullAfterInit
+    @Nullable
     private Function<AttributeFilterContext,SAMLMetadataContext> requesterMetadataContextLookupStrategy;
+
+    /** Lookup strategy used to locate a {@link ProxiedRequesterContext}. */
+    @Nullable
+    private Function<AttributeFilterContext,ProxiedRequesterContext> proxiedRequesterContextLookupStrategy;
 
     /** Constructor. */
     public AttributeFilterContext() {
@@ -225,26 +233,54 @@ public final class AttributeFilterContext extends BaseContext {
     /**
      * Get the strategy used to locate the SP's metadata context.
      * 
-     * @return Returns the requesterMetadataContextLookupStrategy.
+     * @return lookup strategy
      */
-    @NonnullAfterInit public Function<AttributeFilterContext, SAMLMetadataContext>
-            getRequesterMetadataContextLookupStrategy() {
+    @NonnullAfterInit
+    public Function<AttributeFilterContext, SAMLMetadataContext> getRequesterMetadataContextLookupStrategy() {
         return requesterMetadataContextLookupStrategy;
     }
 
     /**
      * Set the strategy used to locate the SP's metadata context.
      * 
-     * @param strategy The requesterMetadataContextLookupStrategy to set.
+     * @param strategy lookup strategy
      */
     public void setRequesterMetadataContextLookupStrategy(
-            @Nonnull final Function<AttributeFilterContext, SAMLMetadataContext> strategy) {
+            @Nonnull final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
         requesterMetadataContextLookupStrategy =
                 Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
     }
 
-    /** Get the Requester Metadata context.<br/> This value is cached and so only calculated once.
-     * @return the cached context
+    /**
+     * Get the strategy used to locate the {@link ProxiedRequesterContext}.
+     * 
+     * @return  lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    @NonnullAfterInit
+    public Function<AttributeFilterContext,ProxiedRequesterContext> getProxiedRequesterContextLookupStrategy() {
+        return proxiedRequesterContextLookupStrategy;
+    }
+
+    /**
+     * Set the strategy used to locate the SP's metadata context.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setProxiedRequesterContextLookupStrategy(
+            @Nonnull final Function<AttributeFilterContext,ProxiedRequesterContext> strategy) {
+        proxiedRequesterContextLookupStrategy =
+                Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
+    }
+
+    /** Get the Requester Metadata context.
+     * 
+     * <p>This value is cached and so only calculated once.</p>
+     * 
+     * @return the context
      */
     @Nullable public SAMLMetadataContext getRequesterMetadataContext() {
         if (null == requesterMetadataContext && null != requesterMetadataContextLookupStrategy) {
@@ -253,4 +289,19 @@ public final class AttributeFilterContext extends BaseContext {
         return requesterMetadataContext;
     }
     
+    /** Get the {@link ProxiedRequesterContext}.
+     * 
+     * <p>This value is cached and so only calculated once.</p>
+     * 
+     * @return the context
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public ProxiedRequesterContext getProxiedRequesterContext() {
+        if (null == proxiedRequesterContext && null != proxiedRequesterContextLookupStrategy) {
+            proxiedRequesterContext = proxiedRequesterContextLookupStrategy.apply(this);
+        }
+        return proxiedRequesterContext;
+    }
+
 }

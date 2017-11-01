@@ -38,6 +38,8 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.NumOfAttribute
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PredicateRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PrincipalNameRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PrincipalNameRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequesterRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequesterRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeRegexRuleParser;
@@ -95,6 +97,11 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
         registerBeanDefinitionParser(AttributeRequesterRegexRuleParser.SCHEMA_TYPE_AFP,
                 new AttributeRequesterRegexRuleParser());
+
+        registerBeanDefinitionParser(ProxiedRequesterRuleParser.SCHEMA_TYPE_AFP, new ProxiedRequesterRuleParser());
+
+        registerBeanDefinitionParser(ProxiedRequesterRegexRuleParser.SCHEMA_TYPE_AFP,
+                new ProxiedRequesterRegexRuleParser());
 
         registerBeanDefinitionParser(AttributeIssuerRuleParser.SCHEMA_TYPE_AFP, new AttributeIssuerRuleParser());
 

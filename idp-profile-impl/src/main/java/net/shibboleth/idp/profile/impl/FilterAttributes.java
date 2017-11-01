@@ -42,6 +42,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RootContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.ProxiedRequesterContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -101,6 +102,18 @@ public class FilterAttributes extends AbstractProfileAction {
      * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link AttributeFilterContext}.
      */
     @Nonnull private Function<AttributeFilterContext,SAMLMetadataContext> metadataFromFilterLookupStrategy;
+
+    /**
+     * Strategy used to locate the {@link ProxiedRequesterContext} associated with a given
+     * {@link ProfileRequestContext}.
+     */
+    @Nonnull private Function<ProfileRequestContext,ProxiedRequesterContext> proxiedRequesterContextLookupStrategy;
+
+    /**
+     * Strategy used to locate the {@link ProxiedRequesterContext} associated with a given
+     * {@link AttributeFilterContext}.
+     */
+    @Nonnull private Function<AttributeFilterContext,ProxiedRequesterContext> proxiesFromFilterLookupStrategy;
     
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
@@ -136,17 +149,19 @@ public class FilterAttributes extends AbstractProfileAction {
                 new ChildContextLookup<>(SAMLMetadataContext.class),
                 Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
                         new InboundMessageContextLookup()));
-        
+                
         // This is always set to navigate to the root context and then apply the previous function.
-        metadataFromFilterLookupStrategy = Functions.compose(
-                new Function<ProfileRequestContext,SAMLMetadataContext>() {
-                    @Override
-                    public SAMLMetadataContext apply(final ProfileRequestContext input) {
-                        return metadataContextLookupStrategy.apply(input);
-                    }
-                },
+        metadataFromFilterLookupStrategy = Functions.compose(metadataContextLookupStrategy,
                 new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
 
+        // Default: inbound msg context -> child
+        proxiedRequesterContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<>(ProxiedRequesterContext.class), new InboundMessageContextLookup());
+        
+        // This is always set to navigate to the root context and then apply the previous function.
+        proxiesFromFilterLookupStrategy = Functions.compose(proxiedRequesterContextLookupStrategy,
+                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+        
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
         filterContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeFilterContext.class, true),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
@@ -246,10 +261,9 @@ public class FilterAttributes extends AbstractProfileAction {
     /**
      * Set the strategy used to locate the {@link SAMLMetadataContext} associated with a given
      * {@link ProfileRequestContext}.  Also sets the strategy to find the {@link SAMLMetadataContext}
-     * from the {@link AttributeFilterContext};  
-     * SAMLMetadataContext
-     * @param strategy strategy used to locate the {@link AuthenticationContext} associated with a given
-     *            {@link ProfileRequestContext}
+     * from the {@link AttributeFilterContext}.
+     * 
+     * @param strategy lookup strategy
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
@@ -261,6 +275,25 @@ public class FilterAttributes extends AbstractProfileAction {
                 new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
     }
 
+    /**
+     * Set the strategy used to locate the {@link ProxiedRequesterContext} associated with a given
+     * {@link ProfileRequestContext}. Also sets the strategy to find the {@link ProxiedRequesterContext}
+     * from the {@link AttributeFilterContext}.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setProxiedRequesterContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,ProxiedRequesterContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        proxiedRequesterContextLookupStrategy =
+                Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
+        proxiesFromFilterLookupStrategy = Functions.compose(proxiedRequesterContextLookupStrategy,
+                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+    }
+    
     /**
      * Set whether to treat resolution failure as equivalent to resolving no attributes.
      * 
@@ -389,6 +422,7 @@ public class FilterAttributes extends AbstractProfileAction {
         }
                 
         filterContext.setRequesterMetadataContextLookupStrategy(metadataFromFilterLookupStrategy);
+        filterContext.setProxiedRequesterContextLookupStrategy(proxiesFromFilterLookupStrategy);
 
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the AttributeContext.

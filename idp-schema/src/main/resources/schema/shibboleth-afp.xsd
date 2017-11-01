@@ -327,6 +327,17 @@
         </complexContent>
     </complexType>
 
+    <complexType name="ProxiedRequester">
+        <annotation>
+            <documentation>
+                A match function that matches a proxied attribute requester against the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:StringMatchType"/>
+        </complexContent>
+    </complexType>
+
     <complexType name="Issuer">
         <annotation>
             <documentation>
@@ -420,6 +431,17 @@
         <annotation>
             <documentation>
                 A match function that matches the attribute requester against the specified regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:RegexMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ProxiedRequesterRegex">
+        <annotation>
+            <documentation>
+                A match function that matches a proxied attribute requester against the specified regular expression.
             </documentation>
         </annotation>
         <complexContent>
