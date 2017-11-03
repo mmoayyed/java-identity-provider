@@ -64,6 +64,7 @@ public final class AttributeFilterContext extends BaseContext {
     @Nullable private String attributeRecipientID;
 
     /** How was the principal Authenticated? */
+    @Deprecated
     @Nullable private String principalAuthenticationMethod;
 
     /** Cache of the metadata context. */
@@ -217,6 +218,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return Returns the principalAuthenticationMethod.
      */
+    @Deprecated
     @Nullable public String getPrincipalAuthenticationMethod() {
         return principalAuthenticationMethod;
     }
@@ -226,6 +228,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param method The principalAuthenticationMethod to set.
      */
+    @Deprecated
     public void setPrincipalAuthenticationMethod(@Nullable final String method) {
         principalAuthenticationMethod = method;
     }

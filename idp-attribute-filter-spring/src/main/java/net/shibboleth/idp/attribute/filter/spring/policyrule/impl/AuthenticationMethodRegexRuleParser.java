@@ -20,9 +20,15 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AuthenticationMethodRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Bean definition parser for {@link AuthenticationMethodRegexpPolicyRule}.
@@ -45,4 +51,14 @@ public class AuthenticationMethodRegexRuleParser extends AbstractRegexPolicyRule
     @Override @Nonnull protected Class<AuthenticationMethodRegexpPolicyRule> getNativeBeanClass() {
         return AuthenticationMethodRegexpPolicyRule.class;
     }
+
+    /** {@inheritDoc} */
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        super.doNativeParse(element, parserContext, builder);
+        
+        DeprecationSupport.warn(ObjectType.XSITYPE, SCHEMA_TYPE_AFP.toString(),
+                parserContext.getReaderContext().getResource().getDescription(), null);
+    }
+
 }

@@ -46,7 +46,7 @@ public class AuthenticationMethodPolicyRule extends AbstractStringPolicyRule {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final String method = filterContext.getPrincipalAuthenticationMethod();
+        @SuppressWarnings("deprecation") final String method = filterContext.getPrincipalAuthenticationMethod();
         if (null == method) {
             log.warn("{} No authetication method found for comparison", getLogPrefix());
             return Tristate.FAIL;

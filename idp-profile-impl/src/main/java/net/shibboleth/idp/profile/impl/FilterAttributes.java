@@ -394,6 +394,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param profileRequestContext current profile request context
      * @param filterContext context to populate
      */
+    @SuppressWarnings("deprecation")
     private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeFilterContext filterContext) {
         
