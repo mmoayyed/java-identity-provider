@@ -26,6 +26,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -66,7 +68,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      */
     @Deprecated public RelyingPartyMetadataProvider(
             @Nonnull @ParameterName(name="child") final MetadataResolver child) {
-        log.warn("Using deprecated constructor");
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "RelyingPartyMetadataProvider(MetadataResolver)", null, null);
         resolver = Constraint.isNotNull(child, "MetadataResolver cannot be null");
     }
     
@@ -106,14 +108,14 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     /** {@inheritDoc} */
     @Override @Nonnull public Iterable<EntityDescriptor> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
-
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return resolver.resolve(criteria);
     }
 
     /** {@inheritDoc} */
     @Override @Nullable public EntityDescriptor resolveSingle(@Nullable final CriteriaSet criteria)
             throws ResolverException {
-
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return resolver.resolveSingle(criteria);
     }
 
@@ -124,6 +126,8 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
 
     /** {@inheritDoc} */
     @Override public void setRequireValidMetadata(final boolean requireValidMetadata) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         resolver.setRequireValidMetadata(requireValidMetadata);
 
     }
@@ -131,6 +135,13 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     /** {@inheritDoc} */
     @Override @Nullable public MetadataFilter getMetadataFilter() {
         return resolver.getMetadataFilter();
+    }
+
+    /** {@inheritDoc} */
+    @Override public void setMetadataFilter(@Nullable final MetadataFilter newFilter) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        resolver.setMetadataFilter(newFilter);
     }
 
     /** {@inheritDoc} */
@@ -149,11 +160,6 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
             log.info("Top level Metadata Provider '{}' did not have a sort key; giving it value '{}'",
                     getId(), sortKey);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override public void setMetadataFilter(@Nullable final MetadataFilter newFilter) {
-        resolver.setMetadataFilter(newFilter);
     }
 
     /** {@inheritDoc} */

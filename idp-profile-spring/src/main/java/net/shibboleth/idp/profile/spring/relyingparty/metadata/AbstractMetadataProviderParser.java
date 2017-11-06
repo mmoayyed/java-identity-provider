@@ -137,6 +137,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         if (isTopMost(element)) {
+            builder.setInitMethodName("initialize");
+            builder.setDestroyMethodName("destroy");
             builder.setLazyInit(true);
             final BeanDefinitionBuilder childBeanDefinitionBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass(element));
