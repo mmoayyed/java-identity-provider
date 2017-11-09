@@ -26,7 +26,7 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
 
 /**
- * {@link Template} based pooled search dn resolver.
+ * {@link net.shibboleth.utilities.java.support.velocity.Template}-based pooled search dn resolver.
  */
 public class PooledTemplateSearchDnResolver extends AbstractTemplateSearchDnResolver
         implements PooledConnectionFactoryManager {

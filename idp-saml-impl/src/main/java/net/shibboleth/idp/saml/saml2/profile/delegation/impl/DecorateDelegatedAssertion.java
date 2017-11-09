@@ -133,7 +133,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** Strategy used to lookup the RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
-    /** Strategy used to lookup the {@link DelegationContext. */
+    /** Strategy used to lookup the {@link DelegationContext}. */
     @Nonnull private Function<ProfileRequestContext, DelegationContext> delegationContextLookupStrategy;
     
     /** Strategy used to locate the {@link Assertion}s on which to operate. */

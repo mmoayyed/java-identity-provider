@@ -171,8 +171,8 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     
     /**
      * Default strategy function to extract embedded {@link AuthenticationResult}s from inside
-     * the {@link Principal} collection of an active {@link AuthenticationResult} of the currently
-     * executing flow.
+     * the {@link AuthenticationResultPrincipal} collection of an active {@link AuthenticationResult}
+     * of the currently executing flow.
      */
     private class DefaultResultLookupStrategy
             implements Function<ProfileRequestContext,Collection<AuthenticationResult>> {

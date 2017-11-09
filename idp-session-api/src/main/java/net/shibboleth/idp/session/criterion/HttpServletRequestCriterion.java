@@ -20,7 +20,7 @@ package net.shibboleth.idp.session.criterion;
 import net.shibboleth.utilities.java.support.resolver.Criterion;
 
 /**
- * {@link Criterion} representing a session bound to an {@link javax.servlet.http.HttpServletRequest},
+ * {@link Criterion} representing a session bound to a servlet request,
  * which is implicitly the "current" request known to the resolver.
  */
 public final class HttpServletRequestCriterion implements Criterion {

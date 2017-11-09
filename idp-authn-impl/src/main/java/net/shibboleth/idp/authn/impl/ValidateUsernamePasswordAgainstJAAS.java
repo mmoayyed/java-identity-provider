@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * An action that checks for a {@link UsernamePasswordContext} and directly produces an
+ * An action that checks for a {@link net.shibboleth.idp.authn.context.UsernamePasswordContext} and directly produces an
  * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by invoking a JAAS configuration.
  * 
  * <p>Various optional properties are supported to control the JAAS configuration process.</p>
@@ -69,7 +69,8 @@ import com.google.common.base.Function;
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  * successful login. On a failed login, the
- * {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, Exception, String)}
+ * {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext,
+ *    Exception, String)}
  * method is called.
  */
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswordValidationAction {

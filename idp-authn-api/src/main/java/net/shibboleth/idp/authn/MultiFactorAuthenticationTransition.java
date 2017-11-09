@@ -87,7 +87,8 @@ public class MultiFactorAuthenticationTransition {
      * Set the map of transition rules to follow.
      * 
      * <p>The values in the map must be either a {@link String} identifying the flow ID to run, or
-     * a {@link Function<ProfileRequestContext,String>} to execute.</p> 
+     * a {@link Function}<code>&lt;</code>{@link ProfileRequestContext}<code>,</code>{@link String}<code>&gt;</code>
+     * to execute.</p> 
      * 
      * @param map map of transition rules
      */

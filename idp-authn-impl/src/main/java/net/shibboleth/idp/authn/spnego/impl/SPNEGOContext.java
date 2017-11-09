@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Context, usually attached to {@link AuthenticationContext}, that carries configuration data
- * and request state for SPNEGO authentication.
+ * Context, usually attached to {@link net.shibboleth.idp.authn.context.AuthenticationContext},
+ * that carries configuration data and request state for SPNEGO authentication.
  */
 public class SPNEGOContext extends BaseContext {
     

@@ -54,7 +54,8 @@ import com.google.common.base.Function;
  * <ul>
  * <li>retrieving the {@link ProfileRequestContext} from the current request environment</li>
  * <li>populating the SWF {@link RequestContext} into the profile context tree</li>
- * <li>starting or stopping any timers as instructed by a {@link MetricContext} in the tree</li>
+ * <li>starting or stopping any timers as instructed by a
+ *     {@link org.opensaml.profile.context.MetricContext} in the tree</li>
  * </ul>
  * </p>
  * 

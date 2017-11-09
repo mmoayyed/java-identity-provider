@@ -37,7 +37,8 @@ import com.google.common.collect.Multimap;
  * A {@link BaseContext} that holds a multimap of {@link SPSession} objects.
  * 
  * <p>This context is used primarily to expose the {@link SPSession} objects for which logout is implicated.
- * It also tracks the processing of actions that populate a {@link MultiRelyingPartyContext} tree containing
+ * It also tracks the processing of actions that populate a
+ * {@link net.shibboleth.idp.profile.context.MultiRelyingPartyContext} tree containing
  * detailed information on each relying party, typically for user interface considerations.</p>
  */
 public final class LogoutContext extends BaseContext {

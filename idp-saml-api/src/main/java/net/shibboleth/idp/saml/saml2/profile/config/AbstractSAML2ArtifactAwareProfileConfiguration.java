@@ -37,7 +37,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
         extends AbstractSAML2ProfileConfiguration
         implements SAMLArtifactAwareProfileConfiguration {
 
-    /** Lookup function to supply {@link #artifactConfig} property. */
+    /** Lookup function to supply <code>artifactConfiguration</code> property. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
 
     /**
@@ -65,7 +65,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
     }
 
     /**
-     * Set a lookup strategy for the {@link #artifactConfig} property.
+     * Set a lookup strategy for the <code>artifactConfiguration</code> property.
      *
      * @param strategy  lookup strategy
      * 

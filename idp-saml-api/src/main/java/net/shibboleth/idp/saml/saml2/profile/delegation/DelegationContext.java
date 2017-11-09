@@ -43,7 +43,10 @@ public class DelegationContext extends BaseContext {
     /** Status of whether the relying party has requested issuance of a delegated assertion token. */
     private DelegationRequest delegationRequested;
     
-    /** The relying party credentials which will be included in the assertion's {@link KeyInfoConfirmationDataType}. */
+    /**
+     * The relying party credentials which will be included in the assertion's
+     * {@link org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType}.
+     */
     private List<Credential> subjectConfirmationCredentials;
     
     
@@ -89,7 +92,8 @@ public class DelegationContext extends BaseContext {
     }
 
     /**
-     * Get the relying party credentials which will be included in the assertion's {@link KeyInfoConfirmationDataType}.
+     * Get the relying party credentials which will be included in the assertion's
+     * {@link org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType}.
      * 
      * @return the confirmation credentials, or null
      */
@@ -98,7 +102,8 @@ public class DelegationContext extends BaseContext {
     }
 
     /**
-     * Set the relying party credentials which will be included in the assertion's {@link KeyInfoConfirmationDataType}.
+     * Set the relying party credentials which will be included in the assertion's
+     * {@link org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType}.
      * 
      * @param credentials the confirmation credentials
      */

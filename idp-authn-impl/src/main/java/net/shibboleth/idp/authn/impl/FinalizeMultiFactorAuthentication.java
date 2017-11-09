@@ -225,7 +225,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      * 
      * <p>The default strategy searches for a {@link MultiFactorAuthenticationContext} child of an
      * {@link AuthenticationContext} child of the input context, and combines all of the {@link Subject}
-     * content from {@link MultiFactorAuthenticationContext#getAuthenticationResults()} into a single result.</p>
+     * content from {@link MultiFactorAuthenticationContext#getActiveResults()} into a single result.</p>
      * 
      * <p>It assigns the flow ID based on {@link AuthenticationContext#getAttemptedFlow()}, and also preserves
      * the original result objects in wrapper principals within the new result.</p>

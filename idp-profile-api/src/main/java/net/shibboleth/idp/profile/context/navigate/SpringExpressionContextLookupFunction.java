@@ -35,7 +35,8 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
- * A {@link Function} over a {@link BaseContext} which calls out to a Spring Expression.
+ * A {@link com.google.common.base.Function} over a {@link BaseContext}
+ * which calls out to a Spring Expression.
  * 
  * @param <T> the specific type of context
  */

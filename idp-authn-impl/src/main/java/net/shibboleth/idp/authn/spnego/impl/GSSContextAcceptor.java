@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @see <a href="http://www.ietf.org/rfc/rfc2853.txt">RFC 2853 - Generic Security Service API Version 2 : Java
  *      Bindings</a>
- * @see http://www.ietf.org/rfc/rfc4178.txt
+ * @see <a href="http://www.ietf.org/rfc/rfc4178.txt">RFC 4178 - The Simple and Protected
+        Generic Security Service Application Program Interface (GSS-API) Negotiation Mechanism</a>
  */
 public class GSSContextAcceptor {
     

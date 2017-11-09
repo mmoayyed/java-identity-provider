@@ -93,7 +93,10 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     /** Principal serializers. */
     @Nonnull @NonnullElements private Collection<PrincipalSerializer<String>> principalSerializers;
 
-    /** Specialized serializer for {@link AuthenticatonResultPrincipal} that requires a circular ref. */
+    /**
+     * Specialized serializer for {@link net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal}
+     * that requires a circular ref.
+     */
     @Nonnull private final AuthenticationResultPrincipalSerializer authnResultPrincipalSerializer;
     
     /** Generic principal serializer for any unsupported principals. */

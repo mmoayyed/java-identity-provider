@@ -427,7 +427,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
     
     /**
-     * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
+     * Set a lookup strategy for the <code>defaultAuthenticationMethods</code> property.
      *
      * @param strategy  lookup strategy
      * 
@@ -459,7 +459,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #authenticationFlows} property.
+     * Set a lookup strategy for the <code>authenticationFlows</code> property.
      *
      * @param strategy  lookup strategy
      * 

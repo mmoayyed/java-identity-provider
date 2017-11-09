@@ -49,7 +49,7 @@ import com.google.common.base.Function;
  * for which flows are to be active, because the potentialFlows collection is filtered by that
  * criterion.</p>
  * 
- * <p>If {@link AuthenticationContext#getHintedName() is null, then it is populated with the
+ * <p>If {@link AuthenticationContext#getHintedName()} is null, then it is populated with the
  * principal name from the session.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}

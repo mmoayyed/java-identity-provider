@@ -34,7 +34,7 @@ import com.google.common.base.Predicate;
  */
 public class IssuingDelegatedAssertionPredicate implements Predicate<ProfileRequestContext> {
     
-    /** Strategy used to lookup the {@link DelegationContext. */
+    /** Strategy used to lookup the {@link DelegationContext}. */
     @Nonnull private Function<ProfileRequestContext, DelegationContext> delegationContextLookupStrategy;
     
     /** Constructor. */

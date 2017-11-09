@@ -49,7 +49,7 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
     /** JDBC data source to validate. */
     @NonnullAfterInit private DataSource dataSource;
 
-    /** whether validate should throw, default value is {@value} . */
+    /** Whether validate should throw, default value is <code>true</code>. */
     private boolean throwOnValidateError = true;
 
     /**

@@ -57,7 +57,10 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseIdPInitiatedSSORequestMessageDecoder.class);
     
-    /** Optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created. */
+    /**
+     * Optional {@link BindingDescriptor} to inject into
+     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContext} created.
+     */
     @Nullable private BindingDescriptor bindingDescriptor;
     
     /** Used to log protocol messages. */
@@ -67,7 +70,8 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
     @Nonnull private final IdentifierGenerationStrategy idGenerator = new Type4UUIDIdentifierGenerationStrategy();
     
     /**
-     * Get an optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created.
+     * Get an optional {@link BindingDescriptor} to inject into
+     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContextSAMLBindingContext} created.
      * 
      * @return binding descriptor
      */
@@ -76,7 +80,8 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
     }
     
     /**
-     * Set an optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created.
+     * Set an optional {@link BindingDescriptor} to inject into
+     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContextSAMLBindingContext} created.
      * 
      * @param descriptor a binding descriptor
      */

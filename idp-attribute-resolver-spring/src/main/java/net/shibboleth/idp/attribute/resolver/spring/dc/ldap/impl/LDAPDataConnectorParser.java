@@ -238,7 +238,7 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
      * Utility class for parsing v2 schema configuration.
      * 
      * <em>Note</em> That parsing the V2 configuration will set some beans with hard wired defaults. See
-     * {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
+     * {@link #doV2Parse(Element, ParserContext, BeanDefinitionBuilder)}.
      */
 
     protected static class V2Parser {

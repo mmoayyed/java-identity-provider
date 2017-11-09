@@ -45,7 +45,7 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
      * Setter for {@link #maxValidityIntervalDuration}.
      * 
      * @param s what to set.
-     * @deprecated use {@link RequiredValidUntilFactoryBean#setMaxValidity(long)}.
+     * @deprecated use {@link RequiredValidUntilFilter#setMaxValidityInterval(long)}.
      */
     @Deprecated public void setMaxValidityInterval(final String s) {
         maxValidityIntervalDuration = s;

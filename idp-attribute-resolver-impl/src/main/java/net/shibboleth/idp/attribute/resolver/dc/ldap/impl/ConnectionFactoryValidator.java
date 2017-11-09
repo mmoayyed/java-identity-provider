@@ -46,7 +46,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
     /** Connection factory to validate. */
     @Nonnull private ConnectionFactory connectionFactory;
     
-    /** whether validate should throw, default value is {@value true}. */
+    /** Whether validate should throw, default value is <code>true</code>. */
     private boolean throwOnValidateError = true;
     
     /**

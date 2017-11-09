@@ -37,7 +37,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.core.io.Resource;
 
 /**
- * A {@link Function} over a {@link BaseContext} which calls out to a supplied script.
+ * A {@link com.google.common.base.Function} over a {@link BaseContext}
+ * which calls out to a supplied script.
  * 
  * @param <T> the specific type of context
  */

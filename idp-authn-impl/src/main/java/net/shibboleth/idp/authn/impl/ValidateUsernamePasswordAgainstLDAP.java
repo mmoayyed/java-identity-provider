@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that checks for a {@link UsernamePasswordContext} and directly produces an
+ * An action that checks for a {@link net.shibboleth.idp.authn.context.UsernamePasswordContext} and directly produces an
  * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by authenticating against an LDAP.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
@@ -61,8 +61,8 @@ import org.slf4j.LoggerFactory;
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then an
  *       {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  *       successful login. On a failed login, the
- *       {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, String, String)}
- *       method is called.
+ *       {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(ProfileRequestContext,
+ *       AuthenticationContext, String, String)} method is called.
  */
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswordValidationAction {
 

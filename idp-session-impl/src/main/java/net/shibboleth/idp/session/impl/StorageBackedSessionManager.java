@@ -375,7 +375,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /**
      * Get whether the configured {@link StorageService}'s
      * {@link org.opensaml.storage.StorageCapabilities#getValueSize()} method meets the
-     * value set via {@link #setStorageServiceThreshold(int)}.
+     * value set via {@link #setStorageServiceThreshold(long)}.
      * 
      * @return true iff the threshold is met
      */

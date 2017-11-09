@@ -92,7 +92,9 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
    
     /**
      * {@inheritDoc}
-     * @deprecated("Used SetAttributeNames instead")
+     *
+     * @deprecated Use {@link #setAttributeNames} instead
+     * @see        #setAttributeNames
      */
     @Override @Deprecated public void setDependencyAttributeId(@Nullable final String attributeId) {
         DeprecationSupport.warn(ObjectType.METHOD,

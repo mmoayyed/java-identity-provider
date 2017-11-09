@@ -62,7 +62,8 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>If no matching Principal is established, or if the match is no longer valid, the request is
  * evaluated in conjunction with the {@link AuthenticationResult} to establish a Principal that
- * does satisfy the request and it is recorded via {@link RequestedPrincipalContext#setMatchingPrincipal()}.</p>
+ * does satisfy the request and it is recorded via
+ * {@link RequestedPrincipalContext#setMatchingPrincipal(Principal)}.</p>
  * 
  * <p>The context is populated based on the presence of a canonical principal name in either
  * a {@link SubjectCanonicalizationContext} or {@link SessionContext}, and also includes

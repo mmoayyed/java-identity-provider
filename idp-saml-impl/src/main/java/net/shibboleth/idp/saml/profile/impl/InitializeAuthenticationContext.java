@@ -42,7 +42,7 @@ import com.google.common.base.Functions;
  * ForceAuthn) is copied into the context from the request.</p>
  * 
  * <p>If a previously populated {@link AuthenticationContext} is found, and it contains a successful
- * {@link AuthenticationResult}, that result is copied to the new context via
+ * {@link net.shibboleth.idp.authn.AuthenticationResult}, that result is copied to the new context via
  * {@link AuthenticationContext#setInitialAuthenticationResult(net.shibboleth.idp.authn.AuthenticationResult)}.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}

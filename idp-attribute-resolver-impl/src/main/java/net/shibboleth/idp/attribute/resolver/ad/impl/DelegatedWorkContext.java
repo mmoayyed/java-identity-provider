@@ -85,7 +85,7 @@ import org.slf4j.LoggerFactory;
     }
 
     /**
-     * see {@link AttributeResolverWorkContext#recordAttributeDefinitionResolution()}.
+     * see {@link AttributeResolverWorkContext#recordAttributeDefinitionResolution(AttributeDefinition,IdPAttribute)}.
      * 
      * @param definition as the delegate does
      * @param attribute as the delegate does
@@ -112,7 +112,7 @@ import org.slf4j.LoggerFactory;
     }
 
     /**
-     * see {@link AttributeResolverWorkContext#recordDataConnectorResolution()}.
+     * see {@link AttributeResolverWorkContext#recordDataConnectorResolution(DataConnector,Map)}.
      * 
      * @param connector as the delegate does
      * @param attributes as the delegate does
@@ -128,7 +128,7 @@ import org.slf4j.LoggerFactory;
     }
 
     /**
-     * see {@link AttributeResolverWorkContext#recordFailoverResolution()}.
+     * see {@link AttributeResolverWorkContext#recordFailoverResolution}.
      * 
      * @param failedConnector as the delegate does
      * @param failoverConnector as the delegate does

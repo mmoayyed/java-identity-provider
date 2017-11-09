@@ -66,7 +66,7 @@ import com.google.common.base.Functions;
  * that it should complete itself. The result of the action is either
  * {@link MultiFactorAuthenticationContext#getEvent()} (if set), or the current WebFlow event.</p>
  * 
- * <p>If a flow is returned, it is populated into the {@link MultiFactorAutenticationContext}.
+ * <p>If a flow is returned, it is populated into the {@link MultiFactorAuthenticationContext}.
  * The flow is checked for the "authn/" prefix, and a login flow is checked against the
  * active result map to determine if it can be reused, in which case the action recurses itself.
  * Otherwise {@link EventIds#PROCEED_EVENT_ID}is signaled to run that flow.</p>

@@ -56,13 +56,22 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /** semi colon separated resources to indicate external config. */
     @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE = "springResources";
 
-    /** A bean name for a {@link java.util.Collection<org.springframework.core.io.Resource>}.. */
+    /**
+     * A bean name for a {@link java.util.Collection}<code>&lt;</code>
+     * {@link org.springframework.core.io.Resource}<code>&gt;</code>.
+     */
     @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE_REF = "springResourcesRef";
 
-    /** A bean name for a {@link List<org.springframework.beans.factory.config.BeanFactoryPostProcessor>}. */
+    /**
+     * A bean name for a {@link List}<code>&lt;</code>
+     * {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor}<code>&gt;</code>.
+     */
     @Nonnull @NotEmpty public static final String ATTR_FACTORY_POSTPROCESSORS_REF = "factoryPostProcessorsRef";
 
-    /** A bean name for a {@link List<org.springframework.beans.factory.config.BeanPostProcessor>}. */
+    /**
+     * A bean name for a {@link List}<code>&lt;</code>
+     * {@link org.springframework.beans.factory.config.BeanPostProcessor}<code>&gt;</code>.
+     */
     @Nonnull @NotEmpty public static final String ATTR_POSTPROCESSORS_REF = "postProcessorsRef";
 
     /** Failover data connector attribute name. */

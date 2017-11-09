@@ -130,7 +130,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
     /** Strategy used to lookup the SAMLMetadataContext. */
     @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> samlMetadataContextLookupStrategy;
     
-    /** Strategy used to lookup the {@link DelegationContext. */
+    /** Strategy used to lookup the {@link DelegationContext}. */
     @Nonnull private Function<ProfileRequestContext, DelegationContext> delegationContextLookupStrategy;
     
     /** Default delegation request value. */

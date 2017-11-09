@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that checks for a {@link UsernamePasswordContext} and directly produces an
+ * An action that checks for a {@link net.shibboleth.idp.authn.context.UsernamePasswordContext} and directly produces an
  * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by acquiring
  * a TGT and optional service ticket from Kerberos.
  *  

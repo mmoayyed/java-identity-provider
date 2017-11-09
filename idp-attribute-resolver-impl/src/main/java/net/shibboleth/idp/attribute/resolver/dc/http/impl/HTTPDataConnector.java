@@ -41,7 +41,10 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** This class implements a {@link DataConnector} that obtains data from an HTTP service. */
+/**
+ * This class implements a {@link net.shibboleth.idp.attribute.resolver.DataConnector}
+ * that obtains data from an HTTP service.
+ */
 public class HTTPDataConnector extends AbstractSearchDataConnector<HTTPSearch,HTTPResponseMappingStrategy> {
     
     /** Class logging. */
