@@ -26,6 +26,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.testing.TestSupport;
+
 /**
  *
  */
@@ -36,20 +38,15 @@ public class ScriptedFunctionTest {
     static final String INTEGER_RETURN_7 = "new java.lang.Integer(37);";
     static final String INTEGER_RETURN_8 = "JavaInteger=Java.type(\"java.lang.Integer\"); new JavaInteger(37);";
     
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
-
     private String stringReturn() {
-        if (isV8()) {
+        if (TestSupport.isJavaV8OrLater()) {
             return STRING_RETURN_8;
         }
         return STRING_RETURN_7;
     }
     
     private String integerReturn() {
-        if (isV8()) {
+        if (TestSupport.isJavaV8OrLater()) {
             return INTEGER_RETURN_8;
         }
         return INTEGER_RETURN_7;
