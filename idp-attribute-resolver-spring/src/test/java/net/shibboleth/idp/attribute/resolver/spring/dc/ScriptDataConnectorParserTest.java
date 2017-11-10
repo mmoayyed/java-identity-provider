@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParse
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
@@ -39,15 +40,10 @@ import org.testng.annotations.Test;
  * test for {@link ScriptDataConnectorParser}
  */
 public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
-    
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
 
     @Test public void simple() throws ComponentInitializationException, ResolutionException {
 
-        if (isV8()) {
+        if (TestSupport.isJavaV8OrLater()) {
             testConnector("scriptedAttributes-8.xml");
         } else {
             testConnector("scriptedAttributes.xml");
@@ -56,7 +52,7 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
 
     @Test public void resolver() throws ComponentInitializationException, ResolutionException {
 
-        if (isV8()) {
+        if (TestSupport.isJavaV8OrLater()) {
             testConnector("resolver/scriptedAttributes-8.xml");
         } else {
             testConnector("resolver/scriptedAttributes.xml");

@@ -38,6 +38,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
@@ -63,11 +64,6 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     /** A script that returns a set containing the prc name. */
     private EvaluableScript prcscScript;
 
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
-
     @BeforeTest public void setup() throws Exception {
         super.setUp();
 
@@ -75,7 +71,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         nullReturnScript = new EvaluableScript("JavaScript", "null;");
 
-        if (!isV8()) {
+        if (!TestSupport.isJavaV8OrLater()) {
             returnOneValueScript =
                     new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
                             .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")

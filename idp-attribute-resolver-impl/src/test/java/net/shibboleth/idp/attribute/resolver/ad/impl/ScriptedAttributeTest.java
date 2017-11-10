@@ -53,6 +53,7 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -80,7 +81,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     private static Logger log = LoggerFactory.getLogger(ScriptedAttributeTest.class);
 
     private String fileNameToPath(final String fileName, final boolean isV8Capable) {
-        if (isV8() && !isV8Capable) {
+        if (TestSupport.isJavaV8OrLater() && !isV8Capable) {
             return "/net/shibboleth/idp/attribute/resolver/impl/ad/jdk8/" + fileName;
         }
         return "/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
@@ -93,11 +94,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     private String getScript(final String fileName) throws IOException {
         return getScript(fileName, true);
-    }
-
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
     }
 
     /**
@@ -309,7 +305,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         } catch (final ResolutionException ex) {
             log.trace("Successful exception", ex);
         } catch (final RuntimeException ex) {
-            if (isV8() && (ex.getCause() instanceof ResolutionException)) {
+            if (TestSupport.isJavaV8OrLater() && (ex.getCause() instanceof ResolutionException)) {
                 // nashhorn wraps exceptions
                 log.trace("Successful exception", ex);
             } else {
@@ -323,7 +319,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         failureTest("fail1.script", "Unknown method", true);
         failureTest("fail2.script", "Bad output type", true);
-        if (!isV8()) {
+        if (!TestSupport.isJavaV8OrLater()) {
             // nashhorn is much more forgiving - and we tested for most of this in fails2
             Assert.assertNull(buildTest("fail3.script", true).resolve(generateContext()), "returns nothing");
         }

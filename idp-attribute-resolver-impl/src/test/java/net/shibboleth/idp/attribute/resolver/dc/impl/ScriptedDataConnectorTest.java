@@ -38,6 +38,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
@@ -49,14 +50,9 @@ import org.testng.annotations.Test;
  */
 public class ScriptedDataConnectorTest {
 
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
-
     private String getScript(String fileName) throws IOException {
         final String name;
-        if (isV8()) {
+        if (TestSupport.isJavaV8OrLater()) {
             name = "/net/shibboleth/idp/attribute/resolver/impl/dc/v8/" + fileName;
         } else {
             name = "/net/shibboleth/idp/attribute/resolver/impl/dc/" + fileName;

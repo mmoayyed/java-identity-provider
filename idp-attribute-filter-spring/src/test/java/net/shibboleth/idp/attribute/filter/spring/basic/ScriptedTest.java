@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.testng.Assert;
@@ -42,13 +43,8 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;
     
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
-    
     private String getScript() {
-        if (isV8()) {
+        if (TestSupport.isJavaV8OrLater()) {
             return "scripted-v8.xml";
         }
         return "scripted.xml";

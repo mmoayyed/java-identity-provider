@@ -42,6 +42,7 @@ import net.shibboleth.idp.attribute.resolver.dc.http.impl.HTTPDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.http.impl.HTTPDataConnectorParser;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /** Test for {@link HTTPDataConnectorParser}. */
 public class HTTPDataConnectorParserTest {
@@ -72,7 +73,7 @@ public class HTTPDataConnectorParserTest {
     @Test public void v2Config() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -100,7 +101,7 @@ public class HTTPDataConnectorParserTest {
     @Test(expectedExceptions=ResolutionException.class) public void v2BadProtocol() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -117,7 +118,7 @@ public class HTTPDataConnectorParserTest {
     @Test(expectedExceptions=ResolutionException.class) public void v2Size() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -134,7 +135,7 @@ public class HTTPDataConnectorParserTest {
     @Test(expectedExceptions=ResolutionException.class) public void v2Missing() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://build.shibboleth.net/test.json");
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -151,7 +152,7 @@ public class HTTPDataConnectorParserTest {
     @Test public void v2MissingOk() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://build.shibboleth.net/test.json");
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -170,7 +171,7 @@ public class HTTPDataConnectorParserTest {
     @Test public void v2Certificate() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("certificate", "/org/opensaml/saml/metadata/resolver/impl/repo-entity.crt");
         
         final HTTPDataConnector connector =
@@ -199,7 +200,7 @@ public class HTTPDataConnectorParserTest {
     @Test(expectedExceptions=ResolutionException.class) public void v2BadCertificate() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("certificate", "/org/opensaml/saml/metadata/resolver/impl/badKey.crt");
         
         final HTTPDataConnector connector =
@@ -217,7 +218,7 @@ public class HTTPDataConnectorParserTest {
     @Test public void v2CA() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
         
         final HTTPDataConnector connector =
@@ -246,7 +247,7 @@ public class HTTPDataConnectorParserTest {
     @Test(expectedExceptions=ResolutionException.class) public void v2BadCA() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/badCA.crt");
         
         final HTTPDataConnector connector =
@@ -266,7 +267,7 @@ public class HTTPDataConnectorParserTest {
         // Could use a better test for this end to end.
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("key", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.key");
         propSource.setProperty("certificate", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.crt");
         
@@ -295,7 +296,7 @@ public class HTTPDataConnectorParserTest {
     
     @Test public void hybridConfig() throws Exception {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -326,7 +327,7 @@ public class HTTPDataConnectorParserTest {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://shibboleth.net/cgi-bin/_frobnitz.cgi");
         propSource.setProperty("serviceBody",
                 "[{\"name\" : \"foo\",\"values\" : [ \"foo1\" ]},{\"name\" : \"bar\",\"values\" : [ \"bar1\", \"bar2\" ]}]");
-        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -380,11 +381,6 @@ public class HTTPDataConnectorParserTest {
         return (HTTPDataConnector) context.getBean("myHTTP");
     }
 
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
-    
     private MockPropertySource singletonPropertySource(final String name, final String value) {
         final MockPropertySource propSource = new MockPropertySource("localProperties");
         propSource.setProperty(name, value);

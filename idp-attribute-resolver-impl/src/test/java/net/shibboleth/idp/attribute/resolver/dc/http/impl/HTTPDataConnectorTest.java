@@ -40,6 +40,7 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.TestCache;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 /**
@@ -58,11 +59,6 @@ public class HTTPDataConnectorTest {
     private static final String SCRIPT_PATH_V8 = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/v8/";
 
     private HTTPDataConnector connector;
-    
-    private boolean isV8() {
-        final String ver = System.getProperty("java.version");
-        return ver.startsWith("1.8");
-    }
     
     @BeforeMethod public void setUp() {
         connector = new HTTPDataConnector();
@@ -87,7 +83,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -125,7 +121,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -150,7 +146,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -175,7 +171,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -223,7 +219,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -255,7 +251,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -290,7 +286,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
@@ -322,7 +318,7 @@ public class HTTPDataConnectorTest {
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+                        ResourceHelper.of(new ClassPathResource((TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
         mapping.setAcceptTypes(Collections.singleton("application/json"));
