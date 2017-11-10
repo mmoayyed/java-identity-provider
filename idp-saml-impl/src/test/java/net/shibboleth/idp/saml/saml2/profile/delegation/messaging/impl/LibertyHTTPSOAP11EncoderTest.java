@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -101,7 +102,10 @@ public class LibertyHTTPSOAP11EncoderTest extends XMLObjectBaseTestCase {
         Assert.assertEquals("UTF-8", response.getCharacterEncoding(), "Unexpected character encoding");
         Assert.assertEquals(response.getHeader("Cache-control"), "no-cache, no-store", "Unexpected cache controls");
         Assert.assertEquals(response.getHeader("SOAPAction"), LibertyConstants.SSOS_RESPONSE_WSA_ACTION_URI);
-        // TODO: this hashes differently with endorsed Xerces
+        // TODO: this hashes differently with endorsed Xerces or under Java 9
+        if (TestSupport.isJavaV9OrLater()) {
+            return;
+        }
         Assert.assertEquals(response.getContentAsString().hashCode(), 1113901725);
     }
 }
