@@ -27,8 +27,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
         } else {
             credential = new BasicX509Credential(entityCertificate, privateKey);
 
-            if (!KeyPairUtil.isKeyPair(entityCertificate.getPublicKey(), privateKey)) {
+            if (!KeySupport.matchKeyPair(entityCertificate.getPublicKey(), privateKey)) {
                 log.error("{}: Public and private keys do not match", getConfigDescription());
                 throw new BeanCreationException("Public and private keys do not match");
             }

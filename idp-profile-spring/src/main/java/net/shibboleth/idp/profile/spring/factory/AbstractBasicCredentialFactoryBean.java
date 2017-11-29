@@ -30,9 +30,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.util.encoders.Hex;
-import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.crypto.KeySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -122,7 +122,7 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
             if (null == privateKey) {
                 credential = new BasicCredential(publicKey);
             } else {
-                if (!KeyPairUtil.isKeyPair(publicKey, privateKey)) {
+                if (!KeySupport.matchKeyPair(publicKey, privateKey)) {
                     log.error("{}: Public and private keys do not match", getConfigDescription());
                     throw new BeanCreationException("Public and private keys do not match");
                 }
