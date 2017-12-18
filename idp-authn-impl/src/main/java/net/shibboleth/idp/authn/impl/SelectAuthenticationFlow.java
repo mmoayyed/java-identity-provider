@@ -426,7 +426,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         
         log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
-        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+        ActionSupport.buildEvent(profileRequestContext,
+                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
     }
     
     /**
@@ -511,7 +512,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             }
             
             log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+            ActionSupport.buildEvent(profileRequestContext,
+                    authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
         }
     }
 // Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
