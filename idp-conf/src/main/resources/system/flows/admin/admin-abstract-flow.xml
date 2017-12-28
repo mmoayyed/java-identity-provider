@@ -152,6 +152,4 @@
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
-    <bean-import resource="admin-abstract-beans.xml" />
-
 </flow>

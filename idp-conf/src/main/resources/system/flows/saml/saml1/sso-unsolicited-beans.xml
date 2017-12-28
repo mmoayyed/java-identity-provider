@@ -11,6 +11,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <import resource="sso-abstract-beans.xml" />
+
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
             <bean class="net.shibboleth.idp.saml.saml1.profile.impl.IdPInitiatedSSORequestMessageDecoder" scope="prototype"

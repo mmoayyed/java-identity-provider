@@ -11,6 +11,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <import resource="sso-abstract-beans.xml" />
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration).PROFILE_ID}"

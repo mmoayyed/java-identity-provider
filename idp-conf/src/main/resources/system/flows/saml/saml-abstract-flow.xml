@@ -191,7 +191,4 @@
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
-    <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
-    <bean-import resource="../saml-abstract-beans.xml" />
-
 </flow>

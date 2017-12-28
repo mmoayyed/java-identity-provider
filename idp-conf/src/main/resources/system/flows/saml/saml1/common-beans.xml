@@ -12,6 +12,8 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
+    <import resource="../saml-abstract-beans.xml" />
+
     <util:constant id="shibboleth.MetadataLookup.Protocol"
         static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
 

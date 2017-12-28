@@ -232,6 +232,4 @@
         </on-entry>
     </end-state>
 
-    <bean-import resource="slo-front-abstract-beans.xml" />
-
 </flow>

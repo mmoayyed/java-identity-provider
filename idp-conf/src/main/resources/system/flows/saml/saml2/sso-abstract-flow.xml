@@ -207,6 +207,4 @@
         </on-entry>
     </end-state>
 
-    <bean-import resource="sso-abstract-beans.xml" />
-
 </flow>

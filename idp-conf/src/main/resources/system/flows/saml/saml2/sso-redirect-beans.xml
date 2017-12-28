@@ -10,6 +10,8 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
        default-init-method="initialize"
        default-destroy-method="destroy">
+
+    <import resource="sso-abstract-beans.xml" />
     
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
