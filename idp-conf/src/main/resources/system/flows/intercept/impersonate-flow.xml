@@ -71,6 +71,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="../../../system/flows/intercept/impersonate-beans.xml" />
+    <bean-import resource="impersonate-beans.xml" />
 
 </flow>

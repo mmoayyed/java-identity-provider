@@ -26,6 +26,6 @@
             then="proceed" else="ContextCheckDenied" />
     </decision-state>
     
-    <bean-import resource="../../../system/flows/intercept/context-check-beans.xml" />
+    <bean-import resource="context-check-beans.xml" />
 
 </flow>
