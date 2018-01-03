@@ -71,7 +71,10 @@ public class TemplatedURLBuilder extends AbstractHTTPSearchBuilder {
 
     /** Escaper for path segments. */
     @Nonnull private final Escaper pathEscaper;
-
+    
+    /** A custom object to inject into the template. */
+    @Nullable private Object customObject;
+    
     /** Constructor. */
     public TemplatedURLBuilder() {
         paramEscaper = UrlEscapers.urlFormParameterEscaper();
@@ -130,6 +133,19 @@ public class TemplatedURLBuilder extends AbstractHTTPSearchBuilder {
         engine = Constraint.isNotNull(velocityEngine, "Velocity engine cannot be null");
     }
     
+
+    /**
+     * Set the custom (externally provided) object.
+     * 
+     * @param object the custom object
+     */
+    public void setCustomObject(@Nullable final Object object) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        customObject = object;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -171,6 +187,7 @@ public class TemplatedURLBuilder extends AbstractHTTPSearchBuilder {
         context.put("paramEscaper", paramEscaper);
         context.put("fragmentEscaper", fragmentEscaper);
         context.put("pathEscaper", pathEscaper);
+        context.put("custom", customObject);
 
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {

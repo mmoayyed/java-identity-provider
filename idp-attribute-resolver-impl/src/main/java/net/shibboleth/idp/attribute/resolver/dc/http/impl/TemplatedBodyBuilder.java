@@ -109,6 +109,9 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
 
     /** Escaper for XML content. */
     @Nonnull private final Escaper xmlContentEscaper;
+    
+    /** A custom object to inject into the template. */
+    @Nullable private Object customObject;
 
     /** Constructor. */
     public TemplatedBodyBuilder() {
@@ -275,6 +278,18 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
         charset = StringSupport.trimOrNull(c);
     }
     
+    /**
+     * Set the custom (externally provided) object.
+     * 
+     * @param object the custom object
+     */
+    public void setCustomObject(@Nullable final Object object) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        customObject = object;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -327,6 +342,7 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
         context.put("pathEscaper", pathEscaper);
         context.put("xmlAttributeEscaper", xmlAttributeEscaper);
         context.put("xmlContentEscaper", xmlContentEscaper);
+        context.put("custom", customObject);
 
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
