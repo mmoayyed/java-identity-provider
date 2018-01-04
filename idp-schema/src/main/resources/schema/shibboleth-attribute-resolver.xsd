@@ -1264,12 +1264,19 @@
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>                                        
                     <element ref="resolver:FailoverDataConnector"/>
-                    <element name="URLTemplate" type="string">
+                    <element name="URLTemplate">
                         <annotation>
                             <documentation>
                                 A template that will be used to create the absolute URL to request.
                             </documentation>
                         </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="customObjectRef" type="string" />
+                                </extension>
+                            </simpleContent>
+                        </complexType>
                     </element>
                     <element name="BodyTemplate">
                         <annotation>
@@ -1282,6 +1289,7 @@
                                 <extension base="string">
                                     <attribute name="MIMEType" type="string" />
                                     <attribute name="charset" type="string" />
+					                <attribute name="customObjectRef" type="string" />
                                 </extension>
                             </simpleContent>
                         </complexType>

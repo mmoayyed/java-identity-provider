@@ -227,6 +227,12 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
                 url = urlTemplates.get(0).getTextContent();
             }
             templateBuilder.addPropertyValue("templateText", url);
+
+            final String customRef =
+                    StringSupport.trimOrNull(urlTemplates.get(0).getAttributeNS(null, "customObjectRef"));
+            if (null != customRef) {
+                templateBuilder.addPropertyReference("customObject", customRef);
+            }
             
             final String headerMapRef = StringSupport.trimOrNull(configElement.getAttributeNS(null, "headerMapRef"));
             if (headerMapRef != null) {
@@ -290,8 +296,22 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
                         getLogPrefix());
             }
             
-            templateBuilder.addPropertyValue("uRLTemplateText", urlTemplates.get(0).getTextContent());
+            final Element urlTemplate = urlTemplates.get(0);
             final Element bodyTemplate = bodyTemplates.get(0);
+            if (urlTemplate.hasAttributeNS(null, "customObjectRef")) {
+                templateBuilder.addPropertyReference("customObject",
+                        urlTemplate.getAttributeNS(null, "customObjectRef"));
+                if (bodyTemplate.hasAttributeNS(null, "customObjectRef")) {
+                    log.warn("{} Ignored <BodyTemplate> customObjectRef in favor of <URLTemplate> customObjectRef",
+                            getLogPrefix());
+                }
+            } else if (bodyTemplate.hasAttributeNS(null, "customObjectRef")) {
+                templateBuilder.addPropertyReference("customObject",
+                        bodyTemplate.getAttributeNS(null, "customObjectRef"));
+            }
+            
+            templateBuilder.addPropertyValue("uRLTemplateText", urlTemplate.getTextContent());
+            
             templateBuilder.addPropertyValue("bodyTemplateText", bodyTemplate.getTextContent());
             if (bodyTemplate.hasAttributeNS(null, "MIMEType")) {
                 templateBuilder.addPropertyValue("mIMEType", bodyTemplate.getAttributeNS(null, "MIMEType"));
@@ -302,7 +322,6 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
             if (cacheKeyTemplates.size() > 0) {
                 templateBuilder.addPropertyValue("cacheKeyTemplateText", cacheKeyTemplates.get(0).getTextContent());
             }
-            
             final String headerMapRef = StringSupport.trimOrNull(configElement.getAttributeNS(null, "headerMapRef"));
             if (headerMapRef != null) {
                 templateBuilder.addPropertyReference("headers", headerMapRef);

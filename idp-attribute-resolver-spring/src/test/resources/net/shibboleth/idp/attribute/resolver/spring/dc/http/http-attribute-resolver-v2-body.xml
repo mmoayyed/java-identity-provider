@@ -8,8 +8,8 @@
             acceptStatuses="200 201"
             acceptTypes="application/json">
             
-        <URLTemplate>%{serviceURL}</URLTemplate>
-        <BodyTemplate MIMEType="application/json">%{serviceBody}</BodyTemplate>
+        <URLTemplate customObjectRef="CustomObject">%{serviceURL}</URLTemplate>
+        <BodyTemplate MIMEType="application/json" customObjectRef="CustomObject">%{serviceBody}</BodyTemplate>
         
         <ResponseMapping>
             <ScriptFile>%{scriptPath}</ScriptFile>
