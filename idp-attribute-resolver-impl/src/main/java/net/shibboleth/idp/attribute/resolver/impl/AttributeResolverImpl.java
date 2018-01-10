@@ -57,6 +57,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.MetricContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -599,7 +600,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @return true iff the {@link #stopTimer(AttributeResolutionContext)} method needs to be called
      */
     private boolean startTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
-        final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
+        final BaseContext prc = profileContextStrategy.apply(resolutionContext);
         if (prc != null) {
             final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
             if (timerCtx != null) {
@@ -616,7 +617,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param resolutionContext attribute resolution context
      */
     private void stopTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
-        final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
+        final BaseContext prc = profileContextStrategy.apply(resolutionContext);
         if (prc != null) {
             final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
             if (timerCtx != null) {
