@@ -74,6 +74,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -102,6 +103,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -119,6 +121,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -136,6 +139,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://build.shibboleth.net/test.json");
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -153,6 +157,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://build.shibboleth.net/test.json");
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -172,6 +177,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         propSource.setProperty("certificate", "/org/opensaml/saml/metadata/resolver/impl/repo-entity.crt");
         
         final HTTPDataConnector connector =
@@ -201,6 +207,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         propSource.setProperty("certificate", "/org/opensaml/saml/metadata/resolver/impl/badKey.crt");
         
         final HTTPDataConnector connector =
@@ -219,6 +226,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
         
         final HTTPDataConnector connector =
@@ -248,6 +256,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/badCA.crt");
         
         final HTTPDataConnector connector =
@@ -268,6 +277,7 @@ public class HTTPDataConnectorParserTest {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         propSource.setProperty("key", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.key");
         propSource.setProperty("certificate", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.crt");
         
@@ -297,6 +307,7 @@ public class HTTPDataConnectorParserTest {
     @Test public void hybridConfig() throws Exception {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -328,6 +339,7 @@ public class HTTPDataConnectorParserTest {
         propSource.setProperty("serviceBody",
                 "[{\"name\" : \"foo\",\"values\" : [ \"foo1\" ]},{\"name\" : \"bar\",\"values\" : [ \"bar1\", \"bar2\" ]}]");
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,

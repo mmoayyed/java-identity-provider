@@ -8,24 +8,32 @@
 
     <bean id="CustomObject" class="java.lang.String" c:_0="foo" />
 
-    <bean id="NoTrustEngineHttpClient"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean" />
+    <bean id="NoTrustEngineHttpClientBuilder"
+        class="net.shibboleth.idp.http.HttpClientBuilder"
+        p:userAgent="%{userAgent}"
+        p:connectionTimeout="PT30S" />
+
+    <bean id="NoTrustEngineHttpClient" factory-bean="NoTrustEngineHttpClientBuilder" factory-method="buildClient" />
 
     <bean id="SecurityEnhancedTLSSocketFactory" 
         class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
         factory-method="buildTLSSocketFactory" />
 
-    <bean id="TrustEngineHttpClient"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+    <bean id="TrustEngineHttpClientBuilder"
+        parent="NoTrustEngineHttpClientBuilder"
         p:TLSSocketFactory-ref="SecurityEnhancedTLSSocketFactory" />
+
+    <bean id="TrustEngineHttpClient" factory-bean="TrustEngineHttpClientBuilder" factory-method="buildClient" />
 
     <bean id="ClientTLSSocketFactory" 
         class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
         factory-method="buildTLSSocketFactoryWithClientTLSOnly" />
 
-    <bean id="ClientTLSHttpClient"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+    <bean id="ClientTLSHttpClientBuilder"
+        parent="NoTrustEngineHttpClientBuilder"
         p:TLSSocketFactory-ref="ClientTLSSocketFactory" />
+        
+    <bean id="ClientTLSHttpClient" factory-bean="ClientTLSHttpClientBuilder" factory-method="buildClient" />
 
     <bean id="BadProtocolParameters"
         class="org.opensaml.security.httpclient.HttpClientSecurityParameters"
