@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.spring;
+package net.shibboleth.idp.http;
 
 import net.shibboleth.idp.Version;
 
 /**
- * HttpClientBuilder customization for the Shibboleth IdP.
+ * InMemoryCachingHttpClientBuilder customization for the Shibboleth IdP.
  */
-public class HttpClientBuilder extends net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder {
+public class InMemoryCachingHttpClientBuilder
+        extends net.shibboleth.utilities.java.support.httpclient.InMemoryCachingHttpClientBuilder {
 
     /**
      * Constructor.
      */
-    public HttpClientBuilder() {
+    public InMemoryCachingHttpClientBuilder() {
         final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
         stringBuilder.append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
         setUserAgent(stringBuilder.toString());
