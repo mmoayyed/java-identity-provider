@@ -19,6 +19,7 @@ package net.shibboleth.idp.test;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.ext.spring.resource.ConditionalResourceResolver;
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 
@@ -32,7 +33,7 @@ import org.springframework.core.annotation.Order;
 
 /**
  * An {@link ApplicationContextInitializer} which configures a given {@link GenericApplicationContext} to use a
- * {@link PreferFileSystemResourceLoader}.
+ * {@link PreferFileSystemResourceLoader} and a {@link ConditionalResourceResolver}.
  * 
  * This initializer allows the {@link IdPPropertiesApplicationContextInitializer} to resolve "classpath*:" resources,
  * and consequently has the highest priority order so that it is called before the
@@ -52,7 +53,9 @@ public class PreferFileSystemApplicationContextInitializer implements
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         if (applicationContext instanceof GenericApplicationContext) {
             log.debug("Initializing application context '{}'", applicationContext);
-            ((GenericApplicationContext) applicationContext).setResourceLoader(new PreferFileSystemResourceLoader());
+            final PreferFileSystemResourceLoader loader = new PreferFileSystemResourceLoader();
+            loader.addProtocolResolver(new ConditionalResourceResolver());
+            ((GenericApplicationContext) applicationContext).setResourceLoader(loader);
         }
     }
 
