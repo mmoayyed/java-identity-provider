@@ -111,6 +111,6 @@
     </bean>
 
     <!-- Import any user defined beans or overrides for the MVC config. -->
-    <import resource="../../conf/mvc-beans.xml" />
+    <import resource="conditional:${idp.home}/conf/mvc-beans.xml" />
 
 </beans>
