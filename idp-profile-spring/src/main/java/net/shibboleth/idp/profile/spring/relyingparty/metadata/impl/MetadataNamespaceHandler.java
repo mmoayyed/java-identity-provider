@@ -54,7 +54,6 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(InlineMetadataProviderParser.ELEMENT_NAME, new InlineMetadataProviderParser());
         registerBeanDefinitionParser(FilesystemMetadataProviderParser.ELEMENT_NAME,
                 new FilesystemMetadataProviderParser());
-        registerBeanDefinitionParser(HTTPMetadataProviderParser.ELEMENT_NAME, new HTTPMetadataProviderParser());
         registerBeanDefinitionParser(FileBackedHTTPMetadataProviderParser.ELEMENT_NAME,
                 new FileBackedHTTPMetadataProviderParser());
         registerBeanDefinitionParser(ResourceBackedMetadataProviderParser.ELEMENT_NAME,
@@ -63,6 +62,10 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
                 new DynamicHTTPMetadataProviderParser());
         registerBeanDefinitionParser(LocalDynamicMetadataProviderParser.ELEMENT_NAME,
                 new LocalDynamicMetadataProviderParser());
+
+        // TODO: deprecated, remove in 4.0
+        registerBeanDefinitionParser(HTTPMetadataProviderParser.ELEMENT_NAME, new HTTPMetadataProviderParser());
+        
 
         // Resources
         registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());

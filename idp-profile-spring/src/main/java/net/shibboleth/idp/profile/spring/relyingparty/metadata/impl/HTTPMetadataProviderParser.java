@@ -23,7 +23,10 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
@@ -61,6 +64,13 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     /** {@inheritDoc} */
     @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
+        
+        if (ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element))) {
+            DeprecationSupport.warn(ObjectType.XSITYPE, ELEMENT_NAME.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.toString());
+        } 
+        
         super.doNativeParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "cacheDuration")) {
