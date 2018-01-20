@@ -152,10 +152,6 @@
         <location>/profile/RaiseError</location>
     </error-page>
 
-    <session-config>
-        <tracking-mode>COOKIE</tracking-mode>
-    </session-config>
-
     <!-- Block commonly flagged methods by using an empty auth-constraint. -->
     <security-constraint>
         <web-resource-collection>
