@@ -49,7 +49,7 @@
             <!-- Log the impersonation. -->
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectContext)).getPrincipalName()" result="requestScope.principalSpoofer" />
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').info('Impersonation by principal ''{}'' as ''{}'' to relying party ''{}''', principalSpoofer, principalToSpoof, relyingPartyId)" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').info('Impersonation by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{principalSpoofer, principalToSpoof, relyingPartyId})" />
         </on-entry>
         
         <evaluate expression="PopulateAuditContext" />
@@ -65,7 +65,7 @@
             <!-- Log violation. -->
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectContext)).getPrincipalName()" result="requestScope.principalSpoofer" />
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').warn('Unauthorized impersonation attempt by principal ''{}'' as ''{}'' to relying party ''{}''', principalSpoofer, principalToSpoof, relyingPartyId)" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').warn('Unauthorized impersonation attempt by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{principalSpoofer, principalToSpoof, relyingPartyId})" />
         </on-entry>
     </end-state>
 
