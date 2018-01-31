@@ -36,6 +36,12 @@
             p:loggingId="%{idp.service.logging.resolvertest:ResolverTest}"
             p:policyName="%{idp.resolvertest.accessPolicy:AccessByIPAddress}" />
 
+        <!-- REST AccountLockoutManager Access -->
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/lockout-manager"
+            p:loggingId="Lockout"
+            p:policyName="AccessByIPAddress" />
+
         <!-- REST StorageService Access -->
         <bean parent="shibboleth.AdminFlow"
             c:id="http://shibboleth.net/ns/profiles/storage"

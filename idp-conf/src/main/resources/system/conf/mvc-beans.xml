@@ -18,6 +18,7 @@
         <property name="sourceList">
             <list>
                 <value>admin/metrics</value>
+                <value>admin/lockout</value>
                 <value>admin/storage</value>
             </list>
         </property>

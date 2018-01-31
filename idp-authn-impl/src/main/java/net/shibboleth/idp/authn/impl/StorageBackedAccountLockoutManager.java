@@ -36,6 +36,7 @@ import com.google.common.base.Function;
 
 import net.shibboleth.idp.authn.AccountLockoutManager;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.LockoutManagerContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -405,10 +406,20 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
 
         /** {@inheritDoc} */
         @Nullable public String apply(@Nullable final ProfileRequestContext profileRequestContext) {
-            if (profileRequestContext == null || httpRequest == null) {
+            if (profileRequestContext == null) {
                 return null;
             }
             
+            final LockoutManagerContext lockoutManagerContext =
+                    profileRequestContext.getSubcontext(LockoutManagerContext.class);
+            if (lockoutManagerContext != null) {
+                return lockoutManagerContext.getKey();
+            }
+
+            if (httpRequest == null) {
+                return null;
+            }
+
             final AuthenticationContext authenticationContext =
                     profileRequestContext.getSubcontext(AuthenticationContext.class);
             if (authenticationContext == null) {

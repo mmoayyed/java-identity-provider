@@ -66,6 +66,11 @@
         </dependency>
 
         <dependency>
+          <groupId>com.github.jasminb</groupId>
+          <artifactId>jsonapi-converter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>

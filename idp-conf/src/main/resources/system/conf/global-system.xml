@@ -265,6 +265,15 @@
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
         class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
 
+    <bean id="shibboleth.StorageBackedAccountLockoutManager" abstract="true"
+            class="net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager"
+            p:storageService-ref="shibboleth.StorageService">
+        <property name="lockoutKeyStrategy">
+            <bean class="net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager.UsernameIPLockoutKeyStrategy"
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        </property>
+    </bean>
+
     <!-- Parent beans for Signature/Encryption/TLS Configuration objects. -->
         
     <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"

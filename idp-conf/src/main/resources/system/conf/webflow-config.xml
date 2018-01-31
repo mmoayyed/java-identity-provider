@@ -26,6 +26,7 @@
                 <entry key="admin/resolvertest" value="../system/flows/admin/resolvertest-flow.xml" />
                 <entry key="admin/reload-service" value="../system/flows/admin/reload-service-flow.xml" />
                 <entry key="admin/reload-metadata" value="../system/flows/admin/reload-metadata-flow.xml" />
+                <entry key="admin/lockout" value="../system/flows/admin/lockout-flow.xml" />
                 <entry key="admin/metrics" value="../system/flows/admin/metrics-flow.xml" />
                 <entry key="admin/storage" value="../system/flows/admin/storage-flow.xml" />
                 
