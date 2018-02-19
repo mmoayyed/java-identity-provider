@@ -6,6 +6,7 @@
 ## attributeReleaseContext - context holding consentable attributes
 ## attributeReleaseFlowDescriptor - attribute consent flow descriptor
 ## attributeDisplayNameFunction - function to display attribute name
+## attributeDisplayDescriptionFunction - function to display attribute description
 ## consentContext - context representing the state of a consent flow
 ## encoder - HTMLEncoder class
 ## flowExecutionKey - SWF execution key (this is built into the flowExecutionUrl)
