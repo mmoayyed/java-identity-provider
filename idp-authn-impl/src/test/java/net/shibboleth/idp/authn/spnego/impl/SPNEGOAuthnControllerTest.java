@@ -479,12 +479,12 @@ public class SPNEGOAuthnControllerTest {
     }
 
     private void assertResponseUnauthorizedNegotiate(MockHttpServletResponse response) {
-        Assert.assertEquals(new Integer(response.getStatus()), new Integer(401));
+        Assert.assertEquals(response.getStatus(), 401);
         Assert.assertEquals(response.getHeader("WWW-Authenticate"), "Negotiate");
     }
 
     private void assertResponseUnauthorizedNegotiate(MockHttpServletResponse response, String base64token) {
-        Assert.assertEquals(new Integer(response.getStatus()), new Integer(401));
+        Assert.assertEquals(response.getStatus(), 401);
         Assert.assertEquals(response.getHeader("WWW-Authenticate"), "Negotiate " + base64token);
     }
 

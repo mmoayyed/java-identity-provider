@@ -61,11 +61,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(resolver.getParserPool());
         
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
-        Assert.assertEquals(resolver.getMinCacheDuration(), new Long(10*60*1000L));
-        Assert.assertEquals(resolver.getMaxCacheDuration(), new Long(8*60*60*1000L));
-        Assert.assertEquals(resolver.getMaxIdleEntityData(), new Long(8*60*60*1000L));
+        Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(10*60*1000L));
+        Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(8*60*60*1000L));
+        Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(8*60*60*1000L));
         Assert.assertTrue(resolver.isRemoveIdleEntityData());
-        Assert.assertEquals(resolver.getCleanupTaskInterval(), new Long(30*60*1000L));
+        Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(30*60*1000L));
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), 
                 Arrays.asList("application/samlmetadata+xml", "application/xml", "text/xml"));
@@ -82,7 +82,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(2*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(2*1000));
         
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
@@ -145,7 +145,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(30*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(30*1000));
     }
     
     @Test
@@ -174,7 +174,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(30*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(30*1000));
     }
     
     @Test
@@ -189,11 +189,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(resolver.getParserPool());
         
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.50f);
-        Assert.assertEquals(resolver.getMinCacheDuration(), new Long(5*60*1000L));
-        Assert.assertEquals(resolver.getMaxCacheDuration(), new Long(4*60*60*1000L));
-        Assert.assertEquals(resolver.getMaxIdleEntityData(), new Long(2*60*60*1000L));
+        Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(5*60*1000L));
+        Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(4*60*60*1000L));
+        Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(2*60*60*1000L));
         Assert.assertFalse(resolver.isRemoveIdleEntityData());
-        Assert.assertEquals(resolver.getCleanupTaskInterval(), new Long(20*60*1000L));
+        Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(20*60*1000L));
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), Collections.singletonList("text/xml"));
         

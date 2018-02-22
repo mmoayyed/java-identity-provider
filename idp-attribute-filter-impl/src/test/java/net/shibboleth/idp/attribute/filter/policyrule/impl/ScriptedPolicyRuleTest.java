@@ -194,7 +194,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         rule = newScriptedPolicyRule(customReturnScript);
-        rule.setCustomObject(new Boolean(true));
+        rule.setCustomObject(Boolean.valueOf(true));
         rule.setId("test");
         rule.initialize();
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);

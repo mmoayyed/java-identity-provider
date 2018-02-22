@@ -83,7 +83,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      */
     public void setSortKey(final int key) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        sortKey = new Integer(key);
+        sortKey = key;
     }
     
     /**
@@ -155,7 +155,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
         if (null == sortKey) {
             synchronized (this) {
                 sortKeyValue++;
-                sortKey = new Integer(sortKeyValue);
+                sortKey = sortKeyValue;
             }
             log.info("Top level Metadata Provider '{}' did not have a sort key; giving it value '{}'",
                     getId(), sortKey);

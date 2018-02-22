@@ -172,7 +172,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
        infoSet = iter.next();
        Assert.assertEquals(infoSet.getCertificates().size(), 3, "Incorrect number of certificates");
        Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-       Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+       Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
        
        Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
     }
@@ -191,7 +191,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
        Assert.assertTrue(iter.hasNext(), "Iterator was empty");
        infoSet = iter.next();
        // 1 is the default VerifyDepth value
-       Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(1), "Incorrect VerifyDepth");
+       Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(1), "Incorrect VerifyDepth");
        
        Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
     }
@@ -211,7 +211,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 7, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 2, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
         
         Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
      }
@@ -231,7 +231,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
        infoSet = iter.next();
        Assert.assertEquals(infoSet.getCertificates().size(), 3, "Incorrect number of certificates");
        Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-       Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+       Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
        
        Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
        
@@ -262,13 +262,13 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 1, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(3), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(3), "Incorrect VerifyDepth");
         
         Assert.assertTrue(iter.hasNext(), "Iterator was empty");
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 6, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
         
         Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
      }
@@ -288,13 +288,13 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 3, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
         
         Assert.assertTrue(iter.hasNext(), "Iterator was empty");
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 1, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(3), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(3), "Incorrect VerifyDepth");
         
         
         Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
@@ -315,19 +315,19 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 1, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(3), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(3), "Incorrect VerifyDepth");
         
         Assert.assertTrue(iter.hasNext(), "Iterator was empty");
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 3, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 0, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
         
         Assert.assertTrue(iter.hasNext(), "Iterator was empty");
         infoSet = iter.next();
         Assert.assertEquals(infoSet.getCertificates().size(), 4, "Incorrect number of certificates");
         Assert.assertEquals(infoSet.getCRLs().size(), 1, "Incorrect number of CRL's");
-        Assert.assertEquals(infoSet.getVerificationDepth(), new Integer(5), "Incorrect VerifyDepth");
+        Assert.assertEquals(infoSet.getVerificationDepth(), Integer.valueOf(5), "Incorrect VerifyDepth");
         
         Assert.assertFalse(iter.hasNext(), "Iterator was not empty");
      } 

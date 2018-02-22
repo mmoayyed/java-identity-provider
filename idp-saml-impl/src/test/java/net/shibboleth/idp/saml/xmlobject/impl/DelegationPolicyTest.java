@@ -39,7 +39,7 @@ public class DelegationPolicyTest extends XMLObjectProviderBaseTestCase {
 
     @BeforeMethod
 	protected void setUp() throws Exception {
-        expectedMaxChainLength = new Long(5);
+        expectedMaxChainLength = 5L;
     }
 
     /** {@inheritDoc} */

@@ -72,8 +72,8 @@ public class ScriptedFunctionTest {
         script.setCustomObject("String");
         Assert.assertEquals(script.apply(prc), "String");
  
-        script.setCustomObject(new Integer(37));
-        Assert.assertEquals(script.apply(prc), new Integer(37));
+        script.setCustomObject(Integer.valueOf(37));
+        Assert.assertEquals(script.apply(prc), Integer.valueOf(37));
     }    
     
     

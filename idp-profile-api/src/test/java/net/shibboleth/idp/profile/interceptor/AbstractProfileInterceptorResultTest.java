@@ -33,37 +33,37 @@ public class AbstractProfileInterceptorResultTest {
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testEmptyContext() {
-        new MockAbstractProfileInterceptorResult("", "key", "value", new Long(100));
+        new MockAbstractProfileInterceptorResult("", "key", "value", 100L);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testEmptyKey() {
-        new MockAbstractProfileInterceptorResult("context", "", "value", new Long(100));
+        new MockAbstractProfileInterceptorResult("context", "", "value", 100L);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testEmptyValue() {
-        new MockAbstractProfileInterceptorResult("context", "key", "", new Long(100));
+        new MockAbstractProfileInterceptorResult("context", "key", "", 100L);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullContext() {
-        new MockAbstractProfileInterceptorResult(null, "key", "value", new Long(100));
+        new MockAbstractProfileInterceptorResult(null, "key", "value", 100L);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullKey() {
-        new MockAbstractProfileInterceptorResult("context", null, "value", new Long(100));
+        new MockAbstractProfileInterceptorResult("context", null, "value", 100L);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullValue() {
-        new MockAbstractProfileInterceptorResult("context", "key", null, new Long(100));
+        new MockAbstractProfileInterceptorResult("context", "key", null, 100L);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNegativeExpiration() {
-        new MockAbstractProfileInterceptorResult("context", "key", null, new Long(-100));
+        new MockAbstractProfileInterceptorResult("context", "key", null, -100L);
     }
 
     @Test public void testNullExpiration() {
@@ -76,16 +76,16 @@ public class AbstractProfileInterceptorResultTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testZeroExpiration() {
-        new MockAbstractProfileInterceptorResult("context", "key", null, new Long(0));
+        new MockAbstractProfileInterceptorResult("context", "key", null, 0L);
     }
 
     @Test public void testResult() {
         final MockAbstractProfileInterceptorResult result =
-                new MockAbstractProfileInterceptorResult("context", "key", "value", new Long(100));
+                new MockAbstractProfileInterceptorResult("context", "key", "value", 100L);
         Assert.assertEquals(result.getStorageContext(), "context");
         Assert.assertEquals(result.getStorageKey(), "key");
         Assert.assertEquals(result.getStorageValue(), "value");
-        Assert.assertEquals(result.getStorageExpiration(), new Long(100));
+        Assert.assertEquals(result.getStorageExpiration(), Long.valueOf(100));
     }
 
     private class MockAbstractProfileInterceptorResult extends AbstractProfileInterceptorResult {

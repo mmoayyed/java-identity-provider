@@ -60,10 +60,10 @@ public class ScriptedPredicateTest {
     
     @Test public void custom() throws ScriptException {
         ScriptedPredicate test = ScriptedPredicate.inlineScript("custom;");
-        test.setCustomObject(new Boolean(true));
+        test.setCustomObject(Boolean.valueOf(true));
         Assert.assertTrue(test.apply(withChild));
 
-        test.setCustomObject(new Boolean(false));
+        test.setCustomObject(Boolean.valueOf(false));
         Assert.assertFalse(test.apply(withChild));
 
     }

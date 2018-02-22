@@ -73,11 +73,11 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNotNull(resolver.getParserPool());
         
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
-        Assert.assertEquals(resolver.getMinCacheDuration(), new Long(10*60*1000L));
-        Assert.assertEquals(resolver.getMaxCacheDuration(), new Long(8*60*60*1000L));
-        Assert.assertEquals(resolver.getMaxIdleEntityData(), new Long(8*60*60*1000L));
+        Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(10*60*1000L));
+        Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(8*60*60*1000L));
+        Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(8*60*60*1000L));
         Assert.assertTrue(resolver.isRemoveIdleEntityData());
-        Assert.assertEquals(resolver.getCleanupTaskInterval(), new Long(30*60*1000L));
+        Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(30*60*1000L));
         
         Assert.assertFalse(resolver.isPersistentCachingEnabled());
         
@@ -91,7 +91,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(2*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(2*1000));
         
     }
         

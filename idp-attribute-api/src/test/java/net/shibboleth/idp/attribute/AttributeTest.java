@@ -370,7 +370,7 @@ public class AttributeTest {
         Assert.assertTrue(attrib.equals(attrib));
         Assert.assertTrue(attrib.equals(dupl));
         Assert.assertFalse(attrib.equals(null));
-        Assert.assertFalse(attrib.equals(new Integer(2)));
+        Assert.assertFalse(attrib.equals(Integer.valueOf(2)));
         
         Assert.assertEquals(attrib.hashCode(), dupl.hashCode());
         Assert.assertNotSame(attrib.hashCode(), diff.hashCode());

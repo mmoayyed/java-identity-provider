@@ -52,15 +52,15 @@ public class ConsentFlowDescriptorTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNegativeLifetime() {
-        descriptor.setLifetime(new Long(-10));
+        descriptor.setLifetime(-10L);
     }
 
     @Test public void testLifetime() {
-        Long lifetime = new Long(1000);
+        Long lifetime = Long.valueOf(1000);
         descriptor.setLifetime(lifetime);
         Assert.assertEquals(descriptor.getLifetime(), lifetime);
 
-        lifetime = new Long(0);
+        lifetime = 0L;
         descriptor.setLifetime(lifetime);
         Assert.assertEquals(descriptor.getLifetime(), lifetime);
     }

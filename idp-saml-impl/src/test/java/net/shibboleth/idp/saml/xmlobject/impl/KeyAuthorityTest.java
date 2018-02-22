@@ -49,7 +49,7 @@ public class KeyAuthorityTest extends XMLObjectProviderBaseTestCase {
 
     @BeforeMethod
 	protected void setUp() throws Exception {
-        expectedVerifyDepth = new Integer(5);
+        expectedVerifyDepth = 5;
         expectedNumKeyInfos = 4;
 
         unknownAttribName = new QName("http://www.example.org/testObjects", "UnknownAttrib", "test");

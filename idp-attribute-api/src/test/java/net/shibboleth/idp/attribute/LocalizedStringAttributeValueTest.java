@@ -42,6 +42,6 @@ public class LocalizedStringAttributeValueTest {
         Assert.assertEquals(val.getValueLocale().getLanguage(), "en");
         Assert.assertFalse(val.equals(null));
         Assert.assertTrue(val.equals(val));
-        Assert.assertFalse(val.equals(new Integer(2)));
+        Assert.assertFalse(val.equals(Integer.valueOf(2)));
     }
 }

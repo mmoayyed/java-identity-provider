@@ -38,7 +38,7 @@ public class PKIXValidationOptionsParserTest extends AbstractSecurityParserTest 
         Assert.assertTrue(what.isProcessCredentialCRLs());
         Assert.assertTrue(what.isProcessEmptyCRLs());
         Assert.assertTrue(what.isProcessExpiredCRLs());
-        Assert.assertEquals(what.getDefaultVerificationDepth(), new Integer(1));
+        Assert.assertEquals(what.getDefaultVerificationDepth(), Integer.valueOf(1));
     }
     
     @Test public void complex() throws IOException {
@@ -47,7 +47,7 @@ public class PKIXValidationOptionsParserTest extends AbstractSecurityParserTest 
         Assert.assertFalse(what.isProcessCredentialCRLs());
         Assert.assertFalse(what.isProcessEmptyCRLs());
         Assert.assertTrue(what.isProcessExpiredCRLs());
-        Assert.assertEquals(what.getDefaultVerificationDepth(), new Integer(2));
+        Assert.assertEquals(what.getDefaultVerificationDepth(), Integer.valueOf(2));
     }
 
 }
