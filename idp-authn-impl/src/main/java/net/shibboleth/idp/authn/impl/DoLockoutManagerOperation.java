@@ -195,7 +195,8 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                     g.writeBooleanField("lockout", lockout);
                     g.close();
                 } catch (final IOException e) {
-                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Lockout manager error.");
+                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                            "Lockout manager error.");
                 }
                 
             } else if ("POST".equals(request.getMethod())) {
@@ -206,7 +207,8 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                         throw new IOException();
                     }
                 } catch (final IOException e) {
-                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Lockout manager error.");
+                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                            "Lockout manager error.");
                 }
                 
             } else if ("DELETE".equals(request.getMethod())) {
@@ -217,7 +219,8 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                         throw new IOException();
                     }
                 } catch (final IOException e) {
-                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Lockout manager error.");
+                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                            "Lockout manager error.");
                 }
                 
             } else {
