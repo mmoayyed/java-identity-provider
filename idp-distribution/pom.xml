@@ -59,7 +59,7 @@
             <version>1.9.4</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- Logging dependencies. https://issues.shibboleth.net/jira/browse/JPAR-57 -->
+        <!-- Logging dependencies, per JPAR-57. -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -73,6 +73,13 @@
         <dependency>
             <groupId>${slf4j.groupId}</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Support for JVM metrics, per IDP-1205. -->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+            <version>${metrics.version}</version>
             <scope>runtime</scope>
         </dependency>
         
