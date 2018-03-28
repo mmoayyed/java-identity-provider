@@ -4,8 +4,14 @@
 
     <!-- Master flow to propagate a logout of an SPSession by determining a subflow to run based on the type. -->
 
-    <action-state id="PropagateLogout">
+    <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="PropagateLogout" />
+    </action-state>
+
+    <action-state id="PropagateLogout">
         <evaluate expression="PopulateMetricContext" />
         <evaluate expression="PopulateLogoutPropagationContext" />
         <evaluate expression="PopulateUserAgentContext" />
