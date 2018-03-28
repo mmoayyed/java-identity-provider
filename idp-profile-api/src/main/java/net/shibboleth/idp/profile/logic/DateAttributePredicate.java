@@ -20,17 +20,20 @@ package net.shibboleth.idp.profile.logic;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.util.Map;
 
 /**
@@ -53,7 +56,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     @Nonnull private final DateTimeFormatter dateTimeFormatter;
 
     /** Offset from system time used for date comparisons. */
-    @Nonnull private Duration systemTimeOffset;
+    @Nullable private org.joda.time.Duration systemTimeOffset;
     
     /** Result of predicate if attribute is missing or has no values. */
     private boolean resultIfMissing;
@@ -75,12 +78,39 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      * @param attribute Attribute name that provides candidate date values to test.
      * @param formatter Date/time parser.
      */
+    @Deprecated
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
             @Nonnull @ParameterName(name="formatter") final DateTimeFormatter formatter) {
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
         dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
-        systemTimeOffset = Duration.ZERO;
         resultIfMissing = false;
+    }
+
+    /**
+     * Create a new instance that performs date comparisons against the given attribute
+     * using the given date parser.
+     *
+     * @param attribute Attribute name that provides candidate date values to test.
+     * @param formatString date/time parsing string, currently based on {@link DateTimeFormatter}
+     */
+    public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
+            @Nonnull @NotEmpty @ParameterName(name="formatString") final String formatString) {
+        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
+        dateTimeFormatter = DateTimeFormat.forPattern(
+                Constraint.isNotNull(formatString, "Format string cannot be null"));
+        resultIfMissing = false;
+    }
+    
+    /**
+     * Set the system time offset, which affects the reference date for comparisons.
+     * By default all comparisons are against system time, i.e. zero offset.
+     *
+     * @param offset System time offset. A negative value decreases the target date (sooner);
+     *                         a positive value increases the target date (later).
+     */
+    @Deprecated
+    public void setSystemTimeOffset(@Nonnull final org.joda.time.Duration offset) {
+        systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot be null");
     }
 
     /**
@@ -90,10 +120,10 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      * @param offset System time offset. A negative value decreases the target date (sooner);
      *                         a positive value increases the target date (later).
      */
-    public void setSystemTimeOffset(@Nonnull final Duration offset) {
-        systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot not be null");
+    @Duration public void setOffset(@Duration final long offset) {
+        systemTimeOffset = org.joda.time.Duration.millis(offset);
     }
-
+    
     /**
      * Set the result to return if the attribute to check is missing or has no values.
      * 
