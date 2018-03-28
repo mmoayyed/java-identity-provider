@@ -70,6 +70,8 @@
                     // Attribute check is required to decide if first factor alone is enough.
                     resCtx = input.getSubcontext(
                         "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
+                    rpCtx = input.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext");
+                    resCtx.setAttributeRecipientID(rpCtx.getRelyingPartyId());
 
                     // Look up the username using a standard function.
                     usernameLookupStrategyClass
