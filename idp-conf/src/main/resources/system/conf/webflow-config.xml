@@ -55,6 +55,7 @@
                 <entry key="SAML2/POST/SSO" value="../system/flows/saml/saml2/sso-post-flow.xml" />
                 <entry key="SAML2/POST-SimpleSign/SSO" value="../system/flows/saml/saml2/sso-post-flow.xml" />
                 <entry key="SAML2/Redirect/SSO" value="../system/flows/saml/saml2/sso-redirect-flow.xml" />
+                <entry key="SAML2/Artifact/SSO" value="../system/flows/saml/saml2/sso-artifact-flow.xml" />
                 <entry key="SAML2/Unsolicited/SSO" value="../system/flows/saml/saml2/sso-unsolicited-flow.xml" />
                 <entry key="SAML2/SOAP/ECP" value="../system/flows/saml/saml2/sso-ecp-flow.xml" />
                 <entry key="SAML2/POST/SLO" value="../system/flows/saml/saml2/slo-post-flow.xml" />

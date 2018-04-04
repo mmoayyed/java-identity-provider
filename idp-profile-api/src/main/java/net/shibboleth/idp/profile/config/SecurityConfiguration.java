@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
+import org.opensaml.security.httpclient.HttpClientSecurityConfiguration;
 import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;
 import org.opensaml.xmlsec.DecryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionConfiguration;
@@ -58,6 +59,9 @@ public class SecurityConfiguration {
     /** Configuration used when validating client TLS X509Credentials. */
     @Nullable private ClientTLSValidationConfiguration clientTLSConfig;
 
+    /** Configuration used when executing HttpClient requests. */
+    @Nullable private HttpClientSecurityConfiguration httpClientConfig;
+    
     /**
      * Constructor.
      * 
@@ -187,5 +191,23 @@ public class SecurityConfiguration {
      */
     public void setClientTLSValidationConfiguration(final ClientTLSValidationConfiguration config) {
         clientTLSConfig = config;
+    }
+    
+    /**
+     * Get the configuration used when executing HttpClient requests.
+     * 
+     * @return configuration used when executing HttpClient requests, or null
+     */
+    public HttpClientSecurityConfiguration getHttpClientSecurityConfiguration() {
+        return httpClientConfig;
+    }
+
+    /**
+     * Set the configuration used when executing HttpClient requests.
+     * 
+     * @param config configuration used when executing HttpClient requests, or null
+     */
+    public void setHttpClientSecurityConfiguration(final HttpClientSecurityConfiguration config) {
+        httpClientConfig = config;
     }
 }
