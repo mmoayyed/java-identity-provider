@@ -863,7 +863,13 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="afp:AttributeInMetadataType" />
+            <extension base="afp:AttributeInMetadataType">
+                <attribute name="objectStrategyRef" type="string" use="optional">
+                    <annotation>
+                        <documentation>Reference to locate XMLObject source of mapped attributes.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 

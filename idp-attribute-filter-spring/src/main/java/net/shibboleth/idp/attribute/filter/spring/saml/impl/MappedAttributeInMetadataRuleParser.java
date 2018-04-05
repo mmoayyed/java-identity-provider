@@ -66,6 +66,11 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
             builder.addPropertyValue("matchIfMetadataSilent",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "matchIfMetadataSilent")));
         }
+        
+        if (config.hasAttributeNS(null, "objectStrategyRef")) {
+            builder.addPropertyReference("objectStrategyRef",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "objectStrategyRef")));
+        }
     }
 
 }
