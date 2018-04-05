@@ -35,18 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Decodes an incoming resolver test message.
+ * Decodes an incoming metadata query request.
  */
-public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessageDecoder<ResolverTestRequest> {
+public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessageDecoder<MetadataQueryRequest> {
 
-    /** Name of the query parameter carrying the subject name: {@value} . */
-    @Nonnull @NotEmpty public static final String PRINCIPAL_PARAM = "principal";
-
-    /** Name of the query parameter carrying the requesterID: {@value} . */
-    @Nonnull @NotEmpty public static final String REQUESTER_ID_PARAM = "requester";
-
-    /** Name of the query parameter carrying the ACS index: {@value} . */
-    @Nonnull @NotEmpty public static final String ACS_INDEX_PARAM = "acsIndex";
+    /** Name of the query parameter carrying the entityID: {@value} . */
+    @Nonnull @NotEmpty public static final String ENTITY_ID_PARAM = "entityID";
 
     /** Name of the query parameter carrying the protocol: {@value} . */
     @Nonnull @NotEmpty public static final String PROTOCOL_PARAM = "protocol";
@@ -58,7 +52,7 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
     @Nonnull @NotEmpty public static final String SAML2_PARAM = "saml2";
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ResolverTestRequestDecoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataQueryRequestDecoder.class);
     
     /** {@inheritDoc} */
     @Override
@@ -68,15 +62,17 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
             throw new MessageDecodingException("Unable to locate HttpServletRequest");
         }
         
-        final ResolverTestRequest message = new ResolverTestRequest(getPrincipal(request), getRequesterId(request),
-                getIndex(request), getProtocol(request));
-        final MessageContext<ResolverTestRequest> messageContext = new MessageContext<>();
+        final MetadataQueryRequest message = new MetadataQueryRequest();
+        message.setEntityID(getEntityID(request));
+        message.setProtocol(getProtocol(request));
+        
+        final MessageContext<MetadataQueryRequest> messageContext = new MessageContext<>();
         messageContext.setMessage(message);
         setMessageContext(messageContext);
         
         final SAMLPeerEntityContext peerCtx = new SAMLPeerEntityContext();
         peerCtx.setRole(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        peerCtx.setEntityId(message.getRequesterId());
+        peerCtx.setEntityId(message.getEntityID());
         messageContext.addSubcontext(peerCtx, true);
         
         if (message.getProtocol() != null) {
@@ -85,56 +81,22 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
     }
 
     /**
-     * Get the name of the subject.
+     * Get the entityID parameter.
      * 
      * @param request current HTTP request
      * 
-     * @return the name of the subject
+     * @return the entityID
      * 
-     * @throws MessageDecodingException thrown if the request does not contain a subject name
+     * @throws MessageDecodingException thrown if the request does not contain an entityID
      */
-    @Nonnull @NotEmpty protected String getPrincipal(@Nonnull final HttpServletRequest request)
+    @Nonnull @NotEmpty protected String getEntityID(@Nonnull final HttpServletRequest request)
             throws MessageDecodingException {
-        final String name = StringSupport.trimOrNull(request.getParameter(PRINCIPAL_PARAM));
+        final String name = StringSupport.trimOrNull(request.getParameter(ENTITY_ID_PARAM));
         if (name == null) {
-            throw new MessageDecodingException("Request did not contain the " + PRINCIPAL_PARAM + " query parameter.");
-        }
-        return name;
-    }
-
-    /**
-     * Get the ID of the requester.
-     * 
-     * @param request current HTTP request
-     * 
-     * @return the ID of the requester
-     * 
-     * @throws MessageDecodingException thrown if the request does not contain a requester name
-     */
-    @Nonnull @NotEmpty protected String getRequesterId(@Nonnull final HttpServletRequest request)
-            throws MessageDecodingException {
-        final String name = StringSupport.trimOrNull(request.getParameter(REQUESTER_ID_PARAM));
-        if (name == null) {
-            throw new MessageDecodingException("Request did not contain the " + REQUESTER_ID_PARAM
+            throw new MessageDecodingException("Request did not contain the " + ENTITY_ID_PARAM
                     + " query parameter.");
         }
         return name;
-    }
-
-    /**
-     * Get the ACS index.
-     * 
-     * @param request current HTTP request
-     * 
-     * @return the ACS index, or null
-     */
-    @Nullable protected Integer getIndex(@Nonnull final HttpServletRequest request) {
-        final String index = StringSupport.trimOrNull(request.getParameter(ACS_INDEX_PARAM));
-        if (index != null) {
-            return Integer.valueOf(index);
-        }
-        
-        return null;
     }
 
     /**
