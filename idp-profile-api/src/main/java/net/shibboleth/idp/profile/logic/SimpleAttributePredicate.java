@@ -46,7 +46,8 @@ import com.google.common.collect.ListMultimap;
  * <p>This handles only simple string-valued data.</p>
  * 
  * <p>For the special case of checking for an attribute's presence, regardless of values, the '*' value is
- * supported.</p>
+ * supported. Note that this does NOT exclude pathological cases such as empty or null values. A more
+ * advanced predicate should be used to deal with such cases.</p>
  */
 public class SimpleAttributePredicate extends AbstractAttributePredicate {
 
@@ -76,11 +77,13 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean allowNullAttributeContext() {
         return attributeValueMap.isEmpty();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean hasMatch(final Map<String, IdPAttribute> attributeMap) {
         for (final String id : attributeValueMap.keySet()) {
