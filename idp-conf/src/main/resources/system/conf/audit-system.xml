@@ -301,6 +301,31 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ENCRYPTION"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="com.google.common.base.Functions" factory-method="forPredicate">
+                                <constructor-arg>
+			                        <bean class="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+			                            c:_0="#input != null and #input.getAssertionEncryptionParameters() != null" />
+			                    </constructor-arg>
+	                        </bean>
+                        </constructor-arg>
+                        <constructor-arg name="f">
+		                    <bean class="com.google.common.base.Functions" factory-method="compose">
+		                        <constructor-arg name="g">
+		                            <ref bean="shibboleth.ChildLookup.EncryptionParameters" />
+		                        </constructor-arg>
+		                        <constructor-arg name="f">
+		                            <ref bean="shibboleth.ChildLookup.RelyingParty" />
+		                        </constructor-arg>
+		                    </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>

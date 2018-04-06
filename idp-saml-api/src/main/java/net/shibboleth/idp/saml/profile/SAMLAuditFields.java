@@ -91,7 +91,10 @@ public final class SAMLAuditFields {
 
     /** ForceAuthn requested field. */
     @Nonnull @NotEmpty public static final String FORCE_AUTHN = "fauth";
-    
+
+    /** Encryption field. */
+    @Nonnull @NotEmpty public static final String ENCRYPTION = "X";
+
     /** Constructor. */
     private SAMLAuditFields() {
 
