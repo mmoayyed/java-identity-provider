@@ -28,6 +28,13 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -50,11 +57,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** Test case for {@link AttributeResolverImpl}. */
 public class AttributeResolverImplTest {
@@ -641,6 +643,37 @@ public class AttributeResolverImplTest {
         Assert.assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
         Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(), 1);
     }
+    
+    /** Test that after resolution that the values for a resolved attribute are deduped. */
+    @Test public void resolveNullValues() throws Exception {
+        final IdPAttribute attribute = new IdPAttribute("ad1");
+        attribute.setValues(Arrays.asList(new EmptyAttributeValue(EmptyType.NULL_VALUE), new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE), null));
+
+        final MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
+
+        final LazySet<AttributeDefinition> definitions = new LazySet<>();
+        definitions.add(definition);
+        definition.initialize();
+
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        Assert.assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(),2);
+        
+        resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        resolver.setStripNulls(true);
+        resolver.initialize();
+
+        context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+    }
+
 
     /**
      * Test that after resolution attribute definitions whose resultant attribute contains no value don't have their

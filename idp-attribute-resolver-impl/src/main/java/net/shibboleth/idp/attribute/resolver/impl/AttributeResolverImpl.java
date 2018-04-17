@@ -29,7 +29,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.MetricContext;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -56,16 +67,6 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
-import org.opensaml.profile.context.MetricContext;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * A component that resolves the attributes for a particular subject.
@@ -96,6 +97,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /** The Principal mapper. */
     @Nullable private LegacyPrincipalDecoder principalConnector;
+    
+    /** Whether to strip null attribute values. */
+    private boolean stripNulls;
     
     /** Strategy to get the {@link ProfileRequestContext}. */
     @Nonnull private Function<AttributeResolutionContext,ProfileRequestContext> profileContextStrategy;
@@ -174,6 +178,22 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         return dataConnectors;
     }
     
+    /**
+     * Do we strip nulls from attribute values.
+     * @return Returns whether to strip nulls from attribute values
+     */
+    public boolean isStripNulls() {
+        return stripNulls;
+    }
+
+    /** 
+     * Sets whether to strip nulls from attribute values.
+     * @param doStripNulls what to set 
+     */
+    public void setStripNulls(final Boolean doStripNulls) {
+        stripNulls = doStripNulls;
+    }
+
     /** Set the Decoder.
      * @param principalResolver code to resolve the principal
      */
@@ -445,6 +465,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @param resolutionContext current resolution context
      */
+ // Checkstyle: CyclomaticComplexity OFF
     protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
         final AttributeResolverWorkContext workContext =
@@ -468,23 +489,36 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 continue;
             }
 
-            // Remove value-less attributes.
-            if (resolvedAttribute.getValues().size() == 0) {
-                log.debug("{} Removing result of attribute definition '{}', contains no values", logPrefix,
-                        definition.getId());
-                continue;
-            }
-
             // Remove duplicate attribute values.
-            log.debug("{} De-duping attribute definition {} result", logPrefix, definition.getId());
+            log.debug("{} De-duping (and null filtering) attribute definition {} result",
+                    logPrefix, definition.getId());
             final Iterator<IdPAttributeValue<?>> valueIter = resolvedAttribute.getValues().iterator();
             final Set<IdPAttributeValue<?>> monitor = new HashSet<>(resolvedAttribute.getValues().size());
             while (valueIter.hasNext()) {
-                final IdPAttributeValue<?> value = valueIter.next();
+                 final IdPAttributeValue<?> value = valueIter.next();
+                
+                if (isStripNulls()) {
+                    if (null == value) {
+                        log.debug("{} Stripping null value", logPrefix);
+                        continue;
+                    } else if (value instanceof EmptyAttributeValue) {
+                        log.debug("{} Stripping {} value", logPrefix, value.getValue());
+                        continue;
+                    } 
+                    // ByteAttributeValue, StringAttributeValue and XMLObjectValue are Constrained to not be empty
+                }
+                
                 if (!monitor.add(value)) {
                     log.debug("{} Removing duplicate value {} of attribute '{}' from resolution result", logPrefix,
                             value, resolvedAttribute.getId());
                 }
+            }
+
+            // Remove value-less attributes.
+            if (monitor.isEmpty()) {
+                log.debug("{} Removing result of attribute definition '{}', contains no values", logPrefix,
+                        definition.getId());
+                continue;
             }
 
             resolvedAttribute.setValues(monitor);
@@ -496,6 +530,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         resolutionContext.setResolvedIdPAttributes(resolvedAttributes);
     }
+ // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
