@@ -29,6 +29,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -37,14 +47,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
@@ -55,6 +57,20 @@ import com.google.common.collect.ImmutableSet;
  */
 @NotThreadSafe
 public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
+    
+    /** helper {@link Function} to convert null to {@link EmptyAttributeValue}. */
+    private static Function<IdPAttributeValue<?>, IdPAttributeValue<?>> convertNullValues 
+        = new Function<IdPAttributeValue<?>, IdPAttributeValue<?>>() {
+
+            @Override
+            public IdPAttributeValue<?> apply(final IdPAttributeValue<?> input) {
+                if (null == input) {
+                    return new EmptyAttributeValue(EmptyType.NULL_VALUE);
+                } else {
+                    return input;
+                }
+            }
+    };
 
     /** ID of this attribute. */
     @Nonnull private final String id;
@@ -173,7 +189,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
         if (newValues != null) {
-            values = ImmutableList.copyOf(Collections2.filter(newValues, Predicates.notNull()));
+            values = ImmutableList.copyOf(Collections2.transform(newValues, convertNullValues));
         } else {
             values = ImmutableList.of();
         }
@@ -255,4 +271,5 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
                 .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values)
                 .toString();
     }
+    
 }

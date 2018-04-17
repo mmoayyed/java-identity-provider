@@ -13,7 +13,6 @@ attr = new IdPAttribute("TwoScripted");
 set = new HashSet(4);
 set.add(new StringAttributeValue("1Value"));
 set.add(new StringAttributeValue("2Value"));
-set.add(new Integer(4));
 set.add(new StringAttributeValue("3Value"));
 attr.setValues(set);
 connectorResults.add(attr);
@@ -31,8 +30,6 @@ while (x.hasNext()){
 attr.setValues(set);
 connectorResults.add(attr);
 
-
-connectorResults.add(new Integer(4));
 
 
 child = profileContext.getSubcontext("net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext");
