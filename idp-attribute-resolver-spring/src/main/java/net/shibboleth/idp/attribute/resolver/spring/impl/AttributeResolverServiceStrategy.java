@@ -22,6 +22,12 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+
+import com.google.common.base.Function;
+
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -33,12 +39,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-
-import com.google.common.base.Function;
-
 /**
  * Strategy for summoning up an {@link AttributeResolverImpl} from a populated {@link ApplicationContext}. We do this by
  * finding all the configured {@link AttributeDefinition}, {@link DataConnector} and {@link PrincipalConnector} beans
@@ -49,6 +49,24 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceStrategy.class);
+    
+    /** Whether to strip null attribute values. */
+    private boolean stripNulls;
+    
+    /** Do we strip nulls from attribute values.
+    * @return Returns whether to strip nulls from attribute values
+    */
+   public boolean isStripNulls() {
+       return stripNulls;
+   }
+
+   /** 
+    * Sets whether to strip nulls from attribute values.
+    * @param doStripNulls what to set 
+    */
+   public void setStripNulls(final Boolean doStripNulls) {
+       stripNulls = doStripNulls;
+   }
 
     /** {@inheritDoc} */
     @Override @Nullable public ServiceableComponent<AttributeResolver> apply(
@@ -71,6 +89,7 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
         resolver.setDataConnectors(connectors);
         resolver.setPrincipalDecoder(pcc);
         resolver.setId(getId());
+        resolver.setStripNulls(isStripNulls());
         resolver.setApplicationContext(appContext);
 
         try {

@@ -24,25 +24,6 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
-import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.testing.DatabaseTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceException;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
@@ -63,6 +44,25 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
+
+import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.testing.DatabaseTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** A work in progress to test the attribute resolver service. */
 
@@ -95,7 +95,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
@@ -103,7 +103,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     @BeforeTest public void setupDataConnectors() throws LDAPException {
 
         // LDAP
-        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
+        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10391));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
@@ -123,13 +123,13 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         directoryServer.shutDown(true);
     }
     
-    private ReloadableService<AttributeResolver> getResolver(String file) {
-        GenericApplicationContext context = new GenericApplicationContext();
+    private ReloadableService<AttributeResolver> getResolver(final String file) {
+        final GenericApplicationContext context = new GenericApplicationContext();
         context.getBeanFactory().addBeanPostProcessor(new IdentifiableBeanPostProcessor());
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.loadBeanDefinitions(file);
@@ -139,10 +139,28 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         
     }
+    
+    @Test public void service() throws ComponentInitializationException, ServiceException, ResolutionException {
+        helper(true);
+    }
+    
+    @Test public void serviceNullStrip() throws ComponentInitializationException, ServiceException, ResolutionException {
+        helper(false);
+    }
 
-    @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
+    private void helper(final boolean stripNulls) throws ComponentInitializationException, ServiceException, ResolutionException {
 
-        final ReloadableService<AttributeResolver> attributeResolverService = getResolver("net/shibboleth/idp/attribute/resolver/spring/service.xml");
+        final String inputFile;
+        final int expectedEPAValues;
+        if (stripNulls) {
+            inputFile = "net/shibboleth/idp/attribute/resolver/spring/serviceNullStrip.xml";
+            expectedEPAValues = 1;
+        } else {
+            inputFile ="net/shibboleth/idp/attribute/resolver/spring/service.xml";
+            expectedEPAValues = 2;
+        }
+
+        final ReloadableService<AttributeResolver> attributeResolverService = getResolver(inputFile);
 
         attributeResolverService.initialize();
 
@@ -162,7 +180,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             }
         }
 
-        Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
+        final Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
         Assert.assertEquals(resolvedAttributes.size(), 15);
@@ -171,14 +189,15 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
         Assert.assertNotNull(attribute);
         List<IdPAttributeValue<?>> values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
+        
+        Assert.assertEquals(values.size(), expectedEPAValues);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
         
         // Broken (case 665)
         attribute =  resolvedAttributes.get("broken");
-        Assert.assertEquals(attribute.getValues().size(), 3);
+        Assert.assertEquals(attribute.getValues().size(), 2+expectedEPAValues);
         attribute =  resolvedAttributes.get("broken2");
-        Assert.assertEquals(attribute.getValues().size(), 3);
+        Assert.assertEquals(attribute.getValues().size(), 2+expectedEPAValues);
         
 
         // LDAP
@@ -257,7 +276,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId));
 
-        SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
+        final SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
         ctx.setSubject(subject);
         ctx.setRequesterId("REQ");
         ctx.setResponderId("RES");
@@ -266,7 +285,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
+            final LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
             Assert.assertTrue(decoder.hasValidConnectors());
             Assert.assertEquals(decoder.canonicalize(ctx), "MyHovercraftIsFullOfEels");
 
@@ -299,7 +318,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             }
         }
 
-        Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
+        final Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("output {}", resolvedAttributes);
         Assert.assertEquals(resolvedAttributes.get("testing").getValues().size(), 2);
     }
@@ -329,7 +348,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameId));
 
-        SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
+        final SubjectCanonicalizationContext ctx = new SubjectCanonicalizationContext();
         ctx.setSubject(subject);
         ctx.setRequesterId("REQ");
         ctx.setResponderId("RES");
@@ -338,7 +357,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
+            final LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
             Assert.assertFalse(decoder.hasValidConnectors());
             Assert.assertNull(decoder.canonicalize(ctx));
 
@@ -350,11 +369,11 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void selective() throws ResolutionException {
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
@@ -382,11 +401,11 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void selectiveNavigate() throws ResolutionException {
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
@@ -449,13 +468,13 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         
         private final Function<ProfileRequestContext, String> navigate; 
 
-        public TestPredicate(Function<ProfileRequestContext, String> profileFinder, String compare) {
+        public TestPredicate(final Function<ProfileRequestContext, String> profileFinder, final String compare) {
             value = Constraint.isNotNull(compare, "provided compare name must not be null");
             navigate = Constraint.isNotNull(profileFinder, "provided prinicpal locator must not be null");
         }
 
         /** {@inheritDoc} */
-        @Override public boolean apply(@Nullable ProfileRequestContext input) {
+        @Override public boolean apply(@Nullable final ProfileRequestContext input) {
             return value.equals(navigate.apply(input));
         }
     }

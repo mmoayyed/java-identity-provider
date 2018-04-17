@@ -12,7 +12,10 @@
             <list>
                 <bean class="net.shibboleth.idp.attribute.IdPAttribute" c:attributeId="staticEpA">
                     <property name="values">
-                        <bean class="net.shibboleth.idp.attribute.StringAttributeValue" c:attributeValue="member" />
+                        <list>
+                            <bean class="net.shibboleth.idp.attribute.StringAttributeValue" c:attributeValue="member" />
+                            <bean factory-method="valueOf" class="net.shibboleth.idp.attribute.StringAttributeValue" c:value="" />
+                        </list>
                     </property>
                 </bean>
                 <bean class="net.shibboleth.idp.attribute.IdPAttribute" c:attributeId="eduPersonEntitlement">

@@ -19,15 +19,15 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import java.util.List;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorParser;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link StaticDataConnectorParser}
@@ -106,7 +106,7 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
         
         values = connector.getAttributes().get("staticEpA").getValues();
-        Assert.assertEquals(values.size(), 1);
+        Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
     }
 }
