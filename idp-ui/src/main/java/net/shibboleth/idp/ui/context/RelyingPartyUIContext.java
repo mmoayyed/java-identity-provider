@@ -26,12 +26,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
@@ -54,6 +48,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * The context which carries the user interface information.
@@ -707,8 +707,21 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     private boolean logoFits(final Logo logo, final int minWidth, final int minHeight, final int maxWidth,
             final int maxHeight) {
-        return logo.getHeight() <= maxHeight && logo.getHeight() >= minHeight && logo.getWidth() <= maxWidth
-                && logo.getWidth() >= minWidth;
+        final int height;
+        if (null == logo.getHeight()) {
+            log.warn("No height available for {} assuming a fit", logo.getURL());
+            height = maxHeight -1;
+        } else {
+            height = logo.getHeight();
+        }
+        final int width;
+        if (null == logo.getWidth()) {
+            log.warn("No width available for {} assuming a fit", logo.getURL());
+            width = maxWidth - 1;
+        } else {
+            width = logo.getWidth();
+        }
+        return height <= maxHeight && height >= minHeight && width <= maxWidth && width >= minWidth;
     }
 
     /**
