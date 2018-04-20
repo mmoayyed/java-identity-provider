@@ -25,11 +25,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
-import net.shibboleth.idp.installer.metadata.MetadataGenerator;
-import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -37,6 +32,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
+import net.shibboleth.idp.installer.metadata.MetadataGenerator;
+import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 
 /**
  * Task to generate metadata.
@@ -226,6 +226,7 @@ public class MetadataGeneratorTask extends Task {
             final MetadataGenerator generator = new MetadataGenerator(outputFile);
             final List<List<String>> signing = new ArrayList<>(2);
             List<String> value = parameters.getBackchannelCert();
+            // IDP-1233 Note that MetadataGenerator.WriteKeyDescriptors() assumes that the order is backchannel, signing
             if (null != value) {
                 signing.add(value);
             }

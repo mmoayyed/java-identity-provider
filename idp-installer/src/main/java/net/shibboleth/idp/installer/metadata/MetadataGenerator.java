@@ -31,13 +31,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
-import net.shibboleth.idp.saml.xmlobject.Scope;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
-import net.shibboleth.utilities.java.support.xml.XMLConstants;
-
 import org.opensaml.core.xml.LangBearing;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.Description;
@@ -59,6 +52,13 @@ import org.opensaml.xmlsec.signature.X509Data;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 
 import com.google.common.collect.ImmutableSet;
+
+import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
+import net.shibboleth.idp.saml.xmlobject.Scope;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 /**
  * This class gathers information which it then uses to generate IdP Metadata. Loosely based on the SP metadata
@@ -644,6 +644,10 @@ public class MetadataGenerator {
      * @throws IOException if badness happens
      */
     protected void writeKeyDescriptors() throws IOException {
+        if (getSigningCerts().size() == 2) {
+            writer.write("        <!-- First signing certificate is BackChannel, the Second is FrontChannel -->");
+            writer.newLine();
+        }
         writeKeyDescriptors(getSigningCerts(), "signing");
         writeKeyDescriptors(getEncryptionCerts(), "encryption");
         writer.newLine();
