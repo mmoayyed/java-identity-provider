@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
+import org.cryptacular.generator.IdGenerator;
 import org.cryptacular.generator.RandomIdGenerator;
 
 /**
@@ -44,6 +45,9 @@ import org.cryptacular.generator.RandomIdGenerator;
  * @author Marvin S. Addison
  */
 public class TicketIdentifierGenerationStrategy implements IdentifierGenerationStrategy {
+
+    /** Generator for random part of the ticket. */
+    private final IdGenerator idGenerator;
 
     /** Ticket prefix. */
     @Nonnull
@@ -73,6 +77,7 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
         if (!isUrlSafe(this.ticketPrefix)) {
             throw new IllegalArgumentException("Unsupported prefix " + this.ticketPrefix);
         }
+        idGenerator = new RandomIdGenerator(ticketLength);
     }
 
     /**
@@ -96,7 +101,7 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
         final StringBuilder builder = new StringBuilder(ticketLength * 2);
         builder.append(ticketPrefix).append('-');
         builder.append(System.currentTimeMillis()).append('-');
-        builder.append(new RandomIdGenerator(ticketLength).generate());
+        builder.append(idGenerator.generate());
         if (ticketSuffix != null) {
             builder.append('-').append(ticketSuffix);
         }
