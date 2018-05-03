@@ -2,7 +2,7 @@
 ' Code taken from the Shib SP install
 '
 Dim FileSystemObj, AntFile, PropsFile, JettyFile, JettyAntFile, LogFile
-Dim CustomData, msiProperties, InstallDir, IdPScope, DebugInstall
+Dim CustomData, msiProperties, InstallDir, IdPScope, DebugInstall, Domain
 Dim ConfigureAd, AdDomain, AdUser, AdPass, AdUseGC, LDAPFile, LDAPPort
 Dim LDAPSearchPath
 
@@ -28,6 +28,11 @@ InstallDirWindows = Replace(InstallDirJava, "/", "\\")
 IdPHostName = LCase(msiProperties(1))
 InstallJetty = LCase(msiProperties(2))
 IdPScope = LCase(msiProperties(3))
+if IdPScope = "" then
+   Domain = IdPHostName
+else
+   Domain = IdPScope
+end if
 DebugInstall = LCase(msiProperties(4))
 ConfigureAd = LCase(msiProperties(5))
 if ConfigureAd = "true" then
@@ -39,6 +44,8 @@ end if
 
 LogFile.WriteLine "Installing to " & InstallDirJava
 LogFile.WriteLine "Host " & IdPHostName
+LogFile.WriteLine "Domain " & Domain
+LogFile.WriteLine "Scope " & IdPScope
 LogFile.WriteLine "IntallJetty" & InstallJetty
 
 KeyStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
@@ -52,7 +59,7 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "#"
     AntFile.WriteLine "idp.noprompt=yes"
     AntFile.WriteLine "idp.host.name=" & IdpHostName
-    AntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
+    AntFile.WriteLine "idp.uri.subject.alt.name=https://" & Domain & "/idp"
     AntFile.WriteLine "idp.keystore.password=" & KeyStorePassword
     AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava 
@@ -79,7 +86,7 @@ if (Err.Number = 0 ) then
     PropsFile.WriteLine "#"
     PropsFile.WriteLine "# File to be merged into idp.properties"
     PropsFile.WriteLine "#"
-    PropsFile.WriteLine "idp.entityID=https://" & IdpHostName & "/idp/shibboleth"
+    PropsFile.WriteLine "idp.entityID=https://" & Domain & "/idp"
     PropsFile.WriteLine "idp.sealer.storePassword=" & SealerPassword
     PropsFile.WriteLine "idp.sealer.keyPassword=" & SealerPassword
     if (IdPScope <> "") then
@@ -99,7 +106,7 @@ if (InstallJetty <> "") then
 	JettyAntFile.WriteLine "jetty.merge.properties="& InstallDirJava & "/jetty.install.replace.properties"
 	JettyAntFile.WriteLine "idp.host.name=" & IdpHostName
 	JettyAntFile.WriteLine "idp.keystore.password=" & SsoStorePassword
-	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
+	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & Domain & "/idp"
 	JettyAntFile.WriteLine "idp.target.dir=" & InstallDirJava 
         if (DebugInstall <> "") then
 	    JettyAntFile.WriteLine "jetty.no.tidy=true"

@@ -59,10 +59,10 @@
 
                 <Control Id="ConfigureAD" Type="CheckBox" X="185" Y="128" Height="20" Width="150" Property="CONFIGURE_AD" CheckBoxValue="TRUE" Text="Configure for &amp;Active Directory" />
 
-                <Control Id="DescriptionLine4" Type="Text" X="25" Y="158" Height="36" Width="150" Text="Choose the DNS name for this IdP.  It will be used to generate the EntityID, Certificates and Metadata" />
+                <Control Id="DescriptionLine4" Type="Text" X="25" Y="158" Height="36" Width="150" Text="Choose the hostname (including domain) for this IdP.  It will be used to generate the Certificates and Metadata" />
                 <Control Id="DnsName" Type="Edit" X="185" Y="160" Height="17" Width="150" Property="DNSNAME" Text="[DNSNAME]" />
 
-                <Control Id="DescriptionLine5" Type="Text" X="25" Y="200" Height="20" Width="150" Text="Choose the scope that this IdP will assert. " />
+                <Control Id="DescriptionLine5" Type="Text" X="25" Y="198" Height="36" Width="150" Text="Choose the scope that this IdP will assert. If present this will be used to create the EntityID " />
                 <Control Id="IdpScope" Type="Edit" X="185" Y="200" Height="17" Width="150" Property="IDP_SCOPE" Text="[IDP_SCOPE]" />
 
                 <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
