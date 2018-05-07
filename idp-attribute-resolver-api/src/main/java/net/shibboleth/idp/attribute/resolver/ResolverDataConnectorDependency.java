@@ -99,7 +99,7 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
     @Override @Deprecated public void setDependencyAttributeId(@Nullable final String attributeId) {
         DeprecationSupport.warn(ObjectType.METHOD,
                 "ResolverDataConnectorDependency#setDependencyAttributeId(String)",
-                null, null);
+                null, "#setAttributeNames(Collection<String>)");
         super.setDependencyAttributeId(attributeId);
     }
 
