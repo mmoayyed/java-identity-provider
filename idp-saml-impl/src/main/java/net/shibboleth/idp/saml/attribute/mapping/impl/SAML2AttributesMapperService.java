@@ -23,15 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapper;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
@@ -39,6 +30,16 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.saml.attribute.mapping.AttributesMapper;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * An implementation of {@link SAML2AttributesMapper} for use by objects that can't just store a constructed mapper
@@ -68,7 +69,8 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
      * 
      * @param resolverService the service for the attribute resolver we are to derive mapping info from
      */
-    public SAML2AttributesMapperService(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
+    public SAML2AttributesMapperService(@Nonnull @ParameterName(name="resolverService") 
+                                        final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
     }
 

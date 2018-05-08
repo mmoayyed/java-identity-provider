@@ -26,6 +26,7 @@ import javax.json.stream.JsonGenerator;
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -46,7 +47,7 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
      *
      * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
-    public CASSPSessionSerializer(@Duration @NonNegative final long offset) {
+    public CASSPSessionSerializer(@Duration @NonNegative @ParameterName(name="offset") final long offset) {
         super(offset);
     }
 

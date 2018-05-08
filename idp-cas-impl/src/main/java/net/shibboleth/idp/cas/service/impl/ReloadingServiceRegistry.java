@@ -20,14 +20,16 @@ package net.shibboleth.idp.cas.service.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service registry wrapper around a {@link net.shibboleth.utilities.java.support.service.ReloadableService}.
@@ -47,7 +49,8 @@ public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableC
      *
      * @param delegate The service to which operations are delegated.
      */
-    public ReloadingServiceRegistry(@Nonnull final ReloadableService<ServiceRegistry> delegate) {
+    public ReloadingServiceRegistry(
+            @Nonnull @ParameterName(name="delegate") final ReloadableService<ServiceRegistry> delegate) {
         service = Constraint.isNotNull(delegate, "ReloadableService cannot be null");
     }
 

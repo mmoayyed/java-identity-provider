@@ -23,6 +23,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -32,16 +39,10 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 /**
  * Action to perform C14N based on the contents of the attribute-resolver.xml file, this
@@ -61,7 +62,8 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      * 
      * @param resolverService the service which will implement {@link LegacyPrincipalDecoder}.
      */
-    public LegacyCanonicalization(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
+    public LegacyCanonicalization(@Nonnull @ParameterName(name="resolverService") 
+                        final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
     }
     
@@ -128,7 +130,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
          * 
          * @param service the service we need to interrogate.
          */
-        public ActivationCondition(final ReloadableService<AttributeResolver> service) {
+        public ActivationCondition(final @ParameterName(name="service") ReloadableService<AttributeResolver> service) {
             attributeResolverService = service;
         }
 

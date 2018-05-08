@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+
 /**
  * A Dependency that references to an Attribute Definition.
  */
@@ -27,7 +29,7 @@ public final class ResolverAttributeDefinitionDependency extends ResolverPluginD
      *
      * @param pluginId ID of dependency
      */
-    public ResolverAttributeDefinitionDependency(final String pluginId) {
+    public ResolverAttributeDefinitionDependency(@ParameterName(name="pluginId") final String pluginId) {
         super(pluginId);
     }
 

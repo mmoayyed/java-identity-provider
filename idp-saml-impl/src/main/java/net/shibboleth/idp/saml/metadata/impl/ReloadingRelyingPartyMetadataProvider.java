@@ -22,6 +22,13 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -29,12 +36,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class uses the service interface to implement {@link MetadataResolver}.
@@ -54,7 +55,8 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
      * 
      * @param resolverService the service which will manage the loading.
      */
-    public ReloadingRelyingPartyMetadataProvider(@Nonnull final ReloadableService<MetadataResolver> resolverService) {
+    public ReloadingRelyingPartyMetadataProvider(
+            @Nonnull @ParameterName(name="resolverService") final ReloadableService<MetadataResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, "MetadataResolver Service cannot be null");
     }
 

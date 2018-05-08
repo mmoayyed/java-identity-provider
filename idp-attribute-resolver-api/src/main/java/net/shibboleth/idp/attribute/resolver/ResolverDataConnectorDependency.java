@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
@@ -47,7 +48,7 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
      *
      * @param pluginId ID of dependency
      */
-    public ResolverDataConnectorDependency(final String pluginId) {
+    public ResolverDataConnectorDependency(@ParameterName(name="pluginId") final String pluginId) {
         super(pluginId);
         
         allAttributes = false;

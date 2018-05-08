@@ -23,13 +23,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
-import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
@@ -39,6 +32,14 @@ import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNamePro
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
+import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * A {@link BeanPostProcessor} for {@link MetadataResolver} beans that ensures a {@link NodeProcessingMetadataFilter}
@@ -59,7 +60,8 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
      *
      * @param service the attribute resolver we use to map attributes
      */
-    public NodeProcessingAttachingBeanPostProcessor(@Nullable final ReloadableService<AttributeResolver> service) {
+    public NodeProcessingAttachingBeanPostProcessor(
+            @Nullable @ParameterName(name="service") final ReloadableService<AttributeResolver> service) {
         atributeResolverService = service;
     }
 

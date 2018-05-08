@@ -20,6 +20,8 @@ package net.shibboleth.idp.session;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.MoreObjects;
+
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -42,7 +44,7 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
      *
      * @param type type of {@link SPSession} associated with this flow
      */
-    public LogoutPropagationFlowDescriptor(final Class<? extends SPSession> type) {
+    public LogoutPropagationFlowDescriptor(@ParameterName(name="type") final Class<? extends SPSession> type) {
         sessionType = Constraint.isNotNull(type, "SPSession type cannot be null");
     }
 
