@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import org.joda.time.Instant;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.joda.time.Instant;
+
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * CAS service ticket.
@@ -51,6 +54,8 @@ public class ServiceTicket extends Ticket {
             final boolean renew) {
         super(id, sessionId, service, expiration);
         forceAuthn = renew;
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "ServiceTicket constructor with sessionID", 
+                null, "TicketState#setSessionId(String)");
     }
 
     /**

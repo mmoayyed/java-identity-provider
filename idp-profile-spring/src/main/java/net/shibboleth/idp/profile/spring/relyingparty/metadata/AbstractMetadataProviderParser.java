@@ -22,12 +22,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.slf4j.Logger;
@@ -37,6 +31,14 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Parser for the MetadataProviderType in the <code>urn:mace:shibboleth:2.0:metadata</code> namespace.
@@ -208,9 +210,9 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         final List<Element> trustEngines =
                 ElementSupport.getChildElements(element, TRUST_ENGINE_ELEMENT_NAME);
         if (trustEngines != null && !trustEngines.isEmpty()) {
-            log.warn("{} Deprecated placement of <TrustEngine> inside <MetadataProvider>. "
-                    + "Place inside the relevant filter", parserContext.getReaderContext().getResource()
-                    .getDescription());
+            DeprecationSupport.warn(ObjectType.ELEMENT, "<TrustEngine> inside <MetadataProvider>", 
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    "Inside <Filter>");
             SpringSupport.parseCustomElements(trustEngines, parserContext);
         }
     }

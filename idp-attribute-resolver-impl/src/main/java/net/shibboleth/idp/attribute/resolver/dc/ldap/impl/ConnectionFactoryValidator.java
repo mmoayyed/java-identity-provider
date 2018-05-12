@@ -19,6 +19,12 @@ package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
 import javax.annotation.Nonnull;
 
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -27,12 +33,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Validator implementation that invokes {@link Connection#open()} to determine if the ConnectionFactory is properly
@@ -56,8 +56,8 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
      * @deprecated - use the property setters
      */
     @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory) {
-        DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory)", null, null);
-        LoggerFactory.getLogger(ConnectionFactoryValidator.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory)", 
+                null, "ConnectionFactoryValidator()");
         setConnectionFactory(factory);
         setThrowValidateError(true);
         try {
@@ -77,7 +77,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
     @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory, 
             final boolean throwOnError) {
         DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory, boolean)",
-                null, null);
+                null, "ConnectionFactoryValidator()");
         setConnectionFactory(factory);
         setThrowValidateError(throwOnError);
         try {

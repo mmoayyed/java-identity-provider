@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.Instant;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.joda.time.Instant;
+
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * CAS proxy ticket.
@@ -53,6 +56,8 @@ public class ProxyTicket extends Ticket {
             @Nonnull final String pgtId) {
         super(id, sessionId, service, expiration);
         pgTicketId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "ProxyTicket constructor with sessionID", 
+                null, "TicketState#setSessionId(String)");
     }
 
     /**

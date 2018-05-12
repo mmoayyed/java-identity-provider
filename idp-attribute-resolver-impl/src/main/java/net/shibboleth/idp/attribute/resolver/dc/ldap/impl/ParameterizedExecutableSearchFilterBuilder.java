@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.ldaptive.SearchFilter;
+
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -32,8 +34,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import org.ldaptive.SearchFilter;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the search filter to
@@ -53,12 +53,12 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
      */
     @Deprecated public ParameterizedExecutableSearchFilterBuilder(@Nonnull final String filter) {
         DeprecationSupport.warn(ObjectType.METHOD, "ParameterizedExecutableSearchFilterBuilder(String)",
-                null, null);
+                null, "ParameterizedExecutableSearchFilterBuilder()");
         setSearchFilter(filter);
         try {
             initialize();
         } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+            throw new ConstraintViolationException("Invalid parameterization.");
         }
     }
     

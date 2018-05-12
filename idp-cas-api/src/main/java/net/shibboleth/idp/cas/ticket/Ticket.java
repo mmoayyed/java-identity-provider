@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.Instant;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.joda.time.Instant;
+
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Generic CAS ticket that has a natural identifier and expiration. All CAS tickets are bound to an IdP session ID
@@ -65,6 +68,9 @@ public class Ticket {
         ticketId = Constraint.isNotNull(id, "Id cannot be null");
         ticketService = Constraint.isNotNull(service, "Service cannot be null");
         expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "Ticket constructor with sessionID", 
+                null, "TicketState#setSessionId(String)");
+
     }
 
     /**

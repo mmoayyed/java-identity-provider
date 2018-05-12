@@ -23,6 +23,9 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -33,9 +36,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Validator implementation that invokes {@link DataSource#getConnection()} to determine if the DataSource is properly
@@ -59,12 +59,12 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
      * @deprecated - use the property setters
      */
     @Deprecated public DataSourceValidator(final DataSource source) {
-        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource)", null, null);
+        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource)", null, "DataSourceValidator()");
         dataSource = source;
         try {
             initialize();
         } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+            throw new ConstraintViolationException("Invalid parameterization.");
         }
     }
 
@@ -76,13 +76,14 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
      * @deprecated - use the property setters
      */
     @Deprecated public DataSourceValidator(final DataSource source, final boolean throwOnError) {
-        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource, boolean)", null, null);
+        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource, boolean)",
+                null, "DataSourceValidator()");
         dataSource = source;
         throwOnValidateError = throwOnError;
         try {
             initialize();
         } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+            throw new ConstraintViolationException("Invalid parameterization.");
         }
     }
     
