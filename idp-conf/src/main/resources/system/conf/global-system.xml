@@ -49,6 +49,7 @@
     <import resource="cas-protocol-system.xml" />
     <import resource="general-admin-system.xml" />
     <import resource="utilities.xml" />
+    <import resource="soap-client.xml" />
 
     <bean id="systemPrereqs" class="org.springframework.beans.factory.config.MethodInvokingBean"
             p:targetObject-ref="systemProperties" p:targetMethod="putAll">
@@ -324,6 +325,8 @@
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
     <bean id="shibboleth.ClientTLSValidationParametersResolver"
         class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
+    <bean id="shibboleth.HttpClientSecurityParametersResolver"
+        class="org.opensaml.security.httpclient.impl.BasicHttpClientSecurityParametersResolver" />
 
     <!--
     The beans below are primarily used by trust engines in relying-party-system.xml, but also in the

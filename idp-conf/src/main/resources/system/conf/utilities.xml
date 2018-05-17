@@ -189,6 +189,16 @@
         p:selfConfiguration="#{getObject('shibboleth.SelfEncryptionConfiguration')}"
         p:includeProfileDefaultConfiguration="%{idp.encryption.self.includeProfileDefaultConfiguration:false}"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        
+    <bean id="shibboleth.MessageContext.SignatureValidationConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.messaging.SignatureValidationConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+    <bean id="shibboleth.MessageContext.SignatureSigningConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.messaging.SignatureSigningConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+    <bean id="shibboleth.MessageContext.HttpClientSecurityConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.messaging.HttpClientSecurityConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
     <util:list id="shibboleth.SAML1Status.VersionMismatch">
         <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.VERSION_MISMATCH" />

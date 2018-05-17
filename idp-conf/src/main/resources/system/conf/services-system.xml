@@ -125,6 +125,10 @@
         class="net.shibboleth.idp.relyingparty.impl.ReloadingRelyingPartyConfigurationResolver"
         c:resolverService-ref="shibboleth.RelyingPartyResolverService" />
         
+    <bean id="shibboleth.CriteriaRelyingPartyConfigurationResolver" 
+        class="net.shibboleth.idp.relyingparty.impl.DelegatingCriteriaRelyingPartyConfigurationResolver"
+        p:delegate-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        
     <bean id="shibboleth.MetadataResolver"
         class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
         c:resolverService-ref="shibboleth.MetadataResolverService" />
