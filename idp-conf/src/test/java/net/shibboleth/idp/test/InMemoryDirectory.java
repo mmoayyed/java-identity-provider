@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import org.ldaptive.ssl.CredentialConfigFactory;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.TLSSocketFactory;
-
 import org.springframework.core.io.Resource;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -35,6 +34,7 @@ import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -56,7 +56,9 @@ public class InMemoryDirectory {
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws IOException if the LDIF resource cannot be imported
      */
-    public InMemoryDirectory(@Nonnull final Resource ldif, @Positive final int port, @Nonnull final Resource keystore) throws LDAPException,
+    public InMemoryDirectory(@ParameterName(name="ldif") @Nonnull final Resource ldif,
+            @ParameterName(name="port") @Positive final int port,
+            @ParameterName(name="keystore") @Nonnull final Resource keystore) throws LDAPException,
             IOException {
         Constraint.isNotNull(ldif, "LDIF resource cannot be null");
         final InMemoryDirectoryServerConfig config =
@@ -71,7 +73,7 @@ public class InMemoryDirectory {
             
             config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, port,
                     socketFactory));
-        } catch (GeneralSecurityException e) {
+        } catch (final GeneralSecurityException e) {
             throw new IOException("Error reading keystore", e);
         }
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
