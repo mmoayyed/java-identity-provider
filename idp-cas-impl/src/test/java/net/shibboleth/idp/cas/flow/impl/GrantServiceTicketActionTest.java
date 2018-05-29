@@ -57,6 +57,7 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, null)
                 .addAuthenticationContext(new AuthenticationResult("Password", new UsernamePrincipal("bob")))
                 .addSessionContext(mockSession("1234567890", true))
+                .addSubjectContext(TEST_PRINCIPAL_NAME)
                 .addRelyingPartyContext(request.getService(), true, new LoginConfiguration())
                 .build();
         assertNull(action.execute(context));
@@ -69,5 +70,6 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
         assertEquals(ticket.isRenew(), request.isRenew());
         assertEquals(ticket.getId(), response.getTicket());
         assertEquals(ticket.getService(), response.getService());
+        assertEquals(ticket.getTicketState().getPrincipalName(), TEST_PRINCIPAL_NAME);
     }
 }

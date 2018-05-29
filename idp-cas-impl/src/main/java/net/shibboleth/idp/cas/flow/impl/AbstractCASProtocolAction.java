@@ -45,13 +45,9 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
     /** Looks up a CAS protocol context from IdP profile request context. */
     private final Function<ProfileRequestContext, ProtocolContext<RequestType, ResponseType>> protocolLookupFunction;
 
-    /** Looks up an IdP session context from IdP profile request context. */
-    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction;
-
     /** Constructor. */
     public AbstractCASProtocolAction() {
         protocolLookupFunction = new ChildContextLookup(ProtocolContext.class, true);
-        sessionContextFunction = new ChildContextLookup(SessionContext.class, false);
     }
 
     /**
@@ -152,20 +148,6 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
     protected void setCASService(final ProfileRequestContext prc, @Nonnull final Service service) {
         getProtocolContext(prc).addSubcontext(
                 new ServiceContext(Constraint.isNotNull(service, "CAS service cannot be null")));
-    }
-
-    /**
-     * Get the IdP session.
-     * 
-     * @param prc profile request context
-     * @return IdP session
-     */
-    @Nonnull protected IdPSession getIdPSession(final ProfileRequestContext prc) {
-        final SessionContext sessionContext = sessionContextFunction.apply(prc);
-        if (sessionContext == null || sessionContext.getIdPSession() == null) {
-            throw new IllegalStateException("Cannot locate IdP session");
-        }
-        return sessionContext.getIdPSession();
     }
 
     /**

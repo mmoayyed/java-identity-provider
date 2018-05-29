@@ -20,8 +20,11 @@ package net.shibboleth.idp.cas.flow.impl;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
@@ -31,6 +34,7 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
@@ -59,10 +63,21 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
             new ConfigLookupFunction<>(LoginConfiguration.class);
 
+    /** Looks up an IdP session context from IdP profile request context. */
+    @Nonnull
+    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction =
+            new ChildContextLookup<>(SessionContext.class, false);
+
     /** AuthenticationContext lookup function. */
     @Nonnull
     private final Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupFunction =
             new ChildContextLookup<>(AuthenticationContext.class);
+
+    /** Function to retrieve subject principal name. */
+    @Nonnull
+    private final Function<ProfileRequestContext, String> principalLookupFunction = Functions.compose(
+            new SubjectContextPrincipalLookupFunction(),
+            new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class));
 
     /** Manages CAS tickets. */
     @Nonnull
@@ -107,7 +122,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             log.debug("Granting service ticket for {}", request.getService());
             final TicketState state = new TicketState(
                     session.getId(),
-                    session.getPrincipalName(),
+                    getPrincipalName(profileRequestContext),
                     new Instant(authnResult.getAuthenticationInstant()),
                     authnResult.getAuthenticationFlowId());
             ticket = ticketServiceEx.createServiceTicket(
@@ -127,6 +142,36 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         }
         setCASResponse(profileRequestContext, response);
         return null;
+    }
+
+    /**
+     * Get the IdP session.
+     *
+     * @param prc profile request context.
+     * @return IdP session
+     */
+    @Nonnull
+    private IdPSession getIdPSession(final ProfileRequestContext prc) {
+        final SessionContext sessionContext = sessionContextFunction.apply(prc);
+        if (sessionContext == null || sessionContext.getIdPSession() == null) {
+            throw new IllegalStateException("Cannot locate IdP session");
+        }
+        return sessionContext.getIdPSession();
+    }
+
+    /**
+     * Get the IdP subject principal name.
+     *
+     * @param prc profile request context.
+     * @return Principal name.
+     */
+    @Nonnull
+    private String getPrincipalName(final ProfileRequestContext prc) {
+        final String principal = principalLookupFunction.apply(prc);
+        if (principal == null ) {
+            throw new IllegalStateException("Cannot determine IdP subject principal name.");
+        }
+        return principal;
     }
 
     /**
