@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.metadata;
+package net.shibboleth.idp.installer.metadata.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +31,7 @@ import org.springframework.core.io.Resource;
 /**
  * POJO to collect parameters from the metadata configuration (partially via spring).
  */
-@Deprecated public class MetadataGeneratorParameters {
+public class MetadataGeneratorParameters {
 
     /**
      * The file with the certificate the IDP uses to encrypt.

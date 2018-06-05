@@ -16,7 +16,8 @@
  */
 
 /**
- * Targets for Ant.
+ * OLD, DEPRECATED Targets for Ant.
+ * Use the .impl versions
  */
 
 package net.shibboleth.idp.installer.ant;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.ant;
+package net.shibboleth.idp.installer.ant.impl;
 
 import java.io.File;
 import java.util.List;
@@ -26,9 +26,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 
 import org.apache.tools.ant.BuildException;
@@ -38,7 +36,7 @@ import org.apache.tools.ant.Task;
 /**
  * Task to shim around {@link SelfSignedCertificateGenerator}.
  */
-@Deprecated public class SelfSignedCertificateGeneratorTask extends Task {
+public class SelfSignedCertificateGeneratorTask extends Task {
 
     /** Our wrapped {@link SelfSignedCertificateGenerator}. */
     private SelfSignedCertificateGenerator generator;
@@ -163,7 +161,6 @@ import org.apache.tools.ant.Task;
     @Override 
     /** {@inheritDoc} */
     public void execute() {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
         try {
             generator.generate();
         } catch (final Exception e) {

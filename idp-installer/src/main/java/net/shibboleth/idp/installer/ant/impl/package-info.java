@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * OLD Deprecated. Classes of use during installation.
- * Use the .impl versions
+ * Targets for Ant.
  */
-package net.shibboleth.idp.installer;
 
+package net.shibboleth.idp.installer.ant.impl;

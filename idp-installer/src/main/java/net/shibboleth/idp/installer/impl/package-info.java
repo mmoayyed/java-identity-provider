@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * OLD Deprecated. Classes of use during installation.
- * Use the .impl versions
+ * Classes of use during installation.
  */
-package net.shibboleth.idp.installer;
 
+package net.shibboleth.idp.installer.impl;

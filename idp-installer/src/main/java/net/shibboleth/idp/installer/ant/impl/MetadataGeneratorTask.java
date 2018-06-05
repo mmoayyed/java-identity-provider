@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.ant;
+package net.shibboleth.idp.installer.ant.impl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,16 +34,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
-import net.shibboleth.idp.installer.metadata.MetadataGenerator;
-import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Task to generate metadata.
  */
-@Deprecated public class MetadataGeneratorTask extends Task {
+public class MetadataGeneratorTask extends Task {
 
     /** Where we collect the parameters. */
 
@@ -202,8 +200,6 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     @Override public void execute() {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
-
         try {
             final MetadataGeneratorParameters parameters;
 

@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * OLD Deprecated. Classes of use during installation.
- * Use the .impl versions
+ * Package to contain classes to do with the one off metadata generation.
  */
-package net.shibboleth.idp.installer;
 
+package net.shibboleth.idp.installer.metadata.impl;

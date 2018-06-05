@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import net.shibboleth.idp.installer.ant.MetadataGeneratorTask;
+import net.shibboleth.idp.installer.ant.impl.MetadataGeneratorTask;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 import org.joda.time.DateTime;

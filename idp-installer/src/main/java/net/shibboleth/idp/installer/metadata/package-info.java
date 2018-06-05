@@ -16,7 +16,8 @@
  */
 
 /**
- * Package to contain classes to do with the one off metadata generation.
+ * OLD, DEPRECATED Package to contain classes to do with the one off metadata generation.
+ * Use the .impl versions
  */
 
 package net.shibboleth.idp.installer.metadata;

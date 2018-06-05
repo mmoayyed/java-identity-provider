@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.ant;
+package net.shibboleth.idp.installer.ant.impl;
 
 import java.io.File;
 
@@ -24,8 +24,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 
 import org.apache.tools.ant.BuildException;
@@ -35,7 +33,7 @@ import org.apache.tools.ant.Task;
 /**
  * Wrapper around {@link BasicKeystoreKeyStrategyTool}.
  */
-@Deprecated public class BasicKeystoreKeyStrategyTask extends Task {
+public class BasicKeystoreKeyStrategyTask extends Task {
 
     /** encapsulated {@link BasicKeystoreKeyStrategyTool}.*/
     private BasicKeystoreKeyStrategyTool tool;
@@ -120,7 +118,6 @@ import org.apache.tools.ant.Task;
     /** {@inheritDoc} */
     @Override
     public void execute() {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
         try {
             tool.changeKey();
         } catch (final Exception e) {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.metadata;
+package net.shibboleth.idp.installer.metadata.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -57,8 +57,6 @@ import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
@@ -67,7 +65,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
  * generator, and the V2 metadata.
  */
 // Checkstyle: HideUtilityClassConstructor OFF
-@Deprecated public class MetadataGenerator {
+public class MetadataGenerator {
 
     /**
      * The end points we understand.
@@ -167,7 +165,6 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
      * @throws FileNotFoundException if the file cannot be found.
      */
     public MetadataGenerator(@Nonnull final File file) throws FileNotFoundException {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
         final File nonnullFile = Constraint.isNotNull(file, "provided file must be nonnull");
         final FileOutputStream outStream = new FileOutputStream(nonnullFile);
         writer = new BufferedWriter(new OutputStreamWriter(outStream));

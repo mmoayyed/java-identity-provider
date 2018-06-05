@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.ant;
+package net.shibboleth.idp.installer.ant.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +25,8 @@ import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.installer.PropertiesWithComments;
+import net.shibboleth.idp.installer.impl.PropertiesWithComments;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -37,7 +35,7 @@ import org.apache.tools.ant.Task;
 /**
  * A class to merge a property file into another property file, preserving the comments. 
  */
-@Deprecated public class MergePropertiesTask extends Task {
+public class MergePropertiesTask extends Task {
 
     /** The input file. */
     private File inFile;
@@ -73,8 +71,6 @@ import org.apache.tools.ant.Task;
     // Checkstyle: CyclomaticComplexity OFF
     @Override
     public void execute() {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
-
         if (null == inFile) {
             log("Input file not provided", Project.MSG_ERR);
             throw new BuildException("Non-existent input file");

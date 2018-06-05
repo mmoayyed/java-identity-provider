@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.ant;
+package net.shibboleth.idp.installer.ant.impl;
 
 import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.input.SecureInputHandler;
 
 /** Ant helper class to ask for passwords, rejecting zero length passwords and asking for confirmation. */
-@Deprecated public class PasswordHandler extends SecureInputHandler {
+public class PasswordHandler extends SecureInputHandler {
 
     /** {@inheritDoc} */
     @Override

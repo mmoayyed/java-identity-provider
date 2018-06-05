@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -34,15 +34,13 @@ import java.util.Properties;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A package which is similar to Properties, but allows comments to be preserved. We use the Properties package to parse
  * the non-comment lines.
  */
-@Deprecated public class PropertiesWithComments {
+public class PropertiesWithComments {
 
     /**
      * The contents.
@@ -103,7 +101,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
      * @throws IOException if readline fails
      */
     public void load(final InputStream input) throws IOException {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         contents = new ArrayList<>();
         properties = new HashMap<>();
