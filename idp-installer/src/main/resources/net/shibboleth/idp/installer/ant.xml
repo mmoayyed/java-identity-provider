@@ -3,5 +3,6 @@
     <taskdef name="selfsignedcert" classname="net.shibboleth.idp.installer.ant.impl.SelfSignedCertificateGeneratorTask"/>
     <taskdef name="keystorestrategy" classname="net.shibboleth.idp.installer.ant.impl.BasicKeystoreKeyStrategyTask"/>
     <taskdef name="mergeproperties" classname="net.shibboleth.idp.installer.ant.impl.MergePropertiesTask"/>
+    <taskdef name="rewriteproperties" classname="net.shibboleth.idp.installer.ant.impl.RewritePropertiesTask"/>
     <taskdef name="metadatagenerate" classname="net.shibboleth.idp.installer.ant.impl.MetadataGeneratorTask"/>
 </antlib>

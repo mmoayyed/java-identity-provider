@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
+import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 
@@ -33,9 +33,9 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 /**
- * A class to merge a property file into another property file, preserving the comments. 
+ * A class to rename the property names in a property file, preserving the comments. 
  */
-public class MergePropertiesTask extends Task {
+public class RewritePropertiesTask extends Task {
 
     /** The input file. */
     private File inFile;
@@ -43,8 +43,8 @@ public class MergePropertiesTask extends Task {
     /** The output file. */
     private File outFile;
 
-    /** The merge file. */
-    private File mergeFile;
+    /** The names file. */
+    private File propertyNameFile;
     
     /** Set the input file.
      * @param what what to set
@@ -63,12 +63,11 @@ public class MergePropertiesTask extends Task {
     /** Set the merge file.
      * @param what what to set
      */
-    public void setMergeFile(@Nonnull final File what) {
-        mergeFile = Constraint.isNotNull(what, "Provided file must not be null");
+    public void setPropertyNameFile(@Nonnull final File what) {
+        propertyNameFile = Constraint.isNotNull(what, "Provided file must not be null");
     }
 
     /** {@inheritDoc} */
-    // Checkstyle: CyclomaticComplexity OFF
     @Override
     public void execute() {
         if (null == inFile) {
@@ -81,54 +80,44 @@ public class MergePropertiesTask extends Task {
         }
         if (null == outFile) {
             log("Output file not provided", Project.MSG_ERR);
-            throw new BuildException("Output file not provided");
-        }
-        if (null == mergeFile) {
-            log("Merge file not provided", Project.MSG_ERR);
-            throw new BuildException("Non-existent input file");
-        }
-        if (!mergeFile.exists()) {
-            log("Input file " + mergeFile.getAbsolutePath() + " does not exist");
-            throw new BuildException("Non-existent merge file");
+            throw new BuildException("Non-existent output file");
         }
         
-        final PropertiesWithComments in = new PropertiesWithComments(); 
+        if (null == propertyNameFile) {
+            log("Property Name file not provided", Project.MSG_ERR);
+            throw new BuildException("Non-existent input file");
+        }
+        if (!propertyNameFile.exists()) {
+            log("Input file " + propertyNameFile.getAbsolutePath() + " does not exist");
+            throw new BuildException("Non-existent property file");
+        }
+        
+        final PropertiesWithComments properties = new PropertiesWithComments(); 
+        try {
+            final InputStream in = new FileInputStream(propertyNameFile);
+            properties.loadNameReplacement(in);
+            in.close();
+        } catch (final IOException e) {
+            log("Could not load name replacements " + propertyNameFile.getAbsolutePath(), e, Project.MSG_ERR);
+            throw new BuildException(e);
+        }
 
         try {
-            final FileInputStream stream = new FileInputStream(inFile);
-            in.load(stream);
-            stream.close();
+            final InputStream in = new FileInputStream(inFile); 
+            properties.load(in);
+            in.close();
         } catch (final IOException e) {
             log("Could not load input " + inFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
         
-        final Properties merge = new Properties(); 
         try {
-            final FileInputStream stream = new FileInputStream(mergeFile);
-            merge.load(stream);
-            stream.close();
-        } catch (final IOException e) {
-            log("Could not load merge " + mergeFile.getAbsolutePath(), e, Project.MSG_ERR);
-            throw new BuildException(e);
-        }
-        
-        
-        for (final Object propName:merge.keySet()) {
-            if (propName instanceof String) {
-                final String name = (String) propName;
-                in.replaceProperty(name, merge.getProperty(name));
-            } 
-        }
-
-        try {
-            final FileOutputStream stream = new FileOutputStream(outFile);
-            in.store(stream);
-            stream.close();
+            final FileOutputStream out = new FileOutputStream(outFile);
+            properties.store(out);
+            out.close();
         } catch (final IOException e) {
             log("Could not store output " + outFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
     }
-    // Checkstyle: CyclomaticComplexity ON
 }
