@@ -53,6 +53,15 @@ public class PropertiesWithComments {
     /** The properties bit. */
     private Map<String, CommentedProperty> properties;
 
+    /** Name Replacement info. */
+    private final Properties nameReplacement = new Properties();
+
+    /** Have we loaded data?.
+     *
+     * We cannot load the replacement names after the file load.
+     * */
+    private boolean loadedData;
+
     /**
      * Add a property, either as a key/value pair or as a key/comment pair.
      * 
@@ -73,15 +82,38 @@ public class PropertiesWithComments {
 
         parser.load(new ByteArrayInputStream(modifiedLine.getBytes()));
         if (!parser.isEmpty()) {
-            final String propName = StringSupport.trimOrNull(parser.stringPropertyNames().iterator().next());
+            String propName = StringSupport.trimOrNull(parser.stringPropertyNames().iterator().next());
             if (propName != null) {
+                
+                String outputLine = line;
+                final String value = parser.getProperty(propName);
+                
+                final String newPropName = StringSupport.trimOrNull(nameReplacement.getProperty(propName));
+
+                if (newPropName != null && !newPropName.isEmpty()) {
+                    // Change the line
+                    if (isComment) {
+                        if (newPropName.contains(propName)) {
+                            // We can only replace once
+                            outputLine = outputLine.replace(propName, newPropName);
+                        } else {
+                            while (outputLine.contains(propName)) {
+                                outputLine = outputLine.replace(propName, newPropName);
+                            }
+                        }
+                    }
+                    // and the property name
+                    propName = newPropName;
+                }
+                
+                
                 final CommentedProperty commentedProperty;
 
                 if (isComment) {
-                    commentedProperty = new CommentedProperty(propName, line, true);
+                    commentedProperty = new CommentedProperty(propName, outputLine, true);
 
                 } else {
-                    commentedProperty = new CommentedProperty(propName, parser.getProperty(propName), false);
+                    commentedProperty = new CommentedProperty(propName, value, false);
 
                 }
                 properties.put(propName, commentedProperty);
@@ -91,7 +123,18 @@ public class PropertiesWithComments {
             contents.add(line);
         }
         parser.clear();
-
+    }
+    
+    /** Read the name replacement data. 
+    * 
+    * @param input what to read
+    * @throws IOException if readline fails
+    */
+    public void loadNameReplacement(final InputStream input) throws IOException {
+        if (loadedData) {
+            throw new IOException("Cannot load name replacement after the data");
+        }
+        nameReplacement.load(input);
     }
 
     /**
@@ -123,6 +166,7 @@ public class PropertiesWithComments {
             }
             s = reader.readLine();
         }
+        loadedData = true;
     }
 
     /**
