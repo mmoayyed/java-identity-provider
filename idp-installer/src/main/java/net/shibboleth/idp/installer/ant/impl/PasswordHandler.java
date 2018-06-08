@@ -17,11 +17,55 @@
 
 package net.shibboleth.idp.installer.ant.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.annotation.Nonnull;
+
 import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.input.SecureInputHandler;
 
+import net.shibboleth.idp.installer.impl.PropertiesWithComments;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 /** Ant helper class to ask for passwords, rejecting zero length passwords and asking for confirmation. */
 public class PasswordHandler extends SecureInputHandler {
+
+    /** Spool the file to a {@link PropertiesWithComments}, read it in again as a {@link Properties} and check
+     * for equivalence.
+     * @param password what to look at
+     * @return if the password can go to a property file OK
+     */
+    private boolean passwordSavesOK(final @Nonnull @NotEmpty String password) {
+        final String propertyName="pass";
+        try {
+            final PropertiesWithComments saveProps = new PropertiesWithComments();
+            // init
+            saveProps.load(new ByteArrayInputStream(new byte[0]));
+
+            // set up
+            saveProps.replaceProperty(propertyName, password);
+
+            // save
+            final ByteArrayOutputStream saveStream = new ByteArrayOutputStream();
+            saveProps.store(saveStream);
+
+            // reload
+            final Properties loadProps = new Properties();
+            final ByteArrayInputStream loadStream = new ByteArrayInputStream(saveStream.toByteArray());
+            saveStream.close();
+            loadProps.load(loadStream);
+            loadStream.close();
+
+            // test
+            return password.equals(loadProps.getProperty(propertyName));
+        } catch (final IOException e) {
+            System.console().printf("Internal error :\n" + e.getStackTrace() + "\n");
+            return false;
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -35,6 +79,10 @@ public class PasswordHandler extends SecureInputHandler {
                 continue;
             }
             final String firstPass = String.copyValueOf(result);
+            if (!passwordSavesOK(firstPass)) {
+                System.console().printf("Password contains unsafe characters\n");
+                continue;
+            }
             System.console().printf("Re-enter password: ");
             System.console().flush();
             result  = System.console().readPassword();
