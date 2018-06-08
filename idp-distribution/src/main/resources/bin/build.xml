@@ -88,7 +88,7 @@
         <TGT>getkeystorepassword</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Backchannel PKCS12 Password: " addproperty="idp.keystore.password">
-            <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
+            <handler classname="net.shibboleth.idp.installer.ant.impl.PasswordHandler"/>
         </input>
     </target>
 
@@ -96,7 +96,7 @@
         <TGT>getsealerpassword</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Cookie Encryption Key Password: " addproperty="idp.sealer.password">
-            <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
+            <handler classname="net.shibboleth.idp.installer.ant.impl.PasswordHandler"/>
         </input>
         <echo file="${idp.merge.properties}" append="yes">
             idp.sealer.storePassword=${idp.sealer.password}

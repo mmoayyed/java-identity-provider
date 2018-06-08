@@ -22,6 +22,14 @@ import org.apache.tools.ant.input.SecureInputHandler;
 
 /** Ant helper class to ask for passwords, rejecting zero length passwords and asking for confirmation. */
 @Deprecated public class PasswordHandler extends SecureInputHandler {
+    
+    /**
+     * Constructor.
+     *
+     */
+    public PasswordHandler() {
+        System.console().printf("Calling Deprecated class " + this.getClass().getName() + "\n");
+    }
 
     /** {@inheritDoc} */
     @Override
