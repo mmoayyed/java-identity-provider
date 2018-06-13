@@ -21,13 +21,18 @@
     <bean id="encodedTicketSealer" lazy-init="true"
           class="net.shibboleth.utilities.java.support.security.DataSealer"
           p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy"
-          p:encoder-ref="base64Codec"
-          p:decoder-ref="base64Codec" />
+          p:encoder-ref="codec"
+          p:decoder-ref="codec" />
 
-    <bean id="base64Codec" class="org.apache.commons.codec.binary.Base64"
+    <!--
+       | For EncodingTicketService use base-32 encoding with '-' as the padding character
+       |to get tickets in the required character set: [A-Za-z0-9-]+
+       -->
+    <bean id="codec" class="org.apache.commons.codec.binary.Base32"
           c:lineLength="0"
-          c:lineSeparator="#{new byte[] {10} }"
-          c:urlSafe="true" />
+          c:lineSeparator="#{null}"
+          c:useHex="false"
+          c:pad="#{ T(java.lang.Integer).valueOf(45).byteValue() }" />
 
     <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
 

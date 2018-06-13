@@ -65,7 +65,7 @@ public class EncodingTicketService extends AbstractTicketService {
     /** Default proxy ticket prefix. */
     public static final String PROXY_TICKET_PREFIX = "PT";
 
-    /** Non-null marker value for unused ServiceTicket#id field. */
+    /** Non-null marker value for unused ServiceTicket#id field and storage context name. */
     private static final String NOT_USED = "na";
 
     /** Class logger. */
@@ -196,7 +196,7 @@ public class EncodingTicketService extends AbstractTicketService {
     private <T extends Ticket> T decode(final Class<T> ticketClass, final String id, final String prefix) {
         try {
             final String decrypted = dataSealer.unwrap(id.substring(prefix.length() + 1));
-            return serializer(ticketClass).deserialize(0, null, id, decrypted, 0L);
+            return serializer(ticketClass).deserialize(0, NOT_USED, id, decrypted, 0L);
         } catch (final Exception e) {
             log.warn("Ticket decoding failed with error: " + e.getMessage());
             log.debug("Ticket decoding failed", e);

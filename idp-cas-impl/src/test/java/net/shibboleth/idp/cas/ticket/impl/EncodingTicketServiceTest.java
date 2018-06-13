@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
+import org.apache.commons.codec.binary.Base32;
 import org.joda.time.Instant;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.core.io.ClassPathResource;
@@ -70,9 +71,12 @@ public class EncodingTicketServiceTest {
         strategy.setKeyAlias("secret");
         strategy.setKeyPassword("password");
         strategy.initialize();
+        final Base32 codec = new Base32(0, null, false, (byte) '-');
         final DataSealer sealer = new DataSealer();
         sealer.setKeyStrategy(strategy);
         sealer.setRandom(secureRandom);
+        sealer.setEncoder(codec);
+        sealer.setDecoder(codec);
         sealer.initialize();
         ticketService = new EncodingTicketService(new MemoryStorageService(), sealer);
     }
@@ -122,8 +126,8 @@ public class EncodingTicketServiceTest {
         final String id = String.valueOf(System.currentTimeMillis());
         final ServiceTicket st1 = ticketService.createServiceTicket(id, expiry, service, state, true);
         assertNotNull(st1);
-        assertTrue(st1.getId().startsWith("ST-"));
-        assertTrue(st1.getId().length() < 500);
+        assertTrue(st1.getId().matches("ST-[A-Za-z0-9]+-*"));
+        assertTrue(st1.getId().length() < 600);
     }
 
     @Test
