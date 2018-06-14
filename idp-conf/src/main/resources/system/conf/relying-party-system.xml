@@ -117,7 +117,8 @@
     <!-- Ticket validity period applies to proxy-granting tickets created upon successful proxy callback validation -->
     <bean id="CAS.ValidateConfiguration" parent="AbstractProfileConfig" lazy-init="true"
         class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration"
-        p:ticketValidityPeriod="PT12H" />
+        p:ticketValidityPeriod="PT12H"
+        p:serviceComparator="#{getObject('shibboleth.CASServiceComparator') ?: getObject('shibboleth.DefaultCASServiceComparator')}" />
 
     <!-- Artifact Configuration Defaults -->
     

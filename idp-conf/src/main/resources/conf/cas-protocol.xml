@@ -67,6 +67,14 @@
           class="com.google.common.base.Predicates"
           factory-method="alwaysFalse" />
 
+    <!--
+       | Uncomment the following bean if you want to ignore jsessionid artifacts in service URLs.
+       | Those sorts of URLs are commonly emitted by Java servlet-based web applications.
+       -->
+    <!--<bean id="shibboleth.CASServiceComparator"
+          class="net.shibboleth.idp.cas.service.impl.DefaultServiceComparator"
+          c:parameterNames="[a-z]+sessionid" />-->
+
 
     <!-- ============== Advanced CAS Configuration ============== -->
 

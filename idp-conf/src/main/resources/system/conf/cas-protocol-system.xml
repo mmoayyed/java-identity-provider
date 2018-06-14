@@ -43,6 +43,9 @@
           class="com.google.common.base.Predicates"
           factory-method="alwaysFalse" />
 
+    <bean id="shibboleth.DefaultCASServiceComparator"
+          class="net.shibboleth.idp.cas.service.impl.DefaultServiceComparator" />
+
     <import resource="../../conf/cas-protocol.xml" />
 
 </beans>
