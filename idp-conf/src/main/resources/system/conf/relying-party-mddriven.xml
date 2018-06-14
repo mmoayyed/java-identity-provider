@@ -465,7 +465,6 @@
     <bean id="CAS.ProxyConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
         class="net.shibboleth.idp.cas.config.impl.ProxyConfiguration" />
 
-    <!-- TODO: ticketValidityPeriod default here needs its default overridden, see IDP-1150. -->
     <bean id="CAS.ValidateConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
             class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration">
         <property name="serviceComparatorLookupStrategy">

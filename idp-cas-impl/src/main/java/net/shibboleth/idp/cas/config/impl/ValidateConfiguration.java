@@ -73,7 +73,9 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
 
     /** Creates a new instance. */
     public ValidateConfiguration() {
-        super(PROFILE_ID);
+        // Ticket validity period for this configuration container applies to proxy-granting tickets
+        // Default to 12H
+        super(PROFILE_ID, 12 * 60 * 60 * 1000);
         
         pgtIOUGenerator = new TicketIdentifierGenerationStrategy("PGTIOU", 50);
         serviceComparator = new DefaultServiceComparator();

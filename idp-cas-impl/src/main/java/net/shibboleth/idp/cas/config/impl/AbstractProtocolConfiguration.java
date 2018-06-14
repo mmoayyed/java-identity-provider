@@ -67,9 +67,19 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * @param profileId Unique profile identifier.
      */
     public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
+        this(profileId, 15000L);
+    }
+
+    /**
+     * Creates a new configuration instance.
+     *
+     * @param profileId Unique profile identifier.
+     * @param ticketTTL Ticket validity period in milliseconds.
+     */
+    public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId, @Positive long ticketTTL) {
         super(profileId);
         resolveAttributesPredicate = Predicates.alwaysTrue();
-        ticketValidityPeriod = 15000L;
+        ticketValidityPeriod = ticketTTL;
         setSecurityConfiguration(new SecurityConfiguration(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES),
                 new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength())));
     }
