@@ -73,7 +73,7 @@
             </bean>
         </constructor-arg>
     </bean>
-    
+
     <bean id="SAMLPopulateAttributeConsumingService"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
@@ -81,6 +81,10 @@
             <bean class="org.opensaml.saml.common.binding.impl.SAMLAddAttributeConsumingServiceHandler" scope="prototype" />
         </constructor-arg>
     </bean>
+
+    <bean id="AddRequestedAttributesToAttributeConsumingService" scope="prototype"
+            class="net.shibboleth.idp.saml.saml2.profile.impl.AddRequestedAttributesToAttributeConsumingService"
+            p:resolverService-ref="shibboleth.AttributeResolverService" />
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
         class="net.shibboleth.idp.saml.profile.impl.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />

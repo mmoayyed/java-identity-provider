@@ -1,3 +1,4 @@
+
 <flow xmlns="http://www.springframework.org/schema/webflow"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
@@ -17,6 +18,7 @@
         <evaluate expression="SAMLProtocolAndRole" />
         <evaluate expression="SAMLMetadataLookup" />
         <evaluate expression="SAMLPopulateAttributeConsumingService" />
+        <evaluate expression="AddRequestedAttributesToAttributeConsumingService" />
 
         <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />

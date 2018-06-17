@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.LangBearing;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.ext.reqattr.RequestedAttributes;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.Logo;
@@ -339,6 +340,7 @@ public class MetadataGenerator {
         writeNameSpace(ExtensionsConstants.SHIB_MDEXT10_PREFIX, ExtensionsConstants.SHIB_MDEXT10_NS);
         writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
+        writeNameSpace(SAMLConstants.SAML20PREQ_ATTRR_PREFIX, SAMLConstants.SAML20PREQ_ATTR_NS);
 
         writer.write(" validUntil=\"" + DOMTypeSupport.longToDateTime(System.currentTimeMillis()) + "\"");
         
@@ -809,7 +811,10 @@ public class MetadataGenerator {
                 writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_POST_BINDING_URI);
-                writer.write("\" Location=\"https://");
+                writer.write("\" ");
+                writeNameSpaceQualified(SAMLConstants.SAML20PREQ_ATTRR_PREFIX,
+                        RequestedAttributes.SUPPORTS_REQUESTED_ATTRIBUTES_LOCAL_NAME);
+                writer.write("=\"true\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/POST/SSO\"/>");
                 writer.newLine();
@@ -821,7 +826,10 @@ public class MetadataGenerator {
                 writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
-                writer.write("\" Location=\"https://");
+                writer.write("\" ");
+                writeNameSpaceQualified(SAMLConstants.SAML20PREQ_ATTRR_PREFIX,
+                        RequestedAttributes.SUPPORTS_REQUESTED_ATTRIBUTES_LOCAL_NAME);
+                writer.write("=\"true\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/POST-SimpleSign/SSO\"/>");
                 writer.newLine();
@@ -833,7 +841,10 @@ public class MetadataGenerator {
                 writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
-                writer.write("\" Location=\"https://");
+                writer.write("\" ");
+                writeNameSpaceQualified(SAMLConstants.SAML20PREQ_ATTRR_PREFIX,
+                        RequestedAttributes.SUPPORTS_REQUESTED_ATTRIBUTES_LOCAL_NAME);
+                writer.write("=\"true\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/Redirect/SSO\"/>");
                 writer.newLine();
