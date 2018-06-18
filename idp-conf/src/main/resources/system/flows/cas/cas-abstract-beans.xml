@@ -24,10 +24,10 @@
     <bean id="PopulateMetricContext"
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
-        
+
     <bean id="BuildRelyingPartyContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction"
-          c:registry-ref="shibboleth.CASServiceRegistry"/>
+          c:registries="#{getObject('shibboleth.CASServiceRegistries') ?: getObject('shibboleth.DefaultCASServiceRegistries')}" />
 
     <bean id="BuildSAMLMetadataContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />

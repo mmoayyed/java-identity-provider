@@ -36,6 +36,16 @@
     </bean>
 
     <!--
+       | Uncomment this bean if you want to override the default list of CAS service registries.
+       | The default configuration tries to find the relying party in a SAML metadata source and falls back to
+       | reloadableServiceRegistry if a match is not found.
+       -->
+    <!--<util:list id="shibboleth.CASServiceRegistries">
+        <ref bean="shibboleth.CASMetadataServiceRegistry" />
+        <ref bean="shibboleth.CASServiceRegistry" />
+    </util:list>-->
+
+    <!--
        | The default ticket service as of 3.3.0 serializes ticket data into the opaque section of the ticket ID
        | for service tickets and proxy tickets. Proxy-granting tickets still require server-side storage, and
        | a StorageService defined by the idp.cas.StorageService is used. Thus for deployers that do not require

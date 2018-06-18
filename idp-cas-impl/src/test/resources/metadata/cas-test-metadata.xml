@@ -1,0 +1,174 @@
+<EntitiesDescriptor
+        Name="urn:mace:example.org"
+        xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+        xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+        xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+        xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+        validUntil="2050-12-31T23:59:59Z">
+
+    <!--
+       | Middleware test SP shib-sp.middleware.vt.edu
+       -->
+    <EntityDescriptor entityID="https://shib-sp.middleware.vt.edu/shibboleth">
+        <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"
+                         AuthnRequestsSigned="false"
+                         WantAssertionsSigned="false">
+            <Extensions>
+                <mdui:UIInfo>
+                    <mdui:DisplayName xml:lang="en">Middleware Test Shibboelth SP</mdui:DisplayName>
+                </mdui:UIInfo>
+            </Extensions>
+            <KeyDescriptor use="signing">
+                <ds:KeyInfo>
+                    <ds:KeyName>shib-sp.middleware.vt.edu</ds:KeyName>
+                    <ds:X509Data>
+                        <ds:X509SubjectName>CN=shib-sp.middleware.vt.edu</ds:X509SubjectName>
+                        <ds:X509IssuerSerial>
+                            <ds:X509IssuerName>CN=shib-sp.middleware.vt.edu</ds:X509IssuerName>
+                            <ds:X509SerialNumber>13911054624363863887</ds:X509SerialNumber>
+                        </ds:X509IssuerSerial>
+                        <ds:X509Certificate>
+                            MIIDEjCCAfqgAwIBAgIJAMEN/noYQ19PMA0GCSqGSIb3DQEBBQUAMCQxIjAgBgNV
+                            BAMTGXNoaWItc3AubWlkZGxld2FyZS52dC5lZHUwHhcNMDkxMDEyMTkwOTI5WhcN
+                            MTkxMDEwMTkwOTI5WjAkMSIwIAYDVQQDExlzaGliLXNwLm1pZGRsZXdhcmUudnQu
+                            ZWR1MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq1+/HSUxoAKfvUi1
+                            D+D0YMVQqaGcWmXndnsR4dBuHaVsl48F6c428bJAwC/u5KEO74PiNFw5tQIY3Msk
+                            pR0CGM41Hj9f+jZF5K0Q9QdHOQEyNJjQtLCwyXXSJzvOHVgZhTbyrTyGCxCqs0jb
+                            w9oCLLtclZcSxO/OgC/PpYN03juTu7EsoyTqB1zkAz+LXM8nd3/egts7EGzVmmo4
+                            n4fAwtfeNjwHxdonRj99UvDernxTe9o671qPcTOSyaAgxC8k3XN1CXFArWDF0aHH
+                            ZuYyfLf2ANvI0EHtvBTkwtjSK32hEAK90FU2AVw4KS4JO/+5kO0E7AfQdefCK5WR
+                            pbaO8wIDAQABo0cwRTAkBgNVHREEHTAbghlzaGliLXNwLm1pZGRsZXdhcmUudnQu
+                            ZWR1MB0GA1UdDgQWBBSkQ5Kf9DS2iZPBzxaM8hgarRUGKjANBgkqhkiG9w0BAQUF
+                            AAOCAQEAM6rz9hcTaDj521/q2BIPmx2Kw3nhmcUgi/tjrBsaR2UeGLwH1NokEr0r
+                            9eiJNRLO8JpnVEFRJ3DOJdgYoUD9Ic6HYBAo0ezPCRPHQ+ugh5vqKMypV7syTz8R
+                            q1F3BuT9gGRNiYosZl/Zm+Gaf6rTwXIOq45RJOTd9m1maM0TSkl4eR13hOewR0ry
+                            BomWaAR/z2m4k1eAggeH1gRufI7NiDx2UfYlrCdU1aTXHkx9i2Wcz4NZu8o3mFOY
+                            Q0cjExJWVeywifStwQT+JOALdQWBIVX56d8n+XH8f6ChJKqP+KZXtUuDf5ARdHIN
+                            L4EFJSmh5lpx88LwgxTsPXUpvcARfQ==
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </KeyDescriptor>
+            <KeyDescriptor use="encryption">
+                <ds:KeyInfo>
+                    <ds:KeyName>shib-sp.middleware.vt.edu</ds:KeyName>
+                    <ds:X509Data>
+                        <ds:X509SubjectName>CN=shib-sp.middleware.vt.edu</ds:X509SubjectName>
+                        <ds:X509IssuerSerial>
+                            <ds:X509IssuerName>CN=shib-sp.middleware.vt.edu</ds:X509IssuerName>
+                            <ds:X509SerialNumber>13911054624363863887</ds:X509SerialNumber>
+                        </ds:X509IssuerSerial>
+                        <ds:X509Certificate>
+                            MIIDEjCCAfqgAwIBAgIJAMEN/noYQ19PMA0GCSqGSIb3DQEBBQUAMCQxIjAgBgNV
+                            BAMTGXNoaWItc3AubWlkZGxld2FyZS52dC5lZHUwHhcNMDkxMDEyMTkwOTI5WhcN
+                            MTkxMDEwMTkwOTI5WjAkMSIwIAYDVQQDExlzaGliLXNwLm1pZGRsZXdhcmUudnQu
+                            ZWR1MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq1+/HSUxoAKfvUi1
+                            D+D0YMVQqaGcWmXndnsR4dBuHaVsl48F6c428bJAwC/u5KEO74PiNFw5tQIY3Msk
+                            pR0CGM41Hj9f+jZF5K0Q9QdHOQEyNJjQtLCwyXXSJzvOHVgZhTbyrTyGCxCqs0jb
+                            w9oCLLtclZcSxO/OgC/PpYN03juTu7EsoyTqB1zkAz+LXM8nd3/egts7EGzVmmo4
+                            n4fAwtfeNjwHxdonRj99UvDernxTe9o671qPcTOSyaAgxC8k3XN1CXFArWDF0aHH
+                            ZuYyfLf2ANvI0EHtvBTkwtjSK32hEAK90FU2AVw4KS4JO/+5kO0E7AfQdefCK5WR
+                            pbaO8wIDAQABo0cwRTAkBgNVHREEHTAbghlzaGliLXNwLm1pZGRsZXdhcmUudnQu
+                            ZWR1MB0GA1UdDgQWBBSkQ5Kf9DS2iZPBzxaM8hgarRUGKjANBgkqhkiG9w0BAQUF
+                            AAOCAQEAM6rz9hcTaDj521/q2BIPmx2Kw3nhmcUgi/tjrBsaR2UeGLwH1NokEr0r
+                            9eiJNRLO8JpnVEFRJ3DOJdgYoUD9Ic6HYBAo0ezPCRPHQ+ugh5vqKMypV7syTz8R
+                            q1F3BuT9gGRNiYosZl/Zm+Gaf6rTwXIOq45RJOTd9m1maM0TSkl4eR13hOewR0ry
+                            BomWaAR/z2m4k1eAggeH1gRufI7NiDx2UfYlrCdU1aTXHkx9i2Wcz4NZu8o3mFOY
+                            Q0cjExJWVeywifStwQT+JOALdQWBIVX56d8n+XH8f6ChJKqP+KZXtUuDf5ARdHIN
+                            L4EFJSmh5lpx88LwgxTsPXUpvcARfQ==
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </KeyDescriptor>
+            <SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SLO/SOAP"/>
+            <SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SLO/Redirect"/>
+            <SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SLO/POST"/>
+            <SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SLO/Artifact"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SAML2/POST"
+                    index="1"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SAML2/POST-SimpleSign"
+                    index="2"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SAML2/Artifact"
+                    index="3"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SAML2/ECP"
+                    index="4"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SAML/POST"
+                    index="5"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"
+                    Location="https://shib-sp.middleware.vt.edu:8443/Shibboleth.sso/SAML/Artifact"
+                    index="6"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+
+    <!--
+       | Alpha (authorizedToProxy="true", singleLogoutParticipant="true")
+       -->
+    <EntityDescriptor entityID="https://alpha.example.org/">
+        <Extensions>
+            <mdattr:EntityAttributes>
+                <saml:Attribute Name="https://www.apereo.org/cas/protocol/authorizedToProxy"
+                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>true</saml:AttributeValue>
+                </saml:Attribute>
+            </mdattr:EntityAttributes>
+        </Extensions>
+        <SPSSODescriptor protocolSupportEnumeration="https://www.apereo.org/cas/protocol">
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://alpha.example.org/"
+                    index="1"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://alpha.dev.example.org/"
+                    index="2"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://alpha.test.example.org/"
+                    index="3"/>
+            <SingleLogoutService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                    Location="https://not.used.invalid/"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+
+    <!--
+       | Beta (authorizedToProxy="false", singleLogoutParticipant="false")
+       -->
+    <EntityDescriptor entityID="https://beta.example.org/">
+        <SPSSODescriptor protocolSupportEnumeration="https://www.apereo.org/cas/protocol">
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://beta.example.org/"
+                    index="1"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://betatest.example.org/"
+                    index="2"/>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://betatest.example.org:8443/"
+                    index="3"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+
+</EntitiesDescriptor>

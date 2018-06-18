@@ -149,4 +149,8 @@
           class="net.shibboleth.idp.cas.service.impl.ReloadingServiceRegistry"
           c:delegate-ref="shibboleth.ReloadableCASServiceRegistry" />
 
+    <bean id="shibboleth.CASMetadataServiceRegistry"
+          class="net.shibboleth.idp.cas.service.impl.MetadataServiceRegistry"
+          c:resolver-ref="shibboleth.MetadataResolver" />
+
  </beans>

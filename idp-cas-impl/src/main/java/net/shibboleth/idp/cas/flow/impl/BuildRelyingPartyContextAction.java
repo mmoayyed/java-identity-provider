@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
@@ -25,15 +27,19 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}.
+ * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}. The component queries
+ * a configured list of {@link ServiceRegistry} until a result is found, otherwise the relying party is treated as
+ * unverified.
  *
  * @author Marvin S. Addison
  */
@@ -45,17 +51,19 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
-    /** Repository for verified CAS services (relying parties). */
+    /** List of registries to query for verified CAS services (relying parties). */
     @Nonnull
-    private final ServiceRegistry serviceRegistry;
+    @NotEmpty
+    private final List<ServiceRegistry> serviceRegistries;
+
 
     /**
      * Creates a new instance.
      *
-     * @param registry Service registry.
+     * @param registries One or more service registries to query for CAS services.
      */
-    public BuildRelyingPartyContextAction(@Nonnull final ServiceRegistry registry) {
-        this.serviceRegistry = Constraint.isNotNull(registry, "Service registry cannot be null");
+    public BuildRelyingPartyContextAction(@Nonnull @NotEmpty final ServiceRegistry ... registries) {
+        serviceRegistries = Arrays.asList(Constraint.isNotEmpty(registries, "Service registries cannot be null"));
     }
 
     @Nonnull
@@ -75,7 +83,7 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         } else {
             throw new IllegalStateException("Service URL not found in flow state");
         }
-        Service service = serviceRegistry.lookup(serviceURL);
+        Service service = query(serviceURL);
         final RelyingPartyContext rpc = new RelyingPartyContext();
         rpc.setVerified(service != null);
         rpc.setRelyingPartyId(serviceURL);
@@ -85,8 +93,20 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
             service = new Service(serviceURL, UNVERIFIED_GROUP, false);
             log.debug("Setting up RP context for unverified relying party {}", service);
         }
+        log.debug("Relying party context created for {}", service);
         profileRequestContext.addSubcontext(rpc);
         setCASService(profileRequestContext, service);
+        return null;
+    }
+
+    private Service query(final String serviceURL) {
+        for (ServiceRegistry registry : serviceRegistries) {
+            log.debug("Querying {} for CAS service URL {}", registry.getClass().getName(), serviceURL);
+            final Service service = registry.lookup(serviceURL);
+            if (service != null) {
+                return service;
+            }
+        }
         return null;
     }
 }

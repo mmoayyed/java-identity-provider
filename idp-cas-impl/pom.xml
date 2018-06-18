@@ -49,6 +49,11 @@
             <version>${opensaml.version}</version>
         </dependency>
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
             <groupId>${httpclient.groupId}</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
