@@ -77,9 +77,6 @@ public class AddRequestedAttributesToAttributeConsumingService extends AbstractP
     /** The context we use to get and put the {@link AttributeConsumingService}.*/
     private AttributeConsumingServiceContext acsContext;
 
-    /** The {@link AttributeConsumingService}} we are going to clone.*/
-    private AttributeConsumingService oldACS;
-
     /** Lookup strategy for an {@link AttributeConsumingService} index. */
     @Nullable private Function<ProfileRequestContext,Integer> indexLookupStrategy;
 
@@ -153,12 +150,6 @@ public class AddRequestedAttributesToAttributeConsumingService extends AbstractP
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        oldACS = acsContext.getAttributeConsumingService();
-        if (oldACS == null) {
-            log.error("{} Unable to find peer's AttributeConsumingService", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
 
         return true;
     }
@@ -180,9 +171,9 @@ public class AddRequestedAttributesToAttributeConsumingService extends AbstractP
         }
 
         try {
-            // Clone the ACS
-            final AttributeConsumingService newACS =
-                    XMLObjectSupport.cloneXMLObject(oldACS, CloneOutputOption.DropDOM);
+            // Create the ACS
+            final AttributeConsumingService newACS = (AttributeConsumingService)
+                    XMLObjectSupport.buildXMLObject(AttributeConsumingService.DEFAULT_ELEMENT_NAME);
             // Add in the RequestedAttributes
             for (final RequestedAttribute attribute: requestedAttributes) {
                 newACS.getRequestAttributes().add(
@@ -197,10 +188,10 @@ public class AddRequestedAttributesToAttributeConsumingService extends AbstractP
             log.error("{} Error mapping Attributesresponding to request", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.RUNTIME_EXCEPTION);
         } catch (final MarshallingException e) {
-            log.error("{} Error Cloning ACS", getLogPrefix(), e);
+            log.error("{} Error Cloning RequestedAttributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.RUNTIME_EXCEPTION);
        } catch (final UnmarshallingException e) {
-           log.error("{} Error Cloning ACS", getLogPrefix(), e);
+           log.error("{} Error Cloning RequestedAttributes", getLogPrefix(), e);
            ActionSupport.buildEvent(profileRequestContext, EventIds.RUNTIME_EXCEPTION);
         }
     }
