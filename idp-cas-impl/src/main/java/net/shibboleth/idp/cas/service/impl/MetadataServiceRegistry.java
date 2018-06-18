@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,25 +30,22 @@ import com.google.common.collect.Lists;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.StartsWithLocationCriterion;
-import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.Extensions;
+import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +66,6 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  */
 public class MetadataServiceRegistry implements ServiceRegistry {
-
-    /** Metadata attribute used to tag an entity as authorized to request proxy-granting tickets. */
-    private static final String PROXY_ATTRIBUTE = AbstractProtocolConfiguration.PROTOCOL_URI + "/authorizedToProxy";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MetadataServiceRegistry.class);
@@ -117,8 +115,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME),
                 new EndpointCriterion<>(acs),
                 new ProtocolCriterion(AbstractProtocolConfiguration.PROTOCOL_URI),
-                new StartsWithLocationCriterion()
-        );
+                new StartsWithLocationCriterion());
     }
 
     /**
@@ -133,60 +130,37 @@ public class MetadataServiceRegistry implements ServiceRegistry {
     @Nonnull
     protected Service create(@Nonnull final String serviceURL, @Nonnull final EntityDescriptor entity) {
         final XMLObject parent = entity.getParent();
-        return new Service(
+        final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
+        if (descriptor == null) {
+            throw new IllegalStateException("SPSSODescriptor element not found for entity " + entity.getEntityID());
+        }
+        final Service service = new Service(
                 serviceURL,
                 parent instanceof EntitiesDescriptor ? ((EntitiesDescriptor) parent).getName() : "unknown",
-                isAllowedToProxy(entity),
-                hasSingleLogoutService(entity));
+                isAuthorizedToProxy(descriptor),
+                hasSingleLogoutService(descriptor));
+        service.setEntityDescriptor(entity);
+        return service;
     }
 
-    private boolean hasSingleLogoutService(@Nonnull final EntityDescriptor entity) {
-        final SPSSODescriptor casSP = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
-        if (casSP != null) {
-            return casSP.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME).size() > 0;
-        }
-        return false;
-    }
-
-    private boolean isAllowedToProxy(@Nonnull final EntityDescriptor entity) {
-        final Attribute allowedToProxy = findAttribute(entity, PROXY_ATTRIBUTE);
-        if (allowedToProxy != null) {
-            final XMLObject first = allowedToProxy.getAttributeValues().iterator().next();
-            if (first instanceof XSAny) {
-                return Boolean.parseBoolean(((XSAny) first).getTextContent());
-            } else {
-                throw new RuntimeException("Expected boolean value for " + PROXY_ATTRIBUTE);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Find a matching entity attribute in the input metadata.
-     *
-     * @param entity the metadata to examine
-     * @param name the attribute name to search for
-     *
-     * @return matching attribute or null
-     */
-    @Nullable
-    private Attribute findAttribute(
-            @Nonnull final EntityDescriptor entity, @Nonnull @NotEmpty final String name) {
-
-        // Check for a tag match in the EntityAttributes extension of the entity and its parent(s).
-        Extensions exts = entity.getExtensions();
-        if (exts != null) {
-            final List<XMLObject> children = exts.getUnknownXMLObjects(EntityAttributes.DEFAULT_ELEMENT_NAME);
-            if (!children.isEmpty() && children.get(0) instanceof EntityAttributes) {
-                final EntityAttributes ea = (EntityAttributes) children.get(0);
-                for (Attribute attribute : ea.getAttributes()) {
-                    if (Objects.equals(attribute.getName(), name) &&
-                        Objects.equals(attribute.getNameFormat(), Attribute.URI_REFERENCE)) {
-                        return attribute;
-                    }
+    private boolean isAuthorizedToProxy(@Nonnull final SPSSODescriptor descriptor) {
+        final Set<X509Certificate> certs = new HashSet<>();
+        for (KeyDescriptor kd : descriptor.getKeyDescriptors()) {
+            if (kd.getKeyInfo() != null) {
+                try {
+                    certs.addAll(KeyInfoSupport.getCertificates(kd.getKeyInfo()));
+                } catch (CertificateException e) {
+                    throw new RuntimeException("Error decoding metadata certificate", e);
                 }
             }
         }
-        return null;
+        return certs.size() > 0;
+    }
+
+    private boolean hasSingleLogoutService(@Nonnull final SPSSODescriptor descriptor) {
+        if (descriptor != null) {
+            return descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME).size() > 0;
+        }
+        return false;
     }
 }

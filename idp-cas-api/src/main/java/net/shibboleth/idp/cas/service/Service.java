@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.service;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,6 +47,10 @@ public class Service implements Principal {
 
     /** Indicates whether a service wants to receive SLO messages. */
     private final boolean singleLogoutParticipant;
+
+    /** Source of service metadata derived from a SAML entity. */
+    @Nullable
+    private transient EntityDescriptor entityDescriptor;
 
 
     /**
@@ -115,6 +120,25 @@ public class Service implements Principal {
      */
     public boolean isSingleLogoutParticipant() {
         return singleLogoutParticipant;
+    }
+
+    /**
+     * Gets the SAML entity that is the source of service metadata.
+     *
+     * @return Entity descriptor for service defined in SAML metadata, otherwise null.
+     */
+    @Nullable
+    public EntityDescriptor getEntityDescriptor() {
+        return entityDescriptor;
+    }
+
+    /**
+     * Sets the SAML entity that is the source of service metadata.
+     *
+     * @param ed SAML entity descriptor.
+     */
+    public void setEntityDescriptor(@Nullable final EntityDescriptor ed) {
+        this.entityDescriptor = ed;
     }
 
     @Override

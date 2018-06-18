@@ -20,10 +20,12 @@ package net.shibboleth.idp.cas.flow.impl;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -48,7 +50,11 @@ public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
             throw new IllegalStateException("RelyingPartyContext not found");
         }
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setEntityDescriptor(new ServiceEntityDescriptor(getCASService(profileRequestContext)));
+        final Service service = getCASService(profileRequestContext);
+        final EntityDescriptor entity = service.getEntityDescriptor() != null
+                ? service.getEntityDescriptor()
+                : new ServiceEntityDescriptor(service);
+        mdCtx.setEntityDescriptor(entity);
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
 
         return null;
