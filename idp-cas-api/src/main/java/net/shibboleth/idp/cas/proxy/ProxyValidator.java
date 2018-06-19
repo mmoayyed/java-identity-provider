@@ -15,32 +15,28 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.test.flows.cas;
+package net.shibboleth.idp.cas.proxy;
 
-import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
-
-import javax.annotation.Nonnull;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import javax.annotation.Nonnull;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
+ * Strategy pattern component for proxy callback endpoint validation.
+ *
  * @author Marvin S. Addison
  */
-public class TestProxyAuthenticator implements ProxyAuthenticator<TrustEngine<X509Credential>> {
-
-    /** Whether to fail or not. */
-    private boolean failureFlag;
-
-    public void setFailureFlag(final boolean isFail) {
-        this.failureFlag = isFail;
-    }
-
-    @Override
-    public void authenticate(@Nonnull URI uri, TrustEngine<X509Credential> criteria) throws GeneralSecurityException {
-        if (failureFlag) {
-            throw new GeneralSecurityException("Proxy callback authentication failed (failureFlag==true)");
-        }
-    }
+public interface ProxyValidator {
+    /**
+     * Validates the proxy callback endpoint.
+     *
+     * @param profileRequestContext Profile request context.
+     * @param proxyCallbackUri Proxy callback URI to validate.
+     *
+     * @throws GeneralSecurityException On validation failure.
+     */
+    void validate(@Nonnull ProfileRequestContext profileRequestContext, @Nonnull URI proxyCallbackUri)
+            throws GeneralSecurityException;
 }

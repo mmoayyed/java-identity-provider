@@ -24,12 +24,11 @@ import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
+import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import org.joda.time.Instant;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
@@ -65,13 +64,13 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
                 ProtocolError.ProxyCallbackAuthenticationFailure.name());
     }
 
-    private static ProxyAuthenticator<TrustEngine<? super X509Credential>> mockProxyAuthenticator(final Exception toBeThrown)
+    private static ProxyValidator mockProxyAuthenticator(final Exception toBeThrown)
             throws Exception {
-        final ProxyAuthenticator<TrustEngine<? super X509Credential>> authenticator = mock(ProxyAuthenticator.class);
+        final ProxyValidator validator = mock(ProxyValidator.class);
         if (toBeThrown != null) {
-            doThrow(toBeThrown).when(authenticator).authenticate(any(URI.class), any(TrustEngine.class));
+            doThrow(toBeThrown).when(validator).validate(any(ProfileRequestContext.class), any(URI.class));
         }
-        return authenticator;
+        return validator;
     }
 
     private static RequestContext newRequestContext(final String pgtURL) {

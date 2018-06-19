@@ -36,8 +36,33 @@
 
     <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
 
-    <bean id="shibboleth.DefaultCASProxyAuthenticator"
-          class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyAuthenticator" />
+    <bean id="proxyTrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+        <constructor-arg name="chain">
+            <list>
+                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                      c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+                <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine" c:nameEvaluator="#{null}">
+                    <constructor-arg name="resolver">
+                        <bean class="org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver" c:names="#{null}">
+                            <constructor-arg name="info">
+                                <bean class="org.opensaml.security.x509.impl.BasicPKIXValidationInformation"
+                                      c:anchors="#{getObject('shibboleth.CASProxyTrustedCertificates') ?: getObject('shibboleth.DefaultCASProxyTrustedCertificates')}"
+                                      c:crls="#{null}"
+                                      c:depth="5" />
+                            </constructor-arg>
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg name="pkixEvaluator">
+                        <bean class="org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator" />
+                    </constructor-arg>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="proxyValidator"
+          class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator"
+          c:engine-ref="proxyTrustEngine" />
 
     <bean id="shibboleth.DefaultCASProxyValidateIdPSessionPredicate"
           class="com.google.common.base.Predicates"
@@ -60,6 +85,8 @@
     <util:set id="shibboleth.CASMetadataIndices">
         <ref bean="shibboleth.CASMetadataIndex" />
     </util:set>
+
+    <util:list id="shibboleth.DefaultCASProxyTrustedCertificates" />
 
     <import resource="../../conf/cas-protocol.xml" />
 

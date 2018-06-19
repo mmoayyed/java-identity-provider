@@ -32,6 +32,8 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,6 +41,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.webflow.execution.RequestContext;
+import org.testng.annotations.BeforeSuite;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -124,5 +127,15 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
 
     protected ProxyGrantingTicket createProxyGrantingTicket(final ProxyTicket pt) {
         return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), pt);
+    }
+
+    /**
+     *  Initialize OpenSAML.
+     *
+     * @throws InitializationException
+     */
+    @BeforeSuite
+    public void initOpenSAML() throws InitializationException {
+        InitializationService.initialize();
     }
 }

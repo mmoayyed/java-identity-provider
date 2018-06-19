@@ -3,9 +3,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd"
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd"
        default-init-method="initialize"
        default-destroy-method="destroy">
 
@@ -78,8 +81,97 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.DefaultCASProxyAuthenticator"
-          class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyAuthenticator" />
+    <util:list id="shibboleth.DefaultCASServiceRegistries">
+        <ref bean="shibboleth.CASServiceRegistry" />
+    </util:list>
+
+    <util:list id="shibboleth.CASProxyTrustedCertificates">
+        <bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
+                  p:resource="classpath:/credentials/localhost.pem" />
+    </util:list>
+
+    <bean id="shibboleth.MetadataCredentialResolver"
+          class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
+          p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
+          p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
+    </bean>
+
+    <bean id="shibboleth.KeyInfoCredentialResolver"
+          class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap"
+          factory-method="buildBasicInlineKeyInfoCredentialResolver" />
+
+    <bean id="shibboleth.MetadataResolver"
+          class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
+          p:parserPool-ref="shibboleth.ParserPool">
+        <constructor-arg name="metadata">
+            <bean class="java.io.File" c:pathname="src/test/resources/metadata/cas-test-metadata.xml" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.RoleDescriptorResolver"
+          class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
+          c:mdResolver-ref="shibboleth.MetadataResolver" />
+
+    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
+          depends-on="shibboleth.ParserPool"
+          p:parserPool-ref="shibboleth.ParserPool" />
+
+    <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+          p:maxPoolSize="100"
+          p:coalescing="true"
+          p:ignoreComments="true"
+          p:ignoreElementContentWhitespace="true"
+          p:namespaceAware="true">
+        <property name="builderAttributes">
+            <map>
+                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->
+                <entry key="http://apache.org/xml/properties/security-manager">
+                    <bean class="com.sun.org.apache.xerces.internal.util.SecurityManager" />
+                </entry>
+            </map>
+        </property>
+        <property name="builderFeatures">
+            <map>
+                <entry key="http://apache.org/xml/features/disallow-doctype-decl">
+                    <util:constant static-field="java.lang.Boolean.TRUE" />
+                </entry>
+                <entry key="http://apache.org/xml/features/validation/schema/normalized-value">
+                    <util:constant static-field="java.lang.Boolean.FALSE" />
+                </entry>
+                <entry key="http://javax.xml.XMLConstants/feature/secure-processing">
+                    <util:constant static-field="java.lang.Boolean.TRUE" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="proxyTrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+        <constructor-arg name="chain">
+            <list>
+                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                      c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+                <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine" c:nameEvaluator="#{null}">
+                    <constructor-arg name="resolver">
+                        <bean class="org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver" c:names="#{null}">
+                            <constructor-arg name="info">
+                                <bean class="org.opensaml.security.x509.impl.BasicPKIXValidationInformation"
+                                      c:anchors="#{getObject('shibboleth.CASProxyTrustedCertificates') ?: getObject('shibboleth.DefaultCASProxyTrustedCertificates')}"
+                                      c:crls="#{null}"
+                                      c:depth="5" />
+                            </constructor-arg>
+                        </bean>
+                    </constructor-arg>
+                    <constructor-arg name="pkixEvaluator">
+                        <bean class="org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator" />
+                    </constructor-arg>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="proxyValidator"
+          class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator"
+          c:engine-ref="proxyTrustEngine" />
 
 
     <!-- Flow beans -->
@@ -89,7 +181,7 @@
 
     <bean id="buildRelyingPartyContextAction"
           class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction"
-          c:registry-ref="shibboleth.CASServiceRegistry"/>
+          c:registries-ref="shibboleth.DefaultCASServiceRegistries" />
 
     <bean id="buildSAMLMetadataContextAction"
           class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
@@ -108,7 +200,7 @@
 
     <bean id="validateProxyCallbackAction"
           class="net.shibboleth.idp.cas.flow.impl.ValidateProxyCallbackAction"
-          c:proxyAuthenticator-ref="shibboleth.DefaultCASProxyAuthenticator"
+          c:validator-ref="proxyValidator"
           c:ticketService-ref="shibboleth.CASTicketService" />
 
     <bean id="validateRenewAction"

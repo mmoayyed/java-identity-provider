@@ -15,31 +15,34 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.proxy;
+package net.shibboleth.idp.test.flows.cas;
+
+import net.shibboleth.idp.cas.proxy.ProxyValidator;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 
 /**
- * Deprecated as of 3.4.0. Superseded by {@link ProxyValidator} interface.
- * <p>
- * Strategy pattern component for proxy callback authentication.
- *
- * @param <CriteriaType> Proxy validation criteria type.
+ * Test proxy validator component.
  *
  * @author Marvin S. Addison
- * @see ProxyValidator
  */
-@Deprecated
-public interface ProxyAuthenticator<CriteriaType> {
-    /**
-     * Authenticates the proxy callback URI.
-     *
-     * @param uri Proxy callback URI to validate.
-     * @param criteria Validation criteria.
-     *
-     * @throws java.security.GeneralSecurityException On authentication failure.
-     */
-    void authenticate(@Nonnull URI uri, CriteriaType criteria) throws GeneralSecurityException;
+public class TestProxyValidator implements ProxyValidator {
+
+    /** Whether to fail or not. */
+    private boolean failureFlag;
+
+    public void setFailureFlag(final boolean isFail) {
+        this.failureFlag = isFail;
+    }
+
+    @Override
+    public void validate(@Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final URI uri)
+            throws GeneralSecurityException {
+        if (failureFlag) {
+            throw new GeneralSecurityException("Proxy callback authentication failed (failureFlag==true)");
+        }
+    }
 }

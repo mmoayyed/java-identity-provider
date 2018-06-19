@@ -26,6 +26,7 @@ import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
 import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.proxy.ProxyIdentifiers;
+import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
@@ -72,7 +73,7 @@ public class ValidateProxyCallbackAction
 
     /** Validates the proxy callback endpoint. */
     @Nonnull
-    private final ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthnticator;
+    private final ProxyValidator proxyValidator;
 
     /** Manages CAS tickets. */
     @Nonnull
@@ -82,13 +83,13 @@ public class ValidateProxyCallbackAction
     /**
      * Creates a new instance.
      *
-     * @param proxyAuthenticator Component that validates the proxy callback endpoint.
+     * @param validator Component that validates the proxy callback endpoint.
      * @param ticketService Ticket service component.
      */
     public ValidateProxyCallbackAction(
-            @Nonnull final ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthenticator,
+            @Nonnull final ProxyValidator validator,
             @Nonnull final TicketServiceEx ticketService) {
-        proxyAuthnticator = Constraint.isNotNull(proxyAuthenticator, "ProxyAuthenticator cannot be null");
+        proxyValidator = Constraint.isNotNull(validator, "ProxyValidator cannot be null");
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
@@ -126,14 +127,7 @@ public class ValidateProxyCallbackAction
         }
         try {
             log.debug("Attempting proxy authentication to {}", proxyCallbackUri);
-            final TrustEngine<? super X509Credential> engine;
-            if (config.getSecurityConfiguration().getClientTLSValidationConfiguration() != null) {
-                engine = config.getSecurityConfiguration().getClientTLSValidationConfiguration().getX509TrustEngine();
-            } else {
-                log.debug("Proxy-granting ticket configuration does not define ClientTLSValidationConfiguration");
-                engine = null;
-            }
-            proxyAuthnticator.authenticate(proxyCallbackUri, engine);
+            proxyValidator.validate(profileRequestContext, proxyCallbackUri);
             final Instant expiration = DateTime.now().plus(config.getTicketValidityPeriod()).toInstant();
             if (ticket instanceof ServiceTicket) {
                 ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);

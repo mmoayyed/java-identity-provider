@@ -61,7 +61,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     private SessionManager sessionManager;
 
     @Autowired
-    private TestProxyAuthenticator testProxyAuthenticator;
+    private TestProxyValidator testProxyValidator;
 
     @Test
     public void testSuccess() throws Exception {
@@ -105,7 +105,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
 
-        testProxyAuthenticator.setFailureFlag(false);
+        testProxyValidator.setFailureFlag(false);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -129,7 +129,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
 
-        testProxyAuthenticator.setFailureFlag(true);
+        testProxyValidator.setFailureFlag(true);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 

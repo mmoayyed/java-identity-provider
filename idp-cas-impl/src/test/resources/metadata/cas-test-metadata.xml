@@ -235,4 +235,42 @@
         </SPSSODescriptor>
     </EntityDescriptor>
 
+    <!--
+       | Nobody-1 (authorizedToProxy="true", singleLogoutParticipant="false")
+       -->
+    <EntityDescriptor entityID="https://nobody-1.middleware.vt.edu/">
+        <SPSSODescriptor protocolSupportEnumeration="https://www.apereo.org/cas/protocol">
+            <KeyDescriptor use="signing">
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIDPDCCAiSgAwIBAgIGAWQZpmybMA0GCSqGSIb3DQEBCwUAMFIxIzAhBgNVBAMM
+                            Gm5vYm9keS0xLm1pZGRsZXdhcmUudnQuZWR1MRMwEQYDVQQLDApNaWRkbGV3YXJl
+                            MRYwFAYDVQQKDA1WaXJnaW5pYSBUZWNoMB4XDTE4MDYxOTIwMDQ1NFoXDTI4MDYx
+                            NjIwMDQ1NFowUjEjMCEGA1UEAwwabm9ib2R5LTEubWlkZGxld2FyZS52dC5lZHUx
+                            EzARBgNVBAsMCk1pZGRsZXdhcmUxFjAUBgNVBAoMDVZpcmdpbmlhIFRlY2gwggEi
+                            MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCkGXo1bVrEJ2rc4SV2jREraYaE
+                            h2jJ+B+vCSq2HYEyfXQpqn+yZL+Uo2wI3P9KyS11KOMTG1u5d5DPx+r052BqgZoz
+                            AU1j/lRbrAS5dfHzXW9G15hrQ6S4YHCnweyPcpXNXLeFG1Gh0R/wdW6ZVNUZrQok
+                            Pb/a1MK+gDlIuIuK3VSQilEb9UN+xmuuETniqPuzwYW2LZorUIg1eb+qSUdV24OW
+                            neVxhdp4uHM/rAtEIyJaAmjv3CF85yJ2FqMPATtl886alMj4hNA4j3Cyz27hRcYN
+                            L/c9BDjBRa1O9/zoC5D780HcC1+XX5KdBx2QWy200mmOK23UpzPEx1x/lVRFAgMB
+                            AAGjGDAWMBQGA1UdEQQNMAuCCWxvY2FsaG9zdDANBgkqhkiG9w0BAQsFAAOCAQEA
+                            bq4BNVm+sFivrX8gnwcB2rnJK42wD01ZRZvm+QfmrPvzn1VHFJOt4quqhcSBCwl1
+                            xLla2c5+EWFN8EP0RPJuna8h92QC5H6fmebKoY/h7QoUs0HcJYORyR2XcAnx35jw
+                            8gBqd5i+orLdHa2tYTrDjZ2H6BOc6+Hf/YdsPffokH9Fs+gRzMBLz8kwSJl+Wfq/
+                            Fdv2QemEzfjpK4cZ+fXfSQvAIvpO/AfA9V8pufzoKp/THd3F8LYpH0gpolLdMwFk
+                            vTfFHoBotoh4+zh6TJP0OMrm04etuBZ46BOAITqqaUDM6QPR6JrLNR8m4wDfeVFP
+                            tsnEAiP3/AthxkAp0iQhFQ==
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </KeyDescriptor>
+            <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                    Location="https://localhost:8443/"
+                    index="1"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+
 </EntitiesDescriptor>

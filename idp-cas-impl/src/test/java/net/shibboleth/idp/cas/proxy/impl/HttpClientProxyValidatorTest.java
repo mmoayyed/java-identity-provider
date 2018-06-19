@@ -26,13 +26,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.cas.flow.impl.AbstractFlowActionTest;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,18 +46,14 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 /**
- * Unit test for {@link HttpClientProxyAuthenticator} class.
+ * Unit test for {@link HttpClientProxyValidator} class.
  *
  * @author Marvin S. Addison
  */
-@ContextConfiguration(
-        locations = "/spring/proxy-authn-test.xml",
-        initializers = IdPPropertiesApplicationContextInitializer.class)
-@WebAppConfiguration
-@TestPropertySource(properties = {"idp.initializer.failFast = false"})
-public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContextTests {
+public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
 
-    private HttpClientProxyAuthenticator authenticator = new HttpClientProxyAuthenticator();
+    @Autowired
+    private HttpClientProxyValidator validator;
 
     @Autowired
     private ApplicationContext context;
@@ -64,34 +61,46 @@ public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContex
     @DataProvider(name = "data")
     public Object[][] buildTestData() {
         return new Object[][] {
-                // Trusted cert and acceptable response code
-                new Object[] { "testCase1", 200, null },
+                // Trusted cert from static trust source and acceptable response code
+                new Object[] { "https://localhost:8443", "src/test/resources/credentials/localhost.p12", 200, null },
 
-                // Trusted cert and unacceptable response code
-                new Object[] { "testCase1", 404, new FailedLoginException() },
+                // Trusted cert from metadata source and acceptable response code
+                new Object[] {
+                        "https://nobody-1.middleware.vt.edu/",
+                        "src/test/resources/credentials/nobody-1.p12",
+                        200,
+                        null,
+                },
+
+                // Trusted cert from static trust source and unacceptable response code
+                new Object[] {
+                        "https://localhost:8443",
+                        "src/test/resources/credentials/localhost.p12",
+                        404,
+                        new FailedLoginException()
+                },
 
                 // Untrusted cert
-                new Object[] { "testCase2", 200, new CertificateException() },
-
-                // Ensure cert is rejected when no trust engine is configured
-                new Object[] { "doesNotExist", 200, new CertificateException() },
+                new Object[] {
+                        "https://localhost:8443",
+                        "src/test/resources/credentials/nobody-2.p12",
+                        200,
+                        new CertificateException(),
+                },
         };
     }
 
     @Test(dataProvider = "data")
-    public void testAuthenticate(final String trustEngineBean, final int status, final Exception expected)
+    public void testAuthenticate(
+            final String serviceURL, final String keyStorePath, final int status, final Exception expected)
             throws Exception {
         Server server = null;
         try {
-            server = startServer(new ConfigurableStatusHandler(status));
-            TrustEngine<X509Credential> trustEngine;
-            try {
-                trustEngine = context.getBean(trustEngineBean, TrustEngine.class);
-            } catch (NoSuchBeanDefinitionException e) {
-                trustEngine = null;
-            }
-            authenticator.setTimeout(5000); // 5s timeout for Windows
-            authenticator.authenticate(new URI("https://localhost:8443/?pgtId=A&pgtIOU=B"), trustEngine);
+            server = startServer(keyStorePath, new ConfigurableStatusHandler(status));
+            validator.setTimeout(5000); // 5s timeout for Windows
+            validator.validate(
+                    buildProfileRequestContext(serviceURL),
+                    new URI("https://localhost:8443/?pgtId=A&pgtIOU=B"));
             if (expected != null) {
                 fail("Proxy authentication should have failed with " + expected);
             }
@@ -107,12 +116,12 @@ public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContex
         }
     }
 
-    private Server startServer(final Handler handler) {
+    private Server startServer(final String keyStorePath, final Handler handler) {
         final Server server = new Server();
 
         final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStoreType("PKCS12");
-        sslContextFactory.setKeyStorePath("src/test/resources/credentials/localhost.p12");
+        sslContextFactory.setKeyStorePath(keyStorePath);
         sslContextFactory.setKeyStorePassword("changeit");
         final ServerConnector connector = new ServerConnector(server, sslContextFactory);
         connector.setHost("127.0.0.1");
@@ -159,5 +168,11 @@ public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContex
             request.setHandled(true);
             servletResponse.getWriter().println("OK");
         }
+    }
+
+    private ProfileRequestContext buildProfileRequestContext(final String serviceUrl) {
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        prc.addSubcontext(new ServiceContext(new Service(serviceUrl, "unknown", true, false)));
+        return prc;
     }
 }
