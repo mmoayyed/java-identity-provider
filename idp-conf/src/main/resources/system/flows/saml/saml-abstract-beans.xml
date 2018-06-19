@@ -82,8 +82,8 @@
         </constructor-arg>
     </bean>
 
-    <bean id="AddRequestedAttributesToAttributeConsumingService" scope="prototype"
-            class="net.shibboleth.idp.saml.saml2.profile.impl.AddRequestedAttributesToAttributeConsumingService"
+    <bean id="MapRequestedAttributesInAttributeConsumingService" scope="prototype"
+            class="net.shibboleth.idp.saml.saml2.profile.impl.MapRequestedAttributesInAttributeConsumingService"
             p:resolverService-ref="shibboleth.AttributeResolverService" />
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"

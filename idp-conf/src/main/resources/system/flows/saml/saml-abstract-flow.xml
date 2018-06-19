@@ -18,7 +18,7 @@
         <evaluate expression="SAMLProtocolAndRole" />
         <evaluate expression="SAMLMetadataLookup" />
         <evaluate expression="SAMLPopulateAttributeConsumingService" />
-        <evaluate expression="AddRequestedAttributesToAttributeConsumingService" />
+        <evaluate expression="MapRequestedAttributesInAttributeConsumingService" />
 
         <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
