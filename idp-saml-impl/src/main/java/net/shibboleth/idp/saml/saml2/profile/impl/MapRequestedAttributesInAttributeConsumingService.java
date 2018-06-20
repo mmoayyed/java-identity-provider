@@ -103,31 +103,33 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         acsContext = attributeConsumingServiceContextLookupStrategy.apply(profileRequestContext);
-        if (acsContext == null) {
-            log.error("{} Unable to find AttributeConsumingServiceContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-
         return true;
     }
 
     /** {@inheritDoc}*/
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        if (acsContext == null) {
+            log.trace("{} AttributeConsumingServiceContext not found", getLogPrefix());
+            return;
+        }
+
         final AttributeConsumingService acs = acsContext.getAttributeConsumingService();
         if (acs == null) {
-            log.trace("{} no acs to map", getLogPrefix());
+            log.trace("{} no AttributeConsumingService to map", getLogPrefix());
             return;
         }
         
         if (acs.getRequestAttributes().isEmpty() ||
-            acs.getObjectMetadata().containsKey(AttributesMapContainer.class)) {
-            // Nothing to map or already mapped
+            acs.getObjectMetadata().containsKey(AttributesMapContainer.class) ||
+            acs.getParent() != null) {
+            log.trace("{} skipping mapping for AttributeConsumingService", getLogPrefix());
+            // Nothing to map, already mapped, or attached to metadata (and hence already scanned)
             return;
         }
         try {
             final AttributeMappingNodeProcessor processor = new AttributeMappingNodeProcessor(attributeResolverService);
+            log.debug("{} mapping requested Attributes for generated AttributeConsumingService", getLogPrefix());
             processor.process(acs);
         } catch (final FilterException e) {
             log.error("{} Error mapping Attributesresponding to request", getLogPrefix(), e);
