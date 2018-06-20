@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -39,6 +40,7 @@ import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.StartsWithLocationCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
@@ -51,13 +53,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * CAS service registry implementation that queries SAML metadata for a CAS service given a CAS service URL using
- * the following strategy. A {@link MetadataResolver} is queried for an {@link EntityDescriptor} that contains at
- * least one <code>AssertionConsumerService</code> endpoint that meets the following criteria:
+ * the following strategy. A {@link MetadataResolver} is queried for an {@link EntityDescriptor} that meets the
+ * following criteria:
  *
  * <ol>
- *     <li>Defines <code>https://www.apereo.org/cas/protocol</code> in its <code>protocolSupportEnumeration</code>
- *         attribute.</li>
- *     <li>Defines a <code>Location</code> URL where the given service URL starts with the ACS URL.</li>
+ *     <li>Defines <code>{@value AbstractProtocolConfiguration#PROTOCOL_URI}</code> in the
+ *        <code>protocolSupportEnumeration</code> attribute of an <code>SPSSODescriptor</code> element.</li>
+ *     <li>Defines an <code>AssertionConsumerService</code> element where the <code>Binding</code> URI is
+ *        {@value #LOGIN_BINDING}.</li>
+ *      <li>Matching <code>AssertionConsumerService</code> element also defines a <code>Location</code> attribute
+ *        where the given service URL starts with the ACS location.</li>
  * </ol>
  *
  * If a single match is found, it is converted to a {@link Service} and returned; if more than result is found, a
@@ -66,6 +71,12 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  */
 public class MetadataServiceRegistry implements ServiceRegistry {
+
+    /** URI identifying an ACS endpoint that requests CAS service tickets. */
+    public static final String LOGIN_BINDING = LoginConfiguration.PROTOCOL_URI;
+
+    /** URI identifying a CAS SLO endpoint. */
+    public static final String LOGOUT_BINDING = AbstractProtocolConfiguration.PROTOCOL_URI + "/logout";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MetadataServiceRegistry.class);
@@ -109,11 +120,12 @@ public class MetadataServiceRegistry implements ServiceRegistry {
      */
     @Nonnull
     protected CriteriaSet criteria(@Nonnull final String serviceURL) {
-        final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
-        acs.setLocation(serviceURL);
+        final AssertionConsumerService loginACS = new AssertionConsumerServiceBuilder().buildObject();
+        loginACS.setBinding(LOGIN_BINDING);
+        loginACS.setLocation(serviceURL);
         return new CriteriaSet(
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME),
-                new EndpointCriterion<>(acs),
+                new EndpointCriterion<>(loginACS),
                 new ProtocolCriterion(AbstractProtocolConfiguration.PROTOCOL_URI),
                 new StartsWithLocationCriterion());
     }
@@ -159,7 +171,11 @@ public class MetadataServiceRegistry implements ServiceRegistry {
 
     private boolean hasSingleLogoutService(@Nonnull final SPSSODescriptor descriptor) {
         if (descriptor != null) {
-            return descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME).size() > 0;
+            for (Endpoint endpoint : descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
+                if (LOGOUT_BINDING.equals(endpoint.getBinding())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
