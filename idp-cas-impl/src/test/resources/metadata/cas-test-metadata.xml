@@ -2,9 +2,7 @@
         Name="urn:mace:example.org"
         xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
         xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-        xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
         xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
-        xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
         validUntil="2050-12-31T23:59:59Z">
 
     <!--
@@ -125,6 +123,23 @@
        -->
     <EntityDescriptor entityID="https://alpha.example.org/">
         <SPSSODescriptor protocolSupportEnumeration="https://www.apereo.org/cas/protocol">
+            <AssertionConsumerService
+                    Binding="https://www.apereo.org/cas/protocol/login"
+                    Location="https://alpha.example.org/"
+                    index="1"/>
+            <AssertionConsumerService
+                    Binding="https://www.apereo.org/cas/protocol/login"
+                    Location="https://alpha.dev.example.org/"
+                    index="2"/>
+            <AssertionConsumerService
+                    Binding="https://www.apereo.org/cas/protocol/login"
+                    Location="https://alpha.test.example.org/"
+                    index="3"/>
+            <SingleLogoutService
+                    Binding="https://www.apereo.org/cas/protocol/logout"
+                    Location="https://not.used.invalid/"/>
+        </SPSSODescriptor>
+        <AttributeAuthorityDescriptor protocolSupportEnumeration="https://www.apereo.org/cas/protocol">
             <KeyDescriptor use="signing">
                 <ds:KeyInfo>
                     <ds:X509Data>
@@ -195,22 +210,10 @@
                     </ds:X509Data>
                 </ds:KeyInfo>
             </KeyDescriptor>
-            <AssertionConsumerService
-                    Binding="https://www.apereo.org/cas/protocol/login"
-                    Location="https://alpha.example.org/"
-                    index="1"/>
-            <AssertionConsumerService
-                    Binding="https://www.apereo.org/cas/protocol/login"
-                    Location="https://alpha.dev.example.org/"
-                    index="2"/>
-            <AssertionConsumerService
-                    Binding="https://www.apereo.org/cas/protocol/login"
-                    Location="https://alpha.test.example.org/"
-                    index="3"/>
-            <SingleLogoutService
-                    Binding="https://www.apereo.org/cas/protocol/logout"
-                    Location="https://not.used.invalid/"/>
-        </SPSSODescriptor>
+            <AttributeService
+                    Binding="https://www.apereo.org/cas/protocol/proxy"
+                    Location="https://alpha.example.org/proxy_receptor" />
+        </AttributeAuthorityDescriptor>
     </EntityDescriptor>
 
     <!--

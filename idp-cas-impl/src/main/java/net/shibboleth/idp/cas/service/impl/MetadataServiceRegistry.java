@@ -17,11 +17,7 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +25,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
+import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -40,14 +37,14 @@ import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.StartsWithLocationCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.AttributeAuthorityDescriptor;
+import org.opensaml.saml.saml2.metadata.AttributeService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
-import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,16 +64,27 @@ import org.slf4j.LoggerFactory;
  *
  * If a single match is found, it is converted to a {@link Service} and returned; if more than result is found, a
  * {@link ResolverException} is raised, otherwise null is returned.
+ * <p>
+ * The presence of an <code>AttributeAuthorityDescriptor</code> element that advertises protocol support for
+ * <code>{@value AbstractProtocolConfiguration#PROTOCOL_URI}</code> signals a CAS proxy endpoint. If at least one
+ * <code>AttributeService</code> with a binding of <code>{@value #PROXY_BINDING}</code> is defined, the service is
+ * authorized to request proxy granting tickets.
+ * <p>
+ * See the <a href="https://wiki.shibboleth.net/confluence/x/BQfKAg">SAML metadata profile for CAS</a> for further
+ * details.
  *
  * @author Marvin S. Addison
  */
 public class MetadataServiceRegistry implements ServiceRegistry {
 
     /** URI identifying an ACS endpoint that requests CAS service tickets. */
-    public static final String LOGIN_BINDING = LoginConfiguration.PROTOCOL_URI;
+    public static final String LOGIN_BINDING = LoginConfiguration.PROFILE_ID;
 
     /** URI identifying a CAS SLO endpoint. */
     public static final String LOGOUT_BINDING = AbstractProtocolConfiguration.PROTOCOL_URI + "/logout";
+
+    /** URI identifying a CAS proxy callback endoint. */
+    public static final String PROXY_BINDING = ProxyConfiguration.PROFILE_ID;
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MetadataServiceRegistry.class);
@@ -142,34 +150,30 @@ public class MetadataServiceRegistry implements ServiceRegistry {
     @Nonnull
     protected Service create(@Nonnull final String serviceURL, @Nonnull final EntityDescriptor entity) {
         final XMLObject parent = entity.getParent();
-        final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
-        if (descriptor == null) {
-            throw new IllegalStateException("SPSSODescriptor element not found for entity " + entity.getEntityID());
-        }
         final Service service = new Service(
                 serviceURL,
                 parent instanceof EntitiesDescriptor ? ((EntitiesDescriptor) parent).getName() : "unknown",
-                isAuthorizedToProxy(descriptor),
-                hasSingleLogoutService(descriptor));
+                isAuthorizedToProxy(entity),
+                hasSingleLogoutService(entity));
         service.setEntityDescriptor(entity);
         return service;
     }
 
-    private boolean isAuthorizedToProxy(@Nonnull final SPSSODescriptor descriptor) {
-        final Set<X509Certificate> certs = new HashSet<>();
-        for (KeyDescriptor kd : descriptor.getKeyDescriptors()) {
-            if (kd.getKeyInfo() != null) {
-                try {
-                    certs.addAll(KeyInfoSupport.getCertificates(kd.getKeyInfo()));
-                } catch (CertificateException e) {
-                    throw new RuntimeException("Error decoding metadata certificate", e);
+    private boolean isAuthorizedToProxy(@Nonnull final EntityDescriptor entity) {
+        final AttributeAuthorityDescriptor descriptor = entity.getAttributeAuthorityDescriptor(
+                AbstractProtocolConfiguration.PROTOCOL_URI);
+        if (descriptor != null) {
+            for (AttributeService as : descriptor.getAttributeServices()) {
+                if (PROXY_BINDING.equals(as.getBinding())) {
+                    return true;
                 }
             }
         }
-        return certs.size() > 0;
+        return false;
     }
 
-    private boolean hasSingleLogoutService(@Nonnull final SPSSODescriptor descriptor) {
+    private boolean hasSingleLogoutService(@Nonnull final EntityDescriptor entity) {
+        final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
         if (descriptor != null) {
             for (Endpoint endpoint : descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
                 if (LOGOUT_BINDING.equals(endpoint.getBinding())) {
