@@ -81,7 +81,8 @@ public class MetadataServiceRegistryTest {
         metadataResolver.setParserPool(XMLObjectProviderRegistrySupport.getParserPool());
         metadataResolver.setMaxRefreshDelay(500000);
         metadataResolver.setId("cas");
-        metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new EndpointMetadataIndex()));
+        metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new EndpointMetadataIndex(
+                new MetadataServiceRegistry.LoginEndpointPredicate())));
         metadataResolver.initialize();
     }
 

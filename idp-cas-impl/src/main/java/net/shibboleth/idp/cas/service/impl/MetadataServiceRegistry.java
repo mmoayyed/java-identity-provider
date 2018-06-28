@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
@@ -37,8 +38,6 @@ import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.StartsWithLocationCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
-import org.opensaml.saml.saml2.metadata.AttributeAuthorityDescriptor;
-import org.opensaml.saml.saml2.metadata.AttributeService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -65,13 +64,16 @@ import org.slf4j.LoggerFactory;
  * If a single match is found, it is converted to a {@link Service} and returned; if more than result is found, a
  * {@link ResolverException} is raised, otherwise null is returned.
  * <p>
- * The presence of an <code>AttributeAuthorityDescriptor</code> element that advertises protocol support for
- * <code>{@value AbstractProtocolConfiguration#PROTOCOL_URI}</code> signals a CAS proxy endpoint. If at least one
- * <code>AttributeService</code> with a binding of <code>{@value #PROXY_BINDING}</code> is defined, the service is
- * authorized to request proxy granting tickets.
- * <p>
- * See the <a href="https://wiki.shibboleth.net/confluence/x/BQfKAg">SAML metadata profile for CAS</a> for further
- * details.
+ * Two additional aspects of a CAS service may be specified in metadata:
+ * <ol>
+ *    <li><code>allowedToProxy</code> - True if there is an code>AssertionConsumerService</code> element with a
+ *    binding of <code>{@value #PROXY_BINDING}</code>, false otherwise.</li>
+ *    <li><code>singleLogoutParticipant</code> - True if there is a <code>SingleLogoutService</code> element with a
+ *    binding of <code>{@value #LOGOUT_BINDING}</code> and a location of <code>{@value #LOGOUT_LOCATION}</code>,
+ *    false otherwise.</li>
+ * </ol>
+ * See the <a href="https://wiki.shibboleth.net/confluence/x/BQfKAg">SAML metadata profile for CAS</a> for the full
+ * specification.
  *
  * @author Marvin S. Addison
  */
@@ -82,6 +84,9 @@ public class MetadataServiceRegistry implements ServiceRegistry {
 
     /** URI identifying a CAS SLO endpoint. */
     public static final String LOGOUT_BINDING = AbstractProtocolConfiguration.PROTOCOL_URI + "/logout";
+
+    /** URN marking that SLO endpoint is dynamic based on service ticket URL. */
+    public static final String LOGOUT_LOCATION= "urn:mace:shibboleth:profile:CAS:logout";
 
     /** URI identifying a CAS proxy callback endoint. */
     public static final String PROXY_BINDING = ProxyConfiguration.PROFILE_ID;
@@ -160,11 +165,10 @@ public class MetadataServiceRegistry implements ServiceRegistry {
     }
 
     private boolean isAuthorizedToProxy(@Nonnull final EntityDescriptor entity) {
-        final AttributeAuthorityDescriptor descriptor = entity.getAttributeAuthorityDescriptor(
-                AbstractProtocolConfiguration.PROTOCOL_URI);
+        final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
         if (descriptor != null) {
-            for (AttributeService as : descriptor.getAttributeServices()) {
-                if (PROXY_BINDING.equals(as.getBinding())) {
+            for (AssertionConsumerService acs : descriptor.getAssertionConsumerServices()) {
+                if (PROXY_BINDING.equals(acs.getBinding())) {
                     return true;
                 }
             }
@@ -176,11 +180,22 @@ public class MetadataServiceRegistry implements ServiceRegistry {
         final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
         if (descriptor != null) {
             for (Endpoint endpoint : descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
-                if (LOGOUT_BINDING.equals(endpoint.getBinding())) {
+                if (LOGOUT_BINDING.equals(endpoint.getBinding()) && LOGOUT_LOCATION.equals(endpoint.getLocation())) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Predicate defines CAS login endpoints so that the metadata index on endpoints can be scoped to the smallest
+     * set needed to support CAS entities in SAML metadata.
+     */
+    public static class LoginEndpointPredicate implements Predicate<Endpoint> {
+        @Override
+        public boolean apply(@Nullable final Endpoint endpoint) {
+            return LOGIN_BINDING.equals(endpoint.getBinding());
+        }
     }
 }
