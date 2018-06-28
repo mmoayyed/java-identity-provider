@@ -51,6 +51,16 @@
         <ref bean="shibboleth.CASServiceRegistry" />
     </util:list>
 
+    <bean id="shibboleth.CASMetadataIndex" class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex">
+        <constructor-arg name="endpointPredicate">
+            <bean class="net.shibboleth.idp.cas.service.impl.MetadataServiceRegistry.LoginEndpointPredicate" />
+        </constructor-arg>
+    </bean>
+
+    <util:set id="shibboleth.CASMetadataIndices">
+        <ref bean="shibboleth.CASMetadataIndex" />
+    </util:set>
+
     <import resource="../../conf/cas-protocol.xml" />
 
 </beans>

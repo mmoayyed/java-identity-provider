@@ -10,7 +10,7 @@
                         urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
-                        
+
     <!-- ========================================================================================== -->
     <!--                             Metadata Configuration                                         -->
     <!--                                                                                            -->
@@ -62,6 +62,17 @@
     <!--
     <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="PATH_TO_YOUR_METADATA"/>
     -->
-          
-    
+
+
+    <!--
+    Example CAS metadata source.
+    -->
+
+    <!--
+    <MetadataProvider id="CasMetadata"
+                      xsi:type="FilesystemMetadataProvider"
+                      metadataFile="PATH_TO_YOUR_METADATA"
+                      indexesRef="shibboleth.CASMetadataIndices" />
+    -->
+
 </MetadataProvider>
