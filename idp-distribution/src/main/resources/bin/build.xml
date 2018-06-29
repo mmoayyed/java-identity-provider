@@ -186,6 +186,11 @@
         <property name="idp.scope" value="${DOMAIN}"/>
     </target>
 
+    <target name="setkeysize" if="idp.set.keysize" depends="checkproperties">
+        <TGT>setkeysize</TGT>
+        <property name="idp.keysize" value="3072"/>
+    </target>
+
     <target name="askscope" if="idp.ask.scope" depends="checkproperties">
         <TGT>askscope</TGT>
         <input message="Attribute Scope:" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
@@ -202,7 +207,7 @@
      KEY MANAGEMENT
     -->
 
-    <target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, backchannel-key, sealer" />
+    <target name="genkeys" depends="init, preload, checkproperties, setkeysize, signing-key, encryption-key, backchannel-key, sealer" />
 
     <target name="checkproperties" depends="gettarget, v2detect, target-properties">
         <TGT>checkproperties</TGT>
@@ -292,6 +297,12 @@
                 <isfalse value="${idp.properties.present}" />
             </and>
         </condition>
+
+        <condition property="idp.set.keysize">
+            <not>
+                <isset property="idp.keysize"/>
+            </not>
+		</condition>
 
         <condition property="idp.write.scope">
             <!-- We write the scope if we set it, ask for it, or if it's supplied -->
@@ -416,7 +427,7 @@
         <TGT>signing-key</TGT>
         <echo>Generating Signing Key, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
-        <selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-signing.key" certificateFile="${idp.target.dir}/credentials/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+        <selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-signing.key" certificateFile="${idp.target.dir}/credentials/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}"  keysize="${idp.keysize}"/>
         <echo>...done</echo>
     </target>
 
@@ -424,7 +435,7 @@
         <TGT>encryption-key</TGT>
         <echo>Creating Encryption Key, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
-        <selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-encryption.key" certificateFile="${idp.target.dir}/credentials/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+        <selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-encryption.key" certificateFile="${idp.target.dir}/credentials/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}"  keysize="${idp.keysize}"/>
         <echo>...done</echo>
     </target>
 
@@ -432,7 +443,7 @@
         <TGT>backchannel-key</TGT>
         <echo>Creating Backchannel keystore, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
-        <selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-backchannel.p12" certificateFile="${idp.target.dir}/credentials/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+        <selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-backchannel.p12" certificateFile="${idp.target.dir}/credentials/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" keysize="${idp.keysize}" />
         <echo>...done</echo>
     </target>
 
