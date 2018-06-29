@@ -22,8 +22,8 @@ import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;

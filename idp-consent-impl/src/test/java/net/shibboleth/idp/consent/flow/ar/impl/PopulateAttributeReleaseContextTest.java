@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.logic.impl.PreferExplicitOrderComparator;
 import net.shibboleth.idp.profile.ActionTestingSupport;

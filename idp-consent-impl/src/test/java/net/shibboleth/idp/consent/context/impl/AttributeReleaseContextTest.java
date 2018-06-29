@@ -23,6 +23,7 @@ import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

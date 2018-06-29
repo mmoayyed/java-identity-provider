@@ -17,47 +17,9 @@
 
 package net.shibboleth.idp.consent.context.impl;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-
-import org.opensaml.messaging.context.BaseContext;
-
-import com.google.common.base.MoreObjects;
-
 /**
  * Context for attribute release consent.
- * 
- * Holds the attributes for which consent is obtained.
+ * @deprecated Use {@link net.shibboleth.idp.consent.context.AttributeReleaseContext}
  */
-public class AttributeReleaseContext extends BaseContext {
-
-    /** Attributes to be consented to. */
-    @Nonnull @NonnullElements @Live private Map<String, IdPAttribute> consentableAttributes;
-
-    /** Constructor. */
-    public AttributeReleaseContext() {
-        consentableAttributes = new LinkedHashMap<>();
-    }
-
-    /**
-     * Get the attributes to be consented to.
-     * 
-     * @return the attributes to be consented to
-     */
-    @Nonnull @NonnullElements @Live public Map<String, IdPAttribute> getConsentableAttributes() {
-        return consentableAttributes;
-    }
-
-    /** {@inheritDoc} */
-    @Override public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("consentableAttributes", consentableAttributes)
-                .toString();
-    }
-}
+public class AttributeReleaseContext extends net.shibboleth.idp.consent.context.AttributeReleaseContext
+{}

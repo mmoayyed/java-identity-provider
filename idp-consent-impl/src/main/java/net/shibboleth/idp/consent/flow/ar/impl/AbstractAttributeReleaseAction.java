@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;

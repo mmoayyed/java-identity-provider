@@ -28,8 +28,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
