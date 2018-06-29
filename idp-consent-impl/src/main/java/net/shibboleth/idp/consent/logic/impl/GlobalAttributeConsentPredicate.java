@@ -22,8 +22,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
-import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;

@@ -24,8 +24,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.impl.Consent;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;

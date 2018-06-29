@@ -22,7 +22,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;

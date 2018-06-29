@@ -19,7 +19,8 @@ package net.shibboleth.idp.consent.context.impl;
 
 import java.util.Map;
 
-import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 
 import org.testng.Assert;

@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.impl.Consent;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;

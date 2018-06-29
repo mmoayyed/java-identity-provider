@@ -19,13 +19,13 @@ package net.shibboleth.idp.consent.audit.impl;
 
 import java.util.Collections;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+
+import net.shibboleth.idp.consent.context.ConsentContext;
 
 /** {@link CurrentConsentValuesAuditExtractor} unit test. */
 public class CurrentConsentValuesAuditExtractorTest extends AbstractConsentAuditExtractorTest {

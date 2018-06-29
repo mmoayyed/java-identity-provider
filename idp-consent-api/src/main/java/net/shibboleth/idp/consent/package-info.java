@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.context.impl;
-
 /**
- * Context representing the state of a consent flow.
- * @deprecated Use {@link net.shibboleth.idp.consent.context.ConsentContext}
+ * Classed related to consent.
  */
-public class ConsentContext extends net.shibboleth.idp.consent.context.ConsentContext
-{}
+
+package net.shibboleth.idp.consent;

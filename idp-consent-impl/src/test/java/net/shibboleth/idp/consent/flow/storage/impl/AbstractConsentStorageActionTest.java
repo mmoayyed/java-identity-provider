@@ -20,8 +20,8 @@ package net.shibboleth.idp.consent.flow.storage.impl;
 import java.io.IOException;
 import java.util.Map;
 
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentActionTest;
-import net.shibboleth.idp.consent.impl.Consent;
 import net.shibboleth.idp.consent.storage.impl.ConsentSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;

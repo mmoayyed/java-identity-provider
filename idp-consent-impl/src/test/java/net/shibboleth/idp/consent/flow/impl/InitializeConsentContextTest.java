@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.consent.flow.impl;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;

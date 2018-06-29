@@ -83,7 +83,7 @@
         <constructor-arg name="f">
             <bean id="shibboleth.ChildLookup.ConsentContext"
                 class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                c:type="#{ T(net.shibboleth.idp.consent.context.impl.ConsentContext) }" />
+                c:type="#{ T(net.shibboleth.idp.consent.context.ConsentContext) }" />
         </constructor-arg>
     </bean>
 

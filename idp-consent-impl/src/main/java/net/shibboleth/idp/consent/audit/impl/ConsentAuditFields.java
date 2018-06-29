@@ -23,7 +23,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Constants to use for audit logging fields stored in an {@link net.shibboleth.idp.profile.context.AuditContext} as a
- * child of an {@link net.shibboleth.idp.consent.context.impl.ConsentContext}.
+ * child of an {@link net.shibboleth.idp.consent.context.ConsentContext}.
  */
 public final class ConsentAuditFields {
 

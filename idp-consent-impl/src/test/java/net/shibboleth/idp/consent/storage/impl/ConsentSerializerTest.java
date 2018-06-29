@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;

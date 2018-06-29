@@ -27,6 +27,7 @@ import java.util.Map;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 
 /**

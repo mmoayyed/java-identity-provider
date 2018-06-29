@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.consent.impl.Consent;
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.consent.flow.storage.impl;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 

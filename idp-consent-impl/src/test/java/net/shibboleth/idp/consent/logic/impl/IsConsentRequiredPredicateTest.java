@@ -20,9 +20,9 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.util.Map;
 import java.util.Objects;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.impl.Consent;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;

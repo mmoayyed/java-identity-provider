@@ -19,7 +19,7 @@ package net.shibboleth.idp.consent.flow.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.context.impl.ConsentContext;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 
