@@ -1,4 +1,4 @@
-rem @Echo off
+@Echo off
 REM Generate msm
 setlocal
 
