@@ -28,6 +28,7 @@
         idp.sealer.password:
         idp.sealer.alias:
         idp.keystore.password:
+        idp.keysize: to change from the the default of 3072 
         idp.scope: The scope to assert.  If present this should also be present in idp.merge.properties
         idp.merge.properties: The name of a property file to merge with idp.properties.  This file only
           used when doing the initial create of idp.properties, and is deleted after processing
