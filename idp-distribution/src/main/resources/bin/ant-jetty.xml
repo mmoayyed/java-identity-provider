@@ -80,10 +80,7 @@
         <mkdir dir="static" />
     </target>
 
-    <target name="copyinis" depends="properties, directories, copyidpini, rewriteidpini">
-        <copy file="jetty-base/start.d.dist/jsp.ini" tofile="jetty-base/start.d/jsp.ini" overwrite="false" failonerror="false" />
-        <copy file="jetty-base/start.d.dist/jstl.ini" tofile="jetty-base/start.d/jstl.ini" overwrite="false" failonerror="false" />
-    </target>
+    <target name="copyinis" depends="properties, directories, copyidpini, rewriteidpini"/>
 
     <target name="copyidpini" depends="directories" unless="idp.ini.present">
         <mergeproperties inFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
