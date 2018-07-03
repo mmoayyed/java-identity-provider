@@ -26,8 +26,6 @@ import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;

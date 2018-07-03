@@ -76,7 +76,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * @param profileId Unique profile identifier.
      * @param ticketTTL Ticket validity period in milliseconds.
      */
-    public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId, @Positive long ticketTTL) {
+    public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId, @Positive final long ticketTTL) {
         super(profileId);
         resolveAttributesPredicate = Predicates.alwaysTrue();
         ticketValidityPeriod = ticketTTL;

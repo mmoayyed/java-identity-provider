@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Two additional aspects of a CAS service may be specified in metadata:
  * <ol>
- *    <li><code>allowedToProxy</code> - True if there is an code>AssertionConsumerService</code> element with a
+ *    <li><code>allowedToProxy</code> - True if there is an <code>AssertionConsumerService</code> element with a
  *    binding of <code>{@value #PROXY_BINDING}</code>, false otherwise.</li>
  *    <li><code>singleLogoutParticipant</code> - True if there is a <code>SingleLogoutService</code> element with a
  *    binding of <code>{@value #LOGOUT_BINDING}</code> and a location of <code>{@value #LOGOUT_LOCATION}</code>,
@@ -110,7 +110,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
 
     @Nullable
     @Override
-    public Service lookup(@Nonnull String serviceURL) {
+    public Service lookup(final @Nonnull String serviceURL) {
         try {
             final List<EntityDescriptor> entities = Lists.newArrayList(metadataResolver.resolve(criteria(serviceURL)));
             if (entities.size() > 1) {
@@ -118,7 +118,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
             } else if (entities.size() == 1) {
                 return create(serviceURL, entities.get(0));
             }
-        } catch (ResolverException e) {
+        } catch (final ResolverException e) {
             log.warn("Metadata resolution failed for {}", serviceURL, e);
         }
         return null;
@@ -164,10 +164,14 @@ public class MetadataServiceRegistry implements ServiceRegistry {
         return service;
     }
 
+    /** Does the {@link EntityDescriptor} have a {@link MetadataServiceRegistry#PROXY_BINDING} acs. 
+     * @param entity  what to look at
+     * @return Whether is is authorized to proxy
+     */
     private boolean isAuthorizedToProxy(@Nonnull final EntityDescriptor entity) {
         final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
         if (descriptor != null) {
-            for (AssertionConsumerService acs : descriptor.getAssertionConsumerServices()) {
+            for (final AssertionConsumerService acs : descriptor.getAssertionConsumerServices()) {
                 if (PROXY_BINDING.equals(acs.getBinding())) {
                     return true;
                 }
@@ -176,10 +180,14 @@ public class MetadataServiceRegistry implements ServiceRegistry {
         return false;
     }
 
+    /** Does the {@link EntityDescriptor} has an SLO endpoint.
+     * @param entity what to look at
+     * @return whether it has an SLO endpoint
+     */
     private boolean hasSingleLogoutService(@Nonnull final EntityDescriptor entity) {
         final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
         if (descriptor != null) {
-            for (Endpoint endpoint : descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
+            for (final Endpoint endpoint : descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
                 if (LOGOUT_BINDING.equals(endpoint.getBinding()) && LOGOUT_LOCATION.equals(endpoint.getLocation())) {
                     return true;
                 }
