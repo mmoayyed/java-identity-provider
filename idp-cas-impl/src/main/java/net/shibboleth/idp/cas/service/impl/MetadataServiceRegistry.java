@@ -29,6 +29,7 @@ import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.core.xml.XMLObject;
@@ -104,7 +105,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
      *
      * @param resolver SAML metadata resolver.
      */
-    public MetadataServiceRegistry(@Nonnull final MetadataResolver resolver) {
+    public MetadataServiceRegistry(@Nonnull @ParameterName(name="resolver") final MetadataResolver resolver) {
         metadataResolver = resolver;
     }
 
