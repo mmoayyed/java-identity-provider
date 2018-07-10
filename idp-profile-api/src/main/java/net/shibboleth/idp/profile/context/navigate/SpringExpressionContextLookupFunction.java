@@ -20,47 +20,31 @@ package net.shibboleth.idp.profile.context.navigate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.util.SpringExpressionFunction;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.expression.EvaluationException;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.ParseException;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
  * A {@link com.google.common.base.Function} over a {@link BaseContext}
  * which calls out to a Spring Expression.
  * 
  * @param <T> the specific type of context
+ * @since 3.3.0
  */
 public class SpringExpressionContextLookupFunction<T extends BaseContext>
     implements ContextDataLookupFunction<T, Object> {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SpringExpressionContextLookupFunction.class);
-
-    /** SpEL expression to evaluate. */
-    @Nullable private String springExpression;
-
-    /** What class we want the output to test against. */
-    @Nullable private Class outputClass;
-
-    /** What class we want the input to test against. */
-    @Nonnull private final Class<T> inputClass;
-
-    /** A custom object that can be injected into the expression. */
-    @Nullable private Object customObject;
-        
-    /** Whether to raise runtime exceptions if an expression fails. */
-    private boolean hideExceptions;
-
+    /**
+     * The object that does the work.
+     * In Future versions this should be replaced with inheritance.
+     */
+    @Deprecated
+    private final SpringExpressionFunction<T, Object> embeddedObject;
 
     /**
      * Constructor.
@@ -70,8 +54,12 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      */
     public SpringExpressionContextLookupFunction(@Nonnull @ParameterName(name="inClass") final Class<T> inClass,
             @Nonnull @NotEmpty @ParameterName(name="expression") final String expression) {
-        inputClass = Constraint.isNotNull(inClass, "Supplied inputClass cannot be null");
-        springExpression = Constraint.isNotNull(expression, "Supplied expression cannot be null");
+        embeddedObject = new SpringExpressionFunction<>(expression);
+        embeddedObject.setInputType(Constraint.isNotNull(inClass, "Supplied inputClass cannot be null"));
+        if(!BaseContext.class.isAssignableFrom(inClass)) {
+            LoggerFactory.getLogger(SpringExpressionContextLookupFunction.class).
+                warn("InClass {} is not derived from {}", inClass, BaseContext.class);
+        }
     }
 
     /**
@@ -85,7 +73,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
             @Nonnull @NotEmpty @ParameterName(name="expression") final String expression, 
             @ParameterName(name="outputType") @Nullable final Class outputType) {
         this(inClass, expression);
-        outputClass = outputType;
+        embeddedObject.setOutputType(outputType);
     }
 
     /**
@@ -94,7 +82,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
-        return customObject;
+        return embeddedObject.getCustomObject();
     }
 
     /**
@@ -103,7 +91,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      * @param object the custom object
      */
     @Nullable public void setCustomObject(final Object object) {
-        customObject = object;
+        embeddedObject.setCustomObject(object);
     }
 
     /**
@@ -112,37 +100,12 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      * @param flag flag to set
      */
     public void setHideExceptions(final boolean flag) {
-        hideExceptions = flag;
+        embeddedObject.setHideExceptions(flag);
     }
 
     /** {@inheritDoc} */
     @Override public Object apply(@Nullable final T context) {
-
-        if (null != context && !inputClass.isInstance(context)) {
-            throw new ClassCastException("Input was type " + context.getClass() + " which is not an instance of "
-                    + inputClass);
-        }
-
-        try {
-            final ExpressionParser parser = new SpelExpressionParser();
-            final StandardEvaluationContext eval = new StandardEvaluationContext();
-            eval.setVariable("custom", customObject);
-            eval.setVariable("input", context);
-            
-            final Object output = parser.parseExpression(springExpression).getValue(eval);
-            if (null != outputClass && null != output && !outputClass.isInstance(output)) {
-                log.error("Output of type {} was not of type {}", output.getClass(), outputClass);
-                return null;
-            }
-            return output;
-            
-        } catch (final ParseException|EvaluationException e) {
-            log.error("Error evaluating Spring expression", e);
-            if (hideExceptions) {
-                return null;
-            }
-            throw e;
-        }
+        return embeddedObject.apply(context);
     }
 
 }
