@@ -273,7 +273,7 @@ public class PropertiesWithComments {
                 writer.write(value);
             } else {
                 writer.write(property);
-                writer.write("= ");
+                writer.write("=");
                 writer.write(value);
             }
         }
