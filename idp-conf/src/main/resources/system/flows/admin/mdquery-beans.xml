@@ -40,9 +40,6 @@
         </constructor-arg>
     </bean>
     
-    <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors="#{getObject('shibboleth.PostDecodeAuditExtractors') ?: getObject('shibboleth.DefaultPostDecodeAuditExtractors')}" />
-    
     <bean id="SAMLMetadataLookup"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
