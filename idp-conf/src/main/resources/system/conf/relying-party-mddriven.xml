@@ -383,6 +383,9 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="qualifiedNameIDFormatsLookupStrategy">
+            <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="qualifiedNameIDFormats" />
+        </property>
     </bean>
 
     <bean id="SAML2.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"

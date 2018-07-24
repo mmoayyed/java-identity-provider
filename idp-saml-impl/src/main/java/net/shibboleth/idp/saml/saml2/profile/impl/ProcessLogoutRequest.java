@@ -17,13 +17,20 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.saml.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -49,6 +56,7 @@ import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.ext.saml2aslo.Asynchronous;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
@@ -103,9 +111,27 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     
     /** Lookup strategy for {@link LogoutRequest} to process. */
     @Nonnull private Function<ProfileRequestContext,LogoutRequest> logoutRequestLookupStrategy;
+
+    /** Lookup strategy for obtaining qualifier-defaultable NameID Formats. */
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> qualifiedNameIDFormatsLookupStrategy;
+    
+    /** Optional lookup function for obtaining default NameQualifier. */
+    @Nullable private Function<ProfileRequestContext,String> assertingPartyLookupStrategy;
+    
+    /** Optional lookup function for obtaining default SPNameQualifier. */
+    @Nullable private Function<ProfileRequestContext,String> relyingPartyLookupStrategy;
     
     /** LogoutRequest to process. */
     @Nullable private LogoutRequest logoutRequest;
+    
+    /** {@link NameID} Formats allowing defaulted qualifiers. */
+    @Nonnull private Set<String> qualifiedNameIDFormats;
+    
+    /** Cached lookup of assertingParty name. */
+    @Nullable private String assertingParty;
+    
+    /** Cached lookup of relyingParty name. */
+    @Nullable private String relyingParty;
     
     /** Constructor. */
     public ProcessLogoutRequest() {
@@ -127,6 +153,13 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     
         logoutRequestLookupStrategy = Functions.compose(new MessageLookup<>(LogoutRequest.class),
                 new InboundMessageContextLookup());
+        
+        qualifiedNameIDFormatsLookupStrategy = new QualifiedNameIDFormatsLookupFunction();
+
+        qualifiedNameIDFormats = Collections.emptySet();
+        
+        setAssertingPartyLookupStrategy(new ResponderIdLookupFunction());
+        setRelyingPartyLookupStrategy(new RelyingPartyIdLookupFunction());
     }
     
     /**
@@ -213,6 +246,49 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         logoutRequestLookupStrategy = Constraint.isNotNull(strategy, "LogoutRequest lookup strategy cannot be null");
     }
     
+    /**
+     * Set the lookup strategy for the {@link NameID} Formats to allow defaulted qualifiers.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setQualifiedNameIDFormatsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        qualifiedNameIDFormatsLookupStrategy = Constraint.isNotNull(strategy,
+                "Qualified NameID Formats lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the lookup strategy to obtain the default IdP NameQualifier.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setAssertingPartyLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        assertingPartyLookupStrategy = strategy;
+    }
+    
+    /**
+     * Set the lookup strategy to obtain the default SPNameQualifier.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setRelyingPartyLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        relyingPartyLookupStrategy = strategy;
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -255,6 +331,8 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             log.debug("{} LogoutRequest contained Asynchronous extension", getLogPrefix());
         }
         
+        qualifiedNameIDFormats = new HashSet<>(qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext));
+        
         return true;
     }
     
@@ -274,7 +352,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             while (sessionIterator.hasNext()) {
                 final IdPSession session = sessionIterator.next();
                 
-                if (!sessionMatches(session)) {
+                if (!sessionMatches(profileRequestContext, session)) {
                     log.debug("{} IdP session {} does not contain a matching SP session", getLogPrefix(),
                             session.getId());
                     continue;
@@ -300,7 +378,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 }
                 
                 for (final SPSession spSession : session.getSPSessions()) {
-                    if (!sessionMatches(spSession)) {
+                    if (!sessionMatches(profileRequestContext, spSession)) {
                         logoutCtx.getSessionMap().put(spSession.getId(), spSession);
                         logoutCtx.getKeyedSessionMap().put(Integer.toString(count++), spSession);
                     }
@@ -335,14 +413,16 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     /**
      * Check if the session contains a {@link SAML2SPSession} with the appropriate service ID and SessionIndex.
      * 
+     * @param profileRequestContext current profile request context
      * @param session {@link IdPSession} to check
      * 
      * @return  true iff the set of {@link SPSession}s includes one applicable to the logout request
      */
-    private boolean sessionMatches(@Nonnull final IdPSession session) {
+    private boolean sessionMatches(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final IdPSession session) {
         
         for (final SPSession spSession : session.getSPSessions()) {
-            if (sessionMatches(spSession)) {
+            if (sessionMatches(profileRequestContext, spSession)) {
                 return true;
             }
         }
@@ -353,20 +433,46 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     /**
      * Check if the {@link SPSession} has the appropriate service ID and SessionIndex.
      * 
+     * @param profileRequestContext current profile request context
      * @param session {@link SPSession} to check
      * 
      * @return  true iff the {@link SPSession} directly matches the logout request
      */
-    private boolean sessionMatches(@Nonnull final SPSession session) {
+    private boolean sessionMatches(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final SPSession session) {
         if (session instanceof SAML2SPSession) {
             final SAML2SPSession saml2Session = (SAML2SPSession) session;
             
+            // Make sure the SP matches.
             if (!saml2Session.getId().equals(logoutRequest.getIssuer().getValue())) {
                 return false;
-            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(
-                    logoutRequest.getNameID(), saml2Session.getNameID())) {
+            } 
+            
+            // Use the format of the original NameID to determine whether to
+            // allow the qualifiers to be defaulted. If the formats don't match
+            // the eventual check will fail anyway.
+            String format = saml2Session.getNameID().getFormat();
+            if (format == null)
+                format = NameID.UNSPECIFIED;
+            if (NameID.PERSISTENT.equals(format) || NameID.TRANSIENT.equals(format)
+                    || qualifiedNameIDFormats.contains(format)) {
+                
+                if (assertingParty == null)
+                    assertingParty = assertingPartyLookupStrategy.apply(profileRequestContext);
+                if (relyingParty == null)
+                    relyingParty = relyingPartyLookupStrategy.apply(profileRequestContext);
+                
+                if (!SAML2ObjectSupport.areNameIDsEquivalent(logoutRequest.getNameID(), saml2Session.getNameID(),
+                        assertingParty, relyingParty)) {
+                    return false;
+                }
+            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(logoutRequest.getNameID(), saml2Session.getNameID())) {
                 return false;
-            } else if (logoutRequest.getSessionIndexes().isEmpty()) {
+            }
+            
+            // Check SessionIndex match.
+            
+            if (logoutRequest.getSessionIndexes().isEmpty()) {
                 return true;
             }
             

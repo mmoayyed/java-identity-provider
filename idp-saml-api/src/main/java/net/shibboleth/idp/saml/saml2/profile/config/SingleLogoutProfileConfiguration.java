@@ -17,12 +17,22 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Configuration support for SAML 2 Single Logout. */
 public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {
@@ -30,6 +40,12 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
 
+    /** Lookup function to supply {@link #qualifiedNameIDFormats} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> qualifiedNameIDFormatsLookupStrategy;
+    
+    /** NameID formats whose matching rules accomodate defaulted qualifiers. */
+    @Nonnull @NonnullElements private Collection<String> qualifiedNameIDFormats;
+    
     /** Constructor. */
     public SingleLogoutProfileConfiguration() {
         this(PROFILE_ID);
@@ -45,6 +61,57 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
         setSignRequests(new NoIntegrityMessageChannelPredicate());
         setSignResponses(new NoIntegrityMessageChannelPredicate());
         setEncryptNameIDs(new NoConfidentialityMessageChannelPredicate());
+
+        qualifiedNameIDFormats = Collections.emptyList();
     }
 
+    /**
+     * Get a collection of {@link org.opensaml.saml.saml2.core.NameID} Format values for which the use of
+     * the NameQualifier and SPNameQualifier attributes is defined to allow default/implicit values
+     * derived from the asserting and relying parties.
+     * 
+     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType.PERSISTENT} and
+     * {@link org.opensaml.saml.saml2.core.NameIDType.TRANSIENT} Formats are defined in this manner. This
+     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>  
+     * 
+     * @return additional Formats for which defaulting of qualifiers is permissable
+     * 
+     * @since 3.4.0
+     */
+    public Collection<String> getQualifiedNameIDFormats() {
+        return ImmutableList.copyOf(getIndirectProperty(qualifiedNameIDFormatsLookupStrategy, qualifiedNameIDFormats));
+    }
+
+    /**
+     * Set a collection of {@link org.opensaml.saml.saml2.core.NameID} Format values for which the use of
+     * the NameQualifier and SPNameQualifier attributes is defined to allow default/implicit values
+     * derived from the asserting and relying parties.
+     * 
+     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType.PERSISTENT} and
+     * {@link org.opensaml.saml.saml2.core.NameIDType.TRANSIENT} Formats are defined in this manner. This
+     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>  
+     * 
+     * @param formats additional Formats for which defaulting of qualifiers is permissable
+     * 
+     * @since 3.4.0
+     */
+    public void setQualifiedNameIDFormats(@Nullable @NonnullElements final Collection<String> formats) {
+        if (formats == null) {
+            qualifiedNameIDFormats = Collections.emptyList();
+        } else {
+            qualifiedNameIDFormats = StringSupport.normalizeStringCollection(formats);
+        }
+    }
+
+    /**
+     * Set a lookup strategy for the {@link #qualifiedNameIDFormats} property.
+     *
+     * @param strategy  lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setQualifiedNameIDFormatsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        qualifiedNameIDFormatsLookupStrategy = strategy;
+    }
 }
