@@ -86,11 +86,6 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
               //    (not commented out) - this extra SP info will be displayed.
               //    Remove or comment out these lines to stop the display of the
               //    added SP information.
-              //
-              //    Documentation: 
-              //      https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage
-              //
-              //    Example:
              %>
              <% if (identifiedRP) { %>
                  <p>
