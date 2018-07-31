@@ -59,6 +59,15 @@
             c:id="http://shibboleth.net/ns/profiles/metrics"
             p:loggingId="Metrics"
             p:policyNameLookupStrategy-ref="shibboleth.metrics.AccessPolicyStrategy" />
+
+        <!-- Attended Startup Unlock -->
+        <!--
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/unlock-keys"
+            p:loggingId="UnlockKeys"
+            p:authenticated="true"
+            p:policyName="AccessByAdminUser" />
+        -->
     
     </util:list>
 

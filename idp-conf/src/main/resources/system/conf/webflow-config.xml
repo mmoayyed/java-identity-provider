@@ -30,6 +30,7 @@
                 <entry key="admin/mdquery" value="../system/flows/admin/mdquery-flow.xml" />
                 <entry key="admin/metrics" value="../system/flows/admin/metrics-flow.xml" />
                 <entry key="admin/storage" value="../system/flows/admin/storage-flow.xml" />
+                <entry key="admin/unlock-keys" value="../system/flows/admin/unlock-keys-flow.xml" />
                 
                 <!-- Proprietary logout flow. -->
                 <entry key="Logout" value="../system/flows/logout/logout-flow.xml" />
