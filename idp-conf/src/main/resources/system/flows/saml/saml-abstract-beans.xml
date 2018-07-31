@@ -135,7 +135,8 @@
     <bean id="PopulateResponseSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
-            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
+            p:noResultIsError="true">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.profile.config.logic.SignResponsesPredicate" />
         </property>
@@ -144,7 +145,8 @@
     <bean id="PopulateRequestSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
-            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
+            p:noResultIsError="true">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate" />
         </property>
@@ -153,7 +155,8 @@
     <bean id="PopulateAssertionSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
-            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
+            p:noResultIsError="true">
         <property name="activationCondition">
             <bean parent="shibboleth.Conditions.OR">
                 <constructor-arg>
