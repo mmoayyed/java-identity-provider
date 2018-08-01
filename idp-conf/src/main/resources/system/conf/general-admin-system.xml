@@ -16,10 +16,15 @@
     <import resource="../../conf/admin/metrics.xml" />
     <import resource="conditional:${idp.home}/conf/admin/unlock-keys.xml" />
 
-    <!-- A parent bean to default some of the flow boilerplate. -->
+    <!-- Parent beans to default some of the flow boilerplate. -->
 
     <bean id="shibboleth.AdminFlow" abstract="true"
             class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
+            p:servletRequest-ref="shibboleth.HttpServletRequest"
+            p:nonBrowserSupported="false" />
+
+    <bean id="shibboleth.OneTimeAdminFlow" abstract="true"
+            class="net.shibboleth.idp.admin.OneTimeAdministrativeFlowDescriptor"
             p:servletRequest-ref="shibboleth.HttpServletRequest"
             p:nonBrowserSupported="false" />
 

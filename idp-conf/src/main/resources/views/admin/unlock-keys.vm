@@ -33,7 +33,7 @@
             <div class="content">
             #if ($state == "end")
                 <strong>#springMessageText("idp.unlock-keys.complete", "The system is unlocked and ready for use.")</strong>
-                <p><a hef="$request.getContextPath()/profile/SAML2/SSO/Unsolicited?providerId=https://sp.example.org/shibboleth">Validation Link</a></p>
+                <p><a href="$request.getContextPath()/profile/SAML2/Unsolicited/SSO?providerId=https://sp.example.org/shibboleth">Validation Link</a></p>
             #else
                 #if ($eventId == "InvalidMessage")
                     <p class="form-element form-error">

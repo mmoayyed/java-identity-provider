@@ -62,7 +62,7 @@
 
         <!-- Attended Startup Unlock -->
         <!--
-        <bean parent="shibboleth.AdminFlow"
+        <bean parent="shibboleth.OneTimeAdminFlow"
             c:id="http://shibboleth.net/ns/profiles/unlock-keys"
             p:loggingId="UnlockKeys"
             p:authenticated="true"
