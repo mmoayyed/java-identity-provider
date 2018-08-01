@@ -87,6 +87,7 @@
     </action-state>
 
     <action-state id="PopulateClientStorageSaveContext">
+        <evaluate expression="AdminPopulateAuditContext" />
         <evaluate expression="PopulateClientStorageSaveContext" />
         <evaluate expression="'proceed'" />
 

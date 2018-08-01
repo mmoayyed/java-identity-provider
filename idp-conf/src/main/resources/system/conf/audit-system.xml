@@ -813,5 +813,9 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.DefaultAdminAuditExtractors"
+          class="org.springframework.beans.factory.config.MapFactoryBean"
+          parent="shibboleth.DefaultErrorViewAuditExtractors" />
     
 </beans>

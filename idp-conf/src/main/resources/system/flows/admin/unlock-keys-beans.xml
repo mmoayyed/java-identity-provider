@@ -29,10 +29,7 @@
         factory-method="constant" c:_0="keys" />
     
     <!--  Work beans. -->
-    
-    <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
-    
+        
     <bean id="UnlockDataSealers" class="net.shibboleth.idp.admin.impl.UnlockDataSealers" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:keyStrategies="#{getObject('shibboleth.unlock-keys.KeyStrategies')}" />

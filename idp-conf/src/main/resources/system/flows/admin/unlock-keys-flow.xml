@@ -17,7 +17,6 @@
 
     <action-state id="DoProfileWork">
         <evaluate expression="CheckAccess" />
-        <evaluate expression="PostResponsePopulateAuditContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CheckIfDone" />
