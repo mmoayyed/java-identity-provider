@@ -3,8 +3,7 @@
 <configuration>
 
     <logger name="net.shibboleth.ext.spring.resource" level="DEBUG"/>
-    <logger name="net.shibboleth.idp.profile" level="DEBUG"/>
-    <logger name="net.shibboleth.utilities.java.support" level="DEBUG"/>
+    <logger name="net.shibboleth.idp.profile.spring" level="DEBUG"/>
 
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

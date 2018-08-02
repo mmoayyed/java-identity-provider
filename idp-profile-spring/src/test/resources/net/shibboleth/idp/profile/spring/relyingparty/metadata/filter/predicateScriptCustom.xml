@@ -7,6 +7,6 @@
 	xsi:type="Predicate" direction="include" removeEmptyEntitiesDescriptors="false">
     
     <ConditionScript customObjectRef="myCustomBean">
-        <Script>custom[input.getEntityID()];</Script>
+        <Script>custom.get(input.getEntityID());</Script>
     </ConditionScript>
 </MetadataFilter>
