@@ -19,21 +19,26 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 
 import java.io.IOException;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
-import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
-
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.common.profile.logic.EntityIdPredicate;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter.Direction;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Test for parser for PredicateFilter filter.
@@ -123,4 +128,14 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         Assert.assertSame(filter.getCondition().getClass(), Predicates.or(Predicates.alwaysTrue()).getClass());
     }
 
+    @Test
+    public void custom() throws IOException, ResolverException {
+        final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateScriptCustom.xml", "filter/predicateCustomBean.xml");
+        Assert.assertNotNull(filter);
+        Assert.assertEquals(filter.getDirection(), Direction.INCLUDE);
+        // hack!
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityTrueResolver.xml");
+        Iterable<EntityDescriptor> entities = resolver.resolve(new CriteriaSet(new EntityIdCriterion("https://sp.example.org/sp/TRUE")));
+        Assert.assertTrue(filter.getCondition().apply(entities.iterator().next()));
+    }
 }
