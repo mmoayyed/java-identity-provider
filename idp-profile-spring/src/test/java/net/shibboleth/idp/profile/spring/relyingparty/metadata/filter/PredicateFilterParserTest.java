@@ -128,7 +128,7 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         Assert.assertSame(filter.getCondition().getClass(), Predicates.or(Predicates.alwaysTrue()).getClass());
     }
 
-    @Test(enabled=false) // test is JVM dependent, and purely didactic
+    @Test
     public void custom() throws IOException, ResolverException {
         final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateScriptCustom.xml", "filter/predicateCustomBean.xml");
         Assert.assertNotNull(filter);
