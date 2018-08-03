@@ -11,6 +11,7 @@
     refreshDelayFactor="0.5"
     minCacheDuration="PT5M"
     maxCacheDuration="PT4H"
+    negativeLookupCacheDuration="PT5M"
     maxIdleEntityData="PT2H"
     removeIdleEntityData="false"
     cleanupTaskInterval="PT20M"

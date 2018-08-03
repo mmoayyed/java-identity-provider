@@ -714,6 +714,15 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="negativeLookupCacheDuration" type="string">
+                    <annotation>
+                        <documentation>
+                            The duration for which a negative lookup result will be cached. 
+                            While the negative lookup cache for an entity's metadata is in effect, no additional lookups will be attempted.
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="maxIdleEntityData" type="string">
                     <annotation>
                         <documentation>

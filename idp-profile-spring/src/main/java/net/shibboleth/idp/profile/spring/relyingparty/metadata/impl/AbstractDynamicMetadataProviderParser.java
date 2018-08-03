@@ -71,6 +71,11 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
                     StringSupport.trimOrNull(element.getAttributeNS(null, "maxCacheDuration")));
         }
 
+        if (element.hasAttributeNS(null, "negativeLookupCacheDuration")) {
+            builder.addPropertyValue("negativeLookupCacheDuration",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "negativeLookupCacheDuration")));
+        }
+
         if (element.hasAttributeNS(null, "maxIdleEntityData")) {
             builder.addPropertyValue("maxIdleEntityData",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "maxIdleEntityData")));

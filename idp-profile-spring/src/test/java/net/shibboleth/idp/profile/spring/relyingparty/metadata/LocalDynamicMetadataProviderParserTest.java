@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
@@ -33,6 +34,8 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.codec.StringDigester;
@@ -72,6 +75,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNull(resolver.getMetadataFilter());
         Assert.assertNotNull(resolver.getParserPool());
         
+        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Long.valueOf(30*60*1000L));
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
         Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(10*60*1000L));
         Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(8*60*60*1000L));
@@ -117,6 +121,12 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
             
         sourceManager.save(entityID, entity);
         
+        // Configured negative lookup cache should still be in effect
+        Assert.assertNull(resolver.resolveSingle(criteria));
+        
+        // Sleep past the negative lookup cache expiration
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration(), TimeUnit.MILLISECONDS);
+        
         // In this case, will be the same instance since using in-memory map-based store.
         Assert.assertSame(resolver.resolveSingle(criteria), entity);
     }
@@ -150,6 +160,12 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         
         XMLObjectSupport.marshallToOutputStream(entity, new FileOutputStream(sourceFile));
         Assert.assertTrue(sourceFile.exists());
+        
+        // Configured negative lookup cache should still be in effect
+        Assert.assertNull(resolver.resolveSingle(criteria));
+        
+        // Sleep past the negative lookup cache expiration
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration(), TimeUnit.MILLISECONDS);
         
         EntityDescriptor resolved = resolver.resolveSingle(criteria);
         Assert.assertNotNull(resolved);
