@@ -67,7 +67,10 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
             final URI uri = new URIBuilder().setScheme("https").setHost(duoIntegration.getAPIHost())
                     .setPath("/auth/v2/auth").build();
             final RequestBuilder rb =
-                    RequestBuilder.post().setUri(uri).addParameter("username", duoContext.getUsername());
+                    RequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
+            if (duoContext.getClientAddress() != null) {
+                rb.addParameter(DuoAuthAPI.DUO_IPADDR, duoContext.getClientAddress());
+            }
             if (duoContext.getFactor() != null) {
                 rb.addParameter(DuoAuthAPI.DUO_FACTOR, duoContext.getFactor());
             }

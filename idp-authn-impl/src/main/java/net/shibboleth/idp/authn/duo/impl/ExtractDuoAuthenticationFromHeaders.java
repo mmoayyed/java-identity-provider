@@ -61,6 +61,9 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
 
     /** Whether "auto" should be the default for factor and device. */
     private boolean autoAuthenticationSupported;
+    
+    /** Whether to trust, and extract, the client address. */
+    private boolean clientAddressTrusted;
 
     /** Header name for factor. */
     @Nonnull @NotEmpty private String factorHeaderName;
@@ -74,6 +77,7 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
     /** Constructor. */
     ExtractDuoAuthenticationFromHeaders() {
         autoAuthenticationSupported = true;
+        clientAddressTrusted = true;
 
         factorHeaderName = DuoAuthAPI.DUO_FACTOR_HEADER_NAME;
         deviceHeaderName = DuoAuthAPI.DUO_DEVICE_HEADER_NAME;
@@ -117,6 +121,26 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
     }
 
     /**
+     * Get whether the client address should be trusted for use in API calls.
+     * 
+     * @return whether client address should be trusted
+     */
+    public boolean isClientAddressTrusted() {
+        return clientAddressTrusted;
+    }
+    
+    /**
+     * Set whether the client address should be trusted for use in API calls.
+     * 
+     * @param flag flag to set
+     */
+    public void setClientAdddressTrusted(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        clientAddressTrusted = flag;
+    }
+    
+    /**
      * Get whether "auto" is the default setting.
      * 
      * @return whether "auto" is the default setting
@@ -154,6 +178,7 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
         log.debug("{} Checking for Duo authentication headers", getLogPrefix());
         
         final DuoAuthenticationContext duoCtx = new DuoAuthenticationContext();
+        
         extractHeaders(duoCtx);
 
         if (duoCtx.getFactor() == null) {
@@ -196,6 +221,10 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
         final HttpServletRequest httpRequest = getHttpServletRequest();
         if (httpRequest == null) {
             return;
+        }
+        
+        if (clientAddressTrusted) {
+            context.setClientAddress(httpRequest.getRemoteAddr());
         }
         
         final String factor = httpRequest.getHeader(factorHeaderName);

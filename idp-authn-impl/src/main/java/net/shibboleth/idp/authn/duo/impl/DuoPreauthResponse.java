@@ -27,8 +27,6 @@ import javax.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import net.shibboleth.idp.authn.duo.DuoAuthAPI;
-
 /**
  * Describes the results of an pre-authentication attempt via the Duo AuthAPI.
  */
@@ -57,24 +55,6 @@ public class DuoPreauthResponse extends DuoAuthAPIResponse {
      */
     @Nullable public URL getEnrollPortalURL() {
         return enrollPortalURL;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isAllow() {
-        return getResult().equals(DuoAuthAPI.DUO_AUTH_RESULT_ALLOW);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isDeny() {
-        return getResult().equals(DuoAuthAPI.DUO_AUTH_RESULT_DENY);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isBypass() {
-        return getResult().equals(DuoAuthAPI.DUO_PREAUTH_RESULT_ALLOW);
     }
 
 }

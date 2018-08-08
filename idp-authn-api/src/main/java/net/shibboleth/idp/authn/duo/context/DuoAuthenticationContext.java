@@ -38,6 +38,9 @@ public class DuoAuthenticationContext extends BaseContext {
     /** Username. */
     @Nullable private String username;
     
+    /** Client address. */
+    @Nullable private String clientAddress;
+    
     /** Factor. */
     @Nullable private String duoFactor;
 
@@ -67,7 +70,28 @@ public class DuoAuthenticationContext extends BaseContext {
         username = name;
         return this;
     }
+
+    /**
+     * Get the client address.
+     * 
+     * @return address
+     */
+    @Nullable public String getClientAddress() {
+        return clientAddress;
+    }
     
+    /**
+     * Set the client address.
+     * 
+     * @param address client address
+     * 
+     * @return this context
+     */
+    @Nonnull public DuoAuthenticationContext setClientAddress(@Nullable final String address) {
+        clientAddress = address;
+        return this;
+    }
+
     /**
      * Get the device ID.
      * 

@@ -29,6 +29,12 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public final class DuoAuthAPI {
 
     /** Duo AuthAPI parameter name. */
+    @Nonnull @NotEmpty public static final String DUO_USERNAME = "username";
+
+    /** Duo AuthAPI parameter name. */
+    @Nonnull @NotEmpty public static final String DUO_IPADDR = "ipaddr";
+
+    /** Duo AuthAPI parameter name. */
     @Nonnull @NotEmpty public static final String DUO_FACTOR = "factor";
 
     /** Duo AuthAPI parameter name. */
@@ -36,7 +42,7 @@ public final class DuoAuthAPI {
 
     /** Duo AuthAPI parameter name. */
     @Nonnull @NotEmpty public static final String DUO_PASSCODE = "passcode";
-
+    
     /** Duo AuthAPI factor "auto" value. */
     @Nonnull @NotEmpty public static final String DUO_FACTOR_AUTO = "auto";
 
@@ -75,6 +81,9 @@ public final class DuoAuthAPI {
 
     /** Duo AuthAPI auth "bypass" result value. */
     @Nonnull @NotEmpty public static final String DUO_AUTH_STATUS_BYPASS = "bypass";
+
+    /** Duo AuthAPI auth "locked_out" result value. */
+    @Nonnull @NotEmpty public static final String DUO_AUTH_STATUS_LOCKED = "locked_out";
 
     /** Duo flow default header name for factor. */
     @Nonnull @NotEmpty public static final String DUO_FACTOR_HEADER_NAME = "X-Shibboleth-Duo-Factor";

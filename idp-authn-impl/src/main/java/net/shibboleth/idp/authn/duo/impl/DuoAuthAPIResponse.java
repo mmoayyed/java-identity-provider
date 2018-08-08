@@ -56,25 +56,4 @@ public abstract class DuoAuthAPIResponse {
         return statusMessage;
     }
 
-    /**
-     * Check if the result of the response is allow state.
-     * 
-     * @return true if result of the response is allow state
-     */
-    public abstract boolean isAllow();
-    
-    /**
-     * Check if the result of the response is deny state.
-     * 
-     * @return true if result of the response is deny state
-     */
-    public abstract boolean isDeny();
-    
-    /**
-     * Check if the status of the response is bypass state.
-     * 
-     * @return true if status of the response is bypass state
-     */
-    public abstract boolean isBypass();
-
 }

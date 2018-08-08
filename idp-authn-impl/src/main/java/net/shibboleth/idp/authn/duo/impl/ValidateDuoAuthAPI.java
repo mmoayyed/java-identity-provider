@@ -55,8 +55,10 @@ import com.duosecurity.duoweb.DuoWebException;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#AUTHN_EXCEPTION}
+ * @event {@link AuthnEventIds#ACCOUNT_LOCKED}
  * @event {@link AuthnEventIds#ACCOUNT_WARNING}
  * @event {@link AuthnEventIds#ACCOUNT_ERROR}
+ * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @pre
  * 
@@ -219,7 +221,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
     }
 
     /** {@inheritDoc} */
-    // CheckStyle: ReturnCount OFF
+    // CheckStyle: CyclomaticComplexity|MethodLength|ReturnCount OFF
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
@@ -253,6 +255,25 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
                 recordFailure();
                 return;
             }
+            
+            // Validate device ID specified against the enrolled set.
+            if (duoContext.getDeviceID() != null && !DuoAuthAPI.DUO_DEVICE_AUTO.equals(duoContext.getDeviceID())) {
+                boolean found = false;
+                for (final DuoDevice device : preAuthResponse.getDevices()) {
+                    if (duoContext.getDeviceID().equals(device.getDevice())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    log.info("{} Request specified non-existent device ID ({}) for '{}': {}", getLogPrefix(),
+                            duoContext.getDeviceID(), username, preAuthResponse.getStatusMessage());
+                    handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
+                            AuthnEventIds.INVALID_CREDENTIALS);
+                    recordFailure();
+                    return;
+                }
+            }
 
             // Duo AuthAPI authentication
             final DuoAuthResponse authenticationResponse = authAuthenticator.authenticate(duoContext, duoIntegration);
@@ -268,7 +289,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else if (DuoAuthAPI.DUO_AUTH_RESULT_DENY.equals(authResult)) {
                 log.info("{} Duo authentication failed for '{}'", getLogPrefix(), username);
-                handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
+                handleError(profileRequestContext, authenticationContext, authenticationResponse.getStatus(),
                         AuthnEventIds.INVALID_CREDENTIALS);
                 recordFailure();
             } else {
@@ -280,7 +301,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
             recordFailure();
         }
     }
-    // CheckStyle: ReturnCount OFF
+    // CheckStyle: CyclomaticComplexity|MethodLength|ReturnCount OFF
 
     /** {@inheritDoc} */
     @Override protected Subject populateSubject(@Nonnull final Subject subject) {

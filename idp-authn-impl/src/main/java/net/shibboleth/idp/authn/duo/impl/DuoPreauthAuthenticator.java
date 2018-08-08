@@ -33,6 +33,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.URIBuilder;
 
+import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 
@@ -66,7 +67,12 @@ public class DuoPreauthAuthenticator extends AbstractDuoAuthenticator {
             final URI uri = new URIBuilder().setScheme("https").setHost(duoIntegration.getAPIHost())
                     .setPath("/auth/v2/preauth").build();
             final RequestBuilder rb =
-                    RequestBuilder.post().setUri(uri).addParameter("username", duoContext.getUsername());
+                    RequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
+            
+            if (duoContext.getClientAddress() != null) {
+                rb.addParameter(DuoAuthAPI.DUO_IPADDR, duoContext.getClientAddress());
+            }
+            
             DuoSupport.signRequest(rb, duoIntegration);
             final HttpUriRequest request = rb.build();
 
