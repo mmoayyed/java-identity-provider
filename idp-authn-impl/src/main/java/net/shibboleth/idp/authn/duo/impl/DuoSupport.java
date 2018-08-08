@@ -17,29 +17,49 @@
 
 package net.shibboleth.idp.authn.duo.impl;
 
+import com.duosecurity.duoweb.Base64;
 import com.duosecurity.duoweb.DuoWeb;
 import com.duosecurity.duoweb.DuoWebException;
+import com.duosecurity.duoweb.Util;
+import com.google.common.escape.Escaper;
+import com.google.common.net.UrlEscapers;
 
 import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.RequestBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 /**
- * Simple wrapper for DuoWeb operations.
+ * Helpers for DuoWeb and Duo AuthAPI operations.
  * 
  * @since 3.3.0
  */
 public final class DuoSupport {
-    
+
+    /** RFC 2822 formatter for date/time. */
+    public static final DateTimeFormatter RFC_2822_DATE_FORMAT;
+
     /** Constructor. */
     private DuoSupport() {
     }
-
+    
     /**
      * Created a signed request to Duo for a user.
      * 
@@ -92,5 +112,99 @@ public final class DuoSupport {
         }
     }
 // Checkstyle: ThrowsCount ON
+ 
+    /**
+     * Sign a Duo AuthAPI request.
+     * 
+     * @param request the request to be signed
+     * @param duo integration parameters to use
+     * 
+     * @throws InvalidKeyException bad skey value
+     * @throws NoSuchAlgorithmException unknown encryption algorithm
+     * @throws UnsupportedEncodingException failure from {@link URLEncoder}
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull @NotEmpty public static void signRequest(@Nonnull final RequestBuilder request,
+            @Nonnull final DuoIntegration duo)
+            throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
+        final String ikey = duo.getIntegrationKey();
+        final String skey = duo.getSecretKey();
+        final int sigVersion = 2;
+        final String date = new DateTime().toString(RFC_2822_DATE_FORMAT);
+        final String canon = canonRequest(request, date, sigVersion);
+        final String sig = Util.hmacSign(skey, canon);
+
+        final String auth = ikey + ":" + sig;
+        final String header = "Basic " + Base64.encodeBytes(auth.getBytes());
+        request.addHeader("Authorization", header);
+        request.addHeader("Date", date);
+    }
+
+    /**
+     * The signature requires that the request parameters being in a particular order as specified in the API.
+     * 
+     * @param request the request
+     * @param date the date
+     * @param sigVersion the signature version
+     * 
+     * @return the parameters to be signed in their canonical order
+     * 
+     * @throws UnsupportedEncodingException failure from {@link URLEncoder}
+     */
+    private static String canonRequest(@Nonnull final RequestBuilder request, @Nonnull final String date,
+            final int sigVersion) throws UnsupportedEncodingException {
+        final URI uri = request.getUri();
+        String canon = "";
+        if (sigVersion == 2) {
+            canon += date + "\n";
+        }
+        canon += request.getMethod().toUpperCase() + "\n";
+        canon += uri.getHost().toLowerCase() + "\n";
+        canon += uri.getPath() + "\n";
+        canon += createQueryString(request.getParameters());
+
+        return canon;
+    }
+
+    /**
+     * Builds a string representaion of the query string with the parameter names is alphabetical order. The names and
+     * values are URL encoded and then they are concatenated with '&' in between.
+     * 
+     * @param params the name/value pairs to be joined
+     * 
+     * @return the canonical query string
+     * 
+     * @throws UnsupportedEncodingException failure from {@link URLEncoder}
+     */
+    private static String createQueryString(@Nonnull final List<NameValuePair> params)
+            throws UnsupportedEncodingException {
+
+        final ArrayList<String> args = new ArrayList<String>();
+
+        // sort by name
+        Collections.sort(params, new Comparator<NameValuePair>() {
+            public int compare(final NameValuePair nvp1, final NameValuePair nvp2) {
+                return nvp1.getName().compareTo(nvp2.getName());
+            }
+        });
+
+        // URL encode and join the name/values with '='
+        final Escaper escaper = UrlEscapers.urlFormParameterEscaper();
+        for (final NameValuePair nvp : params) {
+            final String name = escaper.escape(nvp.getName()).replace("+", "%20").replace("*", "%2A")
+                    .replace("%7E", "~");
+            final String value = escaper.escape(nvp.getValue()).replace("+", "%20").replace("*", "%2A")
+                    .replace("%7E", "~");
+            args.add(name + "=" + value);
+        }
+
+        // Concatenate everything togther with '&'
+        return StringSupport.listToStringValue(args, "&");
+    }
+    
+    static {
+        RFC_2822_DATE_FORMAT = DateTimeFormat.forPattern("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z");
+    }
     
 }

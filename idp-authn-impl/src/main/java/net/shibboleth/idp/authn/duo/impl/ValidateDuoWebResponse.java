@@ -145,7 +145,6 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         if (duoIntegration == null) {
             log.warn("{} No DuoIntegration returned by lookup strategy", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
             return false;
         }
 
@@ -160,7 +159,6 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         if (servletRequest == null) {
             log.error("{} No ServletRequest available", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
             return false;
         }
         
