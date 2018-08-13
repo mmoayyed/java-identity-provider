@@ -291,7 +291,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
                 return;
             } else if (!profileRequestContext.isBrowserProfile() && !flow.isNonBrowserSupported()) {
-                log.error("{} Targeted login flow '{}' does not support passive authentication",
+                log.error("{} Targeted login flow '{}' does not support non-browser authentication",
                         getLogPrefix(), flowId);
                 ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
                         AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
