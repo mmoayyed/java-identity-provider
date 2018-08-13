@@ -290,7 +290,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
 
             final String authResult = authenticationResponse.getResult();
             if (DuoAuthAPI.DUO_AUTH_RESULT_ALLOW.equals(authResult)) {
-                log.info("{} Duo authentication succeeded for '{}', (Factor: {}, Device: {})", getLogPrefix(), username,
+                log.info("{} Duo authentication succeeded for '{}' (Factor: {}, Device: {})", getLogPrefix(), username,
                         duoContext.getFactor(), duoContext.getDeviceID());
                 recordSuccess();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
