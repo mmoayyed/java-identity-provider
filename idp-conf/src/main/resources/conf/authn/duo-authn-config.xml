@@ -13,6 +13,8 @@
     duo.properties file. If you need more flexibility, you can define a function bean
     called "shibboleth.authn.Duo.DuoIntegrationStrategy" to return an instance of
     net.shibboleth.idp.authn.duo.DuoIntegration based on the state of the request.
+    A second bean, "shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy", can be
+    supplied to use the AuthAPI for non-browser profiles.
 
     The Duo flow is designed to operate in conjunction with some other login flow,
     usually orchestrated by the MFA login flow. It obtains the username to send to

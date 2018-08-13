@@ -263,11 +263,17 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
                     if (duoContext.getDeviceID().equals(device.getDevice())) {
                         found = true;
                         break;
+                    } else if (duoContext.getDeviceID().equals(device.getName())) {
+                        log.debug("{} Remapped device ID based on device name ({}) for '{}'", getLogPrefix(),
+                                device.getName(), username);
+                        duoContext.setDeviceID(device.getDevice());
+                        found = true;
+                        break;
                     }
                 }
                 if (!found) {
-                    log.info("{} Request specified non-existent device ID ({}) for '{}': {}", getLogPrefix(),
-                            duoContext.getDeviceID(), username, preAuthResponse.getStatusMessage());
+                    log.info("{} Duo authentication failed for '{}': non-existent device ID ({})", getLogPrefix(),
+                            username, duoContext.getDeviceID());
                     handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                             AuthnEventIds.INVALID_CREDENTIALS);
                     recordFailure();
@@ -284,7 +290,8 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
 
             final String authResult = authenticationResponse.getResult();
             if (DuoAuthAPI.DUO_AUTH_RESULT_ALLOW.equals(authResult)) {
-                log.info("{} Duo authentication succeeded for '{}'", getLogPrefix(), username);
+                log.info("{} Duo authentication succeeded for '{}', (Factor: {}, Device: {})", getLogPrefix(), username,
+                        duoContext.getFactor(), duoContext.getDeviceID());
                 recordSuccess();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else if (DuoAuthAPI.DUO_AUTH_RESULT_DENY.equals(authResult)) {

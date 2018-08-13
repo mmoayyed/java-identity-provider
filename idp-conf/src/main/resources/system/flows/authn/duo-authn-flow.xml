@@ -4,6 +4,25 @@
     
     <!-- This is a simple login flow for Duo authentication. -->
 
+    <action-state id="ExtractDuoAuthenticationFromHeaders">
+        <evaluate expression="ExtractDuoAuthenticationFromHeaders" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ValidateDuoAuthAPI" />
+        
+        <!-- Fall through to a different flow if header extract fails on a passive or non-browser request. -->
+        <transition on="#{ opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() || !opensamlProfileRequestContext.isBrowserProfile() }" to="ReselectFlow" />
+        
+        <transition on="NoCredentials" to="DisplayDuoWebView" />
+    </action-state>
+
+    <action-state id="ValidateDuoAuthAPI">
+        <evaluate expression="ValidateDuoAuthAPI" />
+        <evaluate expression="'proceed'" />
+    
+        <transition on="proceed" to="proceed" />
+    </action-state>
+
     <view-state id="DisplayDuoWebView" view="duo">
         <on-render>
             <evaluate expression="environment" result="viewScope.environment" />

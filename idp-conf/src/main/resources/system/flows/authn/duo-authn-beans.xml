@@ -14,7 +14,8 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <!-- Default static integration. -->
+    <!-- Default static integrations. -->
+    
     <bean id="shibboleth.authn.Duo.DuoIntegration" class="net.shibboleth.idp.authn.duo.BasicDuoIntegration"
         p:APIHost="%{idp.duo.apiHost:none}"
         p:applicationKey="%{idp.duo.applicationKey:none}"
@@ -22,6 +23,15 @@
         p:secretKey="%{idp.duo.secretKey:none}" />
     <bean id="shibboleth.authn.Duo.DuoIntegrationStrategy" class="com.google.common.base.Functions"
         factory-method="constant" c:_0-ref="shibboleth.authn.Duo.DuoIntegration" />
+
+    <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegration" class="net.shibboleth.idp.authn.duo.BasicDuoIntegration"
+        p:APIHost="%{idp.duo.nonbrowser.apiHost:%{idp.duo.apiHost:none}}"
+        p:applicationKey="%{idp.duo.nonbrowser.applicationKey:none}"
+        p:integrationKey="%{idp.duo.nonbrowser.integrationKey:none}"
+        p:secretKey="%{idp.duo.nonbrowser.secretKey:none}" />
+    <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0-ref="shibboleth.authn.Duo.NonBrowser.DuoIntegration" />
+
 
     <!-- Default username comes from previous c14n or session. -->        
     <bean id="shibboleth.authn.Duo.UsernameLookupStrategy"
@@ -37,6 +47,38 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
         p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.DuoIntegrationStrategy"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}" />
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.duo.resultCachingPredicate')}" />
+
+    <bean id="ExtractDuoAuthenticationFromHeaders" scope="prototype"
+        class="net.shibboleth.idp.authn.duo.impl.ExtractDuoAuthenticationFromHeaders"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:autoAuthenticationSupported="%{idp.duo.nonbrowser.auto:true}"
+        p:clientAdddressTrusted="%{idp.duo.nonbrowser.clientAddressTrusted:true}"
+        p:factorHeader="%{idp.duo.nonbrowser.header.factor:X-Shibboleth-Duo-Factor}"
+        p:deviceHeader="%{idp.duo.nonbrowser.header.device:X-Shibboleth-Duo-Device}"
+        p:passcodeHeader="%{idp.duo.nonbrowser.header.passcode:X-Shibboleth-Duo-Passcode}" />
+
+    <bean id="DuoPreauthAuthenticator" lazy-init="true"
+        class="net.shibboleth.idp.authn.duo.impl.DuoPreauthAuthenticator"
+        p:objectMapper-ref="shibboleth.JSONObjectMapper"
+        p:httpClient-ref="%{idp.duo.nonbrowser.httpClient:shibboleth.NonCachingHttpClient}" />
+
+    <bean id="DuoAuthAuthenticator" lazy-init="true"
+        class="net.shibboleth.idp.authn.duo.impl.DuoAuthAuthenticator"
+        p:objectMapper-ref="shibboleth.JSONObjectMapper"
+        p:httpClient-ref="%{idp.duo.nonbrowser.httpClient:shibboleth.NonCachingHttpClient}" />
+
+    <util:map id="shibboleth.authn.duo.DefaultClassifiedMessageMap" />
+
+    <bean id="ValidateDuoAuthAPI" scope="prototype"
+        class="net.shibboleth.idp.authn.duo.impl.ValidateDuoAuthAPI"
+        p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
+        p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
+        p:preauthAuthenticator-ref="DuoPreauthAuthenticator"
+        p:authAuthenticator-ref="DuoAuthAuthenticator"
+        p:classifiedMessages="#{getObject('shibboleth.authn.duo.ClassifiedMessageMap') ?: getObject('shibboleth.authn.duo.DefaultClassifiedMessageMap')}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.duo.resultCachingPredicate')}" />
 
 </beans>

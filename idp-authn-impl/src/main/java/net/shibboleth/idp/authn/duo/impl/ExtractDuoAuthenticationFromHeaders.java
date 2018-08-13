@@ -44,7 +44,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
- * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @pre
  *      <pre>
  *      ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null
@@ -190,6 +189,10 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
                 return;
             }
+        } else if (DuoAuthAPI.DUO_FACTOR_SMS.equals(duoCtx.getFactor())) {
+            log.warn("{} Request for SMS codes unsupported", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            return;
         }
         
         // Check for missing passcode.
