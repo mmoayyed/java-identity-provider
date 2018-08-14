@@ -9,7 +9,7 @@
     default-init-method="initialize" default-destroy-method="destroy">
 
     <!--
-    By default, the Duo flow will use a statically-defined integration defined with the
+    By default, the Duo flow will use statically-defined integrations defined with the
     duo.properties file. If you need more flexibility, you can define a function bean
     called "shibboleth.authn.Duo.DuoIntegrationStrategy" to return an instance of
     net.shibboleth.idp.authn.duo.DuoIntegration based on the state of the request.
@@ -22,6 +22,8 @@
     user. You can override that approach using a function bean called
     "shibboleth.authn.Duo.UsernameLookupStrategy" to supply the username from a
     different source.
+    
+    Various other beans are supported, per the documentation.
     -->
 
 </beans>
