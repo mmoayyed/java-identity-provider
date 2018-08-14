@@ -24,8 +24,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.Resource;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -61,6 +67,9 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
 
     /** Verification depth. */
     @Nullable private Integer verifyDepth;
+    
+    /** Explicit subject name(s) to match. */
+    @Nullable private Set<String> trustedNames;
     
     /** Whether to enable name checking. */
     private boolean checkNames;
@@ -118,6 +127,21 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
     }
     
     /**
+     * Set explicitly trusted names to match against credential.
+     * 
+     * @param names explicitly trusted names
+     * 
+     * @since 3.4.0
+     */
+    public void setTrustedNames(@Nullable @NonnullElements final Collection<String> names) {
+        if (names != null) {
+            trustedNames = new HashSet<>(Collections2.filter(names, Predicates.notNull()));
+        } else {
+            trustedNames = null;
+        }
+    }
+    
+    /**
      * Get the configured certificates.
      * 
      * @return the certificates
@@ -169,7 +193,7 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
         
         final StaticPKIXValidationInformationResolver resolver =
                 new StaticPKIXValidationInformationResolver(
-                        Collections.<PKIXValidationInformation>singletonList(info), null, checkNames);
+                        Collections.<PKIXValidationInformation>singletonList(info), trustedNames, checkNames);
         
         if (checkNames) {
             return new PKIXX509CredentialTrustEngine(resolver);
