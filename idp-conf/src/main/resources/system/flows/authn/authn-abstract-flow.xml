@@ -15,6 +15,8 @@
     <end-state id="proceed" />
 
     <!-- Error events to reflect back from this subflow. -->
+    <end-state id="AccountError" />
+    <end-state id="AccountLocked" />
     <end-state id="AuthenticationException" />
     <end-state id="IdentitySwitch" />
     <end-state id="InputOutputError" />
@@ -42,6 +44,8 @@
         <transition on="#{currentEvent.id.startsWith('authn/')}" to="ReselectFlow">
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setSignaledFlowId(currentEvent.id)" />
         </transition>
+        <transition on="AccountError" to="AccountError" />
+        <transition on="AccountLocked" to="AccountLocked" />
         <transition on="AuthenticationException" to="AuthenticationException" />
         <transition on="IdentitySwitch" to="IdentitySwitch" />
         <transition on="InputOutputError" to="InputOutputError" />

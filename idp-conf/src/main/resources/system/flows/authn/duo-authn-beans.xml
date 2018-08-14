@@ -76,6 +76,7 @@
         <entry key="AccountLocked">
             <list>
                 <value>locked_out</value>
+                <value>Your two-factor account is disabled.</value>
             </list>
         </entry>
     </util:map>
