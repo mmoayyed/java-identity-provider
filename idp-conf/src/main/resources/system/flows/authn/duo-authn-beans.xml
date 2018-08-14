@@ -57,7 +57,8 @@
         p:clientAdddressTrusted="%{idp.duo.nonbrowser.clientAddressTrusted:true}"
         p:factorHeader="%{idp.duo.nonbrowser.header.factor:X-Shibboleth-Duo-Factor}"
         p:deviceHeader="%{idp.duo.nonbrowser.header.device:X-Shibboleth-Duo-Device}"
-        p:passcodeHeader="%{idp.duo.nonbrowser.header.passcode:X-Shibboleth-Duo-Passcode}" />
+        p:passcodeHeader="%{idp.duo.nonbrowser.header.passcode:X-Shibboleth-Duo-Passcode}"
+        p:pushInfoLookupStrategy="#{getObject('shibboleth.authn.Duo.PushInfoLookupStrategy')}" />
 
     <bean id="DuoPreauthAuthenticator" lazy-init="true"
         class="net.shibboleth.idp.authn.duo.impl.DuoPreauthAuthenticator"

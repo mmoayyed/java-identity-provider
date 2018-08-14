@@ -42,7 +42,10 @@ public final class DuoAuthAPI {
 
     /** Duo AuthAPI parameter name. */
     @Nonnull @NotEmpty public static final String DUO_PASSCODE = "passcode";
-    
+
+    /** Duo AuthAPI parameter name. */
+    @Nonnull @NotEmpty public static final String DUO_PUSHINFO = "pushinfo";
+
     /** Duo AuthAPI factor "auto" value. */
     @Nonnull @NotEmpty public static final String DUO_FACTOR_AUTO = "auto";
 

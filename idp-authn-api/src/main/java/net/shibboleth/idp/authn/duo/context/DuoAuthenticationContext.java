@@ -17,12 +17,17 @@
 
 package net.shibboleth.idp.authn.duo.context;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
  * Context that carries Duo factor and device or passcode to be used in validation.
@@ -49,7 +54,15 @@ public class DuoAuthenticationContext extends BaseContext {
 
     /** Passcode. */
     @Nullable private String duoPasscode;
+    
+    /** PushInfo data. */
+    @Nullable private Map<String,String> pushInfo;
 
+    /** Constructor. */
+    public DuoAuthenticationContext() {
+        pushInfo = new HashMap<>();
+    }
+    
     /**
      * Get the username.
      * 
@@ -155,4 +168,13 @@ public class DuoAuthenticationContext extends BaseContext {
         return this;
     }
 
+    /**
+     * Get the pushinfo.
+     * 
+     * @return the pushinfo
+     */
+    @Nonnull @NonnullElements @Live public Map<String,String> getPushInfo() {
+        return pushInfo;
+    }
+    
 }

@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.authn.duo.impl;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -25,11 +28,14 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -72,6 +78,9 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
 
     /** Header name for passcode. */
     @Nonnull @NotEmpty private String passcodeHeaderName;
+    
+    /** Strategy function for populating pushinfo AuthAPI parameter. */
+    @Nullable private Function<ProfileRequestContext,Map<String,String>> pushInfoLookupStrategy;
 
     /** Constructor. */
     ExtractDuoAuthenticationFromHeaders() {
@@ -154,7 +163,21 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
      * @param flag flag to set
      */
     public void setAutoAuthenticationSupported(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         autoAuthenticationSupported = flag;
+    }
+    
+    /**
+     * Set lookup strategy for AuthAPI pushinfo parameter.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setPushInfoLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Map<String,String>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        pushInfoLookupStrategy = strategy;
     }
     
     /** {@inheritDoc} */
@@ -169,6 +192,7 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
         return true;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext,
@@ -207,13 +231,30 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
             duoCtx.setDeviceID(DuoAuthAPI.DUO_DEVICE_AUTO);
         }
 
+        // Populate pushinfo either customized or just with service name.
+        if (pushInfoLookupStrategy != null) {
+            final Map<String,String> pushinfo = pushInfoLookupStrategy.apply(profileRequestContext);
+            if (pushinfo != null) {
+                duoCtx.getPushInfo().putAll(pushinfo);
+            }
+        } else {
+            final RelyingPartyUIContext uiCtx = authenticationContext.getSubcontext(RelyingPartyUIContext.class);
+            if (uiCtx != null) {
+                final String name = uiCtx.getServiceName();
+                if (name != null) {
+                    duoCtx.getPushInfo().put("service", uiCtx.getServiceName());
+                }
+            }
+        }
+        
         authenticationContext.addSubcontext(duoCtx, true);
 
         log.debug("{} Duo AuthAPI parameters extracted from request (Factor: {}, Device: {}, Passcode: {})",
                 getLogPrefix(), duoCtx.getFactor(), duoCtx.getDeviceID(),
                 duoCtx.getPasscode() != null ? "set" : "not set");
     }
-
+ // Checkstyle: CyclomaticComplexity ON
+    
     /**
      * Extracts the Duo API arguments passed in via the request headers.
      * 
