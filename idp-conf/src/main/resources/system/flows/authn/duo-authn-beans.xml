@@ -69,7 +69,13 @@
         p:objectMapper-ref="shibboleth.JSONObjectMapper"
         p:httpClient-ref="%{idp.duo.nonbrowser.httpClient:shibboleth.NonCachingHttpClient}" />
 
-    <util:map id="shibboleth.authn.duo.DefaultClassifiedMessageMap" />
+    <util:map id="shibboleth.authn.duo.DefaultClassifiedMessageMap">
+        <entry key="AccountLocked">
+            <list>
+                <value>locked_out</value>
+            </list>
+        </entry>
+    </util:map>
 
     <bean id="ValidateDuoAuthAPI" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ValidateDuoAuthAPI"
