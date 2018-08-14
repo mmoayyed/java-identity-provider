@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +32,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
+import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
 import com.duosecurity.duoweb.DuoWebException;
 
@@ -49,18 +53,12 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
     /** HttpClient for contacting Duo. */
     @NonnullAfterInit private HttpClient httpClient;
 
+    /** HTTP client security parameters. */
+    @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
+    
     /** JSON object mapper. */
     @NonnullAfterInit private ObjectMapper objectMapper;
     
-    /**
-     * Get the {@link HttpClient} to use for contacting Duo.
-     * 
-     * @return HttpClient
-     */
-    @NonnullAfterInit public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
     /**
      * Set the {@link HttpClient} to use for contacting Duo.
      * 
@@ -68,19 +66,23 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      */
     public void setHttpClient(@Nonnull final HttpClient client) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         httpClient = Constraint.isNotNull(client, "HTTP client cannot be null");
     }
 
     /**
-     * Get the JSON {@link ObjectMapper}.
+     * Set the optional client security parameters.
      * 
-     * @return ObjectMapper
+     * @param params the new client security parameters
      */
-    @NonnullAfterInit public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
+    public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
+        httpClientSecurityParameters = params;
+    }
+    
     /**
      * Set the JSON {@link ObjectMapper}.
      * 
@@ -88,6 +90,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      */
     public void setObjectMapper(@Nonnull final ObjectMapper mapper) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         objectMapper = Constraint.isNotNull(mapper, "Object mapper cannot be null");
     }
@@ -95,7 +98,8 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
+        
+        
         if (httpClient == null) {
             throw new ComponentInitializationException("HttpClient cannot be null");
         }
@@ -124,7 +128,11 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
                     throws DuoWebException, ClientProtocolException, IOException {
 
         // Make the request.
-        final HttpResponse httpResponse = getHttpClient().execute(request);
+        final HttpClientContext clientContext = HttpClientContext.create();
+        HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, true);
+        HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
+        final HttpResponse httpResponse = httpClient.execute(request, clientContext);
+        HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
 
         // Check the HTTP response code.
         final int httpStatusCode = httpResponse.getStatusLine().getStatusCode();

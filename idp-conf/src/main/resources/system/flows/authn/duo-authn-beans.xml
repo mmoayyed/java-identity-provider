@@ -63,12 +63,14 @@
     <bean id="DuoPreauthAuthenticator" lazy-init="true"
         class="net.shibboleth.idp.authn.duo.impl.DuoPreauthAuthenticator"
         p:objectMapper-ref="shibboleth.JSONObjectMapper"
-        p:httpClient-ref="%{idp.duo.nonbrowser.httpClient:shibboleth.NonCachingHttpClient}" />
+        p:httpClient="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClient') ?: getObject('shibboleth.NonCachingHttpClient')}"
+        p:httpClientSecurityParameters="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClientSecurityParameters')}" />
 
     <bean id="DuoAuthAuthenticator" lazy-init="true"
         class="net.shibboleth.idp.authn.duo.impl.DuoAuthAuthenticator"
         p:objectMapper-ref="shibboleth.JSONObjectMapper"
-        p:httpClient-ref="%{idp.duo.nonbrowser.httpClient:shibboleth.NonCachingHttpClient}" />
+        p:httpClient="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClient') ?: getObject('shibboleth.NonCachingHttpClient')}"
+        p:httpClientSecurityParameters="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClientSecurityParameters')}" />
 
     <util:map id="shibboleth.authn.duo.DefaultClassifiedMessageMap">
         <entry key="AccountLocked">
