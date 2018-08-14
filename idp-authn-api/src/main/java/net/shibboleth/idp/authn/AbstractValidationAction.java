@@ -240,7 +240,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
-        return authenticatedSubject.getPrincipals(c);
+        return getSubject().getPrincipals(c);
     }
     
     /**
@@ -256,10 +256,10 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nullable @NonnullElements final Collection<T> principals) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        authenticatedSubject.getPrincipals().clear();
+        getSubject().getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {
-            authenticatedSubject.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+            getSubject().getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
         }
     }
  
@@ -295,7 +295,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         // able to satisfy the request. This step only applies if the validator has been injected with
         // specific principals, otherwise the flow's capabilities have already been examined.
         final RequestedPrincipalContext rpCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-        if (rpCtx != null && rpCtx.getOperator() != null && !authenticatedSubject.getPrincipals().isEmpty()) {
+        if (rpCtx != null && rpCtx.getOperator() != null && !getSubject().getPrincipals().isEmpty()) {
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
             for (final Principal p : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
@@ -339,12 +339,12 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         
         if (addDefaultPrincipals && authenticationContext.getAttemptedFlow() != null) {
             log.debug("{} Adding custom Principal(s) defined on underlying flow descriptor", getLogPrefix());
-            authenticatedSubject.getPrincipals().addAll(
+            getSubject().getPrincipals().addAll(
                     authenticationContext.getAttemptedFlow().getSupportedPrincipals());
         }
         
         final AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
-                populateSubject(authenticatedSubject));
+                populateSubject(getSubject()));
         authenticationContext.setAuthenticationResult(result);
         
         // Override cacheability if a predicate is installed.
