@@ -15,6 +15,7 @@
     <bean class="net.shibboleth.idp.security.ReloadingAccessControlService">
         <constructor-arg>
             <bean class="net.shibboleth.utilities.java.support.security.BasicAccessControlService"
+                p:id="shibboleth.AccessControlService"
                 p:policyMap-ref="shibboleth.AccessControlPolicies" />
         </constructor-arg>
     </bean>
