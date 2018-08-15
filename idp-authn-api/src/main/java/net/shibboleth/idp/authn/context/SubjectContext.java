@@ -45,11 +45,18 @@ import com.google.common.collect.ImmutableList;
  * 
  * <p>This is the ultimate product of a successful authentication process.</p>
  * 
+ * <p>A second field is available to store an identity that is impersonating the effective
+ * subject identity. Profiles should operate on the effective subject unless they need to
+ * be aware of both identities.</p>
+ * 
  * @parent {@link org.opensaml.profile.context.ProfileRequestContext}
  * @added After the subject of a request is determined
  */
 public class SubjectContext extends BaseContext {
 
+    /** Canonical principal name of an impersonating identity. */
+    @Nullable private String impersonatingPrincipalName;
+    
     /** Canonical principal name of subject. */
     @Nullable private String principalName;
 
@@ -83,6 +90,32 @@ public class SubjectContext extends BaseContext {
         return this;
     }
 
+    /**
+     * Get the canonical principal name of an identity that is impersonating the subject.
+     * 
+     * @return the canonical principal name of an impersonating identity
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public String getImpersonatingPrincipalName() {
+        return impersonatingPrincipalName;
+    }
+
+    /**
+     * Set the canonical principal name of an identity that is impersonating the subject.
+     * 
+     * @param name the canonical principal name of an impersonating identity
+     * 
+     * @return this context
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public SubjectContext setImpersonatingPrincipalName(@Nullable final String name) {
+        impersonatingPrincipalName = name;
+        
+        return this;
+    }
+    
     /**
      * Get a mutable map of authentication flow IDs to authentication results.
      * 

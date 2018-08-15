@@ -5,15 +5,18 @@
 
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
-
+    
     <on-start>
-        <evaluate expression="PrincipalFunction.apply(opensamlProfileRequestContext)" result="flowScope.principalCollection" />
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectContext))" result="flowScope.subjectContext" />
     </on-start>
 
-    <decision-state id="CanImpersonate">
-        <if test="principalCollection != null and !principalCollection.isEmpty()"
-            then="ImpersonateView" else="proceed" />
-    </decision-state>
+    <action-state id="CheckGeneralAccess">
+        <evaluate expression="CheckGeneralAccess" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ImpersonateView" />
+        <transition to="proceed" />
+    </action-state>
 
     <view-state id="ImpersonateView" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
@@ -26,7 +29,8 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         
-        <transition on="proceed" to="CheckForImpersonation" />
+        <transition on="impersonate" to="CheckForImpersonation" />
+        <transition to="proceed" />
     </view-state>
     
     <decision-state id="CheckForImpersonation">
@@ -34,13 +38,16 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest().getParameter('principal')" result="requestScope.principalToSpoof" />
         </on-entry>
         <if test="principalToSpoof == null or principalToSpoof.length() == 0"
-            then="proceed" else="CheckAllowed" />
+            then="proceed" else="CheckSpecificAccess" />
     </decision-state>
     
-    <decision-state id="CheckAllowed">
-        <if test="principalCollection.contains(principalToSpoof)"
-            then="DoImpersonate" else="ImpersonationViolation" />
-    </decision-state>
+    <action-state id="CheckSpecificAccess">
+        <evaluate expression="CheckSpecificAccess" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="DoImpersonate" />
+        <transition to="ImpersonationViolation" />
+    </action-state>
     
     <action-state id="DoImpersonate">
         <on-entry>
@@ -48,8 +55,10 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).removeSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext))" />
             <!-- Log the impersonation. -->
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectContext)).getPrincipalName()" result="requestScope.principalSpoofer" />
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').info('Impersonation by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{principalSpoofer, principalToSpoof, relyingPartyId})" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').info('Impersonation by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{subjectContext.getPrincipalName(), principalToSpoof, relyingPartyId})" />
+            <!-- Swap identities. -->
+            <evaluate expression="subjectContext.setImpersonatingPrincipalName(subjectContext.getPrincipalName())" />
+            <evaluate expression="subjectContext.setPrincipalName(principalToSpoof)" />
         </on-entry>
         
         <evaluate expression="PopulateAuditContext" />
@@ -64,8 +73,7 @@
         <on-entry>
             <!-- Log violation. -->
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectContext)).getPrincipalName()" result="requestScope.principalSpoofer" />
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').warn('Unauthorized impersonation attempt by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{principalSpoofer, principalToSpoof, relyingPartyId})" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').warn('Unauthorized impersonation attempt by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{subjectContext.getPrincipalName(), principalToSpoof, relyingPartyId})" />
         </on-entry>
     </end-state>
 

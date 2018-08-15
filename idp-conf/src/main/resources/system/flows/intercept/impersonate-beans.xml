@@ -20,24 +20,34 @@
 
     <import resource="../../../conf/intercept/impersonate-intercept-config.xml" />
 
-    <!-- Simplifies flow definition expressions. -->
-    <alias name="shibboleth.impersonate.PrincipalFunction" alias="PrincipalFunction"/>
+    <bean id="CheckGeneralAccess"
+        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:accessControlService-ref="shibboleth.AccessControlService"
+        p:policyName-ref="shibboleth.impersonate.GeneralPolicy"
+        p:operation="impersonate" />
 
-    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
-        c:resolverService-ref="shibboleth.AttributeResolverService"
-        p:resolutionLabel="intercept/impersonate"
-        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
-        p:principalNameLookupStrategy-ref="FlowScopePrincipalLookup" />
-
-    <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
-        c:filterService-ref="shibboleth.AttributeFilterService"
-        p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
-        p:metadataResolver-ref="shibboleth.MetadataResolver"
-        p:principalNameLookupStrategy-ref="FlowScopePrincipalLookup" />
+    <bean id="CheckSpecificAccess"
+        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:accessControlService-ref="shibboleth.AccessControlService"
+        p:policyName-ref="shibboleth.impersonate.SpecificPolicy"
+        p:operation="impersonate"
+        p:resourceLookupStrategy-ref="FlowScopePrincipalLookup" />
 
     <bean id="FlowScopePrincipalLookup" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
         c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getRequestScope().get('principalToSpoof')" />
+
+    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
+        c:resolverService-ref="shibboleth.AttributeResolverService"
+        p:resolutionLabel="intercept/impersonate"
+        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
+
+    <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
+        c:filterService-ref="shibboleth.AttributeFilterService"
+        p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
+        p:metadataResolver-ref="shibboleth.MetadataResolver" />
         
     <import resource="../../conf/audit-system.xml" />
     
@@ -46,9 +56,16 @@
 		    <map>
 		        <entry>
 		            <key>
-		                <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.IMPERSONATED_USERNAME"/>
+		                <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.IMPERSONATING_USERNAME"/>
 		            </key>
-		            <ref bean="FlowScopePrincipalLookup" />
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextImpersonatingPrincipalLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.SubjectContext" />
+                        </constructor-arg>    
+                    </bean>
 		        </entry>
 		    </map>
         </property>

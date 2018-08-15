@@ -12,12 +12,14 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Function returns the list of principal names the user can impersonate, defaults to null. -->
+    <!--
+    Names of access control policies defined in access-control.xml to control impersonation.
+    The general policy runs first and determines whether to offer the impersonation option.
+    The specific policy runs second and determines whether to allow the requested impersonation.
+    -->
 
-    <bean id="shibboleth.impersonate.PrincipalFunction" class="com.google.common.base.Functions" factory-method="constant">
-        <constructor-arg>
-            <null/>
-        </constructor-arg>
-    </bean>
+    <bean id="shibboleth.impersonate.GeneralPolicy" class="java.lang.String" c:_0="GeneralImpersonationPolicy" />
+
+    <bean id="shibboleth.impersonate.SpecificPolicy" class="java.lang.String" c:_0="SpecificImpersonationPolicy" />
     
 </beans>
