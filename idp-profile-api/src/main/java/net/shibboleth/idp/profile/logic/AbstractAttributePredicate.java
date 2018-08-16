@@ -54,6 +54,15 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
         useUnfilteredAttributes = true;
     }
+    
+    /**
+     * Get the lookup strategy to use to locate the {@link AttributeContext}.
+     * 
+     * @return lookup strategy to use
+     */
+    @Nonnull public Function<ProfileRequestContext,AttributeContext> getAttributeContextLookupStrategy() {
+        return attributeContextLookupStrategy;
+    }
 
     /**
      * Set the lookup strategy to use to locate the {@link AttributeContext}.
@@ -68,6 +77,15 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
     }
     
     /**
+     * Get whether to source the input attributes from the unfiltered set.
+     * 
+     * @return whether to source the input attributes from the unfiltered set
+     */
+    public boolean isUseUnfilteredAttributes() {
+        return useUnfilteredAttributes;
+    }
+    
+    /**
      * Set whether to source the input attributes from the unfiltered set.
      * 
      * <p>Defaults to true.</p>
@@ -78,7 +96,6 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
         useUnfilteredAttributes = flag;
     }
     
-
     /** {@inheritDoc} */
     @Override
     public boolean apply(@Nullable final ProfileRequestContext input) {
@@ -108,7 +125,7 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
     protected boolean allowNullAttributeContext() {
         return false;
     }
-
+    
     /**
      * Abstract implementation of the condition to evaluate.
      * 
