@@ -55,10 +55,12 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        DeprecationSupport.warnOnce(ObjectType.ELEMENT, ELEMENT_NAME.toString(),
-                parserContext.getReaderContext().getResource().getDescription(),
-                InputDataConnectorParser.ELEMENT_NAME.toString()  + " or "
-                        + InputAttributeDefinitionParser.ELEMENT_NAME.toString());
+        if (ELEMENT_NAME.getLocalPart().equals(config.getLocalName())) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, ELEMENT_NAME.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    InputDataConnectorParser.ELEMENT_NAME.toString()  + " or "
+                            + InputAttributeDefinitionParser.ELEMENT_NAME.toString());
+        }
         
         final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
         log.info("Parsing configuration for {} with pluginId: {}", config.getLocalName(), pluginId);
