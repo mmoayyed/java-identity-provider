@@ -118,6 +118,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param definitions attribute definitions loaded in to this resolver
      */
     public void setAttributeDefinitions(@Nullable @NullableElements final Collection<AttributeDefinition> definitions) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         final Map<String, AttributeDefinition> checkedDefinitions;
         if (definitions != null) {
             checkedDefinitions = new HashMap<>(definitions.size());
@@ -151,6 +153,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param connectors data connectors loaded in to this resolver
      */
     public void setDataConnectors( @Nullable @NullableElements final Collection<DataConnector> connectors){
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         final Map<String, DataConnector> checkedConnectors;
         if (connectors != null) {
             checkedConnectors = new HashMap<>(connectors.size());
@@ -191,6 +195,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param doStripNulls what to set 
      */
     public void setStripNulls(final Boolean doStripNulls) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         stripNulls = doStripNulls;
     }
 
@@ -198,6 +204,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param principalResolver code to resolve the principal
      */
     public void setPrincipalDecoder(@Nullable final LegacyPrincipalDecoder principalResolver) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         principalConnector = principalResolver;
     }
 
