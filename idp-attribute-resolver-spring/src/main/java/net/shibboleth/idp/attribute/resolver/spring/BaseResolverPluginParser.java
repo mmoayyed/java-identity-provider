@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
+import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -68,8 +69,17 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         builder.setDestroyMethodName("destroy");
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
+            if (config.hasAttributeNS(null, "relyingParties")) {
+                log.warn("relyingParties ignore, using activationConditionRef");
+            }
             builder.addPropertyReference("activationCondition",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
+        } else if (config.hasAttributeNS(null, "relyingParties")) {
+            final BeanDefinitionBuilder rpBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
+            rpBuilder .addConstructorArgValue(
+                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
+            builder.addPropertyValue("activationCondition", rpBuilder.getBeanDefinition());
         }
 
         if (config.hasAttributeNS(null, "profileContextStrategyRef")) {

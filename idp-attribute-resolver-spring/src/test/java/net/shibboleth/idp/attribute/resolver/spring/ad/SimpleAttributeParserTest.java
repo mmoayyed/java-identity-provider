@@ -23,14 +23,23 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringAttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 import net.shibboleth.idp.saml.impl.TestSources;
@@ -136,5 +145,32 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
     @Test public void bad() throws ComponentInitializationException {
         getAttributeDefn("simpleAttributeBadValues.xml", SimpleAttributeDefinition.class);
+    }
+
+    @Test public void relyingParties() throws ComponentInitializationException {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("prop1", "p1");
+        mockEnvVars.setProperty("prop2", "p2 p3");
+        mockEnvVars.setProperty("prop3", "");
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
+        placeholderConfig.setPropertySources(propertySources);
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+
+        AttributeDefinition attr = getAttributeDefn("relyingParties.xml", SimpleAttributeDefinition.class, context);
+        RelyingPartyIdPredicate pre = (RelyingPartyIdPredicate) attr.getActivationCondition();
+        ProfileRequestContext prc = new ProfileRequestContext<>();
+        RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
+        rpContext.setRelyingPartyId("p1");
+        Assert.assertTrue(pre.apply(prc));
+        rpContext.setRelyingPartyId("p2 p3");
+        Assert.assertFalse(pre.apply(prc));
+        rpContext.setRelyingPartyId("p3");
+        Assert.assertTrue(pre.apply(prc));
     }
 }

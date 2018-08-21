@@ -289,6 +289,15 @@
             <annotation>
                 <documentation>
                     A reference to a predicate to decide whether this plugin is applicable
+                    Mutually exclusive with relyingParties
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="relyingParties" type="string">
+            <annotation>
+                <documentation>
+                    A (space separated) list of entities for which this plugin is to be active
+                    Mutually exclusive with activationConditionRef
                 </documentation>
             </annotation>
         </attribute>
