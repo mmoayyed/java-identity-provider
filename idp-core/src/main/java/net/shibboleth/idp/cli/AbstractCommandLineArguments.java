@@ -22,6 +22,9 @@ import java.net.URL;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -49,7 +52,11 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     /** Path to add to base URL. */
     @Parameter(names = {"-p", "--path"}, description = "Path to append to base URL to invoke")
     @Nullable private String path;
-    
+
+    /** Disable TLS certificate name checking. */
+    @Parameter(names = {"-k", "--disableNameChecking"}, description = "Disable TLS certificate name checking")
+    private boolean disableNameChecking;
+
     /** Trust store for SSL connectivity. */
     @Parameter(names = {"-ts", "--trustStore"}, description = "Path to a trust store for SSL connections")
     @Nullable private String trustStore;
@@ -125,6 +132,15 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     @Nullable public String getTrustStorePassword() {
         return trustStorePassword;
     }
+    
+    /**
+     * Value of "disableNameChecking" parameter.
+     * 
+     * @return parameter value
+     */
+    public boolean isDisableNameChecking() {
+        return disableNameChecking;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -147,6 +163,15 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
      */
     @Nonnull public URL buildURL() throws MalformedURLException {
         installTrustStore();
+        
+        if (disableNameChecking) {
+            final HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(final String hostname, final SSLSession session) {
+                    return true;
+                }
+            };      
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);                       
+        }
         
         final StringBuilder builder = new StringBuilder(getURL());
         if (getPath() != null) {
