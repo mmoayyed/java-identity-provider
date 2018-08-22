@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
@@ -36,11 +37,13 @@ import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
@@ -264,7 +267,33 @@ public class DefaultAuthenticationResultSerializerTest {
         Assert.assertEquals(((ScopedStringAttributeValue) attribute.getValues().get(1)).getScope(), "scope");
         Assert.assertEquals(attribute.getValues().get(2), EmptyAttributeValue.ZERO_LENGTH);
     }
-    
+
+    @Test public void testProxyAuthentication() throws Exception {
+        final ProxyAuthenticationPrincipalSerializer proxySerializer = new ProxyAuthenticationPrincipalSerializer();
+        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(proxySerializer));
+        serializer.initialize();
+        
+        final AuthenticationResult result = createResult("test", new Subject());
+        final ProxyAuthenticationPrincipal prin = new ProxyAuthenticationPrincipal();
+        prin.getAuthorities().addAll(Arrays.asList("foo","bar","baz"));
+        result.getSubject().getPrincipals().add(prin);
+
+        final String s = serializer.serialize(result);
+        final String s2 = fileToString(DATAPATH + "ProxyAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        
+        final Collection<String> authorities =
+                ((ProxyAuthenticationPrincipal) result2.getSubject().getPrincipals().iterator().next()).getAuthorities();
+        Assert.assertEquals(authorities, prin.getAuthorities());
+    }
+
     @Test public void testNestedAuthenticationResult() throws Exception {
         serializer.initialize();
         
