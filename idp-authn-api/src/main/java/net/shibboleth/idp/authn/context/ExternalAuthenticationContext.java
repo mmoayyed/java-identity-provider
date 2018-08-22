@@ -18,12 +18,17 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 
 /**
  * A context representing the state of an externalized authentication attempt,
@@ -49,6 +54,9 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /** Time of authentication. */
     @Nullable private DateTime authnInstant;
     
+    /** Proxied authenticating sources. */
+    @Nonnull private Collection<String> authenticatingAuthorities;
+    
     /** Error message. */
     @Nullable private String authnError;
     
@@ -60,6 +68,11 @@ public final class ExternalAuthenticationContext extends BaseContext {
     
     /** Flag indicating this "new" result is really "old". */
     private boolean previousResult;
+    
+    /** Constructor. */
+    public ExternalAuthenticationContext() {
+        authenticatingAuthorities = new ArrayList<>();
+    }
     
     /**
      * Get the flow execution URL to return control to.
@@ -75,9 +88,13 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * Set the flow execution URL to return control to.
      * 
      * @param url   return location
+     * 
+     * @return this context
      */
-    public void setFlowExecutionUrl(@Nullable final String url) {
+    @Nonnull public ExternalAuthenticationContext setFlowExecutionUrl(@Nullable final String url) {
         flowExecutionUrl = url;
+        
+        return this;
     }
 
     /**
@@ -93,9 +110,13 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * Set a {@link Principal} that was authenticated.
      * 
      * @param prin principal to set
+     * 
+     * @return this context
      */
-    public void setPrincipal(@Nullable final Principal prin) {
+    @Nonnull public ExternalAuthenticationContext setPrincipal(@Nullable final Principal prin) {
         principal = prin;
+        
+        return this;
     }
 
     /**
@@ -111,9 +132,13 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * Set the name of a principal that was authenticated.
      * 
      * @param name name of principal to set
+     * 
+     * @return this context
      */
-    public void setPrincipalName(@Nullable final String name) {
+    @Nonnull public ExternalAuthenticationContext setPrincipalName(@Nullable final String name) {
         principalName = name;
+        
+        return this;
     }
 
     /**
@@ -128,10 +153,14 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /**
      * Set a {@link Subject} that was authenticated.
      * 
-     * @param sub The subject to set.
+     * @param sub The subject to set
+     * 
+     * @return this context
      */
-    public void setSubject(@Nullable final Subject sub) {
+    @Nonnull public ExternalAuthenticationContext setSubject(@Nullable final Subject sub) {
         subject = sub;
+        
+        return this;
     }
 
     /**
@@ -147,9 +176,24 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * Set the time of authentication.
      * 
      * @param instant time of authentication to set
+     * 
+     * @return this context
      */
-    public void setAuthnInstant(final DateTime instant) {
+    @Nonnull public ExternalAuthenticationContext setAuthnInstant(@Nullable final DateTime instant) {
         authnInstant = instant;
+        
+        return this;
+    }
+    
+    /**
+     * Get a mutable, ordered list of proxied authentication sources.
+     * 
+     * @return proxied authentication sources
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull @Live public Collection<String> getAuthenticatingAuthorities() {
+        return authenticatingAuthorities;
     }
 
     /**
@@ -165,9 +209,13 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * Set an error message from the authentication process.
      * 
      * @param message message to set
+     * 
+     * @return this context
      */
-    public void setAuthnError(final String message) {
+    @Nonnull public ExternalAuthenticationContext setAuthnError(@Nullable final String message) {
         authnError = message;
+        
+        return this;
     }
 
     /**
@@ -183,9 +231,13 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * Set an exception from the authentication process.
      * 
      * @param exception exception to set
+     * 
+     * @return this context
      */
-    public void setAuthnException(final Exception exception) {
+    @Nonnull public ExternalAuthenticationContext setAuthnException(@Nullable final Exception exception) {
         authnException = exception;
+        
+        return this;
     }
     
     /**
@@ -200,10 +252,14 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /**
      * Set the "do not cache" flag.
      * 
-     * @param flag flag to set 
+     * @param flag flag to set
+     * 
+     * @return this context
      */
-    public void setDoNotCache(final boolean flag) {
+    @Nonnull public ExternalAuthenticationContext setDoNotCache(final boolean flag) {
         doNotCache = flag;
+        
+        return this;
     }
     
     /**
@@ -224,9 +280,13 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @param flag flag to set
      * 
+     * @return this context
+     * 
      * @since 3.3.0
      */
-    public void setPreviousResult(final boolean flag) {
+    @Nonnull public ExternalAuthenticationContext setPreviousResult(final boolean flag) {
         previousResult = flag;
+        
+        return this;
     }
 }

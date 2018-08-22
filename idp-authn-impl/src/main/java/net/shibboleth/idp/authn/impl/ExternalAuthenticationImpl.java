@@ -160,6 +160,11 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
             extContext.setAuthnInstant((DateTime) attr);
         }
         
+        attr = request.getAttribute(AUTHENTICATING_AUTHORITIES_KEY);
+        if (attr != null && attr instanceof Collection<?>) {
+            extContext.getAuthenticatingAuthorities().addAll((Collection<String>) attr);
+        }
+        
         attr = request.getAttribute(AUTHENTICATION_ERROR_KEY);
         if (attr != null && attr instanceof String) {
             extContext.setAuthnError((String) attr);

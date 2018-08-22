@@ -26,10 +26,17 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
-/** Principal that wraps a set of proxied authentication authorities. */
+/**
+ * Principal that wraps a set of proxied authentication authorities.
+ * 
+ * @since 3.4.0
+ */
 public class ProxyAuthenticationPrincipal implements Principal {
 
     /** The authorities. */
@@ -38,6 +45,17 @@ public class ProxyAuthenticationPrincipal implements Principal {
     /** Constructor. */
     public ProxyAuthenticationPrincipal() {
         authorities = new ArrayList<>();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param proxiedAuthorities initial set of authorities
+     */
+    public ProxyAuthenticationPrincipal(@Nonnull @NonnullElements final Collection<String> proxiedAuthorities) {
+        Constraint.isNotNull(proxiedAuthorities, "Proxied authority collection cannot be null");
+        
+        authorities = new ArrayList<>(Collections2.filter(proxiedAuthorities, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */

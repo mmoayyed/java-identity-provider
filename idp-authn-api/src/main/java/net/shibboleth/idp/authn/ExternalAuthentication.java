@@ -48,6 +48,13 @@ public class ExternalAuthentication {
     /** Request attribute to which an authentication timestamp may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_INSTANT_KEY = "authnInstant";
     
+    /** 
+     * Request attribute to which a collection of authenticating authorities may be bound.
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull @NotEmpty public static final String AUTHENTICATING_AUTHORITIES_KEY = "authnAuthorities";
+    
     /** Request attribute to which an error message may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_ERROR_KEY = "authnError";
 

@@ -29,6 +29,7 @@ import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -164,6 +165,12 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         }
         
         recordSuccess();
+        
+        if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
+            final ProxyAuthenticationPrincipal proxied =
+                    new ProxyAuthenticationPrincipal(extContext.getAuthenticatingAuthorities());
+            extContext.getSubject().getPrincipals().add(proxied);
+        }
         
         if (extContext.doNotCache()) {
             log.debug("{} Disabling caching of authentication result", getLogPrefix());

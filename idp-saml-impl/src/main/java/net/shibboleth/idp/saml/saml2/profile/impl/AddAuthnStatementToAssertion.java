@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,6 +26,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -45,6 +47,7 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
@@ -165,6 +168,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         log.debug("{} Added AuthenticationStatement to Assertion {}", getLogPrefix(), assertion.getID());
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Build the {@link AuthnStatement} to be added to the {@link Response}.
      * 
@@ -208,6 +212,24 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
                     classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef());
         }
         
+        final Set<ProxyAuthenticationPrincipal> proxyPrincipals =
+                getAuthenticationResult().getSubject().getPrincipals(ProxyAuthenticationPrincipal.class);
+        if (proxyPrincipals != null && !proxyPrincipals.isEmpty()) {
+            if (proxyPrincipals.size() == 1) {
+                final SAMLObjectBuilder<AuthenticatingAuthority> authorityBuilder =
+                        (SAMLObjectBuilder<AuthenticatingAuthority>) bf.<AuthenticatingAuthority>getBuilderOrThrow(
+                                AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
+                for (final String authority : proxyPrincipals.iterator().next().getAuthorities()) {
+                    final AuthenticatingAuthority aa = authorityBuilder.buildObject();
+                    aa.setURI(authority);
+                    authnContext.getAuthenticatingAuthorities().add(aa);
+                }
+            } else {
+                log.warn("{} Multiple ProxyAuthenticationPrincipals, skipping AuthenticatingAuthority population",
+                        getLogPrefix());
+            }
+        }
+        
         if (sessionLifetimeLookupStrategy != null) {
             final Long lifetime = sessionLifetimeLookupStrategy.apply(profileRequestContext);
             if (lifetime != null && lifetime > 0) {
@@ -227,6 +249,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         
         return statement;
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Default strategy for obtaining assertion to modify.

@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -126,7 +130,24 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         Assert.assertTrue(ac.getAuthenticationResult().isPreviousResult());
         Assert.assertEquals(ts.getMillis(), ac.getAuthenticationResult().getAuthenticationInstant());
     }
-    
+
+    @Test public void testAuthnAuthorities() {
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        eac.setPrincipalName("foo");
+        eac.getAuthenticatingAuthorities().addAll(Arrays.asList("foo", "bar", "baz"));
+        eac.setPreviousResult(true);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertTrue(ac.getAuthenticationResult().isPreviousResult());
+        final Set<ProxyAuthenticationPrincipal> prin =
+                ac.getAuthenticationResult().getSubject().getPrincipals(ProxyAuthenticationPrincipal.class);
+        Assert.assertEquals(prin.size(), 1);
+        Assert.assertEquals(prin.iterator().next().getAuthorities(), Arrays.asList("foo", "bar", "baz"));
+    }
+
     @Test public void testException() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);

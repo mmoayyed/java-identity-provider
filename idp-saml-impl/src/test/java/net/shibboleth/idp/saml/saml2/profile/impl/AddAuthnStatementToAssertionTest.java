@@ -17,12 +17,15 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.Arrays;
+
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.action.EventIds;
@@ -69,13 +72,13 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     /** Test that the action errors out properly if there is no authentication context. */
-    @Test public void testNoAuthnContext() throws Exception {
+    @Test public void testNoAuthnContext() {
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party context. */
-    @Test public void testNoRelyingPartyContext() throws Exception {
+    @Test public void testNoRelyingPartyContext() {
         prc.getSubcontext(AuthenticationContext.class, true);
         prc.removeSubcontext(RelyingPartyContext.class);
 
@@ -84,7 +87,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     }
 
     /** Test that the action errors out properly if there is no context. */
-    @Test public void testNoContext() throws Exception {
+    @Test public void testNoContext() {
         prc.setOutboundMessageContext(null);
         prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
@@ -101,8 +104,9 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    /** Test that the authentication statement is properly added. */
-    @Test public void testAddAuthenticationStatement() throws Exception {
+    /** Test that the authentication statement is properly added. 
+     * @throws InterruptedException */
+    @Test public void testAddAuthenticationStatement() throws InterruptedException {
         final long now = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
@@ -138,10 +142,11 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(authnContext);
         Assert.assertNotNull(authnContext.getAuthnContextClassRef());
         Assert.assertEquals(authnContext.getAuthnContextClassRef().getAuthnContextClassRef(), "Test");
+        Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
 
     /** Test that the authentication statement is properly added. */
-    @Test public void testSessionNotOnOrAfter() throws Exception {
+    @Test public void testSessionNotOnOrAfter() {
         final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setMaximumSPSessionLifetime(60 * 60 * 1000);
         ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
@@ -160,7 +165,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     /** Test that the authentication statement is properly added with the right method. */
-    @Test public void testAddAuthenticationStatementAndMethod() throws Exception {
+    @Test public void testAddAuthenticationStatementAndMethod() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Foo"));
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Bar"));
@@ -180,7 +185,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(response.getAssertions().size(), 1);
         Assert.assertNotNull(response.getAssertions().get(0));
 
-        Assertion assertion = response.getAssertions().get(0);
+        final Assertion assertion = response.getAssertions().get(0);
         Assert.assertEquals(assertion.getAuthnStatements().size(), 1);
         Assert.assertNotNull(assertion.getAuthnStatements().get(0));
 
@@ -189,6 +194,25 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(authnContext);
         Assert.assertNotNull(authnContext.getAuthnContextClassRef());
         Assert.assertEquals(authnContext.getAuthnContextClassRef().getAuthnContextClassRef(), "Bar");
+        Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
     
+    @Test public void testAuthenticatingAuthorities() {
+        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(Arrays.asList("foo", "bar", "baz"))));
+        
+        final Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final Assertion assertion = response.getAssertions().get(0);
+        final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
+        final AuthnContext authnContext = authenticationStatement.getAuthnContext();
+        Assert.assertNotNull(authnContext);
+        Assert.assertEquals(authnContext.getAuthenticatingAuthorities().size(), 3);
+        Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(0).getURI(), "foo");
+        Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(1).getURI(), "bar");
+        Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(2).getURI(), "baz");
+    }
+
 }

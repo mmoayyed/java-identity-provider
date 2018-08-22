@@ -82,7 +82,10 @@ public class RemoteUserAuthServlet extends HttpServlet {
 
     /** Init parameter identifying a header to check for one or more authentication method strings. */
     @Nonnull @NotEmpty private static final String AUTHN_METHOD_HEADER_PARAM = "authnMethodHeader";
-    
+
+    /** Init parameter identifying a header to check for one or more proxied authenticating authority strings. */
+    @Nonnull @NotEmpty private static final String AUTHN_AUTHORITY_HEADER_PARAM = "authnAuthorityHeader";
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RemoteUserAuthServlet.class);
     
@@ -100,6 +103,9 @@ public class RemoteUserAuthServlet extends HttpServlet {
     
     /** Header to check for authentication method strings. */
     @Nullable @NotEmpty private String authnMethodHeader;
+
+    /** Header to check for proxied authenticating authority strings. */
+    @Nullable @NotEmpty private String authnAuthorityHeader;
 
     /** Constructor. */
     public RemoteUserAuthServlet() {
@@ -153,6 +159,17 @@ public class RemoteUserAuthServlet extends HttpServlet {
         authnMethodHeader = StringSupport.trimOrNull(header);
     }
 
+    /**
+     * Set the name of a request header to check for authenticating authority strings.
+     * 
+     * @param header request header name
+     * 
+     * @since 3.4.0
+     */
+    public void setAuthnAuthorityHeader(@Nullable @NotEmpty final String header) {
+        authnAuthorityHeader = StringSupport.trimOrNull(header);
+    }
+
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
@@ -189,7 +206,12 @@ public class RemoteUserAuthServlet extends HttpServlet {
         if (param != null) {
             setAuthnMethodHeader(param);
         }
-        
+
+        param = config.getInitParameter(AUTHN_AUTHORITY_HEADER_PARAM);
+        if (param != null) {
+            setAuthnAuthorityHeader(param);
+        }
+
         log.info("RemoteUserAuthServlet {} process REMOTE_USER, along with attributes {} and headers {}",
                 new Object[] {checkRemoteUser ? "will" : "will not", checkAttributes, checkHeaders,});
         if (subjectAttribute != null) {
@@ -198,6 +220,10 @@ public class RemoteUserAuthServlet extends HttpServlet {
         }
         if (authnMethodHeader != null) {
             log.info("RemoteUserAuthServlet will check for authentication methods in header: {}", authnMethodHeader);
+        }
+        if (authnAuthorityHeader != null) {
+            log.info("RemoteUserAuthServlet will check for authenticating authorities in header: {}",
+                    authnAuthorityHeader);
         }
     }
 
@@ -257,6 +283,23 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 log.info("User identity not found in request");
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
+            }
+            
+            if (authnAuthorityHeader != null) {
+                // Check for proxied authorities.
+                final Enumeration<String> authorities = httpRequest.getHeaders(authnAuthorityHeader);
+                if (authorities != null && authorities.hasMoreElements()) {
+                    final Collection<String> copied = new ArrayList<>();
+                    while (authorities.hasMoreElements()) {
+                        final String authority = authorities.nextElement();
+                        if (!Strings.isNullOrEmpty(authority)) {
+                            copied.add(authority);
+                        }
+                    }
+                    if (!copied.isEmpty()) {
+                        httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATING_AUTHORITIES_KEY, copied);
+                    }
+                }
             }
             
             if (authnMethodHeader != null) {
