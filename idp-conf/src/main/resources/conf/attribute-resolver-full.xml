@@ -276,6 +276,7 @@
         principal="%{idp.attribute.resolver.LDAP.bindDN}"
         principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
         useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
+        authCert="%{idp.attribute.resolver.LDAP.trustCertificates}"
         connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
         responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}">
         <FilterTemplate>
@@ -283,10 +284,6 @@
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
         </FilterTemplate>
-        <StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
-            <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
-        </StartTLSTrustCredential>
     </DataConnector>
 -->
-
 </AttributeResolver>
