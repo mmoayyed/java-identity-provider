@@ -29,6 +29,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.PreferredPrincipalContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -84,7 +85,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     
     /** A subordinate RequestedPrincipalContext, if any. */
     @Nullable private RequestedPrincipalContext requestedPrincipalCtx; 
-    
+
+    /** A subordinate PreferredPrincipalContext, if any. */
+    @Nullable private PreferredPrincipalContext preferredPrincipalCtx; 
+
     /**
      * Get whether SSO should trump explicit relying party requirements preference.
      * 
@@ -120,6 +124,11 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     || requestedPrincipalCtx.getRequestedPrincipals().isEmpty()) {
                 requestedPrincipalCtx = null;
             }
+        }
+        
+        preferredPrincipalCtx = authenticationContext.getSubcontext(PreferredPrincipalContext.class);
+        if (preferredPrincipalCtx != null && preferredPrincipalCtx.getPreferredPrincipals().isEmpty()) {
+            preferredPrincipalCtx = null;
         }
         
         // Detect a previous attempted flow, and move it to the intermediate collection.
@@ -277,14 +286,24 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             return;
         }
 
-        // Pick a result to reuse if possible.
+        // Pick a result to reuse if possible, honoring any preferences if necessary.
+        
+        AuthenticationResult resultToSelect = null;
+        
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
             final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
                     activeResult.getAuthenticationFlowId());
             if (flow != null && flow.getReuseCondition().apply(profileRequestContext)) {
-                selectActiveResult(profileRequestContext, authenticationContext, activeResult);
-                return;
+                resultToSelect = activeResult;
+                if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(activeResult)) {
+                    break;
+                }
             }
+        }
+        
+        if (resultToSelect != null) {
+            selectActiveResult(profileRequestContext, authenticationContext, resultToSelect);
+            return;
         }
         
         log.debug("{} No usable active results available, selecting an inactive flow", getLogPrefix());
@@ -311,17 +330,23 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     @Nullable private AuthenticationFlowDescriptor getUnattemptedInactiveFlow(
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        
+        AuthenticationFlowDescriptor selectedFlow = null;
+        
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
             if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
                 if (!authenticationContext.isPassive() || flow.isPassiveAuthenticationSupported()) {
                     if (flow.apply(profileRequestContext)) {
-                        return flow;
+                        selectedFlow = flow;
+                        if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(flow)) {
+                            break;
+                        }
                     }
                 }
             }
         }
         
-        return null;
+        return selectedFlow;
     }
 
     /**

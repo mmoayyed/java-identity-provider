@@ -26,6 +26,7 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.PreferredPrincipalContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
@@ -132,6 +133,94 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final Event event = action.execute(src);
 
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
+    }
+
+    @Test public void testPreferredNoMatch() {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
+        ppc.setPreferredPrincipals(principals);
+        authCtx.addSubcontext(ppc, true);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test3");
+        
+        Assert.assertNull(authCtx.getAuthenticationResult());
+        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
+    }
+
+    @Test public void testPreferredNoneActive() {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
+        ppc.setPreferredPrincipals(principals);
+        authCtx.addSubcontext(ppc, true);
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test3");
+        
+        Assert.assertNull(authCtx.getAuthenticationResult());
+        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
+    }
+    
+    @Test public void testPreferredPickActiveInitialNonMatch() throws ComponentInitializationException {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
+        ppc.setPreferredPrincipals(principals);
+        authCtx.addSubcontext(ppc, true);
+        final AuthenticationResult active = new AuthenticationResult("test1", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test1"));
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setInitialAuthenticationResult(active);
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        
+        action = new SelectAuthenticationFlow();
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        Assert.assertEquals(active, authCtx.getAuthenticationResult());
+    }
+    
+    @Test public void testPreferredPickActiveNonMatch() {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
+        ppc.setPreferredPrincipals(principals);
+        authCtx.addSubcontext(ppc, true);
+        final AuthenticationResult active = new AuthenticationResult("test1", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test1"));
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(active, authCtx.getAuthenticationResult());
+    }
+
+    @Test public void testPreferredPickActiveMatch() {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
+        ppc.setPreferredPrincipals(principals);
+        authCtx.addSubcontext(ppc, true);
+        final AuthenticationResult active1 = new AuthenticationResult("test1", new Subject());
+        final AuthenticationResult active3 = new AuthenticationResult("test3", new Subject());
+        active1.getSubject().getPrincipals().add(new TestPrincipal("test1"));
+        active3.getSubject().getPrincipals().add(new TestPrincipal("test3"));
+        authCtx.setActiveResults(Arrays.asList(active1, active3));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(active3, authCtx.getAuthenticationResult());
     }
 
     @Test public void testRequestNoneActive() {
