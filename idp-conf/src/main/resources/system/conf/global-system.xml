@@ -50,8 +50,17 @@
     <import resource="general-admin-system.xml" />
     <import resource="utilities.xml" />
 
+    <bean id="systemPrereqs" class="org.springframework.beans.factory.config.MethodInvokingBean"
+            p:targetObject-ref="systemProperties" p:targetMethod="putAll">
+        <property name="arguments">
+            <props>
+                <prop key="org.apache.xml.security.ignoreLineBreaks">%{idp.apache.xml.security.ignoreLineBreaks:true}</prop>
+            </props>
+        </property>
+    </bean>
+
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
-        depends-on="shibboleth.LoggingService,shibboleth.ParserPool,shibboleth.metrics.MetricRegistry"
+        depends-on="systemPrereqs,shibboleth.LoggingService"
         p:parserPool-ref="shibboleth.ParserPool"
         p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
         
