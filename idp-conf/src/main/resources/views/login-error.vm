@@ -15,6 +15,13 @@
     #else
     	#set ($message = $loginException.toString())
     #end
+#else
+    ## This handles other login events.
+    #set ($eventCtx = $profileRequestContext.getSubcontext("org.opensaml.profile.context.EventContext"))
+    #if ($eventCtx.getEvent() && $eventCtx.getEvent() != "ReselectFlow")
+        #set ($eventKey = $springMacroRequestContext.getMessage("$eventCtx.getEvent()", "login"))
+        #set ($message = $springMacroRequestContext.getMessage("${eventKey}.message", "Login Failure: $eventId"))
+    #end
 #end
 
 #if ($message)
