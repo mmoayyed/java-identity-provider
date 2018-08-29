@@ -30,6 +30,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -69,6 +70,9 @@ public final class AuthenticationContext extends BaseContext {
     
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
+    
+    /** Allowed time in ms since an {@link AuthenticationResult} was created that it can be reused for this request. */
+    @NonNegative @Duration private long maxAge;
 
     /** Flows that are known to the system. */
     @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> availableFlows;
@@ -317,6 +321,37 @@ public final class AuthenticationContext extends BaseContext {
         hintedName = StringSupport.trimOrNull(hint);
         return this;
     }
+    
+    /**
+     * Get duration in milliseconds since an {@link AuthenticationResult} was created that
+     * allows it to be reused for this request.
+     * 
+     * <p>If zero, no constraint is applied.</p>
+     * 
+     * @return duration in milliseconds, or zero
+     * 
+     * @since 3.4.0
+     */
+    @NonNegative @Duration public long getMaxAge() {
+        return maxAge;
+    }
+    
+    /**
+     * Set duration in milliseconds since an {@link AuthenticationResult} was created that
+     * allows it to be reused for this request.
+     * 
+     * <p>Set to zero to apply no constraint.</p>
+     * 
+     * @param age duration in milliseconds, or zero
+     * 
+     * @return this context
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public AuthenticationContext setMaxAge(@NonNegative @Duration final long age) {
+        maxAge = Constraint.isGreaterThanOrEqual(0, age, "MaxAge cannot be negative");
+        return this;
+    }
 
     /**
      * Get the authentication flow that was attempted in order to authenticate the user.
@@ -542,6 +577,7 @@ public final class AuthenticationContext extends BaseContext {
                 .add("isPassive", isPassive)
                 .add("forceAuthn", forceAuthn)
                 .add("hintedName", hintedName)
+                .add("maxAge", maxAge)
                 .add("potentialFlows", potentialFlows.keySet())
                 .add("activeResults", activeResults.keySet())
                 .add("attemptedFlow", attemptedFlow)

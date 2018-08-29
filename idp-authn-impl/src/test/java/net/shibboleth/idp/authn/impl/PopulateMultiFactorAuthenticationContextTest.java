@@ -96,6 +96,12 @@ public class PopulateMultiFactorAuthenticationContextTest {
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         result = new AuthenticationResult("baz", new Subject());
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
+        result = new AuthenticationResult("bav", new Subject());
+        result.setAuthenticationInstant(System.currentTimeMillis() - 1000 * 1000);
+        subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
+        result = new AuthenticationResult("bag", new Subject());
+        result.setAuthenticationInstant(System.currentTimeMillis() - 2000 * 1000);
+        subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         
         ac.getActiveResults().put("authn/MFA", new AuthenticationResult("authn/MFA", subject));
         
@@ -113,6 +119,22 @@ public class PopulateMultiFactorAuthenticationContextTest {
         desc.initialize();
         ac.getAvailableFlows().put(desc.getId(), desc);
 
+        desc = new AuthenticationFlowDescriptor();
+        desc.setId("bav");
+        desc.setResultSerializer(new DefaultAuthenticationResultSerializer());
+        desc.setLifetime(3600 * 1000);
+        desc.initialize();
+        ac.getAvailableFlows().put(desc.getId(), desc);
+
+        desc = new AuthenticationFlowDescriptor();
+        desc.setId("bag");
+        desc.setResultSerializer(new DefaultAuthenticationResultSerializer());
+        desc.setLifetime(3600 * 1000);
+        desc.initialize();
+        ac.getAvailableFlows().put(desc.getId(), desc);
+
+        ac.setMaxAge(1800 * 1000);
+        
         action.setTransitionMapLookupStrategy(
                 FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(
                         Collections.singletonMap("", new MultiFactorAuthenticationTransition())));
@@ -123,10 +145,12 @@ public class PopulateMultiFactorAuthenticationContextTest {
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
         Assert.assertNotNull(mfa);
         Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
-        Assert.assertEquals(mfa.getActiveResults().size(), 1);
+        Assert.assertEquals(mfa.getActiveResults().size(), 2);
         Assert.assertNull(mfa.getActiveResults().get("foo"));
         Assert.assertNotNull(mfa.getActiveResults().get("bar"));
         Assert.assertNull(mfa.getActiveResults().get("baz"));
+        Assert.assertNotNull(mfa.getActiveResults().get("bav"));
+        Assert.assertNull(mfa.getActiveResults().get("bag"));
     }
     
 }

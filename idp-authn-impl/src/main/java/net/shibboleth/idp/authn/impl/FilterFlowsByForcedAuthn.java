@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An authentication action that filters out potential authentication flows if the request requires
- * forced authentication behavior and the flows don't support forced authentication.
+ * forced authentication or max age behavior and the flows don't support forced authentication.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
@@ -49,7 +49,7 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        if (!authenticationContext.isForceAuthn()) {
+        if (!authenticationContext.isForceAuthn() && authenticationContext.getMaxAge() == 0) {
             log.debug("{} Request does not have forced authentication requirement, nothing to do", getLogPrefix());
             return false;
         }
@@ -84,4 +84,5 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
             log.debug("{} Potential authentication flows left after filtering: {}", getLogPrefix(), potentialFlows);
         }
     }
+    
 }

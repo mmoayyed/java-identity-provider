@@ -89,7 +89,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-
+        
         final SessionContext ctx = sessionContextLookupStrategy.apply(profileRequestContext);
         if (ctx != null) {
             session = ctx.getIdPSession();
@@ -110,6 +110,9 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
             authenticationContext.setHintedName(session.getPrincipalName());
         }
         
+        final long maxAge = authenticationContext.getMaxAge();
+        final long now = System.currentTimeMillis();
+        
         final List<AuthenticationResult> actives = new ArrayList<>();
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
             final AuthenticationFlowDescriptor descriptor =
@@ -121,6 +124,12 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
             }
             
             if (descriptor.isResultActive(result)) {
+                if (maxAge > 0 && result.getAuthenticationInstant() + maxAge < now) {
+                    log.debug("{} Authentication result {} exceeds maxAge setting, skiping it", getLogPrefix(),
+                            result.getAuthenticationFlowId());
+                    continue;
+                }
+                
                 log.debug("{} Authentication result {} is active, copying from session", getLogPrefix(),
                         result.getAuthenticationFlowId());
                 actives.add(result);

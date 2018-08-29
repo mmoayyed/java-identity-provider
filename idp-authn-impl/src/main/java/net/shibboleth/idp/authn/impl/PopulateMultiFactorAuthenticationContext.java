@@ -232,7 +232,14 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             if (descriptor != null) {
                 if (descriptor.apply(profileRequestContext)) {
                     if (descriptor.isResultActive(candidate)) {
-                        results.add(candidate);
+                        if (authenticationContext.getMaxAge() > 0
+                                && candidate.getAuthenticationInstant() + authenticationContext.getMaxAge()
+                                    < System.currentTimeMillis()) {
+                            log.debug("{} Ignoring active result from login flow {} due to maxAge on request",
+                                    getLogPrefix(), candidate.getAuthenticationFlowId());
+                        } else {
+                            results.add(candidate);
+                        }
                     } else {
                         log.debug("{} Result from login flow {} has expired", getLogPrefix(), descriptor.getId());
                     }

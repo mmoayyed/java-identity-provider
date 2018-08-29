@@ -39,8 +39,9 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
     }
     
     @Test public void testNonForced() throws Exception {
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setForceAuthn(false);
+        authCtx.setMaxAge(0);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -48,7 +49,7 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testNoFiltering() {
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setForceAuthn(true);
         for (final AuthenticationFlowDescriptor fd : authCtx.getPotentialFlows().values()) {
             fd.setForcedAuthenticationSupported(true);
@@ -60,8 +61,8 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testPartialFiltering() {
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        authCtx.setForceAuthn(true);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setMaxAge(3600 * 1000);
         authCtx.getPotentialFlows().get("test2").setForcedAuthenticationSupported(true);
         
         final Event event = action.execute(src);
@@ -70,4 +71,5 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
         Assert.assertNull(authCtx.getPotentialFlows().get("test1"));
         Assert.assertNotNull(authCtx.getPotentialFlows().get("test2"));
     }
+    
 }
