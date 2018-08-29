@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -48,6 +47,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -59,7 +59,6 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +87,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateEncryptionParameters.class);
-
-    /** Strategy used to locate the {@link AuthnRequest} to operate on, if any. */
-    @Nonnull private Function<ProfileRequestContext,AuthnRequest> requestLookupStrategy;
     
     /** Strategy used to look up a {@link RelyingPartyContext} for configuration options. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -130,10 +126,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
 
     /** Constructor. */
     public PopulateEncryptionParameters() {
-        
-        requestLookupStrategy =
-                Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
-        
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Create context by default.
@@ -145,17 +137,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         peerContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
                         new OutboundMessageContextLookup());
-    }
-    
-    /**
-     * Set the strategy used to locate the {@link AuthnRequest} to examine, if any.
-     * 
-     * @param strategy strategy used to locate the {@link AuthnRequest}
-     */
-    public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     
     /**
@@ -274,18 +255,28 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             log.debug("{} Not a SAML 2 profile configuration, nothing to do", getLogPrefix());
             return false;
         }
+                
+        Object msg = null;
+        if (profileRequestContext.getInboundMessageContext() != null) {
+            msg = profileRequestContext.getInboundMessageContext().getMessage();
+        }
+        
+        if (msg instanceof AuthnRequest) {
+            final AuthnRequest request = (AuthnRequest) msg;
+            if (request.getNameIDPolicy() != null) {
+                final String requestedFormat = request.getNameIDPolicy().getFormat();
+                if (requestedFormat != null && NameID.ENCRYPTED.equals(requestedFormat)) {
+                    log.debug("{} Request asked for encrypted identifier, disregarding installed predicate");
+                    encryptIdentifiers = true;
+                }
+            }            
+        } else if (msg != null && rpContext.getProfileConfig() instanceof SingleLogoutProfileConfiguration) {
+            log.debug("{} Inbound logout message, nothing to do", getLogPrefix());
+            return false;
+        }
         
         final SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
         
-        final AuthnRequest request = requestLookupStrategy.apply(profileRequestContext);
-        if (request != null && request.getNameIDPolicy() != null) {
-            final String requestedFormat = request.getNameIDPolicy().getFormat();
-            if (requestedFormat != null && NameID.ENCRYPTED.equals(requestedFormat)) {
-                log.debug("{} Request asked for encrypted identifier, disregarding installed predicate");
-                encryptIdentifiers = true;
-            }
-        }
-
         if (!encryptIdentifiers) {
             encryptIdentifiers = profileConfiguration.getEncryptNameIDs().apply(profileRequestContext);
             // Encryption can only be optional if the request didn't specify it above.
