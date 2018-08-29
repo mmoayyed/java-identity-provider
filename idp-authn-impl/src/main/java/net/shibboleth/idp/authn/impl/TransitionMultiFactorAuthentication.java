@@ -285,7 +285,8 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                         getLogPrefix(), flowId);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_PASSIVE);
                 return;
-            } else if (authenticationContext.isForceAuthn() && !flow.isForcedAuthenticationSupported()) {
+            } else if ((authenticationContext.isForceAuthn() || authenticationContext.getMaxAge() > 0)
+                    && !flow.isForcedAuthenticationSupported()) {
                 log.error("{} Targeted login flow '{}' does not support forced re-authentication",
                         getLogPrefix(), flowId);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
