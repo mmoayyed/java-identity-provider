@@ -22,7 +22,8 @@
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.AvailableAuthenticationFlows"
         p:potentialFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
-        p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
+        p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry"
+        p:fixedEventLookupStrategy="#{getObject('shibboleth.FixedAuthenticationEventStrategy')}" />
 
     <bean id="PopulateAuthenticationContextWithInitialFlow"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"

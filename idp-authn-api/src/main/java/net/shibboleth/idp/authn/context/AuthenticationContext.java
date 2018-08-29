@@ -41,7 +41,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
 /**
@@ -74,6 +76,9 @@ public final class AuthenticationContext extends BaseContext {
     /** Allowed time in ms since an {@link AuthenticationResult} was created that it can be reused for this request. */
     @NonNegative @Duration private long maxAge;
 
+    /** Lookup strategy for a fixed event to return from validators for testing. */
+    @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
+    
     /** Flows that are known to the system. */
     @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> availableFlows;
 
@@ -350,6 +355,34 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public AuthenticationContext setMaxAge(@NonNegative @Duration final long age) {
         maxAge = Constraint.isGreaterThanOrEqual(0, age, "MaxAge cannot be negative");
+        return this;
+    }
+    
+    /**
+     * Get optional lookup strategy to return a fixed event to return from credential validation
+     * to exercise error and warning logic.
+     * 
+     * @return lookup strategy, or null
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public Function<ProfileRequestContext,String> getFixedEventLookupStrategy() {
+        return fixedEventLookupStrategy;
+    }
+    
+    /**
+     * Set optional lookup strategy to return a fixed event to return from credential validation
+     * to exercise error and warning logic.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @return this context
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public AuthenticationContext setFixedEventLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,String> strategy) {
+        fixedEventLookupStrategy = strategy;
         return this;
     }
 

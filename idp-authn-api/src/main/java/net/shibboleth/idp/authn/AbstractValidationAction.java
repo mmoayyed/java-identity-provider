@@ -120,9 +120,11 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     }
     
     /**
-     * Set the base name to use for metrics reported.
+     * Get the base name to use for metrics reported.
      * 
      * @return root for name of metrics
+     * 
+     * @since 3.3.0
      */
     @Nonnull @NotEmpty public String getMetricName() {
         return metricName;
@@ -140,7 +142,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         
         metricName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Metric name cannot be null or empty");
     }
-
+    
     /**
      * Get whether to inject the authentication flow's default custom principals into the subject.
      * 
@@ -272,6 +274,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         return authenticatedSubject;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(
@@ -288,7 +291,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
 
         if (clearErrorContext) {
             authenticationContext.removeSubcontext(AuthenticationErrorContext.class);
-        }
+        }        
         
         // If the request mandates particular principals, evaluate this validating component to see if it
         // can produce a matching principal. This skips validators chained together in flows that aren't
@@ -322,8 +325,18 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             return false;
         }
         
+        if (authenticationContext.getFixedEventLookupStrategy() != null) {
+            final String fixedEvent = authenticationContext.getFixedEventLookupStrategy().apply(profileRequestContext);
+            if (fixedEvent != null) {
+                log.info("{} Signaling fixed event: {}", getLogPrefix(), fixedEvent);
+                ActionSupport.buildEvent(profileRequestContext, fixedEvent);
+                return false;
+            }
+        }
+    
         return true;
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Normally called upon successful completion of credential validation, calls the {@link #populateSubject(Subject)}

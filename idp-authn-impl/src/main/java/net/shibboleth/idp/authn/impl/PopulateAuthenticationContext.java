@@ -72,6 +72,9 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** The registry of predicate factories for custom principal evaluation. */
     @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
     
+    /** Optional lookup strategy for triggering credential validators to return a fixed event for testing. */
+    @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
+    
     /** Constructor. */
     PopulateAuthenticationContext() {
         availableFlows = Collections.emptyList();
@@ -136,6 +139,20 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         
         evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
+    
+    /**
+     * Set optional lookup strategy to return a fixed event to return from credential validation
+     * to exercise error and warning logic.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.4.0
+     */
+    public void setFixedEventLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        fixedEventLookupStrategy = strategy;
+    }
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
@@ -151,6 +168,10 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
             if (rpCtx != null) {
                 rpCtx.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
             }
+        }
+        
+        if (fixedEventLookupStrategy != null) {
+            authenticationContext.setFixedEventLookupStrategy(fixedEventLookupStrategy);
         }
         
         if (availableFlows.isEmpty()) {
