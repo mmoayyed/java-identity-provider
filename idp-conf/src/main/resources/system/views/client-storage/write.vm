@@ -31,7 +31,11 @@
 <!--
 function doSave() {
     #foreach ($op in $saveContext.getStorageOperations())
-        writeLocalStorage("$op.getKey()", "$op.getValue()");
+        #if ($op.getValue())
+            writeLocalStorage("$op.getKey()", "$op.getValue()");
+        #else
+            writeLocalStorage("$op.getKey()", null);
+        #end
     #end
     document.form1.submit();
 }
