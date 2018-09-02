@@ -46,6 +46,7 @@
                         <Permission User="Administrators" GenericAll="yes" />
                         <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
+                        <MultiStringValue>-Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog</MultiStringValue>
                         <MultiStringValue>-Djava.io.tmpdir=[JAVA_IDP_HOME]/jetty-base/tmp</MultiStringValue>
                         <MultiStringValue>-XX:+UseG1GC</MultiStringValue>
                     </RegistryValue>

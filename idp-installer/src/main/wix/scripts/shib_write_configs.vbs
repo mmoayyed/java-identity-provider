@@ -124,19 +124,24 @@ if (InstallJetty <> "") then
 	JettyFile.WriteLine "# File to be merged into jetty's idp.ini file"
 	JettyFile.WriteLine "#"
 
-	JettyFile.WriteLine "jetty.host=0.0.0.0"
-	JettyFile.WriteLine "jetty.https.port=443"
-	JettyFile.WriteLine "jetty.backchannel.port=8443"
+'
+' Redundant - no longer in idp.ini.windows
+'
+'	JettyFile.WriteLine "jetty.ssl.host=0.0.0.0"
+'	JettyFile.WriteLine "jetty.ssl.port=443"
+'	JettyFile.WriteLine "idp.war.path="../war/idp.war"
+'	JettyFile.WriteLine "jetty.http.host=localhost"
+'	JettyFile.WriteLine "jetty.http.port=80"
+
+'
+' Only thesew 6 properties are used.
+'
 	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/credentials/idp-backchannel.p12"
-	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/credentials/idp-userfacing.p12"
-	JettyFile.WriteLine "jetty.backchannel.keystore.password=" & KeyStorePassword
-	JettyFile.WriteLine "jetty.browser.keystore.password=" & SsoStorePassword
-	JettyFile.WriteLine "jetty.backchannel.keystore.type=PKCS12"
-	JettyFile.WriteLine "jetty.browser.keystore.type=PKCS12"
-	JettyFile.WriteLine "jetty.war.path=" & InstallDirJava & "/war/idp.war"
-	JettyFile.WriteLine "jetty.jaas.path=" & InstallDirJava & "/conf/authn/jaas.config"
-	JettyFile.WriteLine "jetty.nonhttps.host=localhost"
-	JettyFile.WriteLine "jetty.nonhttps.port=80"
+	JettyFile.WriteLine "jetty.sslContext.keyStorePath=" & InstallDirJava & "/credentials/idp-userfacing.p12"
+	JettyFile.WriteLine "idp.backchannel.keystore.password=" & KeyStorePassword
+	JettyFile.WriteLine "jetty.sslContext.keyStorePassword=" & SsoStorePassword
+'	JettyFile.WriteLine "idp.backchannel.keystore.type=PKCS12"
+'	JettyFile.WriteLine "jetty.sslContext.keyStoreType=PKCS12"
 
 	JettyFile.Close
     else

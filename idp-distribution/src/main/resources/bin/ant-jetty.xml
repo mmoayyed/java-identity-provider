@@ -80,12 +80,14 @@
         <mkdir dir="static" />
     </target>
 
-    <target name="copyinis" depends="properties, directories, copyidpini, rewriteidpini"/>
+    <target name="copyinis" depends="properties, directories, copyidpini, rewriteidpini">
+        <copy file="${idp.target.dir}/jetty-base/start.d.dist/idp-system.ini" toFile="${idp.target.dir}/jetty-base/start.d/idp-system.ini" overwrite="true" force="true" />
+     </target>
 
     <target name="copyidpini" depends="directories" unless="idp.ini.present">
-        <mergeproperties inFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
+        <mergeproperties inFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini.windows" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
     </target>
-	
+
     <target name="rewriteidpini" depends="directories" if="idp.ini.present">
         <rewriteproperties inFile="${idp.target.dir}/jetty-base/start.d/idp.ini" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" propertyNameFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini.rewrite.property.names" />
     </target>
