@@ -134,10 +134,10 @@ if (InstallJetty <> "") then
 '	JettyFile.WriteLine "jetty.http.port=80"
 
 '
-' Only thesew 6 properties are used.
+' Only these 6 properties are used and only the password need be changed.
 '
-	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/credentials/idp-backchannel.p12"
-	JettyFile.WriteLine "jetty.sslContext.keyStorePath=" & InstallDirJava & "/credentials/idp-userfacing.p12"
+'	JettyFile.WriteLine "jetty.backchannel.keystore.path=../credentials/idp-backchannel.p12"
+'	JettyFile.WriteLine "jetty.sslContext.keyStorePath=../credentials/idp-userfacing.p12"
 	JettyFile.WriteLine "idp.backchannel.keystore.password=" & KeyStorePassword
 	JettyFile.WriteLine "jetty.sslContext.keyStorePassword=" & SsoStorePassword
 '	JettyFile.WriteLine "idp.backchannel.keystore.type=PKCS12"

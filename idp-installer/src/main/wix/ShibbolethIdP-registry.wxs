@@ -65,6 +65,7 @@
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
+                    <RegistryValue Name="WorkingPath" Type="string" Value="[INSTALLDIR]\jetty-base\"/>
                 </RegistryKey>
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM" ForceCreateOnInstall="yes">
                     <Permission User="Administrators" GenericAll="yes" />
