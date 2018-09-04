@@ -63,6 +63,10 @@ public class NameIDFormatFilterParser extends AbstractSingleBeanDefinitionParser
         builder.setDestroyMethodName("destroy");
         builder.setLazyInit(true);
 
+        if (element.hasAttributeNS(null, "removeExistingFormats")) {
+            builder.addPropertyValue("removeExistingFormats", element.getAttributeNS(null, "removeExistingFormats"));
+        }
+        
         // Accumulate formats to attach as rule values.
         final List<String> accumulator = new ArrayList<>();
 

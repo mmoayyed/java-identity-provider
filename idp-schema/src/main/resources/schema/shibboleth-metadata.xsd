@@ -1246,6 +1246,13 @@
                         </annotation>
                     </element>
                 </choice>
+                <attribute name="removeExistingFormats" type="boolean">
+                    <annotation>
+                        <documentation>
+                            Whether to remove any existing formats when adding new ones (default is false).
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

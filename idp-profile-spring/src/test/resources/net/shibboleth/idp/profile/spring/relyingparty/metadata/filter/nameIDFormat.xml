@@ -7,7 +7,7 @@
 	failFastInitialization="false" requireValidMetadata="false"
 
 	id="nameIDFormat" xsi:type="metadata:InlineMetadataProvider">
-	<metadata:MetadataFilter xsi:type="metadata:NameIDFormat">
+	<metadata:MetadataFilter xsi:type="metadata:NameIDFormat" removeExistingFormats="true">
         <metadata:Format>foo</metadata:Format>
         <metadata:Entity>https://sp.example.org/sp/shibboleth</metadata:Entity>
         <metadata:Format>bar</metadata:Format>
@@ -33,7 +33,7 @@
     
             <SPSSODescriptor
                 protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
-    
+                <NameIDFormat>baz</NameIDFormat>
                 <AssertionConsumerService
                     Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
                     Location="https://sp2.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
