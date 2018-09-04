@@ -18,20 +18,24 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
+import net.shibboleth.idp.authn.principal.TestPrincipal;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link AuthenticationContext} unit test. */
+@Test
 public class AuthenticationContextTest {
 
     /** Tests initiation instant instantiation. */
-    @Test public void testInitiationInstant() throws Exception {
+    public void testInitiationInstant() throws Exception {
         long start = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
@@ -41,7 +45,7 @@ public class AuthenticationContextTest {
     }
 
     /** Tests mutating forcing authentication. */
-    @Test public void testForcingAuthentication() throws Exception {
+    public void testForcingAuthentication() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertFalse(ctx.isForceAuthn());
 
@@ -50,7 +54,7 @@ public class AuthenticationContextTest {
     }
 
     /** Tests active results. */
-    @Test public void testActiveResults() throws Exception {
+    public void testActiveResults() throws Exception {
         final AuthenticationResult result = new AuthenticationResult("test", new Subject());
 
         final AuthenticationContext ctx = new AuthenticationContext();
@@ -63,7 +67,7 @@ public class AuthenticationContextTest {
     }
     
     /** Tests potential flow instantiation. */
-    @Test public void testPotentialFlows() throws Exception {
+    public void testPotentialFlows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
 
@@ -76,7 +80,7 @@ public class AuthenticationContextTest {
     }
 
     /** Tests mutating attempted flow. */
-    @Test public void testAttemptedFlow() throws Exception {
+    public void testAttemptedFlow() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertNull(ctx.getAttemptedFlow());
 
@@ -87,7 +91,7 @@ public class AuthenticationContextTest {
     }
 
     /** Tests setting completion instant. */
-    @Test public void testCompletionInstant() throws Exception {
+    public void testCompletionInstant() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertEquals(ctx.getCompletionInstant(), 0);
 
@@ -97,6 +101,40 @@ public class AuthenticationContextTest {
 
         ctx.setCompletionInstant();
         Assert.assertTrue(ctx.getCompletionInstant() > now);
+    }
+    
+    /** Tests RequestedPrincipalContext helpers. */
+    public void testRequestedPrincipalContextHelpers() throws Exception {
+        final AuthenticationContext ctx = new AuthenticationContext();
+        ctx.setPrincipalEvalPredicateFactoryRegistry(new PrincipalEvalPredicateFactoryRegistry());
+        
+        ctx.addRequestedPrincipalContext("foo", new TestPrincipal("bar"), false);
+        RequestedPrincipalContext rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
+        Assert.assertNotNull(rpCtx);
+        Assert.assertEquals(rpCtx.getOperator(), "foo");
+        Assert.assertEquals(rpCtx.getRequestedPrincipals(), Collections.singletonList(new TestPrincipal("bar")));
+        
+        Assert.assertFalse(ctx.addRequestedPrincipalContext("foo", new TestPrincipal("bar"), false));
+        
+        ctx.addRequestedPrincipalContext("fob", TestPrincipal.class.getName(), "baz", true);
+        rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
+        Assert.assertNotNull(rpCtx);
+        Assert.assertEquals(rpCtx.getOperator(), "fob");
+        Assert.assertEquals(rpCtx.getRequestedPrincipals(), Collections.singletonList(new TestPrincipal("baz")));
+
+        ctx.addRequestedPrincipalContext("fog", TestPrincipal.class.getName(), Arrays.asList("baf", "bag"), true);
+        rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
+        Assert.assertNotNull(rpCtx);
+        Assert.assertEquals(rpCtx.getOperator(), "fog");
+        Assert.assertEquals(rpCtx.getRequestedPrincipals().size(), 2);
+    }
+    
+    @Test(expectedExceptions = ClassCastException.class)
+    public void testRequestedPrincipalContextHelperBadType() throws Exception {
+        final AuthenticationContext ctx = new AuthenticationContext();
+        ctx.setPrincipalEvalPredicateFactoryRegistry(new PrincipalEvalPredicateFactoryRegistry());
+        
+        ctx.addRequestedPrincipalContext("fob", AuthenticationContext.class.getName(), "baz", false);
     }
     
 }

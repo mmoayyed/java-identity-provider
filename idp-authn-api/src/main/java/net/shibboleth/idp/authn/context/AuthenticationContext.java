@@ -17,10 +17,14 @@
 
 package net.shibboleth.idp.authn.context;
 
+import java.lang.reflect.Constructor;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -45,6 +49,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 /**
  * A context representing the state of an authentication attempt, this is the primary
@@ -91,11 +97,7 @@ public final class AuthenticationContext extends BaseContext {
     /** Previously attempted flows (could be failures or intermediate results). */
     @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> intermediateFlows;
     
-    /**
-     * Old copy of registry, moved to {@link RequestedPrincipalContext}.
-     * 
-     * @deprecated
-     */
+    /** Instance of registry used for auto-creation of {@link RequestedPrincipalContext}. */
     @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
     
     /** Authentication flow being attempted to authenticate the user. */
@@ -215,12 +217,11 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get the registry of predicate factories for custom principal evaluation.
      * 
-     * <p>This object is only needed when evaluating a {@link RequestedPrincipalContext}, so the
-     * presence of it at this level of the tree is historical.</p>
+     * <p>This object is only needed when evaluating a {@link RequestedPrincipalContext}, so the presence of it at
+     * this level of the tree is solely for use by the {@link #addRequestedPrincipalContext(String, List, boolean)}
+     * helper method.</p>
      * 
      * @return predicate factory registry
-     * 
-     * @deprecated Use {@link RequestedPrincipalContext#getPrincipalEvalPredicateFactoryRegistry()} instead.
      */
     @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalEvalPredicateFactoryRegistry() {
         
@@ -235,22 +236,27 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Set the registry of predicate factories for custom principal evaluation.
+     * Set the registry of predicate factories for custom principal evaluation to inject into instances of
+     * {@link RequestedPrincipalContext} created via the {@link #addRequestedPrincipalContext(String, List, boolean)}
+     * helper method.
+     * 
+     * <p>It also propagates this object into any existing {@link RequestedPrincipalContext} subcontext.</p>
      * 
      * @param registry predicate factory registry
      * 
-     * @deprecated Use {@link RequestedPrincipalContext#setPrincipalEvalPredicateFactoryRegistry(
-     * PrincipalEvalPredicateFactoryRegistry)} instead.
+     * @return this context
      */
-    public void setPrincipalEvalPredicateFactoryRegistry(
+    @Nonnull public AuthenticationContext setPrincipalEvalPredicateFactoryRegistry(
             @Nullable final PrincipalEvalPredicateFactoryRegistry registry) {
+        
+        evalRegistry = registry;
         
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             rpCtx.setPrincipalEvalPredicateFactoryRegistry(registry);
-        } else {
-            evalRegistry = registry;
         }
+        
+        return this;
     }
     
     /**
@@ -600,6 +606,102 @@ public final class AuthenticationContext extends BaseContext {
             // No requirements so anything is acceptable.
             return true;
         }
+    }
+
+    /**
+     * Add (or replace) a {@link RequestedPrincipalContext} as a child of this context using the
+     * supplied parameters and the previously established {@link PrincipalEvalPredicateFactoryRegistry}
+     * for comparison handling.
+     * 
+     * @param operator matching operator
+     * @param className name of class to wrap principal names
+     * @param principal name of principal to request
+     * @param replace whether to replace an existing context or simply return false
+     * 
+     * @return true iff a new context was created
+     * 
+     * @throws Exception if the principal class can't be loaded or instantiated as required
+     */
+    public boolean addRequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
+            @Nonnull @NotEmpty final String className, @Nonnull @NotEmpty final String principal,
+            final boolean replace) throws Exception {
+        
+        return addRequestedPrincipalContext(operator, className, Collections.singletonList(principal), replace);
+    }
+    
+    /**
+     * Add (or replace) a {@link RequestedPrincipalContext} as a child of this context using the
+     * supplied parameters and the previously established {@link PrincipalEvalPredicateFactoryRegistry}
+     * for comparison handling.
+     * 
+     * @param operator matching operator
+     * @param className name of class to wrap principal names
+     * @param principals names of principals to request
+     * @param replace whether to replace an existing context or simply return false
+     * 
+     * @return true iff a new context was created
+     * 
+     * @throws Exception if the principal class can't be loaded or instantiated as required
+     */
+    public boolean addRequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
+            @Nonnull @NotEmpty final String className, @Nonnull final Collection<String> principals,
+            final boolean replace) throws Exception {
+        
+        final Class<? extends Principal> claz = Class.forName(className).asSubclass(Principal.class);
+        final Constructor<? extends Principal> ctor = claz.getConstructor(String.class);
+        
+        final List<Principal> prins = new ArrayList<>(principals.size());
+        for (final String prin : Collections2.filter(principals, Predicates.notNull())) {
+            prins.add(ctor.newInstance(prin));
+        }
+        
+        return addRequestedPrincipalContext(operator, prins, replace);
+    }
+
+    /**
+     * Add (or replace) a {@link RequestedPrincipalContext} as a child of this context using the
+     * supplied parameters and the previously established {@link PrincipalEvalPredicateFactoryRegistry}
+     * for comparison handling.
+     * 
+     * @param operator matching operator
+     * @param principal principal to request
+     * @param replace whether to replace an existing context or simply return false
+     * 
+     * @return true iff a new context was created
+     */
+    public boolean addRequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
+            @Nonnull final Principal principal, final boolean replace) {
+        
+        return addRequestedPrincipalContext(operator, Collections.singletonList(principal), replace);
+    }
+    
+    /**
+     * Add (or replace) a {@link RequestedPrincipalContext} as a child of this context using the
+     * supplied parameters and the previously established {@link PrincipalEvalPredicateFactoryRegistry}
+     * for comparison handling.
+     * 
+     * @param operator matching operator
+     * @param principals principals to request
+     * @param replace whether to replace an existing context or simply return false
+     * 
+     * @return true iff a new context was created
+     */
+    public boolean addRequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
+            @Nonnull @NonnullElements final List<Principal> principals, final boolean replace) {
+        
+        RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
+        if (rpCtx != null && !replace) {
+            return false;
+        }
+        
+        rpCtx = new RequestedPrincipalContext();
+        rpCtx.setOperator(operator)
+            .setPrincipalEvalPredicateFactoryRegistry(evalRegistry)
+            .setRequestedPrincipals(principals);
+        
+        addSubcontext(rpCtx, true);
+        
+        return true;
     }
     
     /** {@inheritDoc} */
