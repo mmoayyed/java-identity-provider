@@ -59,6 +59,8 @@
 
         <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
 
+        <bean id="authn/Function" parent="shibboleth.AuthenticationFlow" />
+
         <bean id="authn/X509" parent="shibboleth.AuthenticationFlow"
                 p:nonBrowserSupported="false">
             <property name="supportedPrincipals">
