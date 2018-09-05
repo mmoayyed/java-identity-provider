@@ -6,8 +6,7 @@ declare JAVACMD
 declare LOCALCLASSPATH
 declare LIBDIR
 
-LOCATION=$0
-LOCATION=${LOCATION%/*}
+LOCATION=$(dirname $0)
 
 if [ -z "$JAVA_HOME" ] ; then
   echo "ERROR: JAVA_HOME environment variable is not set."
