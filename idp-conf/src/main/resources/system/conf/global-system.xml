@@ -267,7 +267,8 @@
     </bean>
 
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LoggingService"
-        p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}" p:strict="true" />
+        p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}"
+        p:strict="%{idp.replayCache.strict:true}" />
 
     <bean id="shibboleth.SAMLArtifactMap" depends-on="shibboleth.StorageService"
         class="org.opensaml.saml.common.binding.artifact.impl.StorageServiceSAMLArtifactMap"
