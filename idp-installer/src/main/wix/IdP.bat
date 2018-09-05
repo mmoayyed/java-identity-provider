@@ -119,10 +119,10 @@ if exist "%2" (
   "%JARCMD%" xf ..\%2
 )
 rem is this a real package?
-dir /s idp.ini 1> nl:a 2> nl:b
+dir /s idp.ini.windows 1> nl:a 2> nl:b
 if ERRORLEVEL 1 (
   cd ..
-  echo Could not find idp.ini in Jetty Base package
+  echo Could not find idp.ini.windows in Jetty Base package
   goto done;
 )
 for /D %%X in (*) do set jettyBaseEx=%%X
