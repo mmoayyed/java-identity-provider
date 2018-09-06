@@ -46,9 +46,9 @@
         
     <bean id="shibboleth.consent.AttributeConsentStorageKey"
         class="net.shibboleth.idp.consent.logic.impl.AttributeValueLookupFunction"
-        c:userAttributeId="%{idp.consent.userStorageKeyAttribute:uid}" />
+        c:userAttributeId="%{idp.consent.attribute-release.userStorageKeyAttribute:%{idp.consent.userStorageKeyAttribute:uid}}" />
         
-    <alias name="%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}"
+    <alias name="%{idp.consent.attribute-release.userStorageKey:%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}}"
         alias="shibboleth.consent.UserStorageKey" />
 
     <!--
