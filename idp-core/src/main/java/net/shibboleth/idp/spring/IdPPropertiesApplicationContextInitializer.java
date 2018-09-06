@@ -69,8 +69,11 @@ public class IdPPropertiesApplicationContextInitializer
     /** Target resource to be searched for. */
     @Nonnull public static final String IDP_PROPERTIES = "/conf/idp.properties";
 
+    /** Well known search location. */
+    @Nonnull public static final String SEARCH_LOCATION = "/opt/shibboleth-idp";
+
     /** Well known search locations. */
-    @Nonnull public static final String[] SEARCH_LOCATIONS = {"/opt/shibboleth-idp",};
+    @Nonnull @Deprecated public static final String[] SEARCH_LOCATIONS = {SEARCH_LOCATION,};
     
     /** Property controlling whether to fail fast. */
     @Nonnull public static final String FAILFAST_PROPERTY = "idp.initializer.failFast";
@@ -152,9 +155,10 @@ public class IdPPropertiesApplicationContextInitializer
     /**
      * Get the well known search locations. Defaults to {@link #SEARCH_LOCATIONS}.
      * 
+     * @deprecated In a future version a similar method will return one value
      * @return the well known search locations
      */
-    @Nonnull public String[] getSearchLocations() {
+    @Nonnull @Deprecated public String[] getSearchLocations() {
         return SEARCH_LOCATIONS;
     }
 
@@ -163,12 +167,15 @@ public class IdPPropertiesApplicationContextInitializer
      * {@link #IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search locations returned from
      * {@link #getSearchLocations()}.
      * 
+     * @deprecated in future versions there will only be one location returned.  This method is not available yet since
+     * the code cannot coexist with the legacy.  See IDP-999 and IDP-991
      * @param applicationContext the application context
      * @return the search locations used to search for the target
      * @throws ConstraintViolationException if the user-defined search location is empty or ends with '/' and
      *             {@link #isFailFast(ConfigurableApplicationContext)} is true
      */
-    @Nonnull public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
+    @Nonnull @Deprecated public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
+
         Constraint.isNotNull(applicationContext, "Application context cannot be null");
         final String homeProperty = applicationContext.getEnvironment().getProperty(IDP_HOME_PROPERTY);
         if (homeProperty != null && isFailFast(applicationContext)) {
