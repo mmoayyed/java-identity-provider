@@ -80,7 +80,7 @@
     <!-- Serializer for consent records with symbolics support. -->
     <bean id="shibboleth.consent.ConsentSerializer"
         class="net.shibboleth.idp.consent.storage.impl.ConsentSerializer"
-        p:symbolics-ref="shibboleth.consent.AttributeSymbolics" />
+        p:symbolics="#{getObject('shibboleth.consent.AttributeSymbolics') ?: getObject('shibboleth.consent.DefaultAttributeSymbolics')}" />
 
     <!-- Default comparator which orders attributes according to the whitelist. -->
     <bean id="DefaultAttributeIDComparator"
@@ -102,7 +102,7 @@
 
     <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors"
+        p:fieldExtractors="#{getObject('shibboleth.consent.PreConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultPreConsentAuditExtractors')}"
         p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
 
     <bean id="PopulateConsentContext"
@@ -132,7 +132,7 @@
 
     <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors"
+        p:fieldExtractors="#{getObject('shibboleth.consent.ConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultConsentAuditExtractors')}"
         p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
 
     <bean id="ExtractConsent"

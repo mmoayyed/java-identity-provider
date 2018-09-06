@@ -75,7 +75,7 @@
         
     <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors"
+        p:fieldExtractors="#{getObject('shibboleth.consent.PreConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultPreConsentAuditExtractors')}"
         p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
 
     <bean id="ReadConsentFromStorage"
@@ -93,7 +93,7 @@
 
     <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors"
+        p:fieldExtractors="#{getObject('shibboleth.consent.ConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultConsentAuditExtractors')}"
         p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
 
     <bean id="WriteConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
