@@ -26,19 +26,16 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <version>${opensaml.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
-            <version>${opensaml.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-impl</artifactId>
-            <version>${opensaml.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -105,20 +102,17 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-impl</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

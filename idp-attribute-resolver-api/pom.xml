@@ -36,7 +36,6 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
 
         <dependency>

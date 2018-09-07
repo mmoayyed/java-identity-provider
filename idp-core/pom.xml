@@ -73,7 +73,6 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-security-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         
         <!-- Provided Dependencies -->

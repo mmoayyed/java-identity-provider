@@ -32,13 +32,11 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
 
         <dependency>
@@ -71,20 +69,17 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>

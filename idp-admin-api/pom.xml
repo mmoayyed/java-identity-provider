@@ -31,7 +31,6 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
 
         <!-- Provided Dependencies -->

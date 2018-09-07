@@ -151,77 +151,62 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-security-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-security-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-soap-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-soap-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-impl</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
 
         <!-- Provided Dependencies -->

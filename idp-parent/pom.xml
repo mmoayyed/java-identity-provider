@@ -125,7 +125,6 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-api</artifactId>
-            <version>${opensaml.version}</version>
         </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
@@ -166,6 +165,14 @@
     <dependencyManagement>
         <dependencies>
             <!-- Compile Dependencies -->
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-bom</artifactId>
+                <version>${opensaml.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>net.shibboleth.ext</groupId>
                 <artifactId>spring-extensions</artifactId>
