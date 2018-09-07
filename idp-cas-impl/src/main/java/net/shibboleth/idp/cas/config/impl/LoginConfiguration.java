@@ -100,6 +100,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         postAuthenticationFlows = Collections.emptyList();
         defaultAuthenticationContexts = Collections.emptyList();
         nameIDFormatPrecedence = Collections.emptyList();
+        forceAuthnPredicate = Predicates.alwaysFalse();
     }
 
     /** {@inheritDoc} */

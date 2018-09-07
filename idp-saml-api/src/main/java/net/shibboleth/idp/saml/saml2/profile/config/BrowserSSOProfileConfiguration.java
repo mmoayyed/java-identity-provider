@@ -131,6 +131,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         setEncryptAssertions(Predicates.<ProfileRequestContext>alwaysTrue());
         resolveAttributesPredicate = Predicates.alwaysTrue();
         includeAttributeStatementPredicate = Predicates.alwaysTrue();
+        forceAuthnPredicate = Predicates.alwaysFalse();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetime = 0;
         maximumTokenDelegationChainLength = 1;
