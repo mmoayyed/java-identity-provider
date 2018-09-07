@@ -39,6 +39,42 @@
     
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.LogoutRequestAuditExtractors') ?: getObject('shibboleth.DefaultLogoutRequestAuditExtractors')}" />
+
+    <bean id="SetIssuerRPUIInformation"
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+            p:activationCondition="%{idp.logout.elaboration:false}"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="fallbackLanguages">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
+        </property>
+        <property name="metadataContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookup.SAMLMetadataContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.SAMLPeerEntityContext" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.MessageContextLookup.Inbound" />
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="RPUIContextCreateStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <ref bean="shibboleth.ChildLookupOrCreate.RelyingPartyUIContext" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.RelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
         
     <bean id="PopulateMultiRPContextFromLogoutContext"
         class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
@@ -51,7 +87,7 @@
             p:activationCondition="%{idp.logout.elaboration:false}"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
         <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>
         <property name="metadataContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose">

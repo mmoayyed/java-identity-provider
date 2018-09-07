@@ -87,6 +87,7 @@
     <!-- Continue the logout process. -->
 
     <action-state id="CompleteLogout">
+        <evaluate expression="SetIssuerRPUIInformation" />
         <evaluate expression="LogoutPopulateAuditContext" />
         <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
         <evaluate expression="'proceed'" />
