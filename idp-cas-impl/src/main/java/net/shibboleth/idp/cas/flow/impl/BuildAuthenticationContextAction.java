@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 
@@ -40,6 +42,10 @@ import org.springframework.webflow.execution.RequestContext;
 public class BuildAuthenticationContextAction extends
         AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
+    /** Profile configuration lookup function. */
+    private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
+            new ConfigLookupFunction<>(LoginConfiguration.class);
+
     @Nonnull
     @Override
     protected Event doExecute(@Nonnull final RequestContext springRequestContext,
@@ -49,6 +55,11 @@ public class BuildAuthenticationContextAction extends
         ac.setForceAuthn(getCASRequest(profileRequestContext).isRenew());
         ac.setIsPassive(false);
 
+        final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
+        if (config != null) {
+            ac.setForceAuthn(config.getForceAuthnPredicate().apply(profileRequestContext));
+        }
+        
         final AuthenticationContext initialAuthnContext =
                 profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (initialAuthnContext != null) {

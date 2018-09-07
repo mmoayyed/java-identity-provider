@@ -64,6 +64,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Whether responses to the authentication request should include an attribute statement. */
     @Nonnull private Predicate<ProfileRequestContext> includeAttributeStatementPredicate;
 
+    /** Whether to mandate forced authentication for the request. */
+    @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
+    
     /** Whether the response endpoint should be validated if the request is signed. */
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
@@ -233,6 +236,40 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
                 "Include attribute statement predicate cannot be null");
     }
 
+    /**
+     * Get a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @return condition
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getForceAuthnPredicate() {
+        return forceAuthnPredicate;
+    }
+    
+    /**
+     * Set a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
+    }
+    
+    /**
+     * Set whether a fresh user presence proof should be required for this request.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthn(final boolean flag) {
+        forceAuthnPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+    
     /**
      * Get whether the response endpoint should be validated if the request is signed.
      * 

@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.saml.profile.config.logic.ForceAuthnProfileConfigPredicate;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
 
 /**
  * An action that creates an {@link AuthenticationContext} and attaches it to the current {@link ProfileRequestContext}.
@@ -46,7 +48,7 @@ import com.google.common.base.Functions;
  * {@link AuthenticationContext#setInitialAuthenticationResult(net.shibboleth.idp.authn.AuthenticationResult)}.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @post ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != true
+ * @post ProfileRequestContext.getSubcontext(AuthenticationContext.class) != true
  * @post SAML 2.0 AuthnRequest policy flags are copied to the {@link AuthenticationContext}
  */
 public class InitializeAuthenticationContext extends AbstractProfileAction {
@@ -54,6 +56,9 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
 
+    /** Extracts forceAuthn property from profile config. */
+    @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
+    
     /** Strategy used to locate the {@link AuthnRequest} to operate on, if any. */
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> requestLookupStrategy;
     
@@ -62,8 +67,22 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
 
     /** Constructor. */
     public InitializeAuthenticationContext() {
+        forceAuthnPredicate = new ForceAuthnProfileConfigPredicate();
         requestLookupStrategy =
                 Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
+    }
+    
+    /**
+     * Set the predicate to apply to derive the message-independent forced authn default. 
+     * 
+     * @param condition condition to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
     
     /**
@@ -87,7 +106,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         
         authnRequest = this.requestLookupStrategy.apply(profileRequestContext);
         if (authnRequest == null) {
-            log.debug("{} No inbound AuthnRequest, passive and forced flags will be off", getLogPrefix());
+            log.debug("{} No inbound AuthnRequest, passive flag will be off", getLogPrefix());
         }
         
         return true;
@@ -108,6 +127,10 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
                 profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (initialAuthnContext != null) {
             authnCtx.setInitialAuthenticationResult(initialAuthnContext.getAuthenticationResult());
+        }
+        
+        if (!authnCtx.isForceAuthn()) {
+            authnCtx.setForceAuthn(forceAuthnPredicate.apply(profileRequestContext));
         }
         
         profileRequestContext.addSubcontext(authnCtx, true);

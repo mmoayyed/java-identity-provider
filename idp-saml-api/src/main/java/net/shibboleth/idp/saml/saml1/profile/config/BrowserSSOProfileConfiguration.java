@@ -59,6 +59,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
 
     /** Whether responses to the authentication request should include an attribute statement. */
     @Nonnull private Predicate<ProfileRequestContext> includeAttributeStatementPredicate;
+    
+    /** Whether to mandate forced authentication for the request. */
+    @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
 
     /** Lookup function to supply {@link #defaultAuthenticationMethods} property. */
     @Nullable private Function<ProfileRequestContext,Collection<AuthenticationMethodPrincipal>>
@@ -100,6 +103,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
         resolveAttributesPredicate = Predicates.alwaysTrue();
         includeAttributeStatementPredicate = Predicates.alwaysFalse();
+        forceAuthnPredicate = Predicates.alwaysFalse();
         defaultAuthenticationMethods = Collections.emptyList();
         authenticationFlows = Collections.emptySet();
         postAuthenticationFlows = Collections.emptyList();
@@ -197,6 +201,40 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     public void setIncludeAttributeStatementPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         includeAttributeStatementPredicate = Constraint.isNotNull(condition,
                 "Include attribute statement predicate cannot be null");
+    }
+    
+    /**
+     * Get a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @return condition
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getForceAuthnPredicate() {
+        return forceAuthnPredicate;
+    }
+    
+    /**
+     * Set a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
+    }
+    
+    /**
+     * Set whether a fresh user presence proof should be required for this request.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthn(final boolean flag) {
+        forceAuthnPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
     }
 
     /** {@inheritDoc} */

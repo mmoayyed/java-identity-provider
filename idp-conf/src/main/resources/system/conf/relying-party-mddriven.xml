@@ -229,6 +229,14 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="forceAuthnPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
+        </property>
         <property name="defaultAuthenticationMethodsLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="defaultAuthenticationMethods"
                 p:propertyType="#{T(net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal)}" />
@@ -305,6 +313,14 @@
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="includeAttributeStatement" />
                 </constructor-arg>
                 <constructor-arg value="true" />
+            </bean>
+        </property>
+        <property name="forceAuthnPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
+                </constructor-arg>
+                <constructor-arg value="false" />
             </bean>
         </property>
         <property name="skipEndpointValidationWhenSignedPredicate">
@@ -462,6 +478,14 @@
         </property>
         <property name="nameIDFormatPrecedenceLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="nameIDFormatPrecedence" />
+        </property>
+        <property name="forceAuthnPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
         </property>
     </bean>
 

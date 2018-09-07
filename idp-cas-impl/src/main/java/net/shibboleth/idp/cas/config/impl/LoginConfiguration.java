@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -86,7 +87,10 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
 
     /** Precedence of name identifier formats to use for requests. */
     @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
-
+    
+    /** Whether to mandate forced authentication for the request. */
+    @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
+    
     /** Creates a new instance. */
     public LoginConfiguration() {
         super(PROFILE_ID);
@@ -225,6 +229,40 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         nameIDFormatPrecedenceLookupStrategy = strategy;
     }
 
+    /**
+     * Get a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @return condition
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getForceAuthnPredicate() {
+        return forceAuthnPredicate;
+    }
+    
+    /**
+     * Set a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
+    }
+    
+    /**
+     * Set whether a fresh user presence proof should be required for this request.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.4.0
+     */
+    public void setForceAuthn(final boolean flag) {
+        forceAuthnPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty protected String getDefaultTicketPrefix() {
