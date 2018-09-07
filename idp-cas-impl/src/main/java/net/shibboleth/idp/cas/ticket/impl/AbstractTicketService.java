@@ -184,14 +184,15 @@ public abstract class AbstractTicketService implements TicketServiceEx {
      */
     protected <T extends Ticket> void store(final T ticket) {
         final String context = context(ticket.getClass());
-        log.debug("Storing {} in context {}", ticket, context);
         try {
-            if (!storageService.create(
-                    context,
-                    ticket.getId(),
-                    ticket,
-                    serializer(ticket.getClass()),
-                    ticket.getExpirationInstant().getMillis())) {
+            final String sessionId = ticket.getSessionId();
+            final long expiry = ticket.getExpirationInstant().getMillis();
+            log.debug("Storing mapping of {} to {} in context {}", ticket, sessionId, context);
+            if (!storageService.create(context, ticket.getId(), sessionId, expiry)) {
+                throw new RuntimeException("Failed to store ticket " + ticket);
+            }
+            log.debug("Storing {} in context {}", ticket, sessionId);
+            if (!storageService.create(sessionId, ticket.getId(), ticket, serializer(ticket.getClass()), expiry)) {
                 throw new RuntimeException("Failed to store ticket " + ticket);
             }
         } catch (final IOException e) {
@@ -213,12 +214,18 @@ public abstract class AbstractTicketService implements TicketServiceEx {
         final T ticket;
         try {
             final String context = context(clazz);
-            final StorageRecord<T> record = storageService.read(context, id);
-            if (record == null) {
+            final StorageRecord<T> sessionRecord = storageService.read(context, id);
+            if (sessionRecord == null) {
                 log.debug("{} not found in context {}", id, context);
                 return null;
             }
-            ticket = record.getValue(serializer(clazz), context, id);
+            final String sessionId = sessionRecord.getValue();
+            final StorageRecord<T> ticketRecord = storageService.read(sessionId, id);
+            if (ticketRecord == null) {
+                log.debug("{} not found in context {}", id, sessionId);
+                return null;
+            }
+            ticket = ticketRecord.getValue(serializer(clazz), sessionId, id);
         } catch (final IOException e) {
             throw new RuntimeException("Error reading ticket.");
         }
@@ -241,9 +248,14 @@ public abstract class AbstractTicketService implements TicketServiceEx {
         }
         try {
             final String context = context(clazz);
-            log.debug("Attempting to delete {} from context {}", ticket, context);
+            log.debug("Attempting to delete {} from context {}", id, context);
             if (!storageService.delete(context, id)) {
-                log.info("Failed deleting {}. Ticket probably expired from storage service.", id);
+                log.info("Failed deleting {} from context {}.", id, context);
+            }
+            final String sessionId = ticket.getSessionId();
+            log.debug("Attempting to delete {} from context {}", id, sessionId);
+            if (!storageService.delete(sessionId, id)) {
+                log.info("Failed deleting {} from context {}.", id, sessionId);
             }
         } catch (final IOException e) {
             throw new RuntimeException("Error deleting ticket " + id, e);
