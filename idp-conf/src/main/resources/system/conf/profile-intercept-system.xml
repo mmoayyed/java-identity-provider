@@ -89,7 +89,7 @@
 
     <!-- Default pre-consent audit extractors. -->
     <bean id="shibboleth.consent.DefaultPreConsentAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean" lazy-init="true">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -118,7 +118,7 @@
     
     <!-- Default consent audit extractors. -->
     <bean id="shibboleth.consent.DefaultConsentAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean" lazy-init="true">
         <property name="sourceMap">
             <map>
                 <entry>
