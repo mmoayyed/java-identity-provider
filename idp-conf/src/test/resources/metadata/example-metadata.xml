@@ -10,6 +10,17 @@
 	            <saml:AttributeValue>http://refeds.org/category/research-and-scholarship
 	            </saml:AttributeValue>
 	        </saml:Attribute>
+            <saml:Attribute Name="urn:oasis:names:tc:SAML:profiles:subject-id:req"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>any</saml:AttributeValue>
+            </saml:Attribute>
+            <!--
+            <saml:Attribute Name="http://shibboleth.net/ns/profiles/saml2/sso/browser/postAuthenticationFlows"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>terms-of-use</saml:AttributeValue>
+                <saml:AttributeValue>attribute-release</saml:AttributeValue>
+            </saml:Attribute>
+            -->
 	    </mdattr:EntityAttributes>
     </Extensions>
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol" AuthnRequestsSigned="false">
