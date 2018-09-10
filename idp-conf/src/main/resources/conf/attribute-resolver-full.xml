@@ -235,6 +235,19 @@
     </AttributeDefinition>
 -->
 
+    <!-- Schema: SAML Subject ID Attributes -->
+<!--
+    <AttributeDefinition xsi:type="Scoped" id="subject-id" scope="%{idp.scope}">
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}"/>
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oasis:names:tc:SAML:attribute:subject-id" friendlyName="subject-id" encodeType="false" />
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Scoped" id="pairwise-id" scope="%{idp.scope}">
+        <InputDataConnector ref="computed" attributeNames="computedId"/>
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oasis:names:tc:SAML:attribute:pairwise-id" friendlyName="pairwise-id" encodeType="false" />
+    </AttributeDefinition>
+-->
+
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
@@ -284,6 +297,21 @@
             expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"
             failFastInitialize="%{idp.pool.LDAP.failFastInitialize:false}" />
     </DataConnector>
+-->
+
+    <!-- DataConector for pairwise-id (example depends on saml-nameid.properties). -->
+
+<!-- 
+    <DataConnector id="computed" xsi:type="ComputedId"
+	    sourceAttributeID="%{idp.persistentId.sourceAttribute}"
+	    generatedAttributeID="computedId"
+	    salt="%{idp.persistentId.salt}"
+	    algorithm="%{idp.persistentId.algorithm:SHA}"
+        encoding="%{idp.persistentId.encoding:BASE32}">
+	    
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}" />
+        
+	</DataConnector>
 -->
 
 </AttributeResolver>
