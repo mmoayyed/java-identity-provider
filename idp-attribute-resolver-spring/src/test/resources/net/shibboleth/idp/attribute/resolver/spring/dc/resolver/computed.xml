@@ -5,6 +5,8 @@
 	sourceAttributeID="theSourceRemainsTheSame"
 	generatedAttributeID="jenny"
 	salt="abcdefghijklmnopqrst "
+	algorithm="SHA256"
+	encoding="BASE32"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
     <FailoverDataConnector ref="2123"/>
     <Dependency ref="321"/>

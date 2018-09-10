@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy;
+import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -93,7 +94,7 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (null != salt) {
-            log.debug("{} Salt set (secret is logged at TRACE)");
+            log.debug("{} Salt set (secret is logged at TRACE)", getLogPrefix());
             log.trace("{} Salt set as bytes to {}", getLogPrefix(), Arrays.toString(salt));
             idStrategy.setSalt(salt);
         } else {
@@ -116,6 +117,17 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         }
     }
 
+    /**
+     * Get the JCE algorithm name of the digest algorithm to use (default is SHA).
+     * 
+     * @return JCE message digest algorithm
+     */
+    @Nullable @NotEmpty public String getAlgorithm() {
+        if (null == idStrategy) {
+            return null;
+        }
+        return idStrategy.getAlgorithm();
+    }
 
     /**
      * Set the JCE algorithm name of the digest algorithm to use (default is SHA).
@@ -128,6 +140,33 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         idStrategy.setAlgorithm(alg);
     }
     
+    /**
+     * Get the post-digest encoding to use.
+     * 
+     * @return encoding
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public Encoding getEncoding() {
+        if (null == idStrategy) {
+            return null;
+        }
+        return idStrategy.getEncoding();
+    }
+
+    /**
+     * Set the post-digest encoding to use.
+     * 
+     * @param enc encoding
+     * 
+     * @since 3.4.0
+     */
+    public void setEncoding(@Nonnull final Encoding enc) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idStrategy.setEncoding(enc);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {

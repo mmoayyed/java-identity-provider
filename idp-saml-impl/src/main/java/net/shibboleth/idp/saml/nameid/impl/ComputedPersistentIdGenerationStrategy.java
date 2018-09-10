@@ -127,6 +127,17 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     }
 
     /**
+     * Get the JCE algorithm name of the digest algorithm to use (default is SHA).
+     * 
+     * @return JCE message digest algorithm
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull @NotEmpty public String getAlgorithm() {
+        return algorithm;
+    }
+    
+    /**
      * Set the JCE algorithm name of the digest algorithm to use (default is SHA).
      * 
      * @param alg JCE message digest algorithm
@@ -138,6 +149,17 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     }
     
     /**
+     * Get the post-digest encoding to use.
+     * 
+     * @return encoding
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public Encoding getEncoding() {
+        return encoding;
+    }
+
+    /**
      * Set the post-digest encoding to use.
      * 
      * @param enc encoding
@@ -147,7 +169,7 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
         
         encoding = Constraint.isNotNull(enc, "Encoding cannot be null");
     }
-    
+   
     /**
      * Install map of exceptions that override standard generation.
      * 

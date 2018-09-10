@@ -89,6 +89,14 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
 
+        if (config.hasAttributeNS(null, "algorithm")) {
+            builder.addPropertyValue("algorithm", config.getAttributeNS(null, "algorithm"));
+        }
+
+        if (config.hasAttributeNS(null, "encoding")) {
+            builder.addPropertyValue("encoding", config.getAttributeNS(null, "encoding"));
+        }
+
         final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
 
         final String salt;
@@ -97,7 +105,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         } else {
             salt = null;
         }
-            
+        
         if (null == salt) {
             log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", 
                     getLogPrefix(), generatedAttribute, sourceAttribute);
