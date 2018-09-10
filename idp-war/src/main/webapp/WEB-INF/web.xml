@@ -66,6 +66,7 @@
     </filter>
     <filter-mapping>
         <filter-name>CookieBufferingFilter</filter-name>
+        <url-pattern>/profile/admin/*</url-pattern>
         <url-pattern>/profile/Logout</url-pattern>
         <url-pattern>/profile/Shibboleth/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
@@ -80,7 +81,6 @@
     <filter-mapping>
         <filter-name>DynamicResponseHeaderFilter</filter-name>
         <url-pattern>/profile/admin/*</url-pattern>
-        <url-pattern>/profile/Logout</url-pattern>
         <url-pattern>/profile/Shibboleth/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
