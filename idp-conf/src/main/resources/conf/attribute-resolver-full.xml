@@ -240,13 +240,6 @@
     <!-- ========================================== -->
 
     <!-- Example Static Connector -->
-<!--
-    <DataConnector id="staticAttributes" xsi:type="Static">
-        <Attribute id="eduPersonAffiliation">
-            <Value>member</Value>
-        </Attribute>
-    </DataConnector>
--->
 
     <!-- Example Relational Database Connector -->
 <!--
