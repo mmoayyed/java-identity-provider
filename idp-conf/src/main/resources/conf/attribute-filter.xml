@@ -13,6 +13,34 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
+    <!--
+    Example rule for honoring Subject ID requirement tag in metadata.
+    The example supplies pairwise-id if subject-id isn't explicitly required.
+    -->
+    <AttributeFilterPolicy id="subject-identifiers">
+        <PolicyRequirementRule xsi:type="ANY" />
+
+        <AttributeRule attributeID="pairwise-id">
+            <PermitValueRule xsi:type="OR">
+                <Rule xsi:type="EntityAttributeExactMatch"
+                    attributeName="urn:oasis:names:tc:SAML:profiles:subject-id:req"
+                    attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                    attributeValue="pairwise-id" />
+                <Rule xsi:type="EntityAttributeExactMatch"
+                    attributeName="urn:oasis:names:tc:SAML:profiles:subject-id:req"
+                    attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                    attributeValue="any" />
+            </PermitValueRule>
+        </AttributeRule>
+
+        <AttributeRule attributeID="subject-id">
+            <PermitValueRule xsi:type="EntityAttributeExactMatch"
+                attributeName="urn:oasis:names:tc:SAML:profiles:subject-id:req"
+                attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                attributeValue="subject-id" />
+        </AttributeRule>
+    </AttributeFilterPolicy>
+
     <!-- Release some attributes to an SP. -->
     <AttributeFilterPolicy id="example1">
         <PolicyRequirementRule xsi:type="Requester" value="https://sp.example.org" />
@@ -41,5 +69,5 @@
             <PermitValueRule xsi:type="ANY" />
         </AttributeRule>
     </AttributeFilterPolicy>
-
+    
 </AttributeFilterPolicyGroup>
