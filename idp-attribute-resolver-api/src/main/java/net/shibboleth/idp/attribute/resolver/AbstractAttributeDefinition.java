@@ -188,10 +188,10 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
     /**
      * Gets the source attribute id.
-     * 
+     * @deprecated - only used for old style dependencies
      * @return the source attribute id
      */
-    public String getSourceAttributeId() {
+    public @Deprecated String getSourceAttributeId() {
         return sourceAttributeID;
     }
 
