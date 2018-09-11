@@ -218,6 +218,8 @@ public class AbstractAttributeDefinitionTest {
     @Test public void invalidName() throws ComponentInitializationException {
         MockAttributeDefinition definition = new MockAttributeDefinition("Name With Space", (IdPAttribute) null);
         definition.initialize();
+        definition = new MockAttributeDefinition("Name\rWith\tnonprinters", (IdPAttribute) null);
+        definition.initialize();
     }
     
     @Test public void initDestroyValidate() throws ComponentInitializationException {

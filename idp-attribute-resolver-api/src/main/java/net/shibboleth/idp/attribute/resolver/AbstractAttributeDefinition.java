@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,6 +47,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.PatternMatchUtils;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
@@ -228,11 +230,12 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
         
-        if (getId().contains(" ")) {
+        if (Pattern.matches(".*\\s.*", getId())) {
             DeprecationSupport.warn(ObjectType.CONFIGURATION, 
                     "Use of IdP Attributes names with spaces in them", 
                     getLogPrefix(), 
                     null);
+            
         }
     }
 
