@@ -303,7 +303,6 @@
 
 <!-- 
     <DataConnector id="computed" xsi:type="ComputedId"
-	    sourceAttributeID="%{idp.persistentId.sourceAttribute}"
 	    generatedAttributeID="computedId"
 	    salt="%{idp.persistentId.salt}"
 	    algorithm="%{idp.persistentId.algorithm:SHA}"
