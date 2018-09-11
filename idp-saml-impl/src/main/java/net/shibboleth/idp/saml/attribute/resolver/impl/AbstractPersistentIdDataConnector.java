@@ -194,7 +194,6 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
      */
     @Nullable protected String resolveSourceAttribute(@Nonnull final AttributeResolverWorkContext workContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final List<IdPAttributeValue<?>> attributeValues =
