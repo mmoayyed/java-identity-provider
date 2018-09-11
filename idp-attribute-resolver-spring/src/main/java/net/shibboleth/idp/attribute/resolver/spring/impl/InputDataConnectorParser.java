@@ -17,20 +17,26 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.impl;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 /** Bean definition parser for a {@link ResolverPluginDependency}. */
@@ -39,6 +45,10 @@ public class InputDataConnectorParser extends ResolverPluginDependencyParser {
     /** Element name. */
     @Nonnull public static final QName ELEMENT_NAME =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "InputDataConnector");
+
+    /** Child Element Name. */
+    @Nonnull @Deprecated public static final QName SOURCE_ATTRIBUTES =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SourceAttribute");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InputDataConnectorParser.class);
@@ -53,21 +63,41 @@ public class InputDataConnectorParser extends ResolverPluginDependencyParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         
-        final String attributes = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeNames"));
+        final Attr attributes = config.getAttributeNodeNS(null, "attributeNames");
         final String allAttributes = StringSupport.trimOrNull(config.getAttributeNS(null, "allAttributes"));
+        final List<Element> attributeElements = ElementSupport.getChildElements(config, SOURCE_ATTRIBUTES);
         if (attributes != null) {
             if (allAttributes != null) {
                 log.error("attributeNames and allAttributes are mutually exclusive");
                 throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
                         + ": attributeNames and allAttributes are mutually exclusive");
             }
-            builder.addPropertyValue("attributeNames", attributes);
+            if (!attributeElements.isEmpty()) {
+                log.error("attributeNames and <SourceAttribute> are mutually exclusive");
+                throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
+                        + ": attributeNames and child elements are mutually exclusive");
+            }
+            builder.addPropertyValue("attributeNames", SpringSupport.getAttributeValueAsList(attributes));
         } else if (allAttributes != null) {
-            builder.addPropertyValue("allAttributes", allAttributes);
+            if (!attributeElements.isEmpty()) {
+                log.error("allAttributes and <SourceAttribute> are mutually exclusive");
+                throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
+                        + ": attributeNames and allAttributes are mutually exclusive");
+            }
+            final BeanDefinitionBuilder boolBuilder =
+                    BeanDefinitionBuilder.rootBeanDefinition(Boolean.class, "toBoolean");
+            boolBuilder.addConstructorArgValue(allAttributes);
+            builder.addPropertyValue("allAttributes", boolBuilder.getBeanDefinition());
+        } else if (!attributeElements.isEmpty()) {
+            final ManagedList<String> elementNameList = new ManagedList<>(attributeElements.size());
+            for (final Element el:attributeElements) {
+                elementNameList.add(el.getTextContent());
+            }
+            builder.addPropertyValue("attributeNames", elementNameList);
         } else {
-            log.error("One of attributeNames or allAttributes must be specified");
+            log.error("One of attributeNames, allAttributes or <SourceAttribute>  must be specified");
             throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
-                    + ": One of attributeNames or allAttributes must be specified");
+                    + ": One of attributeNames, allAttributes or <SourceAttribute> must be specified ");
         }
     }
     

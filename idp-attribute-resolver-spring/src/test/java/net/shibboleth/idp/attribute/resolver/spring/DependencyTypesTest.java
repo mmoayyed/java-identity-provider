@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  */
 public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void springList() {
+    @Test public void xmlList() {
         final ResolverDataConnectorDependency re = getBean(BEAN_FILE_PATH + "inputDataConnector1.xml", ResolverDataConnectorDependency.class, new GenericApplicationContext());
         
         Assert.assertEquals(re.getDependencyPluginId(), "DC1");
@@ -41,7 +41,18 @@ public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {
         Assert.assertTrue(re.getAttributeNames().contains("2"));
         Assert.assertTrue(re.getAttributeNames().contains("3"));
     }
-    
+
+    @Test public void elementList() {
+        final ResolverDataConnectorDependency re = getBean(BEAN_FILE_PATH + "inputDataConnector5.xml", ResolverDataConnectorDependency.class, new GenericApplicationContext());
+        
+        Assert.assertEquals(re.getDependencyPluginId(), "DC1");
+        Assert.assertFalse(re.isAllAttributes());
+        Assert.assertEquals(re.getAttributeNames().size(), 3);
+        Assert.assertTrue(re.getAttributeNames().contains("1"));
+        Assert.assertTrue(re.getAttributeNames().contains("2"));
+        Assert.assertTrue(re.getAttributeNames().contains("3"));
+    }
+
     @Test public void allAttributeDataConnector() {
         final ResolverDataConnectorDependency re = getBean(BEAN_FILE_PATH + "inputDataConnector2.xml", ResolverDataConnectorDependency.class, new GenericApplicationContext());
         
