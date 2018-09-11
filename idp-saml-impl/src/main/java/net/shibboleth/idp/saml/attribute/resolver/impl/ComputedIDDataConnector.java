@@ -212,9 +212,12 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
             return null;
         }
         
-        final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        String attributeRecipientID = resolutionContext.getAttributeRecipientGroupID();
         if (Strings.isNullOrEmpty(attributeRecipientID)) {
-            log.warn("{} No Attribute Recipient ID located, unable to compute ID", getLogPrefix());
+            attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        }
+        if (Strings.isNullOrEmpty(attributeRecipientID)) {
+            log.warn("{} No Attribute recipient or group ID located, unable to compute ID", getLogPrefix());
             return null;
         }
         

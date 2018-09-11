@@ -223,9 +223,12 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
             return null;
         }
 
-        final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        String attributeRecipientID = resolutionContext.getAttributeRecipientGroupID();
         if (Strings.isNullOrEmpty(attributeRecipientID)) {
-            log.warn("{} Could not get attribute recipient ID, skipping ID creation", getLogPrefix());
+            attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        }
+        if (Strings.isNullOrEmpty(attributeRecipientID)) {
+            log.warn("{} Could not get attribute recipient or group ID, skipping ID creation", getLogPrefix());
             return null;
         }
 

@@ -64,6 +64,9 @@ public class AttributeResolutionContext extends BaseContext {
     /** The attribute recipient identity. */
     @Nullable private String attributeRecipientID;
 
+    /** The attribute recipient's group identity. */
+    @Nullable private String attributeRecipientGroupID;
+
     /** How was the principal Authenticated? */
     @Nullable private String principalAuthenticationMethod;
     
@@ -183,10 +186,44 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
+     * Get the attribute recipient grouping associated with this resolution.
+     * 
+     * <p>This is a protocol-independent way to represent an association between the attribute recipient
+     * and some larger group that may be relevant to attribute resolution.</p>
+     * 
+     * @return the attribute recipient group associated with this resolution
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public String getAttributeRecipientGroupID() {
+        return attributeRecipientGroupID;
+    }
+
+    /**
+     * Set the attribute recipient grouping associated with this resolution.
+     * 
+     * @param value the attribute recipient group associated with this resolution
+     * 
+     * @return this context
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public AttributeResolutionContext setAttributeRecipientGroupID(@Nullable final String value) {
+        attributeRecipientGroupID = value;
+        
+        return this;
+    }
+
+    /**
      * Set how the principal was authenticated.
      * 
-     * @return Returns the principalAuthenticationMethod.
+     * <p>This is deprecated, as the V3 representation of authentication results is more general.</p>
+     * 
+     * @return returns the principalAuthenticationMethod
+     * 
+     * @deprecated
      */
+    @Deprecated
     @Nullable public String getPrincipalAuthenticationMethod() {
         return principalAuthenticationMethod;
     }
@@ -194,10 +231,15 @@ public class AttributeResolutionContext extends BaseContext {
     /**
      * Get how the principal was authenticated.
      * 
-     * @param method The principalAuthenticationMethod to set.
+     * <p>This is deprecated, as the V3 representation of authentication results is more general.</p>
+     * 
+     * @param method The principalAuthenticationMethod to set
      * 
      * @return this context
+     * 
+     * @deprecated
      */
+    @Deprecated
     @Nullable public AttributeResolutionContext setPrincipalAuthenticationMethod(@Nullable final String method) {
         principalAuthenticationMethod = method;
         
