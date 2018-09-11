@@ -203,9 +203,16 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
                 if (propagateResolutionExceptions) {
                     throw e;
                 } else {
-                    log.debug(
-                            "Resolver plugin '{}' produced the following error but was configured not to propagate it.",
-                            getId(), e);
+                    if (e instanceof NoResultAnErrorResolutionException
+                            || e instanceof MultipleResultAnErrorResolutionException) {
+                        log.debug(
+                                "Resolver plugin '{}' produced the following error but was configured not to propagate",
+                                getId(), e);
+                    } else {
+                        log.error(
+                                "Resolver plugin '{}' produced the following error but was configured not to propagate",
+                                getId(), e);
+                    }
                     return null;
                 }
             }
