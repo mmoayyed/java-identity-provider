@@ -68,6 +68,7 @@ public class AttributeResolutionContext extends BaseContext {
     @Nullable private String attributeRecipientGroupID;
 
     /** How was the principal Authenticated? */
+    @Deprecated
     @Nullable private String principalAuthenticationMethod;
     
     /** Whether the resolver should allow for results to come from cache. */

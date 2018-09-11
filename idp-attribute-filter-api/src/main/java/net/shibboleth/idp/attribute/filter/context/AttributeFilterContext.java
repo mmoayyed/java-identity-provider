@@ -63,6 +63,9 @@ public final class AttributeFilterContext extends BaseContext {
     /** The attribute recipient identity. */
     @Nullable private String attributeRecipientID;
 
+    /** The attribute recipient's group identity. */
+    @Nullable private String attributeRecipientGroupID;
+    
     /** How was the principal Authenticated? */
     @Deprecated
     @Nullable private String principalAuthenticationMethod;
@@ -178,41 +181,70 @@ public final class AttributeFilterContext extends BaseContext {
     }
 
     /**
-     * Gets the attribute issuer (me) associated with this resolution.
+     * Gets the attribute issuer (me) associated with this filtering.
      * 
-     * @return the attribute issuer associated with this resolution.
+     * @return the attribute issuer associated with this filtering
      */
     @Nullable public String getAttributeIssuerID() {
         return attributeIssuerID;
     }
 
     /**
-     * Sets the attribute issuer (me) associated with this resolution.
+     * Sets the attribute issuer (me) associated with this filtering.
      * 
-     * @param value the attribute issuer associated with this resolution.
+     * @param value the attribute issuer associated with this filtering
      */
     @Nullable public void setAttributeIssuerID(@Nullable final String value) {
         attributeIssuerID = value;
     }
 
     /**
-     * Gets the attribute recipient (her) associated with this resolution.
+     * Gets the attribute recipient (her) associated with this filtering.
      * 
-     * @return the attribute recipient associated with this resolution.
+     * @return the attribute recipient associated with this filtering
      */
     @Nullable public String getAttributeRecipientID() {
         return attributeRecipientID;
     }
 
     /**
-     * Sets the attribute recipient (her) associated with this resolution.
+     * Sets the attribute recipient (her) associated with this filtering.
      * 
-     * @param value the attribute recipient associated with this resolution.
+     * @param value the attribute recipient associated with this filtering
      */
     @Nullable public void setAttributeRecipientID(@Nullable final String value) {
         attributeRecipientID = value;
     }
 
+    /**
+     * Get the attribute recipient grouping associated with this filtering.
+     * 
+     * <p>This is a protocol-independent way to represent an association between the attribute recipient
+     * and some larger group that may be relevant to attribute filtering.</p>
+     * 
+     * @return the attribute recipient group associated with this filtering
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public String getAttributeRecipientGroupID() {
+        return attributeRecipientGroupID;
+    }
+
+    /**
+     * Set the attribute recipient grouping associated with this filtering.
+     * 
+     * @param value the attribute recipient group associated with this filtering
+     * 
+     * @return this context
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public AttributeFilterContext setAttributeRecipientGroupID(@Nullable final String value) {
+        attributeRecipientGroupID = value;
+        
+        return this;
+    }
+    
     /**
      * Sets how the principal was authenticated.
      * 
