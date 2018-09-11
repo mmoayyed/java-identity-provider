@@ -30,6 +30,8 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -55,13 +57,28 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
     /** ID of the attribute whose first value is used when generating the computed ID. */
     @NonnullAfterInit private String sourceAttribute;
 
+    /** Information about the dependency. */
+    @NonnullAfterInit private String sourceInformation;
+
     /**
      * Get the ID of the attribute whose first value is used when generating the computed ID.
      * 
      * @return ID of the attribute whose first value is used when generating the computed ID
      */
-    @NonnullAfterInit public String getSourceAttributeId() {
+    @Nullable @Deprecated public String getSourceAttributeId() {
         return sourceAttribute;
+    }
+    
+    /**
+     * Get Information about the attribute whose first value is used when generating the computed ID.
+     * This is derived from the sourceID (if present) and/or the dependencies.  
+     * Public purely as an aid to testing.
+     *
+     * @return log-friend information.
+     */
+    @Nullable @NonnullAfterInit public String getSourceAttributeInformation() {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        return sourceInformation;
     }
 
     /**
@@ -92,20 +109,74 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         generatedAttribute = newAttributeId;
     }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-
-        if (null == getSourceAttributeId()) {
-            throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
-        }
-
-        // We have an input id, so that gets added to the dependencies.
-        if (null != getSourceAttributeId()) {
-            for (final ResolverPluginDependency depends : getDependencies()) {
+    
+    /**
+     * Do the dance with dependencies.
+     * 
+     * Old style ones get the sourceId added (failing if it isn't there).
+     * New style ones get their names added to the information string.
+     *
+     * @throws ComponentInitializationException if the dependencies are not aligned correctly
+     */
+ // Checkstyle: CyclomaticComplexity|MethodLength OFF
+    private void doDependencyInformation() throws ComponentInitializationException {
+        final StringBuilder dependencyInformation = new StringBuilder();
+        boolean seenAttribute = false;
+        for (final ResolverPluginDependency depends : getDependencies()) {
+            if (seenAttribute) {
+                dependencyInformation.append(", ");
+            }
+            if (depends instanceof ResolverAttributeDefinitionDependency) {
+                dependencyInformation.append(depends.getDependencyPluginId());
+                // No other work needed.  The name is the reference
+            } else if (depends instanceof ResolverDataConnectorDependency) {
+                final ResolverDataConnectorDependency dataConnectorDependency =
+                        (ResolverDataConnectorDependency) depends;
+                if (dataConnectorDependency.isAllAttributes()) {
+                    dependencyInformation.append(depends.getDependencyPluginId()).append("/*");
+                } else if (dataConnectorDependency.getAttributeNames().isEmpty()) {
+                    throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
+                } else if (dataConnectorDependency.getAttributeNames().size() == 1) {
+                    dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).
+                                          append('/').
+                                          append(dataConnectorDependency.getAttributeNames().iterator().next());
+                } else {
+                    dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).
+                                          append('/').
+                                          append(dataConnectorDependency.getAttributeNames().toString());
+                }
+                // No work needed.  The names are stored elsewhere
+            } else {
+                if (null == getSourceAttributeId()) {
+                    throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
+                }
+                dependencyInformation.append(depends.getDependencyPluginId()).
+                                      append('/').
+                                      append(getSourceAttributeId());
                 depends.setDependencyAttributeId(getSourceAttributeId());
             }
+            seenAttribute = true;
         }
+        if (!seenAttribute) {
+            if (null == getSourceAttributeId()) {
+                throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
+            } else {
+                log.warn("{} source Attribute {} present, but not declared as a dependency", getLogPrefix(), 
+                        getSourceAttributeId());
+                dependencyInformation.append(getSourceAttributeId());
+            }
+        }
+        sourceInformation = dependencyInformation.toString();
+        log.debug("{} Source for definition: {}", getLogPrefix(), sourceInformation);
+    }
+ // Checkstyle: CyclomaticComplexity|MethodLength ON
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException { 
+
+        // Set up the dependencies first. Then the initialize in the parent
+        // will correctly rehash the dependencies.
+        doDependencyInformation();
         super.doInitialize();
 
         if (null == generatedAttribute) {
@@ -130,13 +201,13 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
-                    getSourceAttributeId(), getId());
+                    getSourceAttributeInformation(), getId());
             return null;
         }
 
         if (attributeValues.size() > 1) {
             log.warn("{} Source attribute {} for connector {} has more than one value, only one value is used",
-                    getLogPrefix(), getSourceAttributeId(), getId());
+                    getLogPrefix(), getSourceAttributeInformation(), getId());
         }
 
         final IdPAttributeValue attributeValue = attributeValues.iterator().next();
@@ -146,24 +217,24 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         if (attributeValue instanceof StringAttributeValue) {
             if (StringSupport.trimOrNull((String) attributeValue.getValue()) == null) {
                 log.warn("{} Source attribute {} for connector {} was all-whitespace", getLogPrefix(),
-                        getSourceAttributeId(), getId());
+                        getSourceAttributeInformation(), getId());
                 return null;
             }
             val = (String) attributeValue.getValue();
         } else if (attributeValue instanceof EmptyAttributeValue) {
             final EmptyAttributeValue emptyVal = (EmptyAttributeValue) attributeValue;
             log.warn("{} Source attribute {} value for connector {} was an empty value of type {}", getLogPrefix(),
-                    getSourceAttributeId(), getId(), emptyVal.getDisplayValue());
+                    getSourceAttributeInformation(), getId(), emptyVal.getDisplayValue());
             return null;
         } else {
             log.warn("{} Source attribute {} for connector {} was of an unsupported type: {}", getLogPrefix(),
-                    getSourceAttributeId(), getId(), attributeValue.getClass().getName());
+                    getSourceAttributeInformation(), getId(), attributeValue.getClass().getName());
             return null;
         }
 
         if (val == null) {
             log.warn("{} Attribute value {} for connector {} resolved as empty or null", getLogPrefix(),
-                    getSourceAttributeId(), getId());
+                    getSourceAttributeInformation(), getId());
         }
         return val;
     }

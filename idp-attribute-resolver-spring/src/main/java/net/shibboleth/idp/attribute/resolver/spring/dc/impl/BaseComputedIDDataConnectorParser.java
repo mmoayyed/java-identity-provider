@@ -26,6 +26,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -59,6 +61,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
      * @param builder Spring's bean builder.
      * @param generatedIdDefaultName the name to give the generated Attribute if none was provided.
      */
+    // Checkstyle: CyclomaticComplexity|MethodLength OFF
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder, @Nullable final String generatedIdDefaultName) {
         super.doParse(config, parserContext, builder);
@@ -97,7 +100,14 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
             builder.addPropertyValue("encoding", config.getAttributeNS(null, "encoding"));
         }
 
-        final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
+        if (config.hasAttributeNS(null, "sourceAttributeID")) {
+            final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
+            builder.addPropertyValue("sourceAttributeId", sourceAttribute);
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "sourceAttributeID",
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart() + " or "
+                            + InputDataConnectorParser.ELEMENT_NAME.getLocalPart());
+        }
 
         final String salt;
         if (AttributeSupport.hasAttribute(config, new QName("salt"))) {
@@ -107,18 +117,18 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         }
         
         if (null == salt) {
-            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", 
-                    getLogPrefix(), generatedAttribute, sourceAttribute);
+            log.debug("{} Generated Attribute: '{}', no salt provided", getLogPrefix(), generatedAttribute);
         } else {
-            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', see TRACE log for its value", 
-                    getLogPrefix(), generatedAttribute, sourceAttribute);
+            log.debug("{} Generated Attribute: '{}', see TRACE log for the salt value", 
+                    getLogPrefix(), generatedAttribute);
             log.trace("{} salt: '{}'", getLogPrefix(), salt);
         }
 
         builder.addPropertyValue("generatedAttributeId", generatedAttribute);
-        builder.addPropertyValue("sourceAttributeId", sourceAttribute);
         builder.addPropertyValue("salt", salt);
     }
+    // Checkstyle: CyclomaticComplexity|MethodLength ON
+
     /**
      * return a string which is to be prepended to all log messages.
      * 

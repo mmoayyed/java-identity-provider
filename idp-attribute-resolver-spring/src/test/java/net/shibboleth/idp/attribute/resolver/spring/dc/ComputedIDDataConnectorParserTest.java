@@ -25,6 +25,7 @@ import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.MutablePropertySources;
@@ -36,6 +37,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link ComputedIDDataConnectorParser}
  */
+@SuppressWarnings("deprecation")
 public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {
@@ -43,25 +45,58 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         
         Assert.assertEquals(connector.getId(), "computed");
         Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
+        Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
         Assert.assertEquals(connector.getAlgorithm(), "SHA");
         Assert.assertEquals(connector.getEncoding(), Encoding.BASE64);
 
-        connector.initialize();
+        Assert.assertTrue(connector.isInitialized());
     }
     
-    @Test public void resolver() throws ComponentInitializationException {
+    @Test public void resolverAttribute() throws ComponentInitializationException {
         final ComputedIDDataConnector connector = getDataConnector("resolver/computed.xml", ComputedIDDataConnector.class);
         
+        Assert.assertEquals(connector.getId(), "computed");
+        Assert.assertNull(connector.getSourceAttributeId());
+        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
+        Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
+        Assert.assertEquals(connector.getAlgorithm(), "SHA256");
+        Assert.assertEquals(connector.getEncoding(), Encoding.BASE32);
+
+        Assert.assertTrue(connector.isInitialized());
+    }
+
+    @Test public void resolverDataConnector() throws ComponentInitializationException {
+        final ComputedIDDataConnector connector = getDataConnector("resolver/computedDataConnector.xml", ComputedIDDataConnector.class);
+
+        Assert.assertEquals(connector.getId(), "computed");
+        Assert.assertNull(connector.getSourceAttributeId());
+        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
+        Assert.assertEquals(connector.getSourceAttributeInformation(), "DC/theSourceRemainsTheSame");
+
+        Assert.assertTrue(connector.isInitialized());
+}
+
+    @Test public void resolverNoSourceAttr() {
+        try {
+            getDataConnector("resolver/computedNoSource.xml", ComputedIDDataConnector.class);
+            Assert.fail("Expected initialize to fail");
+        } catch (final BeanCreationException ex) {
+            Assert.assertEquals(ex.getCause().getClass(), ComponentInitializationException.class);
+        }
+    }
+
+    @Test public void resolverNoSourceDependency() {
+        final ComputedIDDataConnector connector = getDataConnector("resolver/computedNoSource1.xml", ComputedIDDataConnector.class);
         Assert.assertEquals(connector.getId(), "computed");
         Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
-        Assert.assertEquals(connector.getAlgorithm(), "SHA256");
-        Assert.assertEquals(connector.getEncoding(), Encoding.BASE32);
+        Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
 
-        connector.initialize();
     }
 
     @Test public void propertySalt()  {
@@ -87,7 +122,7 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions(DATACONNECTOR_FILE_PATH + "computedProperty.xml");
+        beanDefinitionReader.loadBeanDefinitions(DATACONNECTOR_FILE_PATH + "resolver/computedProperty.xml");
 
         
         beanDefinitionReader.setValidating(true);
@@ -97,6 +132,7 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         final ComputedIDDataConnector connector =  context.getBean(ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getSalt(), salt.getBytes());
+        Assert.assertTrue(connector.isInitialized());
     }
 
 }
