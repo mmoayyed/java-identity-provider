@@ -60,6 +60,7 @@
         <module>../idp-ui</module>
 
         <module>../idp-bom</module>
+        <module>../idp-tests-bom</module>
     </modules>
 
     <properties>
@@ -168,6 +169,13 @@
             <dependency>
                 <groupId>${opensaml.groupId}</groupId>
                 <artifactId>opensaml-bom</artifactId>
+                <version>${opensaml.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-tests-bom</artifactId>
                 <version>${opensaml.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
