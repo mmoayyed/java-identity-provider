@@ -40,6 +40,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -223,9 +225,15 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
             }
         }
         super.doInitialize();
-
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
+        
+        if (getId().contains(" ")) {
+            DeprecationSupport.warn(ObjectType.CONFIGURATION, 
+                    "Use of IdP Attributes names with spaces in them", 
+                    getLogPrefix(), 
+                    null);
+        }
     }
 
     /**

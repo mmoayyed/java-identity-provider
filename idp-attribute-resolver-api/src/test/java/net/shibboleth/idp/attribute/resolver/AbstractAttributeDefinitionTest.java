@@ -215,6 +215,11 @@ public class AbstractAttributeDefinitionTest {
         Assert.assertEquals(depends.iterator().next().getDependencyAttributeId(), "source");
     }
     
+    @Test public void invalidName() throws ComponentInitializationException {
+        MockAttributeDefinition definition = new MockAttributeDefinition("Name With Space", (IdPAttribute) null);
+        definition.initialize();
+    }
+    
     @Test public void initDestroyValidate() throws ComponentInitializationException {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
