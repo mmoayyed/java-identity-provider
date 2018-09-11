@@ -25,6 +25,7 @@ import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
+import org.opensaml.xmlsec.config.DecryptionParserPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,9 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
     /** Optional {@link ParserPool} to configure. */
     @Nullable private ParserPool parserPool;
     
+    /** Optional decryption {@link ParserPool} to configure. */
+    @Nullable private ParserPool decryptionParserPool;
+    
     /** Optional {@link MetricRegistry} to configure. */
     @Nullable private MetricRegistry metricRegistry;
     
@@ -69,6 +73,26 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         parserPool = newParserPool;
+    }
+    
+    /**
+     * Get the global decryption {@link ParserPool} to configure.
+     * 
+     * @return the decryption parser pool
+     */
+    @Nullable public ParserPool getDecryptionParserPool() {
+        return decryptionParserPool;
+    }
+
+    /**
+     * Set the global decryption {@link ParserPool} to configure.
+     * 
+     * @param newParserPool the decryption parser pool to set
+     */
+    public void setDecryptionParserPool(@Nullable final ParserPool newParserPool) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        decryptionParserPool = newParserPool;
     }
     
     /**
@@ -119,6 +143,10 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
         
         if (parserPool != null) {
             registry.setParserPool(parserPool);
+        }
+        
+        if (decryptionParserPool != null) {
+            ConfigurationService.register(DecryptionParserPool.class, new DecryptionParserPool(decryptionParserPool));
         }
     }
     
