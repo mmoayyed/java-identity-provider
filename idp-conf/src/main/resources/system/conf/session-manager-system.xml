@@ -31,7 +31,8 @@
                 <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
                     <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer"
                         c:offset="%{idp.session.slop:PT0S}"
-                        p:parserPool-ref="shibboleth.ParserPool" />
+                        p:parserPool-ref="shibboleth.ParserPool"
+                        depends-on="shibboleth.OpenSAMLConfig" />
                 </entry>
                 <entry key="#{T(net.shibboleth.idp.cas.session.impl.CASSPSession)}">
                     <bean class="net.shibboleth.idp.cas.session.impl.CASSPSessionSerializer"
