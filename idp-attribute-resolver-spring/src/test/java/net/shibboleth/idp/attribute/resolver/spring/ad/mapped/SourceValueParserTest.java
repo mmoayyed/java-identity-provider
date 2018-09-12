@@ -67,7 +67,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     }
 
     @Test public void values1() {
-        SourceValue value = getSourceValue("sourceValueAttributes1.xml");
+        SourceValue value = getSourceValue("resolver/sourceValueAttributes1.xml");
 
         Assert.assertTrue(value.isIgnoreCase());
         Assert.assertTrue(value.isPartialMatch());
@@ -75,7 +75,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     }
 
     @Test public void values2() {
-        SourceValue value = getSourceValue("sourceValueAttributes2.xml");
+        SourceValue value = getSourceValue("resolver/sourceValueAttributes2.xml");
 
         Assert.assertFalse(value.isIgnoreCase());
         Assert.assertFalse(value.isPartialMatch());

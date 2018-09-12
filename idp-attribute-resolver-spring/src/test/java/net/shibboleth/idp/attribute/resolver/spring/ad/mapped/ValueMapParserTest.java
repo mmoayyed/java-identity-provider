@@ -63,7 +63,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void noSourceValues() {
 
         try {
-            getValueMap("valueMapNoSourceValue.xml");
+            getValueMap("valueMapNoSourceValue.xml", true);
             Assert.fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK
@@ -73,7 +73,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void noValues() {
 
         try {
-            getValueMap("valueMapNoValues.xml");
+            getValueMap("valueMapNoValues.xml", true);
             Assert.fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK

@@ -12,5 +12,5 @@
 		<SourceValue>source2</SourceValue>
 	</ValueMap>
     <DefaultValue passThru="true">foobar3</DefaultValue>
-    <Dependency xmlns:resolver="urn:mace:shibboleth:2.0:resolver" ref="TheOrphan" />
+    <InputAttributeDefinition ref="TheOrphan" />                    
 </AttributeDefintion>

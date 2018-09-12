@@ -43,7 +43,7 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
     }
 
     @Test public void multiDefault() {
-        final MappedAttributeDefinition defn = getDefinition("multiDefault.xml");
+        final MappedAttributeDefinition defn = getDefinition("resolver/multiDefault.xml");
 
         Assert.assertTrue(defn.isPassThru());
         Assert.assertEquals(defn.getValueMaps().size(), 2);
@@ -59,7 +59,7 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
     }
 
     @Test public void noDefault() {
-        final MappedAttributeDefinition defn = getDefinition("mappedNoDefault.xml");
+        final MappedAttributeDefinition defn = getDefinition("resolver/mappedNoDefault.xml");
 
         Assert.assertFalse(defn.isPassThru());
         Assert.assertEquals(defn.getValueMaps().size(), 1);
@@ -69,7 +69,7 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
     @Test public void noValues() {
 
         try {
-            getDefinition("mappedNoValueMap.xml");
+            getDefinition("resolver/mappedNoValueMap.xml");
             Assert.fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK
