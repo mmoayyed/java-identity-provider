@@ -230,7 +230,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
         
-        if (Pattern.matches(".*\\s.*", getId())) {
+        if (!Pattern.matches("\\S*", getId())) {
             DeprecationSupport.warn(ObjectType.CONFIGURATION, 
                     "Use of IdP Attributes names with spaces in them", 
                     getLogPrefix(), 
