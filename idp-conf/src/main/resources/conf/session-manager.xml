@@ -15,22 +15,6 @@
         <ref bean="logoutprop/cas" />
         <ref bean="logoutprop/saml2" />
     </util:list>
-
-    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
-    <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
-        <property name="mappings">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
-    
-    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
-    <bean id="shibboleth.SessionTypeProtocolMap" parent="shibboleth.DefaultSessionTypeProtocolMap">
-        <property name="sourceMap">
-            <map merge="true">
-            </map>
-        </property>
-    </bean>
         
     <!--
     List of client-side storage service plugins. If you use server-side storage and don't need these

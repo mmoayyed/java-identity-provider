@@ -33,7 +33,7 @@
 
     <bean id="PopulateLogoutPropagationContext"
         class="net.shibboleth.idp.session.impl.PopulateLogoutPropagationContext" scope="prototype"
-        p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry"
+        p:SPSessionSerializerRegistry="#{getObject('shibboleth.SPSessionSerializerRegistry') ?: getObject('shibboleth.DefaultSPSessionSerializerRegistry')}"
         p:dataSealer="#{'%{idp.sealer.storeResource:}'.trim().length() > 0 ? getObject('shibboleth.DataSealer') : null}" />
 
     <bean id="PopulateUserAgentContext"

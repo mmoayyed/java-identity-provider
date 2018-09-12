@@ -54,7 +54,7 @@
     <bean id="PopulateMultiRPContextFromLogoutContext"
         class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
-        p:sessionTypeProtocolMap-ref="shibboleth.SessionTypeProtocolMap" />
+        p:sessionTypeProtocolMap="#{getObject('shibboleth.SessionTypeProtocolMap') ?: getObject('shibboleth.DefaultSessionTypeProtocolMap')}" />
     -->
     
     <bean id="AddLogoutResponse" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"

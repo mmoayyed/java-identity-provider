@@ -16,7 +16,7 @@
         class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="%{idp.session.idSize:32}" />
 
-    <bean id="shibboleth.DefaultSPSessionSerializerRegistry" abstract="true"
+    <bean id="shibboleth.DefaultSPSessionSerializerRegistry"
             class="net.shibboleth.idp.session.SPSessionSerializerRegistry">
         <property name="mappings">
             <map>
@@ -42,7 +42,7 @@
     </bean>
     
     <bean id="shibboleth.DefaultSessionTypeProtocolMap"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry key="#{T(net.shibboleth.idp.saml.session.SAML1SPSession)}">
@@ -72,7 +72,7 @@
             p:trackSPSessions="%{idp.session.trackSPSessions:false}"
             p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
             p:IDGenerator-ref="shibboleth.SessionIDGenerator"
-            p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
+            p:SPSessionSerializerRegistry="#{getObject('shibboleth.SPSessionSerializerRegistry') ?: getObject('shibboleth.DefaultSPSessionSerializerRegistry')}" />
 
     <!-- Built-in logout propagation flows. -->
 

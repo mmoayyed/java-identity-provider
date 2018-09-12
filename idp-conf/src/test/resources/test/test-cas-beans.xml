@@ -23,7 +23,7 @@
           p:trackSPSessions="true"
           p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
           p:IDGenerator-ref="shibboleth.SessionIDGenerator"
-          p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
+          p:SPSessionSerializerRegistry="#{getObject('shibboleth.SPSessionSerializerRegistry') ?: getObject('shibboleth.DefaultSPSessionSerializerRegistry')}" />
 
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>classpath:/test/test-relying-party-cas.xml</value>
