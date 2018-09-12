@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeRequesterRegexpPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -29,8 +29,8 @@ public class AttributeIssuerRegexRuleParserTest extends BaseAttributeFilterParse
 
     @Test public void policy() throws ComponentInitializationException {
 
-        AttributeRequesterRegexpPolicyRule arRule = (AttributeRequesterRegexpPolicyRule) getPolicyRule("attributeRegexIssuer.xml", false);
-        Assert.assertEquals(arRule.getRegularExpression(), "^unr:example:.*$");    
+        AttributeIssuerRegexpPolicyRule arRule = (AttributeIssuerRegexpPolicyRule) getPolicyRule("issuerRegex.xml", true);
+        Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");    
     }
  
 }
