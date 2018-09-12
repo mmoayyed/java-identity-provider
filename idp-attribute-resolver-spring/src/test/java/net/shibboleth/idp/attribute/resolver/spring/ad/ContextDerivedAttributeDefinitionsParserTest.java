@@ -95,7 +95,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     }
 
     @Test public void complex() throws ResolutionException {
-        final AttributeDefinition attrDef = getAttributeDefn("subjectDerivedComplex.xml", "contextDerivedBeans.xml",
+        final AttributeDefinition attrDef = getAttributeDefn("resolver/subjectDerivedComplex.xml", "contextDerivedBeans.xml",
                 ContextDerivedAttributeDefinition.class);
 
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
@@ -129,7 +129,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
 
     @Test public void warn() throws ResolutionException {
         final AttributeDefinition attrDef =
-                getAttributeDefn("subjectDerivedWarn.xml", ContextDerivedAttributeDefinition.class);
+                getAttributeDefn("resolver/subjectDerivedWarn.xml", ContextDerivedAttributeDefinition.class);
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
 
         Assert.assertEquals(2, foo.size());

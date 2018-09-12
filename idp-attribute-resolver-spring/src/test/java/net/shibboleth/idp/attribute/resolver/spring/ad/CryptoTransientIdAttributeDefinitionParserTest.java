@@ -63,7 +63,7 @@ public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttribut
 
     @Test public void noTime() throws ComponentInitializationException {
 
-        TransientIdAttributeDefinition defn = getDefinition("cryptoNoTime.xml");
+        TransientIdAttributeDefinition defn = getDefinition("resolver/cryptoNoTime.xml");
         Assert.assertTrue(defn.isInitialized());
 
         CryptoTransientIdGenerationStrategy strategy =

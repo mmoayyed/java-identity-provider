@@ -78,7 +78,7 @@ public class TransientIdAttributeDefinitionParserTest extends BaseAttributeDefin
 
     @Test public void noTime() throws ComponentInitializationException {
 
-        TransientIdAttributeDefinition defn = getDefinition("transientNoTime.xml");
+        TransientIdAttributeDefinition defn = getDefinition("resolver/transientNoTime.xml");
         Assert.assertTrue(defn.isInitialized());
 
         StoredTransientIdGenerationStrategy generator =

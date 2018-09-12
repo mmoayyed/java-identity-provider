@@ -52,7 +52,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
     @Test public void simple() {
         AttributeDefinition attrDef =
-                getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
+                getAttributeDefn("resolver/simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "simpleUnpopulated");
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
@@ -144,7 +144,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
     }
 
     @Test public void bad() throws ComponentInitializationException {
-        getAttributeDefn("simpleAttributeBadValues.xml", SimpleAttributeDefinition.class);
+        getAttributeDefn("resolver/simpleAttributeBadValues.xml", SimpleAttributeDefinition.class);
     }
 
     @Test public void relyingParties() throws ComponentInitializationException {
@@ -162,7 +162,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         placeholderConfig.setPropertySources(propertySources);
         context.addBeanFactoryPostProcessor(placeholderConfig);
 
-        AttributeDefinition attr = getAttributeDefn("relyingParties.xml", SimpleAttributeDefinition.class, context);
+        AttributeDefinition attr = getAttributeDefn("resolver/relyingParties.xml", SimpleAttributeDefinition.class, context);
         RelyingPartyIdPredicate pre = (RelyingPartyIdPredicate) attr.getActivationCondition();
         ProfileRequestContext prc = new ProfileRequestContext<>();
         RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);

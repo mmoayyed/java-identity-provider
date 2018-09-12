@@ -74,7 +74,7 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
     @Test public void dupl() throws ComponentInitializationException {
 
         final TemplateAttributeDefinition defn =
-                getAttributeDefn("templateTwoTemplate.xml", "velocity2.xml", TemplateAttributeDefinition.class);
+                getAttributeDefn("resolver/templateTwoTemplate.xml", "velocity2.xml", TemplateAttributeDefinition.class);
 
         Assert.assertEquals(defn.getId(), "templateIdAttr");
         Assert.assertEquals(defn.getTemplateText(), "TheTemplate");

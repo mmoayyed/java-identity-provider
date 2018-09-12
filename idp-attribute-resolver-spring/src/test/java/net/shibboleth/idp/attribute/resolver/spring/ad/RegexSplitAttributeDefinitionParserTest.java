@@ -58,7 +58,7 @@ public class RegexSplitAttributeDefinitionParserTest extends BaseAttributeDefini
 
     @Test public void sensitive() {
         RegexSplitAttributeDefinition attrDef =
-                getAttributeDefn("regexSensitive.xml", RegexSplitAttributeDefinition.class);
+                getAttributeDefn("resolver/regexSensitive.xml", RegexSplitAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "regexSplitSensitive");
 
@@ -70,7 +70,7 @@ public class RegexSplitAttributeDefinitionParserTest extends BaseAttributeDefini
 
     @Test public void insensitive() {
         RegexSplitAttributeDefinition attrDef =
-                getAttributeDefn("regexInsensitive.xml", RegexSplitAttributeDefinition.class);
+                getAttributeDefn("resolver/regexInsensitive.xml", RegexSplitAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "regexSplitInsensitive");
 

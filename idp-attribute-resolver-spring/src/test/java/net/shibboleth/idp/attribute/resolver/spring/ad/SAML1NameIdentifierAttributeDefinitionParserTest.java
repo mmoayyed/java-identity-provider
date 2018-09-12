@@ -31,7 +31,7 @@ public class SAML1NameIdentifierAttributeDefinitionParserTest extends BaseAttrib
 
     @Test public void defaultCase() {
         SAML1NameIdentifierAttributeDefinition attrDef =
-                getAttributeDefn("saml1NameIdDefault.xml", SAML1NameIdentifierAttributeDefinition.class);
+                getAttributeDefn("resolver/saml1NameIdDefault.xml", SAML1NameIdentifierAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "SAML1NameIdentifier");
         Assert.assertEquals(attrDef.getNameIdFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
