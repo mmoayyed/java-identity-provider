@@ -179,18 +179,6 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
         
         pushInfoLookupStrategy = strategy;
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        return true;
-    }
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
