@@ -171,7 +171,7 @@
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
-                <entry key="Strict-Transport-Security" value="max-age=%{idp.hsts.maxAge:0}" />
+                <entry key="Strict-Transport-Security" value="%{idp.hsts:max-age=0}" />
                 <entry key="X-Frame-Options" value="%{idp.frameoptions:DENY}" />
                 <entry key="Content-Security-Policy" value="%{idp.csp:frame-ancestors 'none';}"/>
             </map>
