@@ -84,10 +84,7 @@ public class InputDataConnectorParser extends ResolverPluginDependencyParser {
                 throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
                         + ": attributeNames and allAttributes are mutually exclusive");
             }
-            final BeanDefinitionBuilder boolBuilder =
-                    BeanDefinitionBuilder.rootBeanDefinition(Boolean.class, "toBoolean");
-            boolBuilder.addConstructorArgValue(allAttributes);
-            builder.addPropertyValue("allAttributes", boolBuilder.getBeanDefinition());
+            builder.addPropertyValue("allAttributes", allAttributes);
         } else if (!attributeElements.isEmpty()) {
             final ManagedList<String> elementNameList = new ManagedList<>(attributeElements.size());
             for (final Element el:attributeElements) {
