@@ -48,7 +48,7 @@
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
         p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.DuoIntegrationStrategy"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.duo.resultCachingPredicate')}" />
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}" />
 
     <bean id="ExtractDuoAuthenticationFromHeaders" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ExtractDuoAuthenticationFromHeaders"
@@ -72,7 +72,7 @@
         p:httpClient="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClient') ?: getObject('shibboleth.NonCachingHttpClient')}"
         p:httpClientSecurityParameters="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClientSecurityParameters')}" />
 
-    <util:map id="shibboleth.authn.duo.DefaultClassifiedMessageMap">
+    <util:map id="shibboleth.authn.Duo.DefaultClassifiedMessageMap">
         <entry key="AccountLocked">
             <list>
                 <value>locked_out</value>
@@ -88,7 +88,7 @@
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
         p:preauthAuthenticator-ref="DuoPreauthAuthenticator"
         p:authAuthenticator-ref="DuoAuthAuthenticator"
-        p:classifiedMessages="#{getObject('shibboleth.authn.duo.ClassifiedMessageMap') ?: getObject('shibboleth.authn.duo.DefaultClassifiedMessageMap')}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.duo.resultCachingPredicate')}" />
+        p:classifiedMessages="#{getObject('shibboleth.authn.Duo.ClassifiedMessageMap') ?: getObject('shibboleth.authn.Duo.DefaultClassifiedMessageMap')}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}" />
 
 </beans>
