@@ -50,13 +50,13 @@ public class SAML1Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
     
     @Test public void defaultCase() {
         final SAML1ByteAttributeEncoder encoder =
-                getAttributeEncoder("saml1Base64Default.xml", SAML1ByteAttributeEncoder.class);
+                getAttributeEncoder("resolver/saml1Base64Default.xml", SAML1ByteAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "Base64_ATTRIBUTE");
         Assert.assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml1Base64NoName.xml", SAML1ByteAttributeEncoder.class);
+        getAttributeEncoder("resolver/saml1Base64NoName.xml", SAML1ByteAttributeEncoder.class);
     }
 }

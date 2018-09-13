@@ -52,7 +52,7 @@ public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDef
 
     @Test public void defaultCase() {
         final SAML1StringNameIdentifierEncoder encoder =
-                getAttributeEncoder("saml1StringNameIdentifierDefault.xml", SAML1StringNameIdentifierEncoder.class);
+                getAttributeEncoder("resolver/saml1StringNameIdentifierDefault.xml", SAML1StringNameIdentifierEncoder.class);
 
         Assert.assertEquals(encoder.getNameFormat(), NameIdentifier.UNSPECIFIED);
         Assert.assertNull(encoder.getNameQualifier());;
@@ -65,7 +65,7 @@ public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDef
         loadFile(ENCODER_FILE_PATH + "predicates.xml", context);
         
         final SAML1StringNameIdentifierEncoder encoder =
-                getAttributeEncoder("saml1StringNameIdentifierConditional.xml", SAML1StringNameIdentifierEncoder.class, context);
+                getAttributeEncoder("resolver/saml1StringNameIdentifierConditional.xml", SAML1StringNameIdentifierEncoder.class, context);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
         Assert.assertFalse(encoder.getActivationCondition().apply(null));

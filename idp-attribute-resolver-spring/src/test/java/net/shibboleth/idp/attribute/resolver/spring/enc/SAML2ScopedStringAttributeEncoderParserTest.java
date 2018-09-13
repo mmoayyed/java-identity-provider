@@ -57,7 +57,7 @@ public class SAML2ScopedStringAttributeEncoderParserTest extends BaseAttributeDe
     
     @Test public void defaultCase() {
         final SAML2ScopedStringAttributeEncoder encoder =
-                getAttributeEncoder("saml2ScopedDefault.xml", SAML2ScopedStringAttributeEncoder.class);
+                getAttributeEncoder("resolver/saml2ScopedDefault.xml", SAML2ScopedStringAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "name");
         Assert.assertNull(encoder.getFriendlyName()); 
@@ -68,6 +68,6 @@ public class SAML2ScopedStringAttributeEncoderParserTest extends BaseAttributeDe
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2ScopedNoName.xml", SAML2ScopedStringAttributeEncoder.class);
+        getAttributeEncoder("resolver/saml2ScopedNoName.xml", SAML2ScopedStringAttributeEncoder.class);
     }
 }

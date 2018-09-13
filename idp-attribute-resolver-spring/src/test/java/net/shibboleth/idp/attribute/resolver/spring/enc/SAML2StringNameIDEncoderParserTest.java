@@ -49,7 +49,7 @@ public class SAML2StringNameIDEncoderParserTest extends BaseAttributeDefinitionP
     
     @Test public void defaultCase() {
         final SAML2StringNameIDEncoder encoder =
-                getAttributeEncoder("saml2StringNameIDDefault.xml", SAML2StringNameIDEncoder.class);
+                getAttributeEncoder("resolver/saml2StringNameIDDefault.xml", SAML2StringNameIDEncoder.class);
 
         Assert.assertEquals(encoder.getNameFormat(), NameID.UNSPECIFIED);
         Assert.assertNull(encoder.getNameQualifier());;

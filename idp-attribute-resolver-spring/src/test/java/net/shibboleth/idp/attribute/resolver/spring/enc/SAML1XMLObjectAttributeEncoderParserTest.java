@@ -49,13 +49,13 @@ public class SAML1XMLObjectAttributeEncoderParserTest extends BaseAttributeDefin
     
     @Test public void defaultCase() {
         final SAML1XMLObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml1XmlObjectDefault.xml", SAML1XMLObjectAttributeEncoder.class);
+                getAttributeEncoder("resolver/saml1XmlObjectDefault.xml", SAML1XMLObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "XMLObject_ATTRIBUTE");
         Assert.assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml1XmlObjectNoName.xml", SAML1XMLObjectAttributeEncoder.class);
+        getAttributeEncoder("resolver/saml1XmlObjectNoName.xml", SAML1XMLObjectAttributeEncoder.class);
     }
 }

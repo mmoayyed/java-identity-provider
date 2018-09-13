@@ -51,7 +51,7 @@ public class SAML2XMLObjectAttributeEncoderParserTest extends BaseAttributeDefin
 
     @Test public void defaultCase() {
         final SAML2XMLObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml2XmlObjectDefault.xml", SAML2XMLObjectAttributeEncoder.class);
+                getAttributeEncoder("resolver/saml2XmlObjectDefault.xml", SAML2XMLObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "XmlObjectName");
         Assert.assertNull(encoder.getFriendlyName()); 
@@ -59,6 +59,6 @@ public class SAML2XMLObjectAttributeEncoderParserTest extends BaseAttributeDefin
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2XmlObjectNoName.xml", SAML2XMLObjectAttributeEncoder.class);
+        getAttributeEncoder("resolver/saml2XmlObjectNoName.xml", SAML2XMLObjectAttributeEncoder.class);
     }
 }

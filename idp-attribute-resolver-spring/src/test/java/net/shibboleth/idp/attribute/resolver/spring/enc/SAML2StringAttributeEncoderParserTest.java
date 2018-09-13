@@ -55,7 +55,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
     
     @Test public void defaultCase() {
         final SAML2StringAttributeEncoder encoder =
-                getAttributeEncoder("saml2StringDefault.xml", SAML2StringAttributeEncoder.class);
+                getAttributeEncoder("resolver/saml2StringDefault.xml", SAML2StringAttributeEncoder.class);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysTrue());
         Assert.assertTrue(encoder.getActivationCondition().apply(null));
@@ -65,7 +65,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2StringNoName.xml", SAML2StringAttributeEncoder.class);
+        getAttributeEncoder("resolver/saml2StringNoName.xml", SAML2StringAttributeEncoder.class);
     }
     
     @Test public void conditional() {
@@ -75,7 +75,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
         loadFile(ENCODER_FILE_PATH + "predicates.xml", context);
         
         final SAML2StringAttributeEncoder encoder =
-                getAttributeEncoder("saml2StringConditional.xml", SAML2StringAttributeEncoder.class, context);
+                getAttributeEncoder("resolver/saml2StringConditional.xml", SAML2StringAttributeEncoder.class, context);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
         Assert.assertFalse(encoder.getActivationCondition().apply(null));

@@ -35,7 +35,7 @@ public class Regressions extends BaseAttributeDefinitionParserTest {
     @Test public void idp571() {
         GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
-        loadFile(ENCODER_FILE_PATH + "idp-571.xml", context);
+        loadFile(ENCODER_FILE_PATH + "resolver/idp-571.xml", context);
         context.refresh();
      
         Collection<AttributeEncoder> encoders = context.getBeansOfType(AttributeEncoder.class).values();

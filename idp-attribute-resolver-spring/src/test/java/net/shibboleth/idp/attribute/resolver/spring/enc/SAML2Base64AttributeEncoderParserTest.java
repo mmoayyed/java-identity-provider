@@ -51,7 +51,7 @@ public class SAML2Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
     
     @Test public void defaultCase() {
         final SAML2ByteAttributeEncoder encoder =
-                getAttributeEncoder("saml2Base64Default.xml", SAML2ByteAttributeEncoder.class);
+                getAttributeEncoder("resolver/saml2Base64Default.xml", SAML2ByteAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "Base64Name");
         Assert.assertNull(encoder.getFriendlyName()); 
@@ -59,6 +59,6 @@ public class SAML2Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml2Base64NoName.xml", SAML2ByteAttributeEncoder.class);
+        getAttributeEncoder("resolver/saml2Base64NoName.xml", SAML2ByteAttributeEncoder.class);
     }
 }

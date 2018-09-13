@@ -1,0 +1,4 @@
+<AttributeEncoder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mace:shibboleth:2.0:resolver"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"
+    xsi:type="SAML1Base64" name="Base64_ATTRIBUTE"/> 
+ 
