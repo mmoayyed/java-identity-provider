@@ -7,7 +7,7 @@
 	id="dynamicTemplate" xsi:type="metadata:DynamicHTTPMetadataProvider" >
     
     <!-- Note: use of the transformRef here is mostly just to facilitate testing. -->
-    <metadata:Template transformRef="digester.SHA1HexLower" encodingStyle="form">
+    <metadata:Template transformRef="digester.SHA1HexLower" encoded="true">
         %{metadataURL}
     </metadata:Template>
 

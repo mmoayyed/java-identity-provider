@@ -372,8 +372,18 @@
                                     <attribute name="encoded" type="string">
                                         <annotation>
                                             <documentation>
-                                                Boolean flag indicating whether the entityID should be encoded
+                                                Deprecated, use encodingStyle instead.
+                                                
+                                                Boolean flag indicating whether the entityID should be URL form-encoded
                                                 before substitution into the template.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                    <attribute name="encodingStyle" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Enum value indicating whether and how the entityID should be encoded into the 
+                                                URL. Allowed values are: 1) none 2) form 3) path 4) fragment.
                                             </documentation>
                                         </annotation>
                                     </attribute>

@@ -19,11 +19,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.HTTPEntityIDRequestURLBuilder;
@@ -34,6 +29,13 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Parser for concrete dynamic HTTP metadata resolvers, based on {@link FunctionDrivenDynamicHTTPMetadataResolver}.
@@ -86,13 +88,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         final Element template = ElementSupport.getFirstChildElement(element, TEMPLATE);
         if (template != null) {
             final String templateString = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(template));
-            Boolean encoded = null;
-            if (template.hasAttributeNS(null, "encoded")) {
-                encoded = AttributeSupport.getAttributeValueAsBoolean(template.getAttributeNodeNS(null, "encoded"));
-            }
-            if (encoded == null) {
-                encoded = true;
-            }
+            final String encodingStyle = parseTemplateEncodingStyle(template);
             String velocityEngineRef =
                     StringSupport.trimOrNull(StringSupport.trimOrNull(template.getAttributeNS(null, "velocityEngine")));
             if (null == velocityEngineRef) {
@@ -105,7 +101,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
                     BeanDefinitionBuilder.genericBeanDefinition(TemplateRequestURLBuilder.class);
             builder.addConstructorArgReference(velocityEngineRef);
             builder.addConstructorArgValue(templateString);
-            builder.addConstructorArgValue(encoded);
+            builder.addConstructorArgValue(encodingStyle);
             if (transformRef != null) {
                 builder.addConstructorArgReference(transformRef);
             }
@@ -146,6 +142,32 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         final BeanDefinitionBuilder builder =
                 BeanDefinitionBuilder.genericBeanDefinition(HTTPEntityIDRequestURLBuilder.class);
         return builder.getBeanDefinition();
+    }
+
+    /**
+     * Parse the 'encodingStyle' and 'encoded' attributes for Template element types.
+     * @param template the Template element
+     * 
+     * @return the encoding style as a string
+     */
+    private String parseTemplateEncodingStyle(final Element template) {
+        String encodingStyle = null;
+        if (template.hasAttributeNS(null, "encodingStyle")) {
+            encodingStyle = StringSupport.trimOrNull(template.getAttributeNS(null, "encodingStyle"));
+        } else if (template.hasAttributeNS(null, "encoded")) {
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "encoded", null, "'encodingStyle'");
+            final Boolean encoded = 
+                    AttributeSupport.getAttributeValueAsBoolean(template.getAttributeNodeNS(null, "encoded"));
+            if (encoded != null && encoded) {
+                encodingStyle = "form";
+            } else {
+                encodingStyle = "none";
+            }
+        }
+        if (encodingStyle == null) {
+            encodingStyle = "form";
+        }
+        return encodingStyle;
     }
 
 }
