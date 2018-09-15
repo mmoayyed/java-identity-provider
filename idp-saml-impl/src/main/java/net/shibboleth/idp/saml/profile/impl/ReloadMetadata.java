@@ -40,6 +40,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.ClearableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action that refreshes a {@link MetadataResolver} manually.
+ * Action that refreshes or clears a {@link MetadataResolver} manually.
  * 
  * <p>The {@link MetadataResolver} to reload is indicated by supplying {@link #RESOLVER_ID} as a flow variable.</p>
  * 
@@ -138,7 +139,7 @@ public class ReloadMetadata extends AbstractProfileAction {
 
         final ServiceableComponent<MetadataResolver> component = metadataResolverService.getServiceableComponent();
         try {
-            RefreshableMetadataResolver toRefresh = null;
+            MetadataResolver toProcess = null;
             
             MetadataResolver rootResolver = component.getComponent();
             
@@ -147,25 +148,32 @@ public class ReloadMetadata extends AbstractProfileAction {
                 rootResolver = ((RelyingPartyMetadataProvider) rootResolver).getEmbeddedResolver(); 
             }
             
-            if (Objects.equals(id, rootResolver.getId()) && rootResolver instanceof RefreshableMetadataResolver) {
-                toRefresh = (RefreshableMetadataResolver) rootResolver;
+            if (Objects.equals(id, rootResolver.getId())
+                    && (rootResolver instanceof RefreshableMetadataResolver
+                            || rootResolver instanceof ClearableMetadataResolver)) {
+                toProcess = rootResolver;
             } else if (rootResolver instanceof ChainingMetadataResolver) {
                 for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
                     if (Objects.equals(id, childResolver.getId())
-                            && childResolver instanceof RefreshableMetadataResolver) {
-                        toRefresh = (RefreshableMetadataResolver) childResolver;
+                            && (childResolver instanceof RefreshableMetadataResolver
+                                    || childResolver instanceof ClearableMetadataResolver)) {
+                        toProcess = childResolver;
                         break;
                     }
                 }
             }
             
-            if (toRefresh != null) {
-                toRefresh.refresh();
-                log.debug("{} Reloaded metadata from '{}'", getLogPrefix(), id);
+            if (toProcess != null) {
+                if (toProcess instanceof RefreshableMetadataResolver) {
+                    ((RefreshableMetadataResolver)toProcess).refresh();
+                } else if (toProcess instanceof ClearableMetadataResolver) {
+                    ((ClearableMetadataResolver)toProcess).clear();
+                }
+                log.debug("{} Refreshed metadata from '{}'", getLogPrefix(), id);
                 getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
                 getHttpServletResponse().getWriter().println("Metadata reloaded for '" + id + "'");
             } else {
-                log.warn("{} Unable to locate refreshable metadata source '{}'", getLogPrefix(), id);
+                log.warn("{} Unable to locate refreshable or clearable metadata source '{}'", getLogPrefix(), id);
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
             }
             

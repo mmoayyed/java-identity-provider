@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.joda.time.DateTime;
+import org.opensaml.saml.metadata.resolver.ClearableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
@@ -46,7 +47,7 @@ import com.google.common.base.Objects;
  * {@link MetadataResolver}.
  */
 public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver> implements
-        RefreshableMetadataResolver, Comparable<RelyingPartyMetadataProvider> {
+        RefreshableMetadataResolver, ClearableMetadataResolver, Comparable<RelyingPartyMetadataProvider> {
 
     /** If we autogenerate a sort key it comes from this count. */
     private static int sortKeyValue;
@@ -165,6 +166,20 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     /** {@inheritDoc} */
     @Override @Nonnull public MetadataResolver getComponent() {
         return this;
+    }
+
+    /** {@inheritDoc} */
+    public void clear() throws ResolverException {
+        if (resolver instanceof ClearableMetadataResolver) {
+            ((ClearableMetadataResolver) resolver).clear();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void clear(String entityID) throws ResolverException {
+        if (resolver instanceof ClearableMetadataResolver) {
+            ((ClearableMetadataResolver) resolver).clear(entityID);
+        }
     }
 
     /** {@inheritDoc} */
