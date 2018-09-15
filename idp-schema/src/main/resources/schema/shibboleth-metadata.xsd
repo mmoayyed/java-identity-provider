@@ -667,6 +667,9 @@
                             Convenience mechanism for wiring a FilesystemLoadSaveManager loading from the specified
                             source directory in the local filesystem. This attribute will be ignored if 
                             'sourceManagerRef' is also specified.
+
+                            The manager will be configured to check and only return data for an entity if unmodified 
+                            since the last request, i.e. with the manager checkModifyTime=true.
                             
                             The source key generator function, if otherwise unspecified, will default to generating
                             the SHA-1 digest (encoded as lower-case hexadecimal) of the input criteria entityID, 

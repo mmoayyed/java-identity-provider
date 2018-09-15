@@ -74,6 +74,7 @@ public class LocalDynamicMetadataProviderParser extends AbstractDynamicMetadataP
                     BeanDefinitionBuilder.genericBeanDefinition(FilesystemLoadSaveManager.class);
             sourceManagerBuilder.addConstructorArgValue(
                     StringSupport.trimOrNull(element.getAttributeNS(null, "sourceDirectory")));
+            sourceManagerBuilder.addPropertyValue("checkModifyTime", "true");
             sourceManagerRefOrBean = sourceManagerBuilder.getBeanDefinition();
             
             if (sourceKeyGeneratorRefOrBean == null) {
