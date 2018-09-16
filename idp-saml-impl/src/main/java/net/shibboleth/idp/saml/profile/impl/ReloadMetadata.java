@@ -166,19 +166,20 @@ public class ReloadMetadata extends AbstractProfileAction {
             if (toProcess != null) {
                 if (toProcess instanceof RefreshableMetadataResolver) {
                     ((RefreshableMetadataResolver)toProcess).refresh();
+                    log.debug("{} Refreshed metadata resolver: '{}'", getLogPrefix(), id);
                 } else if (toProcess instanceof ClearableMetadataResolver) {
                     ((ClearableMetadataResolver)toProcess).clear();
+                    log.debug("{} Cleared metadata resolver: '{}'", getLogPrefix(), id);
                 }
-                log.debug("{} Refreshed metadata from '{}'", getLogPrefix(), id);
                 getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
                 getHttpServletResponse().getWriter().println("Metadata reloaded for '" + id + "'");
             } else {
-                log.warn("{} Unable to locate refreshable or clearable metadata source '{}'", getLogPrefix(), id);
+                log.warn("{} Unable to locate refreshable or clearable metadata resolver: '{}'", getLogPrefix(), id);
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
             }
             
         } catch (final ResolverException e) {
-            log.error("{} Metadata source '{}': Error during refresh", getLogPrefix(), id, e);
+            log.error("{} Error refreshing/clearing metadata resolver: '{}'", getLogPrefix(), id, e);
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
