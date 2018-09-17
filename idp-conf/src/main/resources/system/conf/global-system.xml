@@ -80,6 +80,9 @@
                 <entry key="idp.nameid.saml1.legacyGenerator">
                     <null/>
                 </entry>
+                <entry key="idp.xml.securityManager">
+                    <null/>
+                </entry>
                 <entry key="idp.consent.userStorageKey" value="idp.consent.attribute-release.userStorageKey" />
                 <entry key="idp.consent.userStorageKeyAttribute" value="idp.consent.attribute-release.userStorageKeyAttribute" />
             </map>
@@ -116,8 +119,10 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
-            depends-on="shibboleth.LoggingService"
+    <alias name="%{idp.xml.parserPool:shibboleth.DefaultParserPool}" alias="shibboleth.ParserPool"/>
+
+    <bean id="shibboleth.DefaultParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+            depends-on="shibboleth.LoggingService" lazy-init="true"
             p:maxPoolSize="100"
             p:coalescing="true"
             p:ignoreComments="true"
