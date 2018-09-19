@@ -90,6 +90,8 @@
         <entry key="InvalidNameIDPolicy" value-ref="shibboleth.SAML2Status.InvalidNameIDPolicy" />
         
         <entry key="ChannelBindingsError" value-ref="shibboleth.SAML2Status.ChannelBindingsError" />
+        
+        <entry key="SubjectIDReqFailed" value-ref="shibboleth.SAML2Status.SubjectIDReqFailed" />
     </util:map>
 
     <util:map id="shibboleth.SOAPFaultCodeMappings">
