@@ -12,7 +12,7 @@
 	        </saml:Attribute>
             <saml:Attribute Name="urn:oasis:names:tc:SAML:profiles:subject-id:req"
                 NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                <saml:AttributeValue>any</saml:AttributeValue>
+                <saml:AttributeValue>none</saml:AttributeValue>
             </saml:Attribute>
             <!--
             <saml:Attribute Name="http://shibboleth.net/ns/profiles/saml2/sso/browser/postAuthenticationFlows"
