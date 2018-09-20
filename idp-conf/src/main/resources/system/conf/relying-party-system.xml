@@ -148,6 +148,11 @@
                 p:x509TrustEngine-ref="#{'%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}'.trim()}" />
         </property>
         
+        <property name="httpClientSecurityConfiguration">
+            <bean parent="shibboleth.BasicHttpClientSecurityConfiguration"
+                p:TLSTrustEngine-ref="#{'%{idp.trust.httpClient.tls:shibboleth.ChainingX509TrustEngine}'.trim()}" />
+        </property>
+        
         <property name="encryptionConfiguration">
             <ref bean="#{'%{idp.encryption.config:shibboleth.EncryptionConfiguration.CBC}'.trim()}" />
         </property>

@@ -95,6 +95,8 @@
                 <property name="handlers">
                     <util:list>
                     
+                        <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.CheckAndRecordServerTLSEntityAuthenticationtHandler" />
+
                         <!--  TODO -->
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" >
                             <property name="protocol">
@@ -155,10 +157,8 @@
         class="net.shibboleth.idp.profile.messaging.impl.SelectProfileConfiguration" scope="prototype"
         p:profiledIdLookupStrategy-ref="SOAPClient.SOAPClientSecurityProfileIdLookup" />
         
-    <!-- TODO probably not we want in the end, just for initial testing. -->
     <bean id="SOAPClient.HttpClient" parent="shibboleth.NonCachingHttpClient"
-        p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLSOnly" />
-    
+        p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLS" />
     
 
 </beans>

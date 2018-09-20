@@ -287,7 +287,7 @@
         </property>
     </bean>
 
-    <!-- Parent beans for Signature/Encryption/TLS Configuration objects. -->
+    <!-- Parent beans for Signature/Encryption/TLS/HttpClientSecurity Configuration objects. -->
         
     <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"
         class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration"
@@ -296,6 +296,9 @@
     
     <bean id="shibboleth.BasicClientTLSValidationConfiguration" abstract="true"
         class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration" />
+    
+    <bean id="shibboleth.BasicHttpClientSecurityConfiguration" abstract="true"
+        class="org.opensaml.security.httpclient.impl.BasicHttpClientSecurityConfiguration" />
     
     <bean id="shibboleth.BasicSignatureSigningConfiguration" abstract="true"
         class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
