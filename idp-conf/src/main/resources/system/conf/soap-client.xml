@@ -97,14 +97,8 @@
                     
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.CheckAndRecordServerTLSEntityAuthenticationtHandler" />
 
-                        <!--  TODO -->
-                        <bean scope="prototype" class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" >
-                            <property name="protocol">
-                                <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
-                            </property>
-                            <property name="role">
-                                <util:constant static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
-                            </property>
+                        <bean scope="prototype" class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" 
+                            p:copyContextLookup-ref="SOAPClient.OperationContextLookup">
                         </bean>
                         
                         <bean scope="prototype" class="org.opensaml.xmlsec.messaging.impl.PopulateSignatureValidationParametersHandler"
@@ -143,6 +137,11 @@
     
     
     <!--  Supporting beans. -->
+    
+    <bean id="SOAPClient.OperationContextLookup" 
+        class="org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup" 
+        c:targetClass="#{T(org.opensaml.messaging.context.InOutOperationContext)}" />
+    
     <bean id="SOAPClient.SOAPClientSecurityProfileIdLookup" 
         class="org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFunction" />
     
