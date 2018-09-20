@@ -23,6 +23,7 @@
     <end-state id="ImpersonationViolation" />
     <end-state id="RestartAuthentication" />
     <end-state id="RuntimeException" />
+    <end-state id="NoPassive" />
 
     <action-state id="LogRuntimeException">
         <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
@@ -41,6 +42,7 @@
         <transition on="ImpersonationViolation" to="ImpersonationViolation" />
         <transition on="RestartAuthentication" to="RestartAuthentication" />
         <transition on="RuntimeException" to="RuntimeException" />
+        <transition on="NoPassive" to="NoPassive" />
     </global-transitions>
 
 </flow>
