@@ -20,7 +20,7 @@
     <AttributeFilterPolicy id="subject-identifiers">
         <PolicyRequirementRule xsi:type="ANY" />
 
-        <AttributeRule attributeID="pairwise-id">
+        <AttributeRule attributeID="samlPairwiseID">
             <PermitValueRule xsi:type="OR">
                 <Rule xsi:type="EntityAttributeExactMatch"
                     attributeName="urn:oasis:names:tc:SAML:profiles:subject-id:req"
@@ -33,7 +33,7 @@
             </PermitValueRule>
         </AttributeRule>
 
-        <AttributeRule attributeID="subject-id">
+        <AttributeRule attributeID="samlSubjectID">
             <PermitValueRule xsi:type="EntityAttributeExactMatch"
                 attributeName="urn:oasis:names:tc:SAML:profiles:subject-id:req"
                 attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"

@@ -240,12 +240,12 @@
 
     <!-- Schema: SAML Subject ID Attributes -->
 <!--
-    <AttributeDefinition xsi:type="Scoped" id="subject-id" scope="%{idp.scope}">
+    <AttributeDefinition xsi:type="Scoped" id="samlSubjectID" scope="%{idp.scope}">
         <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}"/>
         <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oasis:names:tc:SAML:attribute:subject-id" friendlyName="subject-id" encodeType="false" />
     </AttributeDefinition>
 
-    <AttributeDefinition xsi:type="Scoped" id="pairwise-id" scope="%{idp.scope}">
+    <AttributeDefinition xsi:type="Scoped" id="samlPairwiseID" scope="%{idp.scope}">
         <InputDataConnector ref="computed" attributeNames="computedId"/>
         <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oasis:names:tc:SAML:attribute:pairwise-id" friendlyName="pairwise-id" encodeType="false" />
     </AttributeDefinition>
