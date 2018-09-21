@@ -30,9 +30,9 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.webflow.execution.RequestContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -48,11 +48,15 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * @since 3.4.0
  */
-public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenConfigurationLookupStrategy<T> {
+public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenConfigurationLookupStrategy<T>
+        implements ApplicationContextAware {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BeanConfigurationLookupStrategy.class);
 
+    /** Enclosing Spring context. */
+    @Nullable private ApplicationContext applicationContext;
+    
     /** Type of bean to return. */
     @NonnullAfterInit private Class<T> propertyType;
     
@@ -71,14 +75,21 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
         
         propertyType = Constraint.isNotNull(type, "Property type cannot be null");
     }
-    
+
+    /** {@inheritDoc} */
+    public void setApplicationContext(final ApplicationContext context) throws BeansException {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        applicationContext = context;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (propertyType == null) {
-            throw new ComponentInitializationException("Property type cannot be null");
+        if (propertyType == null || applicationContext == null) {
+            throw new ComponentInitializationException("Property type and Spring ApplicationContext cannot be null");
         }
     }
     
@@ -94,19 +105,17 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
         }
         
         log.debug("Converting tag '{}' to Bean property of tyoe '{}'", tag.getName(), propertyType.getSimpleName());
-        return xmlObjectToBean(profileRequestContext, values.get(0));
+        return xmlObjectToBean(values.get(0));
     }
     
     /**
      * Convert an XMLObject to a Spring bean reference if the type is supported.
      * 
-     * @param profileRequestContext current profile request context
      * @param object object to convert
      * 
      * @return the converted value, or null
      */
-    @Nullable private T xmlObjectToBean(@Nullable final ProfileRequestContext profileRequestContext,
-            @Nonnull final XMLObject object) {
+    @Nullable private T xmlObjectToBean(@Nonnull final XMLObject object) {
         String value = null;
         if (object instanceof XSString) {
             value = ((XSString) object).getValue();
@@ -118,24 +127,12 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
         }
         
         if (value != null) {
-            if (profileRequestContext != null) {
-                final SpringRequestContext springContext =
-                        profileRequestContext.getSubcontext(SpringRequestContext.class);
-                if (springContext != null) {
-                    final RequestContext requestContext = springContext.getRequestContext();
-                    if (requestContext != null) {
-                        try {
-                            return requestContext.getActiveFlow().getApplicationContext().getBean(value, propertyType);
-                        } catch (final BeansException e) {
-                            log.error("Error locating appropriately typed bean named {}", value, e);
-                            return null;
-                        }
-                    }
-                }
+            try {
+                return applicationContext.getBean(value, propertyType);
+            } catch (final BeansException e) {
+                log.error("Error locating appropriately typed bean named {}", value, e);
+                return null;
             }
-            
-            log.error("Unable to access Spring ApplicationContext to search for bean reference");
-            return null;
         }
         
         log.error("Unsupported conversion to Spring bean from XMLObject type ({})", object.getClass().getName());
