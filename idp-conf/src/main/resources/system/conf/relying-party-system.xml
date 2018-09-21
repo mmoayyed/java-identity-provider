@@ -149,20 +149,7 @@
         </property>
         
         <property name="encryptionConfiguration">
-            <bean parent="shibboleth.BasicEncryptionConfiguration">
-                <property name="dataEncryptionAlgorithms">
-                    <list>
-                        <util:constant
-                            static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
-                    </list>
-                </property>
-                <property name="keyTransportEncryptionAlgorithms">
-                    <list>
-                        <util:constant
-                            static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
-                    </list>
-                </property>
-            </bean>
+            <ref bean="#{'%{idp.encryption.config:shibboleth.EncryptionConfiguration.CBC}'.trim()}" />
         </property>
 
         <property name="decryptionConfiguration">
@@ -215,6 +202,46 @@
             <list>
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA1" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- Convenience beans for directly injecting AES-CBC or AES-GCM usage.  -->
+    
+    <bean id="shibboleth.SecurityConfiguration.CBC" parent="shibboleth.DefaultSecurityConfiguration" lazy-init="true"
+        p:encryptionConfiguration-ref="shibboleth.EncryptionConfiguration.CBC" />
+
+    <bean id="shibboleth.SecurityConfiguration.GCM" parent="shibboleth.DefaultSecurityConfiguration" lazy-init="true"
+        p:encryptionConfiguration-ref="shibboleth.EncryptionConfiguration.GCM" />
+
+    <!-- Actual encryption configurations for AES-CBC and AES-GCM. -->
+
+    <bean id="shibboleth.EncryptionConfiguration.CBC" parent="shibboleth.BasicEncryptionConfiguration">
+        <property name="dataEncryptionAlgorithms">
+            <list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
+            </list>
+        </property>
+        <property name="keyTransportEncryptionAlgorithms">
+            <list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.EncryptionConfiguration.GCM" parent="shibboleth.BasicEncryptionConfiguration">
+        <property name="dataEncryptionAlgorithms">
+            <list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM" />
+            </list>
+        </property>
+        <property name="keyTransportEncryptionAlgorithms">
+            <list>
+                <util:constant
+                    static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
             </list>
         </property>
     </bean>
