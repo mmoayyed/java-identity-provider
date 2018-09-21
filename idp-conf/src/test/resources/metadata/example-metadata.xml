@@ -21,6 +21,15 @@
                 <saml:AttributeValue>attribute-release</saml:AttributeValue>
             </saml:Attribute>
             -->
+            <saml:Attribute Name="http://shibboleth.net/ns/profiles/saml2/sso/browser/encryptAssertions"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>true</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute Name="http://shibboleth.net/ns/attributes/releaseAllValues"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>eduPersonPrincipalName</saml:AttributeValue>
+                <saml:AttributeValue>mail</saml:AttributeValue>
+            </saml:Attribute>
 	    </mdattr:EntityAttributes>
     </Extensions>
     <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol" AuthnRequestsSigned="false">
