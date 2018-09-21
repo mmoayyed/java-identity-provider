@@ -44,11 +44,12 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
- * This message handler attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the {@link RelyingPartyContext}
- * that was looked up.
+ * This message handler attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the 
+ * {@link RelyingPartyContext} that was looked up.
  * 
  * @post If a {@link RelyingPartyContext} is located, it will be populated with a non-null result of applying
- * the supplied {@link CriteriaRelyingPartyConfigurationResolver} to the {@link RelyingPartyContext#getRelyingPartyId()}.
+ * the supplied 
+ * {@link CriteriaRelyingPartyConfigurationResolver} to the {@link RelyingPartyContext#getRelyingPartyId()}.
  */
 public final class SelectRelyingPartyConfiguration extends AbstractMessageHandler {
 
@@ -79,7 +80,8 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
      * 
      * @param resolver  the resolver to use
      */
-    public void setRelyingPartyConfigurationResolver(@Nonnull final CriteriaRelyingPartyConfigurationResolver resolver) {
+    public void setRelyingPartyConfigurationResolver(
+            @Nonnull final CriteriaRelyingPartyConfigurationResolver resolver) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
