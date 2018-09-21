@@ -113,4 +113,9 @@
         </property>
     </bean>
 
+    <!--
+    Condition to evaluate to apply attribute-release consent to attribute queries.
+    -->
+    <bean id="shibboleth.consent.AttributeQuery.Condition" parent="shibboleth.Conditions.FALSE" />
+
 </beans>
