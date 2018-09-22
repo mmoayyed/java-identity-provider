@@ -557,18 +557,20 @@
     -->
     <target name="build-war" depends="gettarget">
         <!-- no logging -->
+        <delete dir="${idp.target.dir}/webapp" failonerror="false" />
+        <delete dir="${idp.target.dir}/webapp.tmp" failonerror="false" />
         <echo>Rebuilding ${idp.target.dir}/war/idp.war ...</echo>
-        <mkdir dir="${idp.target.dir}/webapp" />
-        <copy todir="${idp.target.dir}/webapp" preservelastmodified="true" failonerror="true">
+        <mkdir dir="${idp.target.dir}/webapp.tmp" />
+        <copy todir="${idp.target.dir}/webapp.tmp" preservelastmodified="true" failonerror="true">
             <fileset dir="${idp.target.dir}/dist/webapp" />
         </copy>
-        <copy todir="${idp.target.dir}/webapp" overwrite="true" preservelastmodified="true" failonerror="true">
+        <copy todir="${idp.target.dir}/webapp.tmp" overwrite="true" preservelastmodified="true" failonerror="true">
             <fileset dir="${idp.target.dir}/edit-webapp" />
         </copy>
         <!-- build a jar, not war, since it is already fully populated -->
         <delete file="${idp.target.dir}/war/idp.war" failonerror="true" />
-        <jar destfile="${idp.target.dir}/war/idp.war" basedir="${idp.target.dir}/webapp" />
-        <delete dir="${idp.target.dir}/webapp" failonerror="true" />
+        <jar destfile="${idp.target.dir}/war/idp.war" basedir="${idp.target.dir}/webapp.tmp" />
+        <delete dir="${idp.target.dir}/webapp.tmp" failonerror="true" />
         <echo>...done</echo>
     </target>
 
