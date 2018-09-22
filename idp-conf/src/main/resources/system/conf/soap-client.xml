@@ -68,6 +68,7 @@
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.impl.PopulateSignatureSigningParametersHandler" 
                             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
                             p:configurationLookupStrategy-ref="shibboleth.MessageContext.SignatureSigningConfigurationLookup"
+                            p:activationCondition-ref="SOAPClient.SignArtifactRequestsPredicate"
                             />
                             
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" />
@@ -84,6 +85,7 @@
                         <bean scope="prototype" class="org.opensaml.security.messaging.impl.PopulateHttpClientSecurityParametersHandler" 
                             p:httpClientSecurityParametersResolver-ref="shibboleth.HttpClientSecurityParametersResolver"
                             p:configurationLookupStrategy-ref="shibboleth.MessageContext.HttpClientSecurityConfigurationLookup"
+                            p:clientTLSPredicate-ref="SOAPClient.ClientTLSArtifactRequestsPredicate"
                             />
                     </util:list>
                 </property>
@@ -95,7 +97,8 @@
                 <property name="handlers">
                     <util:list>
                     
-                        <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.CheckAndRecordServerTLSEntityAuthenticationtHandler" />
+                        <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.CheckAndRecordServerTLSEntityAuthenticationtHandler" 
+                            p:entityIDLookup-ref="SOAPClient.OperationContextEntityIDLookup" />
 
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" 
                             p:copyContextLookup-ref="SOAPClient.OperationContextLookup">
@@ -115,11 +118,13 @@
                         
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" />
                         
-                        <bean scope="prototype" class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer">
-                            <property name="issuerLookupStrategy">
-                                <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
-                            </property>
-                        </bean>
+                        <bean scope="prototype" class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer"
+                            p:issuerLookupStrategy-ref="SOAPClient.SAMLMessageContextIssuerFunction" />
+                        
+                        <bean scope="prototype" class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer"
+                            p:issuerLookupStrategy-ref="SOAPClient.SAMLMessageContextIssuerFunction" 
+                            p:expectedIssuerLookupStrategy-ref="SOAPClient.OperationContextEntityIDLookup" 
+                            />
                         
                         <bean scope="prototype" class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
                             <property name="authenticationLookupStrategy">
@@ -142,6 +147,18 @@
         class="org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup" 
         c:targetClass="#{T(org.opensaml.messaging.context.InOutOperationContext)}" />
     
+    <bean id="SOAPClient.OperationContextEntityIDLookup"
+        class="org.opensaml.saml.common.binding.security.impl.OperationContextEntityIDLookup" />
+    
+    <bean id="SOAPClient.SAMLMessageContextIssuerFunction"
+        class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
+    
+    <bean id="SOAPClient.SignArtifactRequestsPredicate" 
+        class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
+    
+    <bean id="SOAPClient.ClientTLSArtifactRequestsPredicate" 
+        class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
+        
     <bean id="SOAPClient.SOAPClientSecurityProfileIdLookup" 
         class="org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFunction" />
     

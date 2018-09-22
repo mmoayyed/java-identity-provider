@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration;
-
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /** Unit test for {@link AttributeQueryProfileConfiguration}. */
 public class AttributeQueryProfileConfigurationTest {
@@ -58,6 +60,22 @@ public class AttributeQueryProfileConfigurationTest {
                 FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(artifactConfiguration));
 
         Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+    }
+    
+    @Test
+    public void testSignArtifactRequests() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+        
+        config.setSignArtifactRequests(Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getSignArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+    }
+     
+    @Test
+    public void testClientTLSArtifactRequests() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+        
+        config.setClientTLSArtifactRequests(Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
     }
 
 }

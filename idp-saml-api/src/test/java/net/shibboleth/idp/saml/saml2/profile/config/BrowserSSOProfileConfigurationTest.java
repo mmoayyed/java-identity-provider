@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -300,5 +301,22 @@ public class BrowserSSOProfileConfigurationTest {
                 FunctionSupport.<ProfileRequestContext,Collection<String>>constant(formats));
         Assert.assertEquals(config.getNameIDFormatPrecedence(), formats);
     }
+    
+    @Test
+    public void testSignArtifactRequests() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        
+        config.setSignArtifactRequests(Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getSignArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+    }
+     
+    @Test
+    public void testClientTLSArtifactRequests() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        
+        config.setClientTLSArtifactRequests(Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+    }
+     
 
 }

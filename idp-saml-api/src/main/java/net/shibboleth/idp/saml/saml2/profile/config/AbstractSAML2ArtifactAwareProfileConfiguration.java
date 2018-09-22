@@ -21,11 +21,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /**
@@ -35,10 +41,16 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
  */
 public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
         extends AbstractSAML2ProfileConfiguration
-        implements SAMLArtifactAwareProfileConfiguration {
+        implements SAMLArtifactAwareProfileConfiguration, SAMLArtifactConsumerProfileConfiguration {
 
     /** Lookup function to supply <code>artifactConfiguration</code> property. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
+    
+    /** Predicate used to determine if artifact resolution requests should be signed. */
+    @Nonnull private Predicate<MessageContext> signArtifactRequestsPredicate;
+    
+    /** Predicate used to determine if artifact resolution requests should use client TLS. */
+    @Nonnull private Predicate<MessageContext> clientTLSArtifactRequestsPredicate;
 
     /**
      * Constructor.
@@ -48,6 +60,8 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
     protected AbstractSAML2ArtifactAwareProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         artifactConfigurationLookupStrategy = FunctionSupport.constant(null);
+        signArtifactRequestsPredicate = Predicates.alwaysFalse();
+        clientTLSArtifactRequestsPredicate = Predicates.alwaysFalse();
     }
     
     /** {@inheritDoc} */
@@ -75,6 +89,36 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
             @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
         artifactConfigurationLookupStrategy = strategy != null
                 ? strategy : FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(null);
+    }
+
+    /** {@inheritDoc} */
+    public Predicate<MessageContext> getSignArtifactRequests() {
+        return signArtifactRequestsPredicate;
+    }
+    
+    /**
+     * Set the predicate used to determine if artifact resolution requests should be signed.
+     * 
+     * @param predicate the predicate
+     */
+    public void setSignArtifactRequests(@Nonnull final Predicate<MessageContext> predicate) {
+        signArtifactRequestsPredicate = Constraint.isNotNull(predicate, 
+                "Predicate used to determine artifact request signing may not be null");
+    }
+
+    /** {@inheritDoc} */
+    public Predicate<MessageContext> getClientTLSArtifactRequests() {
+        return clientTLSArtifactRequestsPredicate;
+    }
+
+    /**
+     * Set the predicate used to determine if artifact resolution requests should use client TLS.
+     * 
+     * @param predicate the predicate
+     */
+    public void setClientTLSArtifactRequests(@Nonnull final Predicate<MessageContext> predicate) {
+        clientTLSArtifactRequestsPredicate = Constraint.isNotNull(predicate, 
+                "Predicate used to determine artifact client TLS use may not be null");
     }
 
 }

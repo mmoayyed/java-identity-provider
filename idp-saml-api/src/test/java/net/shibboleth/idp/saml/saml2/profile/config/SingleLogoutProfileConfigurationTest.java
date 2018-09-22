@@ -17,12 +17,16 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /** Unit test for {@link SingleLogoutProfileConfiguration}. */
 public class SingleLogoutProfileConfigurationTest {
@@ -56,6 +60,22 @@ public class SingleLogoutProfileConfigurationTest {
                 FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(artifactConfiguration));
 
         Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+    }
+    
+    @Test
+    public void testSignArtifactRequests() {
+        final SingleLogoutProfileConfiguration config = new SingleLogoutProfileConfiguration();
+        
+        config.setSignArtifactRequests(Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getSignArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+    }
+     
+    @Test
+    public void testClientTLSArtifactRequests() {
+        final SingleLogoutProfileConfiguration config = new SingleLogoutProfileConfiguration();
+        
+        config.setClientTLSArtifactRequests(Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
     }
 
 }
