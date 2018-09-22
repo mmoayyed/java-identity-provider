@@ -29,8 +29,7 @@
         <property name="serviceLocatorInterface" value="org.opensaml.messaging.pipeline.httpclient.HttpClientMessagePipelineFactory" />
         <property name="serviceMappings">
             <props>
-                <prop key="SAML2.ArtifactDecoder">SOAPClient.SAML2.Pipeline</prop>
-                <prop key="SAML2.Logout">SOAPClient.SAML2.Pipeline</prop>
+                <prop key="SAML2.ArtifactDecoder">SOAPClient.SAML2.Pipeline.ArtifactDecoder</prop>
             </props>
         </property>
     </bean>
@@ -53,7 +52,7 @@
     <!-- SAML-specific SOAP client beans. -->
     
     <!-- Basic SAML 2 pipeline. -->
-    <bean id="SOAPClient.SAML2.Pipeline" scope="prototype" parent="SOAPClient.SAML2.Pipeline.Abstract">
+    <bean id="SOAPClient.SAML2.Pipeline.ArtifactDecoder" scope="prototype" parent="SOAPClient.SAML2.Pipeline.Abstract">
     
         <property name="outboundPayloadHandler">
             <bean scope="prototype" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain">
