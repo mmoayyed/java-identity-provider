@@ -30,6 +30,7 @@
         <property name="serviceMappings">
             <props>
                 <prop key="SAML2.ArtifactDecoder">SOAPClient.SAML2.Pipeline</prop>
+                <prop key="SAML2.Logout">SOAPClient.SAML2.Pipeline</prop>
             </props>
         </property>
     </bean>
@@ -123,8 +124,7 @@
                         
                         <bean scope="prototype" class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer"
                             p:issuerLookupStrategy-ref="SOAPClient.SAMLMessageContextIssuerFunction" 
-                            p:expectedIssuerLookupStrategy-ref="SOAPClient.OperationContextEntityIDLookup" 
-                            />
+                            p:expectedIssuerLookupStrategy-ref="SOAPClient.OperationContextEntityIDLookup" />
                         
                         <bean scope="prototype" class="org.opensaml.messaging.handler.impl.CheckMandatoryAuthentication">
                             <property name="authenticationLookupStrategy">
