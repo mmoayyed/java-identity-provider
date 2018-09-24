@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.ProfileIdLookup;
 import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -68,7 +69,13 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * @since 3.4.0
  */
 public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> extends AbstractInitializableComponent
-        implements Function<ProfileRequestContext,T> {
+        implements Function<BaseContext,T> {
+
+    /** Default metadata lookup for PRC-based usage. */
+    @Nonnull private static final Function<ProfileRequestContext,EntityDescriptor> DEFAULT_PRC_METADATA_LOOKUP;
+
+    /** Default profile ID lookup for PRC-based usage. */
+    @Nonnull private static final Function<ProfileRequestContext,String> DEFAULT_PRC_PROFILE_ID_LOOKUP;
 
     /** Class logger. */
     @Nonnull
@@ -87,8 +94,11 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     @NonnullAfterInit @NonnullElements private Collection<String> propertyAliases;
         
     /** Strategy for obtaining metadata to check. */
-    @Nonnull private Function<ProfileRequestContext,EntityDescriptor> metadataLookupStrategy;
-    
+    @Nullable private Function<BaseContext,EntityDescriptor> metadataLookupStrategy;
+
+    /** Strategy for obtaining profile ID for property naming. */
+    @Nullable @NotEmpty private Function<BaseContext,String> profileIdLookupStrategy;
+        
     /** Constructor. */
     public AbstractMetadataDrivenConfigurationLookupStrategy() {
         enableCaching = true;
@@ -103,9 +113,6 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             throw new ComponentInitializationException("Property name cannot be null or empty");
         } else if (propertyAliases == null) {
             propertyAliases = Collections.emptyList();
-        } else if (metadataLookupStrategy == null) {
-            metadataLookupStrategy = Functions.compose(new EntityDescriptorLookupFunction(),
-                    new SAMLMetadataContextLookupFunction());
         }
     }
 
@@ -171,14 +178,26 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * 
      * @param strategy  lookup strategy
      */
-    public void setMetadataLookupStrategy(@Nonnull final Function<ProfileRequestContext,EntityDescriptor> strategy) {
+    public void setMetadataLookupStrategy(@Nonnull final Function<BaseContext,EntityDescriptor> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         metadataLookupStrategy = Constraint.isNotNull(strategy, "Metadata lookup strategy cannot be null");
     }
 
+    /**
+     * Set lookup strategy for profile ID to base property names on.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setProfileIdLookupStrategy(@Nonnull final Function<BaseContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        profileIdLookupStrategy = Constraint.isNotNull(strategy, "Profile ID lookup strategy cannot be null");
+    }
+
+// Checkstyle: CyclomaticComplexity OFF    
     /** {@inheritDoc} */
-    @Nullable public T apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public T apply(@Nullable final BaseContext input) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         CachedConfigurationContext cacheContext = null;
@@ -191,14 +210,32 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             }
         }
         
-        final EntityDescriptor entity = metadataLookupStrategy.apply(input);
+        final EntityDescriptor entity;
+        final String profileId;
+        
+        if (metadataLookupStrategy != null) {
+            entity = metadataLookupStrategy.apply(input);
+        } else if (input instanceof ProfileRequestContext) {
+            entity = DEFAULT_PRC_METADATA_LOOKUP.apply((ProfileRequestContext) input);
+        } else {
+            entity = null;
+        }
+            
         if (entity == null) {
             log.debug("No metadata available for relying party, no setting returned for '{}'", propertyName);
             return null;
         }
         
+        if (profileIdLookupStrategy != null) {
+            profileId = profileIdLookupStrategy.apply(input);
+        } else if (input instanceof ProfileRequestContext) {
+            profileId = DEFAULT_PRC_PROFILE_ID_LOOKUP.apply((ProfileRequestContext) input);
+        } else {
+            profileId = "";
+        }
+        
         // Look for "primary" tag name based on profile/property.
-        Attribute attribute = findMatchingTag(entity, input.getProfileId() + '/' + propertyName);
+        Attribute attribute = findMatchingTag(entity, profileId + '/' + propertyName);
         if (attribute != null) {
             log.debug("Found matching tag '{}' for property '{}'", attribute.getName(), propertyName);
             final T result = translate(attribute);
@@ -226,6 +263,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
         return null;
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Translate the value(s) into a setting of the appropriate type.
@@ -339,4 +377,12 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
     }
     
+    static {
+        // Init PRC defaults.
+        
+        DEFAULT_PRC_METADATA_LOOKUP = Functions.compose(new EntityDescriptorLookupFunction(),
+                new SAMLMetadataContextLookupFunction());
+        
+        DEFAULT_PRC_PROFILE_ID_LOOKUP = new ProfileIdLookup();
+    }
 }
