@@ -13,16 +13,16 @@
         <evaluate expression="AttributeConsentFlowDescriptorLookupStrategy.apply(opensamlProfileRequestContext)"
             result="flowScope.attributeReleaseFlowDescriptor" />
     </on-start>
-    
+
     <action-state id="AttributeConsentSetup">
         <evaluate expression="InitializeConsentContext" />
         <evaluate expression="InitializeAttributeConsentContext" />
         <evaluate expression="PopulateAttributeConsentContext" />
-        <!-- <evaluate expression="PopulatePreConsentAuditContext" /> -->
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="ReadConsentFromStorage" />
     </action-state>
+
 
     <!-- Read consent from storage. -->
 
@@ -59,10 +59,9 @@
             else="ReleaseAttributes" />
     </decision-state>
 
+
     <!-- Release attributes consented to as well as non-consentable attributes from attribute context. -->
-    
-    <!-- TODO auditing ? -->
-    
+
     <action-state id="ReleaseAttributes">
         <evaluate expression="ReleaseAttributes" />
         <evaluate expression="'proceed'" />
@@ -72,12 +71,6 @@
 
     <end-state id="proceed" />
 
-    <end-state id="Log">
-        <on-entry>
-            <!-- Log violation. -->
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.attributeReleaseQuery').warn('Log end-state')" />
-        </on-entry>
-    </end-state>
 
     <global-transitions>
         <!-- Catch "InvalidAttributeContext" and short-circuit this intercept flow. -->

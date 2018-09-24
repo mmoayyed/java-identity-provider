@@ -14,6 +14,8 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
+    <!-- Use 'intercept/attribute-release' as storage context. -->
+
     <bean id="AttributeReleaseStorageContextLookupStrategy" class="com.google.common.base.Functions"
         factory-method="constant" c:_0="intercept/attribute-release" />
 
