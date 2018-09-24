@@ -201,7 +201,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         Attribute attribute = findMatchingTag(entity, input.getProfileId() + '/' + propertyName);
         if (attribute != null) {
             log.debug("Found matching tag '{}' for property '{}'", attribute.getName(), propertyName);
-            final T result = translate(input, attribute);
+            final T result = translate(attribute);
             if (enableCaching) {
                 cacheContext.getPropertyMap().put(propertyName, result);
             }
@@ -212,7 +212,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             attribute = findMatchingTag(entity, alias);
             if (attribute != null) {
                 log.debug("Found matching tag '{}' for property '{}'", attribute.getName(), propertyName);
-                final T result = translate(input, attribute);
+                final T result = translate(attribute);
                 if (enableCaching) {
                     cacheContext.getPropertyMap().put(propertyName, result);
                 }
@@ -230,13 +230,11 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     /**
      * Translate the value(s) into a setting of the appropriate type.
      * 
-     * @param profileRequestContext current profile request context
      * @param tag tag to translate
      * 
      * @return the setting derived from the tag's value(s)
      */
-    @Nullable private T translate(@Nullable final ProfileRequestContext profileRequestContext,
-            @Nonnull final Attribute tag) {
+    @Nullable private T translate(@Nonnull final Attribute tag) {
         
         final List<XMLObject> values = tag.getAttributeValues();
         if (values == null || values.isEmpty()) {
@@ -244,7 +242,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             return null;
         }
         
-        return doTranslate(profileRequestContext, tag);
+        return doTranslate(tag);
     }
     
     /**
@@ -252,13 +250,11 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * 
      * <p>Overrides of this function can assume a non-zero collection of values.</p>
      * 
-     * @param profileRequestContext current profile request context
      * @param tag tag to translate
      * 
      * @return the setting derived from the tag's value(s)
      */
-    @Nullable protected abstract T doTranslate(@Nullable final ProfileRequestContext profileRequestContext,
-            @Nonnull final Attribute tag); 
+    @Nullable protected abstract T doTranslate(@Nonnull final Attribute tag); 
     
     /**
      * Find a matching entity attribute in the input metadata.

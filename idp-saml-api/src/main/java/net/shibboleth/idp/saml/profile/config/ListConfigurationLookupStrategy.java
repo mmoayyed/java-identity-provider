@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +43,7 @@ public class ListConfigurationLookupStrategy<T> extends AbstractCollectionConfig
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected List<T> doTranslate(@Nullable final ProfileRequestContext profileRequestContext,
-            @Nonnull final Attribute tag) {
+    @Nullable protected List<T> doTranslate(@Nonnull final Attribute tag) {
 
         log.debug("Converting tag '{}' to List<{}> property", tag.getName(), getPropertyType().getSimpleName());
         

@@ -28,7 +28,6 @@ import org.opensaml.core.xml.schema.XSBoolean;
 import org.opensaml.core.xml.schema.XSBooleanValue;
 import org.opensaml.core.xml.schema.XSInteger;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +45,7 @@ public class IntegerConfigurationLookupStrategy extends AbstractMetadataDrivenCo
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Integer doTranslate(@Nullable final ProfileRequestContext profileRequestContext,
-            @Nonnull final Attribute tag) {
+    @Nullable protected Integer doTranslate(@Nonnull final Attribute tag) {
         
         final List<XMLObject> values = tag.getAttributeValues();
         if (values.size() != 1) {
