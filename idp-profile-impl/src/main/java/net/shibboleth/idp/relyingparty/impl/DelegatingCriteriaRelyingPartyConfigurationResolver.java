@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
@@ -151,14 +153,38 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         if (criteria == null) {
             return null;
         }
-        
+
         final String entityID = resolveEntityID(criteria);
         log.debug("Resolved effective entityID from criteria: {}", entityID);
-        if (entityID != null) {
+
+        final EntityDescriptor entityDescriptor = resolveEntityDescriptor(criteria);
+        log.debug("Resolved effective entity descriptor from criteria: {}", entityDescriptor);
+
+        final RoleDescriptor roleDescriptor = resolveRoleDescriptor(criteria);
+        log.debug("Resolved effective role descriptor from criteria: {}", roleDescriptor);
+
+        if (entityID != null || entityDescriptor != null || roleDescriptor != null) {
             final ProfileRequestContext prc = new ProfileRequestContext<>();
-            final RelyingPartyContext rp = prc.getSubcontext(RelyingPartyContext.class, true);
-            rp.setRelyingPartyId(entityID);
-            rp.setVerified(true);
+            final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
+            rpc.setVerified(true);
+
+            rpc.setRelyingPartyId(entityID);
+
+            if (entityDescriptor != null || roleDescriptor != null) {
+                final SAMLPeerEntityContext peerContext = prc.getSubcontext(SAMLPeerEntityContext.class, true);
+                rpc.setRelyingPartyIdContextTree(peerContext);
+
+                peerContext.setEntityId(entityID);
+
+                if (roleDescriptor != null) {
+                    peerContext.setRole(roleDescriptor.getSchemaType() != null
+                            ? roleDescriptor.getSchemaType() : roleDescriptor.getElementQName());
+                }
+
+                final SAMLMetadataContext metadataContext = peerContext.getSubcontext(SAMLMetadataContext.class, true);
+                metadataContext.setEntityDescriptor(entityDescriptor);
+                metadataContext.setRoleDescriptor(roleDescriptor);
+            }
             return prc;
         } else {
             return null;
@@ -175,14 +201,41 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         if (criteria.contains(EntityIdCriterion.class)) {
             return criteria.get(EntityIdCriterion.class).getEntityId();
         }
-        
-        if (criteria.contains(RoleDescriptorCriterion.class)) {
-            final RoleDescriptor rd = criteria.get(RoleDescriptorCriterion.class).getRole();
-            if (rd.getParent() != null && rd.getParent() instanceof EntityDescriptor) {
-                return ((EntityDescriptor)rd.getParent()).getEntityID();
-            }
+
+        final EntityDescriptor ed = resolveEntityDescriptor(criteria);
+        if (ed != null) {
+            return ed.getEntityID();
         }
-        
+
+        return null;
+    }
+
+    /**
+     * Resolve the EntityDescriptor from the criteria.
+     *
+     * @param criteria the input criteria
+     * @return the input entity descriptor criterion, or null if could not be resolved
+     */
+    private EntityDescriptor resolveEntityDescriptor(@Nonnull final CriteriaSet criteria) {
+        final RoleDescriptor rd = resolveRoleDescriptor(criteria);
+        if (rd != null && rd.getParent() != null && rd.getParent() instanceof EntityDescriptor) {
+            return (EntityDescriptor)rd.getParent();
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve the RoleDescriptor from the criteria.
+     *
+     * @param criteria the input criteria
+     * @return the input role descriptor criterion or null if could not be resolved
+     */
+    private RoleDescriptor resolveRoleDescriptor(@Nonnull final CriteriaSet criteria) {
+        if (criteria.contains(RoleDescriptorCriterion.class)) {
+            return criteria.get(RoleDescriptorCriterion.class).getRole();
+        }
+
         return null;
     }
     
