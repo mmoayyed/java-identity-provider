@@ -35,7 +35,8 @@
         class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
         p:activationCondition="%{idp.session.enabled:true}"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:sessionResolver-ref="shibboleth.SessionManager" />
+        p:sessionResolver-ref="shibboleth.SessionManager"
+        p:checkAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:null}'.trim()) ?: %{idp.session.consistentAddress:true}}" />
     
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"

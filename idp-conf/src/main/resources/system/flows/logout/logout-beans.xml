@@ -44,7 +44,8 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:sessionManager-ref="shibboleth.SessionManager"
-        p:sessionResolver-ref="shibboleth.SessionManager" />
+        p:sessionResolver-ref="shibboleth.SessionManager"
+        p:checkAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:null}'.trim()) ?: %{idp.session.consistentAddress:true}}" />
     
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
