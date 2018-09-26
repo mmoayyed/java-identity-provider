@@ -19,7 +19,9 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -74,8 +76,17 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
         }
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
+            if (config.hasAttributeNS(null, "relyingParties")) {
+                log.warn("relyingParties ignored, using activationConditionRef");
+            }
             builder.addPropertyReference("activationCondition",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
+        } else if (config.hasAttributeNS(null, "relyingParties")) {
+            final BeanDefinitionBuilder rpBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
+            rpBuilder .addConstructorArgValue(
+                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
+            builder.addPropertyValue("activationCondition", rpBuilder.getBeanDefinition());
         } else {
             final Element child = ElementSupport.getFirstChildElement(config);
             if (child != null && ElementSupport.isElementNamed(child,

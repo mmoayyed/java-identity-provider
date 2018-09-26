@@ -107,14 +107,14 @@
                 <attribute name="sourceAttributeID" type="string">
                     <annotation>
                         <documentation>
+                            DEPRECATED
+                        
                             The name of the attribute from a data connector dependency which should be
                             used to populate this attribute definition.
 
                             Whether this attribute is required or optional depends on whether the dependency
                             set contains data connectors or attribute definitions. It may be left out for
                             attribute dependencies but MUST be set if there are data connector dependencies.
-
-                            This was a flawed schema design and may eventually be altered.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -158,6 +158,15 @@
             <annotation>
                 <documentation>
                     A reference to a Predicate which controls whether this encoder will run
+                    Mutually exclusive with relyingParties
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="relyingParties" type="string">
+            <annotation>
+                <documentation>
+                    A (space separated) list of entities for which this plugin is to be active
+                    Mutually exclusive with activationConditionRef
                 </documentation>
             </annotation>
         </attribute>

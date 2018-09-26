@@ -70,7 +70,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
             if (config.hasAttributeNS(null, "relyingParties")) {
-                log.warn("relyingParties ignore, using activationConditionRef");
+                log.warn("relyingParties ignored, using activationConditionRef");
             }
             builder.addPropertyReference("activationCondition",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
