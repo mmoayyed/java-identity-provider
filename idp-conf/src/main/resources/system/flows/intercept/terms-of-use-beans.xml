@@ -19,7 +19,8 @@
 
     <bean id="TermsOfUseConsentFunction"
         class="net.shibboleth.idp.consent.logic.impl.MessageSourceConsentFunction"
-        p:consentKeyLookupStrategy-ref="shibboleth.consent.terms-of-use.Key" />
+        p:consentKeyLookupStrategy-ref="shibboleth.consent.terms-of-use.Key"
+        p:consentValueMessageCodeSuffix="%{idp.consent.terms-of-use.consentValueMessageCodeSuffix:.text}" />
 
     <bean id="IsConsentRequiredPredicate"
         class="net.shibboleth.idp.consent.logic.impl.IsConsentRequiredPredicate" />
