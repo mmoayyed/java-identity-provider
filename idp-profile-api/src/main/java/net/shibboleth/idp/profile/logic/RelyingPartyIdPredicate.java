@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -54,7 +55,7 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      * 
      * @param candidate a single value to check against
      */
-    public RelyingPartyIdPredicate(@Nonnull @NonnullElements @ParameterName(name="candidate") final String candidate) {
+    public RelyingPartyIdPredicate(@Nonnull @NotEmpty @ParameterName(name="candidate") final String candidate) {
         this(Collections.singleton(candidate));
     }
 
@@ -65,6 +66,46 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      */
     public RelyingPartyIdPredicate(@Nonnull @ParameterName(name="pred") final Predicate<String> pred) {
         super(new RelyingPartyIdLookupFunction(), pred);
+    }
+    
+    /**
+     * Workaround for Spring type conversion ambiguities.
+     * 
+     * @param candidates hardwired set of values to check against
+     * 
+     * @return the predicate
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public static RelyingPartyIdPredicate fromCandidates(
+            @Nonnull @NonnullElements final Collection<String> candidates) {
+        return new RelyingPartyIdPredicate(candidates);
+    }
+    
+    /**
+     * Workaround for Spring type conversion ambiguities.
+     * 
+     * @param candidate a single value to check against
+     * 
+     * @return the predicate
+     * 
+     *  @since 3.4.0
+     */
+    @Nonnull public static RelyingPartyIdPredicate fromCandidate(@Nonnull @NotEmpty final String candidate) {
+        return new RelyingPartyIdPredicate(candidate);
+    }
+
+    /**
+     * Workaround for Spring type conversion ambiguities.
+     * 
+     * @param pred generalized predicate
+     * 
+     * @return the predicate
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public static RelyingPartyIdPredicate fromPredicate(@Nonnull final Predicate<String> pred) {
+        return new RelyingPartyIdPredicate(pred);
     }
     
 }

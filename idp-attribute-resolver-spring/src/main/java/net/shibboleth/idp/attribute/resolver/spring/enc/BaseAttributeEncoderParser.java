@@ -84,6 +84,7 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
         } else if (config.hasAttributeNS(null, "relyingParties")) {
             final BeanDefinitionBuilder rpBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
+            rpBuilder.setFactoryMethod("fromCandidates");
             rpBuilder .addConstructorArgValue(
                     SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
             builder.addPropertyValue("activationCondition", rpBuilder.getBeanDefinition());

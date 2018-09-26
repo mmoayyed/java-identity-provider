@@ -77,7 +77,8 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         } else if (config.hasAttributeNS(null, "relyingParties")) {
             final BeanDefinitionBuilder rpBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
-            rpBuilder .addConstructorArgValue(
+            rpBuilder.setFactoryMethod("fromCandidates");
+            rpBuilder.addConstructorArgValue(
                     SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
             builder.addPropertyValue("activationCondition", rpBuilder.getBeanDefinition());
         }
