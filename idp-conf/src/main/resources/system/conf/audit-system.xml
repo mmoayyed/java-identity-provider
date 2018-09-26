@@ -78,7 +78,8 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLBindingContextBindingFunction" />
+                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLBindingContextBindingFunction"
+                                p:useShortName="%{idp.audit.shortenBindings:false}" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -404,7 +405,8 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLBindingContextBindingFunction" />
+                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLBindingContextBindingFunction"
+                                p:useShortName="%{idp.audit.shortenBindings:false}" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <bean class="com.google.common.base.Functions" factory-method="compose"
