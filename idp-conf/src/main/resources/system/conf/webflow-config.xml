@@ -61,6 +61,7 @@
                 <entry key="SAML2/POST/SLO" value="../system/flows/saml/saml2/slo-post-flow.xml" />
                 <entry key="SAML2/POST-SimpleSign/SLO" value="../system/flows/saml/saml2/slo-post-flow.xml" />
                 <entry key="SAML2/Redirect/SLO" value="../system/flows/saml/saml2/slo-redirect-flow.xml" />
+                <entry key="SAML2/Artifact/SLO" value="../system/flows/saml/saml2/slo-artifact-flow.xml" />
                 <entry key="SAML2/SOAP/SLO" value="../system/flows/saml/saml2/slo-back-flow.xml" />
                 <entry key="SAML2/SOAP/AttributeQuery" value="../system/flows/saml/saml2/attribute-query-flow.xml" />
                 <entry key="SAML2/SOAP/ArtifactResolution" value="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
