@@ -32,9 +32,9 @@
             failFastInitialize="false" />
 
 
-        <StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security"
+        <StartTLSTrustCredential xsi:type="sec:X509Inline"
             id="LDAPtoIdPCredential">
-            <security:Certificate>
+            <sec:Certificate>
                 MIICATCCAWoCCQCZy4ovDlQTvDANBgkqhkiG9w0BAQUFADBFMRMwEQYKCZImiZPy
                 LGQBGRYDbmV0MRowGAYKCZImiZPyLGQBGRYKc2hpYmJvbGV0aDESMBAGA1UEAxMJ
                 bG9jYWxob3N0MB4XDTEzMDkyMDA0NDE1OFoXDTIzMDkxODA0NDE1OFowRTETMBEG
@@ -46,7 +46,7 @@
                 AAOBgQCKQsndxYjsGIvK3lnlztIuKQmRlj7IHL/T6abBYwmQcyMa5o3hv6/Rx+Ze
                 NSRfyhakPY4v5yUBi1fyIVIGcAbnak+GQIfsO8uDhzZt6DwshzHrnCbHTLQx6NTB
                 4mvLjAdt7riBIl5y5n3tbtrZdpTgFhQxjLWTBpWIO0XKxqtBhw==
-            </security:Certificate>
+            </sec:Certificate>
         </StartTLSTrustCredential>
 
         <StartTLSTrustCredential xsi:type="sec:X509ResourceBacked" id="IdPtoLDAPCredential">
@@ -61,8 +61,6 @@
         
         <ResultCacheBean>cache</ResultCacheBean>
         <ResultCacheBean>cache</ResultCacheBean>
-        
-
         
     </DataConnector>
     

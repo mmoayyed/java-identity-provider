@@ -198,7 +198,7 @@ public class LDAPDataConnectorParserTest {
 
     @Test public void v2MinimalConfig() throws Exception {
         final LDAPDataConnector dataConnector =
-                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-minimal.xml"});
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-minimal.xml"});
         Assert.assertNotNull(dataConnector);
         AssertJUnit.assertEquals(0, dataConnector.getNoRetryDelay());
         final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
@@ -256,7 +256,7 @@ public class LDAPDataConnectorParserTest {
 
     @Test public void v2MinimalPoolConfig() throws Exception {
         final LDAPDataConnector dataConnector =
-                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-minimal-pool.xml"});
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-minimal-pool.xml"});
         Assert.assertNotNull(dataConnector);
         AssertJUnit.assertEquals(0, dataConnector.getNoRetryDelay());
         final PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
@@ -333,7 +333,7 @@ public class LDAPDataConnectorParserTest {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-v2.properties");
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(props, new String[] {
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-props.xml",});
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-props.xml",});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -352,7 +352,7 @@ public class LDAPDataConnectorParserTest {
 
     @Test public void springConfig() throws Exception {
         final LDAPDataConnector dataConnector =
-                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml"});
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-spring.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -368,7 +368,7 @@ public class LDAPDataConnectorParserTest {
             ResolutionException {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-v3.properties");
         final LDAPDataConnector dataConnector =
-                getLdapDataConnector(props, new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-props.xml"});
+                getLdapDataConnector(props, new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-spring-props.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
@@ -441,7 +441,7 @@ public class LDAPDataConnectorParserTest {
     @Test public void flatHybridConfig() throws Exception {
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-flat-hybrid.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-context.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resolver:AttributeResolver xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+<resolver:AttributeResolver 
     xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
-    xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder"
+    xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:security="urn:mace:shibboleth:2.0:security"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                                urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
+                        urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
+						urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
 
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory" ldapURL="ldap://localhost:10389"
         baseDN="ou=people,dc=shibboleth,dc=net" principal="cn=Directory Manager" principalCredential="password"
@@ -16,7 +17,7 @@
         </dc:FilterTemplate>
         <dc:LDAPProperty name="name1" value="value1" />
         <dc:LDAPProperty name="name2" value="value2" />
-        <dc:StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security"
+        <dc:StartTLSTrustCredential xsi:type="security:X509Inline" 
             id="LDAPtoIdPCredential">
             <security:Certificate>
                 MIICATCCAWoCCQCZy4ovDlQTvDANBgkqhkiG9w0BAQUFADBFMRMwEQYKCZImiZPy

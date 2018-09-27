@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resolver:AttributeResolver 
-            xmlns="http://www.springframework.org/schema/beans"
-            xmlns:p="http://www.springframework.org/schema/p"
-            xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-            xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
-            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                                urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
+<AttributeResolver 
+            xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
-    <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
         ldapURL="%{connectionConfig.ldapURL}" 
         baseDN="%{search.baseDn}" 
         principal="%{connectionConfig.bindDn}"
@@ -19,15 +15,15 @@
         noRetryDelay="%{noRetryDelay}"
         connectTimeout="%{connectionConfig.connectTimeout}"
         responseTimeout="%{connectionConfig.responseTimeout}">
-        <dc:FilterTemplate>
+        <FilterTemplate>
             <![CDATA[
                 %{search.filter}
             ]]>
-        </dc:FilterTemplate>
-        <dc:ReturnAttributes>%{search.returnAttributes}</dc:ReturnAttributes>
-        <dc:LDAPProperty name="name1" value="%{jndi.property1}"/>
-        <dc:LDAPProperty name="name2" value="%{jndi.property2}"/>
-        <dc:StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">
+        </FilterTemplate>
+        <ReturnAttributes>%{search.returnAttributes}</ReturnAttributes>
+        <LDAPProperty name="name1" value="%{jndi.property1}"/>
+        <LDAPProperty name="name2" value="%{jndi.property2}"/>
+        <StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">
             <security:Certificate>
               MIICATCCAWoCCQCZy4ovDlQTvDANBgkqhkiG9w0BAQUFADBFMRMwEQYKCZImiZPy
               LGQBGRYDbmV0MRowGAYKCZImiZPyLGQBGRYKc2hpYmJvbGV0aDESMBAGA1UEAxMJ
@@ -41,12 +37,12 @@
               NSRfyhakPY4v5yUBi1fyIVIGcAbnak+GQIfsO8uDhzZt6DwshzHrnCbHTLQx6NTB
               4mvLjAdt7riBIl5y5n3tbtrZdpTgFhQxjLWTBpWIO0XKxqtBhw==
             </security:Certificate>
-        </dc:StartTLSTrustCredential>
-        <dc:StartTLSAuthenticationCredential xsi:type="security:X509ResourceBacked" xmlns:security="urn:mace:shibboleth:2.0:security" id="IdPtoLDAPCredential">
+        </StartTLSTrustCredential>
+        <StartTLSAuthenticationCredential xsi:type="security:X509ResourceBacked" xmlns:security="urn:mace:shibboleth:2.0:security" id="IdPtoLDAPCredential">
             <security:PrivateKey>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.key</security:PrivateKey>
             <security:Certificate>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt</security:Certificate>
-        </dc:StartTLSAuthenticationCredential>
-        <dc:ConnectionPool
+        </StartTLSAuthenticationCredential>
+        <ConnectionPool
             minPoolSize="%{connectionPool.minPoolSize}"
             maxPoolSize="%{connectionPool.maxPoolSize}"
             blockWaitTime="%{connectionPool.blockWaitTime}"
@@ -56,9 +52,9 @@
             validateDN="%{connectionPool.validator.baseDn}"
             validateFilter="%{connectionPool.validator.filter}"
             failFastInitialize="%{connectionPool.failFastInitialize}"/>
-        <dc:ResultCache
+        <ResultCache
             elementTimeToLive="%{cache.TTL}"
             maximumCachedElements="%{cache.maxSize}"/>
-    </resolver:DataConnector>
+    </DataConnector>
     
-</resolver:AttributeResolver>
+</AttributeResolver>
