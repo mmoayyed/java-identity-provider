@@ -25,6 +25,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
@@ -60,8 +61,8 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
     protected AbstractSAML2ArtifactAwareProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         artifactConfigurationLookupStrategy = FunctionSupport.constant(null);
-        signArtifactRequestsPredicate = Predicates.alwaysFalse();
-        clientTLSArtifactRequestsPredicate = Predicates.alwaysFalse();
+        signArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate();
+        clientTLSArtifactRequestsPredicate = Predicates.not(new NoIntegrityMessageChannelPredicate());
     }
     
     /** {@inheritDoc} */

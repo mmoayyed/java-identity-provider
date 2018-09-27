@@ -59,6 +59,8 @@
                 <property name="handlers">
                     <util:list>
                     
+                        <ref bean="SOAPClient.MessageChannelSecurity" />
+                        
                         <ref bean="SOAPClient.InitializeRelyingPartyContexFromSAMLPeer" />
                         
                         <ref bean="SOAPClient.SelectRelyingPartyConfiguration" />
@@ -152,6 +154,9 @@
     <bean id="SOAPClient.SAMLMessageContextIssuerFunction"
         class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
     
+    <bean id="SOAPClient.DestinationURILookup" 
+        class="org.opensaml.soap.client.messaging.SOAPClientDestinationURILookup" />
+    
     <bean id="SOAPClient.SignArtifactRequestsPredicate" 
         class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
     
@@ -171,6 +176,10 @@
     <bean id="SOAPClient.SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.messaging.impl.SelectProfileConfiguration" scope="prototype"
         p:profiledIdLookupStrategy-ref="SOAPClient.SOAPClientSecurityProfileIdLookup" />
+        
+    <bean id="SOAPClient.MessageChannelSecurity"
+        class="org.opensaml.messaging.handler.impl.URLEvaluatingMessageChannelSecurity" scope="prototype"
+        p:URLLookup-ref="SOAPClient.DestinationURILookup" />
         
     <bean id="SOAPClient.HttpClient" parent="shibboleth.NonCachingHttpClient"
         p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLS" />
