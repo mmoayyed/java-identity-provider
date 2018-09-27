@@ -322,9 +322,7 @@
                     <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="signArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
-                    <value>true</value>
-                    <!-- TODO: switch default to something like this once it's available -->
-                    <!-- <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" /> -->
+                    <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
                 </constructor-arg>
             </bean>
         </property>
@@ -334,9 +332,11 @@
                     <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="clientTLSArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
-                    <value>false</value>
-                    <!-- TODO: switch default to something like this once it's available, but wrap it in NOT -->
-                    <!-- <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" /> -->
+                    <bean parent="shibboleth.Conditions.NOT">
+                        <constructor-arg>
+                            <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
+                        </constructor-arg>
+                    </bean>
                 </constructor-arg>
             </bean>
         </property>
@@ -432,9 +432,7 @@
                     <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="signArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
-                    <value>true</value>
-                    <!-- TODO: switch default to something like this once it's available -->
-                    <!-- <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" /> -->
+                    <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
                 </constructor-arg>
             </bean>
         </property>
@@ -444,9 +442,11 @@
                     <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="clientTLSArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
-                    <value>false</value>
-                    <!-- TODO: switch default to something like this once it's available, but wrap it in NOT -->
-                    <!-- <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" /> -->
+                    <bean parent="shibboleth.Conditions.NOT">
+                        <constructor-arg>
+                            <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
+                        </constructor-arg>
+                    </bean>
                 </constructor-arg>
             </bean>
         </property>
