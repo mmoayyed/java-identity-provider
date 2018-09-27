@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resolver:AttributeResolver 
-            xmlns="http://www.springframework.org/schema/beans"
-            xmlns:p="http://www.springframework.org/schema/p"
-            xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-            xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
-            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                                urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
+<AttributeResolver 
+            xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
-    <resolver:DataConnector id="myDatabase" xsi:type="dc:RelationalDatabase"
+    <DataConnector id="myDatabase" xsi:type="RelationalDatabase"
         noResultIsError="%{noResultIsError}"
         multipleResultsIsError="%{multipleResultsIsError}"
         readOnlyConnection="%{readOnlyConnection}"
         noRetryDelay="%{noRetryDelay}">
-      <dc:ApplicationManagedConnection
+      <ApplicationManagedConnection
         jdbcDriver="%{datasource.driverClass}"
         jdbcURL="%{datasource.jdbcUrl}"
         jdbcUserName="%{datasource.user}"
@@ -25,14 +21,14 @@
         poolMaxSize="%{datasource.maxPoolSize}" 
         poolMaxIdleTime="%{datasource.maxIdleTime}"
         poolIdleTestPeriod="%{datasource.idleConnectionTestPeriod}"/>
-        <dc:QueryTemplate>
+        <QueryTemplate>
             <![CDATA[
                 ${statementBuilder.selectStatement}
             ]]>
-        </dc:QueryTemplate>
-        <dc:ResultCache
+        </QueryTemplate>
+        <ResultCache
             elementTimeToLive="%{cache.TTL}"
             maximumCachedElements="%{cache.maxSize}"/>
-    </resolver:DataConnector>
+    </DataConnector>
     
-</resolver:AttributeResolver>
+</AttributeResolver>

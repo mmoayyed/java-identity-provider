@@ -105,7 +105,7 @@ public class RDBMSDataConnectorParserTest {
     
     @Test public void simpleConnector() throws Exception {
         final RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-simple.xml");
+                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-simple.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
@@ -140,7 +140,7 @@ public class RDBMSDataConnectorParserTest {
     @Test public void flatHybridConfig() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-flat-hybrid.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
@@ -153,14 +153,14 @@ public class RDBMSDataConnectorParserTest {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v2.properties");
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(props,
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-props.xml");
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-props.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
     @Test public void springConfig() throws Exception {
         final RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring.xml");
+                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
@@ -169,7 +169,7 @@ public class RDBMSDataConnectorParserTest {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v3.properties");
 
         final RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector(props, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props.xml");
+                getRdbmsDataConnector(props, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-spring-props.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
