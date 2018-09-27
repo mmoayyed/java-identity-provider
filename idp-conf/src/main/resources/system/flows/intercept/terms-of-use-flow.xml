@@ -13,9 +13,16 @@
         <evaluate expression="ReadConsentFromStorage" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="IsConsentRequired" />
+        <transition on="proceed" to="TestForIsPassiveAndNoStorageRecords" />
     </action-state>
-    
+
+    <!-- Respond with NoPassive if IsPassive and no storage records were read. -->
+
+    <decision-state id="TestForIsPassiveAndNoStorageRecords">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).isPassive() and opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext)).getPreviousConsents().isEmpty()"
+            then="NoPassive" else="IsConsentRequired" />
+    </decision-state>
+
    <decision-state id="IsConsentRequired">
         <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
     </decision-state>
