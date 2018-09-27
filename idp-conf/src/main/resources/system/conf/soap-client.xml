@@ -110,6 +110,8 @@
                             p:signatureValidationParametersResolver-ref="shibboleth.SignatureValidationParametersResolver"
                             p:configurationLookupStrategy-ref="shibboleth.MessageContext.SignatureValidationConfigurationLookup" />
                         
+                        <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.InResponseToSecurityHandler" />
+                        
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler"
                             p:replayCache-ref="shibboleth.ReplayCache"
                             p:expires="%{idp.policy.messageLifetime:PT3M}" />
