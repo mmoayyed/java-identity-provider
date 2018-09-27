@@ -150,6 +150,7 @@
         
         <property name="httpClientSecurityConfiguration">
             <bean parent="shibboleth.BasicHttpClientSecurityConfiguration"
+                p:clientTLSCredential="#{getObject('shibboleth.DefaultClientTLSCredential')}"
                 p:TLSTrustEngine-ref="#{'%{idp.trust.httpClient.tls:shibboleth.ChainingX509TrustEngine}'.trim()}" />
         </property>
         
