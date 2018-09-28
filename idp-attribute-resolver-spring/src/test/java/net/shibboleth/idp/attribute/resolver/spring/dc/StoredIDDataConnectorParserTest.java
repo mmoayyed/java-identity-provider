@@ -44,19 +44,19 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
     }
     
     @Test public void withSalt() throws ComponentInitializationException {
-        final StoredIDDataConnector connector = getDataConnector("stored.xml", StoredIDDataConnector.class);
+        final StoredIDDataConnector connector = getDataConnector("resolver/stored.xml", StoredIDDataConnector.class);
         
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
 
     @Test public void withOutSalt() throws ComponentInitializationException {
-        final StoredIDDataConnector connector = getDataConnector("storedNoSalt.xml", StoredIDDataConnector.class);
+        final StoredIDDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", StoredIDDataConnector.class);
         testIt(connector);
     }
 
     @Test public void resolver() throws ComponentInitializationException {
-        final StoredIDDataConnector connector = getDataConnector("resolver/stored.xml", StoredIDDataConnector.class);
+        final StoredIDDataConnector connector = getDataConnector("stored.xml", StoredIDDataConnector.class);
         
         testIt(connector);
     }
