@@ -59,5 +59,9 @@ public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRulePar
             @Nonnull final BeanDefinitionBuilder builder) {
 
         builder.addPropertyValue("entityGroup", StringSupport.trimOrNull(element.getAttributeNS(null, "groupID")));
+        if (element.hasAttributeNS(null, "checkAffiliations")) {
+            builder.addPropertyValue("checkAffiliations",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "checkAffiliations")));
+        }
     }
 }

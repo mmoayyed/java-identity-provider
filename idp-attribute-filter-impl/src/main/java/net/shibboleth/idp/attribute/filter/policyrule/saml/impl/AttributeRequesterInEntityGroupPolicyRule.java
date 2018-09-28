@@ -48,6 +48,9 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
     /** The entity group to match against. */
     @Nullable private String entityGroup;
     
+    /** Whether to search metadata for AffiliationDescriptor membership. */
+    private boolean checkAffiliations;
+    
     /**
      * Gets the entity group to match against.
      * 
@@ -64,6 +67,20 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      */
     public void setEntityGroup(@Nullable final String group) {
         entityGroup = StringSupport.trimOrNull(group);
+    }
+    
+    /**
+     * Set whether to check a supplied {@link MetadataResolver} for membership in an AffiliationDescriptor
+     * as a form of group policy.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.4.0
+     */
+    public void setCheckAffiliations(final boolean flag) {
+        checkAffiliations = flag;
     }
 
     /**
@@ -103,7 +120,8 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
         }
 
         final Predicate<EntityDescriptor> predicate =
-                new EntityGroupNamePredicate(Collections.singleton(entityGroup), input.getMetadataResolver());
+                new EntityGroupNamePredicate(Collections.singleton(entityGroup),
+                        checkAffiliations ? input.getMetadataResolver() : null);
         
         final EntityDescriptor entity = getEntityMetadata(input);
         return predicate.apply(entity) ? Tristate.TRUE : Tristate.FALSE;
