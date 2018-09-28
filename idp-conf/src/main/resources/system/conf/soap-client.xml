@@ -29,7 +29,7 @@
         <property name="serviceLocatorInterface" value="org.opensaml.messaging.pipeline.httpclient.HttpClientMessagePipelineFactory" />
         <property name="serviceMappings">
             <props>
-                <prop key="SAML2.ArtifactDecoder">SOAPClient.SAML2.Pipeline.ArtifactDecoder</prop>
+                <prop key="SAML2.ArtifactDecoder">SOAPClient.SAML2.Pipeline</prop>
             </props>
         </property>
     </bean>
@@ -52,7 +52,7 @@
     <!-- SAML-specific SOAP client beans. -->
     
     <!-- Basic SAML 2 pipeline. -->
-    <bean id="SOAPClient.SAML2.Pipeline.ArtifactDecoder" scope="prototype" parent="SOAPClient.SAML2.Pipeline.Abstract">
+    <bean id="SOAPClient.SAML2.Pipeline" scope="prototype" parent="SOAPClient.SAML2.Pipeline.Abstract">
     
         <property name="outboundPayloadHandler">
             <bean scope="prototype" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain">
@@ -70,7 +70,7 @@
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.impl.PopulateSignatureSigningParametersHandler" 
                             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
                             p:configurationLookupStrategy-ref="shibboleth.MessageContext.SignatureSigningConfigurationLookup"
-                            p:activationCondition-ref="SOAPClient.SignArtifactRequestsPredicate"
+                            p:activationCondition-ref="SOAPClient.SAMLSigningPredicate"
                             />
                             
                         <bean scope="prototype" class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" />
@@ -87,7 +87,7 @@
                         <bean scope="prototype" class="org.opensaml.security.messaging.impl.PopulateHttpClientSecurityParametersHandler" 
                             p:httpClientSecurityParametersResolver-ref="shibboleth.HttpClientSecurityParametersResolver"
                             p:configurationLookupStrategy-ref="shibboleth.MessageContext.HttpClientSecurityConfigurationLookup"
-                            p:clientTLSPredicate-ref="SOAPClient.ClientTLSArtifactRequestsPredicate"
+                            p:clientTLSPredicate-ref="SOAPClient.ClientTLSPredicate"
                             />
                     </util:list>
                 </property>
@@ -158,12 +158,6 @@
     
     <bean id="SOAPClient.DestinationURILookup" 
         class="org.opensaml.soap.client.messaging.SOAPClientDestinationURILookup" />
-    
-    <bean id="SOAPClient.SignArtifactRequestsPredicate" 
-        class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
-    
-    <bean id="SOAPClient.ClientTLSArtifactRequestsPredicate" 
-        class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
         
     <bean id="SOAPClient.SOAPClientSecurityProfileIdLookup" 
         class="org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFunction" />
@@ -185,6 +179,28 @@
         
     <bean id="SOAPClient.HttpClient" parent="shibboleth.NonCachingHttpClient"
         p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLS" />
+        
+    <bean id="SOAPClient.ClientTLSPredicate"
+        class="org.opensaml.soap.client.messaging.SOAPClientPipelineNameMappingPredicate">
+        <constructor-arg>
+            <map>
+                <entry key="SAML2.ArtifactDecoder">
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="SOAPClient.SAMLSigningPredicate"
+        class="org.opensaml.soap.client.messaging.SOAPClientPipelineNameMappingPredicate">
+        <constructor-arg>
+            <map>
+                <entry key="SAML2.ArtifactDecoder">
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
     
 
 </beans>
