@@ -669,7 +669,7 @@
                             'sourceManagerRef' is also specified.
 
                             The manager will be configured to check and only return data for an entity if unmodified 
-                            since the last request, i.e. with the manager loadConditionally=true.
+                            since the last request, i.e. with the manager parameter conditionalLoad=true.
                             
                             The source key generator function, if otherwise unspecified, will default to generating
                             the SHA-1 digest (encoded as lower-case hexadecimal) of the input criteria entityID, 
