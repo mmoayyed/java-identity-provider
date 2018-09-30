@@ -102,18 +102,7 @@
             <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
         </constructor-arg>
         <constructor-arg name="f">
-            <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction">
-                <property name="relyingPartyContextLookupStrategy">
-				    <bean class="com.google.common.base.Functions" factory-method="compose">
-				        <constructor-arg name="g">
-				            <ref bean="shibboleth.ChildLookup.RelyingParty" />
-				        </constructor-arg>
-				        <constructor-arg name="f">
-				            <ref bean="SOAPClient.OperationContextLookup" />
-				        </constructor-arg>
-				    </bean>
-                </property>    
-            </bean>
+            <bean class="net.shibboleth.idp.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction" />
         </constructor-arg>
     </bean>
 
