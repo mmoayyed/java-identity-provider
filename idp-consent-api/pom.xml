@@ -16,6 +16,10 @@
     <artifactId>idp-consent-api</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <automatic.module.name>net.shibboleth.idp.consent</automatic.module.name>
+    </properties>
+
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>

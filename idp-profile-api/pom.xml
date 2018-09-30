@@ -16,6 +16,10 @@
     <artifactId>idp-profile-api</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <automatic.module.name>net.shibboleth.idp.profile</automatic.module.name>
+    </properties>
+
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>

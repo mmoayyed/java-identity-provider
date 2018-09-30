@@ -16,6 +16,10 @@
     <artifactId>idp-attribute-filter-spring</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <automatic.module.name>net.shibboleth.idp.attribute.filter.spring</automatic.module.name>
+    </properties>
+
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>

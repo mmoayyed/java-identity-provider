@@ -16,6 +16,10 @@
     <artifactId>idp-installer</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <automatic.module.name>net.shibboleth.idp.installer</automatic.module.name>
+    </properties>
+
     <dependencies>
         <!-- Compile Dependencies -->
         
