@@ -90,6 +90,11 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
             builder.addPropertyValue("cleanupTaskInterval",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "cleanupTaskInterval")));
         }
+        
+        if (element.hasAttributeNS(null, "indexesRef")) {
+            builder.addPropertyReference("indexes",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));
+        }
 
         builder.addPropertyReference("parserPool", getParserPoolRef(element));
         

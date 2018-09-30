@@ -128,12 +128,17 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
             final String baseURL = ElementSupport.getElementContentAsString(mdq);
             final String transformRef =
                     StringSupport.trimOrNull(StringSupport.trimOrNull(mdq.getAttributeNS(null, "transformRef")));
+            final String secondaryURLBuildersRef =
+                    StringSupport.trimOrNull(StringSupport.trimOrNull(mdq.getAttributeNS(null, "secondaryURLBuildersRef")));
 
             final BeanDefinitionBuilder builder =
                     BeanDefinitionBuilder.genericBeanDefinition(MetadataQueryProtocolRequestURLBuilder.class);
             builder.addConstructorArgValue(baseURL);
             if (transformRef != null) {
                 builder.addConstructorArgReference(transformRef);
+            }
+            if (secondaryURLBuildersRef != null) {
+                builder.addConstructorArgReference(secondaryURLBuildersRef);
             }
             return builder.getBeanDefinition();
         }

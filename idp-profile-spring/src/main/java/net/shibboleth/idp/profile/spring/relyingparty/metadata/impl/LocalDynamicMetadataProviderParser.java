@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.EntityIDDigestGenerator;
+import org.opensaml.saml.metadata.resolver.impl.DefaultLocalDynamicSourceKeyGenerator;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,7 @@ public class LocalDynamicMetadataProviderParser extends AbstractDynamicMetadataP
             sourceManagerRefOrBean = sourceManagerBuilder.getBeanDefinition();
             
             if (sourceKeyGeneratorRefOrBean == null) {
-                sourceKeyGeneratorRefOrBean = new EntityIDDigestGenerator(null, null, ".xml", null);
+                sourceKeyGeneratorRefOrBean = new DefaultLocalDynamicSourceKeyGenerator(null, ".xml", null);
             }
         } else {
             log.error("{} LocalDynamicMetadataProvider contained neither a sourceManagerRef nor a sourceDirectory", 

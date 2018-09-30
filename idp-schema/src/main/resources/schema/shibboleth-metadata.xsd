@@ -442,6 +442,15 @@
                                             </documentation>
                                         </annotation>
                                     </attribute>
+                                    <attribute name="secondaryURLBuildersRef" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Reference to a list of secondary URL builders for non-entityID-based lookups.
+                                                The list should contain instances of the interface 
+                                                org.opensaml.saml.metadata.resolver.impl.MetadataQueryProtocolRequestURLBuilder.MetadataQueryProtocolURLBuilder.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
                                 </extension>
                             </simpleContent>
                         </complexType>
@@ -696,6 +705,14 @@
                 <attribute name="parserPoolRef" type="string">
                     <annotation>
                         <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="indexesRef" type="string">
+                    <annotation>
+                        <documentation>
+                            ID of a Set of MetadataIndex instances used to support resolution of metadata based on
+                            criteria other than an entityID.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="taskTimerRef" type="string">

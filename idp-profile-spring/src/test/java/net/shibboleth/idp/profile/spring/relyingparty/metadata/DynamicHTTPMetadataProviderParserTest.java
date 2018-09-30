@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -27,10 +29,14 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.core.xml.persist.XMLObjectLoadSaveManager;
+import org.opensaml.saml.common.binding.artifact.SAMLSourceIDArtifact;
+import org.opensaml.saml.criterion.ArtifactCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.HTTPEntityIDRequestURLBuilder;
+import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.security.crypto.JCAConstants;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
@@ -59,6 +65,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertTrue(resolver.isRequireValidMetadata());
         Assert.assertNull(resolver.getMetadataFilter());
         Assert.assertNotNull(resolver.getParserPool());
+        Assert.assertTrue(resolver.getIndexes().isEmpty());
         
         Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Long.valueOf(10*60*1000L));
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
@@ -86,6 +93,15 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(2*1000));
         
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
+    }
+    
+    @Test
+    public void testIndexes() throws Exception {
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamicIndexes.xml", "beans.xml");
+        
+        Assert.assertFalse(resolver.getIndexes().isEmpty());
+        Assert.assertEquals(resolver.getIndexes().size(), 3);
     }
 
     @Test(enabled=false)
@@ -259,6 +275,26 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         final String entityID = "https://foo1.example.org/idp/shibboleth";
         
         final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+    
+    @Test
+    public void testMDQWithSecondaryURLBuilderForArtifact() throws Exception {
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamicMetadataQueryProtocolWithSecondaryURLBuilders.xml", "beans.xml");
+        
+        final String entityID = "https://foo1.example.org/idp/shibboleth";
+        MessageDigest sha1Digester = MessageDigest.getInstance(JCAConstants.DIGEST_SHA1);
+        byte[] entityIDSourceID = sha1Digester.digest(entityID.getBytes("UTF-8"));
+        SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        byte[] messageHandle = new byte[20];
+        secureRandom.nextBytes(messageHandle);
+        SAMLSourceIDArtifact sourceIDArtifact = new SAML2ArtifactType0004(new byte[] {0, 0} , entityIDSourceID, messageHandle);
+        
+        final CriteriaSet criteriaSet = new CriteriaSet( new ArtifactCriterion(sourceIDArtifact));
         
         final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
