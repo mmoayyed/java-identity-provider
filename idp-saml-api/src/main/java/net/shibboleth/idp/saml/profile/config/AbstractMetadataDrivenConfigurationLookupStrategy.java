@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.ProfileIdLookup;
 import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
@@ -37,6 +38,7 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
+import org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 
-import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -76,6 +77,12 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
 
     /** Default profile ID lookup for PRC-based usage. */
     @Nonnull private static final Function<ProfileRequestContext,String> DEFAULT_PRC_PROFILE_ID_LOOKUP;
+
+    /** Default metadata lookup for MC-based usage. */
+    @Nonnull private static final Function<MessageContext,EntityDescriptor> DEFAULT_MC_METADATA_LOOKUP;
+
+    /** Default profile ID lookup for MC-based usage. */
+    @Nonnull private static final Function<MessageContext,String> DEFAULT_MC_PROFILE_ID_LOOKUP;
 
     /** Class logger. */
     @Nonnull
@@ -202,7 +209,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         
         CachedConfigurationContext cacheContext = null;
         
-        if (enableCaching) {
+        if (enableCaching && input != null) {
             cacheContext = input.getSubcontext(CachedConfigurationContext.class, true);
             if (cacheContext.getPropertyMap().containsKey(propertyName)) {
                 log.debug("Returning cached property '{}'", propertyName);
@@ -217,6 +224,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             entity = metadataLookupStrategy.apply(input);
         } else if (input instanceof ProfileRequestContext) {
             entity = DEFAULT_PRC_METADATA_LOOKUP.apply((ProfileRequestContext) input);
+        } else if (input instanceof MessageContext) {
+            entity = DEFAULT_MC_METADATA_LOOKUP.apply((MessageContext) input);
         } else {
             entity = null;
         }
@@ -230,6 +239,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             profileId = profileIdLookupStrategy.apply(input);
         } else if (input instanceof ProfileRequestContext) {
             profileId = DEFAULT_PRC_PROFILE_ID_LOOKUP.apply((ProfileRequestContext) input);
+        } else if (input instanceof MessageContext) {
+            profileId = DEFAULT_MC_PROFILE_ID_LOOKUP.apply((MessageContext) input);
         } else {
             profileId = "";
         }
@@ -381,8 +392,15 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         // Init PRC defaults.
         
         DEFAULT_PRC_METADATA_LOOKUP = Functions.compose(new EntityDescriptorLookupFunction(),
-                new SAMLMetadataContextLookupFunction());
+                new net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction());
         
         DEFAULT_PRC_PROFILE_ID_LOOKUP = new ProfileIdLookup();
+
+        // Init MC defaults.
+
+        DEFAULT_MC_METADATA_LOOKUP = Functions.compose(new EntityDescriptorLookupFunction(),
+                new net.shibboleth.idp.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction());
+        
+        DEFAULT_MC_PROFILE_ID_LOOKUP = new SOAPClientSecurityProfileIdLookupFunction();
     }
 }

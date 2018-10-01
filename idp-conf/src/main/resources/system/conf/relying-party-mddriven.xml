@@ -61,17 +61,7 @@
 
     <!-- ProfileRequestContext-based access to metadata properties of various types. -->
 
-    <bean id="shibboleth.MDDrivenMetadataLookup" class="com.google.common.base.Functions" factory-method="compose">
-        <constructor-arg name="g">
-            <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
-        </constructor-arg>
-        <constructor-arg name="f">
-            <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
-        </constructor-arg>
-    </bean>
-    
     <bean id="shibboleth.AbstractMDDrivenProperty" abstract="true"
-        p:metadataLookupStrategy-ref="shibboleth.MDDrivenMetadataLookup"
         p:profileAliases="#{getObject('shibboleth.MDProfileAliases') ?: getObject('shibboleth.DefaultMDProfileAliases')}" />
     
     <bean id="shibboleth.MDDrivenStringProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
@@ -97,17 +87,7 @@
 
     <!-- MessageContext-based access to metadata properties of various types. -->
 
-    <bean id="shibboleth.MDDrivenMessagingMetadataLookup" class="com.google.common.base.Functions" factory-method="compose">
-        <constructor-arg name="g">
-            <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
-        </constructor-arg>
-        <constructor-arg name="f">
-            <bean class="net.shibboleth.idp.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction" />
-        </constructor-arg>
-    </bean>
-
     <bean id="shibboleth.AbstractMDDrivenMessagingProperty" parent="shibboleth.AbstractMDDrivenProperty" abstract="true"
-        p:metadataLookupStrategy-ref="shibboleth.MDDrivenMessagingMetadataLookup"
         p:profileIdLookupStrategy-ref="SOAPClient.SOAPClientSecurityProfileIdLookup" />
 
     <bean id="shibboleth.MDDrivenBoolMessagingProperty" abstract="true" parent="shibboleth.AbstractMDDrivenMessagingProperty"
