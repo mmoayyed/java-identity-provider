@@ -59,8 +59,6 @@
         </property>
     </bean>
 
-    <!-- ProfileRequestContext-based access to metadata properties of various types. -->
-
     <bean id="shibboleth.AbstractMDDrivenProperty" abstract="true"
         p:profileAliases="#{getObject('shibboleth.MDProfileAliases') ?: getObject('shibboleth.DefaultMDProfileAliases')}" />
     
@@ -84,14 +82,6 @@
         p:propertyType="#{T(java.lang.String)}" />
     <bean id="shibboleth.MDDrivenBeanProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
         class="net.shibboleth.idp.saml.profile.config.BeanConfigurationLookupStrategy" />
-
-    <!-- MessageContext-based access to metadata properties of various types. -->
-
-    <bean id="shibboleth.AbstractMDDrivenMessagingProperty" parent="shibboleth.AbstractMDDrivenProperty" abstract="true"
-        p:profileIdLookupStrategy-ref="SOAPClient.SOAPClientSecurityProfileIdLookup" />
-
-    <bean id="shibboleth.MDDrivenBoolMessagingProperty" abstract="true" parent="shibboleth.AbstractMDDrivenMessagingProperty"
-        class="net.shibboleth.idp.saml.profile.config.BooleanConfigurationLookupStrategy" />
 
     <!-- Wiring lookup strategies into the actual profile configurations of various types. -->
 
@@ -288,7 +278,7 @@
         <property name="signArtifactRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="signArtifactRequests" />
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
                     <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
@@ -298,7 +288,7 @@
         <property name="clientTLSArtifactRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="clientTLSArtifactRequests" />
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
                     <bean parent="shibboleth.Conditions.NOT">
@@ -398,7 +388,7 @@
         <property name="signArtifactRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="signArtifactRequests" />
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
                     <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
@@ -408,7 +398,7 @@
         <property name="clientTLSArtifactRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolMessagingProperty" p:propertyName="clientTLSArtifactRequests" />
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSArtifactRequests" />
                 </constructor-arg>
                 <constructor-arg>
                     <bean parent="shibboleth.Conditions.NOT">
