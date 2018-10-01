@@ -91,6 +91,11 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
                     StringSupport.trimOrNull(element.getAttributeNS(null, "cleanupTaskInterval")));
         }
         
+        if (element.hasAttributeNS(null, "expirationWarningThreshold")) {
+            builder.addPropertyValue("expirationWarningThreshold",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "expirationWarningThreshold")));
+        }
+        
         if (element.hasAttributeNS(null, "indexesRef")) {
             builder.addPropertyReference("indexes",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));

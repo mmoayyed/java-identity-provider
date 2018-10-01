@@ -766,6 +766,13 @@
                         <documentation>A boolean flag indicating whether idle metadata should be removed.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="expirationWarningThreshold" type="string">
+                    <annotation>
+                        <documentation>
+                            Impending expiration warning threshold for metadata refresh.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="cleanupTaskInterval" type="string">
                     <annotation>
                         <documentation>

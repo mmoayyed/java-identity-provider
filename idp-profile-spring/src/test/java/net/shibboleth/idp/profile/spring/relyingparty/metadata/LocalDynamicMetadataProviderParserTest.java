@@ -82,6 +82,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(8*60*60*1000L));
         Assert.assertTrue(resolver.isRemoveIdleEntityData());
         Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(30*60*1000L));
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Long.valueOf(0l));
         
         Assert.assertFalse(resolver.isPersistentCachingEnabled());
         

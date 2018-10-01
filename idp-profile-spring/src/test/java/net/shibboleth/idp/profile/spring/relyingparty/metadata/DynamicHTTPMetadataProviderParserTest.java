@@ -74,6 +74,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(8*60*60*1000L));
         Assert.assertTrue(resolver.isRemoveIdleEntityData());
         Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(30*60*1000L));
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Long.valueOf(0l));
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), 
                 Arrays.asList("application/samlmetadata+xml", "application/xml", "text/xml"));
@@ -212,6 +213,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(2*60*60*1000L));
         Assert.assertFalse(resolver.isRemoveIdleEntityData());
         Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(20*60*1000L));
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Long.valueOf(3*60*60*1000L));
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), Collections.singletonList("text/xml"));
         

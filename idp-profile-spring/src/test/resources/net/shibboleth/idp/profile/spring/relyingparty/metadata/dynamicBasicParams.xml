@@ -14,6 +14,7 @@
     negativeLookupCacheDuration="PT5M"
     maxIdleEntityData="PT2H"
     removeIdleEntityData="false"
+    expirationWarningThreshold="PT3H"
     cleanupTaskInterval="PT20M"
     httpClientRef="apacheClient"
     supportedContentTypes="text/xml"
