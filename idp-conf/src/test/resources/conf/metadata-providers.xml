@@ -20,7 +20,7 @@
 
 	<!-- Example metadata provider. -->
 
-    <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M">
+    <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes">
         <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="false"> <!-- TODO -->
             <PublicKey>
                 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
@@ -52,7 +52,7 @@
         <MetadataResource xsi:type="resource:ClasspathResource" file="/metadata/example-metadata.xml" />
     </MetadataProvider>
 
-    <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M">
+    <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes">
         <MetadataResource xsi:type="resource:ClasspathResource" file="/metadata/example-sp123-metadata.xml" />
     </MetadataProvider>
 
