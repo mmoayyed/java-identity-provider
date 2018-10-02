@@ -205,6 +205,9 @@ public final class HTTPMetadataProvidersParserSupport {
             @Nullable final BeanDefinition httpClientSecurityParameters) {
         final String caching;
         if (element.hasAttributeNS(null, "httpCaching")) {
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "httpCaching", 
+                    parserContext.getReaderContext().getResource().getDescription(), 
+                    "HttpClient bean via httpClientRef");
             caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
         } else {
             caching = defaultCaching;
@@ -218,14 +221,23 @@ public final class HTTPMetadataProvidersParserSupport {
             case "file":
                 clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
                 if (element.hasAttributeNS(null, "httpCacheDirectory")) {
+                    DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "httpCacheDirectory", 
+                            parserContext.getReaderContext().getResource().getDescription(), 
+                            "HttpClient bean via httpClientRef");
                     clientBuilder.addPropertyValue("cacheDirectory",
                             StringSupport.trimOrNull(element.getAttributeNS(null, "httpCacheDirectory")));
                 }
                 if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
+                    DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "httpMaxCacheEntries", 
+                            parserContext.getReaderContext().getResource().getDescription(), 
+                            "HttpClient bean via httpClientRef");
                     clientBuilder.addPropertyValue("maxCacheEntries",
                             StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntries")));
                 }
                 if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
+                    DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "httpMaxCacheEntrySize", 
+                            parserContext.getReaderContext().getResource().getDescription(), 
+                            "HttpClient bean via httpClientRef");
                     clientBuilder.addPropertyValue("maxCacheEntrySize",
                             StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntrySize")));
                 }
@@ -233,10 +245,16 @@ public final class HTTPMetadataProvidersParserSupport {
             case "memory":
                 clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(InMemoryCachingHttpClientFactoryBean.class);
                 if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
+                    DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "httpMaxCacheEntries", 
+                            parserContext.getReaderContext().getResource().getDescription(), 
+                            "HttpClient bean via httpClientRef");
                     clientBuilder.addPropertyValue("maxCacheEntries",
                             StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntries")));
                 }
                 if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
+                    DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "httpMaxCacheEntrySize", 
+                            parserContext.getReaderContext().getResource().getDescription(), 
+                            "HttpClient bean via httpClientRef");
                     clientBuilder.addPropertyValue("maxCacheEntrySize",
                             StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntrySize")));
                 }

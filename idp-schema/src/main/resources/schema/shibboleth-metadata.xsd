@@ -268,24 +268,34 @@
                 </attribute>
                 <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
                     <annotation>
-                        <documentation>The type of HttpClient caching to perform. Defaults to 'none'.</documentation>
+                        <documentation>
+                            The type of HttpClient caching to perform. Defaults to 'none'.
+                            Deprecated in favor of httpClientRef.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="httpCacheDirectory" type="string">
                     <annotation>
                         <documentation>
                             The path to the HttpClient cache directory. Only used if caching type is 'file'.
+                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="httpMaxCacheEntries" type="string">
                     <annotation>
-                        <documentation>The maximum number of responses to cache.</documentation>
+                        <documentation>
+                            The maximum number of responses to cache.
+                            Deprecated in favor of httpClientRef.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="httpMaxCacheEntrySize" type="string">
                     <annotation>
-                        <documentation>The maximum response body size which may be cached, in bytes.</documentation>
+                        <documentation>
+                            The maximum response body size which may be cached, in bytes. 
+                            Deprecated in favor of httpClientRef.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="tlsTrustEngineRef" type="string">
@@ -610,6 +620,7 @@
                     <annotation>
                         <documentation>
                             The type of HttpClient caching to perform. Defaults to 'memory'.
+                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -617,6 +628,7 @@
                     <annotation>
                         <documentation>
                             The path to the HttpClient cache directory. Only used if caching type is 'file'.
+                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -624,6 +636,7 @@
                     <annotation>
                         <documentation>
                             The maximum number of responses to cache.
+                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -631,6 +644,7 @@
                     <annotation>
                         <documentation>
                             The maximum response body size which may be cached, in bytes.
+                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
