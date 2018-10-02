@@ -449,5 +449,30 @@
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
-        
+
+
+
+    <!-- Beans for user-visible metadata configuration usage -->
+
+    <!-- Secondary indexing support -->
+
+    <bean id="shibboleth.Metadata.Index.SAMLArtifact" class="org.opensaml.saml.metadata.resolver.index.impl.SAMLArtifactMetadataIndex" />
+
+    <!-- Note: By default this indexes all endpoints under all roles.
+         To index more selectively by role and endpoint name/type, use the predicate below. -->
+    <bean id="shibboleth.Metadata.Index.Endpoint" class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex" />
+
+    <!--  By default this predicate selects no endpoints to index.
+          So this would typically be used only as a parent bean, with an added ctor param.
+          This would be a Map<QName, Set<QName>> (RoleDescriptor element/type -> Endpoint(s) element/type),
+          either as a single ctor param or as a named ctor param c:indexableTypes. -->
+    <bean id="shibboleth.Metadata.Index.Endpoint.Predicate.ByRoleAndEndpoint"
+        class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex.DefaultEndpointSelectionPredicate" />
+
+
+    <!-- Metadata Query Protocol (MDQ) support -->
+
+    <bean id="shibboleth.Metadata.MDQ.URLBuilder.SAMLArtifact" class="org.opensaml.saml.metadata.resolver.impl.SAMLArtifactURLBuilder" />
+
+
  </beans>
