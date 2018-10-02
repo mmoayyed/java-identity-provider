@@ -317,6 +317,13 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="propagateResolutionExceptions" type="string">
+            <annotation>
+                <documentation>
+                    Whether to ripple errors produced by the plugin out to the resolver (default is true).
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
     <complexType name="BaseResolutionPlugInType" abstract="true">

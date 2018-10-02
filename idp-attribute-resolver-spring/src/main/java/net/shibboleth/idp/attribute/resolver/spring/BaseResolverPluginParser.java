@@ -55,6 +55,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         return defnId;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
@@ -88,6 +89,11 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
                     StringSupport.trimOrNull(config.getAttributeNS(null, "profileContextStrategyRef")));
         }
 
+        if (config.hasAttributeNS(null, "propagateResolutionExceptions")) {
+            builder.addPropertyValue("propagateResolutionExceptions",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "propagateResolutionExceptions")));
+        }
+
         final List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);
         dependencyElements.addAll(
@@ -105,6 +111,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         }
         builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /** Controls parsing of Dependencies. 
      * 
