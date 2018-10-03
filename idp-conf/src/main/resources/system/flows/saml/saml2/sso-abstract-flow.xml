@@ -98,7 +98,6 @@
         <evaluate expression="AddAuthnStatementToAssertionFromInboundAssertionToken" />
         
         <evaluate expression="AddAttributeStatementToAssertion" />
-        <evaluate expression="EnforceSubjectIDRequirement" />
         <evaluate expression="AddNameIDToSubjects" />
         <evaluate expression="AddSubjectConfirmationToSubjects" />
         <evaluate expression="AddNotBeforeConditionToAssertions" />

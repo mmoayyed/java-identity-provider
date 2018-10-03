@@ -84,20 +84,6 @@
         </property>
     </bean>
 
-    <bean id="EnforceSubjectIDRequirement"
-            class="net.shibboleth.idp.saml.saml2.profile.impl.EnforceSubjectIDRequirement">
-        <property name="activationCondition">
-            <bean parent="shibboleth.Conditions.AND">
-                <constructor-arg>
-                    <value>%{idp.saml2.subject-id.enforcing:true}</value>
-                </constructor-arg>
-                <constructor-arg>
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
-                </constructor-arg>
-            </bean>
-        </property>
-    </bean>
-
     <bean id="AddSubjectConfirmationToSubjects"
         class="org.opensaml.saml.saml2.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"

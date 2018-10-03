@@ -265,11 +265,6 @@
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER" />
         <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20CB_NS" />
     </util:list>
-
-    <util:list id="shibboleth.SAML2Status.SubjectIDReqFailed">
-        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER" />
-        <value>urn:oasis:names:tc:SAML:profiles:subject-id:req</value>
-    </util:list>
     
     <util:constant id="shibboleth.SOAP.Client" static-field="org.opensaml.soap.soap11.FaultCode.CLIENT"/>
     <util:constant id="shibboleth.SOAP.Server" static-field="org.opensaml.soap.soap11.FaultCode.SERVER"/>
