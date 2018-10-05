@@ -27,7 +27,6 @@ import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /**
  * Configuration support for artifact-aware profiles.
@@ -38,8 +37,11 @@ public abstract class AbstractSAML1ArtifactAwareProfileConfiguration
         extends AbstractSAMLProfileConfiguration
         implements SAML1ProfileConfiguration, SAMLArtifactAwareProfileConfiguration {
 
+    /** Explicitly set artifact configuration. */
+    @Nullable private SAMLArtifactConfiguration artifactConfiguration; 
+    
     /** Lookup function to supply <code>artifactConfiguration</code> property. */
-    @Nonnull private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
 
     /**
      * Constructor.
@@ -48,12 +50,11 @@ public abstract class AbstractSAML1ArtifactAwareProfileConfiguration
      */
     protected AbstractSAML1ArtifactAwareProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        artifactConfigurationLookupStrategy = FunctionSupport.constant(null);
     }
     
     /** {@inheritDoc} */
-    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return artifactConfigurationLookupStrategy.apply(getProfileRequestContext());
+    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
+        return getIndirectProperty(artifactConfigurationLookupStrategy, artifactConfiguration);
     }
 
     /**
@@ -62,7 +63,7 @@ public abstract class AbstractSAML1ArtifactAwareProfileConfiguration
      * @param config configuration to set
      */
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
-        artifactConfigurationLookupStrategy = FunctionSupport.constant(config);
+        artifactConfiguration = config;
     }
 
     /**
@@ -74,8 +75,7 @@ public abstract class AbstractSAML1ArtifactAwareProfileConfiguration
      */
     public void setArtifactConfigurationLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
-        artifactConfigurationLookupStrategy = strategy != null
-                ? strategy : FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(null);
+        artifactConfigurationLookupStrategy = strategy;
     }
 
 }

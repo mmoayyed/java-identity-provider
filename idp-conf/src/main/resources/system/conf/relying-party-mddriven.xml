@@ -197,6 +197,10 @@
             class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
             p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
             p:inboundInterceptorFlows="security-policy/shibboleth-sso">
+        <property name="artifactConfigurationLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
+                p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
+        </property>
         <property name="signResponses">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -275,6 +279,10 @@
             class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
             p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
             p:inboundInterceptorFlows="security-policy/saml2-sso">
+        <property name="artifactConfigurationLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
+                p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
+        </property>
         <property name="signArtifactRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -385,6 +393,10 @@
             class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
             p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
             p:inboundInterceptorFlows="security-policy/saml2-slo">
+        <property name="artifactConfigurationLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
+                p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
+        </property>
         <property name="signArtifactRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
