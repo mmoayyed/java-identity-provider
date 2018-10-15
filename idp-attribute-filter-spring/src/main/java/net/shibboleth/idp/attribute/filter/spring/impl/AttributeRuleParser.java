@@ -116,8 +116,6 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("isDenyRule", false);
 
         } else if (denyValueRule != null && !denyValueRule.isEmpty()) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, DENY_VALUE_REF.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(),  null);
 
             final ManagedList<BeanDefinition> denyValueRules =
                     SpringSupport.parseCustomElements(denyValueRule, parserContext);
@@ -126,6 +124,8 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("isDenyRule", true);
 
         } else if (denyValueReference != null && !denyValueReference.isEmpty()) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, DENY_VALUE_REF.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),  null);
 
             final String referenceText = getReferenceText(denyValueReference.get(0));
             if (null == referenceText) {
