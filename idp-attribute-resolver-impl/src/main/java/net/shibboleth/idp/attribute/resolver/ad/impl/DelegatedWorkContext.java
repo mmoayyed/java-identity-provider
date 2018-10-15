@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolvedDataConnector;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -40,14 +42,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A delegate for {@link AttributeResolverWorkContext}.
- * 
- * <p>This is only here because in a moment of madness we pushed the work context into
- * the scripted definitions. This preserves the function while making it obvious that
- * we don't want people to use it.</p>
- *   
+ *
+ * <p>
+ * This is only here because in a moment of madness we pushed the work context into the scripted definitions. This
+ * preserves the function while making it obvious that we don't want people to use it.
+ * </p>
+ *
  * @deprecated
  */
-@Deprecated public class DelegatedWorkContext extends BaseContext {
+@Deprecated
+public class DelegatedWorkContext extends BaseContext {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DelegatedWorkContext.class);
@@ -67,9 +71,86 @@ import org.slf4j.LoggerFactory;
     public DelegatedWorkContext(@Nonnull final AttributeResolverWorkContext parent, @Nullable final String prefix) {
         delegate = parent;
         setParent(delegate.getParent());
-        setAutoCreateSubcontexts(parent.isAutoCreateSubcontexts());
         logPrefix = prefix;
     }
+
+    /* BaseContext Overrides */
+
+    @Override @Nullable public BaseContext getParent() {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.getParent();
+    }
+
+    @Override @Nullable public <T extends BaseContext> T getSubcontext(@Nonnull final Class<T> clazz) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.getSubcontext(clazz);
+    }
+
+    @Override @Nullable public <T extends BaseContext> T getSubcontext(@Nonnull final Class<T> clazz,
+            final boolean autocreate) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.getSubcontext(clazz, autocreate);
+    }
+
+    @Override @Nullable public BaseContext getSubcontext(@Nonnull @NotEmpty final String className)
+            throws ClassNotFoundException {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.getSubcontext(className);
+    }
+
+    @Override @Nullable public BaseContext getSubcontext(@Nonnull @NotEmpty final String className,
+            final boolean autocreate) throws ClassNotFoundException {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.getSubcontext(className, autocreate);
+    }
+
+    @Override @Nonnull public BaseContext addSubcontext(@Nonnull final BaseContext subContext) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.addSubcontext(subContext);
+    }
+
+    @Override @Nonnull public BaseContext addSubcontext(@Nonnull final BaseContext subcontext, final boolean replace) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.addSubcontext(subcontext, replace);
+    }
+
+    @Override public void removeSubcontext(@Nonnull final BaseContext subcontext) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        delegate.removeSubcontext(subcontext);
+    }
+
+    @Override public <T extends BaseContext> void removeSubcontext(@Nonnull final Class<T> clazz) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        delegate.removeSubcontext(clazz);
+    }
+
+    @Override public <T extends BaseContext> boolean containsSubcontext(@Nonnull final Class<T> clazz) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.containsSubcontext(clazz);
+    }
+
+    @Override public void clearSubcontexts() {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        delegate.clearSubcontexts();
+    }
+
+    @Override @Deprecated public boolean isAutoCreateSubcontexts() {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.isAutoCreateSubcontexts();
+    }
+
+    @Override @Deprecated public void setAutoCreateSubcontexts(final boolean autoCreate) {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        delegate.setAutoCreateSubcontexts(autoCreate);
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull public Iterator<BaseContext> iterator() {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
+        return delegate.iterator();
+    }
+
+    /* Attribute Resolver implementations */
 
     /**
      * see {@link AttributeResolverWorkContext#getResolvedIdPAttributeDefinitions()}.
@@ -121,8 +202,7 @@ import org.slf4j.LoggerFactory;
     public void recordDataConnectorResolution(@Nonnull final DataConnector connector,
             @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
         DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
-        log.error(
-                "'{}' Use of workContext.recordDataConnectorResolution() is deprecated and will cause instability",
+        log.error("'{}' Use of workContext.recordDataConnectorResolution() is deprecated and will cause instability",
                 logPrefix);
         delegate.recordDataConnectorResolution(connector, attributes);
     }
@@ -142,5 +222,4 @@ import org.slf4j.LoggerFactory;
         delegate.recordFailoverResolution(failedConnector, failoverConnector);
 
     }
-    
 }
