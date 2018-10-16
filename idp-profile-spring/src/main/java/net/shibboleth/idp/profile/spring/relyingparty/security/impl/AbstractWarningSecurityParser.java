@@ -17,11 +17,15 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.security.impl;
 
+import javax.xml.namespace.QName;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
@@ -32,10 +36,31 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 @Deprecated
 public class AbstractWarningSecurityParser extends AbstractSingleBeanDefinitionParser {
 
+    /** Is this element ultimately parented by a MetadataFilter Element?
+     * @param element what to inspect
+     * @return if it is.
+     */
+    private boolean isDescendantOfSignatureFilter(final Element element) {
+        final Node parent = element.getParentNode();
+        if ((null == parent)||!(parent instanceof Element)) {
+            return false;
+        }
+        if (AbstractMetadataProviderParser.SECURITY_NAMESPACE.equals(parent.getNamespaceURI())) {
+            return isDescendantOfSignatureFilter((Element) parent);
+        }
+        final QName filterQname = AbstractMetadataProviderParser.METADATA_FILTER_ELEMENT_NAME;
+        return filterQname.getNamespaceURI().equals(parent.getNamespaceURI())&&
+                filterQname.getLocalPart().equals(parent.getLocalName());
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
-        DeprecationSupport.warnOnce(ObjectType.ELEMENT, element.getPrefix() +":" + element.getLocalName(), null, null);
+        
+        if (!isDescendantOfSignatureFilter(element)){
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, 
+                    element.getPrefix() +":" + element.getLocalName(), null, null);
+        }
         super.doParse(element, builder);
     }
     
@@ -43,8 +68,10 @@ public class AbstractWarningSecurityParser extends AbstractSingleBeanDefinitionP
     @Override
     protected void doParse(final Element element, final ParserContext parserContext, 
             final BeanDefinitionBuilder builder) {
-        DeprecationSupport.warnOnce(ObjectType.ELEMENT, element.getPrefix() +":" + element.getLocalName(), 
+        if (!isDescendantOfSignatureFilter(element)){
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, element.getPrefix() +":" + element.getLocalName(), 
                 parserContext.getReaderContext().getResource().getDescription(), null);
+        }
         super.doParse(element, parserContext, builder);
     }
 }
