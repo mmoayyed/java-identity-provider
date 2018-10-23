@@ -39,7 +39,7 @@
         <!-- Metadata Query -->
         <bean parent="shibboleth.AdminFlow"
             c:id="http://shibboleth.net/ns/profiles/mdquery"
-            p:loggingId="MetadataQuery}"
+            p:loggingId="MetadataQuery"
             p:policyName="AccessByIPAddress" />
 
         <!-- REST AccountLockoutManager Access -->
