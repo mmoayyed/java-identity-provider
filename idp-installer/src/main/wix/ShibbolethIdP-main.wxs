@@ -19,7 +19,7 @@
 
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.4.0.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+    <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.4.1.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
         <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP V3.4" Manufacturer="The Shibboleth Consortium" />
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" />
