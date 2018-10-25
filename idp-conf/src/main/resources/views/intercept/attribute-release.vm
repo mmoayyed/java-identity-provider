@@ -22,7 +22,7 @@
 #set ($informationURL = $rpUIContext.informationURL)
 #set ($privacyStatementURL = $rpUIContext.privacyStatementURL)
 #set ($rpOrganizationLogo = $rpUIContext.getLogo())
-#set ($rpOrganizationName = $rpUIContext.organizationDisplayName)
+#set ($rpOrganizationName = $rpUIContext.organizationName)
 #set ($replaceDollarWithNewline = true)
 ##
 <!DOCTYPE html>
