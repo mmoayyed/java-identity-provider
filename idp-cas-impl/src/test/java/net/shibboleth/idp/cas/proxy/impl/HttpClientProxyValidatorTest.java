@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.cas.flow.impl.AbstractFlowActionTest;
+import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
@@ -172,7 +173,9 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
 
     private ProfileRequestContext buildProfileRequestContext(final String serviceUrl) {
         final ProfileRequestContext prc = new ProfileRequestContext();
-        prc.addSubcontext(new ServiceContext(new Service(serviceUrl, "unknown", true, false)));
+        final ProtocolContext protoCtx = new ProtocolContext();
+        prc.addSubcontext(protoCtx);
+        protoCtx.addSubcontext(new ServiceContext(new Service(serviceUrl, "unknown", true, false)));
         return prc;
     }
 }

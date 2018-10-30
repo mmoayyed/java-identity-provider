@@ -32,7 +32,9 @@ import javax.net.ssl.SSLException;
 import javax.security.auth.login.FailedLoginException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
@@ -98,8 +100,9 @@ public class HttpClientProxyValidator implements ProxyValidator {
     private final TrustEngine<? super X509Credential> trustEngine;
 
     /** Looks up a ServiceContext from the profile request context. */
-    private final Function<ProfileRequestContext, ServiceContext> serviceCtxLookupFunction =
-            new ChildContextLookup<>(ServiceContext.class);
+    private final Function<ProfileRequestContext, ServiceContext> serviceCtxLookupFunction = Functions.compose(
+            new ChildContextLookup<ProtocolContext, ServiceContext>(ServiceContext.class),
+            new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
 
     /** List of HTTP response codes permitted for successful proxy callback. */
     @NotEmpty
