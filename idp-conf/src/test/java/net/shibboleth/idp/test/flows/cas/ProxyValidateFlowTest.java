@@ -105,7 +105,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
 
-        testProxyValidator.setFailureFlag(false);
+        testProxyValidator.setResponseCode(200);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -129,7 +129,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
 
-        testProxyValidator.setFailureFlag(true);
+        testProxyValidator.setResponseCode(404);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 

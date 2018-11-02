@@ -17,32 +17,44 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import net.shibboleth.idp.cas.proxy.ProxyValidator;
-import org.opensaml.profile.context.ProfileRequestContext;
+import net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.opensaml.security.trust.TrustEngine;
+import org.opensaml.security.x509.X509Credential;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.net.URI;
-import java.security.GeneralSecurityException;
 
 /**
  * Test proxy validator component.
  *
  * @author Marvin S. Addison
  */
-public class TestProxyValidator implements ProxyValidator {
+public class TestProxyValidator extends HttpClientProxyValidator {
 
-    /** Whether to fail or not. */
-    private boolean failureFlag;
+    /** Validation repsonse HTTP status code to return. */
+    private int responseCode;
 
-    public void setFailureFlag(final boolean isFail) {
-        this.failureFlag = isFail;
+    /** Creates a new instance. */
+    public TestProxyValidator() {
+        super(new TrustEngine<X509Credential>() {
+            @Override
+            public boolean validate(
+                    @Nonnull final X509Credential x509Credential, @Nullable final CriteriaSet criteriaSet) {
+                return true;
+            }
+        });
+    }
+
+    public void setResponseCode(final int code) {
+        this.responseCode = code;
     }
 
     @Override
-    public void validate(@Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final URI uri)
-            throws GeneralSecurityException {
-        if (failureFlag) {
-            throw new GeneralSecurityException("Proxy callback authentication failed (failureFlag==true)");
-        }
+    protected int connect(@Nonnull final URI uri, @Nonnull final Service service) {
+        return responseCode;
     }
 }
