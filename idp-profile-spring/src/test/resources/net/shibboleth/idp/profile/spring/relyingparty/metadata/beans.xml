@@ -24,7 +24,7 @@
 		
 	<bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11"/>
     
-    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
         <property name="overrideLogging" value="false"/>
         <property name="velocityProperties">
             <props>

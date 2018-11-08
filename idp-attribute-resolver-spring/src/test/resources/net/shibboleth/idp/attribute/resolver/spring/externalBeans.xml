@@ -8,7 +8,7 @@
                             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
                             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
-    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
             <props>
                 <prop key="resource.loader">classpath, string</prop>

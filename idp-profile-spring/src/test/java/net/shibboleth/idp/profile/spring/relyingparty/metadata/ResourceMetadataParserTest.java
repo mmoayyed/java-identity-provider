@@ -150,18 +150,6 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
 
-    @Test public void svnEntity() throws Exception {
-
-        final MetadataResolver resolver = getBean2(ResourceBackedMetadataResolver.class,  
-                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/SVN").getFile().getAbsolutePath(),  
-                "svnEntity.xml", "beans.xml");
-        
-        Assert.assertEquals(resolver.getId(), "SVNEntity");
-   
-        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
-        Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
-    }
-    
     @Test public void ref() throws Exception {
 
         final MetadataResolver resolver = getBean(ResourceBackedMetadataResolver.class, "resourceRef.xml", "beans.xml");

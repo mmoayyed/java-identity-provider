@@ -28,7 +28,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.resource.impl.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.impl.ResourceNamespaceHandler;
-import net.shibboleth.idp.profile.spring.resource.impl.SVNResourceParser;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -95,8 +94,6 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
         if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
             return ResourceBackedMetadataResolver.class;
-        } else if (SVNResourceParser.ELEMENT_NAME.equals(qName)) {
-            return ResourceBackedMetadataResolver.class;
         } else if (ResourceNamespaceHandler.HTTP_ELEMENT_NAME.equals(qName)) {
             return HTTPMetadataResolver.class;
         } else if (ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.equals(qName)) {
@@ -143,10 +140,6 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         log.debug("Dispatching based on type '{}'", qName.getLocalPart());
 
         if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
-
-            parseResource(resources.get(0), parserContext, builder);
-
-        } else if (SVNResourceParser.ELEMENT_NAME.equals(qName)) {
 
             parseResource(resources.get(0), parserContext, builder);
 

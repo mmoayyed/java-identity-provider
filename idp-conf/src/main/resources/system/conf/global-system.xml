@@ -94,14 +94,10 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
+    <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean"
             depends-on="shibboleth.LoggingService">
-        <property name="overrideLogging" value="false"/>
         <property name="velocityProperties">
             <props>
-                <prop key="runtime.log.logsystem.class">
-                    net.shibboleth.utilities.java.support.velocity.SLF4JLogChute
-                </prop>
                 <prop key="input.encoding">UTF-8</prop>
                 <prop key="output.encoding">UTF-8</prop>
                 <prop key="resource.loader">file, classpath, string</prop>

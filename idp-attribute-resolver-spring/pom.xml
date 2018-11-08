@@ -162,12 +162,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.tmatesoft.svnkit</groupId>
-            <artifactId>svnkit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Managed Dependencies -->
     </dependencies>
 

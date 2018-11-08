@@ -34,7 +34,7 @@
 
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" p:order="1" />
 
-    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" p:order="2" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" p:order="2" />
 
     <!-- Add this one to mount any additional MVC controllers we create. -->
 
@@ -61,7 +61,7 @@
     
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
     
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
     
     <!-- Additional MVC controllers -->
     
@@ -84,7 +84,7 @@
         <property name="order" value="1" />
     </bean>
             
-    <bean id="shibboleth.VelocityViewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+    <bean id="shibboleth.VelocityViewResolver" class="net.shibboleth.ext.spring.velocity.VelocityViewResolver">
         <property name="order" value="2" />
         <property name="cache" value="true"/>
         <property name="prefix" value=""/>
@@ -100,17 +100,16 @@
         <property name="contentType" value="text/html;charset=utf-8" />
     </bean>
 
-    <bean class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+    <bean class="net.shibboleth.ext.spring.velocity.VelocityConfigurer">
         <property name="resourceLoaderPath" value="#{'%{idp.views:%{idp.home}/views}'.trim()},%{idp.home}/system/views" />
         <property name="velocityProperties">
             <props>
-                <prop key="runtime.log.logsystem.class">net.shibboleth.utilities.java.support.velocity.SLF4JLogChute</prop>
                 <prop key="input.encoding">UTF-8</prop>
                 <prop key="output.encoding">UTF-8</prop>
             </props>
         </property>
     </bean>
-
+    
     <!-- Import any user defined beans or overrides for the MVC config. -->
     <import resource="conditional:${idp.home}/conf/mvc-beans.xml" />
 

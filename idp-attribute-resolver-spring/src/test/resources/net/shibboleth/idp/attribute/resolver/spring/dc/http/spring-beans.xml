@@ -39,7 +39,7 @@
         class="org.opensaml.security.httpclient.HttpClientSecurityParameters"
         p:TLSProtocols="SSLv3" />
 
-    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
             <props>
                 <prop key="resource.loader">classpath, string</prop>

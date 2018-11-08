@@ -61,7 +61,6 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
     @Override public void init() {
         // Relying party Configuration
         registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());
-        registerBeanDefinitionParser(SVNResourceParser.ELEMENT_NAME, new SVNResourceParser());
     }
 
     /**

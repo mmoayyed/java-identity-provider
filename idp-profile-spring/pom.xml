@@ -76,13 +76,6 @@
             <artifactId>opensaml-security-impl</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.tmatesoft.svnkit</groupId>
-            <artifactId>svnkit</artifactId>
-            <!-- Required for SVNResource. Constrained by licensing. -->
-            <optional>true</optional>
-        </dependency>
-
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
