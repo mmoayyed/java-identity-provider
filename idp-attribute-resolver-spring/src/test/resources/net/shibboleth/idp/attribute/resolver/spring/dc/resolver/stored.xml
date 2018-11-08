@@ -6,7 +6,6 @@
     queryTimeout="PT5S"
     transactionRetries="5"
     retryableErrors="25000 25001"
-	sourceAttributeID="theSourceRemainsTheSame"
 	generatedAttributeID="jenny"
 	salt="abcdefghijklmnopqrst"
 	
@@ -18,5 +17,5 @@
         
         <FailoverDataConnector ref="sddsadas"/>
         <FailoverDataConnector ref="sddsadas"/>
-        
+	<InputAttributeDefinition ref="theSourceRemainsTheSame"/>
 </DataConnector>

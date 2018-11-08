@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIDDataConnectorParser;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
@@ -33,7 +35,6 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
     
     private void testIt(final StoredIDDataConnector connector) throws ComponentInitializationException {
         Assert.assertEquals(connector.getId(), "stored");
-        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getTransactionRetries(), 5);
         Assert.assertEquals(connector.getQueryTimeout(), 5000);
@@ -46,18 +47,22 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
     @Test public void withSalt() throws ComponentInitializationException {
         final StoredIDDataConnector connector = getDataConnector("resolver/stored.xml", StoredIDDataConnector.class);
         
+        ResolverAttributeDefinitionDependency attrib = (ResolverAttributeDefinitionDependency) connector.getDependencies().iterator().next();
+        Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
 
     @Test public void withOutSalt() throws ComponentInitializationException {
         final StoredIDDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", StoredIDDataConnector.class);
+        ResolverAttributeDefinitionDependency attrib = (ResolverAttributeDefinitionDependency) connector.getDependencies().iterator().next();
+        Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         testIt(connector);
     }
 
     @Test public void resolver() throws ComponentInitializationException {
         final StoredIDDataConnector connector = getDataConnector("stored.xml", StoredIDDataConnector.class);
-        
+        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
         testIt(connector);
     }
 }
