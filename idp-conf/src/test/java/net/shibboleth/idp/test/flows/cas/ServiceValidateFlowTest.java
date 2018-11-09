@@ -187,8 +187,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("E_TICKET_EXPIRED"));
     }
 
-    // TODO: fix failing test in Jenkins
-    @Test(enabled=false)
+    @Test
     public void testSuccessWithProxy() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
@@ -202,6 +201,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         testProxyValidator.setResponseCode(200);
 
