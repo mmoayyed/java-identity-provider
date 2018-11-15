@@ -36,11 +36,14 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -116,6 +119,15 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     }
 //CheckStyle: ReturnCount ON
     
+    public static SubjectCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory(
+                @ParameterName(name="activationCondition") Predicate<ProfileRequestContext> activationCondition)
+    {
+        DeprecationSupport.warn(ObjectType.BEAN, "c14n/LegacyPrincipalConnector", "c14n/subject-c14n.xml", "<remove>");
+        final SubjectCanonicalizationFlowDescriptor result = new SubjectCanonicalizationFlowDescriptor ();
+        result.setActivationCondition(activationCondition);
+        return result;
+    }
+
     /**
      * A predicate that determines if this action can run or not - it does this by inspecting the attribute resolver for
      * principal connectors.

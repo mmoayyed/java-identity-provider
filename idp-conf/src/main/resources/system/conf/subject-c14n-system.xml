@@ -29,11 +29,12 @@
         </property>
     </bean>
 
-    <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
-        <property name="activationCondition">
+    <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization"
+          lazy-init="true" factory-method="c14LegacyPrincipalConnectorFactory">
+        <constructor-arg  name="activationCondition">
             <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 
                 c:service-ref="shibboleth.AttributeResolverService"/>
-        </property>
+        </constructor-arg>
     </bean>
 
     <bean id="shibboleth.AbstractSAML1C14NFlowBean" abstract="true"
