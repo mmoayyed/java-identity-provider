@@ -119,6 +119,10 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     }
 //CheckStyle: ReturnCount ON
     
+    /** Factory used to generate a specific Connector. 
+     * @param activationCondition - the activationCondition
+     * @return an appropriate FlowDescriptor 
+     */
     public static SubjectCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory(
                 @ParameterName(name="activationCondition") Predicate<ProfileRequestContext> activationCondition)
     {
