@@ -421,6 +421,30 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="signSOAPRequests">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signSOAPRequests" />
+                </constructor-arg>
+                <constructor-arg>
+                    <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="clientTLSSOAPRequests">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSSOAPRequests" />
+                </constructor-arg>
+                <constructor-arg>
+                    <bean parent="shibboleth.Conditions.NOT">
+                        <constructor-arg>
+                            <bean class="org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
         <property name="signRequests">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>

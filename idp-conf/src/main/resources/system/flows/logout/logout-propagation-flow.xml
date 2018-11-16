@@ -34,6 +34,7 @@
 
     <end-state id="RenderResult" view="logout/result">
         <on-entry>
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" result="requestScope.logoutPropCtx" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.UserAgentContext))" result="requestScope.userAgentContext" />
             <evaluate expression="userAgentContext.isInstance(T(eu.bitwalker.useragentutils.Browser).IE)
                 ? externalContext.nativeResponse.setContentType('text/plain')

@@ -23,15 +23,19 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Configuration support for SAML 2 Single Logout. */
@@ -40,10 +44,16 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
 
+    /** Predicate used to determine if SOAP-based requests should be signed. */
+    @Nonnull private Predicate<MessageContext> signSOAPRequestsPredicate;
+    
+    /** Predicate used to determine if SOAP-based requests should use client TLS. */
+    @Nonnull private Predicate<MessageContext> clientTLSSOAPRequestsPredicate;
+    
     /** Lookup function to supply {@link #qualifiedNameIDFormats} property. */
     @Nullable private Function<ProfileRequestContext,Collection<String>> qualifiedNameIDFormatsLookupStrategy;
     
-    /** NameID formats whose matching rules accomodate defaulted qualifiers. */
+    /** NameID formats whose matching rules accommodate defaulted qualifiers. */
     @Nonnull @NonnullElements private Collection<String> qualifiedNameIDFormats;
     
     /** Constructor. */
@@ -62,9 +72,59 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
         setSignResponses(new NoIntegrityMessageChannelPredicate());
         setEncryptNameIDs(new NoConfidentialityMessageChannelPredicate());
 
+        signSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate();
+        clientTLSSOAPRequestsPredicate =
+                Predicates.not(new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate());
+        
         qualifiedNameIDFormats = Collections.emptyList();
     }
 
+    /**
+     * Get the predicate used to determine if SOAP-based requests should be signed.
+     * 
+     * @return predicate used to determine if SOAP-based requests should be signed
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public Predicate<MessageContext> getSignSOAPRequests() {
+        return signSOAPRequestsPredicate;
+    }
+    
+    /**
+     * Set the predicate used to determine if SOAP-based requests should be signed.
+     * 
+     * @param predicate the predicate
+     * 
+     * @since 4.0.0
+     */
+    public void setSignSOAPRequests(@Nonnull final Predicate<MessageContext> predicate) {
+        signSOAPRequestsPredicate = Constraint.isNotNull(predicate, 
+                "Predicate used to determine SOAP-based signing cannot be null");
+    }
+
+    /**
+     * Get the predicate used to determine if SOAP-based requests should use client TLS.
+     * 
+     * @return predicate used to determine if SOAP-based requests should use client TLS
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public Predicate<MessageContext> getClientTLSSOAPRequests() {
+        return clientTLSSOAPRequestsPredicate;
+    }
+    
+    /**
+     * Set the predicate used to determine if SOAP-based requests should use client TLS.
+     * 
+     * @param predicate the predicate
+     * 
+     * @since 4.0.0
+     */
+    public void setClientTLSSOAPRequests(@Nonnull final Predicate<MessageContext> predicate) {
+        clientTLSSOAPRequestsPredicate = Constraint.isNotNull(predicate, 
+                "Predicate used to determine SOAP-based client TLS use cannot be null");
+    }
+    
     /**
      * Get a collection of {@link org.opensaml.saml.saml2.core.NameID} Format values for which the use of
      * the NameQualifier and SPNameQualifier attributes is defined to allow default/implicit values

@@ -66,6 +66,9 @@
 
     <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
+
+    <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostDecodeAuditExtractors') ?: getObject('shibboleth.DefaultPostDecodeAuditExtractors')}" />
     
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
@@ -86,5 +89,10 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="SOAPLogoutRequest"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.SOAPLogoutRequest" scope="prototype"
+        p:SOAPClient-ref="shibboleth.SOAPClient.SAML"
+        p:SOAPPipelineName="SAML2.Logout" />
 
 </beans>

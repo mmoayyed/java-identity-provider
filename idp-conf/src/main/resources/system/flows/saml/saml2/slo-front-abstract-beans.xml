@@ -30,7 +30,7 @@
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />
 
-    <alias name="shibboleth.OutgoingSAML2SLOBindings" alias="shibboleth.OutgoingBindings"/>
+    <alias name="shibboleth.OutgoingSAML2SLOFrontBindings" alias="shibboleth.OutgoingBindings"/>
 
     <bean id="ProcessLogoutRequest"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogoutRequest" scope="prototype"

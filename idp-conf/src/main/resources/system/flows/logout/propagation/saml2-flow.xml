@@ -22,7 +22,26 @@
         <evaluate expression="InitializeOutboundMessageContext" />
         <evaluate expression="InitializeMessageChannelSecurityContext" />
         <evaluate expression="PopulateBindingAndEndpointContexts" />
+        
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CheckForSynchronousBinding1" />
+    </action-state>
+    
+    <decision-state id="CheckForSynchronousBinding1">
+        <if test="opensamlProfileRequestContext.getOutboundMessageContext().getSubcontext('org.opensaml.saml.common.messaging.context.SAMLBindingContext').getBindingDescriptor().isSynchronous()"
+            then="PrepareRequest"
+            else="PopulateNonSOAPRequestSignatureSigningParameters"/>
+    </decision-state>
+    
+    <action-state id="PopulateNonSOAPRequestSignatureSigningParameters">
         <evaluate expression="PopulateRequestSignatureSigningParameters" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PrepareRequest" />
+    </action-state>
+    
+    <action-state id="PrepareRequest">
         <evaluate expression="PopulateEncryptionParameters" />
 
         <evaluate expression="AddLogoutRequest" />
@@ -35,7 +54,21 @@
 
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="HandleOutboundMessage" />
+        <transition on="proceed" to="CheckForSynchronousBinding2" />
+    </action-state>
+
+    <decision-state id="CheckForSynchronousBinding2">
+        <if test="opensamlProfileRequestContext.getOutboundMessageContext().getSubcontext('org.opensaml.saml.common.messaging.context.SAMLBindingContext').getBindingDescriptor().isSynchronous()"
+            then="HandleBackChannelMessage"
+            else="HandleOutboundMessage"/>
+    </decision-state>
+
+    <action-state id="HandleBackChannelMessage">
+        <evaluate expression="SOAPLogoutRequest" />
+        <evaluate expression="PostDecodePopulateAuditContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="proceed" />
     </action-state>
 
     <action-state id="HandleOutboundMessage">
@@ -68,8 +101,8 @@
     </end-state>
 
     <!--
-    Unsuccessful terminal state. This is "proceed" because the parent flow will respond to that
-    by emitting the outcome in the LogoutPropagationContext, which is always left at Failure.
+    Terminal state. This is "proceed" because the parent flow will respond to that
+    by emitting the outcome in the LogoutPropagationContext, which is set appropriately.
     -->
     <end-state id="proceed"/>
 

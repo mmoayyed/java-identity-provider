@@ -30,6 +30,7 @@
         <property name="serviceMappings">
             <props>
                 <prop key="SAML2.ArtifactDecoder">SOAPClient.SAML2.Pipeline</prop>
+                <prop key="SAML2.Logout">SOAPClient.SAML2.Pipeline</prop>
             </props>
         </property>
     </bean>
@@ -41,10 +42,12 @@
          IMPORTANT: actual instances of this bean and the encoder/decoder below MUST be prototypes, as they are per-request instance. -->
     <bean id="SOAPClient.SAML2.Pipeline.Abstract" abstract="true" class="org.opensaml.messaging.pipeline.httpclient.BasicHttpClientMessagePipeline">
         <constructor-arg>
-            <bean scope="prototype" init-method="" class="org.opensaml.saml.saml2.binding.encoding.impl.HttpClientRequestSOAP11Encoder" />
+            <bean scope="prototype" init-method=""
+                class="org.opensaml.saml.saml2.binding.encoding.impl.HttpClientRequestSOAP11Encoder" />
         </constructor-arg>
         <constructor-arg>
-            <bean scope="prototype" init-method="" class="org.opensaml.saml.saml2.binding.decoding.impl.HttpClientResponseSOAP11Decoder" />
+            <bean scope="prototype" init-method=""
+                class="org.opensaml.saml.saml2.binding.decoding.impl.HttpClientResponseSOAP11Decoder" />
         </constructor-arg>
     </bean>
     
@@ -142,8 +145,6 @@
     </bean>
     
     
-    
-    
     <!--  Supporting beans. -->
     
     <bean id="SOAPClient.OperationContextLookup" 
@@ -187,6 +188,9 @@
                 <entry key="SAML2.ArtifactDecoder">
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
                 </entry>
+                <entry key="SAML2.Logout">
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSSOAPLogoutRequestsPredicate" />
+                </entry>
             </map>
         </constructor-arg>
     </bean>
@@ -197,6 +201,9 @@
             <map>
                 <entry key="SAML2.ArtifactDecoder">
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
+                </entry>
+                <entry key="SAML2.Logout">
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignSOAPLogoutRequestsPredicate" />
                 </entry>
             </map>
         </constructor-arg>

@@ -95,11 +95,19 @@
         <ref bean="shibboleth.Binding.SAML2Artifact" />
     </util:list>
 
+    <util:list id="shibboleth.OutgoingSAML2SLOFrontBindings">
+        <ref bean="shibboleth.Binding.SAML2Redirect" />
+        <ref bean="shibboleth.Binding.SAML2POST" />
+        <ref bean="shibboleth.Binding.SAML2POSTSimpleSign" />
+        <ref bean="shibboleth.Binding.SAML2Artifact" />
+    </util:list>
+
     <util:list id="shibboleth.OutgoingSAML2SLOBindings">
         <ref bean="shibboleth.Binding.SAML2Redirect" />
         <ref bean="shibboleth.Binding.SAML2POST" />
         <ref bean="shibboleth.Binding.SAML2POSTSimpleSign" />
         <ref bean="shibboleth.Binding.SAML2Artifact" />
+        <ref bean="shibboleth.Binding.SAML2SOAP" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSOAPBindings">
