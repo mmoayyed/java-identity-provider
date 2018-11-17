@@ -351,6 +351,36 @@ public class TemplateAttributeTest {
         }
     }
 
+    @Test public void allowingOneEmpty() throws ResolutionException, ComponentInitializationException {
+        final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
+
+        final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
+        templateDef.setId(name);
+        templateDef.setVelocityEngine(getEngine());
+        templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_CONNECTOR);
+        final String otherDefName = TestSources.STATIC_ATTRIBUTE_NAME + "2";
+        final String otherAttrName = TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "2";
+
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(otherDefName, otherAttrName));
+        templateDef.setDependencies(ds);
+        templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, otherAttrName));
+        templateDef.initialize();
+
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
+        attrDefinitions.add(templateDef);
+        attrDefinitions.add(TestSources.populatedStaticAttribute());
+        attrDefinitions.add(TestSources.populatedStaticAttribute(otherDefName, otherAttrName, 0));
+
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+    }
+
     @Test public void wrongType() throws ResolutionException, ComponentInitializationException {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 

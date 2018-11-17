@@ -264,9 +264,6 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
      * a mismatch in number of elements in any attribute.
      * 
-     * <p>Finally, the names of the source attributes is checked against the dependency attributes and if there is a
-     * mismatch then a warning is emitted.</p>
-     * 
      * @param workContext source for dependencies
      * @param sourceValues to populate with the attribute iterators
      * 
@@ -285,9 +282,10 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         for (final String attributeName : sourceAttributes) {
 
-            List<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
-            if (null == attributeValues) {
-                attributeValues = Collections.emptyList();
+            final List<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
+            if (null == attributeValues || 0 == attributeValues.size()) {
+                log.debug("{} Ignoring input attribute '{}' with no values", getLogPrefix(), attributeName);
+                continue;
             }
 
             if (!valueCountSet) {
@@ -296,7 +294,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             } else if (attributeValues.size() != valueCount) {
                 final String msg = getLogPrefix() + " All source attributes used in"
                         + " TemplateAttributeDefinition must have the same number of values: '" + attributeName + "'" ;
-                log.error(msg);
+                log.error("{} {}", getLogPrefix(), msg);
                 throw new ResolutionException(msg);
             }
 
