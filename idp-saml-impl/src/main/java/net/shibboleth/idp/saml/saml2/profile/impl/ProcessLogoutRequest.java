@@ -430,6 +430,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         return false;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Check if the {@link SPSession} has the appropriate service ID and SessionIndex.
      * 
@@ -452,15 +453,18 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             // allow the qualifiers to be defaulted. If the formats don't match
             // the eventual check will fail anyway.
             String format = saml2Session.getNameID().getFormat();
-            if (format == null)
+            if (format == null) {
                 format = NameID.UNSPECIFIED;
+            }
             if (NameID.PERSISTENT.equals(format) || NameID.TRANSIENT.equals(format)
                     || qualifiedNameIDFormats.contains(format)) {
                 
-                if (assertingParty == null)
+                if (assertingParty == null) {
                     assertingParty = assertingPartyLookupStrategy.apply(profileRequestContext);
-                if (relyingParty == null)
+                }
+                if (relyingParty == null) {
                     relyingParty = relyingPartyLookupStrategy.apply(profileRequestContext);
+                }
                 
                 if (!SAML2ObjectSupport.areNameIDsEquivalent(logoutRequest.getNameID(), saml2Session.getNameID(),
                         assertingParty, relyingParty)) {
@@ -486,5 +490,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         
         return false;
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
