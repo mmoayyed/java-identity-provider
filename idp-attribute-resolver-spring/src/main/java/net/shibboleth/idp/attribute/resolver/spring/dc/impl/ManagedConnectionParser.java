@@ -152,11 +152,13 @@ public class ManagedConnectionParser {
                 DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty");
         elements.addAll(ElementSupport.getChildElementsByTagNameNS(containerManagedElement,
                 AttributeResolverNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
-        for (final Element e : elements) {
-            props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
-                    AttributeSupport.getAttributeValue(e, new QName("value")));
+        if (!elements.isEmpty()) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, "<JNDIConnectionProperty>", null, null);
+            for (final Element e : elements) {
+                props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
+                        AttributeSupport.getAttributeValue(e, new QName("value")));
+            }
         }
-
         final BeanDefinitionBuilder dataSource =
                 BeanDefinitionBuilder.rootBeanDefinition(ManagedConnectionParser.class, "buildDataSource");
         dataSource.addConstructorArgValue(props);

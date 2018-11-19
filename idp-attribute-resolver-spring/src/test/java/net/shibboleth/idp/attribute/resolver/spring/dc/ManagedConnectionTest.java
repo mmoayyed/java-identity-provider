@@ -53,19 +53,19 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
         if (!NamingManager.hasInitialContextFactoryBuilder()) {
             NamingManager.setInitialContextFactoryBuilder(new ContextFactoryBuilder() );
         }
-        
+
         final  StoredIDDataConnector connector = getDataConnector("containerManagedConnection.xml", StoredIDDataConnector.class);
         MyDataSource source = (MyDataSource) connector.getDataSource();
         assertEquals(source.getEnvironment().size(), 2);
         assertEquals(source.getEnvironment().get("foo"), "Bar");
         assertEquals(source.getEnvironment().get("yellow"), "green");
     }
-    
+
     @Test(enabled=false) public void resolver() throws ComponentInitializationException, NamingException {
         if (!NamingManager.hasInitialContextFactoryBuilder()) {
             NamingManager.setInitialContextFactoryBuilder(new ContextFactoryBuilder() );
         }
-        
+
         final  StoredIDDataConnector connector = getDataConnector("resolver/containerManagedConnection.xml", StoredIDDataConnector.class);
         MyDataSource source = (MyDataSource) connector.getDataSource();
         assertEquals(source.getEnvironment().size(), 2);
@@ -73,8 +73,6 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
         assertEquals(source.getEnvironment().get("yellow"), "green");
     }
 
-    
-    
     /** Hard wiring for JNDI.  This is an {@link InitialContextFactoryBuilder} Its only job is to return a {@link MyContextFactory} */
     private class ContextFactoryBuilder implements InitialContextFactoryBuilder {
 
@@ -83,7 +81,7 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
             return new MyContextFactory();
         }
     }
-    
+
     /** Hard wiring for JNDI.  This is an {@link InitialContextFactory}.  Its only job is to return an {@link MyInitialContext} */
     private class MyContextFactory implements InitialContextFactory {
 
