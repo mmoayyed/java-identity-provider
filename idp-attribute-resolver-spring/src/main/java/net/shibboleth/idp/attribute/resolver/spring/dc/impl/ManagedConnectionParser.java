@@ -148,10 +148,10 @@ public class ManagedConnectionParser {
                 AttributeSupport.getAttributeValue(containerManagedElement, new QName("resourceName"));
 
         final ManagedMap<String, String> props = new ManagedMap<>();
-        final Element propertyElement =
-                ElementSupport.getFirstChildElement(containerManagedElement, new QName(
-                        DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
-        final List<Element> elements = ElementSupport.getChildElements(propertyElement);
+        final List<Element> elements = ElementSupport.getChildElementsByTagNameNS(containerManagedElement,
+                DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty");
+        elements.addAll(ElementSupport.getChildElementsByTagNameNS(containerManagedElement,
+                AttributeResolverNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
         for (final Element e : elements) {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));

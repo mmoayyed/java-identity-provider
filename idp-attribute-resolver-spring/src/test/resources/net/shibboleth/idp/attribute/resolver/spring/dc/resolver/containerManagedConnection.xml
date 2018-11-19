@@ -1,0 +1,19 @@
+<DataConnector id="stored" xsi:type="StoredId" 
+    xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	
+    failFast="false"
+    queryTimeout="PT5S"
+    transactionRetries="5"
+    retryableErrors="25000 25001"
+	generatedAttributeID="jenny"
+	
+	salt="abcdefghijklmnopqrst"
+	
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+    <ContainerManagedConnection resourceName="myConnnector">
+	    <JNDIConnectionProperty name="foo" value="Bar"/>
+    	<JNDIConnectionProperty name="yellow" value="green"/>
+    </ContainerManagedConnection>
+               
+	<InputAttributeDefinition ref="TheAttributeRemainsTheSame"/>
+</DataConnector>
