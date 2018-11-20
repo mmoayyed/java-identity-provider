@@ -352,8 +352,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
@@ -386,8 +385,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("work.script")));
@@ -457,7 +455,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, null));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
@@ -469,7 +467,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final Set<AttributeDefinition> attrDefinitions = new HashSet<>(3);
         attrDefinitions.add(scripted);
         final AttributeDefinition nonString =
-                TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+                TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
         attrDefinitions.add(nonString);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
@@ -545,7 +543,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         connector.setId("Connector");
 
         final Set<ResolverPluginDependency> ds =
-                Collections.singleton(TestSources.makeResolverPluginDependency("Connector", null));
+                Collections.singleton(TestSources.makeResolverPluginDependency("Connector", true));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);

@@ -80,8 +80,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
 
@@ -165,8 +164,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
         final Set<AttributeDefinition> am = new LazySet<>();
@@ -222,8 +220,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.setNameIdFormat(ALTERNATIVE_FORMAT);
         defn.setNameIdQualifier(ALTERNATE_QUALIFIER);
@@ -232,8 +229,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         // And resolve
         final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
-        am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
+        am.add(TestSources.populatedStaticAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
         final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
         resolver.initialize();

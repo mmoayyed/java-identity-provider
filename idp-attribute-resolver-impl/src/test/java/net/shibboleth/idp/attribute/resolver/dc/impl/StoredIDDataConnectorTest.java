@@ -89,19 +89,19 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
 
         tryInitialize(connector, "No DataSource");
         connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
 
         connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
         connector.setSalt(ComputedIDDataConnectorTest.smallSalt);
@@ -109,7 +109,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
         connector.setSalt(ComputedIDDataConnectorTest.smallSalt);
