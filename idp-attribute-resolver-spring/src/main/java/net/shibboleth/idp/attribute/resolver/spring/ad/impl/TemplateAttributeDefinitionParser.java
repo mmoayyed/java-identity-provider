@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -79,7 +81,11 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
 
         final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_AD);
         templateElements.addAll(ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_RESOLVER));
-        if (null != templateElements && templateElements.size() >= 1) {
+        if (null == templateElements || templateElements.isEmpty()) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, "Missing " + TEMPLATE_ELEMENT_NAME_RESOLVER.getLocalPart(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    "by providing an explicit template");
+        } else {
             if (templateElements.size() > 1) {
                 log.warn("{} Too many <Template> elements, taking the first");
             }
@@ -94,6 +100,9 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
                 ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_AD);
         sourceAttributeElements.addAll(ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER));
         if (null != sourceAttributeElements) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER.getLocalPart(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    "by using <InputAttributeDefinition> and <InputDataConnector>");
             final List<String> sourceAttributes = new ManagedList<>(sourceAttributeElements.size());
             for (final Element element : sourceAttributeElements) {
                 sourceAttributes.add(StringSupport.trimOrNull(element.getTextContent()));

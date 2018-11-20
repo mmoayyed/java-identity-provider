@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.HashSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +37,9 @@ import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -175,9 +181,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + " no velocity engine was configured");
         }
     
-        if (sourceAttributes.isEmpty()) {
-            log.info("{} No Source Attributes supplied, was this intended?", getLogPrefix());
-        }
+        checkSourceAttributes();
     
         if (null == templateText) {
             // V2 compatibility - define our own template
@@ -195,6 +199,33 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         }
     
         template = Template.fromTemplate(engine, templateText);
+    }
+
+    /**
+     * Check the provided source attributes against the provided dependencies.
+     */
+    private void checkSourceAttributes() {
+        if (sourceAttributes.isEmpty()) {
+            return;
+        }
+
+        final Set<String> dependencyAttributeNames = new HashSet<>(getDependencies().size());
+        for (final ResolverPluginDependency dependency: getDependencies()) {
+            if (dependency instanceof ResolverAttributeDefinitionDependency) {
+                dependencyAttributeNames.add( dependency.getDependencyPluginId());
+            } else if (dependency instanceof ResolverDataConnectorDependency) {
+                final ResolverDataConnectorDependency dc = (ResolverDataConnectorDependency) dependency;
+                if (dc.isAllAttributes()) {
+                    return;
+                }
+            }
+        }
+
+        for (final String s: sourceAttributes) {
+            if (!dependencyAttributeNames.contains(s)) {
+                log.warn("{} Source Attribute {} is not provided as a dependency", getLogPrefix(),s);
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -276,15 +307,14 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
-
         int valueCount = 0;
         boolean valueCountSet = false;
 
-        for (final String attributeName : sourceAttributes) {
+        for (final Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet() ) {
 
-            final List<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
+            final List<IdPAttributeValue<?>> attributeValues = entry.getValue();
             if (null == attributeValues || 0 == attributeValues.size()) {
-                log.debug("{} Ignoring input attribute '{}' with no values", getLogPrefix(), attributeName);
+                log.debug("{} Ignoring input attribute '{}' with no values", getLogPrefix(), entry.getKey());
                 continue;
             }
 
@@ -293,12 +323,12 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 valueCountSet = true;
             } else if (attributeValues.size() != valueCount) {
                 final String msg = getLogPrefix() + " All source attributes used in"
-                        + " TemplateAttributeDefinition must have the same number of values: '" + attributeName + "'" ;
+                        + " TemplateAttributeDefinition must have the same number of values: '" + entry.getKey() + "'" ;
                 log.error("{} {}", getLogPrefix(), msg);
                 throw new ResolutionException(msg);
             }
 
-            sourceValues.put(attributeName, attributeValues.iterator());
+            sourceValues.put(entry.getKey(), attributeValues.iterator());
         }
 
         return valueCount;
