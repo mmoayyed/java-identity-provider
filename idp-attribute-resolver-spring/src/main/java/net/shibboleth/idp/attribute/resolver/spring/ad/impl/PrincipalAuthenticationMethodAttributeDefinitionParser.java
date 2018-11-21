@@ -22,7 +22,11 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalAuthenticationMethodAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for PrincipalAuthenticationMethod. */
@@ -42,9 +46,15 @@ public class PrincipalAuthenticationMethodAttributeDefinitionParser extends Abst
     }
     
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
+    @Override @Nonnull protected QName getPreferredName() {
         return TYPE_NAME_RESOLVER;
+    }
+
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        DeprecationSupport.warnOnce(ObjectType.ELEMENT, "PrincipalAuthenticationMethod",
+                parserContext.getReaderContext().getResource().getDescription(), null);
+        super.doParse(config, parserContext, builder);
     }
 
 }
