@@ -126,6 +126,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         defaultMappingStrategy = false;
     }
 
+// CheckStyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         if (connectionFactory == null) {
@@ -185,6 +186,8 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             }
         }
     }
+// CheckStyle: CyclomaticComplexity ON
+
 
     /**
      * Attempts to retrieve attributes from the LDAP.

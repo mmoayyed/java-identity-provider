@@ -243,6 +243,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
 // Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: MethodLength OFF
         /**
          * Create the definition of the POST search builder.
          * 
@@ -330,6 +331,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
             return templateBuilder.getBeanDefinition();
         }
 // Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: MethodLength ON
         
         /**
          * Get the bean ID of an externally defined mapping strategy.

@@ -56,6 +56,33 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
             builder.addConstructorArgReference(timerRef);
         }
 
+        processTimingProperties(element, parserContext, builder);
+
+        if (element.hasAttributeNS(null, "expirationWarningThreshold")) {
+            builder.addPropertyValue("expirationWarningThreshold",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "expirationWarningThreshold")));
+        }
+
+        if (element.hasAttributeNS(null, "indexesRef")) {
+            builder.addPropertyReference("indexes",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));
+        }
+
+        builder.addPropertyReference("parserPool", getParserPoolRef(element));
+
+        processPersistentCachingProperties(element, parserContext, builder);
+    }
+
+    /**
+     * Process options related to time.
+     *
+     * @param element current element
+     * @param parserContext current parser context
+     * @param builder current builder
+     */
+    protected void processTimingProperties(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
+
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
             builder.addPropertyValue("refreshDelayFactor",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "refreshDelayFactor")));
@@ -90,25 +117,11 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
             builder.addPropertyValue("cleanupTaskInterval",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "cleanupTaskInterval")));
         }
-        
-        if (element.hasAttributeNS(null, "expirationWarningThreshold")) {
-            builder.addPropertyValue("expirationWarningThreshold",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "expirationWarningThreshold")));
-        }
-        
-        if (element.hasAttributeNS(null, "indexesRef")) {
-            builder.addPropertyReference("indexes",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));
-        }
-
-        builder.addPropertyReference("parserPool", getParserPoolRef(element));
-        
-        processPersistentCachingProperties(element, parserContext, builder);
     }
     
     /**
      * Process options related to persistent caching support.
-     * 
+     *
      * @param element current element
      * @param parserContext current parser context
      * @param builder current builder
