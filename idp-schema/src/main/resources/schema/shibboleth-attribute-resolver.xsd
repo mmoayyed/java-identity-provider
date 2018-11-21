@@ -20,7 +20,6 @@
         <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="resolver:AttributeDefinition"/>
             <element ref="resolver:DataConnector"/>
-            <element ref="resolver:PrincipalConnector"/>
         </choice>
         <attribute name="id" type="string">
             <annotation>
@@ -237,47 +236,6 @@
                     <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
                     <element ref="resolver:FailoverDataConnector" minOccurs="0"/>
                 </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="PrincipalConnector" type="resolver:BasePrincipalConnectorType">
-        <annotation>
-            <documentation>
-                DEPRECATED:
-                Principal connectors convert a subject's NameID into an internal principal
-                name for use within attribute definitions and data connectors.
-            </documentation>
-        </annotation>
-    </element>
-
-    <complexType name="BasePrincipalConnectorType">
-        <annotation>
-            <documentation>
-                DEPRECATED:
-                Principal connectors convert a subject's NameID into an internal principal
-                name for use within attribute definitions and data connectors.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="resolver:BaseResolutionPlugInType">
-                <sequence>
-                    <element name="RelyingParty" type="string" minOccurs="0"
-                        maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                The relying party for which this connector is valid.
-                            </documentation>
-                        </annotation>
-                    </element>
-                </sequence>
-                <attribute name="nameIDFormat" type="string" use="required">
-                    <annotation>
-                        <documentation>
-                            The format of the NameID for which this connector is valid.
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>

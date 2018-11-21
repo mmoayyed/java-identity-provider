@@ -1,6 +1,6 @@
 <resolver:DataConnector id="stored"
 	xsi:type="dc:StoredId" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pc="urn:mace:shibboleth:2.0:resolver:pc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad" xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
 	xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:sec="urn:mace:shibboleth:2.0:security"
 	

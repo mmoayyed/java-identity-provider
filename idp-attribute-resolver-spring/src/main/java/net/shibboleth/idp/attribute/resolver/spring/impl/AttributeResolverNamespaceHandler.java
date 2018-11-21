@@ -55,7 +55,6 @@ import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2ScopedStringAt
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringNameIDEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
-import net.shibboleth.idp.attribute.resolver.spring.pc.impl.DirectConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -74,7 +73,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
 
         registerBeanDefinitionParser(AttributeResolverParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(DirectConnectorParser.TYPE_NAME, new DirectConnectorParser());
         registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME, new ResolverPluginDependencyParser());
         registerBeanDefinitionParser(InputDataConnectorParser.ELEMENT_NAME, new InputDataConnectorParser());
         registerBeanDefinitionParser(InputAttributeDefinitionParser.ELEMENT_NAME, new InputAttributeDefinitionParser());
