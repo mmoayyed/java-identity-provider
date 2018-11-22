@@ -84,7 +84,7 @@ public class RegexAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(attrDef);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -169,7 +169,7 @@ public class RegexAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(attrDef);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

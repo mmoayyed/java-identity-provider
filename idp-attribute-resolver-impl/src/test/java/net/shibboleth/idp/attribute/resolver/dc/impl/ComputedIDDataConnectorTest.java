@@ -101,7 +101,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         set.add(TestSources.populatedStaticAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
         final AttributeResolverImpl resolver =
-                AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
+                AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
 
         simple.initialize();
         resolver.initialize();
@@ -169,7 +169,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         set.add(TestSources.populatedStaticAttribute(
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, values));
 
-        return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
+        return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
     private AttributeResolver constructResolverWithNonString(final String dependantOn)
@@ -195,7 +195,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
         set.add(TestSources.nonStringAttributeDefiniton(dependantOn));
 
-        return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
+        return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
     protected static AbstractPersistentIdDataConnector connectorFromResolver(final AttributeResolver resolver) {
@@ -314,7 +314,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.initialize();
 
         final AttributeResolver resolver =
-                AttributeResolverImplTest.newAttributeResolverImpl("atresolver", Collections.singleton((AttributeDefinition) simple), set, null);
+                AttributeResolverImplTest.newAttributeResolverImpl("atresolver", Collections.singleton((AttributeDefinition) simple), set);
         ComponentSupport.initialize(resolver);
 
         final AttributeResolutionContext context =
