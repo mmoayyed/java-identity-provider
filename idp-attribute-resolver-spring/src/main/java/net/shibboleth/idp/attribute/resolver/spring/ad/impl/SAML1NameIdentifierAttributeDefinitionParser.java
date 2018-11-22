@@ -34,11 +34,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /** Spring bean definition parser for SAML 1 NameIdentifier attribute definitions. */
 public class SAML1NameIdentifierAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SAML1NameIdentifier");
-
-    /** Schema type name - resolver:. */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SAML1NameIdentifier");
 

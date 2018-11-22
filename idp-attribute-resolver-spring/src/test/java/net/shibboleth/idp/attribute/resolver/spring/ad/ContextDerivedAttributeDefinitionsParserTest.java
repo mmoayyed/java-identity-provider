@@ -94,17 +94,6 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     }
 
     @Test public void context() throws ResolutionException {
-        final AttributeDefinition attrDef = getAttributeDefn("contextDerived.xml", "contextDerivedBeans.xml",
-                ContextDerivedAttributeDefinition.class);
-
-        final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
-
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
-    }
-
-    @Test public void resolver() throws ResolutionException {
         final AttributeDefinition attrDef = getAttributeDefn("resolver/contextDerived.xml", "contextDerivedBeans.xml",
                 ContextDerivedAttributeDefinition.class);
 
@@ -126,11 +115,11 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     }
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void fail() throws ResolutionException {
-        getAttributeDefn("subjectDerivedFail.xml", ContextDerivedAttributeDefinition.class);
+        getAttributeDefn("resolver/subjectDerivedFail.xml", ContextDerivedAttributeDefinition.class);
     }
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void dependency()
             throws ResolutionException {
-        getAttributeDefn("subjectDerivedDependency.xml", ContextDerivedAttributeDefinition.class);
+        getAttributeDefn("resolver/subjectDerivedDependency.xml", ContextDerivedAttributeDefinition.class);
     }
 }

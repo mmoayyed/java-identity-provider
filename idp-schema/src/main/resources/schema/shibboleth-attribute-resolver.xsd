@@ -29,14 +29,14 @@
         </attribute>
     </complexType>
 
-    <element name="AttributeDefinition" type="resolver:FlattenedBaseAttributeDefinitionType">
+    <element name="AttributeDefinition" type="resolver:BaseAttributeDefinitionType">
         <annotation>
             <documentation>Defines an attribute definition within this resolver.
             </documentation>
         </annotation>
     </element>
 
-    <complexType name="FlattenedBaseAttributeDefinitionType">
+    <complexType name="BaseAttributeDefinitionType">
         <annotation>
             <documentation>
                 Attribute definition define the finished attributes to be released by the
@@ -56,64 +56,6 @@
                             A boolean flag that indicates whether this attribute definition is
                             only defined because its data is needed elsewhere within the resolver
                             and as such should not be released outside the resolver.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="BaseAttributeDefinitionType">
-        <annotation>
-            <documentation>
-                Legacy attribute definition define the finished attributes to be released by the
-                resolver.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
-                <sequence>
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
-                    <element name="DisplayName" type="resolver:LocalizedStringType"
-                        minOccurs="0" maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                A human readable name of for this attribute. This name may, for
-                                example, be displayed to the user with an attribute release approval
-                                request.
-
-                                If multiple display names are used they should bear an xml:lang
-                                attribute to distinguish them.
-                            </documentation>
-                        </annotation>
-                    </element>
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType"
-                        minOccurs="0" maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                A human readable description of for this attribute. This name
-                                may, for example, be displayed to the user with an attribute release
-                                approval request.
-
-                                If multiple display descriptions are used they should bear an
-                                xml:lang attribute to distinguish them.
-                            </documentation>
-                        </annotation>
-                    </element>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0"
-                        maxOccurs="unbounded"/>
-                </sequence>
-                <attribute name="sourceAttributeID" type="string">
-                    <annotation>
-                        <documentation>
-                            DEPRECATED
-                        
-                            The name of the attribute from a data connector dependency which should be
-                            used to populate this attribute definition.
-
-                            Whether this attribute is required or optional depends on whether the dependency
-                            set contains data connectors or attribute definitions. It may be left out for
-                            attribute dependencies but MUST be set if there are data connector dependencies.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -411,7 +353,7 @@
             <documentation>A attribute definition to pull attribute values from anywhere in the PRC tree</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
@@ -431,7 +373,7 @@
             <documentation>An attribute definition used to construct stateless transient subject identifiers.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
@@ -461,7 +403,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -506,7 +448,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -530,7 +472,7 @@
             <documentation>Exposes the principal's authentication method as an attribute definition.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
@@ -545,7 +487,7 @@
             <documentation>Exposes the principal's name as an attribute definition.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
@@ -560,7 +502,7 @@
             <documentation>An attribute definition that splits the source attribute's values based on a regular expression.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -591,7 +533,7 @@
             <documentation>An attribute definition that creates attributes whose values are SAML 1 NameIdentifiers.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -620,7 +562,7 @@
             <documentation>An attribute definition that creates attributes whose values are SAML 2 NameIDs.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -654,7 +596,7 @@
             <documentation>A basic attribute definition which supports attribute scoping.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -687,7 +629,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -733,7 +675,7 @@
             <documentation>A basic attribute definition.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -752,7 +694,7 @@
             <documentation>A attribute definition to pull attribute values from the Principals.  A short cut looks at IdPAttributePrincipals</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
@@ -783,7 +725,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -824,7 +766,7 @@
             <documentation>A attribute definition used to construct transient subject identifiers.</documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+            <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>

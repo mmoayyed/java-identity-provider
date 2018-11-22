@@ -40,28 +40,6 @@ public class TransientIdAttributeDefinitionParserTest extends BaseAttributeDefin
 
     @Test public void withTime() throws ComponentInitializationException {
 
-        try {
-            getDefinition("transientWithTime.xml");
-            Assert.fail();
-        } catch (BeanCreationException e) {
-            // OK
-        }
-        TransientIdAttributeDefinition defn =
-                getAttributeDefn("transientWithTime.xml", "idStore2.xml", TransientIdAttributeDefinition.class);
-
-        Assert.assertEquals(defn.getId(), "transientIdWithTime");
-
-        Assert.assertTrue(defn.isInitialized());
-
-        StoredTransientIdGenerationStrategy generator =
-                (StoredTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
-
-        Assert.assertEquals(generator.getIdLifetime(), 1000 * 60 * 3);
-        Assert.assertEquals(generator.getIdSize(), 16);
-    }
-
-    @Test public void withTimeResolver() throws ComponentInitializationException {
-
         final TransientIdAttributeDefinition defn = getAttributeDefn("resolver/transientWithTime.xml", "idStore2.xml",
                 TransientIdAttributeDefinition.class);
 

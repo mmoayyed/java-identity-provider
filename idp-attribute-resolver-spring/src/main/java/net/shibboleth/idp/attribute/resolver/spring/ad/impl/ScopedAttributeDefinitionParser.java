@@ -36,11 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public class ScopedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
-
-    /** Schema type name - resolver: . */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Scoped");
 

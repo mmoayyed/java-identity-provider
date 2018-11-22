@@ -36,11 +36,7 @@ import org.w3c.dom.Element;
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
 public class SubjectDerivedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SubjectDerivedAttribute");
-
-    /** Schema type name resolver: (legacy). */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SubjectDerivedAttribute");
 

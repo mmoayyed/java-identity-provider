@@ -41,19 +41,6 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     }
 
     @Test public void simple() {
-        SourceValue value = getSourceValue("sourceValue.xml");
-
-        Assert.assertFalse(value.isIgnoreCase());
-        Assert.assertFalse(value.isPartialMatch());
-        try {
-            Assert.assertNull(value.getValue());
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-    }
-
-    @Test public void resolver() {
         SourceValue value = getSourceValue("resolver/sourceValue.xml");
 
         Assert.assertFalse(value.isIgnoreCase());

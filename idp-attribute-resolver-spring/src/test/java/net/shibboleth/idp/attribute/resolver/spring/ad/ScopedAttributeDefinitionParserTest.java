@@ -30,13 +30,6 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierA
 public class ScopedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void defaultCase() {
-        ScopedAttributeDefinition attrDef = getAttributeDefn("scoped.xml", ScopedAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "scoped");
-        Assert.assertEquals(attrDef.getScope(), "mYsCoPe");
-    }
-
-    @Test public void resolver() {
         ScopedAttributeDefinition attrDef = getAttributeDefn("resolver/scoped.xml", ScopedAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "scoped");

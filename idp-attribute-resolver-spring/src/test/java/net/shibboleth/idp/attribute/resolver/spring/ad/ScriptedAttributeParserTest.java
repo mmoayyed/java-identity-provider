@@ -34,27 +34,6 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
 
     @Test public void inline() {
         final ScriptedAttributeDefinition attrDef =
-                getAttributeDefn("scriptedAttributeInline.xml", ScriptedAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "scriptedInline");
-        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
-        Assert.assertEquals(attrDef.getScript().getScript(), "foo=\"bar\";");
-    }
-
-    @Test public void file() {
-        final ScriptedAttributeDefinition attrDef =
-                getAttributeDefn("scriptedAttributeFile.xml", ScriptedAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "scriptedFile");
-        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
-        Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
-
-        Assert.assertNull(attrDef.getCustomObject());
-
-    }
-
-    @Test public void resolverInline() {
-        final ScriptedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/scriptedAttributeInline.xml", ScriptedAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "scriptedInline");
@@ -62,7 +41,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         Assert.assertEquals(attrDef.getScript().getScript(), "foo=\"bar\";");
     }
 
-    @Test public void resolverFile() {
+    @Test public void file() {
         final ScriptedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/scriptedAttributeFile.xml", ScriptedAttributeDefinition.class);
 
@@ -91,7 +70,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
 
     @Test public void bad() {
         try {
-            getAttributeDefn("scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);
+            getAttributeDefn("resolver/scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);
             Assert.fail("Bad script worked?");
         } catch (BeanDefinitionStoreException | BeanCreationException e) {
             // OK
@@ -100,7 +79,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
 
     @Test public void absent() {
         try {
-            getAttributeDefn("scriptedAttributeAbsent.xml", ScriptedAttributeDefinition.class);
+            getAttributeDefn("resolverscriptedAttributeAbsent.xml", ScriptedAttributeDefinition.class);
             Assert.fail("Missing script worked?");
         } catch (final BeanDefinitionStoreException e) {
             // OK
@@ -108,7 +87,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
     }
 
     @Test(expectedExceptions = {BeanCreationException.class,}) public void missingFile() {
-        getAttributeDefn("scriptedAttributeFileMissing.xml", ScriptedAttributeDefinition.class);
+        getAttributeDefn("resolver/scriptedAttributeFileMissing.xml", ScriptedAttributeDefinition.class);
     }
 
 }

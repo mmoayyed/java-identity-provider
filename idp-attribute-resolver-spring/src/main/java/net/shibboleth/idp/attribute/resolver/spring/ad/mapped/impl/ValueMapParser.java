@@ -35,7 +35,6 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -43,19 +42,12 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 /** Bean definition parser for a {@link ValueMap}. */
 public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ValueMap");
-
+    /** Schema type name. */
     /** Schema type name - resolver: . */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ValueMap");
 
-    /** return Value element name - ad: (legacy). */
-    @Nonnull public static final QName RETURN_VALUE_ELEMENT_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ReturnValue");
-
-    /** return Value element name - resolver:. */
+    /** return Value element name. */
     @Nonnull public static final QName RETURN_VALUE_ELEMENT_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ReturnValue");
 
@@ -72,8 +64,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final List<Element> returnElems = ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME_AD);
-        returnElems.addAll(ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME_RESOLVER));
+        final List<Element> returnElems = ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME_RESOLVER);
         String returnValue = null;
 
         if (null != returnElems && returnElems.size() > 0) {
@@ -85,8 +76,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
         }
 
         final List<Element> sourceValueElements =
-                ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME_AD);
-        sourceValueElements.addAll(ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME_RESOLVER));
+                ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME_RESOLVER);
         if (null == sourceValueElements || sourceValueElements.size() == 0) {
             throw new BeanCreationException("Attribute Definition: ValueMap must have at least one SourceValue");
         }

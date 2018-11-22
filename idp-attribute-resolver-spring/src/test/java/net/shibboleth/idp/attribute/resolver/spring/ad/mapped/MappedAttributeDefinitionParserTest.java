@@ -34,14 +34,6 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
         return getAttributeDefn("mapped/" + fileName, MappedAttributeDefinition.class);
     }
 
-    @Test public void defaultCase() {
-        final MappedAttributeDefinition defn = getDefinition("mapped.xml");
-
-        Assert.assertTrue(defn.isPassThru());
-        Assert.assertEquals(defn.getValueMaps().size(), 2);
-        Assert.assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
-    }
-
     @Test public void multiDefault() {
         final MappedAttributeDefinition defn = getDefinition("resolver/multiDefault.xml");
 
@@ -50,7 +42,7 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
         Assert.assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
     }
 
-    @Test public void resolver() {
+    @Test public void defaultCase() {
         final MappedAttributeDefinition defn = getDefinition("resolver/mapped.xml");
 
         Assert.assertTrue(defn.isPassThru());

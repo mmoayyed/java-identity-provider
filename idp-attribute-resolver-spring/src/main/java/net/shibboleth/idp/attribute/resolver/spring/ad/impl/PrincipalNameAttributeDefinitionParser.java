@@ -29,11 +29,7 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamesp
 /** Spring Bean Definition Parser for PrincipalName attribute definitions. */
 public class PrincipalNameAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalName");
-
-    /** Schema type name ad: (legacy). */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalName");
 

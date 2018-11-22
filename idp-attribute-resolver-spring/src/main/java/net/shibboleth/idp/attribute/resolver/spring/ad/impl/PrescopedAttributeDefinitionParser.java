@@ -34,11 +34,7 @@ import org.w3c.dom.Element;
 /** Spring bean definition parser for prescoped attributes. */
 public class PrescopedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Prescoped");
-
-    /** Schema type name resolver: (legacy). */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Prescoped");
 

@@ -40,16 +40,6 @@ public class SAML2NameIDdentifierAttributeDefinitionParserTest extends BaseAttri
 
     @Test public void attributes() {
         SAML2NameIDAttributeDefinition attrDef =
-                getAttributeDefn("saml2NameIdAttributes.xml", SAML2NameIDAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "SAML2NameId-Attr");
-        Assert.assertEquals(attrDef.getNameIdFormat(), "format");
-        Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
-        Assert.assertEquals(attrDef.getNameIdSPQualifier(), "name-Id-SP-Qualifier");
-    }
-
-    @Test public void resolver() {
-        SAML2NameIDAttributeDefinition attrDef =
                 getAttributeDefn("resolver/saml2NameIdAttributes.xml", SAML2NameIDAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "SAML2NameId-Attr");

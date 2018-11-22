@@ -42,27 +42,15 @@ import org.w3c.dom.Element;
  */
 public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
-
-    /** Schema type name - resolver: . */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Template");
 
-    /** SourceValue element name - ad: (legacy). */
-    @Nonnull public static final QName TEMPLATE_ELEMENT_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
-
-    /** SourceValue element name - - resolver: . */
+    /** SourceValue element name. */
     @Nonnull public static final QName TEMPLATE_ELEMENT_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Template");
 
-    /** SourceValue element name - ad: (legacy). */
-    @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SourceAttribute");
-
-    /** SourceValue element name - resolver: . */
+    /** SourceValue element name. */
     @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SourceAttribute");
 
@@ -79,8 +67,7 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_AD);
-        templateElements.addAll(ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_RESOLVER));
+        final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_RESOLVER);
         if (null == templateElements || templateElements.isEmpty()) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, "Missing " + TEMPLATE_ELEMENT_NAME_RESOLVER.getLocalPart(),
                     parserContext.getReaderContext().getResource().getDescription(),
@@ -97,8 +84,7 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
         }
 
         final List<Element> sourceAttributeElements =
-                ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_AD);
-        sourceAttributeElements.addAll(ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER));
+            ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER);
         if (null != sourceAttributeElements && !sourceAttributeElements.isEmpty()) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER.getLocalPart(),
                     parserContext.getReaderContext().getResource().getDescription(),

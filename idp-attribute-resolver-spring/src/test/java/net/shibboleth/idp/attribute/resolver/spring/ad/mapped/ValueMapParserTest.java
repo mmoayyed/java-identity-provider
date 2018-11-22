@@ -32,15 +32,11 @@ import org.testng.annotations.Test;
 public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
 
     private ValueMap getValueMap(final String fileName) {
-        return getValueMap(fileName, false);
-    }
-
-    private ValueMap getValueMap(final String fileName, final boolean resolver) {
         final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + ValueMapParserTest.class);
 
-        return getBean(ATTRIBUTE_FILE_PATH + (resolver ? "mapped/resolver/" : "mapped/") + fileName, ValueMap.class,
+        return getBean(ATTRIBUTE_FILE_PATH + "mapped/resolver/"  + fileName, ValueMap.class,
                 context);
     }
 
@@ -52,18 +48,11 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
         Assert.assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
     }
 
-    @Test public void valueMapResolver() {
-
-        final ValueMap value = getValueMap("valueMap.xml", true);
-        Assert.assertEquals(value.getReturnValue(), "return");
-        Assert.assertEquals(value.getSourceValues().size(), 1);
-        Assert.assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
-    }
 
     @Test public void noSourceValues() {
 
         try {
-            getValueMap("valueMapNoSourceValue.xml", true);
+            getValueMap("valueMapNoSourceValue.xml");
             Assert.fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK
@@ -73,7 +62,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void noValues() {
 
         try {
-            getValueMap("valueMapNoValues.xml", true);
+            getValueMap("valueMapNoValues.xml");
             Assert.fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK

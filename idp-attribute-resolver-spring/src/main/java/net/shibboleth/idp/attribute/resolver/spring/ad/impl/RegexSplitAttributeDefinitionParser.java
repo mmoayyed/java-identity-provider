@@ -36,11 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /** Spring Bean Definition Parser for Regexp split attribute definitions. */
 public class RegexSplitAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name : ad: (Legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "RegexSplit");
-
-    /** Schema type name : ad: (Legacy). */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RegexSplit");
 

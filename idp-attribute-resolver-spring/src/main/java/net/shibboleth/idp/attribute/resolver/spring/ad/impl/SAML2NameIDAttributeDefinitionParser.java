@@ -34,11 +34,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /** Spring bean definition parser for SAML 2 NameID attribute definitions. */
 public class SAML2NameIDAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SAML2NameID");
-
-    /** Schema type name - resolver: . */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SAML2NameID");
 

@@ -31,13 +31,6 @@ public class PrincipalNameAttributeDefinitionParserTest extends BaseAttributeDef
 
     @Test public void test() {
         PrincipalNameAttributeDefinition attrDef =
-                getAttributeDefn("principalName.xml", PrincipalNameAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "PrincipalName");
-    }
-
-    @Test public void legacy() {
-        PrincipalNameAttributeDefinition attrDef =
                 getAttributeDefn("resolver/principalName.xml", PrincipalNameAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "PrincipalName");

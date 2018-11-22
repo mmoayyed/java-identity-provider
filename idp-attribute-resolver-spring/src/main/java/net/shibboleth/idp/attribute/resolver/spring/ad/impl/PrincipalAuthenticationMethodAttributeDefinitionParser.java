@@ -32,11 +32,7 @@ import org.w3c.dom.Element;
 /** Spring Bean Definition Parser for PrincipalAuthenticationMethod. */
 public class PrincipalAuthenticationMethodAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalAuthenticationMethod");
-
-    /** Schema type name resolver:. */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalAuthenticationMethod");
 

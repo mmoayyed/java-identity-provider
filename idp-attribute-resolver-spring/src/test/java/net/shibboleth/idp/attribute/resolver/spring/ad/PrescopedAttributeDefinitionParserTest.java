@@ -29,14 +29,6 @@ import org.testng.annotations.Test;
  */
 public class PrescopedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void withScope() {
-        PrescopedAttributeDefinition attrDef =
-                getAttributeDefn("prescopedWith.xml", PrescopedAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "prescopedWith");
-        Assert.assertEquals(attrDef.getScopeDelimiter(), "#");
-    }
-
     @Test public void resolver() {
         PrescopedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/prescopedWith.xml", PrescopedAttributeDefinition.class);

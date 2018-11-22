@@ -41,21 +41,10 @@ import org.w3c.dom.Element;
  */
 public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
-
+    /** Schema type name. */
     /** Schema type name - resolver: . */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ScriptedAttribute");
-
-    /** Script file element name. */
-    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile");
-
-    /** Inline Script element name. */
-    @Nonnull public static final QName SCRIPT_ELEMENT_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
     /** Script file element name. */
     @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME_RESOLVER =
@@ -87,10 +76,8 @@ public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeD
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
 
-        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_AD);
-        scriptElem.addAll(ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_RESOLVER));
-        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_AD);
-        scriptFileElem.addAll(ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_RESOLVER));
+        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_RESOLVER);
+        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_RESOLVER);
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 log.warn("{} definition contains both <Script> and <ScriptFile> elements, taking the "

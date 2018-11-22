@@ -34,7 +34,7 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
     @Test(enabled = false) public void noAttr() throws ComponentInitializationException {
 
         final TemplateAttributeDefinition defn =
-                getAttributeDefn("templateNoAttributes.xml", "externalBeans.xml", TemplateAttributeDefinition.class);
+                getAttributeDefn("resolver/templateNoAttributes.xml", "externalBeans.xml", TemplateAttributeDefinition.class);
 
         Assert.assertEquals(defn.getId(), "templateId");
         Assert.assertNull(defn.getTemplateText());
@@ -42,24 +42,6 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
     }
 
     @Test public void withAttr() throws ComponentInitializationException {
-
-        try {
-            getAttributeDefn("templateAttributes.xml", "externalBeans.xml", TemplateAttributeDefinition.class);
-            Assert.fail("should not find bean");
-        } catch (final BeanCreationException e) {
-            // OK
-        }
-        final TemplateAttributeDefinition defn =
-                getAttributeDefn("templateAttributes.xml", "velocity2.xml", TemplateAttributeDefinition.class);
-
-        Assert.assertEquals(defn.getId(), "templateIdAttr");
-        Assert.assertEquals(defn.getTemplateText(), "TheTemplate");
-        Assert.assertEquals(defn.getSourceAttributes().size(), 2);
-        Assert.assertTrue(defn.getSourceAttributes().contains("att1"));
-        Assert.assertTrue(defn.getSourceAttributes().contains("att2"));
-    }
-
-    @Test public void resolver() throws ComponentInitializationException {
 
         final TemplateAttributeDefinition defn =
                 getAttributeDefn("resolver/templateAttributes.xml", "velocity2.xml", TemplateAttributeDefinition.class);

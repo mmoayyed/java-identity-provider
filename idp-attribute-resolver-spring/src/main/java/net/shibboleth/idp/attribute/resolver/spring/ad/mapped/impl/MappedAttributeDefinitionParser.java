@@ -23,15 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AbstractWarningAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -40,22 +31,21 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /** Bean definition parser for a {@link MappedAttributeDefinition}. */
-public class MappedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class MappedAttributeDefinitionParser extends BaseResolverPluginParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Mapped");
-
-    /** Schema type name - resolver:. */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Mapped");
 
-    /** return Value element name - ad: (legacy). */
-    @Nonnull public static final QName DEFAULT_VALUE_ELEMENT_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "DefaultValue");
-
-    /** return Value element name - resolver:. */
+    /** return Value element name. */
     @Nonnull public static final QName DEFAULT_VALUE_ELEMENT_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DefaultValue");
 
@@ -73,8 +63,7 @@ public class MappedAttributeDefinitionParser extends AbstractWarningAttributeDef
         super.doParse(config, parserContext, builder);
 
         final List<Element> defaultValueElements =
-                ElementSupport.getChildElements(config, DEFAULT_VALUE_ELEMENT_NAME_AD);
-        defaultValueElements.addAll(ElementSupport.getChildElements(config, DEFAULT_VALUE_ELEMENT_NAME_RESOLVER));
+                ElementSupport.getChildElements(config, DEFAULT_VALUE_ELEMENT_NAME_RESOLVER);
         String defaultValue = null;
         String passThru = null;
 
@@ -94,8 +83,8 @@ public class MappedAttributeDefinitionParser extends AbstractWarningAttributeDef
             }
         }
 
-        final List<Element> valueMapElements = ElementSupport.getChildElements(config, ValueMapParser.TYPE_NAME_AD);
-        valueMapElements.addAll(ElementSupport.getChildElements(config, ValueMapParser.TYPE_NAME_RESOLVER));
+        final List<Element> valueMapElements = ElementSupport.getChildElements(config, 
+                ValueMapParser.TYPE_NAME_RESOLVER);
         if (null == valueMapElements || valueMapElements.size() == 0) {
             throw new BeanCreationException(
                     "Attribute Definition '" + getDefinitionId() + "' At least one ValueMap must be specified");
@@ -109,11 +98,6 @@ public class MappedAttributeDefinitionParser extends AbstractWarningAttributeDef
 
         builder.addPropertyValue("defaultValue", defaultValue);
         builder.addPropertyValue("valueMaps", valueMaps);
-    }
-
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
     }
 
 }

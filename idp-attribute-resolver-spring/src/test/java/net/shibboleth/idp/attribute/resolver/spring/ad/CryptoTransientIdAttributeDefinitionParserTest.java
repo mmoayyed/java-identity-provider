@@ -37,18 +37,6 @@ public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttribut
         return getAttributeDefn(fileName, "sealer.xml", TransientIdAttributeDefinition.class);
     }
 
-    @Test public void withTime() throws ComponentInitializationException {
-
-        TransientIdAttributeDefinition defn = getDefinition("cryptoWithTime.xml");
-
-        Assert.assertTrue(defn.isInitialized());
-
-        CryptoTransientIdGenerationStrategy strategy =
-                (CryptoTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
-
-        Assert.assertEquals(strategy.getIdLifetime(), 3 * 60 * 1000);
-    }
-
     @Test public void resolver() throws ComponentInitializationException {
 
         TransientIdAttributeDefinition defn = getDefinition("resolver/cryptoWithTime.xml");

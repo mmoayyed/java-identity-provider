@@ -34,18 +34,6 @@ public class RegexSplitAttributeDefinitionParserTest extends BaseAttributeDefini
 
     @Test public void defaultCase() {
         RegexSplitAttributeDefinition attrDef =
-                getAttributeDefn("regexDefault.xml", RegexSplitAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "regexSplitDefault");
-
-        Pattern pat = attrDef.getRegularExpression();
-
-        Assert.assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
-        Assert.assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
-    }
-
-    @Test public void resolver() {
-        RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("resolver/regexDefault.xml", RegexSplitAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "regexSplitDefault");

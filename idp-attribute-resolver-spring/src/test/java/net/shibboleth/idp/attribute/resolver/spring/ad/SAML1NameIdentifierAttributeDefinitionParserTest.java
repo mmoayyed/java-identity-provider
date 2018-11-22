@@ -39,15 +39,6 @@ public class SAML1NameIdentifierAttributeDefinitionParserTest extends BaseAttrib
     }
 
     @Test public void attributes() {
-        SAML1NameIdentifierAttributeDefinition attrDef =
-                getAttributeDefn("saml1NameIdAttributes.xml", SAML1NameIdentifierAttributeDefinition.class);
-
-        Assert.assertEquals(attrDef.getId(), "SAML1NameIdentifierAttributes");
-        Assert.assertEquals(attrDef.getNameIdFormat(), "format");
-        Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
-    }
-
-    @Test public void resolver() {
         SAML1NameIdentifierAttributeDefinition attrDef = getAttributeDefn("resolver/saml1NameIdentifierAttributes.xml",
                 SAML1NameIdentifierAttributeDefinition.class);
 

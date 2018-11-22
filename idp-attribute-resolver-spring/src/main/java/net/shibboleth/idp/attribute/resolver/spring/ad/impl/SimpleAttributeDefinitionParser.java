@@ -31,11 +31,7 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamesp
 /** Bean definition parser for a {@link SimpleAttributeDefinition}. */
 public class SimpleAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
-    /** Schema type names - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
-
-    /** Schema type names - ad: (legacy). */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Simple");
 

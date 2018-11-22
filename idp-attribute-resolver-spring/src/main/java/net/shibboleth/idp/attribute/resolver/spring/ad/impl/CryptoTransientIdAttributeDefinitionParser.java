@@ -43,11 +43,7 @@ import org.w3c.dom.Element;
 @SuppressWarnings("deprecation")
 public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name - ad: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "CryptoTransientId");
-
-    /** Schema type name - resolver: . */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "CryptoTransientId");
 
