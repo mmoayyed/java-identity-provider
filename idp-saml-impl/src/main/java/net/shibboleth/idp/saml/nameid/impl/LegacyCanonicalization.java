@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.security.auth.Subject;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -30,8 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -41,7 +38,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Action to fail if asked to perform C14N ..
@@ -51,9 +47,6 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyCanonicalization.class);
     
-    /** Service used to get the resolver used to fetch attributes. */
-    @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
-
     /**
      * Constructor.
      * 
@@ -61,7 +54,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      */
     public LegacyCanonicalization(@Nonnull @ParameterName(name="resolverService") 
                         final ReloadableService<AttributeResolver> resolverService) {
-        attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
+        Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
     }
     
 //CheckStyle: ReturnCount OFF
@@ -69,47 +62,8 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        ServiceableComponent<AttributeResolver> component = null;
-        try {
-            component = attributeResolverService.getServiceableComponent();
-            if (null == component) {
-                log.error("{} Error resolving PrincipalConnector: Invalid Attribute resolver configuration.",
-                        getLogPrefix());
-                c14nContext.setException(new SubjectCanonicalizationException(
-                        "Error resolving PrincipalConnectore: Invalid Attribute resolver configuration."));
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return;
-            }
-
-            final AttributeResolver attributeResolver = component.getComponent();
-            if (!(attributeResolver instanceof LegacyPrincipalDecoder)) {
-                log.info("{} Attribute Resolver did not implement LegacyPrincipalDecoder.", getLogPrefix());
-                c14nContext.setException(new SubjectCanonicalizationException(
-                        "Attribute Resolver did not implement LegacyPrincipalDecoder."));
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return;
-            }
-
-            final LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) attributeResolver;
-
-            final String decodedPrincipal = decoder.canonicalize(c14nContext);
-            if (null == decodedPrincipal) {
-                log.info("{} Legacy Principal Decoding returned no value", getLogPrefix());
-                c14nContext.setException(new SubjectCanonicalizationException(
-                        "Legacy Principal Decoding returned no value"));
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                return;
-            }
-            
-            c14nContext.setPrincipalName(decodedPrincipal);
-        } catch (final ResolutionException e) {
-            c14nContext.setException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
-        }
+        log.error("legacy C14N no supported");
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
     }
 //CheckStyle: ReturnCount ON
     
@@ -126,8 +80,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
     }
 
     /**
-     * A predicate that determines if this action can run or not - it does this by inspecting the attribute resolver for
-     * principal connectors.
+     * A predicate that determines if this action can run or not.  This can never run.
      */
     public static class ActivationCondition implements Predicate<ProfileRequestContext> {
 
@@ -146,54 +99,10 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
         /**
          * {@inheritDoc}
          * 
-         * <p>Iff there is a valid service and there are no parsing errors and the service does understand
-         * principal connectors and there were some configured we will proceed.</p>
+         * <p>Never run this</p>
          */
         public boolean test(@Nullable final ProfileRequestContext input) {
-
-            if (null == input) {
-                return false;
-            }
-            
-            final SubjectCanonicalizationContext c14nContext =
-                    input.getSubcontext(SubjectCanonicalizationContext.class);
-            if (null == c14nContext) {
-                return false;
-            }
-
-            final Subject subject = c14nContext.getSubject();
-            if (null == subject) {
-                return false;
-            }
-            
-            final Set<NameIDPrincipal> nameIDs = subject.getPrincipals(NameIDPrincipal.class);
-            final Set<NameIdentifierPrincipal> nameIdentifiers = subject.getPrincipals(NameIdentifierPrincipal.class);
-            if (1 != nameIDs.size() + nameIdentifiers.size()) {
-                return false;
-            }
-            
-            if (null == attributeResolverService) {
-                return false;
-            }
-
-            ServiceableComponent<AttributeResolver> component = null;
-            try {
-                component = attributeResolverService.getServiceableComponent();
-                if (null == component) {
-                    return false;
-                }
-
-                final AttributeResolver attributeResolver = component.getComponent();
-                if (!(attributeResolver instanceof LegacyPrincipalDecoder)) {
-                    return false;
-                }
-                return ((LegacyPrincipalDecoder) attributeResolver).hasValidConnectors();
-            } finally {
-                if (null != component) {
-                    component.unpinComponent();
-                }
-            }
+            return false;
         }
     }
-
 }

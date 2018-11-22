@@ -31,8 +31,6 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
-import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
-import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrinicpalConnectorCanonicalizer;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceException;
