@@ -10,8 +10,8 @@
 		</Attribute>
 	</DataConnector>
 
-	<AttributeDefinition id="dn1" xsi:type="Simple" sourceAttributeID="dn1">
-    	<Dependency ref="staticAttributes"/>
+	<AttributeDefinition id="dn1" xsi:type="Simple" >
+	<InputDataConnector ref="staticAttributes" attributeNames="dn1"></InputDataConnector>
 		<AttributeEncoder xsi:type="SAML2String"
 			name="urn:mace:dir:attribute-def:displayName" nameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri"
 			friendlyName="dn1" />
