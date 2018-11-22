@@ -31,17 +31,6 @@ import org.testng.annotations.Test;
  */
 public class SAML1ScopedStringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void legacy() {
-        final SAML1ScopedStringAttributeEncoder encoder =
-                getAttributeEncoder("saml1Scoped.xml", SAML1ScopedStringAttributeEncoder.class);
-
-        Assert.assertEquals(encoder.getName(), "SAML1_SCOPED_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_SCOPED_ATTRIBUTE_NAME_FORMAT");
-        Assert.assertEquals(encoder.getScopeType(),"attribute");
-        Assert.assertEquals(encoder.getScopeAttributeName(),"saml1ScopeAttrib");
-        Assert.assertEquals(encoder.getScopeDelimiter(),"#@#");
-    }
-    
     @Test public void resolver() {
         final SAML1ScopedStringAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1Scoped.xml", SAML1ScopedStringAttributeEncoder.class);

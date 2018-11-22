@@ -35,11 +35,7 @@ import org.w3c.dom.Element;
  */
 public class SAML1Base64AttributeEncoderParser extends AbstractWarningAttributeEncoderParser {
 
-    /** Schema type name: enc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_ENC = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, 
-            "SAML1Base64");
-
-    /** Schema type name: resolver:. */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "SAML1Base64");
 

@@ -44,11 +44,7 @@ import org.w3c.dom.Element;
  */
 public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type- enc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_ENC = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
-            "SAML1StringNameIdentifier");
-
-    /** Schema type- resolver:. */
+    /** Schema type name.. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "SAML1StringNameIdentifier");
 

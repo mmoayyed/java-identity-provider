@@ -30,15 +30,7 @@ import org.testng.annotations.Test;
  * Test for {@link SAML1Base64AttributeEncoderParser}.
  */
 public class SAML1Base64AttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
-
-    @Test public void legacy() {
-        final SAML1ByteAttributeEncoder encoder =
-                getAttributeEncoder("saml1Base64.xml", SAML1ByteAttributeEncoder.class);
-
-        Assert.assertEquals(encoder.getName(), "SAML1_BASE64_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_BASE64_ATTRIBUTE_NAME_SPACE");
-    }
-    
+  
     @Test public void resolver() {
         final SAML1ByteAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1Base64.xml", SAML1ByteAttributeEncoder.class);

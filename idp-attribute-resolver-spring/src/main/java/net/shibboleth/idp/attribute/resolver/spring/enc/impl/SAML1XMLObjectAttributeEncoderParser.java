@@ -33,11 +33,7 @@ import org.w3c.dom.Element;
 /** Spring Bean Definition Parser for {@link SAML1XMLObjectAttributeEncoder}. */
 public class SAML1XMLObjectAttributeEncoderParser extends AbstractWarningAttributeEncoderParser {
 
-    /** Schema type name- enc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_ENC =
-            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
-
-    /** Schema type name- enc: (legacy). */
+    /** Schema type name.. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SAML1XMLObject");
 

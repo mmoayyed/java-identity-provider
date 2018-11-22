@@ -31,15 +31,6 @@ import org.testng.annotations.Test;
  */
 public class SAML2XMLObjectAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void legacy() {
-        final SAML2XMLObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml2XmlObject.xml", SAML2XMLObjectAttributeEncoder.class);
-
-        Assert.assertEquals(encoder.getName(), "Saml2XmlObject_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getFriendlyName(),"Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNameFormat(),"Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
-    }
-    
     @Test public void resolver() {
         final SAML2XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml2XmlObject.xml", SAML2XMLObjectAttributeEncoder.class);

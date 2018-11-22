@@ -35,11 +35,7 @@ import org.w3c.dom.Element;
  */
 public class SAML1ScopedStringAttributeEncoderParser extends AbstractWarningScopedAttributeEncoderParser {
 
-    /** Schema type name - enc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_ENC = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
-            "SAML1ScopedString");
-
-    /** Schema type name - resolver:. */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "SAML1ScopedString");
 

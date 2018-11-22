@@ -34,16 +34,7 @@ import com.google.common.base.Predicates;
  * Test for {@link SAML2StringAttributeEncoderParser}.
  */
 public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
-
-    @Test public void legacy() {
-        final SAML2StringAttributeEncoder encoder =
-                getAttributeEncoder("saml2String.xml", SAML2StringAttributeEncoder.class);
-
-        Assert.assertEquals(encoder.getName(), "Saml2String_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getFriendlyName(),"Saml2String_ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNameFormat(),"Saml2String_ATTRIBUTE_NAME_FORMAT");
-    }
-    
+  
     @Test public void resolver() {
         final SAML2StringAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml2String.xml", SAML2StringAttributeEncoder.class);

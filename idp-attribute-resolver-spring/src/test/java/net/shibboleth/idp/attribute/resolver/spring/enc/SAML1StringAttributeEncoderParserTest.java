@@ -31,14 +31,6 @@ import org.testng.annotations.Test;
  */
 public class SAML1StringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void legacy() {
-        final SAML1StringAttributeEncoder encoder =
-                getAttributeEncoder("saml1String.xml", SAML1StringAttributeEncoder.class);
-
-        Assert.assertEquals(encoder.getName(), "SAML1_STRING_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_STRING_ATTRIBUTE_NAME_SPACE");
-    }
-    
     @Test public void newNameSpace() {
         final SAML1StringAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1String.xml", SAML1StringAttributeEncoder.class);

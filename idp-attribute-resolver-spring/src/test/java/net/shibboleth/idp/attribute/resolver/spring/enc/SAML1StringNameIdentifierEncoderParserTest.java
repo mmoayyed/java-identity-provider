@@ -34,14 +34,6 @@ import com.google.common.base.Predicates;
 @SuppressWarnings("deprecation")
 public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void legacy() {
-        final SAML1StringNameIdentifierEncoder encoder =
-                getAttributeEncoder("saml1StringNameIdentifier.xml", SAML1StringNameIdentifierEncoder.class);
-
-        Assert.assertEquals(encoder.getNameFormat(), "NAMEIDENTIFIER_FORMAT");
-        Assert.assertEquals(encoder.getNameQualifier(),"NAMEIDENTIFIER_QUALIFIER");
-    }
-    
     @Test public void resolver() {
         final SAML1StringNameIdentifierEncoder encoder =
                 getAttributeEncoder("resolver/saml1StringNameIdentifier.xml", SAML1StringNameIdentifierEncoder.class);

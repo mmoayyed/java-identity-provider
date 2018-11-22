@@ -30,15 +30,7 @@ import org.testng.annotations.Test;
  */
 @SuppressWarnings("deprecation")
 public class SAML2StringNameIDEncoderParserTest extends BaseAttributeDefinitionParserTest {
-
-    @Test public void legacy() {
-        final SAML2StringNameIDEncoder encoder =
-                getAttributeEncoder("saml2StringNameID.xml",  SAML2StringNameIDEncoder.class);
-
-        Assert.assertEquals(encoder.getNameFormat(), "S2_NAMEID_FORMAT");
-        Assert.assertEquals(encoder.getNameQualifier(),"S2_NAMEID_QUALIFIER");
-    }
-    
+  
     @Test public void resolver() {
         final SAML2StringNameIDEncoder encoder =
                 getAttributeEncoder("resolver/saml2StringNameID.xml",  SAML2StringNameIDEncoder.class);

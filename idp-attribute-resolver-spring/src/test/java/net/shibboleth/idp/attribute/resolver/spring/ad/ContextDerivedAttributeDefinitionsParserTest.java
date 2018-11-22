@@ -70,18 +70,6 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
         return ctx;
     }
 
-    @Test public void simple() throws ResolutionException {
-        final AttributeDefinition attrDef =
-                getAttributeDefn("subjectDerived.xml", ContextDerivedAttributeDefinition.class);
-
-        final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
-
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
-
-    }
-
     @Test public void resolverSubject() throws ResolutionException {
         final AttributeDefinition attrDef =
                 getAttributeDefn("resolver/subjectDerived.xml", ContextDerivedAttributeDefinition.class);
