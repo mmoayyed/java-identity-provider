@@ -34,10 +34,7 @@ import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -47,9 +44,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
- * Action to perform c14n based on the contents of the attribute-resolver.xml file, this
- * delegates the work to an {@link AttributeResolver} instance that supports the
- * {@link LegacyPrincipalDecoder} interface.
+ * Action to fail if asked to perform C14N ..
  */
 public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction {
 

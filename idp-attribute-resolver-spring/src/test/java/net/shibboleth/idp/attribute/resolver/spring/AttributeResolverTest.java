@@ -339,19 +339,6 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         ctx.setRequesterId("REQ");
         ctx.setResponderId("RES");
 
-        try {
-            serviceableComponent = attributeResolverService.getServiceableComponent();
-
-            final AttributeResolver resolver = serviceableComponent.getComponent();
-            final LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
-            Assert.assertFalse(decoder.hasValidConnectors());
-            Assert.assertNull(decoder.canonicalize(ctx));
-
-        } finally {
-            if (null != serviceableComponent) {
-                serviceableComponent.unpinComponent();
-            }
-        }
     }
 
     @Test public void selective() throws ResolutionException {

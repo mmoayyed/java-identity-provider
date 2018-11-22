@@ -75,13 +75,6 @@ public class AttributeResolverParser implements BeanDefinitionParser {
         children = configChildren.get(AbstractDataConnectorParser.ELEMENT_NAME);
         SpringSupport.parseCustomElements(children, context);
 
-        children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
-        if (null != children && !children.isEmpty()) {
-            DeprecationSupport.warn(ObjectType.ELEMENT, "<PrincipalConnector>", 
-                    context.getReaderContext().getResource().getDescription(), 
-                    "(https://wiki.shibboleth.net/confluence/display/IDP30/NameIDConsumptionConfiguration)");
-        }
-        SpringSupport.parseCustomElements(children, context);
         return null;
     }
 

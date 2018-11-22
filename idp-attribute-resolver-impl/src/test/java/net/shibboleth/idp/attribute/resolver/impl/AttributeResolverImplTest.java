@@ -42,7 +42,6 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
-import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -876,47 +875,13 @@ public class AttributeResolverImplTest {
         }
     }
 
-    @Test public void testPrincipalConnector() throws ComponentInitializationException, ResolutionException {
-        final LazySet<AttributeDefinition> definitions = new LazySet<>();
-
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
-        resolver.initialize();
-
-        Assert.assertNull(resolver.canonicalize(null));
-
-        resolver =
-                newAttributeResolverWithPrincipalConnector("foo", definitions, null,
-                        new LegacyPrincipalDecoder() {
-
-                            @Override @Nullable public String canonicalize(final SubjectCanonicalizationContext context)
-                                    throws ResolutionException {
-                                return "Principal";
-                            }
-
-                            @Override public boolean hasValidConnectors() {
-                                return true;
-                            }
-                        });
-        resolver.initialize();
-        Assert.assertEquals(resolver.canonicalize(null), "Principal");
-    }
-
-    public static AttributeResolverImpl newAttributeResolverWithPrincipalConnector(@Nonnull @NotEmpty final String resolverId,
+    public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
             @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
-            @Nullable @NullableElements final Collection<DataConnector> connectors,
-            @Nullable final LegacyPrincipalDecoder principalResolver) {
+            @Nullable @NullableElements final Collection<DataConnector> connectors) {
         final AttributeResolverImpl result = new AttributeResolverImpl();
         result.setId(resolverId);
         result.setAttributeDefinitions(definitions);
         result.setDataConnectors(connectors);
-        result.setPrincipalDecoder(principalResolver);
         return result;
     }
-
-    public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
-            @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
-            @Nullable @NullableElements final Collection<DataConnector> connectors) {
-        return newAttributeResolverWithPrincipalConnector(resolverId, definitions, connectors, null);
-    }
-
 }

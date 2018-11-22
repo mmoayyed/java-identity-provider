@@ -47,7 +47,6 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
-import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
@@ -75,12 +74,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * {@link net.shibboleth.utilities.java.support.resolver.Resolver} which in about summoning up bits of generic data from
  * the configuration (usually the metadata) in response to specific
  * {@link net.shibboleth.utilities.java.support.resolver.Criterion}s. <br>
- * The implementation also implements {@link LegacyPrincipalDecoder} in support of the deprecated
- * &lt;PrincipalConnector&gt;
- * */
+ */
 @ThreadSafe
 public class AttributeResolverImpl extends AbstractServiceableComponent<AttributeResolver> implements
-        AttributeResolver, LegacyPrincipalDecoder {
+        AttributeResolver {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
@@ -93,10 +90,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /** cache for the log prefix - to save multiple recalculations. */
     @NonnullAfterInit private String logPrefix;
-
-    /** The Principal mapper. */
-    @Nullable private LegacyPrincipalDecoder principalConnector;
-    
+  
     /** Whether to strip null attribute values. */
     private boolean stripNulls;
     
@@ -192,15 +186,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         stripNulls = doStripNulls;
-    }
-
-    /** Set the Decoder.
-     * @param principalResolver code to resolve the principal
-     */
-    public void setPrincipalDecoder(@Nullable final LegacyPrincipalDecoder principalResolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        principalConnector = principalResolver;
     }
 
     /**
@@ -615,20 +600,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         return this;
     }
 
-    /** {@inheritDoc} */
-    @Override @Nullable public String canonicalize(@Nonnull final SubjectCanonicalizationContext context)
-            throws ResolutionException {
-        if (null == principalConnector) {
-            return null;
-        }
-        return principalConnector.canonicalize(context);
-    }
-
-    /** {@inheritDoc} */
-    @Override public boolean hasValidConnectors() {
-        return principalConnector.hasValidConnectors();
-    }
-    
     /**
      * Conditionally start a timer at the beginning of the resolution process.
      * 

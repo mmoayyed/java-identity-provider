@@ -70,22 +70,17 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
     /** {@inheritDoc} */
     @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable final ApplicationContext appContext) {
 
-        final Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
-        final PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer();
-        pcc.setConnectors(pcs);
-
         final Collection<AttributeDefinition> definitions =
                 appContext.getBeansOfType(AttributeDefinition.class).values();
 
         final Collection<DataConnector> connectors = appContext.getBeansOfType(DataConnector.class).values();
 
-        log.debug("Creating Attribute Resolver {} with {} Attribute Definition(s), {} Data Connector(s)"
-                + " and {} Principal Connector(s)", getId(), definitions.size(), connectors.size(), pcs.size());
+        log.debug("Creating Attribute Resolver {} with {} Attribute Definition(s) and {} Data Connector(s)",
+                getId(), definitions.size(), connectors.size());
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl();
         resolver.setAttributeDefinitions(definitions);
         resolver.setDataConnectors(connectors);
-        resolver.setPrincipalDecoder(pcc);
         resolver.setId(getId());
         resolver.setStripNulls(isStripNulls());
         resolver.setApplicationContext(appContext);

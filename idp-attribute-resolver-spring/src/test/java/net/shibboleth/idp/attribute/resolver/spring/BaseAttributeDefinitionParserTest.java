@@ -34,7 +34,6 @@ import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy;
-import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -202,27 +201,6 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         return getBean(ENCODER_FILE_PATH + fileName, claz, context);
 
-    }
-
-    protected PrincipalConnector getPrincipalConnector(final String fileName) {
-
-        final GenericApplicationContext context = new GenericApplicationContext();
-        setTestContext(context);
-        context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
-
-        return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
-    }
-
-    protected PrincipalConnector getPrincipalConnector(final String fileName, final String beanFileName) {
-
-        final GenericApplicationContext context = new GenericApplicationContext();
-        setTestContext(context);
-        context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
-        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
-
-        return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
     }
 
     static public AttributeResolverImpl getResolver(final ApplicationContext appCtx) {
