@@ -61,7 +61,6 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMa
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -79,11 +78,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
  */
 public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser {
 
-    /** Schema type name - dc: (Legacy). */
-    @Nonnull public static final QName
-        TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
-
-    /** Schema type name - resolver: . */
+    /** Schema type - resolver. */
     @Nonnull public static final QName
         TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
@@ -165,9 +160,7 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
         final ManagedMap<String, String> props = new ManagedMap<>();
         final List<Element> propertyElements =
                 ElementSupport.getChildElements(config,
-                        new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPProperty"));
-        propertyElements.addAll(ElementSupport.getChildElements(config,
-                        new QName(AttributeResolverNamespaceHandler.NAMESPACE, "LDAPProperty")));
+                        new QName(AttributeResolverNamespaceHandler.NAMESPACE, "LDAPProperty"));
         for (final Element e : propertyElements) {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
@@ -351,10 +344,9 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
                     BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactoryBean.class);
 
             final List<Element> trustElements =
-                    ElementSupport.getChildElements(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "StartTLSTrustCredential"));
-            trustElements.addAll(ElementSupport.getChildElements(configElement, new QName(
-                    AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
+                    ElementSupport.getChildElementsByTagNameNS(configElement,
+                            AttributeResolverNamespaceHandler.NAMESPACE,
+                            "StartTLSTrustCredential");
             final String trustResource =
                     StringSupport.trimOrNull(AttributeSupport.getAttributeValue(configElement, null, "trustFile"));
             if (trustResource != null) {
@@ -376,10 +368,8 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
             }
 
             final List<Element> authElements =
-                    ElementSupport.getChildElements(configElement,
-                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential"));
-            authElements.addAll(ElementSupport.getChildElements(configElement,
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")));
+                    ElementSupport.getChildElementsByTagNameNS(configElement,
+                            AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential");
             final String authKey =
                     StringSupport.trimOrNull(AttributeSupport.getAttributeValue(configElement, null, "authKey"));
             final String authCert =
@@ -422,10 +412,8 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
          * @return the filter or null.
          */
         @Nullable private String getFilterText() {
-            final List<Element> filterElements = ElementSupport.getChildElements(configElement,
-                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
-            filterElements.addAll(ElementSupport.getChildElements(configElement,
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "FilterTemplate")));
+            final List<Element> filterElements = ElementSupport.getChildElementsByTagNameNS(configElement,
+                    AttributeResolverNamespaceHandler.NAMESPACE, "FilterTemplate");
             
             final String filter;
             if (!filterElements.isEmpty()) {
@@ -515,10 +503,8 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
             handlers.addConstructorArgValue(lowercaseAttributeNames);
             searchExecutor.addPropertyValue("searchEntryHandlers", handlers.getBeanDefinition());
 
-            final List<Element> returnAttrsElements = ElementSupport.getChildElements(configElement, 
-                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "ReturnAttributes"));
-            returnAttrsElements.addAll(ElementSupport.getChildElements(configElement, 
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ReturnAttributes")));
+            final List<Element> returnAttrsElements = ElementSupport.getChildElementsByTagNameNS(configElement, 
+                    AttributeResolverNamespaceHandler.NAMESPACE, "ReturnAttributes");
             
             if (!returnAttrsElements.isEmpty()) {
                 if (returnAttrsElements.size() > 1) {
@@ -541,10 +527,8 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
          */
         @Nullable Element getConnectionPoolElement() {
             final List<Element> poolConfigElements =
-                    ElementSupport.getChildElements(configElement,
-                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
-            poolConfigElements.addAll(ElementSupport.getChildElements(configElement,
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ConnectionPool")));
+                    ElementSupport.getChildElementsByTagNameNS(configElement,
+                            AttributeResolverNamespaceHandler.NAMESPACE, "ConnectionPool");
             if (poolConfigElements.isEmpty()) {
                 return null;
             }
@@ -691,11 +675,8 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
 
             final BeanDefinitionBuilder mapper =
                     BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValueMappingStrategy.class);
-            final List<Element> columns =
-                    ElementSupport.getChildElementsByTagNameNS(configElement, 
-                            DataConnectorNamespaceHandler.NAMESPACE, "Column");
-            columns.addAll(ElementSupport.getChildElementsByTagNameNS(configElement,
-                            AttributeResolverNamespaceHandler.NAMESPACE, "Column"));
+            final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
+                            AttributeResolverNamespaceHandler.NAMESPACE, "Column");
 
             if (!columns.isEmpty()) {
                 final ManagedMap renamingMap = new ManagedMap();

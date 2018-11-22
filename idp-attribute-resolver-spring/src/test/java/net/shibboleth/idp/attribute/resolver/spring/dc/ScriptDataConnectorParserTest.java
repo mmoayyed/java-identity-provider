@@ -41,15 +41,6 @@ import org.testng.annotations.Test;
  */
 public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void simple() throws ComponentInitializationException, ResolutionException {
-
-        if (TestSupport.isJavaV8OrLater()) {
-            testConnector("scriptedAttributes-8.xml");
-        } else {
-            testConnector("scriptedAttributes.xml");
-        }
-    }
-
     @Test public void resolver() throws ComponentInitializationException, ResolutionException {
 
         if (TestSupport.isJavaV8OrLater()) {

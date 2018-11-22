@@ -113,7 +113,7 @@
         </attribute>
     </complexType>
 
-    <element name="DataConnector" type="resolver:FlattenedBaseDataConnectorType">
+    <element name="DataConnector" type="resolver:BaseDataConnectorType">
         <annotation>
             <documentation>
                 Defines a data connector which is used to pull information from local
@@ -122,7 +122,7 @@
         </annotation>
     </element>
 
-    <complexType name="FlattenedBaseDataConnectorType">
+    <complexType name="BaseDataConnectorType">
         <annotation>
             <documentation>
                 Data connectors pull information from local infrastructure, such as
@@ -160,24 +160,6 @@
                         <documentation>Bean Name of a list of bean post processors.</documentation>
                     </annotation>
                 </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="BaseDataConnectorType">
-        <annotation>
-            <documentation>
-                Data connectors pull information from local infrastructure, such as
-                databases and LDAP directories, and make these raw attributes available
-                to attribute definitions for finishing.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
-                <sequence>
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0"/>
-                </sequence>
             </extension>
         </complexContent>
     </complexType>
@@ -795,7 +777,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -850,7 +832,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -1088,7 +1070,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -1212,7 +1194,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -1379,7 +1361,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -1426,7 +1408,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
@@ -1468,7 +1450,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseDataConnectorType">
+            <extension base="resolver:BaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>

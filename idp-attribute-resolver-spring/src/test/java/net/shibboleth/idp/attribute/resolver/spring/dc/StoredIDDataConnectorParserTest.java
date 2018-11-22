@@ -59,10 +59,4 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
         Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         testIt(connector);
     }
-
-    @Test public void resolver() throws ComponentInitializationException {
-        final StoredIDDataConnector connector = getDataConnector("stored.xml", StoredIDDataConnector.class);
-        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
-        testIt(connector);
-    }
 }

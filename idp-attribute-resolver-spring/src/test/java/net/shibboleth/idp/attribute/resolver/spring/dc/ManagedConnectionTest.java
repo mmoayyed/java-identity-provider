@@ -54,18 +54,6 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
             NamingManager.setInitialContextFactoryBuilder(new ContextFactoryBuilder() );
         }
 
-        final  StoredIDDataConnector connector = getDataConnector("containerManagedConnection.xml", StoredIDDataConnector.class);
-        MyDataSource source = (MyDataSource) connector.getDataSource();
-        assertEquals(source.getEnvironment().size(), 2);
-        assertEquals(source.getEnvironment().get("foo"), "Bar");
-        assertEquals(source.getEnvironment().get("yellow"), "green");
-    }
-
-    @Test(enabled=false) public void resolver() throws ComponentInitializationException, NamingException {
-        if (!NamingManager.hasInitialContextFactoryBuilder()) {
-            NamingManager.setInitialContextFactoryBuilder(new ContextFactoryBuilder() );
-        }
-
         final  StoredIDDataConnector connector = getDataConnector("resolver/containerManagedConnection.xml", StoredIDDataConnector.class);
         MyDataSource source = (MyDataSource) connector.getDataSource();
         assertEquals(source.getEnvironment().size(), 2);

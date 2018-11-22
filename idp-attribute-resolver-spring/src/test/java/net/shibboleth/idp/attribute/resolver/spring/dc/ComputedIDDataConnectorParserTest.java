@@ -41,20 +41,6 @@ import org.testng.annotations.Test;
 public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {
-        final ComputedIDDataConnector connector = getDataConnector("computed.xml", ComputedIDDataConnector.class);
-        
-        Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
-        Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
-        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
-        Assert.assertEquals(connector.getAlgorithm(), "SHA");
-        Assert.assertEquals(connector.getEncoding(), Encoding.BASE64);
-
-        Assert.assertTrue(connector.isInitialized());
-    }
-    
-    @Test public void resolverAttribute() throws ComponentInitializationException {
         final ComputedIDDataConnector connector = getDataConnector("resolver/computed.xml", ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "computed");

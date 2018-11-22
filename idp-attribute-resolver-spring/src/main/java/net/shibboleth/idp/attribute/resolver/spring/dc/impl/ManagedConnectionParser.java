@@ -50,26 +50,14 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 /** Utility class for parsing v2 managed connection configuration. */
 public class ManagedConnectionParser {
 
-    /** dc:ContainerManagedConnection (legacy).*/
-    @Nonnull public static final QName CONTAINER_MANAGED_CONNECTION_DC =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection");
-    
     /** resolver:ContainerManagedConnection.*/
     @Nonnull public static final QName CONTAINER_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ContainerManagedConnection");
-    
-    /** dc: ApplicationManagedConnection (legacy).*/
-    @Nonnull public static final QName APPLICATION_MANAGED_CONNECTION_DC =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
     
     /** resolver: ApplicationManagedConnection (legacy).*/
     @Nonnull public static final QName APPLICATION_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
 
-    /** dc:BeanManagedConnection (legacy).*/
-    @Nonnull public static final QName BEAN_MANAGED_CONNECTION_DC =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "BeanManagedConnection");
-    
     /** resolver:BeanManagedConnection.*/
     @Nonnull public static final QName BEAN_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "BeanManagedConnection");
@@ -102,14 +90,10 @@ public class ManagedConnectionParser {
      */
     @Nullable public BeanDefinition createDataSource() {
         final List<Element> containerManagedElements =
-                ElementSupport.getChildElements(configElement, CONTAINER_MANAGED_CONNECTION_DC);
-        containerManagedElements.addAll(
-                ElementSupport.getChildElements(configElement, CONTAINER_MANAGED_CONNECTION_RESOLVER));
+                ElementSupport.getChildElements(configElement, CONTAINER_MANAGED_CONNECTION_RESOLVER);
 
         final List<Element> applicationManagedElements =
-                ElementSupport.getChildElements(configElement, APPLICATION_MANAGED_CONNECTION_DC);
-        applicationManagedElements.addAll(
-                ElementSupport.getChildElements(configElement, APPLICATION_MANAGED_CONNECTION_RESOLVER));
+                ElementSupport.getChildElements(configElement, APPLICATION_MANAGED_CONNECTION_RESOLVER);
 
         final List<Element> simpleManagedElements =
                 ElementSupport.getChildElements(configElement, SIMPLE_MANAGED_CONNECTION_RESOLVER);
@@ -149,9 +133,7 @@ public class ManagedConnectionParser {
 
         final ManagedMap<String, String> props = new ManagedMap<>();
         final List<Element> elements = ElementSupport.getChildElementsByTagNameNS(containerManagedElement,
-                DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty");
-        elements.addAll(ElementSupport.getChildElementsByTagNameNS(containerManagedElement,
-                AttributeResolverNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
+                AttributeResolverNamespaceHandler.NAMESPACE, "JNDIConnectionProperty");
         if (!elements.isEmpty()) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, "<JNDIConnectionProperty>", null, null);
             for (final Element e : elements) {
@@ -361,8 +343,8 @@ public class ManagedConnectionParser {
      */
     @Nullable public static String getBeanDataSourceID(@Nonnull final Element config) {
         
-        final List<Element> beanManagedElements = ElementSupport.getChildElements(config, BEAN_MANAGED_CONNECTION_DC);
-        beanManagedElements.addAll(ElementSupport.getChildElements(config, BEAN_MANAGED_CONNECTION_RESOLVER)); 
+        final List<Element> beanManagedElements = ElementSupport.getChildElements(config,
+                BEAN_MANAGED_CONNECTION_RESOLVER); 
         
         if (beanManagedElements.isEmpty()) {
             return null;
@@ -372,9 +354,8 @@ public class ManagedConnectionParser {
             LOG.warn("Only one <BeanManagedConnection> should be specified; the first one has been consulted");
         }
 
-        final List<Element> managedElements = ElementSupport.getChildElements(config, CONTAINER_MANAGED_CONNECTION_DC);
-        managedElements.addAll(ElementSupport.getChildElements(config, CONTAINER_MANAGED_CONNECTION_RESOLVER));
-        managedElements.addAll(ElementSupport.getChildElements(config, APPLICATION_MANAGED_CONNECTION_DC));
+        final List<Element> managedElements = ElementSupport.getChildElements(config, 
+                CONTAINER_MANAGED_CONNECTION_RESOLVER);
         managedElements.addAll(ElementSupport.getChildElements(config, APPLICATION_MANAGED_CONNECTION_RESOLVER));
         managedElements.addAll(ElementSupport.getChildElements(config, SIMPLE_MANAGED_CONNECTION_RESOLVER));
         

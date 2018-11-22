@@ -45,10 +45,7 @@ import org.w3c.dom.Element;
  */
 public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
 
-    /** Schema type name: dc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_AD = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
-
-    /** Schema type name: resolver: . */
+    /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
                 new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StoredId");
 

@@ -130,25 +130,6 @@ public class LDAPDataConnectorParserTest {
 
     @Test public void v2Config() throws Exception {
         final LDAPDataConnector dataConnector =
-                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml"});
-        Assert.assertNotNull(dataConnector);
-        doTest(dataConnector);
-        final StringAttributeValueMappingStrategy mappingStrategy =
-                (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
-
-        dataConnector.initialize();
-        final AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);
-        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
-        Assert.assertNotNull(attrs);
-        Assert.assertNotNull(attrs.get("entryDN"));
-    }
-    
-    @Test public void v2Resolver() throws Exception {
-        final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
@@ -416,29 +397,6 @@ public class LDAPDataConnectorParserTest {
     }
 
     @Test public void hybridConfig() throws Exception {
-        final LDAPDataConnector dataConnector =
-                getLdapDataConnector(new String[] {
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-hybrid.xml",
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-context.xml"});
-        Assert.assertNotNull(dataConnector);
-        doTest(dataConnector);
-
-        dataConnector.initialize();
-        final StringAttributeValueMappingStrategy mappingStrategy =
-                (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
-        final AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);
-        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
-        Assert.assertNotNull(attrs);
-        Assert.assertNull(attrs.get("homephone"));
-        Assert.assertNotNull(attrs.get("phonenumber"));
-        Assert.assertNotNull(attrs.get("entryDN"));
-    }
-
-    @Test public void flatHybridConfig() throws Exception {
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {
                         "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-hybrid.xml",

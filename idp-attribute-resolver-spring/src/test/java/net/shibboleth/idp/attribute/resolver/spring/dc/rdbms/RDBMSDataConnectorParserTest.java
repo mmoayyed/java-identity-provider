@@ -93,16 +93,6 @@ public class RDBMSDataConnectorParserTest {
         DatabaseTestingSupport.InitializeDataSourceFromFile(DATA_FILE, datasource);
     }
     
-    @Test public void v2Config() throws Exception {
-        final RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml");
-        Assert.assertNotNull(dataConnector);
-        doTest(dataConnector);
-        final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
-    }
-    
     @Test public void simpleConnector() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-simple.xml");
@@ -114,7 +104,7 @@ public class RDBMSDataConnectorParserTest {
     }
 
     
-    @Test public void resolver() throws Exception {
+    @Test public void v2Config() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2.xml");
         Assert.assertNotNull(dataConnector);
@@ -128,19 +118,7 @@ public class RDBMSDataConnectorParserTest {
     @Test public void hybridConfig() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-hybrid.xml",
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
-        Assert.assertNotNull(dataConnector);
-        doTest(dataConnector);
-        final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
-    }
-
-    @Test public void flatHybridConfig() throws Exception {
-        final RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector(
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-hybrid.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);

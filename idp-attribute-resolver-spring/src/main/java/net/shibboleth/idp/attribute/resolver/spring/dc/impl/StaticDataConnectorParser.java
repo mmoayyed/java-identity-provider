@@ -42,18 +42,11 @@ import org.w3c.dom.Element;
 /** Bean definition Parser for a {@link StaticDataConnector}. */
 public class StaticDataConnectorParser extends AbstractWarningDataConnectorParser {
 
-    /** Schema type name - dc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
-
-    /** Schema type name - resolver:. */
+    /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Static");
 
-    /** Local name of attribute - dc: (legacy). */
-    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME_DC =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
-
-    /** Local name of attribute - resolver:. */
+    /** Local name of attribute. */
     @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Attribute");
 
@@ -74,8 +67,7 @@ public class StaticDataConnectorParser extends AbstractWarningDataConnectorParse
                     FAILOVER_DATA_CONNECTOR_ELEMENT_NAME.getLocalPart(), TYPE_NAME_RESOLVER.toString(), null);
         }
         
-        final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_DC);
-        children.addAll(ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_RESOLVER));
+        final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_RESOLVER);
         final List<BeanDefinition> attributes = new ManagedList<>(children.size());
 
         for (final Element child : children) {
@@ -84,10 +76,8 @@ public class StaticDataConnectorParser extends AbstractWarningDataConnectorParse
             final BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.genericBeanDefinition(IdPAttribute.class);
             attributeDefn.addConstructorArgValue(attrId);
 
-            final List<Element> values =
-                    ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
-            values.addAll(ElementSupport.getChildElementsByTagNameNS(child, AttributeResolverNamespaceHandler.NAMESPACE,
-                    "Value"));
+            final List<Element> values = ElementSupport.getChildElementsByTagNameNS(
+                    child, AttributeResolverNamespaceHandler.NAMESPACE, "Value");
             final ManagedList<BeanDefinition> inValues = new ManagedList<>(values.size());
             for (final Element val : values) {
                 final BeanDefinitionBuilder value =

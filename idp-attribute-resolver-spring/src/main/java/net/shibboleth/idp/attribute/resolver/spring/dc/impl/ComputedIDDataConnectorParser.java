@@ -32,10 +32,7 @@ import org.w3c.dom.Element;
  */
 public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
 
-    /** Schema type - dc: (legacy). */
-    @Nonnull public static final QName TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
-
-    /** Schema type - resolver: . */
+    /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "ComputedId");
 

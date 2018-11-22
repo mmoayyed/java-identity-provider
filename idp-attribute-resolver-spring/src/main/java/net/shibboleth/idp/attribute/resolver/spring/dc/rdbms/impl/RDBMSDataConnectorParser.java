@@ -29,7 +29,6 @@ import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingSt
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -52,11 +51,7 @@ import org.w3c.dom.Element;
 /** Bean definition Parser for a {@link RDBMSDataConnector}. */
 public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser {
 
-    /** Schema type name - dc: (Legacy). */
-    @Nonnull public static final QName TYPE_NAME_DC =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
-
-    /** Schema type name - resolver:. */
+    /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RelationalDatabase");
 
@@ -231,10 +226,8 @@ public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser
                 templateBuilder.addPropertyValue("queryTimeout", duration.getBeanDefinition());
             }
 
-            final List<Element> queryTemplates = ElementSupport.getChildElements(configElement, 
-                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "QueryTemplate"));
-            queryTemplates.addAll(ElementSupport.getChildElements(configElement, 
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "QueryTemplate")));
+            final List<Element> queryTemplates = ElementSupport.getChildElementsByTagNameNS(configElement, 
+                    AttributeResolverNamespaceHandler.NAMESPACE, "QueryTemplate");
             
             if (queryTemplates.size() > 1) {
                 log.warn("{} A maximum of 1 <QueryTemplate> should be specified; the first one has been used",
@@ -274,9 +267,7 @@ public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser
                     BeanDefinitionBuilder.genericBeanDefinition(StringResultMappingStrategy.class);
 
             final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
-                    DataConnectorNamespaceHandler.NAMESPACE, "Column");
-            columns.addAll(ElementSupport.getChildElementsByTagNameNS(configElement,
-                    AttributeResolverNamespaceHandler.NAMESPACE, "Column"));
+                    AttributeResolverNamespaceHandler.NAMESPACE, "Column");
             if (!columns.isEmpty()) {
                 final ManagedMap renamingMap = new ManagedMap();
                 for (final Element column : columns) {
