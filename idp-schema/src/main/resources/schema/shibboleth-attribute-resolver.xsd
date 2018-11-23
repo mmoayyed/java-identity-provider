@@ -49,7 +49,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseResolutionPlugInType">
+            <extension base="resolver:BaseResolutionPlugInType">
                 <attribute name="dependencyOnly" type="string">
                     <annotation>
                         <documentation>
@@ -131,7 +131,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:FlattenedBaseResolutionPlugInType">
+            <extension base="resolver:BaseResolutionPlugInType">
                 <attribute name="noRetryDelay" type="string">
                     <annotation>
                         <documentation>Time to bypass connector after a failure before trying it again.</documentation>
@@ -164,7 +164,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="FlattenedBaseResolutionPlugInType" abstract="true">
+    <complexType name="BaseResolutionPlugInType" abstract="true">
         <annotation>
             <documentation>
                 A base type for all attribute resolver plugins: data and principal
@@ -206,21 +206,6 @@
                 </documentation>
             </annotation>
         </attribute>
-    </complexType>
-
-    <complexType name="BaseResolutionPlugInType" abstract="true">
-        <annotation>
-            <documentation>
-                A base type for all legacy attribute resolver plugins
-            </documentation>
-        </annotation>
-        <complexContent>
-        <extension base="resolver:FlattenedBaseResolutionPlugInType">
-            <sequence>
-                <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
-            </sequence>
-        </extension>
-        </complexContent>
     </complexType>
 
     <element name="Dependency" type="resolver:PluginDependencyType">
@@ -327,8 +312,6 @@
             </element>
         </sequence>
     </complexType>
-
-    <!--  Flatten the ad: namespace into the resolver: namespace -->
 
     <complexType name="ContextDerivedAttribute">
         <annotation>
@@ -767,8 +750,6 @@
             </extension>
         </complexContent>
     </complexType>
-
-    <!-- Flatten the dc: namespace into the resolver: namespace -->
 
     <complexType name="ComputedId">
         <annotation>
@@ -1947,10 +1928,6 @@
             </annotation>
         </attribute>
     </complexType>
-
-
-
-    <!-- Flatten the enc: namespace into the resolver: namespace -->
 
     <!-- Encoders that produce SAML 1 or SAML 2 Attributes -->
     <complexType name="SAML1String">
