@@ -69,7 +69,7 @@ public class AttributeResolverImplTest {
         dataCon.initialize();
         final AttributeResolverImpl resolver =
                 newAttributeResolverImpl("toto", Collections.singleton((AttributeDefinition) attrDef),
-                        Collections.singleton((DataConnector) dataCon), null);
+                        Collections.singleton((DataConnector) dataCon));
 
         Assert.assertFalse(attrDef.isInitialized());
         Assert.assertFalse(attrDef.isDestroyed());
@@ -112,14 +112,14 @@ public class AttributeResolverImplTest {
         definitions.add(null);
         definitions.add(new MockAttributeDefinition("bar", new IdPAttribute("test")));
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl(" foo ", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl(" foo ", definitions, null);
         resolver.initialize();
         Assert.assertNotNull(resolver.getAttributeDefinitions());
         Assert.assertEquals(resolver.getAttributeDefinitions().size(), 2);
 
         definitions.add(new MockAttributeDefinition("foo", new IdPAttribute("test")));
         try {
-            newAttributeResolverImpl(" foo ", definitions, null, null);
+            newAttributeResolverImpl(" foo ", definitions, null);
             Assert.fail();
         } catch (final IllegalArgumentException e) {
             // OK
@@ -133,13 +133,13 @@ public class AttributeResolverImplTest {
         connectors.add(null);
         connectors.add(new MockDataConnector("bar", (Map) null));
 
-        final AttributeResolver resolver = newAttributeResolverImpl("foo", null, connectors, null);
+        final AttributeResolver resolver = newAttributeResolverImpl("foo", null, connectors);
         Assert.assertNotNull(resolver.getDataConnectors());
         Assert.assertEquals(resolver.getDataConnectors().size(), 2);
 
         connectors.add(new MockDataConnector("foo", (Map) null));
         try {
-            newAttributeResolverImpl(" foo ", null, connectors, null);
+            newAttributeResolverImpl(" foo ", null, connectors);
             Assert.fail();
         } catch (final IllegalArgumentException e) {
             // OK
@@ -155,7 +155,7 @@ public class AttributeResolverImplTest {
         definitions.add(new MockAttributeDefinition("ad1", attribute));
         definitions.iterator().next().initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -174,7 +174,7 @@ public class AttributeResolverImplTest {
         definitions.add(new MockAttributeDefinition("ad1", attribute));
         definitions.iterator().next().initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -202,7 +202,7 @@ public class AttributeResolverImplTest {
         attrDef.setPropagateResolutionExceptions(true);
         definitions.add(attrDef);
 
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         attrDef.initialize();
         resolver.initialize();
 
@@ -219,7 +219,7 @@ public class AttributeResolverImplTest {
         attrDef.setPropagateResolutionExceptions(false);
         definitions.add(attrDef);
 
-        resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
         attrDef.initialize();
 
@@ -234,7 +234,7 @@ public class AttributeResolverImplTest {
     @Test public void resolveEmpty() throws Exception {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -274,7 +274,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad2);
         ad2.initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -314,7 +314,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad2);
         ad2.initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -348,7 +348,7 @@ public class AttributeResolverImplTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         dc1.initialize();
         ad1.initialize();
         resolver.initialize();
@@ -389,7 +389,7 @@ public class AttributeResolverImplTest {
         connectors.add(dc2);
         connectors.add(dc1);
         
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", Collections.singleton((AttributeDefinition)ad), connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", Collections.singleton((AttributeDefinition)ad), connectors);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -437,7 +437,7 @@ public class AttributeResolverImplTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         dc1.initialize();
         ad1.initialize();
         resolver.initialize();
@@ -476,7 +476,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad1);
         definitions.add(ad2);
 
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -514,7 +514,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad10);
         definitions.add(ad11);
 
-        resolver = newAttributeResolverImpl("failoverTest", definitions, connectors, null);
+        resolver = newAttributeResolverImpl("failoverTest", definitions, connectors);
         resolver.initialize();
 
     }
@@ -541,7 +541,7 @@ public class AttributeResolverImplTest {
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -572,7 +572,7 @@ public class AttributeResolverImplTest {
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -590,7 +590,7 @@ public class AttributeResolverImplTest {
         definitions.add(new MockAttributeDefinition("ad1", new IdPAttribute("test")));
         definitions.iterator().next().initialize();
         
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -614,7 +614,7 @@ public class AttributeResolverImplTest {
         definitions.add(definition);
         definition.initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -634,7 +634,7 @@ public class AttributeResolverImplTest {
         definitions.add(definition);
         definition.initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -655,7 +655,7 @@ public class AttributeResolverImplTest {
         definitions.add(definition);
         definition.initialize();
 
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -664,7 +664,7 @@ public class AttributeResolverImplTest {
         Assert.assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
         Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(),2);
         
-        resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.setStripNulls(true);
         resolver.initialize();
 
@@ -689,7 +689,7 @@ public class AttributeResolverImplTest {
         definitions.add(definition);
         definition.initialize();
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -714,7 +714,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad0);
         definitions.add(ad1);
 
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         try {
             resolver.initialize();
             Assert.fail("invalid resolver configuration didn't fail initialization");
@@ -729,7 +729,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad0);
         ad0.initialize();
 
-        resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        resolver = newAttributeResolverImpl("foo", definitions, null);
 
         try {
             resolver.initialize();
@@ -755,7 +755,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad0);
         definitions.add(ad1);
 
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         try {
             resolver.initialize();
             Assert.fail("invalid resolver configuration didn't fail initialization");
@@ -770,7 +770,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad0);
         ad0.initialize();
 
-        resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        resolver = newAttributeResolverImpl("foo", definitions, null);
 
         try {
             resolver.initialize();
@@ -788,7 +788,7 @@ public class AttributeResolverImplTest {
         LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
         ad1.initialize();
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
 
         try {
             resolver.initialize();
@@ -819,7 +819,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad1);
         definitions.add(ad2);
 
-        resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        resolver = newAttributeResolverImpl("foo", definitions, connectors);
         try {
             resolver.initialize();
             Assert.fail("invalid resolver configuration didn't fail initialization");
@@ -837,7 +837,7 @@ public class AttributeResolverImplTest {
         LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
         ad1.initialize();
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
 
         try {
             resolver.initialize();
@@ -868,7 +868,7 @@ public class AttributeResolverImplTest {
         definitions.add(ad1);
         definitions.add(ad2);
 
-        resolver = newAttributeResolverImpl("foo", definitions, connectors, null);
+        resolver = newAttributeResolverImpl("foo", definitions, connectors);
         try {
             resolver.initialize();
             Assert.fail("invalid resolver configuration didn't fail initialization");
@@ -880,13 +880,13 @@ public class AttributeResolverImplTest {
     @Test public void testPrincipalConnector() throws ComponentInitializationException, ResolutionException {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
 
-        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null, null);
+        AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.initialize();
 
         Assert.assertNull(resolver.canonicalize(null));
 
         resolver =
-                newAttributeResolverImpl("foo", definitions, null,
+                newAttributeResolverWithPrincipalConnector("foo", definitions, null,
                         new LegacyPrincipalDecoder() {
 
                             @Override @Nullable public String canonicalize(final SubjectCanonicalizationContext context)
@@ -902,7 +902,7 @@ public class AttributeResolverImplTest {
         Assert.assertEquals(resolver.canonicalize(null), "Principal");
     }
 
-    public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
+    public static AttributeResolverImpl newAttributeResolverWithPrincipalConnector(@Nonnull @NotEmpty final String resolverId,
             @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
             @Nullable @NullableElements final Collection<DataConnector> connectors,
             @Nullable final LegacyPrincipalDecoder principalResolver) {
@@ -913,4 +913,11 @@ public class AttributeResolverImplTest {
         result.setPrincipalDecoder(principalResolver);
         return result;
     }
+
+    public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
+            @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
+            @Nullable @NullableElements final Collection<DataConnector> connectors) {
+        return newAttributeResolverWithPrincipalConnector(resolverId, definitions, connectors, null);
+    }
+
 }

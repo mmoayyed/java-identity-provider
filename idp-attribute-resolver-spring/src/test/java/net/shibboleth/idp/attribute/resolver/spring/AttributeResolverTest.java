@@ -281,20 +281,6 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         ctx.setRequesterId("REQ");
         ctx.setResponderId("RES");
 
-        try {
-            serviceableComponent = attributeResolverService.getServiceableComponent();
-
-            final AttributeResolver resolver = serviceableComponent.getComponent();
-            final LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) resolver;
-            Assert.assertTrue(decoder.hasValidConnectors());
-            Assert.assertEquals(decoder.canonicalize(ctx), "MyHovercraftIsFullOfEels");
-
-        } finally {
-            if (null != serviceableComponent) {
-                serviceableComponent.unpinComponent();
-            }
-        }
-
     }
     
     @Test public void mappedTemplate() throws Exception {

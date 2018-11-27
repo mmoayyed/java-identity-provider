@@ -62,19 +62,9 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(), "getgetAttributeEncoders().isEmpty()");
     }
 
-    @Test public void populated() throws ComponentInitializationException {
+    @Test public void simplePopulated() throws ComponentInitializationException {
         final AttributeDefinition attrDef =
-                getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
-        valuesPopulated(attrDef);
-    }
-
-    @Test public void resolver() throws ComponentInitializationException {
-        final AttributeDefinition attrDef =
-                getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
-        valuesPopulated(attrDef);
-    }
-
-    private void valuesPopulated(AttributeDefinition attrDef) throws ComponentInitializationException {
+                getAttributeDefn("resolver/simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
 
         attrDef.initialize();
 
@@ -94,9 +84,9 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
         Assert.assertEquals(dependencies.size(), 3, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep1", "flibble")));
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep2", "flibble")));
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", "flibble")));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("con1", "dep1")));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep2")));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3")));
 
         Assert.assertEquals(attrDef.getAttributeEncoders().size(), 1);
         final SAML2StringAttributeEncoder e1 =
@@ -108,7 +98,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
     @Test public void populated2() throws ComponentInitializationException {
         AttributeDefinition attrDef =
-                getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
+                getAttributeDefn("resolver/simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
 
         attrDef.initialize();
 
@@ -123,7 +113,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
         Assert.assertEquals(dependencies.size(), 1, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", null)));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3")));
 
         Assert.assertEquals(attrDef.getAttributeEncoders().size(), 2);
         List a = new ArrayList(attrDef.getAttributeEncoders());

@@ -98,7 +98,7 @@ public class SimpleAttributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(simple);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -127,8 +127,7 @@ public class SimpleAttributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         simple.setDependencies(dependencySet);
         simple.initialize();
 
@@ -137,7 +136,7 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -201,8 +200,7 @@ public class SimpleAttributeTest {
         simple.setId(TEST_ATTRIBUTE_NAME);
 
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         simple.setDependencies(dependencySet);
@@ -216,7 +214,7 @@ public class SimpleAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

@@ -124,10 +124,9 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      * @return an appropriate FlowDescriptor 
      */
     public static SubjectCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory(
-                @ParameterName(name="activationCondition") Predicate<ProfileRequestContext> activationCondition)
-    {
+                final @ParameterName(name="activationCondition") Predicate<ProfileRequestContext> activationCondition) {
         DeprecationSupport.warn(ObjectType.BEAN, "c14n/LegacyPrincipalConnector", "c14n/subject-c14n.xml", "<remove>");
-        final SubjectCanonicalizationFlowDescriptor result = new SubjectCanonicalizationFlowDescriptor ();
+        final SubjectCanonicalizationFlowDescriptor result = new SubjectCanonicalizationFlowDescriptor();
         result.setActivationCondition(activationCondition);
         return result;
     }

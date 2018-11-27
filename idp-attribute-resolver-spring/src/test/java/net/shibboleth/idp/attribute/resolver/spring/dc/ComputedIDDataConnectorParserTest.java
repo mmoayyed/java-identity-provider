@@ -92,7 +92,6 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
     @Test public void resolverNoSourceDependency() {
         final ComputedIDDataConnector connector = getDataConnector("resolver/computedNoSource1.xml", ComputedIDDataConnector.class);
         Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
         Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");

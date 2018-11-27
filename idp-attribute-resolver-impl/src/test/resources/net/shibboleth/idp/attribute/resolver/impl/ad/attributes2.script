@@ -1,4 +1,4 @@
-values = at1.getValues().iterator();
+values = at2.getValues().iterator();
 val = values.next();
 Scripted.addValue(val);
     if (values.hasNext()) {

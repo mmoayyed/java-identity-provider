@@ -36,8 +36,10 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -58,8 +60,6 @@ public final class TestSources {
     /** The name we use in this test for the static connector. */
     public static final String STATIC_CONNECTOR_NAME = "staticCon";
 
-    /** The name we use in this test for the static attribute. */
-    public static final String STATIC_ATTRIBUTE_NAME = "staticAtt";
 
     /** The name of the attribute we use as source. */
     public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
@@ -129,7 +129,7 @@ public final class TestSources {
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
+    public static DataConnectorEx populatedStaticConnector() throws ComponentInitializationException {
         IdPAttribute attr;
         Set<IdPAttribute> attributeSet;
 
@@ -160,28 +160,28 @@ public final class TestSources {
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     public static AttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
-        return populatedStaticAttribute(STATIC_ATTRIBUTE_NAME, DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
+        return populatedStaticAttribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
 
-    public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName,
-            int attributeCount) throws ComponentInitializationException {
+    public static AttributeDefinition populatedStaticAttribute(String attributeName,
+            int attributeValuesCount) throws ComponentInitializationException {
         IdPAttribute attr;
         List<IdPAttributeValue<?>> valuesList = new ArrayList<>();
 
-        if (attributeCount > 0) {
+        if (attributeValuesCount > 0) {
             valuesList.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
         }
-        if (attributeCount > 1) {
+        if (attributeValuesCount > 1) {
             valuesList.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
         }
-        for (int i = 2; i < attributeCount; i++) {
+        for (int i = 2; i < attributeValuesCount; i++) {
             valuesList.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING + i));
         }
         attr = new IdPAttribute(attributeName);
         attr.setValues(valuesList);
 
         StaticAttributeDefinition definition = new StaticAttributeDefinition();
-        definition.setId(definitionName);
+        definition.setId(attributeName);
         definition.setValue(attr);
         definition.initialize();
         return definition;
@@ -192,8 +192,7 @@ public final class TestSources {
         defn.setId(name);
 
         // Set the dependency on the data connector
-        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME);
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        ResolverPluginDependency depend = new ResolverAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         defn.setDependencies(Collections.singleton(depend));
         defn.initialize();
         return defn;
@@ -212,12 +211,26 @@ public final class TestSources {
         return retVal;
     }
 
-    public static ResolverPluginDependency makeResolverPluginDependency(String pluginId, String attributeId) {
-        ResolverPluginDependency retVal = new ResolverPluginDependency(pluginId);
-        retVal.setDependencyAttributeId(attributeId);
+    public static ResolverPluginDependency makeResolverPluginDependency(String attributeId) {
+        ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
+        return retVal;
+    }
+    
+    public static ResolverPluginDependency makeResolverPluginDependency(String connectorId, String attributeId) {
+        ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
+        retVal.setAttributeNames(Collections.singleton(attributeId));
+        return retVal;
+    }
+    
+    public static ResolverPluginDependency makeResolverPluginDependency(String connectorId, boolean allAttributes) {
+        ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
+        retVal.setAllAttributes(allAttributes);
         return retVal;
     }
 
+
+
+    @SuppressWarnings("unused")
     private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
 
         /** Static value returned by this definition. */

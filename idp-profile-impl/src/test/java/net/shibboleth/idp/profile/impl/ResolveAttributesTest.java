@@ -73,7 +73,7 @@ public class ResolveAttributesTest {
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -107,7 +107,7 @@ public class ResolveAttributesTest {
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -166,7 +166,7 @@ public class ResolveAttributesTest {
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null);
         ad1.initialize();
         resolver.initialize();
 
