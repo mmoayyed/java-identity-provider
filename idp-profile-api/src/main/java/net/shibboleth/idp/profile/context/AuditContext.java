@@ -27,7 +27,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -40,7 +40,7 @@ public final class AuditContext extends BaseContext {
     
     /** Constructor. */
     public AuditContext() {
-        fieldMap = ArrayListMultimap.create(20, 1);
+        fieldMap = HashMultimap.create(20, 1);
     }
     
     /**
