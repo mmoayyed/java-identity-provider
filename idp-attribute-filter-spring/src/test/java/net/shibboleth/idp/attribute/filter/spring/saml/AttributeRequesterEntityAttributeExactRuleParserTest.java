@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeRegexRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeRequesterEntityAttributeRegexRuleParser}.
@@ -32,24 +32,9 @@ public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAt
 
     @Test public void basic() throws ComponentInitializationException {
         AttributeRequesterEntityAttributeExactPolicyRule rule =
-                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml", false);
+                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml");
 
         Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
-        
-        rule =
-                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml", true);
-
-        Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
-    }
-
-    @Test public void v2() throws ComponentInitializationException {
-        final AttributeRequesterEntityAttributeExactPolicyRule rule =
-                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA.xml", false);
-
-        Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
-
     }
 }

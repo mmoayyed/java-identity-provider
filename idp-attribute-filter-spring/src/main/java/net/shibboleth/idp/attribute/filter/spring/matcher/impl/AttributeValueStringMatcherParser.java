@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
 /**
  * Bean definition parser for {@link AttributeValueStringMatcher}s.
@@ -30,15 +29,11 @@ import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasi
 public class AttributeValueStringMatcherParser extends AbstractStringMatcherParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
-            "AttributeValueString");
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "Value");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "Value");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

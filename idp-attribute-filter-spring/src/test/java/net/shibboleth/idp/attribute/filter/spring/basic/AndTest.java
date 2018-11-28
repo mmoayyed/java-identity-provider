@@ -38,14 +38,7 @@ import org.testng.annotations.Test;
 public class AndTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        matcher("and.xml", true);
-        matcher("and.xml", false);
-    }
-
-    public void matcher(String path, boolean isAfp) throws ComponentInitializationException {
-
-        AndMatcher what = (AndMatcher) getMatcher(path, isAfp);
-        
+        AndMatcher what = (AndMatcher) getMatcher("and.xml");
         final List<Matcher> children = what.getComposedMatchers();
         
         Assert.assertEquals(children.size(), 2);
@@ -54,12 +47,7 @@ public class AndTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        policy("and.xml", true);
-        policy("and.xml", false);
-    }
-
-    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
-        AndPolicyRule what = (AndPolicyRule) getPolicyRule(path, isAfp);
+        AndPolicyRule what = (AndPolicyRule) getPolicyRule("and.xml");
         
         final List<PolicyRequirementRule> children = what.getComposedRules();
         Assert.assertEquals(children.size(), 2);
@@ -68,12 +56,7 @@ public class AndTest extends BaseAttributeFilterParserTest {
     }
     
     @Test public void matcherSingleton() throws ComponentInitializationException {
-        matcherSingleton("andSingleton.xml", false);
-        matcherSingleton("andSingleton.xml", true);
-    }
-    
-    public void matcherSingleton(String path, boolean isAfp) throws ComponentInitializationException {
-        AndMatcher what = (AndMatcher) getMatcher(path, isAfp);
+        AndMatcher what = (AndMatcher) getMatcher("andSingleton.xml");
         
         final List<Matcher> children = what.getComposedMatchers();
         
@@ -82,12 +65,7 @@ public class AndTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policySingleton() throws ComponentInitializationException {
-        policySingleton("andSingleton.xml", true);
-        policySingleton("andSingleton.xml", false);
-    }
-    
-    public void policySingleton(String path, boolean isAfp) throws ComponentInitializationException {
-        AndPolicyRule what = (AndPolicyRule) getPolicyRule(path, isAfp);
+        AndPolicyRule what = (AndPolicyRule) getPolicyRule("andSingleton.xml");
         
         final List<PolicyRequirementRule> children = what.getComposedRules();
         Assert.assertEquals(children.size(), 1);

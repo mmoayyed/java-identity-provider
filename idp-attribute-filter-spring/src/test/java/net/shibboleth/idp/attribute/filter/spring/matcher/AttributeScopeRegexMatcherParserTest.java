@@ -32,12 +32,9 @@ public class AttributeScopeRegexMatcherParserTest extends BaseAttributeFilterPar
 
     @Test public void matcher() throws ComponentInitializationException {
 
-        AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml", true);
+        AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml");
         
         Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
 
-        what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml", false);
-        
-        Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
-}
+    }
 }

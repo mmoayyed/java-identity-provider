@@ -30,12 +30,7 @@ import org.testng.annotations.Test;
 public class Implicit extends BaseAttributeFilterParserTest {
 
     @Test public void implicit() throws ComponentInitializationException {
-        implicit("implicit.xml", true);
-        implicit("implicit.xml", false);
-    }
-
-    public void implicit(String path, boolean isAfp) throws ComponentInitializationException {
-        Matcher what = getMatcher(path, isAfp);
+        Matcher what = getMatcher("implicit.xml");
 
         Assert.assertSame(what.getClass(), Matcher.MATCHES_ALL.getClass());
     }

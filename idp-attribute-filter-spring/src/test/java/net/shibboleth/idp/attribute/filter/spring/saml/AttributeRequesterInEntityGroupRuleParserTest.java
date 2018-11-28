@@ -17,33 +17,23 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterInEntityGroupRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeRequesterInEntityGroupRuleParser}.
  */
 public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
 
-    @Test public void v2() throws ComponentInitializationException {
-        final AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG.xml", false);
-     
-        Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
-
-    }
-    
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", true);
+        final AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml");
      
         Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
 
-        rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", true);
-        
-        Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
     }
 }

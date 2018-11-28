@@ -28,11 +28,7 @@ public class PrincipalNameRuleParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void policy() throws ComponentInitializationException {
 
-        PrincipalNamePolicyRule arRule = (PrincipalNamePolicyRule) getPolicyRule("principalName.xml", false);
+        PrincipalNamePolicyRule arRule = (PrincipalNamePolicyRule) getPolicyRule("principalName.xml");
         Assert.assertEquals(arRule.getMatchString(), "jsmith");
-
-        arRule = (PrincipalNamePolicyRule) getPolicyRule("principalName.xml", true);
-        Assert.assertEquals(arRule.getMatchString(), "jsmith");
-}
- 
+    }
 }

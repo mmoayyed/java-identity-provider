@@ -34,12 +34,7 @@ import org.testng.annotations.Test;
 public class NotTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        matcher("not.xml", true);
-        matcher("not.xml", false);
-    }
-    
-    public void matcher(String path, boolean isAfp) throws ComponentInitializationException {
-        NotMatcher what = (NotMatcher) getMatcher(path,isAfp);
+        NotMatcher what = (NotMatcher) getMatcher("not.xml");
 
         NotMatcher child = (NotMatcher) what.getNegatedMatcher();
 
@@ -47,12 +42,7 @@ public class NotTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        policy("not.xml", true);
-        policy("not.xml", false);
-    }
-
-    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
-        NotPolicyRule what = (NotPolicyRule) getPolicyRule(path,isAfp);
+        NotPolicyRule what = (NotPolicyRule) getPolicyRule("not.xml");
 
         NotPolicyRule child = (NotPolicyRule) what.getNegatedRule();
 

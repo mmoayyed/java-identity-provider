@@ -32,17 +32,9 @@ import org.w3c.dom.Element;
  */
 public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEntityAttributeRuleParser {
 
-    /** Schema type - saml. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
             "EntityAttributeRegexMatch");
-
-    /** Schema type - afp. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "EntityAttributeRegexMatch");
-
-    /** Schema type - v2. */
-    public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeRequesterEntityAttributeRegexMatch");
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterEntityAttributeRegexPolicyRule> getNativeBeanClass() {
@@ -52,7 +44,7 @@ public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEn
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

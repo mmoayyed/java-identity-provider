@@ -31,12 +31,9 @@ import org.testng.annotations.Test;
 public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("attributeRegex.xml", true);
+        AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("attributeRegex.xml");
         
         Assert.assertEquals(what.getRegularExpression(), "^jsmit.*$");
 
-        what = (AttributeValueRegexpMatcher) getMatcher("attributeRegex.xml", false);
-        
-        Assert.assertEquals(what.getRegularExpression(), "^jsmit.*$");
     }
 }

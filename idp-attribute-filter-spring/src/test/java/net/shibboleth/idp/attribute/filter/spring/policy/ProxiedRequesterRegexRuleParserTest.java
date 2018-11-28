@@ -29,7 +29,7 @@ public class ProxiedRequesterRegexRuleParserTest extends BaseAttributeFilterPars
 
     @Test public void policy() throws ComponentInitializationException {
 
-        final ProxiedRequesterRegexpPolicyRule arRule = (ProxiedRequesterRegexpPolicyRule) getPolicyRule("proxiedRegexRequester.xml", true);
+        final ProxiedRequesterRegexpPolicyRule arRule = (ProxiedRequesterRegexpPolicyRule) getPolicyRule("proxiedRegexRequester.xml");
         Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");
     }
  

@@ -31,23 +31,13 @@ import org.testng.annotations.Test;
 public class AnyTest extends BaseAttributeFilterParserTest {
     
     @Test public void testMatcher() throws ComponentInitializationException {
-        testMatcher("any.xml", true);
-        testMatcher("any.xml", true);
-    }
-    
-    public void testMatcher(String path, boolean isAfp) throws ComponentInitializationException {
-        Matcher matcher = getMatcher(path, isAfp);
+        Matcher matcher = getMatcher("any.xml");
         
         Assert.assertEquals(Matcher.MATCHES_ALL.getClass(), matcher.getClass());
     }
     
     @Test public void testPolicy() throws ComponentInitializationException {
-        testPolicy("any.xml", true);
-        testPolicy("any.xml", false);
-    }
-
-    public void testPolicy(String path, boolean isAfp) throws ComponentInitializationException {
-        PolicyRequirementRule policy = getPolicyRule(path, isAfp);
+        PolicyRequirementRule policy = getPolicyRule("any.xml");
         Assert.assertEquals(PolicyRequirementRule.MATCHES_ALL.getClass(), policy.getClass());
     }
 

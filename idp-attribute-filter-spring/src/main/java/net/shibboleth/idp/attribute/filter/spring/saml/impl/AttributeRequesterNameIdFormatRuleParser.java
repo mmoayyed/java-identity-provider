@@ -34,17 +34,9 @@ import org.w3c.dom.Element;
  */
 public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRuleParser {
 
-    /** Schema type- saml. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "NameIDFormatExactMatch");
-
-    /** Schema type- afp. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "NameIDFormatExactMatch");
-
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeRequesterNameIDFormatExactMatch");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
+            "NameIDFormatExactMatch");
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterNameIDFormatExactPolicyRule> getNativeBeanClass() {
@@ -53,7 +45,7 @@ public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRulePars
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

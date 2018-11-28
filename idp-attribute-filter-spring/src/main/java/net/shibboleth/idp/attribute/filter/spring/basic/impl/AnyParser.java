@@ -35,14 +35,11 @@ import org.w3c.dom.Element;
 public class AnyParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "ANY");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

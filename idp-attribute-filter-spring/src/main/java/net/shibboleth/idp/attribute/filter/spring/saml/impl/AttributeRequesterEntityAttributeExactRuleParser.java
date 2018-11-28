@@ -32,16 +32,8 @@ import org.w3c.dom.Element;
  */
 public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEntityAttributeRuleParser {
 
-    /** Schema type - v2. */
-    public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeRequesterEntityAttributeExactMatch");
-
-    /** Schema type -saml. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "EntityAttributeExactMatch");
-
-    /** Schema type -saml. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
             "EntityAttributeExactMatch");
 
     @Override @Nonnull protected Class<AttributeRequesterEntityAttributeExactPolicyRule> getNativeBeanClass() {
@@ -51,7 +43,7 @@ public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEn
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

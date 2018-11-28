@@ -34,15 +34,8 @@ import org.w3c.dom.Element;
  */
 public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRuleParser {
 
-    /** Schema type - saml. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE, "InEntityGroup");
-
-    /** Schema type - afp. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "InEntityGroup");
-
-    /** Schema type - v2. */
-    public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeRequesterInEntityGroup");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "InEntityGroup");
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterInEntityGroupPolicyRule> getNativeBeanClass() {
@@ -51,7 +44,7 @@ public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRulePar
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

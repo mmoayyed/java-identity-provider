@@ -56,13 +56,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        policy(true);
-        policy(false);
-   }
-    
-   public void policy(boolean isAfp) throws ComponentInitializationException {
-
-        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(getScript(), isAfp);
+        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(getScript());
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -71,16 +65,11 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void policyNotFound() throws ComponentInitializationException {
 
-        getPolicyRule("scriptedNotThere.xml", false);
+        getPolicyRule("scriptedNotThere.xml");
     }
     
     @Test public void matcher()  throws ComponentInitializationException {
-        matcher(false);
-        matcher(true);
-    }
-    
-    public void matcher(boolean isAfp)  throws ComponentInitializationException {
-        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(getScript(), isAfp);
+        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(getScript());
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -93,7 +82,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     
     @Test public void customMatcher() throws ComponentInitializationException {
         
-        final ScriptedMatcher what = (ScriptedMatcher) getMatcher(getScript(), false);
+        final ScriptedMatcher what = (ScriptedMatcher) getMatcher(getScript());
         
         Assert.assertNull(what.getCustomObject());
         
@@ -101,7 +90,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     @Test public void customPolicy() throws ComponentInitializationException {
         
-        final ScriptedPolicyRule what = (ScriptedPolicyRule) getPolicyRule(getScript(), true);
+        final ScriptedPolicyRule what = (ScriptedPolicyRule) getPolicyRule(getScript());
         
         final Map custom = (Map) what.getCustomObject();
      

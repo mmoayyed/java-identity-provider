@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
 /**
  * Bean definition parser for {@link AttributeIssuerPolicyRule}.
@@ -30,11 +29,7 @@ import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasi
 public class AttributeIssuerRuleParser extends AbstractStringPolicyRuleParser {
 
     /** Schema type. */
-    @Nonnull public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
-            "AttributeIssuerString");
-    
-    /** Schema type. */
-    @Nonnull public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "Issuer");
+    @Nonnull public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "Issuer");
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeIssuerPolicyRule> getNativeBeanClass() {
@@ -43,7 +38,7 @@ public class AttributeIssuerRuleParser extends AbstractStringPolicyRuleParser {
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
 }

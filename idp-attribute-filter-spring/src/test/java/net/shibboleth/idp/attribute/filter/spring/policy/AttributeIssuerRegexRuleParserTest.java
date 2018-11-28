@@ -29,7 +29,7 @@ public class AttributeIssuerRegexRuleParserTest extends BaseAttributeFilterParse
 
     @Test public void policy() throws ComponentInitializationException {
 
-        AttributeIssuerRegexpPolicyRule arRule = (AttributeIssuerRegexpPolicyRule) getPolicyRule("issuerRegex.xml", true);
+        AttributeIssuerRegexpPolicyRule arRule = (AttributeIssuerRegexpPolicyRule) getPolicyRule("issuerRegex.xml");
         Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");    
     }
  

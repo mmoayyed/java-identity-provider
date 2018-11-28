@@ -20,15 +20,14 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.NumOfAttributeValuesPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
-import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.NumOfAttributeValuesPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Bean definition parser for {@link NumOfAttributeValuesPolicyRule}.
@@ -36,15 +35,11 @@ import org.w3c.dom.Element;
 public class NumOfAttributeValuesRuleParser extends BasePolicyRuleParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
-            "NumberOfAttributeValues");
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "NumberOfAttributeValues");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "NumberOfAttributeValues");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

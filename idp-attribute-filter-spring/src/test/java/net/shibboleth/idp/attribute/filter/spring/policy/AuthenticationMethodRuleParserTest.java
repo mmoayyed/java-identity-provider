@@ -28,10 +28,7 @@ public class AuthenticationMethodRuleParserTest extends BaseAttributeFilterParse
 
     @Test public void policy() throws ComponentInitializationException {
 
-        AuthenticationMethodPolicyRule arRule = (AuthenticationMethodPolicyRule) getPolicyRule("authenticationMethod.xml", true);
-        Assert.assertEquals(arRule.getMatchString(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
-
-        arRule = (AuthenticationMethodPolicyRule) getPolicyRule("authenticationMethod.xml", false);
+        AuthenticationMethodPolicyRule arRule = (AuthenticationMethodPolicyRule) getPolicyRule("authenticationMethod.xml");
         Assert.assertEquals(arRule.getMatchString(), "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
     }
  

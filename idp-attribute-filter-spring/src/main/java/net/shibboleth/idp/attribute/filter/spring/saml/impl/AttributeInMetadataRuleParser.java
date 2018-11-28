@@ -34,17 +34,13 @@ import org.w3c.dom.Element;
  */
 public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 
-    /** Schema type - saml. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "AttributeInMetadata");
-
-    /** Schema type - afp. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
             "AttributeInMetadata");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

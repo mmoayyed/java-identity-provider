@@ -31,12 +31,7 @@ import org.testng.annotations.Test;
 public class AttributeIssuerRuleParserTest extends BaseAttributeFilterParserTest {
  
     @Test public void policy() throws ComponentInitializationException {
-        policy("attributeIssuer.xml", true);
-        policy("attributeIssuer.xml", false);
-    }
-
-    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
-        final PolicyRequirementRule rule = getPolicyRule(path, isAfp);
+        final PolicyRequirementRule rule = getPolicyRule("attributeIssuer.xml");
 
         AttributeFilterContext filterContext =
                 DataSources.populatedFilterContext("principal", "urn:example:org:idp:foo", "http://example.org");

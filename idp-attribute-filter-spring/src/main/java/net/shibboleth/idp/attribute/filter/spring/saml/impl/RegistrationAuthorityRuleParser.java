@@ -37,12 +37,8 @@ import org.w3c.dom.Element;
 /** Spring bean definition parser that creates {@link RegistrationAuthorityPolicyRule} beans. */
 public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
-    /** Schema type - saml. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "RegistrationAuthority");
-    
-    /** Schema type - afp. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
             "RegistrationAuthority");
 
     /** Name of the attribute carrying the Issuers list. */
@@ -61,7 +57,7 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

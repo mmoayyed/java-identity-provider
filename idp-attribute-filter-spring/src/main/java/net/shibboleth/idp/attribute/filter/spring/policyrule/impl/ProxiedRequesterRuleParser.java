@@ -29,11 +29,11 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 public class ProxiedRequesterRuleParser extends AbstractStringPolicyRuleParser {
 
     /** Schema type. */
-    @Nonnull public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "ProxiedRequester");
+    @Nonnull public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "ProxiedRequester");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

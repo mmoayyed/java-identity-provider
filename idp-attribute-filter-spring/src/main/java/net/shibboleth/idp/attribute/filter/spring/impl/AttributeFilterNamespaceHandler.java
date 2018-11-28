@@ -72,79 +72,79 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         
         // BASIC
         
-        registerBeanDefinitionParser(AnyParser.SCHEMA_TYPE_AFP, new AnyParser());
+        registerBeanDefinitionParser(AnyParser.SCHEMA_TYPE, new AnyParser());
 
-        registerBeanDefinitionParser(AndMatcherParser.SCHEMA_TYPE_AFP, new AndMatcherParser());
+        registerBeanDefinitionParser(AndMatcherParser.SCHEMA_TYPE, new AndMatcherParser());
 
-        registerBeanDefinitionParser(OrMatcherParser.SCHEMA_TYPE_AFP, new OrMatcherParser());
+        registerBeanDefinitionParser(OrMatcherParser.SCHEMA_TYPE, new OrMatcherParser());
 
-        registerBeanDefinitionParser(NotMatcherParser.SCHEMA_TYPE_AFP, new NotMatcherParser());
+        registerBeanDefinitionParser(NotMatcherParser.SCHEMA_TYPE, new NotMatcherParser());
 
         // Attribute/Matcher
-        registerBeanDefinitionParser(AttributeValueStringMatcherParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeValueStringMatcherParser.SCHEMA_TYPE,
                 new AttributeValueStringMatcherParser());
 
-        registerBeanDefinitionParser(AttributeScopeMatcherParser.SCHEMA_TYPE_AFP, new AttributeScopeMatcherParser());
+        registerBeanDefinitionParser(AttributeScopeMatcherParser.SCHEMA_TYPE, new AttributeScopeMatcherParser());
 
-        registerBeanDefinitionParser(AttributeValueRegexMatcherParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeValueRegexMatcherParser.SCHEMA_TYPE,
                 new AttributeValueRegexMatcherParser());
 
-        registerBeanDefinitionParser(AttributeScopeRegexMatcherParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeScopeRegexMatcherParser.SCHEMA_TYPE,
                 new AttributeScopeRegexMatcherParser());
 
         // Policy
-        registerBeanDefinitionParser(AttributeRequesterRuleParser.SCHEMA_TYPE_AFP, new AttributeRequesterRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterRuleParser.SCHEMA_TYPE, new AttributeRequesterRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterRegexRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeRequesterRegexRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterRegexRuleParser());
 
-        registerBeanDefinitionParser(ProxiedRequesterRuleParser.SCHEMA_TYPE_AFP, new ProxiedRequesterRuleParser());
+        registerBeanDefinitionParser(ProxiedRequesterRuleParser.SCHEMA_TYPE, new ProxiedRequesterRuleParser());
 
-        registerBeanDefinitionParser(ProxiedRequesterRegexRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(ProxiedRequesterRegexRuleParser.SCHEMA_TYPE,
                 new ProxiedRequesterRegexRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerRuleParser.SCHEMA_TYPE_AFP, new AttributeIssuerRuleParser());
+        registerBeanDefinitionParser(AttributeIssuerRuleParser.SCHEMA_TYPE, new AttributeIssuerRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerRegexRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeIssuerRegexRuleParser.SCHEMA_TYPE,
                 new AttributeIssuerRegexRuleParser());
         
-        registerBeanDefinitionParser(PrincipalNameRuleParser.SCHEMA_TYPE_AFP, new PrincipalNameRuleParser());
+        registerBeanDefinitionParser(PrincipalNameRuleParser.SCHEMA_TYPE, new PrincipalNameRuleParser());
 
-        registerBeanDefinitionParser(PrincipalNameRegexRuleParser.SCHEMA_TYPE_AFP, new PrincipalNameRegexRuleParser());
+        registerBeanDefinitionParser(PrincipalNameRegexRuleParser.SCHEMA_TYPE, new PrincipalNameRegexRuleParser());
 
-        registerBeanDefinitionParser(AuthenticationMethodRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AuthenticationMethodRuleParser.SCHEMA_TYPE,
                 new AuthenticationMethodRuleParser());
 
-        registerBeanDefinitionParser(AuthenticationMethodRegexRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AuthenticationMethodRegexRuleParser.SCHEMA_TYPE,
                 new AuthenticationMethodRegexRuleParser());
 
-        registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE,
                 new NumOfAttributeValuesRuleParser());
 
-        registerBeanDefinitionParser(ScriptedMatcherParser.SCHEMA_TYPE_AFP, new ScriptedMatcherParser());
+        registerBeanDefinitionParser(ScriptedMatcherParser.SCHEMA_TYPE, new ScriptedMatcherParser());
         
-        registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE_AFP, new PredicateRuleParser());
+        registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE, new PredicateRuleParser());
         
         // SAML - 
-        registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterEntityAttributeExactRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterEntityAttributeRegexRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterNameIdFormatRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterInEntityGroupRuleParser());
 
-        registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new AttributeInMetadataRuleParser());
 
-        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new MappedAttributeInMetadataRuleParser());
 
-        registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE_AFP,
+        registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE,
                 new RegistrationAuthorityRuleParser());
     }
     // Checkstyle: MethodLength ON

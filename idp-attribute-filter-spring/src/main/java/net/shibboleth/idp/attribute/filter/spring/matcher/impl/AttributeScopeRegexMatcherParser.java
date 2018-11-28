@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
 /**
  * Bean definition parser for {@link AttributeScopeRegexpMatcher}s.
@@ -30,15 +29,11 @@ import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasi
 public class AttributeScopeRegexMatcherParser extends AbstractRegexMatcherParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
-            "AttributeScopeRegex");
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "ScopeRegex");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "ScopeRegex");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */

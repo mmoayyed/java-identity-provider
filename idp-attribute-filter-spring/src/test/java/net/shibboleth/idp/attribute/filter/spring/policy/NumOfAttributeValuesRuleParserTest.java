@@ -28,15 +28,9 @@ public class NumOfAttributeValuesRuleParserTest extends BaseAttributeFilterParse
 
     @Test public void policy() throws ComponentInitializationException {
 
-        NumOfAttributeValuesPolicyRule rule = (NumOfAttributeValuesPolicyRule) getPolicyRule("numberAttrValues.xml", true);
+        NumOfAttributeValuesPolicyRule rule = (NumOfAttributeValuesPolicyRule) getPolicyRule("numberAttrValues.xml");
         Assert.assertEquals(rule.getAttributeId(), "uid");
         Assert.assertEquals(rule.getMinimum(), 1);
         Assert.assertEquals(rule.getMaximum(), 3);
-
-        rule = (NumOfAttributeValuesPolicyRule) getPolicyRule("numberAttrValues.xml", false);
-        Assert.assertEquals(rule.getAttributeId(), "uid");
-        Assert.assertEquals(rule.getMinimum(), 1);
-        Assert.assertEquals(rule.getMaximum(), 3);
-}
- 
+    }
 }

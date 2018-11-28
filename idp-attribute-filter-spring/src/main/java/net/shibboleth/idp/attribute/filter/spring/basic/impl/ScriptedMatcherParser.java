@@ -43,30 +43,20 @@ import org.w3c.dom.Element;
 public class ScriptedMatcherParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "Script");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "Script");
 
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "Script");
+    /** Script file element name. */
+    public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(BaseFilterParser.NAMESPACE, "ScriptFile");
 
-    /** Script file element name - basic. */
-    public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
-            "ScriptFile");
-
-    /** Script file element name - afp. */
-    public static final QName SCRIPT_FILE_ELEMENT_NAME_AFP = new QName(BaseFilterParser.NAMESPACE, "ScriptFile");
-
-    /** Inline Script element name - basic. */
-    public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "Script");
-
-    /** Inline Script element name - afp. */
-    public static final QName SCRIPT_ELEMENT_NAME_AFP = new QName(BaseFilterParser.NAMESPACE, "Script");
+    /** Inline Script element name. */
+    public static final QName SCRIPT_ELEMENT_NAME = new QName(BaseFilterParser.NAMESPACE, "Script");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeFilterBasicNamespaceHandler.class);
+    private final Logger log = LoggerFactory.getLogger(ScriptedMatcherParser.class);
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */
@@ -97,15 +87,9 @@ public class ScriptedMatcherParser extends AbstractWarningFilterParser {
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
 
-        List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
-        if (scriptElem == null || scriptElem.isEmpty()) {
-            scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_AFP);
-        }
+        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
 
-        List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
-        if (scriptFileElem == null || scriptFileElem.isEmpty()) {
-            scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_AFP);
-        }
+        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
 
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {

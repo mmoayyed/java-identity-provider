@@ -49,11 +49,7 @@ public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTes
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        policy("proxiedRequester.xml", true);
-    }
-
-    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
-        final PolicyRequirementRule rule = getPolicyRule(path, isAfp);
+        final PolicyRequirementRule rule = getPolicyRule("proxiedRequester.xml");
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
         filterContext.setProxiedRequesterContextLookupStrategy(
@@ -71,11 +67,7 @@ public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTes
     }
  
     @Test public void matcher() throws ComponentInitializationException {
-        matcher("proxiedRequester.xml", true);
-    }
-
-    public void matcher(String path, boolean isAfp) throws ComponentInitializationException {
-        final Matcher matcher = getMatcher(path, isAfp);
+        final Matcher matcher = getMatcher("proxiedRequester.xml");
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
         filterContext.setProxiedRequesterContextLookupStrategy(

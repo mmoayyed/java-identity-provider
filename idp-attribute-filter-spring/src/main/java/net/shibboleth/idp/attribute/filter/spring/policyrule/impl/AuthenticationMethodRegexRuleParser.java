@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AuthenticationMethodRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
@@ -36,15 +35,11 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 public class AuthenticationMethodRegexRuleParser extends AbstractRegexPolicyRuleParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
-            "AuthenticationMethodRegex");
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "AuthenticationMethodRegex");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "AuthenticationMethodRegex");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */
@@ -57,7 +52,7 @@ public class AuthenticationMethodRegexRuleParser extends AbstractRegexPolicyRule
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
         
-        DeprecationSupport.warn(ObjectType.XSITYPE, SCHEMA_TYPE_AFP.toString(),
+        DeprecationSupport.warn(ObjectType.XSITYPE, SCHEMA_TYPE.toString(),
                 parserContext.getReaderContext().getResource().getDescription(), null);
     }
 

@@ -192,13 +192,7 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void testAll() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        testAll(true);
-        testAll(false);
-    }
-
-    public void testAll(boolean nativeSpring) throws ServiceException, AttributeFilterException,
-            ComponentInitializationException {
-        final AttributeFilter filter = getFilter("policyAll.xml", nativeSpring);
+        final AttributeFilter filter = getFilter("policyAll.xml", false);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());

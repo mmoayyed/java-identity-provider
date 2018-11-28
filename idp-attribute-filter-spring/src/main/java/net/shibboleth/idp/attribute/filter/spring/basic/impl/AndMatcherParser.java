@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
+
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AndMatcher;
@@ -29,10 +32,6 @@ import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AndPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.<br/>
@@ -42,14 +41,11 @@ import org.w3c.dom.Element;
 public class AndMatcherParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "AND");
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "AND");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "AND");
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return SCHEMA_TYPE_AFP;
+        return SCHEMA_TYPE;
     }
 
     /** {@inheritDoc} */
@@ -69,15 +65,8 @@ public class AndMatcherParser extends AbstractWarningFilterParser {
 
         builder.addPropertyValue("id", myId);
 
-        final List<Element> ruleElementsBasic =
-                ElementSupport.getChildElementsByTagNameNS(configElement,
-                        AttributeFilterBasicNamespaceHandler.NAMESPACE, "Rule");
-        final List<Element> ruleElementsAfp =
+        final List<Element> ruleElements =
                 ElementSupport.getChildElementsByTagNameNS(configElement, BaseFilterParser.NAMESPACE, "Rule");
-
-        final List<Element> ruleElements = new ArrayList<>(ruleElementsBasic.size() + ruleElementsAfp.size());
-        ruleElements.addAll(ruleElementsBasic);
-        ruleElements.addAll(ruleElementsAfp);
 
         builder.addPropertyValue("subsidiaries", SpringSupport.parseCustomElements(ruleElements, parserContext));
 
