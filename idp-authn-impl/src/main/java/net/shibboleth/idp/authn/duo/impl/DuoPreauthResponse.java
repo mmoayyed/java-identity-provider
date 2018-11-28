@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DuoPreauthResponse extends DuoAuthAPIResponse {
 
-    /** the {@link List} of {@link DuoDeivces} registered. */
+    /** the {@link List} of {@link DuoDevice}s registered. */
     @JsonProperty("devices") @Nonnull private List<DuoDevice> devices;
 
     /** the {@link URL} for the self-enrollment portal. */

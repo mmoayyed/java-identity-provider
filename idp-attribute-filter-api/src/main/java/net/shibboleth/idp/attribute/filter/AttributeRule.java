@@ -39,15 +39,22 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// Checkstyle: Javadoc OFF
+// See https://github.com/checkstyle/checkstyle/issues/3351
 /**
- * Represents a value filtering rule for a particular attribute. <code>
-     <element name="AttributeRule" type="afp:AttributeRuleType">
-        <annotation>
-            <documentation>A rule that describes how values of an attribute will be filtered.&lt;/documentation>
-        &lt;/annotation>
-    &lt;/element>
- </code>
+ * Represents a value filtering rule for a particular attribute.
+ *
+ * <pre>
+ * {@code
+ * <element name="AttributeRule" type="afp:AttributeRuleType">
+ *     <annotation>
+ *         <documentation>A rule that describes how values of an attribute will be filtered.</documentation>
+ *     </annotation>
+ * </element>
+ * }
+ * </pre>
  */
+//Checkstyle: Javadoc ON
 @ThreadSafe
 public class AttributeRule extends AbstractIdentifiableInitializableComponent implements
         UnmodifiableComponent {
@@ -58,15 +65,23 @@ public class AttributeRule extends AbstractIdentifiableInitializableComponent im
     /** Log prefix. */
     private String logPrefix;
 
+    // Checkstyle: Javadoc OFF
+    // See https://github.com/checkstyle/checkstyle/issues/3351
     /**
-     * Unique ID of the attribute this rule applies to. <code>
-        <attribute name="attributeID" type="string" use="required">
-            <annotation>
-                <documentation>The ID of the attribute to which this rule applies.&lt;/documentation>
-            &lt;/annotation>
-        &lt;/attribute>
-      </code>
+     * Unique ID of the attribute this rule applies to.
+     *
+     * <pre>
+     * {@code
+     * <attribute name="attributeID" type="string" use="required">
+     *     <annotation>
+     *         <documentation>The ID of the attribute to which this rule applies.</documentation>
+     *     </annotation>
+     * </attribute>
+     * }
+     * </pre>
      */
+    // Checkstyle: Javadoc ON
+
     private String attributeId;
 
     /**

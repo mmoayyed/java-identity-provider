@@ -23,7 +23,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Describes the results of a Duo AuthAPI call, intended for use with a jackson {@link ObjectMapper}.
+ * Describes the results of a Duo AuthAPI call, intended for use with a jackson
+ * {@link com.fasterxml.jackson.databind.ObjectMapper}.
  * 
  * @since 3.4.0
  */

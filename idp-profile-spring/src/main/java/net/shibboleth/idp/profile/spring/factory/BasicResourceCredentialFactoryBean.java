@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
 import com.google.common.io.ByteStreams;
 
 /**
- * Factory bean for BasicFilesystem & BasicResourceBacked Credentials.
+ * Factory bean for BasicFilesystem &amp; BasicResourceBacked Credentials.
  */
 public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
 

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Describes the results of an authentication attempt via the Duo AuthAPI, intended for use with a jackson
- * {@link ObjectMapper}.
+ * {@link com.fasterxml.jackson.databind.ObjectMapper}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DuoAuthResponse extends DuoAuthAPIResponse {

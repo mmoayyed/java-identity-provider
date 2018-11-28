@@ -28,7 +28,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Represents a Duo device, intended for use with a jackson {@link ObjectMapper}.
+ * Represents a Duo device, intended for use with a jackson
+ * {@link com.fasterxml.jackson.databind.ObjectMapper}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DuoDevice {

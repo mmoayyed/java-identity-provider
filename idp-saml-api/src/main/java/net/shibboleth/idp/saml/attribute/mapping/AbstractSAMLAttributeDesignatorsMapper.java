@@ -75,8 +75,8 @@ public abstract class AbstractSAMLAttributeDesignatorsMapper<OutType extends IdP
     /**
      * Constructor to create the mapping from an existing resolver.
      * 
-     * <p>This code inverts the {@link AttributeEncoder} (internal attribute -> SAML Attributes) into
-     * {@link AttributeMapper} (SAML [AttributeDesignators] -> internal [Requested] Attributes). <br/>
+     * <p>This code inverts the {@link AttributeEncoder} (internal attribute -&gt; SAML Attributes) into
+     * {@link AttributeMapper} (SAML [AttributeDesignators] -&gt; internal [Requested] Attributes). <br/>
      * to generate the {@link AbstractSAMLAttributeDesignatorMapper} (with no
      * {@link AbstractSAMLAttributeDesignatorMapper#getAttributeIds()}. These are accumulated into a {@link Multimap},
      * where the key is the {@link AbstractSAMLAttributeDesignatorMapper} and the values are the (IdP) attribute names.

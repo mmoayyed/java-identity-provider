@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.Predicates;
 
 /**
- * Parser for the &lt:rp:AnonymousRelyingParty&gt; element. <br/>
+ * Parser for the &lt;rp:AnonymousRelyingParty&gt; element. <br/>
  * The {@link com.google.common.base.Predicate} which is injected is AlwaysTrue. The {@link RelyingPartyGroupParser}
  * takes care to ensure that this element is always at the end of the list, thus implementing Default semantics.
  */

@@ -31,7 +31,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Parser for &lt;InlineMetadataProvider&gt. */
+/** Parser for &lt;InlineMetadataProvider&gt;. */
 public class InlineMetadataProviderParser extends AbstractMetadataProviderParser {
 
     /** Element name. */

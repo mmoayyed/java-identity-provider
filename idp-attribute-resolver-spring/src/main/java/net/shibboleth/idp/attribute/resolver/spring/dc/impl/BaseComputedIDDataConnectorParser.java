@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for configuring
  * {@link net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector} and
- * {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
+ * {@link net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector}.
  */
 public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPluginParser {
 
@@ -54,7 +54,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
 
     /**
      * Parse the common definitions for {@link net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector}
-     * and {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
+     * and {@link net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector}.
      * 
      * @param config the DOM element under consideration.
      * @param parserContext Spring's context.

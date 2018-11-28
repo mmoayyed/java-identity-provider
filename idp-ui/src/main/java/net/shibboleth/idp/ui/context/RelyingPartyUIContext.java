@@ -392,7 +392,7 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * look for an &ltAttributeConsumeService&gt and if its there look for an appropriate description.
+     * Look for an &lt;AttributeConsumeService&gt; and if it's there look for an appropriate description.
      * 
      * @param lang - which language to look up
      * @return null or an appropriate description

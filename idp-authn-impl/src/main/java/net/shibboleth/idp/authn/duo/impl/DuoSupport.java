@@ -121,7 +121,7 @@ public final class DuoSupport {
      * 
      * @throws InvalidKeyException bad skey value
      * @throws NoSuchAlgorithmException unknown encryption algorithm
-     * @throws UnsupportedEncodingException failure from {@link URLEncoder}
+     * @throws UnsupportedEncodingException failure from {@link java.net.URLEncoder}
      * 
      * @since 3.4.0
      */
@@ -150,7 +150,7 @@ public final class DuoSupport {
      * 
      * @return the parameters to be signed in their canonical order
      * 
-     * @throws UnsupportedEncodingException failure from {@link URLEncoder}
+     * @throws UnsupportedEncodingException failure from {@link java.net.URLEncoder}
      */
     private static String canonRequest(@Nonnull final RequestBuilder request, @Nonnull final String date,
             final int sigVersion) throws UnsupportedEncodingException {
@@ -168,14 +168,14 @@ public final class DuoSupport {
     }
 
     /**
-     * Builds a string representaion of the query string with the parameter names is alphabetical order. The names and
-     * values are URL encoded and then they are concatenated with '&' in between.
+     * Builds a string representation of the query string with the parameter names is alphabetical order. The names and
+     * values are URL encoded and then they are concatenated with '&amp;' in between.
      * 
      * @param params the name/value pairs to be joined
      * 
      * @return the canonical query string
      * 
-     * @throws UnsupportedEncodingException failure from {@link URLEncoder}
+     * @throws UnsupportedEncodingException failure from {@link java.net.URLEncoder}
      */
     private static String createQueryString(@Nonnull final List<NameValuePair> params)
             throws UnsupportedEncodingException {

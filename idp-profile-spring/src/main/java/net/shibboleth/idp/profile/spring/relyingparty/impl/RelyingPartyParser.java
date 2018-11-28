@@ -38,7 +38,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 
 /**
- * Parser for the &lt:rp:RelyingParty&gt; element.
+ * Parser for the &lt;rp:RelyingParty&gt; element.
  */
 public class RelyingPartyParser extends AbstractRelyingPartyParser {
 

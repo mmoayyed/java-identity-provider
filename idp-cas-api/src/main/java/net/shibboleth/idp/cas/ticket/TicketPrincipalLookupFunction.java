@@ -30,8 +30,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 /**
  * Looks up a principal name stored in a CAS ticket:
  *
- * {@link ProfileRequestContext} -> {@link ProtocolContext} -> {@link TicketContext} ->
- * {@link Ticket#getTicketState()} -> {@link TicketState#getPrincipalName()}.
+ * {@link ProfileRequestContext} -&gt; {@link ProtocolContext} -&gt; {@link TicketContext} -&gt;
+ * {@link Ticket#getTicketState()} -&gt; {@link TicketState#getPrincipalName()}.
  *
  * @author Marvin S. Addison
  * @since 3.3.0

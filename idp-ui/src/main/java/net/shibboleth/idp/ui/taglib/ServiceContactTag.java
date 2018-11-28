@@ -112,7 +112,7 @@ public class ServiceContactTag extends ServiceTagSupport {
     }
 
     /**
-     * build an appropriate string from the &ltContact&gt.
+     * Build an appropriate string from the &lt;Contact&gt;.
      * 
      * @param contact who we are interested in.
      * @return either an hyperlink or straight text or null
@@ -149,9 +149,9 @@ public class ServiceContactTag extends ServiceTagSupport {
     }
 
     /**
-     * build an appropriate string from the &ltEntityDescriptor&gt.
+     * Build an appropriate string from the &lt;EntityDescriptor&gt;.
      * 
-     * @return either an hyperlink or straight text or null.
+     * @return either a hyperlink or straight text or null.
      */
     @Nullable protected String getContactFromEntity() {
 

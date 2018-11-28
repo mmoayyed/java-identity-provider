@@ -147,9 +147,9 @@ public class ServiceLogoTag extends ServiceTagSupport {
     }
 
     /**
-     * Given the url build an appropriate &lta href=...
+     * Given the url, build an appropriate &lt;a href=...
      * 
-     * @return the contrcuted hyperlink or null
+     * @return the constructed hyperlink or null
      */
     @Nullable private String getHyperlink() {
         final String url = getLogoFromUIInfo();

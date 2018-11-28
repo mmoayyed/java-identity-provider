@@ -104,7 +104,7 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
     // CheckStyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Parses a version 2 configuration. <br/>
-     * The following automatically created & injected beans acquire hard wired defaults:
+     * The following automatically created &amp; injected beans acquire hard wired defaults:
      * <ul>
      * <li>{@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" attribute.
      * </li>

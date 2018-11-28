@@ -76,7 +76,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /**
      * Get the maximum number of records to keep in the storage service if the expanded size threshold is not met.
      * 
-     * @return the maximum number of records, or <=0 for no limit
+     * @return the maximum number of records, or &lt;=0 for no limit
      */
     public int getMaximumNumberOfStoredRecords() {
         return maxStoredRecords;
@@ -85,7 +85,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /**
      * Get the maximum number of records to keep in the storage service if the expanded size threshold is met.
      * 
-     * @return the maximum number of records, or <=0 for no limit
+     * @return the maximum number of records, or &lt;=0 for no limit
      */
     public int getExpandedNumberOfStoredRecords() {
         return expandedMaxStoredRecords;
@@ -126,7 +126,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /**
      * Set the maximum number of records to keep in the storage service if the expanded size threshold is not met.
      * 
-     * @param maximum the maximum number of records, or <=0 for no limit
+     * @param maximum the maximum number of records, or &lt;=0 for no limit
      */
     public void setMaximumNumberOfStoredRecords(final int maximum) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -137,7 +137,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /**
      * Set the maximum number of records to keep in the storage service if the expanded size threshold is met.
      * 
-     * @param maximum the maximum number of records, or <=0 for no limit
+     * @param maximum the maximum number of records, or &lt;=0 for no limit
      */
     public void setExpandedNumberOfStoredRecords(final int maximum) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

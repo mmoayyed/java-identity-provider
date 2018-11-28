@@ -35,7 +35,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Bean definition parser for &lt;afp:AttributeFilterPolicyGroup&gt;, top top level of the filter "stack". <br.>
+ * Bean definition parser for &lt;afp:AttributeFilterPolicyGroup&gt;, top top level of the filter "stack". <br/>
  * 
  * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the *
  * {@link net.shibboleth.idp.attribute.filter.AttributeFilterPolicy} beans are sucked out of spring by type and injected

@@ -59,7 +59,7 @@ import com.google.common.base.Function;
  * @event {@link EventIds#IO_ERROR}
  * @event {@link AuthnEventIds#IDENTITY_SWITCH}
  * @post If an identity switch is detected, SessionContext.getIdPSession() == null
- *  && AuthenticationContext.getActiveResults().isEmpty()
+ *  &amp;&amp; AuthenticationContext.getActiveResults().isEmpty()
  */
 public class DetectIdentitySwitch extends AbstractAuthenticationAction {
 

@@ -70,7 +70,8 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
     }
     
     /**
-     * Set whether to check a supplied {@link MetadataResolver} for membership in an AffiliationDescriptor
+     * Set whether to check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}
+     * for membership in an AffiliationDescriptor
      * as a form of group policy.
      * 
      * <p>Defaults to false.</p>

@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 
 /**
- * Strategy for processing an {@link org.apache.http.client.protocol.HttpClient} response into a map of 
+ * Strategy for processing an {@link org.apache.http.client.HttpClient} response into a map of 
  * {@link net.shibboleth.idp.attribute.IdPAttribute}s.
  */
 public interface HTTPResponseMappingStrategy extends MappingStrategy<Map<String,IdPAttribute>>,

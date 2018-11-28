@@ -26,7 +26,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for the &lt:rp:AnonymousRelyingParty&gt; element. <br/>
+ * Parser for the &lt;rp:AnonymousRelyingParty&gt; element. <br/>
  * The {@link com.google.common.base.Predicate} which is injected looks to see if there is metadata associated with the
  * RelyingParty and if so says TRUE.
  */
