@@ -54,8 +54,8 @@ import org.slf4j.LoggerFactory;
  * following criteria:
  *
  * <ol>
- *     <li>Defines <code>{@value AbstractProtocolConfiguration#PROTOCOL_URI}</code> in the
- *        <code>protocolSupportEnumeration</code> attribute of an <code>SPSSODescriptor</code> element.</li>
+ *     <li>Defines <code>https://www.apereo.org/cas/protocol</code> in the <code>protocolSupportEnumeration</code>
+ *         attribute of an <code>SPSSODescriptor</code> element.</li>
  *     <li>Defines an <code>AssertionConsumerService</code> element where the <code>Binding</code> URI is
  *        {@value #LOGIN_BINDING}.</li>
  *      <li>Matching <code>AssertionConsumerService</code> element also defines a <code>Location</code> attribute

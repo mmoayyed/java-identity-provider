@@ -36,14 +36,15 @@ public class ServiceTicket extends Ticket {
     private final boolean forceAuthn;
 
     /**
-     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
-     * and {@link #setTicketState(TicketState)}.
+     * Deprecated.
      *
      * @param id Ticket ID.
-     * @param sessionId IdP session ID used to create ticket.
+     * @param sessionId This parameter is ignored.
      * @param service Service that requested the ticket.
      * @param expiration Expiration instant.
      * @param renew True if ticket was issued from forced authentication, false otherwise.
+     *
+     * @see Ticket#Ticket(String, String, String, Instant)
      */
     @Deprecated
     public ServiceTicket(

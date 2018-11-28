@@ -51,11 +51,16 @@ public class Ticket {
     private TicketState ticketState;
 
     /**
-     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
-     * and {@link #setTicketState(TicketState)}.
+     * Deprecated. This constructor was formerly used to associate a ticket with an IdP session, but is no longer
+     * supported. In order to associate an IdP session with a ticket, follow these steps:
+     * <ol>
+     *     <li>Create a ticket using the {@link Ticket#Ticket(String, String, Instant)} constructor.</li>
+     *     <li>Create an instance of {@link TicketState}, which accepts an IdP session ID parameter.</li>
+     *     <li>Call {@link #setTicketState(TicketState)} on the ticket instance.</li>
+     * </ol>
      *
      * @param id Ticket ID.
-     * @param sessionId IdP session ID used to create ticket.
+     * @param sessionId This parameter is ignored.
      * @param service Service that requested the ticket.
      * @param expiration Expiration instant.
      */

@@ -38,14 +38,15 @@ public class ProxyGrantingTicket extends Ticket {
     private String parentPgTicketId;
 
     /**
-     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
-     * and {@link #setTicketState(TicketState)}.
+     * Deprecated.
      *
      * @param id Ticket ID.
-     * @param sessionId IdP session ID used to create ticket.
+     * @param sessionId This parameter is ignored.
      * @param service Service that requested the ticket.
      * @param expiration Expiration instant.
      * @param parentId ID of parent proxy-granting ticket or null if this is first proxy in chain.
+     *
+     * @see Ticket#Ticket(String, String, String, Instant)
      */
     @Deprecated
     public ProxyGrantingTicket(
