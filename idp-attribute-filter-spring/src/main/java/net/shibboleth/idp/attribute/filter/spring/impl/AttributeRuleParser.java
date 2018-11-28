@@ -23,25 +23,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.filter.AttributeRule;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Spring bean definition parser to configure an {@link AttributeRule}.
@@ -53,14 +49,6 @@ public class AttributeRuleParser extends BaseFilterParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(BaseFilterParser.NAMESPACE, "AttributeRuleType");
-
-    /** PermitValueRuleReference. */
-    @Deprecated public static final QName PERMIT_VALUE_REF = new QName(BaseFilterParser.NAMESPACE,
-            "PermitValueRuleReference");
-
-    /** DenyValueRuleReference. */
-    @Deprecated public static final QName DENY_VALUE_REF = new QName(BaseFilterParser.NAMESPACE,
-            "DenyValueRuleReference");
 
     /** permitAny Attribute. */
     public static final String PERMIT_ANY_ATTRIBUTE = "permitAny";
@@ -88,9 +76,7 @@ public class AttributeRuleParser extends BaseFilterParser {
 
         final List<Element> permitValueRule = ElementSupport.getChildElements(config,
                 BaseFilterParser.PERMIT_VALUE_RULE);
-        final List<Element> permitValueReference = ElementSupport.getChildElements(config, PERMIT_VALUE_REF);
         final List<Element> denyValueRule = ElementSupport.getChildElements(config, BaseFilterParser.DENY_VALUE_RULE);
-        final List<Element> denyValueReference = ElementSupport.getChildElements(config, DENY_VALUE_REF);
 
         if (permitValueRule != null && !permitValueRule.isEmpty()) {
 
@@ -98,21 +84,6 @@ public class AttributeRuleParser extends BaseFilterParser {
                     SpringSupport.parseCustomElements(permitValueRule, parserContext);
             log.debug("permitValueRules {}", permitValueRules);
             builder.addPropertyValue("matcher", permitValueRules.get(0));
-            builder.addPropertyValue("isDenyRule", false);
-
-        } else if (permitValueReference != null && !permitValueReference.isEmpty()) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, PERMIT_VALUE_REF.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(),  null);
-
-            final String referenceText = getReferenceText(permitValueReference.get(0));
-            if (null == referenceText) {
-                throw new BeanCreationException("Attribute Rule '" + id + "' no text or reference for "
-                        + PERMIT_VALUE_REF);
-            }
-
-            final String reference = getAbsoluteReference(config, "PermitValueRule", referenceText);
-            log.debug("Adding PermitValueRule reference to {}", reference);
-            builder.addPropertyValue("matcher", new RuntimeBeanReference(reference));
             builder.addPropertyValue("isDenyRule", false);
 
         } else if (denyValueRule != null && !denyValueRule.isEmpty()) {
@@ -123,27 +94,15 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("matcher", denyValueRules.get(0));
             builder.addPropertyValue("isDenyRule", true);
 
-        } else if (denyValueReference != null && !denyValueReference.isEmpty()) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, DENY_VALUE_REF.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(),  null);
-
-            final String referenceText = getReferenceText(denyValueReference.get(0));
-            if (null == referenceText) {
-                throw new BeanCreationException("Attribute Rule '" + id + "' no text or reference for "
-                        + DENY_VALUE_REF);
-            }
-            final String reference = getAbsoluteReference(config, "DenyValueRule", referenceText);
-            log.debug("Adding DenyValueRule reference to {}", reference);
-            builder.addPropertyValue("matcher", new RuntimeBeanReference(reference));
-            builder.addPropertyValue("isDenyRule", true);
         } else if (config.hasAttributeNS(null, PERMIT_ANY_ATTRIBUTE)
                 && AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, PERMIT_ANY_ATTRIBUTE))) {
             // Note the documented restriction that permitAny cannot be property replaced.
             builder.addPropertyValue("isDenyRule", false);
             builder.addPropertyValue("matcher", Matcher.MATCHES_ALL);
         } else {
-            log.warn("Attribute rule must have one of PermitValueRule, "
-                    + "DenyValueRule or have attribute permitAny=\"true\"");
+            log.warn("{}: Attribute rule must have PermitValueRule or a DenyValueRule" +
+                    ", or have attribute permitAny=\"true\"",
+                    parserContext.getReaderContext().getResource().getDescription());
         }
     }
     // Checkstyle: CyclomaticComplexity ON

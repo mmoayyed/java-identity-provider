@@ -85,38 +85,20 @@
         <complexContent>
             <extension base="afp:IdentityType">
                 <sequence>
-                    <choice>
-                        <element ref="afp:PolicyRequirementRule">
-                            <annotation>
-                                <documentation>
-                                    A requirement that if met signals that this filter policy should be used.
-                                </documentation>
-                            </annotation>
-                        </element>
-                        <element name="PolicyRequirementRuleReference" type="afp:ReferenceType">
-                            <annotation>
-                                <documentation>
-                                    Reference to a PolicyRequirement defined within this policy group or another.
-                                </documentation>
-                            </annotation>
-                        </element>
-                    </choice>
-                    <choice minOccurs="0" maxOccurs="unbounded">
-                        <element ref="afp:AttributeRule">
-                            <annotation>
-                                <documentation>
-                                    A rule that describes how values of an attribute will be filtered.
-                                </documentation>
-                            </annotation>
-                        </element>
-                        <element name="AttributeRuleReference" type="afp:ReferenceType">
-                            <annotation>
-                                <documentation>
-                                    Reference to a AttributeRule defined within this policy group or another.
-                                </documentation>
-                            </annotation>
-                        </element>
-                    </choice>
+	                 <element ref="afp:PolicyRequirementRule">
+	                     <annotation>
+	                         <documentation>
+	                             A requirement that if met signals that this filter policy should be used.
+	                         </documentation>
+	                     </annotation>
+	                 </element>
+	                 <element ref="afp:AttributeRule" minOccurs="0" maxOccurs="unbounded">
+	                     <annotation>
+	                         <documentation>
+	                             A rule that describes how values of an attribute will be filtered.
+	                         </documentation>
+	                     </annotation>
+	                 </element>
                 </sequence>
             </extension>
         </complexContent>

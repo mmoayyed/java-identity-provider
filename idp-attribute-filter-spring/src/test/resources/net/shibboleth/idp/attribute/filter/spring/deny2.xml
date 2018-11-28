@@ -3,16 +3,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mace:shibboleth:2.0:afp"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
-	<DenyValueRule xsi:type="OR" id="deny">
-		<Rule xsi:type="Value" value="staff" />
-		<Rule xsi:type="Value" value="student" />
-	</DenyValueRule>
-
 	<AttributeFilterPolicy id="InCommonRelease">
 		<PolicyRequirementRule xsi:type="ANY" />
 
 		<AttributeRule attributeID="affiliation">
-			<DenyValueRuleReference ref="deny" />
+			<DenyValueRule xsi:type="OR" id="deny">
+				<Rule xsi:type="Value" value="staff" />
+				<Rule xsi:type="Value" value="student" />
+			</DenyValueRule>
 		</AttributeRule>
 
 	</AttributeFilterPolicy>

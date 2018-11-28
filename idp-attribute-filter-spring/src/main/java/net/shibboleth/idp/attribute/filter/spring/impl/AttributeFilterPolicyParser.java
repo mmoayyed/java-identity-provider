@@ -25,9 +25,7 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanMetadataElement;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -36,8 +34,6 @@ import org.w3c.dom.Element;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -52,16 +48,8 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     public static final QName TYPE_NAME = new QName(BaseFilterParser.NAMESPACE,
             "AttributeFilterPolicyType");
 
-    /** The PolicyRequirementRuleReference QName. */
-    @Deprecated public static final QName POLICY_REQUIREMENT_RULE_REF = new QName(BaseFilterParser.NAMESPACE,
-            "PolicyRequirementRuleReference");
-
     /** The AttributeRule QName. */
     private static final QName ATTRIBUTE_RULE = new QName(BaseFilterParser.NAMESPACE, "AttributeRule");
-
-    /** The AttributeRuleReference QName. */
-    @Deprecated private static final QName ATTRIBUTE_RULE_REF = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeRuleReference");
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AttributeFilterPolicyParser.class);
@@ -73,9 +61,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
- // Checkstyle: CyclomaticComplexity OFF
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
@@ -93,26 +79,6 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
             final ManagedList<BeanDefinition> requirements =
                     SpringSupport.parseCustomElements(policyRequirements, parserContext);
             builder.addConstructorArgValue(requirements.get(0));
-        } else {
-            final List<Element> policyRequirementsRef =
-                    ElementSupport.getChildElements(config, POLICY_REQUIREMENT_RULE_REF);
-            if (policyRequirementsRef != null && policyRequirementsRef.size() > 0) {
-                    DeprecationSupport.warnOnce(ObjectType.ELEMENT, POLICY_REQUIREMENT_RULE_REF.toString(),
-                        parserContext.getReaderContext().getResource().getDescription(),  null);
-
-                final String referenceText = getReferenceText(policyRequirementsRef.get(0));
-                if (null == referenceText) {
-                    throw new BeanCreationException("Attribute Filter '" + policyId + "' no text or reference for "
-                            + POLICY_REQUIREMENT_RULE_REF);
-                }
-
-                final String reference = getAbsoluteReference(config, "PolicyRequirementRule", referenceText);
-                log.debug("Adding PolicyRequirementRule reference to {}", reference);
-                builder.addConstructorArgValue(new RuntimeBeanReference(reference));
-            } else {
-                throw new BeanCreationException("Attribute Filter '" + policyId
-                        + "' A PolicyRequirementRule or a PolicyRequirementRuleReference should be present");
-            }
         }
 
         // Get the attribute rules, both inline or referenced.
@@ -122,18 +88,6 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
             attributeRules.addAll(SpringSupport.parseCustomElements(rules, parserContext));
         }
 
-        final List<Element> rulesRef = ElementSupport.getChildElements(config, ATTRIBUTE_RULE_REF);
-        if (rulesRef != null && rulesRef.size() > 0) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, ATTRIBUTE_RULE_REF.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(),  null);
-            
-            for (final Element ruleRef : rulesRef) {
-                final String reference = getAbsoluteReference(config, "AttributeRule", getReferenceText(ruleRef));
-                attributeRules.add(new RuntimeBeanReference(reference));
-            }
-        }
-
         builder.addConstructorArgValue(attributeRules);
     }
-    // Checkstyle: CyclomaticComplexity ON
 }

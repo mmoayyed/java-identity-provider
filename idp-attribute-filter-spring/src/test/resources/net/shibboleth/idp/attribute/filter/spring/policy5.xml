@@ -4,27 +4,23 @@
     	xmlns="urn:mace:shibboleth:2.0:afp"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
-        <PermitValueRule
-            id="Wibble" xsi:type="OR">
-            <Rule xsi:type="Value" value="faculty" id="fac"/>
-            <Rule xsi:type="Value" value="student" id="stud"/>
-            <Rule xsi:type="Value" value="staff" id="stadd"/>
-            <Rule xsi:type="Value" value="alum" id="alum"/>
-            <Rule xsi:type="Value" value="member" id="member"/>
-            <Rule xsi:type="Value" value="affiliate" id="affilient"/>
-            <Rule xsi:type="Value" value="employee" id = "emp"/>
-        </PermitValueRule>
-                            
-	<AttributeRule attributeID="affiliation" id="wobble">
-		<PermitValueRuleReference ref="Wibble"/>
-	</AttributeRule>
-
 	<!-- Release affiliation to anyone in the InCommon group -->
 	<AttributeFilterPolicy id="InCommonRelease">
         <!--  Turn on rule if an attribute call firstName has value "john" -->
 		<PolicyRequirementRule xsi:type="Value" value="john" attributeID="firstName"/>
 
-		<AttributeRuleReference ref="wobble"/>
+		<AttributeRule attributeID="affiliation" id="wobble">
+	        <PermitValueRule xsi:type="OR">
+	            <Rule xsi:type="Value" value="faculty" id="fac"/>
+	            <Rule xsi:type="Value" value="student" id="stud"/>
+	            <Rule xsi:type="Value" value="staff" id="stadd"/>
+	            <Rule xsi:type="Value" value="alum" id="alum"/>
+	            <Rule xsi:type="Value" value="member" id="member"/>
+	            <Rule xsi:type="Value" value="affiliate" id="affilient"/>
+	            <Rule xsi:type="Value" value="employee" id = "emp"/>
+	        </PermitValueRule>
+	                            
+		</AttributeRule>
 
 	</AttributeFilterPolicy>
 

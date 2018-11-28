@@ -105,19 +105,6 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
     }
 
     /**
-     * Gets the reference text from an element.
-     * 
-     * @param element the element to look at.
-     * @return the text.
-     * 
-     */
-    @Nullable protected String getReferenceText(@Nonnull final Element element) {
-        final String reference = StringSupport.trimOrNull(element.getAttributeNS(null, "ref"));
-
-        return reference;
-    }
-
-    /**
      * Gets the absolute reference given a possibly relative reference.
      * 
      * @param configElement component configuration element
