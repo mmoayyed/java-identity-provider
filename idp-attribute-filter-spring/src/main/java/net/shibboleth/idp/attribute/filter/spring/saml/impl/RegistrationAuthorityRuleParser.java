@@ -20,19 +20,19 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
 
 /** Spring bean definition parser that creates {@link RegistrationAuthorityPolicyRule} beans. */
 public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
@@ -73,8 +73,8 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
         final Attr attr = element.getAttributeNodeNS(null, REGISTRARS_ATTR_NAME);
         if (attr != null) {
-            final ManagedList<String> issuers = SpringSupport.getAttributeValueAsManagedList(attr);
-            log.debug("Registration Authority Filter: Issuers = {}", issuers);
+            final AbstractBeanDefinition issuers = SpringSupport.getAttributeValueAsList(attr);
+            log.debug("Registration Authority Filter: Issuers = {}", attr.getValue());
             builder.addPropertyValue("issuers", issuers);
         }
     }
