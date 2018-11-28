@@ -21,19 +21,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.resolver.spring.enc.BaseScopedAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1ScopedStringAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 /**
  * Spring Bean Definition Parser for {@link SAML1ScopedStringAttributeEncoder}.
  */
-public class SAML1ScopedStringAttributeEncoderParser extends AbstractWarningScopedAttributeEncoderParser {
+public class SAML1ScopedStringAttributeEncoderParser extends BaseScopedAttributeEncoderParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
@@ -67,11 +68,4 @@ public class SAML1ScopedStringAttributeEncoderParser extends AbstractWarningScop
             builder.addPropertyValue("namespace", namespace);
         }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-
 }
