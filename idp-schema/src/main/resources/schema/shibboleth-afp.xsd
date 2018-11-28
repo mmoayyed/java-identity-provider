@@ -340,17 +340,6 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AuthenticationMethod">
-        <annotation>
-            <documentation>
-                A match function that matches the authentication method against the specified value.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:StringMatchType"/>
-        </complexContent>
-    </complexType>
-
     <complexType name="Value">
         <annotation>
             <documentation>
@@ -446,17 +435,6 @@
         <annotation>
             <documentation>
                 A match function that matches the principal name against the specified regular expression.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:RegexMatchType"/>
-        </complexContent>
-    </complexType>
-
-    <complexType name="AuthenticationMethodRegex">
-        <annotation>
-            <documentation>
-                A match function that matches the authentication method against the specified regular expression.
             </documentation>
         </annotation>
         <complexContent>

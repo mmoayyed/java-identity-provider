@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.impl;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AndMatcherParser;
@@ -32,8 +34,6 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.AttributeIssue
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.AttributeIssuerRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.AttributeRequesterRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.AttributeRequesterRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.AuthenticationMethodRegexRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.AuthenticationMethodRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.NumOfAttributeValuesRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PredicateRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PrincipalNameRegexRuleParser;
@@ -47,8 +47,6 @@ import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterIn
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIdFormatRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.RegistrationAuthorityRuleParser;
-
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 /** Namespace handler for the attribute filtering engine. */
 public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -111,12 +109,6 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(PrincipalNameRuleParser.SCHEMA_TYPE, new PrincipalNameRuleParser());
 
         registerBeanDefinitionParser(PrincipalNameRegexRuleParser.SCHEMA_TYPE, new PrincipalNameRegexRuleParser());
-
-        registerBeanDefinitionParser(AuthenticationMethodRuleParser.SCHEMA_TYPE,
-                new AuthenticationMethodRuleParser());
-
-        registerBeanDefinitionParser(AuthenticationMethodRegexRuleParser.SCHEMA_TYPE,
-                new AuthenticationMethodRegexRuleParser());
 
         registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE,
                 new NumOfAttributeValuesRuleParser());
