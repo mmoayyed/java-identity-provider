@@ -22,14 +22,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
-import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
-import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -37,10 +29,17 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
+import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
+import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /**
  * Bean definition parser for {@link ScriptedPolicyRule} or {@link ScriptedMatcher} objects.
  */
-public class ScriptedMatcherParser extends AbstractWarningFilterParser {
+public class ScriptedMatcherParser extends BaseFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "Script");
@@ -53,11 +52,6 @@ public class ScriptedMatcherParser extends AbstractWarningFilterParser {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedMatcherParser.class);
-
-    /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {

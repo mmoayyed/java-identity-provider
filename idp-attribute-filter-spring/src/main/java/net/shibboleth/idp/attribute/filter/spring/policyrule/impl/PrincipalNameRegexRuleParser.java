@@ -32,11 +32,6 @@ public class PrincipalNameRegexRuleParser extends AbstractRegexPolicyRuleParser 
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "PrincipalNameRegex");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<PrincipalNameRegexpPolicyRule> getNativeBeanClass() {
         return PrincipalNameRegexpPolicyRule.class;
     }

@@ -32,11 +32,6 @@ public class ProxiedRequesterRuleParser extends AbstractStringPolicyRuleParser {
     @Nonnull public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "ProxiedRequester");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<ProxiedRequesterPolicyRule> getNativeBeanClass() {
         return ProxiedRequesterPolicyRule.class;
     }

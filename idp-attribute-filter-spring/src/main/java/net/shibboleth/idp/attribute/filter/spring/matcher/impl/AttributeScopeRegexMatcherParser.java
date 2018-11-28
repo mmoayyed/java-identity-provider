@@ -32,11 +32,6 @@ public class AttributeScopeRegexMatcherParser extends AbstractRegexMatcherParser
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "ScopeRegex");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeScopeRegexpMatcher.class;
     }

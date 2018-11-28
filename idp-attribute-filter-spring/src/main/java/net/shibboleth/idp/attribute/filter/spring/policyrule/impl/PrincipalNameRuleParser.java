@@ -29,13 +29,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 public class PrincipalNameRuleParser extends AbstractStringPolicyRuleParser {
 
     /** Schema type. */
-    /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "PrincipalName");
-
-    /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<PrincipalNamePolicyRule> getNativeBeanClass() {

@@ -30,7 +30,6 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AndMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AndPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
@@ -38,15 +37,10 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
  * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or
  * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
  */
-public class AndMatcherParser extends AbstractWarningFilterParser {
+public class AndMatcherParser extends BaseFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "AND");
-
-    /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {

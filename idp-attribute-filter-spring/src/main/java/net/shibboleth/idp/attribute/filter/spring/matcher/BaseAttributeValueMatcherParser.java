@@ -19,14 +19,14 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
-import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
-import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
-import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
+import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
+import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 /**
  * Base function for all Attribute Value matchers. <br/>
@@ -52,7 +52,7 @@ import org.w3c.dom.Element;
  * </tr>
  * </table>
  */
-public abstract class BaseAttributeValueMatcherParser extends AbstractWarningFilterParser {
+public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
     
     /** ATTRIBUTE ID string. */
     public static final String ATTRIBUTE_ID = "attributeID";

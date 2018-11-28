@@ -32,11 +32,6 @@ public class AttributeIssuerRegexRuleParser extends AbstractRegexPolicyRuleParse
     @Nonnull public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "IssuerRegex");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeIssuerRegexpPolicyRule> getNativeBeanClass() {
         return AttributeIssuerRegexpPolicyRule.class;
     }

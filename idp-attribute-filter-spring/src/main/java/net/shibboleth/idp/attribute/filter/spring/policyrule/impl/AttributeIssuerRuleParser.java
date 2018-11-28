@@ -35,10 +35,4 @@ public class AttributeIssuerRuleParser extends AbstractStringPolicyRuleParser {
     @Override @Nonnull protected Class<AttributeIssuerPolicyRule> getNativeBeanClass() {
         return AttributeIssuerPolicyRule.class;
     }
-
-    /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
 }

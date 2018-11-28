@@ -32,11 +32,6 @@ public class AttributeRequesterRuleParser extends AbstractStringPolicyRuleParser
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "Requester");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterPolicyRule> getNativeBeanClass() {
         return AttributeRequesterPolicyRule.class;
     }

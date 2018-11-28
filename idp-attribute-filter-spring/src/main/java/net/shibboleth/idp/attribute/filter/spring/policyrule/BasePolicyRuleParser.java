@@ -19,13 +19,13 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
-import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 
 /**
  * Base function for all natural policy rules. <br/>
@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * </tr>
  * </table>
  */
-public abstract class BasePolicyRuleParser extends AbstractWarningFilterParser {
+public abstract class BasePolicyRuleParser extends BaseFilterParser {
 
     /**
      * Helper function to determine if the Attribute Matcher has the attribute Id Specified.

@@ -38,11 +38,6 @@ public class AuthenticationMethodRegexRuleParser extends AbstractRegexPolicyRule
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "AuthenticationMethodRegex");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<AuthenticationMethodRegexpPolicyRule> getNativeBeanClass() {
         return AuthenticationMethodRegexpPolicyRule.class;
     }

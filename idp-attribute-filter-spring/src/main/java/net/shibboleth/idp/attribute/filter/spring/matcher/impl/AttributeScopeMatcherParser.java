@@ -33,11 +33,6 @@ public class AttributeScopeMatcherParser extends AbstractStringMatcherParser {
             "Scope");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override
     @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeScopeStringMatcher.class;

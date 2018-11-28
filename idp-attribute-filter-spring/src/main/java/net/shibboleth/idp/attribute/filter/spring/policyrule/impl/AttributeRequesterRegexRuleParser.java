@@ -32,11 +32,6 @@ public class AttributeRequesterRegexRuleParser extends AbstractRegexPolicyRulePa
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "RequesterRegex");
 
     /** {@inheritDoc} */
-    @Override protected QName getAFPName() {
-        return SCHEMA_TYPE;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterRegexpPolicyRule> getNativeBeanClass() {
         return AttributeRequesterRegexpPolicyRule.class;
     }
