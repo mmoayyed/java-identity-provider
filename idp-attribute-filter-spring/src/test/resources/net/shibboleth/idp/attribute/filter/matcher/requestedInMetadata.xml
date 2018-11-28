@@ -1,20 +1,11 @@
-<afp:AttributeFilterPolicy id="MostBasicExample"
-        xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns:afp="urn:mace:shibboleth:2.0:afp"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
-        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
-                            urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd
-                            urn:mace:shibboleth:2.0:afp:mf:saml http://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd">                            
-    <afp:PolicyRequirementRule xsi:type="saml:AttributeInMetadata"
-                           id="PRR"
-                           onlyIfRequired="true"
-                           matchIfMetadataSilent="true"/>
-                            
-    <afp:AttributeRule attributeID="email">
-		
-		<afp:PermitValueRule xsi:type="saml:AttributeInMetadata"
-                     	     id="PermitRule"
-	                         onlyIfRequired="true"
-	                         matchIfMetadataSilent="true"
-	                        />
-    </afp:AttributeRule>
-</afp:AttributeFilterPolicy>
+<AttributeFilterPolicy id="MostBasicExample" xmlns="urn:mace:shibboleth:2.0:afp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
+    <PolicyRequirementRule xsi:type="AttributeInMetadata" id="PRR" onlyIfRequired="true"
+        matchIfMetadataSilent="true" />
+
+    <AttributeRule attributeID="email">
+
+        <PermitValueRule xsi:type="AttributeInMetadata" id="PermitRule" onlyIfRequired="true"
+            matchIfMetadataSilent="true" />
+    </AttributeRule>
+</AttributeFilterPolicy>

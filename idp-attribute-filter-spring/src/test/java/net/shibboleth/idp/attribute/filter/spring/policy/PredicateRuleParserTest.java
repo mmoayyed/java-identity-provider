@@ -43,7 +43,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
         setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH + "afp/"
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH 
                 + "predicate1.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
                 + "predicateBeans.xml"));
 
@@ -66,7 +66,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH 
-                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH + "afp/"
+                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH 
                 + "predicate2.xml"));
 
         ctx.refresh();
@@ -92,7 +92,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
-                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH + "afp/"
+                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
                 + "predicateRp.xml"));
 
         ctx.refresh();

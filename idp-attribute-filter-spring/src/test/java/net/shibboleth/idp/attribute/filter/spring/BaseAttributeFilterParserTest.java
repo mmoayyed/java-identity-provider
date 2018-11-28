@@ -114,7 +114,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         context.setDisplayName("ApplicationContext: Policy Rule");
 
         setTestContext(context);
-        final String path = POLICY_RULE_PATH + "afp/"  + fileName; 
+        final String path = POLICY_RULE_PATH + fileName; 
         final AttributeFilterPolicy policy =
                 getBean(path, AttributeFilterPolicy.class, context);
 
@@ -128,7 +128,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         context.setDisplayName("ApplicationContext: Matcher");
         setTestContext(context);
         
-        final String path = MATCHER_PATH + "afp/" + fileName; 
+        final String path = MATCHER_PATH + fileName; 
 
         final AttributeRule rule = getBean(path, AttributeRule.class, context);
 

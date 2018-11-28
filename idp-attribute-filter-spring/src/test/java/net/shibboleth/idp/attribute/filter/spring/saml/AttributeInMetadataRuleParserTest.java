@@ -40,7 +40,7 @@ public class AttributeInMetadataRuleParserTest extends  BaseAttributeFilterParse
         setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");
         
-        final AttributeRule rule = getBean(MATCHER_PATH + "afp/" + "requestedInMetadata.xml", AttributeRule.class, context);
+        final AttributeRule rule = getBean(MATCHER_PATH + "requestedInMetadata.xml", AttributeRule.class, context);
         rule.initialize();
         AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) rule.getMatcher();
      
