@@ -27,7 +27,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -36,6 +35,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
+import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -73,7 +73,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Outbound binding to use. */
-    @NonnullAfterInit private String outboundBinding;
+    @NonnullAfterInit private BindingDescriptor outboundBinding;
     
     /** The {@link SAMLPeerEntityContext} to base the outbound context on, if any. */
     @Nullable private SAMLPeerEntityContext peerEntityCtx;
@@ -115,11 +115,10 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
     /**
      * Set the outbound binding to use for the error response.
      * 
-     * @param binding   binding identifier
+     * @param binding   binding descriptor
      */
-    public void setOutboundBinding(@Nonnull @NotEmpty final String binding) {
-        outboundBinding = Constraint.isNotNull(StringSupport.trimOrNull(binding),
-                "Outbound binding URI cannot be null or empty");
+    public void setOutboundBinding(@Nonnull @NotEmpty final BindingDescriptor binding) {
+        outboundBinding = Constraint.isNotNull(binding, "Outbound BindingDescriptor cannot be null or empty");
     }
     
     /** {@inheritDoc} */
@@ -128,7 +127,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
         super.doInitialize();
         
         if (outboundBinding == null) {
-            throw new ComponentInitializationException("Outbound binding URI cannot be null");
+            throw new ComponentInitializationException("Outbound BindingDescriptor cannot be null");
         }
     }
 
@@ -172,7 +171,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
             bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(
                     profileRequestContext.getInboundMessageContext()));
         }
-        bindingCtx.setBindingUri(outboundBinding);
+        bindingCtx.setBindingDescriptor(outboundBinding);
                 
         // Copy SAML peer context and metadata if it exists.
         if (peerEntityCtx != null) {

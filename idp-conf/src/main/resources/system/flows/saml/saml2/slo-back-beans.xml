@@ -23,6 +23,7 @@
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID}"
+        p:browserProfile="false"
         p:loggingId="%{idp.service.logging.saml2slo:Logout}" />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
@@ -34,12 +35,14 @@
         </constructor-arg>
     </bean>
 
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+        c:_0-ref="shibboleth.OutgoingSOAPBindings" />
+
     <bean id="InitializeMessageChannelSecurityContext"
         class="org.opensaml.profile.action.impl.HttpServletRequestMessageChannelSecurity" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:defaultPortInsecure="%{idp.security.defaultPortInsecure:true}" />
-
-    <alias name="shibboleth.OutgoingSOAPBindings" alias="shibboleth.OutgoingBindings"/>
 
     <bean id="ProcessLogoutRequest"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogoutRequest" scope="prototype"
@@ -47,15 +50,29 @@
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors="#{getObject('shibboleth.LogoutAuditExtractors') ?: getObject('shibboleth.DefaultLogoutAuditExtractors')}" />
+        p:fieldExtractors="#{getObject('shibboleth.LogoutRequestAuditExtractors') ?: getObject('shibboleth.DefaultLogoutRequestAuditExtractors')}" />
     
-    <!--
-    TODO: will be used when logout propagation is enabled
-    <bean id="PopulateMultiRPContextFromLogoutContext"
-        class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
-        p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
-        p:sessionTypeProtocolMap="#{getObject('shibboleth.SessionTypeProtocolMap') ?: getObject('shibboleth.DefaultSessionTypeProtocolMap')}" />
-    -->
+    <bean id="SaveProfileRequestContextTree"
+        class="net.shibboleth.idp.session.impl.SaveProfileRequestContextTree" scope="prototype" />
+    
+    <bean id="RestoreProfileRequestContextTree"
+        class="net.shibboleth.idp.session.impl.RestoreProfileRequestContextTree" scope="prototype" />
+    
+    <bean id="PopulateLogoutPropagationContext"
+            class="net.shibboleth.idp.session.impl.PopulateLogoutPropagationContext" scope="prototype">
+        <property name="sessionLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:f-ref="shibboleth.ChildLookup.LogoutContext">
+                <constructor-arg name="g">
+                    <bean class="net.shibboleth.idp.session.context.navigate.LogoutContextSessionLookupFunction" />
+                </constructor-arg>    
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="SelectPropagationFlow"
+        class="net.shibboleth.idp.session.impl.SelectLogoutPropagationFlow" scope="prototype"
+        c:selector-ref="shibboleth.LogoutPropagationFlowSelector" />
     
     <bean id="AddLogoutResponse" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
             p:overwriteExisting="true"
@@ -67,11 +84,20 @@
         </property>
     </bean>
 
+    <bean id="AddPartialLogoutStatusToResponse"
+            class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype">
+        <property name="statusCodes">
+            <list>
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.SUCCESS" />
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.PARTIAL_LOGOUT" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
-                <!-- TODO outbound handlers -->
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler"
                     scope="prototype" p:signErrorResponses="%{idp.errors.signed:true}" />
             </util:list>

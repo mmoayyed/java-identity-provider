@@ -60,11 +60,8 @@
     </bean>
 
     <bean id="InitializeOutboundMessageContextForError"
-            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype">
-        <property name="outboundBinding">
-            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML1_SOAP11_BINDING_URI"/>
-        </property>
-    </bean>
+            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype"
+            p:outboundBinding-ref="shibboleth.Binding.SAML1SOAP" />
 
     <bean id="AddStatusToResponse"
             class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse" scope="prototype"

@@ -28,7 +28,9 @@
         </constructor-arg>
     </bean>
     
-    <alias name="shibboleth.OutgoingIDWSFSSOSBindings" alias="shibboleth.OutgoingBindings"/>
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+        c:_0-ref="shibboleth.OutgoingIDWSFSSOSBindings" />
     
     <bean id="shibboleth.BindingSpecificMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

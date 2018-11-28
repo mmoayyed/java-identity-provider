@@ -94,7 +94,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         } else if (logoutPropCtx.getSession() == null || !(logoutPropCtx.getSession() instanceof SAML2SPSession)) {
-            log.debug("{} Logout propgation context did not contain a SAML2SPSession", getLogPrefix());
+            log.debug("{} Logout propagation context did not contain a SAML2SPSession", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }

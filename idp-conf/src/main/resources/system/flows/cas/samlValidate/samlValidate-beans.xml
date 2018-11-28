@@ -13,25 +13,29 @@
           scope="prototype"
           c:messageDecoder-ref="SoapDecoder" />
 
-    <bean id="SoapDecoder"
+    <bean id="SoapDecoder" 
           class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder"
           scope="prototype"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="ProcessSamlMessage"
-          class="net.shibboleth.idp.cas.flow.impl.ProcessSamlMessageAction" />
+          class="net.shibboleth.idp.cas.flow.impl.ProcessSamlMessageAction"
+          scope="prototype" />
 
-    <bean id="BuildSamlValidationSuccessMessage"
+    <bean id="BuildSamlValidationSuccessMessage" 
           class="net.shibboleth.idp.cas.flow.impl.BuildSamlValidationSuccessMessageAction"
+          scope="prototype"
           c:strategy-ref="shibboleth.DefaultIdentifierGenerationStrategy"
-          c:id="%{idp.entityID}" />
+          c:id="%{idp.entityID}"
+          p:outgoingBinding-ref="shibboleth.Binding.SAML1SOAP" />
 
     <bean id="BuildSamlValidationFailureMessage"
-          class="net.shibboleth.idp.cas.flow.impl.BuildSamlValidationFailureMessageAction" />
+          class="net.shibboleth.idp.cas.flow.impl.BuildSamlValidationFailureMessageAction"
+          scope="prototype"
+          p:outgoingBinding-ref="shibboleth.Binding.SAML1SOAP" />
 
     <bean id="MessageEncoderFactory"
-          class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory"
-          p:bindings-ref="shibboleth.OutgoingSOAPBindings" />
+          class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory" />
 
     <bean id="EncodeMessage"
           class="org.opensaml.profile.action.impl.EncodeMessage"

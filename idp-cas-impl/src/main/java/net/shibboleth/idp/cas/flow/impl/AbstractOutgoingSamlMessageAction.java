@@ -24,14 +24,20 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
@@ -49,13 +55,42 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** CAS namespace. */
-    protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
+    @Nonnull @NotEmpty protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
     
     /** SOAP envelope needed for old/broken CAS clients. */
+    @Nonnull
     private QName envelopeName = new QName(SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
 
     /** SOAP body needed for old/broken CAS clients. */
-    private QName bodyName = new QName(SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
+    @Nonnull private QName bodyName = new QName(SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
+    
+    /** Descriptor for outgoing SOAP binding. */
+    @NonnullAfterInit private BindingDescriptor outgoingBinding;
+    
+    /**
+     * Set the {@link BindingDescriptor} describing the outbound binding to use.
+     * 
+     * @param descriptor the descriptor
+     * 
+     * @since 4.0.0
+     */
+    public void setOutgoingBinding(@Nonnull final BindingDescriptor descriptor) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        outgoingBinding = Constraint.isNotNull(descriptor, "Outgoing BindingDescriptor cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (outgoingBinding == null) {
+            throw new ComponentInitializationException("Outgoing BindingDescriptor cannot be null");
+        }
+    }
+
+
 
     /**
      * Build the SAML object.
@@ -84,7 +119,8 @@ public abstract class AbstractOutgoingSamlMessageAction extends
             return ProtocolError.IllegalState.event(this);
         }
         final SAMLBindingContext bindingContext = new SAMLBindingContext();
-        bindingContext.setBindingUri(SAMLConstants.SAML1_SOAP11_BINDING_URI);
+        bindingContext.setBindingUri(outgoingBinding.getId());
+        bindingContext.setBindingDescriptor(outgoingBinding);
         msgContext.addSubcontext(bindingContext);
 
         // Ensure message uses SOAP-ENV ns prefix required by old/broken CAS clients

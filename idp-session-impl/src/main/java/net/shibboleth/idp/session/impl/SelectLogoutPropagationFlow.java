@@ -28,7 +28,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(SelectLogoutPropagationFlow.class);
 
     /** Selection function to determine suitable LogoutPropagationFlowDescriptor for given SPSession. */
-    @Nonnull private final Function<SPSession, LogoutPropagationFlowDescriptor> flowSelectorFunction;
+    @Nonnull private final Function<SPSession,LogoutPropagationFlowDescriptor> flowSelectorFunction;
 
     /** Function to retrieve LogoutPropagationContext from context tree. */
     @Nonnull private Function<ProfileRequestContext, LogoutPropagationContext> logoutPropagationContextFunction;
@@ -80,20 +79,19 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
         logoutPropagationContextFunction = Constraint.isNotNull(function, "Function cannot be null");
     }
 
- // Checkstyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         final LogoutPropagationContext logoutPropCtx = logoutPropagationContextFunction.apply(profileRequestContext);
         if (logoutPropCtx == null || logoutPropCtx.getSession() == null) {
             log.error("{} LogoutPropagationContext not found or found with null SPSession", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
 
         final LogoutPropagationFlowDescriptor flow = flowSelectorFunction.apply(logoutPropCtx.getSession());
         if (flow == null) {
-            log.error("{} No potential flows to choose from, logout propagation will fail", getLogPrefix());
+            log.error("{} No potential flows to choose from, no logout propagation possible", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
@@ -101,6 +99,5 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
         log.debug("{} Selecting logout propagation flow {}", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
- // Checkstyle: ReturnCount ON
     
 }

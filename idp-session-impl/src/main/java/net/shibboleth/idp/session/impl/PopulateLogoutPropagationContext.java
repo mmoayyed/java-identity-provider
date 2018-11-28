@@ -27,9 +27,8 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -49,20 +48,25 @@ import com.google.common.base.Function;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Profile action that creates a {@link LogoutPropagationContext} containing an {@link SPSession} to be destroyed. The
- * SP session may be populated by reference or value.
+ * Profile action that creates a {@link LogoutPropagationContext} containing {@link SPSession} to be destroyed. The
+ * SP sessions may be populated:
  * <ul>
- *     <li>By reference - via <em>SessionKey</em> request parameter that looks up {@link SPSession} from a
+ *     <li>By reference - via <em>SessionKey</em> request parameter that looks up one {@link SPSession} from a
  *     {@link LogoutContext} stored in the HTTP session.</li>
  *     <li>By value - reconstitutes an encrypted {@link SPSession} object in <em>SPSession</em> request parameter.</li>
+ *     <li>By lookup strategy.</li>
  * </ul>
  *
+ * @event SessionNotFound
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
  * @event {@link org.opensaml.profile.action.EventIds#UNABLE_TO_DECODE}
  * @post If an {@link SPSession} is found, then a {@link LogoutPropagationContext} will be populated.
  */
 public class PopulateLogoutPropagationContext extends AbstractProfileAction {
+
+    /** Name of parameter containing session by reference. */
+    @Nonnull @NotEmpty private static final String SESSION_NOT_FOUND = "SessionNotFound";
 
     /** Name of parameter containing session by reference. */
     @Nonnull @NotEmpty private static final String SESSION_PARAM_BYREF = "SessionKey";
@@ -77,10 +81,13 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
     @Nullable private DataSealer dataSealer;
     
     /** Mappings between a SPSession type and a serializer implementation. */
-    @NonnullAfterInit private SPSessionSerializerRegistry spSessionSerializerRegistry;
+    @Nullable private SPSessionSerializerRegistry spSessionSerializerRegistry;
     
-    /** Creation function for LogoutPropagationContext. */
-    @Nonnull private Function<ProfileRequestContext, LogoutPropagationContext> contextCreationStrategy;
+    /** Lookup/creation function for LogoutPropagationContext. */
+    @Nonnull private Function<ProfileRequestContext,LogoutPropagationContext> contextCreationStrategy;
+    
+    /** Lookup strategy for session. */
+    @Nullable private Function<ProfileRequestContext,SPSession> sessionLookupStrategy;
     
     /** {@link SPSession} to operate on. */
     @Nullable private SPSession session;
@@ -110,10 +117,10 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * 
      * @param registry a registry of SPSession class to serializer mappings
      */
-    public void setSPSessionSerializerRegistry(@Nonnull final SPSessionSerializerRegistry registry) {
+    public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        spSessionSerializerRegistry = Constraint.isNotNull(registry, "Registry cannot be null");
+        spSessionSerializerRegistry = registry;
     }
     
     /**
@@ -129,22 +136,36 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
                 "LogoutPropagationContext creation strategy cannot be null");
     }
     
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
+    /**
+     * Set a lookup strategy to use to obtain the session to populate.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setSessionLookupStrategy(@Nullable final Function<ProfileRequestContext,SPSession> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (spSessionSerializerRegistry == null) {
-            throw new ComponentInitializationException("SPSessionSerializerRegistry cannot be null");
-        }
+        sessionLookupStrategy = strategy;
     }
-
+    
+// Checkstyle: ReturnCount|CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
+        }
+        
+        if (sessionLookupStrategy != null) {
+            session = sessionLookupStrategy.apply(profileRequestContext);
+            if (session != null) {
+                log.debug("{} Got session to propagate logout: {}", getLogPrefix(), session);
+                return true;
+            } else {
+                log.debug("{} No sessions remaining for logout propagation", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, SESSION_NOT_FOUND);
+                return false;
+            }
         }
 
         final RequestContext requestContext = getRequestContext(profileRequestContext);
@@ -161,10 +182,11 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
                 sessionKey = sessionRef;
                 session = getSessionByReference(requestContext, sessionKey);
             } else if (sessionVal != null) {
-                if (dataSealer != null) {
+                if (dataSealer != null && spSessionSerializerRegistry != null) {
                     session = getSessionByValue(sessionVal);
                 } else {
-                    log.error("{} No DataSealer provided, unable to decrypt session passed by value", getLogPrefix());
+                    log.error("{} No DataSealer/SerializerRegistry provided, unable to process session passed by value",
+                            getLogPrefix());
                     ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
                     return false;
                 }
@@ -186,18 +208,21 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
 
         return true;
     }
+// Checkstyle: ReturnCount|CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         final LogoutPropagationContext logoutPropCtx = contextCreationStrategy.apply(profileRequestContext);
         if (logoutPropCtx == null) {
-            log.error("{} Unable to create or locate SingleLogoutContext", getLogPrefix());
+            log.error("{} Unable to create or locate LogoutPropagationContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }
         logoutPropCtx.setSession(session);
         logoutPropCtx.setSessionKey(sessionKey);
+        logoutPropCtx.setResult(Result.Failure);
+        logoutPropCtx.setDetail(null);
     }
 
     /**

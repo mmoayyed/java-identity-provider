@@ -36,6 +36,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -105,7 +106,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         bindings.add(new BindingDescriptor());
         bindings.get(0).setId(SAMLConstants.SAML2_POST_BINDING_URI);
         bindings.get(0).initialize();
-        action.setBindings(bindings);
+        action.setBindingDescriptorsLookupStrategy(FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(bindings));
         action.initialize();
     }
 
@@ -138,7 +139,8 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setEndpointResolver(new DefaultEndpointResolver());
-        badaction.setBindings(Collections.singletonList(binding));
+        badaction.setBindingDescriptorsLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(Collections.singletonList(binding)));
         badaction.initialize();
         
         final Event event = badaction.execute(rc);
@@ -287,7 +289,8 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setEndpointResolver(new DefaultEndpointResolver());
-        badaction.setBindings(Collections.singletonList(binding));
+        badaction.setBindingDescriptorsLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(Collections.singletonList(binding)));
         badaction.initialize();
         
         final Event event = badaction.execute(rc);

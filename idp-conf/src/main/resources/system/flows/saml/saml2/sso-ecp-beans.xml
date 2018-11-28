@@ -27,8 +27,10 @@
                 p:bindingDescriptor-ref="shibboleth.Binding.SAML2SOAP" />
         </constructor-arg>
     </bean>
-    
-    <alias name="shibboleth.OutgoingECPBindings" alias="shibboleth.OutgoingBindings"/>
+
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+        c:_0-ref="shibboleth.OutgoingECPBindings" />    
     
     <bean id="shibboleth.BindingSpecificMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

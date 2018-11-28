@@ -36,7 +36,9 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:defaultPortInsecure="%{idp.security.defaultPortInsecure:true}" />
 
-    <alias name="shibboleth.OutgoingSOAPBindings" alias="shibboleth.OutgoingBindings"/>
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+        c:_0-ref="shibboleth.OutgoingSOAPBindings" />
 
     <bean id="AddArtifactResponseShell" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"

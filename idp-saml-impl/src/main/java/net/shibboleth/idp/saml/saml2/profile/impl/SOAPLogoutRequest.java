@@ -95,7 +95,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
     /** Strategy function for access to {@link SAMLMetadataContext} for input to SOAP client. */
     @Nonnull private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
 
-    /** Strategy function for access to {@link SAMLEndpointContext} to populate. */
+    /** Strategy function for access to {@link SAMLEndpointContext} to retrieve address from. */
     @Nonnull private Function<ProfileRequestContext,SAMLEndpointContext> endpointContextLookupStrategy;
     
     /** SOAP client. */
@@ -309,11 +309,16 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             @Nonnull final LogoutResponse response) {
         final Status status = response.getStatus();
         if (status != null) {
-            final StatusCode code = status.getStatusCode();
+            StatusCode code = status.getStatusCode();
             if (code != null) {
                 if (StatusCode.SUCCESS.equals(code.getValue())) {
-                    log.debug("{} LogoutResponse was successful", getLogPrefix());
-                    propagationContext.setResult(Result.Success);
+                    code = code.getStatusCode();
+                    if (code == null || code.getValue() == null || !StatusCode.PARTIAL_LOGOUT.equals(code.getValue())) {
+                        log.debug("{} Logout successful", getLogPrefix());
+                        propagationContext.setResult(Result.Success);
+                    } else {
+                        log.debug("{} Logout partially successful", getLogPrefix());
+                    }
                     return;
                 }
                 log.warn("{} LogoutResponse received with status code '{}'", getLogPrefix(), code.getValue());

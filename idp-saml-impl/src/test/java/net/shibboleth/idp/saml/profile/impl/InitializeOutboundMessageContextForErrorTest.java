@@ -21,6 +21,7 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.saml.binding.BindingDescriptor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -55,7 +56,10 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.setOutboundMessageContext(null);
         action = new InitializeOutboundMessageContextForError();
-        action.setOutboundBinding(SAMLConstants.SAML1_SOAP11_BINDING_URI);
+        final BindingDescriptor bd = new BindingDescriptor();
+        bd.setId(SAMLConstants.SAML1_SOAP11_BINDING_URI);
+        bd.initialize();
+        action.setOutboundBinding(bd);
         action.initialize();
     }
     

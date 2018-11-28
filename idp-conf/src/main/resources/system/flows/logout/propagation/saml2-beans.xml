@@ -31,7 +31,20 @@
     <util:constant id="shibboleth.MetadataLookup.Role"
         static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
 
-    <alias name="shibboleth.OutgoingSAML2SLOBindings" alias="shibboleth.OutgoingBindings"/>
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+            class="net.shibboleth.ext.spring.util.SpringExpressionFunction"
+            c:expression="#custom[#input.isBrowserProfile() ? 'full' : 'soap']">
+        <property name="customObject">
+            <map>
+                <entry key="full">
+                    <ref bean="shibboleth.OutgoingSAML2SLOBindings" />
+                </entry>
+                <entry key="soap">
+                    <ref bean="shibboleth.OutgoingSOAPBindings" />
+                </entry>
+            </map>
+        </property>
+    </bean>    
     
     <bean id="PrepareInboundMessageContext"
         class="net.shibboleth.idp.saml.session.impl.PrepareInboundMessageContext" scope="prototype" />

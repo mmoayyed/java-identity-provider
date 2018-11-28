@@ -140,6 +140,9 @@
     <bean id="shibboleth.ChildLookup.SessionContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.session.context.SessionContext) }" />
+    <bean id="shibboleth.ChildLookup.LogoutContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.session.context.LogoutContext) }" />
         
     <bean id="shibboleth.ChildLookup.SAMLBindingContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"

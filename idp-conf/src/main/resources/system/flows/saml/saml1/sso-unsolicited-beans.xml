@@ -20,7 +20,9 @@
                 p:bindingDescriptor-ref="shibboleth.Binding.LegacyShibboleth" />
         </constructor-arg>
     </bean>
-
-    <alias name="shibboleth.OutgoingSAML1SSOBindings" alias="shibboleth.OutgoingBindings"/>
+    
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+        c:_0-ref="shibboleth.OutgoingSAML1SSOBindings" />
     
 </beans>

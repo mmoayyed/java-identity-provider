@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -70,8 +71,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
 /**
@@ -107,9 +106,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Endpoint resolver. */
     @NonnullAfterInit private EndpointResolver<?> endpointResolver;
     
-    /** List of possible bindings, in preference order. */
-    @Nonnull @NonnullElements private List<BindingDescriptor> bindingDescriptors;
-
+    /** Lookup strategy for bindings. */
+    @Nonnull private Function<ProfileRequestContext,List<BindingDescriptor>> bindingDescriptorsLookupStrategy;
+    
     /** Strategy function for access to {@link RelyingPartyContext}. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
@@ -124,6 +123,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
 
     /** Strategy function for access to {@link SAMLArtifactContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactContext> artifactContextLookupStrategy;
+    
+    /** List of possible bindings, in preference order. */
+    @Nonnull @NonnullElements private List<BindingDescriptor> bindingDescriptors;
     
     /** Whether an artifact-based binding implies the use of a secure channel. */
     private boolean artifactImpliesSecureChannel;
@@ -151,7 +153,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
-        bindingDescriptors = Collections.emptyList();
+        bindingDescriptorsLookupStrategy =
+                FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(
+                        Collections.<BindingDescriptor>emptyList());
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
@@ -201,17 +205,20 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     }
     
     /**
-     * Set the bindings to evaluate for use, in preference order.
+     * Set lookup strategy to return the bindings to evaluate for use, in preference order.
      * 
-     * @param bindings bindings to consider
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
      */
-    public void setBindings(@Nonnull @NonnullElements final List<BindingDescriptor> bindings) {
+    public void setBindingDescriptorsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,List<BindingDescriptor>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(bindings, "Binding descriptor list cannot be null");
         
-        bindingDescriptors = new ArrayList<>(Collections2.filter(bindings, Predicates.notNull()));
+        bindingDescriptorsLookupStrategy =
+                Constraint.isNotNull(strategy, "Binding descriptors lookup strategy cannot be null");
     }
-
+    
     /**
      * Set lookup strategy for {@link RelyingPartyContext}.
      * 
@@ -355,8 +362,14 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         }
+       
+        bindingDescriptors = bindingDescriptorsLookupStrategy.apply(profileRequestContext);
+        if (bindingDescriptors == null) {
+            bindingDescriptors = Collections.emptyList();
+        }
         
         mdContext = metadataContextLookupStrategy.apply(profileRequestContext);
+        
         return true;
     }
 

@@ -5,6 +5,10 @@
 
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     
+    <on-start>
+        <set name="conversationScope.LogoutStatus" value="true" />
+    </on-start>
+    
     <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="'proceed'" />
@@ -15,16 +19,66 @@
     <action-state id="DoProfileWork">
         <evaluate expression="ProcessLogoutRequest" />
         <evaluate expression="LogoutPopulateAuditContext" />
-        <!--
-        TODO: will be used when logout propagation is enabled
-        <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
-        -->
 
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="CheckAsync" />
+        <transition on="proceed" to="CheckForSessions" />
     </action-state>
 
+    <decision-state id="CheckForSessions">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext), true).getSessionMap().isEmpty()"
+            then="CheckAsync"
+            else="SaveProfileRequestContextTree" />
+    </decision-state>
+
+    <action-state id="SaveProfileRequestContextTree">
+        <evaluate expression="SaveProfileRequestContextTree" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PopulateNextLogoutPropagationContext" />
+    </action-state>
+
+    <action-state id="PopulateNextLogoutPropagationContext">
+        <evaluate expression="PopulateLogoutPropagationContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PropagateLogout" />
+        <transition on="SessionNotFound" to="RestoreProfileRequestContextTree" />
+    </action-state>
+    
+    <action-state id="PropagateLogout">
+        <evaluate expression="SelectPropagationFlow" />
+        
+        <!-- Call a subflow with the same ID as the event. -->
+        <transition on="#{currentEvent.id.startsWith('logoutprop/')}" to="CallPropagationFlow" />
+
+        <!-- Try the next RP's session(s), and record overall failure. -->
+        <transition to="PopulateNextLogoutPropagationContext">
+            <set name="conversationScope.LogoutStatus" value="false" />
+        </transition>
+    </action-state>
+
+    <!-- This invokes a propagation flow. We check for failure but otherwise just keep iterating. -->
+    <subflow-state id="CallPropagationFlow" subflow="#{currentEvent.id}">
+        <input name="calledAsSubflow" value="true" />
+        <transition to="PopulateNextLogoutPropagationContext" />
+        <on-exit>
+            <evaluate expression="WriteAuditLog" />
+            <!-- If overall status remains positive, intersect with the last propagation result's success. -->
+            <evaluate expression="conversationScope.LogoutStatus and opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext)).getResult() == T(net.shibboleth.idp.session.context.LogoutPropagationContext.Result).Success"
+                result="conversationScope.LogoutStatus" />
+            <evaluate expression="opensamlProfileRequestContext.removeSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" />
+            <evaluate expression="opensamlProfileRequestContext.removeSubcontext(T(net.shibboleth.idp.profile.context.AuditContext))" />
+        </on-exit>
+    </subflow-state>
+    
+    <action-state id="RestoreProfileRequestContextTree">
+        <evaluate expression="RestoreProfileRequestContextTree" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CheckAsync" />    
+    </action-state>
+    
     <decision-state id="CheckAsync">
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() == null or opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
             then="BuildResponse" else="DoAsync" />
@@ -57,10 +111,8 @@
         <transition on="proceed" to="CheckForPartialLogout" />
     </action-state>
     
-    <!-- TODO: this partial logout machinery will change once propagation exists -->
-    
     <decision-state id="CheckForPartialLogout">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext), true).getSessionMap().isEmpty()"
+        <if test="conversationScope.LogoutStatus"
             then="CompleteResponse" else="PartialLogout" />
     </decision-state>
     
@@ -86,6 +138,7 @@
         <on-entry>
             <evaluate expression="LogEvent" />
         </on-entry>
+        <evaluate expression="RestoreProfileRequestContextTree" />
         <evaluate expression="InitializeOutboundMessageContextForError" />
         <evaluate expression="AddLogoutResponse" />
         <evaluate expression="AddInResponseToToResponse" />

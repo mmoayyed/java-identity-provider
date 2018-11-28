@@ -74,11 +74,8 @@
     </bean>
 
     <bean id="InitializeOutboundMessageContextForError"
-            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype">
-        <property name="outboundBinding">
-            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML2_SOAP11_BINDING_URI"/>
-        </property>
-    </bean>
+            class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype"
+            p:outboundBinding-ref="shibboleth.Binding.SAML2SOAP" />
 
     <bean id="AddStatusToResponse"
             class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype"
@@ -97,16 +94,6 @@
         </property>
         <property name="statusMessageLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
-        </property>
-    </bean>
-
-    <bean id="AddPartialLogoutStatusToResponse"
-            class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype">
-        <property name="statusCodes">
-            <list>
-                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.SUCCESS" />
-                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.PARTIAL_LOGOUT" />
-            </list>
         </property>
     </bean>
     
