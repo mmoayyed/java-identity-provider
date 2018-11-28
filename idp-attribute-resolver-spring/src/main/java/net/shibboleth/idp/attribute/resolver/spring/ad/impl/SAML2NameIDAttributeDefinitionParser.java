@@ -27,12 +27,13 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Spring bean definition parser for SAML 2 NameID attribute definitions. */
-public class SAML2NameIDAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -65,12 +66,6 @@ public class SAML2NameIDAttributeDefinitionParser extends AbstractWarningAttribu
 
         log.debug("{} nameIdQualifier '{}', nameIdSPQualifier '{}'", getLogPrefix(), nameIdQualifier,
                 nameIdSPQualifier);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
     }
 
 }

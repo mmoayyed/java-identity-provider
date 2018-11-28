@@ -20,12 +20,6 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
-import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -33,8 +27,15 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
+import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
-public class SubjectDerivedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -90,11 +91,4 @@ public class SubjectDerivedAttributeDefinitionParser extends AbstractWarningAttr
     @Override protected boolean failOnDependencies() {
         return true;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-
 }

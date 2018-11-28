@@ -23,13 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -37,10 +30,18 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /**
  * Spring bean definition parser for templated attribute definition elements.
  */
-public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -104,11 +105,4 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
         log.debug("{} Velocity engine reference '{}'.", getLogPrefix(), velocityEngineRef);
         builder.addPropertyReference("velocityEngine", velocityEngineRef);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-
 }

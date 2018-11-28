@@ -27,12 +27,13 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML1NameIdentifierAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Spring bean definition parser for SAML 1 NameIdentifier attribute definitions. */
-public class SAML1NameIdentifierAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -62,11 +63,4 @@ public class SAML1NameIdentifierAttributeDefinitionParser extends AbstractWarnin
             log.debug("{} nameIdQualifier '{}'", getLogPrefix(), nameIdQualifier);
         }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-
 }

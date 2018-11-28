@@ -23,12 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
-import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -36,10 +30,17 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /**
  * Spring bean definition parser for scripted attribute configuration elements.
  */
-public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     /** Schema type name - resolver: . */
@@ -108,12 +109,6 @@ public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeD
         }
 
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
     }
 
 }

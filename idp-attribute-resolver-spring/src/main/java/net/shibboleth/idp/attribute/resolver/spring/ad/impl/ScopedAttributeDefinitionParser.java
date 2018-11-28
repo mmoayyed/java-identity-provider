@@ -28,13 +28,14 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Spring Bean Definition Parser for scoped attribute definitions.
  */
-public class ScopedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
+public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -57,11 +58,4 @@ public class ScopedAttributeDefinitionParser extends AbstractWarningAttributeDef
         log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
         builder.addPropertyValue("scope", scope);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-
 }
