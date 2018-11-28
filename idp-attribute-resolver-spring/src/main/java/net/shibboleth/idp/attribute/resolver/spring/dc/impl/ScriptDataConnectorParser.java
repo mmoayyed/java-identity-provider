@@ -22,13 +22,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -36,8 +29,16 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
+import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /** Bean definition Parser for a {@link ScriptedDataConnector}. */
-public class ScriptDataConnectorParser extends AbstractWarningDataConnectorParser {
+public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -110,11 +111,4 @@ public class ScriptDataConnectorParser extends AbstractWarningDataConnectorParse
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
     // Checkstyle: CyclomaticComplexity ON
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-
 }

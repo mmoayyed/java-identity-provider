@@ -23,20 +23,18 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
-import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. <br/>

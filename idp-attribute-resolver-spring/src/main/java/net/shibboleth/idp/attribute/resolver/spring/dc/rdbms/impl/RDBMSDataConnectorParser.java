@@ -23,11 +23,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
@@ -40,16 +48,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedMap;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 /** Bean definition Parser for a {@link RDBMSDataConnector}. */
-public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser {
+public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -63,12 +63,6 @@ public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser
         return RDBMSDataConnector.class;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected QName getPreferredName() {
-        return TYPE_NAME_RESOLVER;
-    }
-    
     /** {@inheritDoc} */
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
