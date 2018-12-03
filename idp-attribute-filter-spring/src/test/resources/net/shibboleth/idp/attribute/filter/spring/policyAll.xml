@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<afp:AttributeFilterPolicyGroup id="PolicyExample3"
+<AttributeFilterPolicyGroup id="PolicyExample3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xmlns:afp="urn:mace:shibboleth:2.0:afp"
-        xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
-                            urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd">
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
-    <afp:AttributeFilterPolicy id="MostBasicExample">
-        <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
+    <AttributeFilterPolicy id="MostBasicExample">
+        <PolicyRequirementRule xsi:type="ANY"/>
         
-        <afp:AttributeRule attributeID="email" permitAny="true"/>
-    </afp:AttributeFilterPolicy>
+        <AttributeRule attributeID="email" permitAny="true"/>
+    </AttributeFilterPolicy>
     
-</afp:AttributeFilterPolicyGroup>
+</AttributeFilterPolicyGroup>

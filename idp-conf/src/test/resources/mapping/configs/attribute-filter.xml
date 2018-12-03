@@ -1,46 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Part one of a two part Attribute Filter Policy. -->
-<afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
-	xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-	xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
-                                                    urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd
-                                                    urn:mace:shibboleth:2.0:afp:mf:saml http://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd">
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+	xmlns="urn:mace:shibboleth:2.0:afp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
 	<!-- Release OK if RA map -->
-	<afp:AttributeFilterPolicy id="RAOKFILTER">
-		<afp:PolicyRequirementRule id="prrRA1"
-			xsi:type="basic:ANY" />
+	<AttributeFilterPolicy id="RAOKFILTER">
+		<PolicyRequirementRule id="prrRA1"
+			xsi:type="ANY" />
 
-		<afp:AttributeRule attributeID="IdPRA1" id="ra1release">
-			<afp:PermitValueRule xsi:type="saml:MappedAttributeInMetadata" />
-		</afp:AttributeRule>
+		<AttributeRule attributeID="IdPRA1" id="ra1release">
+			<PermitValueRule xsi:type="MappedAttributeInMetadata" />
+		</AttributeRule>
 
-	</afp:AttributeFilterPolicy>
+	</AttributeFilterPolicy>
 	
 	
     <!-- Release OK if RA map, but it doesn't -->
-	<afp:AttributeFilterPolicy id="RANOTFILTER">
-        <afp:PolicyRequirementRule id="prrRA2"
-            xsi:type="basic:ANY" />
+	<AttributeFilterPolicy id="RANOTFILTER">
+        <PolicyRequirementRule id="prrRA2"
+            xsi:type="ANY" />
 
-        <afp:AttributeRule attributeID="IdPEA1" id="ra2release">
-            <afp:PermitValueRule xsi:type="saml:MappedAttributeInMetadata" />
-        </afp:AttributeRule>
+        <AttributeRule attributeID="IdPEA1" id="ra2release">
+            <PermitValueRule xsi:type="MappedAttributeInMetadata" />
+        </AttributeRule>
 
-    </afp:AttributeFilterPolicy>
+    </AttributeFilterPolicy>
 	
 
     <!--  Release is EA map -->
-	<afp:AttributeFilterPolicy id="EAOKFILTER">
-		<afp:PolicyRequirementRule id="prrEA1" xsi:type="saml:EntityAttributeExactMatch"
+	<AttributeFilterPolicy id="EAOKFILTER">
+		<PolicyRequirementRule id="prrEA1" xsi:type="EntityAttributeExactMatch"
             attributeName="http://macedir.org/entity-category"
             attributeValue="http://refeds.org/category/research-and-scholarship" />
 
-		<afp:AttributeRule attributeID="IdPOK">
-			<afp:PermitValueRule xsi:type="basic:ANY"/>
-		</afp:AttributeRule>
+		<AttributeRule attributeID="IdPOK">
+			<PermitValueRule xsi:type="ANY"/>
+		</AttributeRule>
 
-	</afp:AttributeFilterPolicy> 
+	</AttributeFilterPolicy> 
 
-</afp:AttributeFilterPolicyGroup>
+</AttributeFilterPolicyGroup>

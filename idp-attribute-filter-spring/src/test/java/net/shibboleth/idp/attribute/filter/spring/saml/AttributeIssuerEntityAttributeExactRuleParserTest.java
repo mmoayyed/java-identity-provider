@@ -25,11 +25,11 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link AttributeIssuerEntityAttributeExactRuleParser}.
+ * test for (removed) {@link AttributeIssuerEntityAttributeExactRuleParser}.
  */
 public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void removed()
             throws ComponentInitializationException {
         getPolicyRule("issuerEA.xml", false);
 

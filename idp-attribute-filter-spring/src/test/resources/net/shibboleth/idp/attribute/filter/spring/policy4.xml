@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<afp:AttributeFilterPolicyGroup id="PolicyExample4"
+<AttributeFilterPolicyGroup id="PolicyExample4"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    	xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
-                            urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd">
+    	xmlns="urn:mace:shibboleth:2.0:afp"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
                             
-	<afp:AttributeRule attributeID="affiliation" id="wobble">
-		<afp:PermitValueRule xmlns="urn:mace:shibboleth:2.0:afp:mf:basic"
+	<AttributeRule attributeID="affiliation" id="wobble">
+		<PermitValueRule 
 			id="Wibble" xsi:type="OR">
-			<Rule xsi:type="AttributeValueString" value="faculty" id="fac"/>
-			<Rule xsi:type="AttributeValueString" value="student" id="stud"/>
-			<Rule xsi:type="AttributeValueString" value="staff" id="stadd"/>
-			<Rule xsi:type="AttributeValueString" value="alum" id="alum"/>
-			<Rule xsi:type="AttributeValueString" value="member" id="member"/>
-			<Rule xsi:type="AttributeValueString" value="affiliate" id="affilient"/>
-			<Rule xsi:type="AttributeValueString" value="employee" id = "emp"/>
-		</afp:PermitValueRule>
-	</afp:AttributeRule>
+			<Rule xsi:type="Value" value="faculty" id="fac"/>
+			<Rule xsi:type="Value" value="student" id="stud"/>
+			<Rule xsi:type="Value" value="staff" id="stadd"/>
+			<Rule xsi:type="Value" value="alum" id="alum"/>
+			<Rule xsi:type="Value" value="member" id="member"/>
+			<Rule xsi:type="Value" value="affiliate" id="affilient"/>
+			<Rule xsi:type="Value" value="employee" id = "emp"/>
+		</PermitValueRule>
+	</AttributeRule>
 
 	<!-- Release affiliation to anyone in the InCommon group -->
-	<afp:AttributeFilterPolicy id="InCommonRelease">
-		<afp:PolicyRequirementRule xsi:type="basic:ANY" id="pq"/>
+	<AttributeFilterPolicy id="InCommonRelease">
+		<PolicyRequirementRule xsi:type="ANY" id="pq"/>
 
-		<afp:AttributeRuleReference ref="wobble"/>
+		<AttributeRuleReference ref="wobble"/>
 
-	</afp:AttributeFilterPolicy>
+	</AttributeFilterPolicy>
 
-</afp:AttributeFilterPolicyGroup>
+</AttributeFilterPolicyGroup>

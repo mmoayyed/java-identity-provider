@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<afp:AttributeFilterPolicyGroup id="PolicyExample2"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:afp="urn:mace:shibboleth:2.0:afp"
-	xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
-                            urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd">
+<AttributeFilterPolicyGroup id="PolicyExample2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mace:shibboleth:2.0:afp"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
-	<afp:AttributeFilterPolicy id="InCommonRelease">
-		<afp:PolicyRequirementRule xsi:type="basic:ANY" />
-		<afp:AttributeRule attributeID="affiliation">
-			<afp:DenyValueRule xmlns="urn:mace:shibboleth:2.0:afp:mf:basic"
-				xsi:type="OR">
-				<Rule xsi:type="AttributeValueString" value="staff" />
-				<Rule xsi:type="AttributeValueString" value="student" />
-			</afp:DenyValueRule>
-		</afp:AttributeRule>
-	</afp:AttributeFilterPolicy>
+	<AttributeFilterPolicy id="InCommonRelease">
+		<PolicyRequirementRule xsi:type="ANY" />
+		<AttributeRule attributeID="affiliation">
+			<DenyValueRule xsi:type="OR">
+				<Rule xsi:type="Value" value="staff" />
+				<Rule xsi:type="Value" value="student" />
+			</DenyValueRule>
+		</AttributeRule>
+	</AttributeFilterPolicy>
 
-	<afp:AttributeFilterPolicy id="InCommonRelease2">
-		<afp:PolicyRequirementRule xsi:type="basic:ANY" />
-		<afp:AttributeRule attributeID="affiliation">
-			<afp:PermitValueRule xsi:type="basic:ANY" />
-		</afp:AttributeRule>
-	</afp:AttributeFilterPolicy>
+	<AttributeFilterPolicy id="InCommonRelease2">
+		<PolicyRequirementRule xsi:type="ANY" />
+		<AttributeRule attributeID="affiliation">
+			<PermitValueRule xsi:type="ANY" />
+		</AttributeRule>
+	</AttributeFilterPolicy>
 
-</afp:AttributeFilterPolicyGroup>
+</AttributeFilterPolicyGroup>

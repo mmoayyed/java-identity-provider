@@ -142,7 +142,7 @@
                             <documentation>
                                 TrustEngine used to evaluate HTTPS server TLS certificates.
                             
-                                This element conflicts with and is overridden by the tlsTrustEngineRef attribute.
+                                This element conflicts with and overriddes the tlsTrustEngineRef attribute.
                             </documentation>
                         </annotation>
                         <complexType>
@@ -482,7 +482,7 @@
                             <documentation>
                                 TrustEngine used to evaluate HTTPS server TLS certificates.
                             
-                                This element conflicts with and is overridden by the tlsTrustEngineRef attribute.
+                                This element conflicts with and overrides the tlsTrustEngineRef attribute.
                             </documentation>
                         </annotation>
                         <complexType>

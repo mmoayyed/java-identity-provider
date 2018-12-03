@@ -36,8 +36,8 @@ import org.testng.annotations.Test;
 public class AttributeInMetadataRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void requested() throws ComponentInitializationException {
-        requested(false);
-//        requested(true);
+//        requested(false);
+        requested(true);
     }
     
     public void requested(boolean isAfp) throws ComponentInitializationException {

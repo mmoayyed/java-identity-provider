@@ -38,7 +38,7 @@ public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttribut
     }
     
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", false);
+        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", true);
      
         Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
 

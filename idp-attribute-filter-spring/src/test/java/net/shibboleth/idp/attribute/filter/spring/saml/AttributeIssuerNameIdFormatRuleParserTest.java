@@ -25,11 +25,11 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link AttributeIssuerNameIdFormatRuleParser}.
+ * test for (removed) {@link AttributeIssuerNameIdFormatRuleParser}.
  */
 public class AttributeIssuerNameIdFormatRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void removed()
             throws ComponentInitializationException {
         getPolicyRule("issuerNameId.xml", false);
 

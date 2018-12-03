@@ -25,11 +25,11 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link AttributeRequesterInEntityGroupRuleParser}.
+ * test for (removed) {@link AttributeRequesterInEntityGroupRuleParser}.
  */
 public class AttributeIssuerInEntityGroupRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void removed()
             throws ComponentInitializationException {
         getPolicyRule("issuerEG.xml", false);
     }

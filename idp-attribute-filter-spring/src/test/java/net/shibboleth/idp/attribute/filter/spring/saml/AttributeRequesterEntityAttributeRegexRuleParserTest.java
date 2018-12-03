@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class AttributeRequesterEntityAttributeRegexRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml", false);
+        AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml", true);
      
         Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
