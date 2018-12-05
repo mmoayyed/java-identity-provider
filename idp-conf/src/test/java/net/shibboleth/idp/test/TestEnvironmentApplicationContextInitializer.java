@@ -48,7 +48,9 @@ public class TestEnvironmentApplicationContextInitializer
         final MockPropertySource mock = new MockPropertySource();
         mock.setProperty("idp.home", "classpath:");
         mock.setProperty("idp.webflows", "classpath*:/flows");
-        mock.setProperty("idp.authn.flows", "Password");
+        mock.setProperty("idp.storage.htmlLocalStorage", "false");
+        mock.setProperty("idp.session.trackSPSessions", "false");
+        mock.setProperty("idp.session.secondaryServiceIndex", "false");
         applicationContext.getEnvironment().getPropertySources().addFirst(mock);
         log.info("Prepending properties '{}'", mock.getSource());
     }
