@@ -25,16 +25,26 @@
 ##
 #if ($logoutContext and !$logoutContext.getSessionMap().isEmpty())
     <ol>
-        #foreach ($sp in $logoutContext.getSessionMap().keySet())
+        #foreach ($entry in $logoutContext.getKeyedSessionMap().entrySet())
+            #set ($sp = $entry.getValue().getId())
             #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
             #if ($rpCtx)
                 #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
             #end
             #if ($rpUIContext and $rpUIContext.getServiceName())
-                <li id="result_$codecUtil.hex($sp.getBytes())" title="Logout pending">$htmlEncoder.encodeForHTML($rpUIContext.getServiceName())</li>
+                #set ($serviceName = $rpUIContext.getServiceName())
             #else
-                <li id="result_$codecUtil.hex($sp.getBytes())" title="Logout pending">$htmlEncoder.encodeForHTML($sp)</li>
+                #set ($serviceName = $sp)
             #end
+            #if ($flowSelector.apply($entry.getValue()))
+                #set ($logoutClass = "logout pending")
+                #set ($logoutTitle = "Logout pending...")
+            #else
+                #set ($logoutClass = "logout na")
+                #set ($logoutTitle = "Logout not supported")
+            #end
+            <li id="result_$codecUtil.hex($sp.getBytes())" class="$logoutClass"
+                title="$logoutTitle">$htmlEncoder.encodeForHTML($serviceName)</li>
         #end
     </ol>
     <script src="$request.getContextPath()/js/jquery-3.3.1.min.js"></script>
@@ -57,7 +67,10 @@
             spTracker.status = check_status;
             sessionTracker['result_$codecUtil.hex($sp.getBytes())'] = spTracker;
         #end
-    
+
+        var hasCompleted = new Object();
+        setupHasCompleted();
+
         function onLoad(src, target, trackerId, sessionKey) {
             try {
                 var content = src.contents().text();
@@ -69,13 +82,13 @@
             } catch (e) {
                 sessionTracker[trackerId]['_' + sessionKey] = false;
             }
-            target.removeClass("success failure");
+            target.removeClass("pending success failure");
             if (sessionTracker[trackerId].status()) {
                 target.addClass("success");
-                target.prop("title", "Successful logout");
+                target.prop("title", "Logout successful");
             } else {
                 target.addClass("failure");
-                target.prop("title", "Failed logout")
+                target.prop("title", "Logout failed")
             }
             if (typeof(Storage) !== "undefined" ) {
                 var url = sessionStorage.getItem(sessionKey);
@@ -84,6 +97,64 @@
                     setTimeout(function() { src.prop("src", url) }, 1500);
                 }
             }
+
+            markAsCompleted(target, trackerId, sessionKey);
+            if (allHaveCompleted()) {
+              processAllHaveCompleted();
+            }
+        }
+
+        function setupHasCompleted() {
+        #foreach ($entry in $logoutContext.getKeyedSessionMap().entrySet())
+          #if ($flowSelector.apply($entry.getValue()))
+            #set ($trackerId = "result_$codecUtil.hex($entry.getValue().getId().getBytes())")
+            #set ($sessionKey = "$entry.getKey()")
+          hasCompleted['${trackerId}_${sessionKey}'] = false;
+          #end
+        #end
+        }
+
+        function markAsCompleted(target, trackerId, sessionKey) {
+          hasCompleted[trackerId + '_' + sessionKey] = true;
+        }
+
+        function allHaveCompleted() {
+          for (key in hasCompleted) {
+            if (!hasCompleted[key]) {
+              return false;
+            }
+          }
+          return true;
+        }
+
+        function allHaveSucceeded() {
+          for (key in sessionTracker) {
+            if (!sessionTracker[key].status()) {
+              return false;
+            }
+          }
+          return true;
+        }
+
+        function allHaveFailed() {
+          for (key in sessionTracker) {
+            if (sessionTracker[key].status()) {
+              return false;
+            }
+          }
+          return true;
+        }
+
+        function processAllHaveCompleted() {
+          $('.logout-status').removeClass("pending")
+          $('.logout-status').addClass("completed")
+          if (allHaveSucceeded()) {
+            $('.logout-status').addClass("all-success")
+          } else if (allHaveFailed()) {
+            $('.logout-status').addClass("all-failure")
+          } else {
+            $('.logout-status').addClass("any-failure")
+          }
         }
     // -->
     </script>
