@@ -81,9 +81,10 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
             if (AttributeSupport.hasAttribute(element, RESOURCE_REF)) {
                 return ResourceBackedMetadataResolver.class;
             }
-            
+
             throw new BeanCreationException("No <Resource> specified for ResourceBackedMetadataProvider");
         }
+
         final QName qName = DOMTypeSupport.getXSIType(resources.get(0));
         if (null == qName) {
             log.error("No type specified for a <Resource> within a ResourceBackedMetadataProvider");
@@ -125,6 +126,9 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
                     parserContext, builder);
             return;
         }
+        DeprecationSupport.warnOnce(ObjectType.ELEMENT, "Resource",
+                parserContext.getReaderContext().getResource().getDescription(),
+                "resourceRef property");
         
         if (resources.size() != 1) {
             log.error("{}: Only one Resource may be supplied to a ResourceBackedMetadataProvider", parserContext
