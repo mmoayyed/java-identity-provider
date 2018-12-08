@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -169,7 +168,7 @@ public class TemplateAttributeTest {
         attr = new TemplateAttributeDefinition();
         attr.setId(name);
         attr.setVelocityEngine(getEngine());
-        attr.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        attr.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
         try {
             attr.initialize();
             Assert.fail("No Text or attributes");
@@ -241,7 +240,7 @@ public class TemplateAttributeTest {
      * @throws ComponentInitializationException if it goes wrong.
      */
     @Test public void templateWithValuesTestSources() throws ResolutionException, ComponentInitializationException {
-        templateWithValues(false);
+        templateWithValues(true);
     }
 
     /** Worker function for the templateWithValues and templateWithValuesTestSources tests.
