@@ -218,6 +218,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 if (dc.isAllAttributes()) {
                     return;
                 }
+                dependencyAttributeNames.addAll(dc.getAttributeNames());
             }
         }
 
