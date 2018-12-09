@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -69,6 +71,10 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
+        DeprecationSupport.warn(ObjectType.ELEMENT, "Trust Engine type " +
+                DOMTypeSupport.getXSIType(element).toString(),
+                parserContext.getReaderContext().getResource().getDescription(),
+                null);
         log.warn("Configuration {} contained unsupported Trust Engine type {}. This has been ignored.", parserContext
                 .getReaderContext().getResource().getDescription(), DOMTypeSupport.getXSIType(element).toString());
     }
