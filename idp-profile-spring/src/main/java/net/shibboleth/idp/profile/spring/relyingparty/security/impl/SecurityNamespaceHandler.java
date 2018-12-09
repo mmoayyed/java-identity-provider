@@ -35,7 +35,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeySignatureParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticPKIXSignatureParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticPKIXX509CredentialParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.UnsupportedTrustEngineParser;
 
 /** Namespace handler for {@link AbstractMetadataProviderParser#SECURITY_NAMESPACE}. */
 public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -70,16 +69,6 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
                 new StaticExplicitKeySignatureParser());
         registerBeanDefinitionParser(StaticPKIXSignatureParser.TYPE_NAME, new StaticPKIXSignatureParser());
         registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
-
-        // Metadata based unsupported
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_TYPE,
-                new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE_TYPE,
-                new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_CREDENTIAL_TYPE,
-                new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_PKIX_SIGNATURE_TYPE,
-                new UnsupportedTrustEngineParser());
 
         // Validation Info
         registerBeanDefinitionParser(PKIXResourceValidationInfoParser.TYPE_NAME_FILESYSTEM,

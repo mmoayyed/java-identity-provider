@@ -125,6 +125,7 @@
 		evaluated by the trust engines and so you'll see some rules that reference 
 		the declared trust engines. -->
 		
+<!-- 
 	<security:TrustEngine id="shibboleth.SignatureTrustEngine"
 		xsi:type="security:SignatureChaining">
 		<security:TrustEngine
@@ -142,7 +143,7 @@
 		<security:TrustEngine id="shibboleth.CredentialMetadataPKIXTrustEngine"
 			xsi:type="security:MetadataPKIXX509Credential" metadataProviderRef="ShibbolethMetadata" />
 	</security:TrustEngine>
-
+-->
 	<security:SecurityPolicy id="shibboleth.ShibbolethSSOSecurityPolicy"
 		xsi:type="security:SecurityPolicyType">
 		<security:Rule xsi:type="samlsec:Replay" required="false" />

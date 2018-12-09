@@ -38,9 +38,9 @@ public class SignatureChainingParserTest extends AbstractSecurityParserTest {
     @Test public void simple() throws IOException, ResolverException {
         final ChainingSignatureTrustEngine chain =  getBean(ChainingSignatureTrustEngine.class, true, "trustengine/chain.xml");
         
-        Assert.assertEquals(chain.getChain().size(),1 );
+        Assert.assertEquals(chain.getChain().size(),2);
         
-        final TrustedCredentialTrustEngine engine = (TrustedCredentialTrustEngine) chain.getChain().get(0);
+        final TrustedCredentialTrustEngine engine = (TrustedCredentialTrustEngine) chain.getChain().get(1);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         
