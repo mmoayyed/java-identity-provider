@@ -43,10 +43,6 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
     public static final QName CREDENTIAL_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "Credential");
 
-    /** SecurityPolicy element name. */
-    public static final QName SECURITY_POLICY_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
-            "SecurityPolicy");
-
     /** TrustEngineRef element name. */
     public static final QName TRUST_ENGINE_REF = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "TrustEngineRef");

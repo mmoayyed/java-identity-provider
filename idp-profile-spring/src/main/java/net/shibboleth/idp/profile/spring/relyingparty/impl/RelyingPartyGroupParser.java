@@ -53,9 +53,6 @@ import org.w3c.dom.Element;
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(RelyingPartyGroupParser.class);
-
     /** {@inheritDoc} */
     @Override protected Class<DefaultRelyingPartyConfigurationResolver> getBeanClass(final Element element) {
         return DefaultRelyingPartyConfigurationResolver.class;
@@ -106,13 +103,6 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         // <TrustEngine> (for metadata)
         SpringSupport.parseCustomElements(configChildren.get(AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME),
                 parserContext);
-
-        // <SecurityPolicy> (warn and ignore).
-        final List<Element> policies = configChildren.get(SecurityNamespaceHandler.SECURITY_POLICY_NAME);
-        if (null != policies && !policies.isEmpty()) {
-            log.warn("{}: {} occurrence(s) of unsupported <SecurityPolicy/> elements have been ignored", parserContext
-                    .getReaderContext().getResource().getDescription(), policies.size());
-        }
 
     }
 

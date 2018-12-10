@@ -21,7 +21,6 @@
                 <element ref="shibmd:MetadataProvider" minOccurs="0"/>
                 <element ref="security:Credential" minOccurs="0" maxOccurs="unbounded"/>
                 <element ref="security:TrustEngine" minOccurs="0" maxOccurs="unbounded"/>
-                <element ref="security:SecurityPolicy" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
         </complexType>
     </element>
