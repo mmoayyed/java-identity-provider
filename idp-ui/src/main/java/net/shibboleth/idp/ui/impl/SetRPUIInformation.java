@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.LazyList;
@@ -38,10 +39,8 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -96,9 +95,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /** Constructor. */
     public SetRPUIInformation() {
-        metadataContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(SAMLMetadataContext.class), Functions.compose(
-                        new ChildContextLookup<>(SAMLPeerEntityContext.class), new OutboundMessageContextLookup()));
+        metadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
 
         rpUIContextCreateStrategy =
                 Functions.compose(new ChildContextLookup<>(RelyingPartyUIContext.class, true),
