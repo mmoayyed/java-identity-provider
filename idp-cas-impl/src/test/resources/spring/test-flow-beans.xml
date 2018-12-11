@@ -85,9 +85,8 @@
         <ref bean="shibboleth.CASServiceRegistry" />
     </util:list>
 
-    <util:list id="shibboleth.CASProxyTrustedCertificates">
-        <bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
-                  p:resource="classpath:/credentials/localhost.pem" />
+    <util:list id="shibboleth.CASProxyTrustedCertificates" value-type="java.lang.String">
+        <value>classpath:/credentials/localhost.pem</value>
     </util:list>
 
     <bean id="shibboleth.MetadataCredentialResolver"
@@ -145,33 +144,47 @@
         </property>
     </bean>
 
-    <bean id="proxyTrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
-        <constructor-arg name="chain">
-            <list>
-                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
-                      c:resolver-ref="shibboleth.MetadataCredentialResolver" />
-                <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine" c:nameEvaluator="#{null}">
-                    <constructor-arg name="resolver">
-                        <bean class="org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver" c:names="#{null}">
-                            <constructor-arg name="info">
-                                <bean class="org.opensaml.security.x509.impl.BasicPKIXValidationInformation"
-                                      c:anchors="#{getObject('shibboleth.CASProxyTrustedCertificates') ?: getObject('shibboleth.DefaultCASProxyTrustedCertificates')}"
-                                      c:crls="#{null}"
-                                      c:depth="5" />
-                            </constructor-arg>
-                        </bean>
-                    </constructor-arg>
-                    <constructor-arg name="pkixEvaluator">
-                        <bean class="org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator" />
-                    </constructor-arg>
-                </bean>
-            </list>
-        </constructor-arg>
+    <bean id="shibboleth.NonCachingHttpClient"
+          lazy-init="true"
+          class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+          p:connectionDisregardTLSCertificate="false"
+          p:connectionTimeout="PT1M"
+          p:connectionRequestTimeout="PT1M"
+          p:socketTimeout="PT1M"
+          p:maxConnectionsTotal="10"
+          p:maxConnectionsPerRoute="10" />
+
+    <bean id="shibboleth.SecurityEnhancedTLSSocketFactory" name="shibboleth.TrustEngineTLSSocketFactory"
+          lazy-init="true"
+          class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+          factory-method="buildTLSSocketFactory" />
+
+    <bean id="proxyHttpClient" parent="shibboleth.NonCachingHttpClient"
+          p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactory" />
+
+    <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"
+          class="net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean" />
+
+    <bean id="proxyHttpSecurity" class="org.opensaml.security.httpclient.HttpClientSecurityParameters">
+        <property name="tLSTrustEngine">
+            <bean class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+                <constructor-arg name="chain">
+                    <list>
+                        <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                              c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+                        <bean parent="shibboleth.StaticPKIXTrustEngine"
+                              p:certificates="#{getObject('shibboleth.CASProxyTrustedCertificates') ?: getObject('shibboleth.DefaultCASProxyTrustedCertificates')}"
+                              p:checkNames="false" />
+                    </list>
+                </constructor-arg>
+            </bean>
+        </property>
     </bean>
 
     <bean id="proxyValidator"
           class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator"
-          c:engine-ref="proxyTrustEngine" />
+          c:client-ref="proxyHttpClient"
+          c:parameters-ref="proxyHttpSecurity" />
 
 
     <!-- Flow beans -->

@@ -19,12 +19,10 @@ package net.shibboleth.idp.test.flows.cas;
 
 import net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator;
 import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
+import org.apache.http.impl.client.HttpClients;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import java.net.URI;
 
@@ -38,15 +36,10 @@ public class TestProxyValidator extends HttpClientProxyValidator {
     /** Validation repsonse HTTP status code to return. */
     private int responseCode;
 
+
     /** Creates a new instance. */
     public TestProxyValidator() {
-        super(new TrustEngine<X509Credential>() {
-            @Override
-            public boolean validate(
-                    @Nonnull final X509Credential x509Credential, @Nullable final CriteriaSet criteriaSet) {
-                return true;
-            }
-        });
+        super(HttpClients.createDefault(), new HttpClientSecurityParameters());
     }
 
     public void setResponseCode(final int code) {

@@ -93,9 +93,8 @@
        | which is the preferred mechanism to specify CAS proxy trust material. In the case of metadata, self-signed
        | certificates are recommended.
        -->
-    <util:list id="shibboleth.CASProxyTrustedCertificates">
-        <!--<bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
-                  p:resource="%{idp.home}/credentials/your_ca.pem" /> -->
+    <util:list id="shibboleth.CASProxyTrustedCertificates" value-type="java.lang.String">
+        <!--<value>%{idp.home}/credentials/your_ca.pem</value>-->
     </util:list>
 
 

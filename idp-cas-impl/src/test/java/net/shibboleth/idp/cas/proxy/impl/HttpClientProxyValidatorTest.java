@@ -19,8 +19,10 @@ package net.shibboleth.idp.cas.proxy.impl;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 
+import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,12 +83,20 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
                         new FailedLoginException()
                 },
 
-                // Untrusted cert
+                // Untrusted self-signed cert
                 new Object[] {
                         "https://localhost:8443",
                         "src/test/resources/credentials/nobody-2.p12",
                         200,
-                        new CertificateException(),
+                        new CredentialException(),
+                },
+
+                // Untrusted cert signed by commercial CA that appears in default system truststore
+                new Object[] {
+                        "https://localhost:8443",
+                        "src/test/resources/credentials/idp-1371.p12",
+                        200,
+                        new CredentialException(),
                 },
         };
     }
@@ -98,7 +108,6 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
         Server server = null;
         try {
             server = startServer(keyStorePath, new ConfigurableStatusHandler(status));
-            validator.setTimeout(5000); // 5s timeout for Windows
             validator.validate(
                     buildProfileRequestContext(serviceURL),
                     new URI("https://localhost:8443/?pgtId=A&pgtIOU=B"));
