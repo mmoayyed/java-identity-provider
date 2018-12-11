@@ -52,8 +52,6 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
     /** Namespace for Security. */
     public static final String SECURITY_NAMESPACE = "urn:mace:shibboleth:2.0:security";
-    /** Namespace for RelyingParty. */
-    public static final String RP_NAMESPACE = "urn:mace:shibboleth:2.0:relying-party";
     /** Namespace for Metadata. */
     public static final String METADATA_NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
     
@@ -63,8 +61,6 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     public static final QName CHAINING_PROVIDER_ELEMENT_NAME = 
             new QName(METADATA_NAMESPACE, "ChainingMetadataProvider");
     /** RelyingPartyGroup Element name. */
-    public static final QName RELYING_PARTY_GROUP_ELEMENT_NAME = new QName(RP_NAMESPACE, "RelyingPartyGroup");
-    /** TrustEngine element name. */
     public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(SECURITY_NAMESPACE, "TrustEngine");
 
     /** Logger. */
@@ -94,7 +90,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     }
 
     /**
-     * Is this the element at the top of the file? Yes, if it has no parent or if the parent is a RelyingPartyGroup. In
+     * Is this the element at the top of the file? Yes, if it has no parent. In
      * this situation we need to wrap the element in a {@link RelyingPartyMetadataProvider}.
      * 
      * @param element the element.
@@ -103,15 +99,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     private boolean isTopMost(@Nonnull final Element element) {
         final Node parent = element.getParentNode();
 
-        if (parent.getNodeType() == Node.DOCUMENT_NODE) {
-            return true;
-        }
-
-        if (parent.getNodeType() != Node.ELEMENT_NODE) {
-            return false;
-        }
-        return RELYING_PARTY_GROUP_ELEMENT_NAME.getLocalPart().equals(parent.getLocalName())
-                && RELYING_PARTY_GROUP_ELEMENT_NAME.getNamespaceURI().equals(parent.getNamespaceURI());
+        return parent.getNodeType() == Node.DOCUMENT_NODE;
     }
 
     /**
