@@ -48,7 +48,7 @@
                               c:resolver-ref="shibboleth.MetadataCredentialResolver" />
                         <bean parent="shibboleth.StaticPKIXTrustEngine"
                               p:certificates="#{getObject('shibboleth.CASProxyTrustedCertificates') ?: getObject('shibboleth.DefaultCASProxyTrustedCertificates')}"
-                              p:checkNames="false" />
+                              p:checkNames="true" />
                     </list>
                 </constructor-arg>
             </bean>

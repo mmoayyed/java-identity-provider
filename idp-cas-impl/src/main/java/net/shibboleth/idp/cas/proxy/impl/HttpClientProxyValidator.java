@@ -159,6 +159,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
             log.debug("Attempting to validate CAS proxy callback URI {}", uri);
             final HttpGet request = new HttpGet(uri);
             response = httpClient.execute(request, clientContext);
+            HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
             return response.getStatusLine().getStatusCode();
         } catch (final ClientProtocolException e) {
             throw new GeneralSecurityException("HTTP protocol error", e);
