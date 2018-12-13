@@ -106,7 +106,7 @@ public class HTTPDataConnectorTest {
         Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
     }
 
-    @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
+    @Test(expectedExceptions=ResolutionException.class, enabled=false) public void testBadProtocol()
             throws Exception {
         final HttpClientBuilder clientBuilder = new HttpClientBuilder();
         clientBuilder.setTLSSocketFactory(HTTPMetadataResolverTest.buildTrustEngineSocketFactory());
