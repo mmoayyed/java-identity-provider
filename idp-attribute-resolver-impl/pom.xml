@@ -140,6 +140,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>${opensaml.groupId}</groupId>
+			<artifactId>opensaml-saml-impl</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
     <distributionManagement>

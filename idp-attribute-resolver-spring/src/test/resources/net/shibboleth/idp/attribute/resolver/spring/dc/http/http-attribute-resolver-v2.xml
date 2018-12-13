@@ -4,8 +4,9 @@
             xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
     <DataConnector id="myHTTP" xsi:type="HTTP"
-            httpClientRef="NoTrustEngineHttpClient"
             acceptStatuses="200 201"
+            httpClientRef="TrustEngineHttpClient"
+            certificateAuthority="%{certificateAuthority}"
             acceptTypes="application/json">
             
         <URLTemplate customObjectRef="CustomObject">%{serviceURL}</URLTemplate>

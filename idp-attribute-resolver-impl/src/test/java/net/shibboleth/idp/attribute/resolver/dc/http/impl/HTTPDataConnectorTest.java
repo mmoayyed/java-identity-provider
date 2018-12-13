@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.script.ScriptException;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolverTest;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
 import org.springframework.core.io.ClassPathResource;
@@ -39,6 +39,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.TestCache;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
@@ -51,8 +52,8 @@ public class HTTPDataConnectorTest {
     private static final String TEST_CONNECTOR_NAME = "HTTPConnector";
     
     private static final String TEST_URL =
-            RepositorySupport.buildHTTPSResourceURL("java-identity-provider",
-                    "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json");
+            RepositorySupport.buildHTTPResourceURL("java-identity-provider",
+                    "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json", false);
 
     private static final String SCRIPT_PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/";
     
@@ -60,13 +61,12 @@ public class HTTPDataConnectorTest {
 
     private HTTPDataConnector connector;
     
-    @BeforeMethod public void setUp() {
+    @BeforeMethod public void setUp() throws Exception {
         connector = new HTTPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setHttpClient(
-                HttpClientBuilder.create()
-                    .setSSLSocketFactory(SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(false, false))
-                    .build());
+        final HttpClientBuilder builder = new HttpClientBuilder();
+        builder.setTLSSocketFactory(SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(false, false));
+        connector.setHttpClient(builder.buildClient());
     }
     
     @Test public void test() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
@@ -107,13 +107,19 @@ public class HTTPDataConnectorTest {
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
-            throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
+            throws Exception {
+        final HttpClientBuilder clientBuilder = new HttpClientBuilder();
+        clientBuilder.setTLSSocketFactory(HTTPMetadataResolverTest.buildTrustEngineSocketFactory());
+        connector.setHttpClient(clientBuilder.buildClient());
+
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
         params.setTLSProtocols(Collections.singleton("SSLv3"));
+        params.setTLSTrustEngine(HTTPMetadataResolverTest.buildExplicitKeyTrustEngine("repo-entity.crt"));
         connector.setHttpClientSecurityParameters(params);
-        
+
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
-        builder.setTemplateText(TEST_URL);
+        builder.setTemplateText(RepositorySupport.buildHTTPSResourceURL("java-identity-provider",
+                    "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json"));
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.setHttpClientSecurityParameters(params);
         builder.initialize();        

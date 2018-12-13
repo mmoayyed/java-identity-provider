@@ -6,6 +6,7 @@
     <DataConnector id="myHTTP" xsi:type="HTTP"
             httpClientRef="ClientTLSHttpClient"
             clientPrivateKey="%{key}"
+			certificateAuthority="%{certificateAuthority}"
             clientCertificate="%{certificate}">
             
         <URLTemplate>%{serviceURL}</URLTemplate>

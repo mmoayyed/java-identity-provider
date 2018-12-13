@@ -75,6 +75,7 @@ public class HTTPDataConnectorParserTest {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
+        propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -122,6 +123,8 @@ public class HTTPDataConnectorParserTest {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js");
         propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
+        propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
+
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -140,6 +143,8 @@ public class HTTPDataConnectorParserTest {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://build.shibboleth.net/test.json");
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
+        propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
+
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -222,36 +227,6 @@ public class HTTPDataConnectorParserTest {
         connector.resolve(context);
     }
 
-    @Test public void v2CA() throws Exception {
-        
-        final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
-        propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
-        propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
-        propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
-        
-        final HTTPDataConnector connector =
-                getDataConnector(propSource,
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-ca.xml");
-        Assert.assertNotNull(connector);
-        
-        final AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);
-        
-        connector.resolve(context);
-        
-        final Map<String,IdPAttribute> attrs = connector.resolve(context);
-        
-        Assert.assertEquals(attrs.size(), 2);
-        
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
-        
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
-    }
-    
     @Test(expectedExceptions=ResolutionException.class) public void v2BadCA() throws Exception {
         
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
@@ -280,6 +255,8 @@ public class HTTPDataConnectorParserTest {
         propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
         propSource.setProperty("key", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.key");
         propSource.setProperty("certificate", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.crt");
+        propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
+
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
@@ -308,6 +285,7 @@ public class HTTPDataConnectorParserTest {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (TestSupport.isJavaV8OrLater() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         propSource.setProperty("userAgent", "disguised/1.0.0 hidden/3.4.5");
+        propSource.setProperty("certificateAuthority", "/org/opensaml/saml/metadata/resolver/impl/repo-rootCA.crt");
         
         final HTTPDataConnector connector =
                 getDataConnector(propSource,

@@ -27,7 +27,7 @@
 
     <bean id="ClientTLSSocketFactory" 
         class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
-        factory-method="buildTLSSocketFactoryWithClientTLSOnly" />
+        factory-method="buildTLSSocketFactoryWithClientTLS" />
 
     <bean id="ClientTLSHttpClientBuilder"
         parent="NoTrustEngineHttpClientBuilder"
