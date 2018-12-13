@@ -374,7 +374,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     @Test
     public void testHTTPSNoTrustEngine() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
-                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+                RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
         
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 propSource, "dynamic-https-noTrustEngine.xml", "beans.xml");

@@ -61,7 +61,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
     
-    @Test public void httpsNoTrustEngine() throws Exception {
+    @Test(enabled=false) public void httpsNoTrustEngine() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPSResourceURL(REPO_IDP, ENTITY_XML));
 
@@ -213,7 +213,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
     @Test public void clientSecurityParameters() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
-                RepositorySupport.buildHTTPSResourceURL(REPO_IDP, ENTITY_XML));
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
         HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "https-client-security-params.xml", "beans.xml");
         
