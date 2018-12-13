@@ -59,6 +59,7 @@ import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.opensaml.security.trust.TrustEngine;
+import org.opensaml.security.x509.TrustedNamesCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +154,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
     protected int connect(@Nonnull final URI uri, @Nonnull Service service) throws GeneralSecurityException {
         final HttpClientContext clientContext = HttpClientContext.create();
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
-        setCASTLSTrustEngineCriteria(clientContext, service);
+        setCASTLSTrustEngineCriteria(clientContext, uri, service);
         HttpResponse response;
         try {
             log.debug("Attempting to validate CAS proxy callback URI {}", uri);
@@ -175,7 +176,8 @@ public class HttpClientProxyValidator implements ProxyValidator {
         }
     }
 
-    private static void setCASTLSTrustEngineCriteria(final HttpClientContext context, final Service service) {
+    private static void setCASTLSTrustEngineCriteria(
+            final HttpClientContext context, final URI requestUri, final Service service) {
         final String entityID;
         if (service.getEntityDescriptor() != null) {
             entityID = service.getEntityDescriptor().getEntityID();
@@ -186,7 +188,8 @@ public class HttpClientProxyValidator implements ProxyValidator {
                 new EntityIdCriterion(entityID),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME),
                 new ProtocolCriterion(AbstractProtocolConfiguration.PROTOCOL_URI),
-                new UsageCriterion(UsageType.SIGNING));
+                new UsageCriterion(UsageType.SIGNING),
+                new TrustedNamesCriterion(Collections.singleton(requestUri.getHost())));
         context.setAttribute(CONTEXT_KEY_CRITERIA_SET, criteria);
     }
 }
