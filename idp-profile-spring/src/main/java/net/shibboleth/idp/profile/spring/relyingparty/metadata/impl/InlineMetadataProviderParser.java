@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -55,6 +56,17 @@ public class InlineMetadataProviderParser extends AbstractMetadataProviderParser
                     ElementSupport.getChildElementsByTagNameNS(element, SAMLConstants.SAML20MD_NS, "EntityDescriptor");
         }
         builder.addConstructorArgValue(metadataContent.get(0));
+        
+        if (element.hasAttributeNS(null, "indexesRef")) {
+            builder.addPropertyReference("indexes",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));
+        }
+        
+        if (element.hasAttributeNS(null, "resolveViaPredicatesOnly")) {
+            builder.addPropertyValue("resolveViaPredicatesOnly",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "resolveViaPredicatesOnly")));
+        }
+        
     }
     
 }

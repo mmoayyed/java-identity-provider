@@ -91,6 +91,22 @@
                         </annotation>
                     </element>
                 </choice>
+                <attribute name="indexesRef" type="string">
+                    <annotation>
+                        <documentation>
+                            ID of a Set of MetadataIndex instances used to support resolution of metadata based on
+                            criteria other than an entityID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="resolveViaPredicatesOnly" type="string">
+                    <annotation>
+                        <documentation>
+                            Flag indicating whether resolution may be performed solely by applying predicates to the
+                            entire metadata collection. Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

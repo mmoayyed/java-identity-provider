@@ -37,33 +37,40 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void entity() throws ResolverException, IOException {
-        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntity.xml");
+        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntity.xml", "beans.xml");
 
         Assert.assertEquals(resolver.getId(), "inLineEntity");
 
-        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         Assert.assertTrue(resolver.isFailFastInitialization());
         Assert.assertTrue(resolver.isRequireValidMetadata());
+        
+        Assert.assertTrue(resolver.isResolveViaPredicatesOnly());
+        Assert.assertNotNull(resolver.getIndexes());
+        Assert.assertFalse(resolver.getIndexes().isEmpty());
 
+        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
         Assert.assertFalse(entities.hasNext());
 
     }
 
     @Test public void entities() throws ResolverException, IOException {
-        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntities.xml");
+        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntities.xml", "beans.xml");
 
         Assert.assertEquals(resolver.getId(), "inLineEntities");
 
         Assert.assertFalse(resolver.isFailFastInitialization());
         Assert.assertFalse(resolver.isRequireValidMetadata());
+        
+        Assert.assertTrue(resolver.isResolveViaPredicatesOnly());
+        Assert.assertNotNull(resolver.getIndexes());
+        Assert.assertFalse(resolver.getIndexes().isEmpty());
 
         Assert.assertNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
@@ -86,10 +93,10 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
         configReader.setValidating(true);
 
-        final Resource r =
-                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/multipleResolvers.xml");
-
-        configReader.loadBeanDefinitions(r);
+        configReader.loadBeanDefinitions(
+                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/beans.xml"),
+                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/multipleResolvers.xml")
+                );
         context.refresh();
 
         final ReloadableSpringService<MetadataResolver> ms =

@@ -4,6 +4,9 @@
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
+    resolveViaPredicatesOnly="true"
+    indexesRef="metadata.Indexes"
+    
 	id="inLineEntity" xsi:type="metadata:InlineMetadataProvider" sortKey="1">
 
 	<EntityDescriptor ID="ie1"
