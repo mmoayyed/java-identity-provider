@@ -21,6 +21,12 @@
             <value>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/inLineEntities2.xml</value>
         </util:list>
         
+    <util:set id="metadata.Indexes">
+        <bean class="org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex" />
+        <bean class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex" />
+        <bean class="org.opensaml.saml.metadata.resolver.index.impl.SAMLArtifactMetadataIndex" />
+    </util:set>
+        
 	<bean id="shibboleth.MetadataResolverService"
 		class="net.shibboleth.ext.spring.service.ReloadableSpringService"
 		p:serviceConfigurations-ref="resources"
