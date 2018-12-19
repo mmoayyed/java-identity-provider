@@ -19,6 +19,7 @@
     <action-state id="DoProfileWork">
         <evaluate expression="ProcessLogoutRequest" />
         <evaluate expression="LogoutPopulateAuditContext" />
+        <evaluate expression="DestroySessions" />
 
         <evaluate expression="'proceed'" />
         

@@ -14,6 +14,8 @@
 ## environment - Spring Environment object for property resolution
 ## custom - arbitrary object injected by deployer
 ##
+#set ($activeIdPSessions = $logoutContext and !$logoutContext.getIdPSessions().isEmpty())
+#set ($activeSPSessions = $logoutContext and !$logoutContext.getSessionMap().isEmpty())
 <!DOCTYPE html>
 <html>
     <head>
@@ -32,7 +34,13 @@
 
         <div class="content">
           <div class="column one">
+          #if ($activeIdPSessions)
+            <p>#springMessageText("idp.logout.cancelled", "Logout has been cancelled.")</p>
+          #elseif ($activeSPSessions)
             <p>#springMessageText("idp.logout.local", "You elected not to log out of all the applications accessed during your session.")</p>
+          #else
+            <p>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</p>
+          #end
           </div>
           <div class="column two">
             <ul class="list list-help">

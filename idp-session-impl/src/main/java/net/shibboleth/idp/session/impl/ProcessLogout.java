@@ -25,7 +25,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -49,7 +48,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
- * Profile action that resolves an active session from the profile request, and destroys it,
+ * Profile action that resolves an active session from the profile request, and records it,
  * populating the associated {@link SPSession} objects into a {@link LogoutContext}.
  * 
  * <p>A {@link SubjectContext} and {@link SessionContext} are also populated.</p>
@@ -60,7 +59,6 @@ import com.google.common.base.Predicates;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
  * @event {@link org.opensaml.profile.action.EventIds#IO_ERROR}
- * @post The matching {@link IdPSession} is destroyed.
  * @post If a {@link IdPSession} was found, then a {@link SubjectContext} and {@link LogoutContext} will be populated.
  */
 public class ProcessLogout extends AbstractProfileAction {
@@ -70,9 +68,6 @@ public class ProcessLogout extends AbstractProfileAction {
     
     /** Session resolver. */
     @NonnullAfterInit private SessionResolver sessionResolver;
-
-    /** Session manager. */
-    @NonnullAfterInit private SessionManager sessionManager;
 
     /** Condition to determine whether to enforce address binding on the session. */
     @Nonnull private Predicate<ProfileRequestContext> checkAddressCondition;
@@ -128,17 +123,6 @@ public class ProcessLogout extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
-    }
-
-    /**
-     * Set the {@link SessionManager} to use.
-     * 
-     * @param manager  session manager to use
-     */
-    public void setSessionManager(@Nonnull final SessionManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
     /**
@@ -199,8 +183,6 @@ public class ProcessLogout extends AbstractProfileAction {
         if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
             if (sessionResolver == null) {
                 throw new ComponentInitializationException("SessionResolver cannot be null");
-            } else if (sessionManager == null) {
-                throw new ComponentInitializationException("SessionManager cannot be null");
             }
         }
     }
@@ -254,18 +236,14 @@ public class ProcessLogout extends AbstractProfileAction {
                 return;
             }
             
+            logoutCtx.getIdPSessions().add(session);
+            
             int count = 1;
             for (final SPSession spSession : session.getSPSessions()) {
                 logoutCtx.getSessionMap().put(spSession.getId(), spSession);
                 logoutCtx.getKeyedSessionMap().put(Integer.toString(count++), spSession);
             }
                 
-            try {
-                sessionManager.destroySession(session.getId(), true);
-            } catch (final SessionException e) {
-                log.error("{} Error destroying session", getLogPrefix(), e);
-                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
-            }
         } catch (final ResolverException e) {
             log.error("{} Error resolving matching session(s)", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

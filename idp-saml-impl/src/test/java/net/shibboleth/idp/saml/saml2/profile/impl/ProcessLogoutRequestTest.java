@@ -90,7 +90,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         action = new ProcessLogoutRequest();
         action.setSessionResolver(sessionManager);
-        action.setSessionManager(sessionManager);
         action.initialize();
     }
     
@@ -211,9 +210,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        if (logoutCtx != null) {
-            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
-        }
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
+        Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
+        Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+
+        sessionManager.destroySession(session.getId(), false);
     }
 
     @Test public void testDefaultedSessionQualifiers() throws SessionException, ResolverException {
@@ -247,9 +249,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        if (logoutCtx != null) {
-            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
-        }
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
+        Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
+        Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+        
+        sessionManager.destroySession(session.getId(), false);
     }
     
     @Test public void testSessionOneSPSession() throws SessionException, ResolverException {
@@ -280,9 +285,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        if (logoutCtx != null) {
-            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
-        }
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
+        Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
+        Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+        
+        sessionManager.destroySession(session.getId(), false);
     }
     
     @Test public void testSessionTwoSPSessions() throws SessionException, ResolverException {
@@ -316,6 +324,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, true);
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
+        Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);
         
         final SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2").iterator().next();
@@ -324,6 +335,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId2, sp.getNameID()));
         Assert.assertEquals(sp.getSessionIndex(), "index2");
+        
+        sessionManager.destroySession(session.getId(), false);
     }
 
     @Test public void testTwoSPSessionsWrongRequester() throws SessionException, ResolverException {
@@ -395,10 +408,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, false);
-        if (logoutCtx != null) {
-            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
-        }
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
+        Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
+        Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
         
+        sessionManager.destroySession(session.getId(), false);
         sessionManager.destroySession(session2.getId(), false);
     }
 
@@ -438,9 +453,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertNull(sessionCtx);
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        if (logoutCtx != null) {
-            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
-        }
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 2);
+        Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+
+        sessionManager.destroySession(session.getId(), false);
+        sessionManager.destroySession(session2.getId(), false);
     }
     
 }

@@ -28,6 +28,22 @@
 
     <action-state id="DoLogout">
         <evaluate expression="ProcessLogout" />
+        <evaluate expression="LogoutPopulateAuditContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CheckPromptCondition1">
+            <set name="flowScope.transitionAfterDestroy" value="'ContinueLogout'" />
+            <set name="flowScope.promptForIdP" value="UserPromptCondition.apply(opensamlProfileRequestContext)" />
+        </transition>
+    </action-state>
+
+    <decision-state id="CheckPromptCondition1">
+        <if test="promptForIdP"
+            then="ContinueLogout" else="DestroySessions" />
+    </decision-state>
+
+    <action-state id="DestroySessions">
+        <evaluate expression="DestroySessions" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="PopulateClientStorageSaveContext" />
@@ -40,18 +56,17 @@
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="ClientStorageSave" />
-        <transition on="NoSaveNeeded" to="CompleteLogout" />
+        <transition on="NoSaveNeeded" to="#{transitionAfterDestroy}" />
     </action-state>
     
     <subflow-state id="ClientStorageSave" subflow="client-storage/write">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="CompleteLogout"/>
+        <transition on="proceed" to="#{transitionAfterDestroy}"/>
     </subflow-state>
 
     <!-- Continue the logout process. -->
 
-    <action-state id="CompleteLogout">
-        <evaluate expression="LogoutPopulateAuditContext" />
+    <action-state id="ContinueLogout">
         <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
         <evaluate expression="'proceed'" />
         
@@ -75,7 +90,6 @@
 
     <view-state id="LogoutView" view="logout">
         <on-render>
-            <evaluate expression="WriteAuditLog" />
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
@@ -86,14 +100,25 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         <transition on="proceed" to="LogoutCompleteView" />
+        <transition on="local" to="DestroySessions">
+            <set name="flowScope.transitionAfterDestroy" value="'LogoutCompleteView'" />
+        </transition>
+        <transition on="propagate" to="CheckPromptCondition2">
+            <set name="flowScope.transitionAfterDestroy" value="'LogoutPropagateView'" />
+        </transition>
         <transition on="end" to="LogoutCompleteView" />
-        <transition on="propagate" to="LogoutPropagateView" />
     </view-state>
+
+    <decision-state id="CheckPromptCondition2">
+        <if test="promptForIdP"
+            then="DestroySessions" else="#{transitionAfterDestroy}" />
+    </decision-state>
 
     <!-- Terminus -->
 
     <end-state id="LogoutPropagateView" view="logout-propagate">
         <on-entry>
+            <evaluate expression="WriteAuditLog" />
             <evaluate expression="SaveLogoutContext" />
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
@@ -111,6 +136,7 @@
 
     <end-state id="LogoutCompleteView" view="logout-complete">
         <on-entry>
+            <evaluate expression="WriteAuditLog" />
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="requestScope.logoutContext" />

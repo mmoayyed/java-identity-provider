@@ -34,8 +34,6 @@ import net.shibboleth.idp.saml.profile.config.navigate.QualifiedNameIDFormatsLoo
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -82,8 +80,8 @@ import com.google.common.base.Predicates;
  * @event {@link EventIds#INVALID_MESSAGE}
  * @event {@link EventIds#IO_ERROR}
  * @event {@link SAMLEventIds#SESSION_NOT_FOUND}
- * @post The matching session(s) are destroyed.
- * @post If a {@link IdPSession} was found, then a {@link SubjectContext} and {@link LogoutContext} will be populated.
+ * @post If at least one {@link IdPSession} was found, then a {@link SubjectContext} and {@link LogoutContext}
+ *  will be populated.
  * @post If a single {@link IdPSession} was found, then a {@link SessionContext} will be populated.
  */
 public class ProcessLogoutRequest extends AbstractProfileAction {
@@ -94,9 +92,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     /** Session resolver. */
     @NonnullAfterInit private SessionResolver sessionResolver;
 
-    /** Session manager. */
-    @NonnullAfterInit private SessionManager sessionManager;
-    
     /** Creation/lookup function for SubjectContext. */
     @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextCreationStrategy;
 
@@ -171,17 +166,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
-    }
-
-    /**
-     * Set the {@link SessionManager} to use.
-     * 
-     * @param manager  session manager to use
-     */
-    public void setSessionManager(@Nonnull final SessionManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
     /**
@@ -297,8 +281,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
             if (sessionResolver == null) {
                 throw new ComponentInitializationException("SessionResolver cannot be null");
-            } else if (sessionManager == null) {
-                throw new ComponentInitializationException("SessionManager cannot be null");
             }
         }
     }
@@ -344,7 +326,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                     sessionResolver.resolve(sessionResolverCriteriaStrategy.apply(profileRequestContext));
             final Iterator<IdPSession> sessionIterator = sessions.iterator();
 
-            IdPSession single = null;
             LogoutContext logoutCtx = null;
             
             int count = 1;
@@ -372,10 +353,9 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                     if (subjectCtx != null) {
                         subjectCtx.setPrincipalName(session.getPrincipalName());
                     }
-                    single = session;
-                } else {
-                    single = null;
                 }
+
+                logoutCtx.getIdPSessions().add(session);
                 
                 for (final SPSession spSession : session.getSPSessions()) {
                     if (!sessionMatches(profileRequestContext, spSession)) {
@@ -383,26 +363,18 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                         logoutCtx.getKeyedSessionMap().put(Integer.toString(count++), spSession);
                     }
                 }
-
-                try {
-                    sessionManager.destroySession(session.getId(), true);
-                } catch (final SessionException e) {
-                    log.error("{} Error destroying session {}", getLogPrefix(), session.getId(), e);
-                    ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
-                    return;
-                }
             }
             
-            if (single != null) {
-                final SessionContext sessionCtx = sessionContextCreationStrategy.apply(profileRequestContext);
-                if (sessionCtx != null) {
-                    sessionCtx.setIdPSession(single);
-                }
-            } else if (logoutCtx == null) {
+            if (logoutCtx == null) {
                 log.info("{} No active session(s) found matching LogoutRequest", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.SESSION_NOT_FOUND);
+            } else if (logoutCtx.getIdPSessions().size() == 1) {
+                final SessionContext sessionCtx = sessionContextCreationStrategy.apply(profileRequestContext);
+                if (sessionCtx != null) {
+                    sessionCtx.setIdPSession(logoutCtx.getIdPSessions().iterator().next());
+                }
             }
-            
+
         } catch (final ResolverException e) {
             log.error("{} Error resolving matching session(s)", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.SESSION_NOT_FOUND);

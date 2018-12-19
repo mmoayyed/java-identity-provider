@@ -17,12 +17,14 @@
 
 package net.shibboleth.idp.session.context;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -40,16 +42,31 @@ import com.google.common.collect.Multimap;
  */
 public final class LogoutContext extends BaseContext {
 
+    /** Primary sessions to destroy. */
+    @Nonnull @NonnullElements private final Collection<IdPSession> idpSessions;
+
     /** SP sessions needing logout. */
     @Nonnull @NonnullElements private final Multimap<String,SPSession> sessionMap;
 
     /** An index of the session objects by an externally assigned key. */
     @Nonnull @NonnullElements private final Map<String,SPSession> keyedSessionMap;
-    
+        
     /** Constructor. */
     public LogoutContext() {
+        idpSessions = new ArrayList<>();
         sessionMap = ArrayListMultimap.create(10, 1);
         keyedSessionMap = new HashMap<>();
+    }
+    
+    /**
+     * Get a live collection of the IdP Sessions being destroyed.
+     * 
+     * @return sessions being destroyed
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull @NonnullElements @Live public Collection<IdPSession> getIdPSessions() {
+        return idpSessions;
     }
 
     /**

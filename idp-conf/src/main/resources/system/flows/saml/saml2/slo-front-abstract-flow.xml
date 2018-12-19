@@ -64,6 +64,22 @@
 
     <action-state id="DoLogoutRequest">
         <evaluate expression="ProcessLogoutRequest" />
+        <evaluate expression="LogoutPopulateAuditContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CheckPromptCondition1">
+            <set name="flowScope.transitionAfterDestroy" value="'ContinueLogout'" />
+            <set name="flowScope.promptForIdP" value="UserPromptCondition.apply(opensamlProfileRequestContext)" />
+        </transition>
+    </action-state>
+
+    <decision-state id="CheckPromptCondition1">
+        <if test="promptForIdP"
+            then="ContinueLogout" else="DestroySessions" />
+    </decision-state>
+
+    <action-state id="DestroySessions">
+        <evaluate expression="DestroySessions" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="PopulateClientStorageSaveContext" />
@@ -76,19 +92,18 @@
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="ClientStorageSave" />
-        <transition on="NoSaveNeeded" to="CompleteLogout" />
+        <transition on="NoSaveNeeded" to="#{transitionAfterDestroy}" />
     </action-state>
     
     <subflow-state id="ClientStorageSave" subflow="client-storage/write">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="CompleteLogout"/>
+        <transition on="proceed" to="#{transitionAfterDestroy}"/>
     </subflow-state>
 
     <!-- Continue the logout process. -->
 
-    <action-state id="CompleteLogout">
+    <action-state id="ContinueLogout">
         <evaluate expression="SetIssuerRPUIInformation" />
-        <evaluate expression="LogoutPopulateAuditContext" />
         <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
         <evaluate expression="'proceed'" />
         
@@ -123,9 +138,19 @@
         </on-render>
         
         <transition on="proceed" to="CheckAsync2" />
-        <transition on="propagate" to="LogoutPropagateView" />
+        <transition on="local" to="DestroySessions">
+            <set name="flowScope.transitionAfterDestroy" value="'LogoutCompleteView'" />
+        </transition>
+        <transition on="propagate" to="CheckPromptCondition2">
+            <set name="flowScope.transitionAfterDestroy" value="'LogoutPropagateView'" />
+        </transition>
         <transition on="end" to="LogoutCompleteView" />
     </view-state>
+    
+    <decision-state id="CheckPromptCondition2">
+        <if test="promptForIdP"
+            then="DestroySessions" else="#{transitionAfterDestroy}" />
+    </decision-state>
     
     <view-state id="LogoutPropagateView" view="logout-propagate">
         <on-render>
@@ -169,6 +194,7 @@
     <action-state id="BuildResponse">
         <evaluate expression="AddLogoutResponse" />
         <evaluate expression="AddInResponseToToResponse" />
+        <evaluate expression="AddLogoutStatusToResponse" />
         <evaluate expression="PostResponsePopulateAuditContext" />
         
         <evaluate expression="'proceed'" />

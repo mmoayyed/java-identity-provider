@@ -537,6 +537,19 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.SESSION_ID"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextIDLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.SessionContext" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>

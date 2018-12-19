@@ -46,8 +46,11 @@
 
     <bean id="ProcessLogoutRequest"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogoutRequest" scope="prototype"
-        p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager" />
+    
+    <bean id="DestroySessions"
+        class="net.shibboleth.idp.session.impl.DestroySessions" scope="prototype"
+        p:sessionManager-ref="shibboleth.SessionManager" />
     
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.LogoutRequestAuditExtractors') ?: getObject('shibboleth.DefaultLogoutRequestAuditExtractors')}" />

@@ -21,6 +21,8 @@
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
 
+    <alias alias="UserPromptCondition" name="%{idp.logout.promptUser:shibboleth.Conditions.FALSE}" />
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="http://shibboleth.net/ns/profiles/logout"
@@ -42,10 +44,12 @@
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-        p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager"
         p:checkAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:null}'.trim()) ?: %{idp.session.consistentAddress:true}}" />
+    
+    <bean id="DestroySessions"
+        class="net.shibboleth.idp.session.impl.DestroySessions" scope="prototype"
+        p:sessionManager-ref="shibboleth.SessionManager" />
     
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"

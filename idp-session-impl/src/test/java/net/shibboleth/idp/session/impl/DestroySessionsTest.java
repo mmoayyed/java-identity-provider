@@ -21,7 +21,6 @@ import java.util.Collections;
 
 import javax.servlet.http.Cookie;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -31,7 +30,9 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
+import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -47,23 +48,21 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link ProcessLogout} unit test. */
-public class ProcessLogoutTest extends SessionManagerBaseTestCase {
+/** {@link DestroySessions} unit test. */
+public class DestroySessionsTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
     
     private ProfileRequestContext prc;
     
-    private ProcessLogout action;
+    private DestroySessions action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
-        action = new ProcessLogout();
-        action.setHttpServletRequest(requestProxy);
-        action.setHttpServletResponse(responseProxy);
-        action.setSessionResolver(sessionManager);
+        action = new DestroySessions();
+        action.setSessionManager(sessionManager);
         action.initialize();
     }
     
@@ -81,104 +80,131 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         sessionManager.setSPSessionSerializerRegistry(registry);
     }
     
-    @Test public void testNoSession() {
-        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+    @Test public void testNoContext() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
-        Assert.assertNull(prc.getSubcontext(LogoutContext.class));
+    }
+
+    @Test public void testNoSessions() {
+        prc.getSubcontext(LogoutContext.class, true);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
     }
     
-    @Test public void testSessionNoSPSessions() throws SessionException, ResolverException {
+    @Test public void testOneSessionNoUnbind() throws SessionException, ResolverException {
         final Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
 
-        final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
+        final String sessionId = session.getId();
+        
+        prc.getSubcontext(LogoutContext.class, true).getIdPSessions().add(session);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
-        Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
+        
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
         Assert.assertNotNull(logoutCtx);
-        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
-        Assert.assertEquals(logoutCtx.getIdPSessions().iterator().next().getId(), session.getId());
-        Assert.assertTrue(logoutCtx.getSessionMap().isEmpty());
+        Assert.assertTrue(logoutCtx.getIdPSessions().isEmpty());
         
-        sessionManager.destroySession(session.getId(), false);
+        session = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
+        Assert.assertNull(session);
     }
 
-    @Test public void testSessionSPSessions() throws SessionException, ResolverException {
+    @Test public void testOneSessionUnbind() throws SessionException, ResolverException {
         final Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
 
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
-
-        final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new BasicSPSession("https://sp.example.org", creation, expiration));
-        session.addSPSession(new BasicSPSession("https://sp2.example.org", creation, expiration));
+        final String sessionId = session.getId();
+        
+        prc.getSubcontext(LogoutContext.class, true).getIdPSessions().add(session);
+        prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
-        Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
+        
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
         Assert.assertNotNull(logoutCtx);
-        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
-        Assert.assertEquals(logoutCtx.getIdPSessions().iterator().next().getId(), session.getId());
+        Assert.assertTrue(logoutCtx.getIdPSessions().isEmpty());
         
-        BasicSPSession sp = (BasicSPSession) logoutCtx.getSessions("https://sp.example.org").iterator().next();
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
-
-        sp = (BasicSPSession) logoutCtx.getSessions("https://sp2.example.org").iterator().next();
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
+        final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
+        Assert.assertNull(sessionCtx);
         
-        sessionManager.destroySession(session.getId(), false);
-}
-    
-    @Test public void testAddressRebind() throws SessionException, ResolverException {
-        final Cookie cookie = createSession("joe");
-        
-        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("::1");
-        
-        final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
-        
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
-        final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
-        Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
-        
-        sessionManager.destroySession(session.getId(), false);
+        session = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
+        Assert.assertNull(session);
     }
-    
-    @Test public void testAddressMismatch() throws SessionException {
-        final Cookie cookie = createSession("joe");
+
+    @Test public void testOneSessionDifferent() throws SessionException, ResolverException {
+        Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("192.168.1.1");
+
+        IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        Assert.assertNotNull(session);
+
+        prc.getSubcontext(LogoutContext.class, true).getIdPSessions().add(session);
+
+        cookie = createSession("joe");
+
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+
+        session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        Assert.assertNotNull(session);
+                
+        prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
-        Assert.assertNull(prc.getSubcontext(LogoutContext.class));
+        
+        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertTrue(logoutCtx.getIdPSessions().isEmpty());
+        
+        final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
+        Assert.assertNotNull(sessionCtx);
+        Assert.assertNotNull(sessionCtx.getIdPSession());
+    }
+
+    @Test public void testTwoSessions() throws SessionException, ResolverException {
+        Cookie cookie = createSession("joe");
+        
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+
+        IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        Assert.assertNotNull(session);
+
+        prc.getSubcontext(LogoutContext.class, true).getIdPSessions().add(session);
+
+        cookie = createSession("joe");
+
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+
+        session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        Assert.assertNotNull(session);
+                
+        prc.getSubcontext(LogoutContext.class, true).getIdPSessions().add(session);
+        prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
+        Assert.assertNotNull(logoutCtx);
+        Assert.assertTrue(logoutCtx.getIdPSessions().isEmpty());
+        
+        final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
+        Assert.assertNull(sessionCtx);
     }
 
 }

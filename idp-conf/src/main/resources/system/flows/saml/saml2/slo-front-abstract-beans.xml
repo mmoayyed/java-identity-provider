@@ -17,6 +17,8 @@
         
     <import resource="common-beans.xml" />
 
+    <alias alias="UserPromptCondition" name="%{idp.logout.promptUser:shibboleth.Conditions.FALSE}" />
+
     <util:constant id="shibboleth.EndpointType"
         static-field="org.opensaml.saml.saml2.metadata.SingleLogoutService.DEFAULT_ELEMENT_NAME" />
 
@@ -36,8 +38,11 @@
 
     <bean id="ProcessLogoutRequest"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogoutRequest" scope="prototype"
-        p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager" />
+    
+    <bean id="DestroySessions"
+        class="net.shibboleth.idp.session.impl.DestroySessions" scope="prototype"
+        p:sessionManager-ref="shibboleth.SessionManager" />
     
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.LogoutRequestAuditExtractors') ?: getObject('shibboleth.DefaultLogoutRequestAuditExtractors')}" />
@@ -48,23 +53,6 @@
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
-        </property>
-        <property name="metadataContextLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose">
-                <constructor-arg name="g">
-                    <bean class="com.google.common.base.Functions" factory-method="compose">
-                        <constructor-arg name="g">
-                            <ref bean="shibboleth.ChildLookup.SAMLMetadataContext" />
-                        </constructor-arg>
-                        <constructor-arg name="f">
-                            <ref bean="shibboleth.ChildLookup.SAMLPeerEntityContext" />
-                        </constructor-arg>
-                    </bean>
-                </constructor-arg>
-                <constructor-arg name="f">
-                    <ref bean="shibboleth.MessageContextLookup.Inbound" />
-                </constructor-arg>
-            </bean>
         </property>
         <property name="RPUIContextCreateStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose">
@@ -134,6 +122,22 @@
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+    </bean>
+
+    <bean id="AddLogoutStatusToResponse"
+            class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype"
+            p:statusMessage="An error occurred.">
+        <property name="detailedErrorsCondition">
+            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+        </property>
+        <property name="statusCodes">
+            <list>
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.SUCCESS" />
+            </list>
+        </property>
+        <property name="statusCodesLookupStrategy">
+            <bean class="net.shibboleth.idp.session.impl.LogoutStatusStrategyFunction" />
         </property>
     </bean>
 
