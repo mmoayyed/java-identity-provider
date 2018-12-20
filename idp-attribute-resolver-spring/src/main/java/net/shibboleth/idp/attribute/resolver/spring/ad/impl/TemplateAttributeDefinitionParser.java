@@ -99,7 +99,7 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
         final List<Element> sourceAttributeElements =
                 ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_AD);
         sourceAttributeElements.addAll(ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER));
-        if (null != sourceAttributeElements) {
+        if (null != sourceAttributeElements && !sourceAttributeElements.isEmpty()) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER.getLocalPart(),
                     parserContext.getReaderContext().getResource().getDescription(),
                     "by using <InputAttributeDefinition> and <InputDataConnector>");
