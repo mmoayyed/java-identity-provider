@@ -228,8 +228,6 @@ public final class TestSources {
         return retVal;
     }
 
-
-
     @SuppressWarnings("unused")
     private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
 

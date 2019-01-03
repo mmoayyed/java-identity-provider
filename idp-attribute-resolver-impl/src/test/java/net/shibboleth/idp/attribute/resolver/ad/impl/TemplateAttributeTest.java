@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.testng.annotations.Test;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.TemplateAttribute}. */
 @ThreadSafe
+@SuppressWarnings("deprecation")
 public class TemplateAttributeTest {
 
     /** The name. */
@@ -236,6 +238,8 @@ public class TemplateAttributeTest {
      * Test resolution of an template script with data generated from the attributes, but with
      * explicit setting of source attributes.
      *
+     * This is a canary for IDP-1386
+     *
      * @throws ResolutionException if it goes wrong.
      * @throws ComponentInitializationException if it goes wrong.
      */
@@ -259,18 +263,24 @@ public class TemplateAttributeTest {
         templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_CONNECTOR);
 
         final Set<ResolverPluginDependency> ds = new LazySet<>();
+        
         ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        if (setSources) {
+            ds.add(new ResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR+"2"));
+        }
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
         if (setSources) {
-            templateDef.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+            templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR,
+                    TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         }
         templateDef.initialize();
 
         final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
+        attrDefinitions.add(TestSources.populatedStaticAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR+"2", 3));
         final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
