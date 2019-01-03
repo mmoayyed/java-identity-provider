@@ -88,7 +88,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     @NonnullAfterInit private VelocityEngine engine;
 
     /** The names of the attributes we need. */
-    @Nonnull @NonnullElements private List<String> sourceAttributes;
+    @Deprecated @Nonnull @NonnullElements private List<String> sourceAttributes;
     
     /** Constructor. */
     public TemplateAttributeDefinition() {
@@ -100,7 +100,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the source attribute IDs
      */
-    @Nonnull @Unmodifiable @NonnullElements public List<String> getSourceAttributes() {
+    @Deprecated @Nonnull @Unmodifiable @NonnullElements public List<String> getSourceAttributes() {
         return Collections.unmodifiableList(sourceAttributes);
     }
 
@@ -109,7 +109,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newSourceAttributes the source attribute IDs
      */
-    public void setSourceAttributes(@Nonnull @NullableElements final List<String> newSourceAttributes) {
+    @Deprecated public void setSourceAttributes(@Nonnull @NullableElements final List<String> newSourceAttributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(newSourceAttributes, "Source attribute list cannot be null");
@@ -290,7 +290,39 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         resultantAttribute.setValues(valueList);
         return resultantAttribute;
     }
+    
+    /** Add values for a given attribute to the source Map. 
+     *  Helper function for {@link #setupSourceValues(AttributeResolverWorkContext, Map)}
+     * @param attributeName the attribute name under consideration
+     * @param attributeValues The values to add.
+     * @param sourceValues the Map to add to
+     * @param curValueCount how many values to expect.  0 means never set
+     * @return the number of values to expect, 0 means still not set.
+     * @throws ResolutionException if there is a mismatched count of attributes
+     */
+    private int addAttributeValues(@Nonnull final String attributeName,
+            @Nullable final List<IdPAttributeValue<?>> attributeValues,  
+            @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues,
+            final int curValueCount) throws ResolutionException {
+        
+        int valueCount = curValueCount;
+        if (null == attributeValues || 0 == attributeValues.size()) {
+            log.debug("{} Ignoring input attribute '{}' with no values", getLogPrefix(), attributeName);
+            return valueCount;
+        }
 
+        if (valueCount <= 0) {
+            valueCount = attributeValues.size();
+        } else if (attributeValues.size() != valueCount) {
+            final String msg = getLogPrefix() + " All source attributes used in"
+                    + " TemplateAttributeDefinition must have the same number of values: '" + attributeName  + "'" ;
+            log.error("{} {}", getLogPrefix(), msg);
+            throw new ResolutionException(msg);
+        }
+
+        sourceValues.put(attributeName, attributeValues.iterator());
+        return valueCount;
+    }
     /**
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
@@ -309,27 +341,18 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
         int valueCount = 0;
-        boolean valueCountSet = false;
 
-        for (final Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet() ) {
-
-            final List<IdPAttributeValue<?>> attributeValues = entry.getValue();
-            if (null == attributeValues || 0 == attributeValues.size()) {
-                log.debug("{} Ignoring input attribute '{}' with no values", getLogPrefix(), entry.getKey());
-                continue;
+        if (getSourceAttributes().isEmpty()) {
+            for (final Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet() ) {
+                valueCount = addAttributeValues(entry.getKey(), entry.getValue(), sourceValues, valueCount);
             }
-
-            if (!valueCountSet) {
-                valueCount = attributeValues.size();
-                valueCountSet = true;
-            } else if (attributeValues.size() != valueCount) {
-                final String msg = getLogPrefix() + " All source attributes used in"
-                        + " TemplateAttributeDefinition must have the same number of values: '" + entry.getKey() + "'" ;
-                log.error("{} {}", getLogPrefix(), msg);
-                throw new ResolutionException(msg);
+        } else {
+            for (final String attributeName:getSourceAttributes()) {
+                valueCount = addAttributeValues(attributeName,
+                        dependencyAttributes.get(attributeName),
+                        sourceValues,
+                        valueCount);
             }
-
-            sourceValues.put(entry.getKey(), attributeValues.iterator());
         }
 
         return valueCount;
