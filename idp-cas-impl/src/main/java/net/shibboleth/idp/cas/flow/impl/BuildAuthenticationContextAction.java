@@ -55,9 +55,11 @@ public class BuildAuthenticationContextAction extends
         ac.setForceAuthn(getCASRequest(profileRequestContext).isRenew());
         ac.setIsPassive(false);
 
-        final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
-        if (config != null) {
-            ac.setForceAuthn(config.getForceAuthnPredicate().apply(profileRequestContext));
+        if (!ac.isForceAuthn()) {
+            final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
+            if (config != null) {
+                ac.setForceAuthn(config.getForceAuthnPredicate().apply(profileRequestContext));
+            }
         }
         
         final AuthenticationContext initialAuthnContext =
