@@ -129,7 +129,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
             getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
             getHttpServletResponse().getWriter().println("Configuration reloaded for '" + id + "'");
         } catch (final ServiceException e) {
-            log.error("{} Error reloading service configuration for '{}'", getLogPrefix(), id, e);
+            log.error("{} Error reloading service configuration for '{}'", getLogPrefix(), id);
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
