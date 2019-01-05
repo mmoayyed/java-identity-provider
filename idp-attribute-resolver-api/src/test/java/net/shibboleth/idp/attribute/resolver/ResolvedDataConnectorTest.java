@@ -97,9 +97,9 @@ public class ResolvedDataConnectorTest {
         MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new IdPAttribute("attr")));
         dc.setId("Defn");
-        ResolverPluginDependency dep = new ResolverPluginDependency("doo");
-        dep.setDependencyAttributeId("foo");
-        dc.setDependencies(Collections.singleton(dep));
+        ResolverDataConnectorDependency dep = new ResolverDataConnectorDependency("doo");
+        dep.setAttributeNames(Collections.singletonList("foo"));
+        dc.setDependencies(Collections.singleton((ResolverPluginDependency) dep));
         dc.setPropagateResolutionExceptions(false);
         dc.initialize();
         ResolvedDataConnector resolvedDataConnector = new ResolvedDataConnector(dc, resolvedData);

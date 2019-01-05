@@ -216,18 +216,16 @@ public final class TestSources {
         return retVal;
     }
     
-    public static ResolverPluginDependency makeResolverPluginDependency(String connectorId, String attributeId) {
+    public static ResolverPluginDependency makeResolverPluginDependency(@Nonnull String connectorId, @Nullable String attributeId) {
         ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
-        retVal.setAttributeNames(Collections.singleton(attributeId));
-        return retVal;
+        if (null == attributeId) {
+            retVal.setAllAttributes(true);
+        } else {
+            retVal.setAttributeNames(Collections.singleton(attributeId));
+        }
+        return retVal; 
     }
     
-    public static ResolverPluginDependency makeResolverPluginDependency(String connectorId, boolean allAttributes) {
-        ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
-        retVal.setAllAttributes(allAttributes);
-        return retVal;
-    }
-
     @SuppressWarnings("unused")
     private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
 

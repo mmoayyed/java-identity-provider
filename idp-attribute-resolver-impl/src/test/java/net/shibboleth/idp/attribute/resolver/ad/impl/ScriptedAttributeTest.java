@@ -432,8 +432,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
@@ -543,7 +542,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         connector.setId("Connector");
 
         final Set<ResolverPluginDependency> ds =
-                Collections.singleton(TestSources.makeResolverPluginDependency("Connector", true));
+                Collections.singleton(TestSources.makeResolverPluginDependency("Connector", null));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);

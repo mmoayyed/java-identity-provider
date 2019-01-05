@@ -201,7 +201,7 @@ public class TemplateAttributeTest {
         templateDef.setTemplateText(TEST_SIMPLE_TEMPLATE);
 
         final Set<ResolverPluginDependency> ds = new LazySet<>();
-        ds.add(new ResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.setDependencies(ds);
         templateDef.initialize();
 
@@ -266,7 +266,7 @@ public class TemplateAttributeTest {
         
         ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         if (setSources) {
-            ds.add(new ResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR+"2"));
+            ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR+"2"));
         }
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));

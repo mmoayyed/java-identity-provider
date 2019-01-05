@@ -140,8 +140,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(values);
         
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
         
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();

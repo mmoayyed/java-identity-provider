@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -51,6 +52,7 @@ import org.testng.annotations.Test;
 /**
  * Test for prescoped attribute definitions.
  */
+@SuppressWarnings("deprecation") 
 public class PrescopedAtributeTest {
     /** The name. resolve to */
     private static final String TEST_ATTRIBUTE_NAME = "prescoped";
@@ -68,8 +70,8 @@ public class PrescopedAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final  ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setAttributeNames(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -106,8 +108,8 @@ public class PrescopedAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final  ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setAttributeNames(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -144,9 +146,9 @@ public class PrescopedAtributeTest {
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("@");
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        attrDef.setDependencies(Collections.singleton(depend));
+        final  ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
+        depend.setAttributeNames(Collections.singletonList(ResolverTestSupport.EPA_ATTRIB_ID));
+        attrDef.setDependencies(Collections.singleton((ResolverPluginDependency) depend));
         attrDef.initialize();
 
         try {
@@ -169,13 +171,14 @@ public class PrescopedAtributeTest {
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        
+        final  ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
+        depend.setAttributeNames(Collections.singletonList(ResolverTestSupport.EPA_ATTRIB_ID));
 
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("@");
-        attrDef.setDependencies(Collections.singleton(depend));
+        attrDef.setDependencies(Collections.singleton((ResolverPluginDependency) depend));
         attrDef.initialize();
         final IdPAttribute result = attrDef.resolve(resolutionContext);
         
@@ -191,8 +194,8 @@ public class PrescopedAtributeTest {
     @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final  ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setAttributeNames(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -224,9 +227,9 @@ public class PrescopedAtributeTest {
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        final Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
+        final  ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
+        depend.setAttributeNames(Collections.singletonList(ResolverTestSupport.EPA_ATTRIB_ID));
+        final Set<ResolverPluginDependency> pluginDependencies = Collections.singleton((ResolverPluginDependency)depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 

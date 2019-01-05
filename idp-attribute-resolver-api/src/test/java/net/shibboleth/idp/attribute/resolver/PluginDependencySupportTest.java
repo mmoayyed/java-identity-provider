@@ -63,7 +63,7 @@ public class PluginDependencySupportTest {
 
         final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Collections.singletonList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList((ResolverPluginDependency) new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
                         ResolverTestSupport.EPA_ATTRIB_ID);
 
         Assert.assertNotNull(result);

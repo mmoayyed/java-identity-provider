@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
@@ -46,12 +49,10 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 /**
  * Test for regex attribute definitions.
  */
+@SuppressWarnings("deprecation")
 public class RegexAtributeTest {
     
     /** The name. */
@@ -68,8 +69,7 @@ public class RegexAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final  ResolverPluginDependency depend = TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -107,8 +107,7 @@ public class RegexAtributeTest {
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
 
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
@@ -136,8 +135,7 @@ public class RegexAtributeTest {
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
         attrDef.setDependencies(Collections.singleton(depend));
         attrDef.initialize();
 
@@ -152,8 +150,7 @@ public class RegexAtributeTest {
     @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -183,8 +180,7 @@ public class RegexAtributeTest {
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
         final Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);

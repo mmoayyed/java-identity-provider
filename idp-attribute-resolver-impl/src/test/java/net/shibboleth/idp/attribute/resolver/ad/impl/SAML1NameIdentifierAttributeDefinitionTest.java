@@ -120,8 +120,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(values);
         
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
         
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
@@ -191,7 +190,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME));
+        dependencySet.add(TestSources.makeResolverPluginDependency(TEST_ATTRIBUTE_NAME));
         defn2.setDependencies(dependencySet);
         defn2.initialize();
 

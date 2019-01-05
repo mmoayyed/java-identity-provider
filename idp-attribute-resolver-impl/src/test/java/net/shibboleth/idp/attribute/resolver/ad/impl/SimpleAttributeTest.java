@@ -170,8 +170,7 @@ public class SimpleAttributeTest {
 
        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);

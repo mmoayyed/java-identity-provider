@@ -344,8 +344,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolutionContext.setAttributeRecipientID(TestSources.SP_ENTITY_ID);
         resolutionContext.setPrincipal(TestSources.PRINCIPAL_ID);
 
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
 
         final ComputedIDDataConnector connector = new ComputedIDDataConnector();
@@ -375,8 +374,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolutionContext.setAttributeRecipientID(TestSources.SP_ENTITY_ID);
         resolutionContext.setPrincipal(TestSources.PRINCIPAL_ID);
 
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
 
         final ComputedIDDataConnector connector = new ComputedIDDataConnector();

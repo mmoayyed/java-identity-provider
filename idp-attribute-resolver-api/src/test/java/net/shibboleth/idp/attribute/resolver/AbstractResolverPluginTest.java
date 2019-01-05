@@ -101,9 +101,9 @@ public class AbstractResolverPluginTest {
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("foo");
+        ResolverPluginDependency dep1 = new ResolverAttributeDefinitionDependency("foo");
         dep1.setDependencyAttributeId("bar");
-        ResolverPluginDependency dep2 = new ResolverPluginDependency("foo");
+        ResolverPluginDependency dep2 = new ResolverAttributeDefinitionDependency("foo");
         dep2.setDependencyAttributeId("baz");
 
         depdencies.add(dep1);
