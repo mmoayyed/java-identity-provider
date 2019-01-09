@@ -49,9 +49,6 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     /** CAS base protocol URI. */
     public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
 
-    /** Initialization flag. */
-    private boolean initialized;
-
     /** Lookup function to supply {@link #ticketValidityPeriod} property. */
     @Nullable private Function<ProfileRequestContext, Long> ticketValidityPeriodLookupStrategy;
 
@@ -85,16 +82,10 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     }
 
     /** {@inheritDoc} */
-    @Override public void initialize() throws ComponentInitializationException {
+    @Override public void doInitialize() throws ComponentInitializationException {
         Constraint.isNotNull(getSecurityConfiguration(), "Security configuration cannot be null.");
         Constraint.isNotNull(getSecurityConfiguration().getIdGenerator(),
                 "Security configuration ID generator cannot be null.");
-        initialized = true;
-    }
-
-    /** {@inheritDoc} */
-    @Override public boolean isInitialized() {
-        return initialized;
     }
 
     /**

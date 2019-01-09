@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -56,7 +57,8 @@ import com.google.common.collect.Collections2;
  * </p>
  */
 public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
-        PrincipalSupportingComponent, Predicate<ProfileRequestContext>, StorageSerializer<AuthenticationResult> {
+        FlowDescriptor, PrincipalSupportingComponent, Predicate<ProfileRequestContext>,
+            StorageSerializer<AuthenticationResult> {
 
     /** Prefix convention for flow IDs. */
     @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "authn/";

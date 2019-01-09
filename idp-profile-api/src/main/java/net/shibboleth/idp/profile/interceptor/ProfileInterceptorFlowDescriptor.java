@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.interceptor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -42,7 +43,7 @@ import com.google.common.base.Predicates;
  * </p>
  */
 public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
-        Predicate<ProfileRequestContext> {
+        FlowDescriptor, Predicate<ProfileRequestContext> {
 
     /** Prefix convention for flow IDs. */
     @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "intercept/";

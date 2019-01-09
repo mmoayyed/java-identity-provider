@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -41,7 +42,7 @@ import com.google.common.base.Predicates;
  * </p>
  */
 public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
-        Predicate<ProfileRequestContext> {
+        FlowDescriptor, Predicate<ProfileRequestContext> {
 
     /** Predicate that must be true for this flow to be usable for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;

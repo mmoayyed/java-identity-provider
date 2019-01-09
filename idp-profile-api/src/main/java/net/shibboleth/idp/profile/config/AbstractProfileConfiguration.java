@@ -35,23 +35,21 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
-public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
+public abstract class AbstractProfileConfiguration extends AbstractIdentifiableInitializableComponent
+        implements ProfileConfiguration {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileConfiguration.class);
 
     /** Access to servlet request. */
     @Nullable private ServletRequest servletRequest;
-
-    /** ID of the profile configured. */
-    @Nonnull @NotEmpty private final String profileId;
 
     /** Lookup function to supply {@link #inboundFlows} property. */
     @Nullable private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
@@ -83,7 +81,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * @param id ID of the communication profile, never null or empty
      */
     public AbstractProfileConfiguration(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
-        profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile identifier cannot be null or empty");
+        setId(id);
         inboundFlows = Collections.emptyList();
         outboundFlows = Collections.emptyList();
     }
@@ -99,12 +97,6 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public void setServletRequest(@Nullable final ServletRequest request) {
         servletRequest = request;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String getId() {
-        return profileId;
     }
 
     /** {@inheritDoc} */
@@ -245,7 +237,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return profileId.hashCode();
+        return getId().hashCode();
     }
 
     /** {@inheritDoc} */
@@ -264,7 +256,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         }
 
         final AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
-        return Objects.equals(profileId, other.getId());
+        return Objects.equals(getId(), other.getId());
     }
 
     /**

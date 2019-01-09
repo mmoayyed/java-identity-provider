@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.profile.FlowDescriptor;
 
 /**
  * A descriptor for an administrative flow.
@@ -34,7 +35,7 @@ import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
  * 
  * @since 3.3.0
  */
-public interface AdministrativeFlowDescriptor extends AuthenticationProfileConfiguration {
+public interface AdministrativeFlowDescriptor extends FlowDescriptor, AuthenticationProfileConfiguration {
     
     /**
      * Get a logging ID to use when auditing this profile.
