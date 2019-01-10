@@ -69,9 +69,6 @@
         <property name="deprecatedProperties">
             <map>
                 <entry key="idp.httpclient.useTrustEngineTLSSocketFactory" value="idp.httpclient.useSecurityEnhancedTLSSocketFactory" />
-                <entry key="idp.authn.flows.initial">
-                    <null/>
-                </entry>
                 <entry key="idp.authn.resolveAttribute">
                     <null/>
                 </entry>
@@ -90,6 +87,7 @@
         </property>
         <property name="deadProperties">
             <list>
+                <value>idp.authn.flows.initial</value>
             </list>
         </property>
     </bean>

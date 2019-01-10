@@ -72,7 +72,6 @@
                 <!-- Master flow for authentication. -->
                 <entry key="authn.events" value="../conf/authn/authn-events-flow.xml" />
                 <entry key="authn.abstract" value="../system/flows/authn/authn-abstract-flow.xml" />
-                <entry key="authn-initial" value="../system/flows/authn/initial-authn-flow.xml" />
                 <entry key="authn" value="../system/flows/authn/authn-flow.xml" />
         
                 <!-- Login methods. -->

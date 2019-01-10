@@ -48,10 +48,6 @@
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
 
-    <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
-        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
-    </bean>
-
     <bean id="InitializeRequestedPrincipalContext"
         class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype" />
 
