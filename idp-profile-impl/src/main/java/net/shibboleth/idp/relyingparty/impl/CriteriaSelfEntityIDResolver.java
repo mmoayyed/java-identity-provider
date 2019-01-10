@@ -22,9 +22,6 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.relyingparty.CriteriaRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -48,9 +45,6 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
  */
 public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializableComponent
     implements Resolver<String, CriteriaSet>, IdentifiableComponent {
-    
-    /** Logger. */
-    private Logger log = LoggerFactory.getLogger(CriteriaSelfEntityIDResolver.class);
     
     /** The CriteriaRelyingPartyConfigurationResolver to which to delegate. */
     @NonnullAfterInit private CriteriaRelyingPartyConfigurationResolver rpcResolver;
