@@ -146,11 +146,11 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
         }
         
         int i = 0;
-        Iterator<MutableCredential> c_iter = credentials.iterator();
-        Iterator<Resource> k_iter = keyResources.iterator();
-        while (c_iter.hasNext() && k_iter.hasNext()) {
-            final MutableCredential cred = c_iter.next();
-            final Resource resource = k_iter.next();
+        final Iterator<MutableCredential> cIter = credentials.iterator();
+        final Iterator<Resource> kIter = keyResources.iterator();
+        while (cIter.hasNext() && kIter.hasNext()) {
+            final MutableCredential cred = cIter.next();
+            final Resource resource = kIter.next();
             
             if (keyPasswords[i] == null) {
                 log.warn("{} Empty password supplied at index {}", getLogPrefix(), i);

@@ -67,12 +67,22 @@ public class ServiceTicketResponse {
         return serviceTicket;
     }
 
+    /**
+     * Get whether ticket request is via SAML 1.1 protocol.
+     * 
+     * @return whether ticket request is via SAML 1.1 protocol
+     */
     public boolean isSaml() {
         return saml;
     }
-
-    public void setSaml(final boolean saml) {
-        this.saml = saml;
+    
+    /**
+     * Set whether ticket request is via SAML 1.1 protocol.
+     * 
+     * @param flag flag to set
+     */
+    public void setSaml(final boolean flag) {
+        saml = flag;
     }
 
     /**

@@ -174,7 +174,8 @@ public class IdPPropertiesApplicationContextInitializer
      * @throws ConstraintViolationException if the user-defined search location is empty or ends with '/' and
      *             {@link #isFailFast(ConfigurableApplicationContext)} is true
      */
-    @Nonnull @Deprecated public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
+    @Deprecated
+    @Nonnull public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
 
         Constraint.isNotNull(applicationContext, "Application context cannot be null");
         final String homeProperty = applicationContext.getEnvironment().getProperty(IDP_HOME_PROPERTY);

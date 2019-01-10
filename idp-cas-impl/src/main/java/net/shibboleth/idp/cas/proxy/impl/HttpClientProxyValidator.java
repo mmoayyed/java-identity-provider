@@ -102,9 +102,11 @@ public class HttpClientProxyValidator implements ProxyValidator {
 
 
     /**
-     * Creates a new instance.
+     * 
+     * Constructor.
      *
-     * @param engine Trust engine to use for validating proxy X.509 certificate credentials.
+     * @param client HttpClient to use
+     * @param parameters security parameters for client
      */
     public HttpClientProxyValidator(
             @Nonnull final HttpClient client, @Nonnull final HttpClientSecurityParameters parameters) {
@@ -123,10 +125,10 @@ public class HttpClientProxyValidator implements ProxyValidator {
         allowedResponseCodes = responseCodes;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void validate (
-            @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final URI proxyCallbackUri)
-            throws GeneralSecurityException {
+    public void validate(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final URI proxyCallbackUri) throws GeneralSecurityException {
 
         Constraint.isNotNull(proxyCallbackUri, "Proxy callback URI cannot be null");
         if (!HTTPS_SCHEME.equalsIgnoreCase(proxyCallbackUri.getScheme())) {
@@ -151,11 +153,11 @@ public class HttpClientProxyValidator implements ProxyValidator {
      * @return HTTP response code.
      * @throws GeneralSecurityException On connection errors, e.g. invalid/untrusted cert.
      */
-    protected int connect(@Nonnull final URI uri, @Nonnull Service service) throws GeneralSecurityException {
+    protected int connect(@Nonnull final URI uri, @Nonnull final Service service) throws GeneralSecurityException {
         final HttpClientContext clientContext = HttpClientContext.create();
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
         setCASTLSTrustEngineCriteria(clientContext, uri, service);
-        HttpResponse response;
+        final HttpResponse response;
         try {
             log.debug("Attempting to validate CAS proxy callback URI {}", uri);
             final HttpGet request = new HttpGet(uri);

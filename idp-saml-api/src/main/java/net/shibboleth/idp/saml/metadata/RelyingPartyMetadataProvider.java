@@ -176,7 +176,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     }
 
     /** {@inheritDoc} */
-    public void clear(String entityID) throws ResolverException {
+    public void clear(final String entityID) throws ResolverException {
         if (resolver instanceof ClearableMetadataResolver) {
             ((ClearableMetadataResolver) resolver).clear(entityID);
         }

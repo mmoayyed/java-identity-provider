@@ -103,12 +103,22 @@ public class ServiceTicketRequest {
         gateway = doNotForce;
     }
 
+    /**
+     * Get whether ticket request is via SAML 1.1 protocol.
+     * 
+     * @return whether ticket request is via SAML 1.1 protocol
+     */
     public boolean isSAML() {
         return saml;
     }
 
-    public void setSAML(final boolean saml) {
-        this.saml = saml;
+    /**
+     * Set whether ticket request is via SAML 1.1 protocol.
+     * 
+     * @param flag flag to set
+     */
+    public void setSAML(final boolean flag) {
+        saml = flag;
     }
 
     /**
