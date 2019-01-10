@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -190,10 +189,6 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         final AuthenticationResult activeResult;
         if (!authenticationContext.isForceAuthn() && flow.getReuseCondition().apply(profileRequestContext)) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
-        } else if (authenticationContext.getInitialAuthenticationResult() != null
-                && authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId().equals(
-                        flow.getId())) {
-            activeResult = authenticationContext.getInitialAuthenticationResult();
         } else {
             activeResult = null;
         }
@@ -262,15 +257,6 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         
         log.debug("{} No specific Principals requested", getLogPrefix());
-        
-        // Check for initial authentication (valid even in presence of forced authentication).
-        if (authenticationContext.getInitialAuthenticationResult() != null
-                && authenticationContext.getPotentialFlows().containsKey(
-                        authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId())) {
-            selectActiveResult(profileRequestContext, authenticationContext,
-                    authenticationContext.getInitialAuthenticationResult());
-            return;
-        }
         
         if (authenticationContext.isForceAuthn()) {
             log.debug("{} Forced authentication requested, selecting an inactive flow", getLogPrefix());
@@ -396,15 +382,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 requestedPrincipalCtx.getOperator(), requestedPrincipalCtx.getRequestedPrincipals());
 
         
-        if (authenticationContext.getInitialAuthenticationResult() != null
-                && authenticationContext.getPotentialFlows().containsKey(
-                        authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId())) {
-            // Invoke possible SSO but with the initial result as the only possible reuse option.
-            selectRequestedFlow(profileRequestContext, authenticationContext,
-                    Collections.singletonMap(
-                            authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId(),
-                            authenticationContext.getInitialAuthenticationResult()));
-        } else if (authenticationContext.isForceAuthn()) {
+        if (authenticationContext.isForceAuthn()) {
             log.debug("{} Forced authentication requested, selecting an inactive flow", getLogPrefix());
             selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
         } else if (authenticationContext.getActiveResults().isEmpty()) {

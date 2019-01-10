@@ -19,7 +19,6 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
@@ -32,10 +31,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Builds an authentication context from an incoming {@link ServiceTicketRequest} message.
- * 
- * <p>If a previously populated {@link AuthenticationContext} is found, and it contains a successful
- * {@link AuthenticationResult}, that result is copied to the new context via
- * {@link AuthenticationContext#setInitialAuthenticationResult(net.shibboleth.idp.authn.AuthenticationResult)}.</p>
  *
  * @author Marvin S. Addison
  */
@@ -60,12 +55,6 @@ public class BuildAuthenticationContextAction extends
             if (config != null) {
                 ac.setForceAuthn(config.getForceAuthnPredicate().apply(profileRequestContext));
             }
-        }
-        
-        final AuthenticationContext initialAuthnContext =
-                profileRequestContext.getSubcontext(AuthenticationContext.class);
-        if (initialAuthnContext != null) {
-            ac.setInitialAuthenticationResult(initialAuthnContext.getAuthenticationResult());
         }
         
         profileRequestContext.addSubcontext(ac, true);
