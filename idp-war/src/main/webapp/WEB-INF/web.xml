@@ -73,9 +73,11 @@
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Artifact/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
+        <url-pattern>/profile/SAML2/Artifact/SLO</url-pattern>
         <url-pattern>/profile/cas/login</url-pattern>
     </filter-mapping>
     <filter-mapping>
@@ -86,6 +88,7 @@
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Artifact/SSO</url-pattern>
         <url-pattern>/profile/cas/login</url-pattern>
         <url-pattern>/Authn/*</url-pattern>
     </filter-mapping>
