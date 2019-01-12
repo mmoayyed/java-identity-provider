@@ -261,4 +261,34 @@ public class MappedAttributeTest {
         return retVal;
     }
     
+    @Test public void IdP1389() throws Exception {
+        final SourceValue source = new SourceValue();
+        source.setValue(".*(.*)");
+        source.setPartialMatch(false);
+        source.initialize();
+
+        final ValueMap valueMap = new ValueMap();
+        valueMap.setReturnValue("$1");
+        valueMap.setSourceValues(Collections.singleton(source));
+        
+        final MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(TEST_ATTRIBUTE_NAME);
+        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID)));
+        
+        definition.setValueMaps(Collections.singleton(valueMap));
+        definition.initialize();
+
+        final AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
+                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
+                                ResolverTestSupport.EPA_ATTRIB_ID, "Val", "val")));
+        
+        final IdPAttribute result = definition.resolve(resolutionContext);
+        
+        
+
+    }
+    
 }

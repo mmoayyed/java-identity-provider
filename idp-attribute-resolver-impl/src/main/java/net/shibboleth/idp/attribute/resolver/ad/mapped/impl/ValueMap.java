@@ -27,14 +27,6 @@ import java.util.regex.PatternSyntaxException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +34,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Performs many to one mapping of source values to a return value. SourceValue strings may include regular expressions
@@ -108,8 +108,8 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      * @return set of new values the incoming value mapped to
      */
     /** {@inheritDoc} */
-    @Override
-    @Nullable public Set<StringAttributeValue> apply(@Nullable final String attributeValue) {
+    // CheckStyle: CyclomaticComplexity OFF
+    @Override @Nullable public Set<StringAttributeValue> apply(@Nullable final String attributeValue) {
         
         if (attributeValue == null) {
             log.debug("Input value was null, returning empty set");
@@ -145,12 +145,16 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
                 }
             }
 
-            if (newValue != null) {
+            if (newValue == null) {
+                log.debug("Value {} yielded a null value", attributeValue);
+            } else if ("".equals(newValue)) {
+                log.debug("Value {} yielded an empty value", attributeValue);
+            } else {
                 mappedValues.add(new StringAttributeValue(newValue));
             }
         }
 
         return mappedValues;
     }
-
+    // CheckStyle: CyclomaticComplexity ON
 }
