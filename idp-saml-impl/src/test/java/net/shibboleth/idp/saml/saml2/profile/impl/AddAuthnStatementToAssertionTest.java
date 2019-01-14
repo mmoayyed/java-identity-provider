@@ -21,10 +21,12 @@ import java.util.Arrays;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
@@ -45,6 +47,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -105,13 +108,23 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     }
 
     /** Test that the authentication statement is properly added. 
-     * @throws InterruptedException */
-    @Test public void testAddAuthenticationStatement() throws InterruptedException {
+     * @throws InterruptedException 
+     * @throws ComponentInitializationException */
+    @Test public void testAddAuthenticationStatement() throws InterruptedException, ComponentInitializationException {
         final long now = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
         
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        final StorageSerializer<AuthenticationResult> serializer = new DefaultAuthenticationResultSerializer();
+        serializer.initialize();
+        
+        final AuthenticationFlowDescriptor fd = new AuthenticationFlowDescriptor();
+        fd.setId("Test");
+        fd.setResultSerializer(serializer);
+        fd.initialize();
+        
+        prc.getSubcontext(AuthenticationContext.class, true).getAvailableFlows().put("Test", fd);
+        prc.getSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
         
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("127.0.0.1");

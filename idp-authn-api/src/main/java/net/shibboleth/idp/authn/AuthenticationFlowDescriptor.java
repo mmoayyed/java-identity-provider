@@ -340,7 +340,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public void setPrincipalWeightMap(@Nullable @NonnullElements final Map<Principal,Integer> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        principalWeightMap = map != null ? map : Collections.emptyMap();
+        principalWeightMap = map != null ? map : Collections.<Principal,Integer>emptyMap();
     }    
 
     /** {@inheritDoc} */

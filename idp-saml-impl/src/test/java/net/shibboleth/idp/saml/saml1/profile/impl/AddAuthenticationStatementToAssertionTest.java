@@ -19,10 +19,12 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.action.EventIds;
@@ -39,6 +41,7 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -104,7 +107,16 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
         
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        final StorageSerializer<AuthenticationResult> serializer = new DefaultAuthenticationResultSerializer();
+        serializer.initialize();
+        
+        final AuthenticationFlowDescriptor fd = new AuthenticationFlowDescriptor();
+        fd.setId("Test");
+        fd.setResultSerializer(serializer);
+        fd.initialize();
+        
+        prc.getSubcontext(AuthenticationContext.class, true).getAvailableFlows().put("Test", fd);
+        prc.getSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("127.0.0.1");
