@@ -25,26 +25,18 @@ import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** Implementation of {@link NameIdentifierGenerationService}. */
 public class NameIdentifierGenerationServiceImpl extends AbstractServiceableComponent<NameIdentifierGenerationService>
-        implements NameIdentifierGenerationService, IdentifiableComponent {
+        implements NameIdentifierGenerationService {
 
     /** SAML 1 generator. */
     @NonnullAfterInit private SAML1NameIdentifierGenerator saml1Generator;
 
     /** SAML 2 generator. */
     @NonnullAfterInit private SAML2NameIDGenerator saml2Generator;
-
-    /** {@inheritDoc} */
-    @Override
-    public void setId(@Nonnull @NotEmpty final String id) {
-        super.setId(id);
-    }
     
     /**
      * Set the {@link SAML1NameIdentifierGenerator} to use.

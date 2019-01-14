@@ -39,7 +39,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -64,7 +63,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class DefaultRelyingPartyConfigurationResolver
         extends AbstractServiceableComponent<RelyingPartyConfigurationResolver>
-        implements RelyingPartyConfigurationResolver, IdentifiableComponent {
+        implements RelyingPartyConfigurationResolver {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
@@ -365,11 +364,6 @@ public class DefaultRelyingPartyConfigurationResolver
             return;
         }
         encryptionCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
-    }
-
-    /** {@inheritDoc} */
-    @Override public void setId(@Nonnull final String componentId) {
-        super.setId(componentId);
     }
 
     /** {@inheritDoc} */

@@ -59,7 +59,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
@@ -107,11 +106,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /** Constructor. */
     public AttributeResolverImpl() {
         profileContextStrategy = new ParentContextLookup<>();
-    }
-    
-    /** {@inheritDoc} */
-    @Override public void setId(@Nonnull @NotEmpty final String resolverId) {
-        super.setId(resolverId);
     }
     
     /** Sets the attribute definitions for this resolver.

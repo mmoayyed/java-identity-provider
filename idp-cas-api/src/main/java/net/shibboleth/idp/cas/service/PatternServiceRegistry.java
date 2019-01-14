@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  */
 public class PatternServiceRegistry extends AbstractServiceableComponent<ServiceRegistry>
-        implements IdentifiableComponent, ServiceRegistry {
+        implements ServiceRegistry {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PatternServiceRegistry.class);
@@ -51,11 +50,6 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
     @Nonnull
     @NonnullElements
     private Map<ServiceDefinition, Pattern> definitions = Collections.emptyMap();
-
-    @Override
-    public void setId(@Nonnull final String componentId) {
-        super.setId(componentId);
-    }
 
     /**
      * Sets the list of service definitions that back the registry.
