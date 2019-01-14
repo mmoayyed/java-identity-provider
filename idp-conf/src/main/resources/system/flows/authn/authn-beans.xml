@@ -104,8 +104,7 @@
     </bean>
     
     <bean id="FinalizeAuthentication"
-        class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype"
-        p:weightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}" />
+        class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />
     
     <bean id="UpdateSessionWithAuthenticationResult"
         class="net.shibboleth.idp.session.impl.UpdateSessionWithAuthenticationResult" scope="prototype"

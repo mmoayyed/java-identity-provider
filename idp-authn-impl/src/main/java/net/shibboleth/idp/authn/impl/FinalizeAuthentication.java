@@ -19,10 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -41,7 +39,6 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -94,41 +91,18 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FinalizeAuthentication.class);
     
-    /** A map supplying weighted preference to particular Principals. */
-    @Nonnull @NonnullElements private Map<Principal,Integer> weightMap;
-    
     /** The principal name extracted from the context tree. */
     @Nullable private String canonicalPrincipalName;
-    
-    /** Constructor. */
-    public FinalizeAuthentication() {
-        weightMap = Collections.emptyMap();
-    }
-    
-    /**
-     * Set the map of Principals to weight values to impose a sort order on any matching Principals
-     * found in the authentication result.
-     * 
-     * @param map   map to set
-     */
-    public void setWeightMap(@Nullable @NonnullElements final Map<Principal,Integer> map) {
-        if (map == null) {
-            weightMap = Collections.emptyMap();
-            return;
-        }
         
-        weightMap = new HashMap<>(map.size());
-        for (final Map.Entry<Principal,Integer> entry : map.entrySet()) {
-            if (entry.getKey() != null && entry.getValue() != null) {
-                weightMap.put(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-    
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
 
         final SubjectCanonicalizationContext c14nCtx =
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
@@ -188,8 +162,9 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                     getLogPrefix());
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /** {@inheritDoc} */
     @Override
@@ -226,7 +201,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
      * result that satisfies the request criteria.
      * 
      * <p>If a weighting map is supplied, the {@link Principal} returned is the one that both satisfies
-     * the request and is highest weighted.</p>
+     * the request and is highest weighted according to the underlying flow descriptor.</p>
      * 
      * @param authenticationContext authentication context
      * @param requestedPrincipalCtx request criteria
@@ -235,7 +210,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
      */
     @Nullable protected Principal findMatchingPrincipal(@Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final RequestedPrincipalContext requestedPrincipalCtx) {
-        
+                
         // Maintain a list of each Principal that matches the request.
         final ArrayList<Principal> matches = new ArrayList<>();
         
@@ -280,36 +255,11 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         
         if (matches.isEmpty()) {
             return null;
-        } else if (matches.size() == 1 || weightMap.isEmpty()) {
-            return matches.get(0);
         } else {
-            final Object[] principalArray = matches.toArray();
-            Arrays.sort(principalArray, new WeightedComparator());
-            return (Principal) principalArray[principalArray.length - 1];
+            final AuthenticationFlowDescriptor flowDescriptor = authenticationContext.getAvailableFlows().get(
+                    authenticationContext.getAuthenticationResult().getAuthenticationFlowId());
+            return flowDescriptor.getHighestWeighted(matches);
         }
-    }
-    
-    /**
-     * A {@link Comparator} that compares the mapped weights of the two operands, using a weight of zero
-     * for any unmapped values.
-     */
-    private class WeightedComparator implements Comparator {
-
-        /** {@inheritDoc} */
-        @Override
-        public int compare(final Object o1, final Object o2) {
-            
-            final int weight1 = weightMap.containsKey(o1) ? weightMap.get(o1) : 0;
-            final int weight2 = weightMap.containsKey(o2) ? weightMap.get(o2) : 0;
-            if (weight1 < weight2) {
-                return -1;
-            } else if (weight1 > weight2) {
-                return 1;
-            }
-            
-            return 0;
-        }
-        
     }
 
 }

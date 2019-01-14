@@ -39,8 +39,7 @@
         </property>
         <property name="classRefLookupStrategy">
             <bean class="net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy"
-                    c:type="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
-                    p:weightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}">
+                    c:type="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal">
                 <constructor-arg name="principal">
                     <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
                         c:classRef="#{T(org.opensaml.saml.saml2.core.AuthnContext).UNSPECIFIED_AUTHN_CTX}" />

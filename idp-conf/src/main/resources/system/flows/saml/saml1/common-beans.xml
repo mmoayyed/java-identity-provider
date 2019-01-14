@@ -38,8 +38,7 @@
         </property>
         <property name="authenticationMethodLookupStrategy">
             <bean class="net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy"
-                    c:type="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
-                    p:weightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}">
+                    c:type="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal">
                 <constructor-arg name="principal">
                     <bean class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
                         c:method="#{T(org.opensaml.saml.saml1.core.AuthenticationStatement).UNSPECIFIED_AUTHN_METHOD}" />
