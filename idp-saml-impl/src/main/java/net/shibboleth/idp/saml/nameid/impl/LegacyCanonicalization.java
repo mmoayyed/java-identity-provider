@@ -36,10 +36,10 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
-import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
@@ -48,7 +48,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
- * Action to perform C14N based on the contents of the attribute-resolver.xml file, this
+ * Action to perform c14n based on the contents of the attribute-resolver.xml file, this
  * delegates the work to an {@link AttributeResolver} instance that supports the
  * {@link LegacyPrincipalDecoder} interface.
  */
@@ -123,10 +123,10 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      * @param activationCondition - the activationCondition
      * @return an appropriate FlowDescriptor 
      */
-    public static SubjectCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory(
+    public static NameIDCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory(
                 final @ParameterName(name="activationCondition") Predicate<ProfileRequestContext> activationCondition) {
         DeprecationSupport.warn(ObjectType.BEAN, "c14n/LegacyPrincipalConnector", "c14n/subject-c14n.xml", "<remove>");
-        final SubjectCanonicalizationFlowDescriptor result = new SubjectCanonicalizationFlowDescriptor();
+        final NameIDCanonicalizationFlowDescriptor result = new NameIDCanonicalizationFlowDescriptor();
         result.setActivationCondition(activationCondition);
         return result;
     }
