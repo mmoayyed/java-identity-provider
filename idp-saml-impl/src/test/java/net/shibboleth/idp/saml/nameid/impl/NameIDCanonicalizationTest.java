@@ -120,10 +120,6 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(flowDescriptor.getFormats().size(), 2);
     }
 
-    @Test(expectedExceptions = {UnsupportedOperationException.class}) public void testFormatSet() {
-        flowDescriptor.getFormats().add("bar");
-    }
-
     @Test public void testNoContext() {
         action.execute(prc);
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
