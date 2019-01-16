@@ -116,6 +116,24 @@
         <value>%{idp.home}/conf/cas-protocol.xml</value>
     </util:list>
 
+    <bean id="shibboleth.ManagedBeanService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
+            c:claz="org.springframework.context.ApplicationContext"
+            p:serviceConfigurations-ref="#{
+                getObject('%{idp.service.managedBean.resources:shibboleth.ManagedBeanResources}'.trim()) != null
+                    ? '%{idp.service.managedBean.resources:shibboleth.ManagedBeanResources}'.trim()
+                    : 'shibboleth.DefaultManagedBeanResources' }"
+            p:failFast="%{idp.service.managedBean.failFast:%{idp.service.failFast:false}}"
+            p:reloadCheckDelay="%{idp.service.managedBean.checkInterval:PT0S}"
+            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
+            p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
+        <constructor-arg name="strategy">
+            <bean class="net.shibboleth.ext.spring.service.ApplicationContextServiceStrategy" />
+        </constructor-arg>
+    </bean>
+    <util:list id="shibboleth.DefaultManagedBeanResources">
+        <value>conditional:%{idp.home}/conf/managed-beans.xml</value>
+    </util:list>
+
     <!--
     These are proxies/facades that expose a service-unaware interface to client components.
     Services without such facades are being consumed directly in a service-aware way.
@@ -156,5 +174,5 @@
     <bean id="shibboleth.CASMetadataServiceRegistry"
           class="net.shibboleth.idp.cas.service.impl.MetadataServiceRegistry"
           c:resolver-ref="shibboleth.MetadataResolver" />
-
+          
  </beans>
