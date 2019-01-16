@@ -46,6 +46,21 @@
     <bean id="shibboleth.Functions.Expression"
         class="net.shibboleth.ext.spring.util.SpringExpressionFunction"  abstract="true" />
     
+    <!-- Parent bean for indirecting a lookup into a managed/reloadable bean. -->
+    
+    <bean id="shibboleth.ManagedBean" abstract="true"
+        class="net.shibboleth.ext.spring.factory.ProxiedFactoryBean"
+        c:service-ref="shibboleth.ManagedBeanService" />
+    
+    <!-- Parent beans for custom principal types. -->
+    
+    <bean id="shibboleth.SAML2AuthnContextClassRef"
+        class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal" abstract="true" />
+    <bean id="shibboleth.SAML2AuthnContextDeclRef"
+        class="net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal" abstract="true" />
+    <bean id="shibboleth.SAML1AuthenticationMethod"
+        class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal" abstract="true" />
+   
     <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
     <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
             class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">

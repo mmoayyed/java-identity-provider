@@ -15,15 +15,6 @@
 	<import resource="../../conf/authn/authn-comparison.xml" />
 	<import resource="../../conf/authn/general-authn.xml" />
 
-    <!-- Parent beans for custom principal types. -->
-    
-    <bean id="shibboleth.SAML2AuthnContextClassRef"
-        class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal" abstract="true" />
-    <bean id="shibboleth.SAML2AuthnContextDeclRef"
-        class="net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal" abstract="true" />
-    <bean id="shibboleth.SAML1AuthenticationMethod"
-        class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal" abstract="true" />
-
     <!-- A parent bean to default some of the flow boilerplate. -->
 
     <bean id="shibboleth.AuthenticationFlow" abstract="true"
