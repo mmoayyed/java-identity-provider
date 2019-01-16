@@ -49,7 +49,7 @@
     
     <bean id="ProcessRequestedAuthnContext"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessRequestedAuthnContext" scope="prototype"
-        p:ignoredContexts-ref="#{getObject('shibboleth.IgnoredContexts') != null ? 'shibboleth.IgnoredContexts' : 'shibboleth.DefaultIgnoredContexts'}" />
+        p:ignoredContexts="#{getObject('shibboleth.IgnoredContexts') ?: getObject('shibboleth.DefaultIgnoredContexts') }" />
 
     <bean id="ExtractProxiedRequesters"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
