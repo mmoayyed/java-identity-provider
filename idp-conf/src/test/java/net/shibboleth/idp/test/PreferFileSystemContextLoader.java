@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.test;
 
+import net.shibboleth.ext.spring.resource.ConditionalResourceResolver;
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 
 import org.springframework.test.context.web.GenericXmlWebContextLoader;
@@ -38,7 +39,9 @@ public class PreferFileSystemContextLoader extends GenericXmlWebContextLoader {
      */
     @Override protected void customizeContext(GenericWebApplicationContext context,
             WebMergedContextConfiguration webMergedConfig) {
-        context.setResourceLoader(new PreferFileSystemResourceLoader());
+        final PreferFileSystemResourceLoader loader = new PreferFileSystemResourceLoader();
+        loader.addProtocolResolver(new ConditionalResourceResolver());
+        context.setResourceLoader(loader);
     }
 
 }
