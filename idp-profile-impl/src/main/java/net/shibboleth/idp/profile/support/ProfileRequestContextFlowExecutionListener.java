@@ -21,7 +21,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.definition.StateDefinition;
-import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ import javax.servlet.ServletRequest;
  *
  * @author Marvin S. Addison
  */
-public class ProfileRequestContextFlowExecutionListener extends FlowExecutionListenerAdapter {
+public class ProfileRequestContextFlowExecutionListener implements FlowExecutionListener {
 
     /** Logger instance. */
     private final Logger log = LoggerFactory.getLogger(ProfileRequestContextFlowExecutionListener.class);
