@@ -28,6 +28,8 @@
                 <ref bean="shibboleth.metrics.RelyingPartyGaugeSet" />
                 <ref bean="shibboleth.metrics.AttributeResolverGaugeSet" />
                 <ref bean="shibboleth.metrics.AttributeFilterGaugeSet" />
+                <ref bean="shibboleth.metrics.CASServiceRegistryGaugeSet" />
+                <ref bean="shibboleth.metrics.ManagedBeanGaugeSet" />
 
                 <!--
                 <bean class="com.codahale.metrics.jvm.CachedThreadStatesGaugeSet"
@@ -59,6 +61,8 @@
         <entry key="relyingparty" value-ref="shibboleth.metrics.RelyingPartyGaugeSet" />
         <entry key="resolver" value-ref="shibboleth.metrics.AttributeResolverGaugeSet" />
         <entry key="filter" value-ref="shibboleth.metrics.AttributeFilterGaugeSet" />
+        <entry key="cas" value-ref="shibboleth.metrics.CASServiceRegistryGaugeSet" />
+        <entry key="bean" value-ref="shibboleth.metrics.ManagedBeanGaugeSet" />
     </util:map>
         
     <!-- If you don't specify an alternate access policy, this named policy will be enforced. -->

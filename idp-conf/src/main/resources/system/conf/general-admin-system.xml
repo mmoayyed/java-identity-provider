@@ -109,5 +109,15 @@
         class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="attribute.filter"
         p:service-ref="shibboleth.AttributeFilterService" />
+
+    <bean id="shibboleth.metrics.CASServiceRegistryGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="cas.registry"
+        p:service-ref="shibboleth.ReloadableCASServiceRegistry" />
+
+    <bean id="shibboleth.metrics.ManagedBeanGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="managedbean"
+        p:service-ref="shibboleth.ManagedBeanService" />
         
 </beans>

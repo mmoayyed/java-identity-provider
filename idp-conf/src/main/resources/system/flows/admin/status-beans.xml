@@ -36,6 +36,8 @@
         <ref bean="shibboleth.NameIdentifierGenerationService" />
         <ref bean="shibboleth.AttributeResolverService" />
         <ref bean="shibboleth.AttributeFilterService" />
+        <ref bean="shibboleth.ReloadableCASServiceRegistry" />
+        <ref bean="shibboleth.ManagedBeanService" />
     </util:list>
 
 </beans>
