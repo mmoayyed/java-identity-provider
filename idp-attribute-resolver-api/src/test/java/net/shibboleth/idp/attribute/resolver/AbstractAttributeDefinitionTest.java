@@ -215,11 +215,19 @@ public class AbstractAttributeDefinitionTest {
         Assert.assertEquals(depends.iterator().next().getDependencyAttributeId(), "source");
     }
     
-    @Test public void invalidName() throws ComponentInitializationException {
-        MockAttributeDefinition definition = new MockAttributeDefinition("Name With Space", (IdPAttribute) null);
-        definition.initialize();
-        definition = new MockAttributeDefinition("Name\rWith\tnonprinters", (IdPAttribute) null);
-        definition.initialize();
+    private void testInvalidName(@Nonnull MockAttributeDefinition attrdef) {
+        try {
+            attrdef.initialize();
+            Assert.fail(attrdef.getId() +  "' Should not have initialized OK");
+        }
+        catch (ComponentInitializationException e) {
+            // OK No actions
+        }
+    }
+    
+    @Test public void invalidName() {
+        testInvalidName(new MockAttributeDefinition("Name With Space", (IdPAttribute) null));
+        testInvalidName(new MockAttributeDefinition("Name\rWith\tnonprinters", (IdPAttribute) null));
     }
     
     @Test public void initDestroyValidate() throws ComponentInitializationException {

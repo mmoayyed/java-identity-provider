@@ -80,6 +80,15 @@ public class AttributeTest {
         } catch (ConstraintViolationException e) {
             // expected this
         }
+        
+        try {
+            new IdPAttribute("a b");
+            Assert.fail("able to create attribute ID with spaces");
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
+
+        
     }
 
     /** Tests that display names are properly added and modified. */
