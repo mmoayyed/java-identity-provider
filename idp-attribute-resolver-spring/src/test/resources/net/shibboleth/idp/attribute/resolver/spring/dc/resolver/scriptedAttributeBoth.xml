@@ -7,8 +7,6 @@
 	<Script><![CDATA[
     foo;
 	]]></Script>
-    <Dependency ref="asr"/>
-    <Dependency ref="ddde"/>
     <ScriptFile>classpath:/net/shibboleth/idp/attribute/resolver/spring/dc/scriptedConnector.8.js</ScriptFile>
     <FailoverDataConnector ref="w"/>
 </DataConnector>

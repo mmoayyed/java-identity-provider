@@ -4,5 +4,5 @@
     dependencyOnly="1"
     xsi:type="Prescoped" id="prescopedWith" scopeDelimiter="#"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-    <Dependency ref="TheOrphan" />
+    <InputAttributeDefinition ref="TheOrphan" />
 </AttributeDefinition>                        

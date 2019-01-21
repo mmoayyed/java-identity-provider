@@ -30,7 +30,7 @@
         
         <ResultCache elementTimeToLive="PT10S" maximumCachedElements="25"/>
 
-        <Dependency ref="321"/>
+        <InputAttributeDefinition ref="321"/>
         
         <QueryTemplate>
             <![CDATA[
@@ -38,7 +38,7 @@
             ]]>
         </QueryTemplate>
         
-        <Dependency ref="321"/>
+        <InputAttributeDefinition ref="321"/>
         
     </DataConnector>
     

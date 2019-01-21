@@ -208,13 +208,6 @@
         </attribute>
     </complexType>
 
-    <element name="Dependency" type="resolver:PluginDependencyType">
-        <annotation>
-            <documentation>
-                Defines a dependency on a specific resolution plug-in.
-            </documentation>
-        </annotation>
-    </element>
     <element name="InputAttributeDefinition" type="resolver:PluginDependencyType">
         <annotation>
             <documentation>
@@ -253,7 +246,7 @@
     </element>
     <complexType name="PluginDependencyType">
         <annotation>
-            <documentation>A type that represents a reference to another plugin</documentation>
+            <documentation>An (abstract) type that represents a reference to another plugin</documentation>
         </annotation>
         <attribute name="ref" type="string" use="required"/>
     </complexType>
@@ -364,7 +357,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -409,7 +401,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -463,7 +454,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -494,7 +484,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -523,7 +512,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -557,7 +545,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -590,7 +577,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -636,7 +622,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -686,7 +671,6 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
@@ -754,7 +738,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
@@ -809,7 +792,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
@@ -1047,7 +1029,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
@@ -1171,7 +1152,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice maxOccurs="unbounded">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>                                        
                     <element ref="resolver:FailoverDataConnector"/>
@@ -1338,7 +1318,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
@@ -1385,7 +1364,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
@@ -1427,7 +1405,6 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency"/>
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>

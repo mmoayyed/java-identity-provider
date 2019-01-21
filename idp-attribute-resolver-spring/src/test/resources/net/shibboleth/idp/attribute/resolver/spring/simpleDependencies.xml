@@ -5,7 +5,6 @@
     xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
  
     <InputDataConnector ref="dep2" allAttributes="true"/>
-    <Dependency ref="dep1"/>
     <InputAttributeDefinition ref="dep3"/>
 
  </AttributeDefinition>

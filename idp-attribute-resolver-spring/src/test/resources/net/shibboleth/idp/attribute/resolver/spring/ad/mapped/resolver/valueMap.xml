@@ -7,5 +7,5 @@
 		<ReturnValue>return</ReturnValue>
 		<SourceValue>source</SourceValue>
 	</ValueMap>
-     <Dependency ref="TheOrphan" />
+     <InputAttributeDefinition ref="TheOrphan" />
 </AttributeDefinition>

@@ -3,7 +3,7 @@
   
   <AttributeDefinition id="skillsoftdept" xsi:type="ScriptedAttribute" >
 	<!--  Old Style just for now -->
-    <Dependency ref="static" />
+    <InputDataConnector ref="static" attributeNames="staticEpA"/>
 
     <AttributeEncoder xsi:type="SAML2String"  name="skillsoftdept" friendlyName="dept name for skillsoft" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified" />
 

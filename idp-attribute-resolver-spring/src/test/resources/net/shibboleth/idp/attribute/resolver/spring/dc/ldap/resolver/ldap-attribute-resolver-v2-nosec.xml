@@ -25,8 +25,6 @@
 
         <Column columnName="homephone" attributeID="phonenumber" />
 
-        <Dependency ref="321"/>
-
         <ConnectionPool
             minPoolSize="5"
             maxPoolSize="10"
@@ -43,7 +41,6 @@
             <sec:PrivateKey>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.key</sec:PrivateKey>
             <sec:Certificate>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt</sec:Certificate>
         </StartTLSAuthenticationCredential>
-        <Dependency ref="321"/>
 
         <LDAPProperty name="name2" value="value2"/>
                 

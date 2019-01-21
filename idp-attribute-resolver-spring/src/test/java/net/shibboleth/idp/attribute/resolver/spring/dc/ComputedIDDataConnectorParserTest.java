@@ -66,15 +66,6 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         Assert.assertTrue(connector.isInitialized());
 }
 
-    @Test public void resolverNoSourceAttr() {
-        try {
-            getDataConnector("resolver/computedNoSource.xml", ComputedIDDataConnector.class);
-            Assert.fail("Expected initialize to fail");
-        } catch (final BeanCreationException ex) {
-            Assert.assertEquals(ex.getCause().getClass(), ComponentInitializationException.class);
-        }
-    }
-
     @Test public void resolverNoSourceDependency() {
         final ComputedIDDataConnector connector = getDataConnector("resolver/computedNoSource1.xml", ComputedIDDataConnector.class);
         Assert.assertEquals(connector.getId(), "computed");

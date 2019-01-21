@@ -5,5 +5,5 @@
     xsi:type="RegexSplit" id="regexSplitDefault" 
     regex="at1-(.+)or"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-    <Dependency ref="TheOrphan" />
+    <InputAttributeDefinition ref="TheOrphan" />
 </AttributeDefinition>

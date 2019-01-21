@@ -67,7 +67,7 @@ public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {
     @Test(dependsOnMethods={"attributeInput", "allAttributeDataConnector"}) public void simple() {
         final AttributeDefinition attr =  getBean(BEAN_FILE_PATH + "simpleDependencies.xml", AttributeDefinition.class, new GenericApplicationContext());
         
-        Assert.assertEquals(attr.getDependencies().size(), 3);
+        Assert.assertEquals(attr.getDependencies().size(), 2);
     }
 
 }

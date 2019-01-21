@@ -5,8 +5,6 @@
 
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
     <ScriptFile>classpath:/net/shibboleth/idp/attribute/resolver/spring/dc/scriptedConnector.8.js</ScriptFile>
-    <Dependency ref="asr"/>
-    <Dependency ref="ddde"/>
     <ScriptFile>classpath:/net/shibboleth/idp/attribute/resolver/spring/dc/scriptedConnector.8.js</ScriptFile>
     <FailoverDataConnector ref="w"/>
 </DataConnector>

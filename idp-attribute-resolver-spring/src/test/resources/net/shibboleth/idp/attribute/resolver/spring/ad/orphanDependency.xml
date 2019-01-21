@@ -1,3 +1,0 @@
-  <Dependency xmlns="urn:mace:shibboleth:2.0:resolver" ref="TheOrphan"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/>

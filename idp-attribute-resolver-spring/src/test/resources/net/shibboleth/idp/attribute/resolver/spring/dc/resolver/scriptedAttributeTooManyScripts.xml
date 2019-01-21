@@ -7,8 +7,6 @@
 	<Script><![CDATA[
     foo;
 	]]></Script>
-    <Dependency ref="asr"/>
-    <Dependency ref="ddde"/>
     <Script><![CDATA[
     bar;
     ]]></Script>
