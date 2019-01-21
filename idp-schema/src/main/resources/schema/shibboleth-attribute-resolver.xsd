@@ -232,18 +232,12 @@
 
                 allAttributes means take all attributes. Property replacement done before conversion
 
-                the SourceAtttribute elementslist serves the same purpose but allows space.
-                Since spaces in attribute names are deprecated this is also deprecated
-
-                One one of the abovr are allowed.
+                One one of the above are allowed.
             </documentation>
         </annotation>
         <complexType>
             <complexContent>
                 <extension base="resolver:PluginDependencyType">
-                    <sequence  maxOccurs="unbounded" minOccurs="0">
-	                    <element name="SourceAttribute" type="string"/>
-	                </sequence>
                     <attribute name="allAttributes" type="string"/>
                     <attribute name="attributeNames" type="string"/>
                 </extension>
