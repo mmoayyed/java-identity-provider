@@ -67,7 +67,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final TransientIdAttributeDefinition defn = newTransientIdAttributeDefinition(strategy);
         defn.setId(TEST_ATTRIBUTE_NAME);
 
-        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
 
         defn.initialize();
 
@@ -105,7 +105,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         
         final TransientIdAttributeDefinition defn = newTransientIdAttributeDefinition(strategy);
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         defn.initialize();
         try {
             defn.resolve(TestSources.createResolutionContext(principal, idp, sp));
@@ -133,7 +133,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         strategy.initialize();
         final TransientIdAttributeDefinition defn = newTransientIdAttributeDefinition(strategy);
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
 
         defn.initialize();
 
@@ -154,7 +154,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final TransientIdAttributeDefinition defn = newTransientIdAttributeDefinition(strategy);
 
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         defn.initialize();
 
         IdPAttribute result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,

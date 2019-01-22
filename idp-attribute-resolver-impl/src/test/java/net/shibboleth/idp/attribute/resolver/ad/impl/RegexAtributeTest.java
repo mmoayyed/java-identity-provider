@@ -70,7 +70,7 @@ public class RegexAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
-        final  ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final  ResolverDataConnectorDependency depend = TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -108,7 +108,7 @@ public class RegexAtributeTest {
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverDataConnectorDependency depend = TestSources.makeDataConnectorDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
 
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
@@ -136,7 +136,7 @@ public class RegexAtributeTest {
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverDataConnectorDependency depend = TestSources.makeDataConnectorDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
         attrDef.setDataConnectorDependencies(Collections.singleton(depend));
         attrDef.initialize();
 
@@ -152,7 +152,7 @@ public class RegexAtributeTest {
         // Set the dependency on the data connector
         final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
         final ResolverDataConnectorDependency depend = 
-                TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+                TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
@@ -183,7 +183,7 @@ public class RegexAtributeTest {
 
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         final ResolverDataConnectorDependency depend = 
-                TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+                TestSources.makeDataConnectorDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
         final Set<ResolverDataConnectorDependency> pluginDependencies = Collections.singleton(depend);
         attrDef.setDataConnectorDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);

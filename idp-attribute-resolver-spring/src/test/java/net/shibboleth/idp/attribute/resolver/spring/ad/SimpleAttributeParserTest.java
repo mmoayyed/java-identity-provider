@@ -85,8 +85,8 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         Set<ResolverAttributeDefinitionDependency> adDeps = attrDef.getAttributeDependencies();
         Assert.assertEquals(adDeps.size(), 2, "getAttributeDependencies");
-        Assert.assertTrue(adDeps.contains(TestSources.makeResolverPluginDependency("dep2")));
-        Assert.assertTrue(adDeps.contains(TestSources.makeResolverPluginDependency("dep3")));
+        Assert.assertTrue(adDeps.contains(TestSources.makeAttributeDefinitionDependency("dep2")));
+        Assert.assertTrue(adDeps.contains(TestSources.makeAttributeDefinitionDependency("dep3")));
 
         Set<ResolverDataConnectorDependency> dcDeps = attrDef.getDataConnectorDependencies();
         Assert.assertEquals(dcDeps.size(), 1, "getDataConnectorDependencies");
@@ -119,7 +119,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         final Set<ResolverAttributeDefinitionDependency> attrDeps = attrDef.getAttributeDependencies();
         Assert.assertEquals(attrDeps.size(), 1, "getAttributeDependencies");
-        Assert.assertTrue(attrDeps.contains(TestSources.makeResolverPluginDependency("dep3")));
+        Assert.assertTrue(attrDeps.contains(TestSources.makeAttributeDefinitionDependency("dep3")));
 
         final Set<ResolverDataConnectorDependency> dcDeps = attrDef.getDataConnectorDependencies();
         Assert.assertEquals(dcDeps.size(), 0, "getDataConnectorDependencies");

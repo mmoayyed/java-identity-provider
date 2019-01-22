@@ -71,7 +71,7 @@ public class ScopedAttributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+        dependencySet.add(TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
@@ -116,7 +116,7 @@ public class ScopedAttributeTest {
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScope(TEST_SCOPE);
-        attrDef.setDataConnectorDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+        attrDef.setDataConnectorDependencies(new HashSet<>(Arrays.asList(TestSources.makeDataConnectorDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID))));
         attrDef.initialize();
 
@@ -144,7 +144,7 @@ public class ScopedAttributeTest {
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScope(TEST_SCOPE);
-        attrDef.setDataConnectorDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+        attrDef.setDataConnectorDependencies(new HashSet<>(Arrays.asList(TestSources.makeDataConnectorDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID))));
         attrDef.initialize();
 
@@ -163,7 +163,7 @@ public class ScopedAttributeTest {
 
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         final Set<ResolverDataConnectorDependency> pluginDependencies =
-                new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+                new HashSet<>(Arrays.asList(TestSources.makeDataConnectorDependency("connector1",
                         ResolverTestSupport.EPA_ATTRIB_ID)));
         attrDef.setDataConnectorDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);

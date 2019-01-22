@@ -210,12 +210,12 @@ public final class TestSources {
         return retVal;
     }
 
-    public static ResolverAttributeDefinitionDependency makeResolverPluginDependency(String attributeId) {
+    public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(String attributeId) {
         ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
         return retVal;
     }
     
-    public static ResolverDataConnectorDependency makeResolverPluginDependency(@Nonnull String connectorId, @Nullable String attributeId) {
+    public static ResolverDataConnectorDependency makeDataConnectorDependency(@Nonnull String connectorId, @Nullable String attributeId) {
         ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
         if (null == attributeId) {
             retVal.setAllAttributes(true);

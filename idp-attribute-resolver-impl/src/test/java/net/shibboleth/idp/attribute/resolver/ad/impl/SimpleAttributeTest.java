@@ -66,7 +66,7 @@ public class SimpleAttributeTest {
         } catch (final ComponentInitializationException e) {
             //OK
         }
-        simple.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        simple.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         simple.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -88,7 +88,7 @@ public class SimpleAttributeTest {
         simple.setId(TEST_ATTRIBUTE_NAME);
 
         final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+        dependencySet.add(TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         simple.setDataConnectorDependencies(dependencySet);
         simple.initialize();
@@ -129,7 +129,7 @@ public class SimpleAttributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        dependencySet.add(TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         simple.setAttributeDependencies(dependencySet);
         simple.initialize();
 
@@ -172,7 +172,7 @@ public class SimpleAttributeTest {
 
        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final ResolverDataConnectorDependency depend = TestSources.makeDataConnectorDependency("connector1", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
@@ -201,9 +201,9 @@ public class SimpleAttributeTest {
         simple.setId(TEST_ATTRIBUTE_NAME);
 
         simple.setAttributeDependencies(Collections.singleton(
-                TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
+                TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
         simple.setDataConnectorDependencies(Collections.singleton(
-                TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+                TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
                         TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR)));
         simple.initialize();
 
