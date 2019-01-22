@@ -21,11 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
-
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 
 /** Bean definition parser for a {@link ResolverPluginDependency}. */
 public class InputAttributeDefinitionParser extends BaseResolverPluginDependencyParser {

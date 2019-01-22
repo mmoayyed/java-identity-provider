@@ -26,6 +26,10 @@ import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.apache.velocity.app.VelocityEngine;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -35,7 +39,6 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
@@ -43,10 +46,6 @@ import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.apache.velocity.app.VelocityEngine;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.TemplateAttribute}. */
 @ThreadSafe

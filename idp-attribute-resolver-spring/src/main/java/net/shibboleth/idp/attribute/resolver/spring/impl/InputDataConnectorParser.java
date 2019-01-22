@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
