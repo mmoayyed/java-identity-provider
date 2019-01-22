@@ -298,4 +298,67 @@ public class PluginDependencySupportTest {
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));
     }
+    
+    @Test public void hashesAttributeDependency() {
+        final ResolverAttributeDefinitionDependency ad1 = new ResolverAttributeDefinitionDependency("ra1");
+        final ResolverAttributeDefinitionDependency ad2 = new ResolverAttributeDefinitionDependency("ra1");
+        final ResolverAttributeDefinitionDependency ad3 = new ResolverAttributeDefinitionDependency("ra3");
+        
+        Assert.assertEquals(ad1, ad2);
+        Assert.assertNotEquals(ad2, ad3);
+        Assert.assertEquals(ad1.hashCode(), ad2.hashCode());
+        Assert.assertNotEquals(ad2.hashCode(), ad3.hashCode());
+        
+        ad1.setDependencyAttributeId("ra1");
+        ad2.setDependencyAttributeId("bar");
+        Assert.assertNotEquals(ad1, ad2);
+        Assert.assertNotEquals(ad2, ad3);
+        Assert.assertNotEquals(ad1.hashCode(), ad2.hashCode());
+        Assert.assertNotEquals(ad2.hashCode(), ad3.hashCode());
+       
+        ad1.setDependencyAttributeId("bar");
+        Assert.assertEquals(ad1, ad2);
+        Assert.assertNotEquals(ad2, ad3);
+        Assert.assertEquals(ad1.hashCode(), ad2.hashCode());
+        Assert.assertNotEquals(ad2.hashCode(), ad3.hashCode());
+    }
+
+    @Test public void hashesDataConnectorDependency() {
+
+        final ResolverDataConnectorDependency dc1 = new ResolverDataConnectorDependency("dc1");
+        final ResolverDataConnectorDependency dc2 = new ResolverDataConnectorDependency("dc1");
+        final ResolverDataConnectorDependency dc3 = new ResolverDataConnectorDependency("dc3");
+
+        Assert.assertEquals(dc1, dc2);
+        Assert.assertNotEquals(dc2, dc3);
+        Assert.assertEquals(dc1.hashCode(), dc2.hashCode());
+        Assert.assertNotEquals(dc2.hashCode(), dc3.hashCode());
+        
+        dc1.setAttributeNames(Arrays.asList("a", "b"));
+        dc2.setAttributeNames(Arrays.asList("b", "a"));
+
+        Assert.assertEquals(dc1, dc2);
+        Assert.assertNotEquals(dc2, dc3);
+        Assert.assertEquals(dc1.hashCode(), dc2.hashCode());
+        Assert.assertNotEquals(dc2.hashCode(), dc3.hashCode());
+        
+        dc2.setAllAttributes(true);
+        Assert.assertNotEquals(dc1, dc2);
+        Assert.assertNotEquals(dc2, dc3);
+        Assert.assertNotEquals(dc1.hashCode(), dc2.hashCode());
+        Assert.assertNotEquals(dc2.hashCode(), dc3.hashCode());
+
+        dc1.setAllAttributes(true);
+        Assert.assertEquals(dc1, dc2);
+        Assert.assertNotEquals(dc2, dc3);
+        Assert.assertEquals(dc1.hashCode(), dc2.hashCode());
+        Assert.assertNotEquals(dc2.hashCode(), dc3.hashCode());
+
+        dc2.setAttributeNames(Arrays.asList("b", "a", "d"));
+        Assert.assertNotEquals(dc1, dc2);
+        Assert.assertNotEquals(dc2, dc3);
+        Assert.assertNotEquals(dc1.hashCode(), dc2.hashCode());
+        Assert.assertNotEquals(dc2.hashCode(), dc3.hashCode());
+        
+}
 }
