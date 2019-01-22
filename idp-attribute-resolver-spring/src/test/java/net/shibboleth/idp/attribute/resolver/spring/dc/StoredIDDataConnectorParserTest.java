@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
-import org.bouncycastle.util.Arrays;
+import java.util.Arrays;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -38,7 +39,7 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
         Assert.assertEquals(connector.getTransactionRetries(), 5);
         Assert.assertEquals(connector.getQueryTimeout(), 5000);
         Assert.assertEquals(connector.getFailFast(), false);
-        Assert.assertTrue(Arrays.areEqual(connector.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
+        Assert.assertTrue(Arrays.equals(connector.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
         
         connector.initialize();
     }
