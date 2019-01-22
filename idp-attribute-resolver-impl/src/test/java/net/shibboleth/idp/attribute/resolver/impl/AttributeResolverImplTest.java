@@ -245,45 +245,6 @@ public class AttributeResolverImplTest {
 
     /** Test that resolve w/ dependencies returns the expected results. */
 
-    @Test public void resolveWithDependenciesOld() throws Exception {
-        final MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
-        dc1.initialize();
-
-        final IdPAttribute attr = new IdPAttribute("test");
-        attr.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
-        
-        final ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
-        final MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
-        ad1.setDependencies(Collections.singleton(dep1));
-        ad1.initialize();
-
-        final MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
-
-        final ResolverPluginDependency dep2 = TestSources.makeResolverPluginDependency("ad1");
-        final ResolverPluginDependency dep3 = TestSources.makeResolverPluginDependency("ad2");
-        final MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", attr);
-        ad0.setDependencies(new HashSet<>(Arrays.asList(dep2, dep3)));
-        ad0.initialize();
-
-        final LazySet<DataConnector> connectors = new LazySet<>();
-        connectors.add(dc1);
-
-        final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        definitions.add(ad0);
-        definitions.add(ad1);
-        definitions.add(ad2);
-        ad2.initialize();
-
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, connectors);
-        resolver.initialize();
-
-        final AttributeResolutionContext context = new AttributeResolutionContext();
-        resolver.resolveAttributes(context);
-
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("test").getValues().size(), 2);
-    }
-    
     @Test public void resolveWithDependencies() throws Exception {
         final MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
         dc1.initialize();
@@ -487,25 +448,27 @@ public class AttributeResolverImplTest {
         dcfail1.setFailure(true);
         dcfail1.setPropagateResolutionExceptions(false);
         dcfail1.initialize();
-        final ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1");
+        final ResolverDataConnectorDependency depFail1 = new ResolverDataConnectorDependency("failer1");
+        depFail1.setAllAttributes(true);
         final MockDataConnector dcfail2 = new MockDataConnector("failer2", new HashMap<String, IdPAttribute>());
         dcfail2.setFailure(true);
         dcfail2.setFailoverDataConnectorId("failer1");
         dcfail2.initialize();
-        final ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2");
+        final ResolverDataConnectorDependency depFail2 = new ResolverDataConnectorDependency("failer2");
+        depFail2.setAllAttributes(true);
 
         connectors = new LazySet<>();
         connectors.add(dcfail1);
         connectors.add(dcfail2);
 
         final MockAttributeDefinition ad10 = new MockAttributeDefinition("ad10", new IdPAttribute("ten"));
-        ad10.setDependencies(Collections.singleton(depFail1));
+        ad10.setDependencies(Collections.singleton((ResolverPluginDependency) depFail1));
         ad10.setPropagateResolutionExceptions(false);
         ad10.initialize();
 
 
         final MockAttributeDefinition ad11 = new MockAttributeDefinition("ad11", new IdPAttribute("eleven"));
-        ad11.setDependencies(Collections.singleton(depFail2));
+        ad11.setDependencies(Collections.singleton((ResolverPluginDependency) depFail2));
         ad11.setPropagateResolutionExceptions(false);
         ad11.initialize();
 

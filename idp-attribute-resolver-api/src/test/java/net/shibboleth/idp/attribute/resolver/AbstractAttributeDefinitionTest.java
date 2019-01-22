@@ -193,7 +193,7 @@ public class AbstractAttributeDefinitionTest {
     public void dependencies() throws ComponentInitializationException {
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         
-        definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
+        definition.setDependencies(Collections.singleton((ResolverPluginDependency) new ResolverAttributeDefinitionDependency("plugin")));
         definition.initialize();
         
         Set<ResolverPluginDependency> depends = definition.getDependencies();
@@ -204,7 +204,7 @@ public class AbstractAttributeDefinitionTest {
         
         definition = new MockAttributeDefinition("foo", null);
         definition.setSourceAttributeId("source");
-        definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
+        definition.setDependencies(Collections.singleton((ResolverPluginDependency) new ResolverAttributeDefinitionDependency("source")));
         definition.initialize();
         
         Assert.assertEquals(definition.getSourceAttributeId(), "source");
@@ -212,7 +212,7 @@ public class AbstractAttributeDefinitionTest {
         depends = definition.getDependencies();
         
         Assert.assertEquals(depends.size(), 1);
-        Assert.assertEquals(depends.iterator().next().getDependencyAttributeId(), "source");
+        Assert.assertEquals(depends.iterator().next().getDependencyPluginId(), "source");
     }
     
     private void testInvalidName(@Nonnull MockAttributeDefinition attrdef) {

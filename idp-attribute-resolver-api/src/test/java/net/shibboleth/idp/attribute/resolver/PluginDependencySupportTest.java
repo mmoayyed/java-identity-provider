@@ -99,10 +99,10 @@ public class PluginDependencySupportTest {
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPE_ATTRIB_ID);
+        final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
+        depend.setAttributeNames(Collections.singletonList(ResolverTestSupport.EPE_ATTRIB_ID));
         final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend),
+                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList((ResolverPluginDependency) depend),
                         ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -183,58 +183,6 @@ public class PluginDependencySupportTest {
 
     }
     
-    @SuppressWarnings("deprecation")
-    @Test public void dataConnectorNoAttrName() {
-        final AttributeResolutionContext resolutionContext =
-                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
-                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
-                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
-                                ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
-        final AttributeResolverWorkContext workContext =
-                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
-
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend),
-                        ResolverTestSupport.EPE_ATTRIB_ID);
-
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.isEmpty());
-        
-        Assert.assertTrue(PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend)).isEmpty());
-    }
-
-
-    @Test public void getMergedAttributeValueWithMultipleDependenciesOld() {
-        final MockStaticDataConnector connector1 =
-                ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
-                        ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
-                        .buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA2_VALUES));
-
-        final MockStaticAttributeDefinition definition1 =
-                ResolverTestSupport.buildAttributeDefinition(ResolverTestSupport.EPA_ATTRIB_ID,
-                        ResolverTestSupport.EPA1_VALUES);
-
-        final AttributeResolutionContext resolutionContext =
-                ResolverTestSupport.buildResolutionContext(connector1, definition1);
-        final AttributeResolverWorkContext workContext =
-                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
-
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
-                        ResolverTestSupport.EPE_ATTRIB_ID);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 4);
-        Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[0])));
-        Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
-        Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));
-
-    }
-    
     @Test public void getMergedAttributeValueWithMultipleDependencies() {
         final MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
@@ -266,44 +214,6 @@ public class PluginDependencySupportTest {
 
     }
 
-    @Test public void getAllAttributeValuesOld() {
-        final MockStaticDataConnector connector1 =
-                ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
-                        ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
-                        .buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA2_VALUES));
-
-        final MockStaticAttributeDefinition definition1 =
-                ResolverTestSupport.buildAttributeDefinition(ResolverTestSupport.EPA_ATTRIB_ID,
-                        ResolverTestSupport.EPA1_VALUES);
-
-        final AttributeResolutionContext resolutionContext =
-                ResolverTestSupport.buildResolutionContext(connector1, definition1);
-        final AttributeResolverWorkContext workContext =
-                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
-
-        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-       // depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        final Map<String, List<IdPAttributeValue<?>>> result =
-                PluginDependencySupport.getAllAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 2);
-
-        List<IdPAttributeValue<?>> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
-        Assert.assertNotNull(values);
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPE1_VALUES[0])));
-        Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPE1_VALUES[1])));
-
-        values = result.get(ResolverTestSupport.EPA_ATTRIB_ID);
-        Assert.assertNotNull(values);
-        Assert.assertEquals(values.size(), 4);
-        Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[0])));
-        Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
-        Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));
-    }
-    
     @Test public void getAllAttributeValues() {
         final MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
@@ -320,11 +230,11 @@ public class PluginDependencySupportTest {
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
-        
         depend.setAllAttributes(true);
+
         final Map<String, List<IdPAttributeValue<?>>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
+                        Arrays.asList(depend, new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -342,7 +252,7 @@ public class PluginDependencySupportTest {
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));
     }
-    
+
     @Test public void getAllAttributeValuesLimited() {
         final MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
@@ -359,11 +269,11 @@ public class PluginDependencySupportTest {
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
-        
+
         depend.setAttributeNames(Collections.singleton(ResolverTestSupport.EPA_ATTRIB_ID));
         final Map<String, List<IdPAttributeValue<?>>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
+                        Arrays.asList(depend, new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
@@ -375,6 +285,4 @@ public class PluginDependencySupportTest {
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));
     }
-
-
 }
