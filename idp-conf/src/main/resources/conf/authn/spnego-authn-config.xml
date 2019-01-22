@@ -48,7 +48,7 @@
 
     <!--
     <bean id="shibboleth.authn.SPNEGO.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.edu]$" />
+        c:_0="^(.+)@example\.edu$" />
     -->
 
     <!--
