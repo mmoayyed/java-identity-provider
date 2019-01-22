@@ -94,7 +94,6 @@ public class ResolvedAttributeDefinitionTest {
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
         final ResolverAttributeDefinitionDependency dep = new ResolverAttributeDefinitionDependency("doo");
-        dep.setDependencyAttributeId("foo");
         attrDef.setAttributeDependencies(Collections.singleton(dep));
         final ResolverDataConnectorDependency ddep = new ResolverDataConnectorDependency("ddoo");
         ddep.setAttributeNames(Collections.singletonList("foo"));

@@ -114,14 +114,10 @@ public class AbstractResolverPluginTest {
         Assert.assertTrue(plugin.getDataConnectorDependencies().isEmpty());
 
         final ResolverAttributeDefinitionDependency dep1 = new ResolverAttributeDefinitionDependency("foo");
-        dep1.setDependencyAttributeId("bar");
         final ResolverAttributeDefinitionDependency dep2 = new ResolverAttributeDefinitionDependency("foo2");
-        dep2.setDependencyAttributeId("baz");
 
         final ResolverDataConnectorDependency depd1 = new ResolverDataConnectorDependency("food");
-        dep1.setDependencyAttributeId("bard");
         final ResolverDataConnectorDependency depd2 = new ResolverDataConnectorDependency("food2");
-        dep2.setDependencyAttributeId("bazd");
 
         final HashSet<ResolverAttributeDefinitionDependency> adeps = new HashSet<>();
         final HashSet<ResolverDataConnectorDependency> ddeps = new HashSet<>();

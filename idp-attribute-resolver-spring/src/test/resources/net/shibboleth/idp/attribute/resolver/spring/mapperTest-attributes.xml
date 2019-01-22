@@ -21,27 +21,27 @@
         </Attribute>
     </DataConnector>
 
-    <AttributeDefinition xsi:type="Simple" id="eduPersonAssurance" sourceAttributeID="assurance">
+    <AttributeDefinition xsi:type="Simple" id="eduPersonAssurance">
         <InputDataConnector allAttributes="true" ref="staticAttributes" />
         <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:eduPersonAssurance" />
         <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" friendlyName="feduPersonAssurance" />
         <AttributeEncoder xsi:type="SAML2String" nameFormat="http://example.org/Format" name="http://example.org/name/for/Attribute" friendlyName="fotherSAMLName" />
     </AttributeDefinition>
 
-    <AttributeDefinition xsi:type="Simple" id="otherPersonAssurance" sourceAttributeID="oAssurance">
+    <AttributeDefinition xsi:type="Simple" id="otherPersonAssurance" >
         <InputDataConnector allAttributes="true"  ref="staticAttributes" />
         <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:eduPersonAssurance" />
         <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" friendlyName="feduPersonAssurance" />
     </AttributeDefinition>
         
-    <AttributeDefinition xsi:type="Simple" id="otherFormatPersonAssurance" sourceAttributeID="ofAssurance">
+    <AttributeDefinition xsi:type="Simple" id="otherFormatPersonAssurance" >
         <InputDataConnector allAttributes="true"  ref="staticAttributes" />
         <AttributeEncoder xsi:type="SAML1String" name="urn:mace:dir:attribute-def:eduPersonAssurance" />
         <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" nameFormat="http://example.org/Format" friendlyName="fOeduPersonAssurance" />
     </AttributeDefinition>
 
     <AttributeDefinition xsi:type="Scoped" id="eduPersonScopedAffiliation" scope="example.org" 
-                                  sourceAttributeID="assurance">
+                                  >
         <InputDataConnector allAttributes="true"  ref="staticAttributes" />
         <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonScopedAffiliation" />
         <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" friendlyName="feduPersonScopedAffiliation" 
@@ -49,7 +49,7 @@
     </AttributeDefinition>
     
     <AttributeDefinition xsi:type="SAML2NameID" id="eduPersonTID" 
-                                  nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" sourceAttributeID="eduPersonEntitlement">
+                                  nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" >
         <InputDataConnector allAttributes="true"  ref="staticAttributes" />
         <AttributeEncoder xsi:type="SAML1XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
         <AttributeEncoder xsi:type="SAML2XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" friendlyName="feduPersonTargetedID" />

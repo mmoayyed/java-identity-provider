@@ -99,7 +99,6 @@ public class ResolvedDataConnectorTest {
         dc.setId("Defn");
         
         final ResolverAttributeDefinitionDependency dep = new ResolverAttributeDefinitionDependency("doo");
-        dep.setDependencyAttributeId("foo");
         dc.setAttributeDependencies(Collections.singleton(dep));
         final ResolverDataConnectorDependency ddep = new ResolverDataConnectorDependency("ddoo");
         ddep.setAttributeNames(Collections.singletonList("foo"));

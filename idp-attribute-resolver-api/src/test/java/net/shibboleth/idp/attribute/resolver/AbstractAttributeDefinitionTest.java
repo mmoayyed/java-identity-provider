@@ -203,13 +203,11 @@ public class AbstractAttributeDefinitionTest {
         final Set<ResolverDataConnectorDependency> dDepends = definition.getDataConnectorDependencies();
         
         Assert.assertEquals(dDepends.size(), 1);
-        Assert.assertNull(definition.getSourceAttributeId());
         Assert.assertTrue(dDepends.iterator().next().getAttributeNames().contains("da"));
         Assert.assertEquals(dDepends.iterator().next().getDependencyPluginId(), "dc");
 
         final Set<ResolverAttributeDefinitionDependency> aDepends = definition.getAttributeDependencies();
         Assert.assertEquals(aDepends.size(), 1);
-        Assert.assertNull(definition.getSourceAttributeId());
         Assert.assertEquals(aDepends.iterator().next().getDependencyPluginId(), "ad");
 
     }

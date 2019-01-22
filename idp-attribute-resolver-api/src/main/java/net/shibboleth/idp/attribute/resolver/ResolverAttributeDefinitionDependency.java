@@ -38,9 +38,6 @@ public final class ResolverAttributeDefinitionDependency  {
     /** ID of the plugin that will produce the attribute. */
     @Nonnull @NotEmpty private final String dependencyPluginId;
 
-    /** ID of the attribute, produced by the identified plugin, whose values will be used by the dependent plugin. */
-    @Nullable private String dependencyAttributeId;
-
     /**
      * Constructor.
      * 
@@ -62,33 +59,10 @@ public final class ResolverAttributeDefinitionDependency  {
         return dependencyPluginId;
     }
 
-    /**
-     * Set the attributeId.
-     * 
-     * @param attributeId ID of the attribute, produced by the identified plugin, whose values will be used by the
-     *            dependent plugin
-     */
-    public void setDependencyAttributeId(@Nullable final String attributeId) {
-        dependencyAttributeId = StringSupport.trimOrNull(attributeId);
-    }
-
-    /**
-     * Gets the ID of the attribute, produced by the identified plugin, whose values will be used by the dependent
-     * plugin.
-     * 
-     * @return ID of the attribute, produced by the identified plugin, whose values will be used by the dependent
-     *         plugin, never null or empty
-     */
-    @Nullable public String getDependencyAttributeId() {
-        return dependencyAttributeId;
-    }
-
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        final int[] input = {getDependencyPluginId().hashCode(),
-                getDependencyAttributeId()!=null?getDependencyAttributeId().hashCode(): 0};
-        return Arrays.hashCode(input);
+        return getDependencyPluginId().hashCode();
     }
 
     /** {@inheritDoc} */
@@ -107,14 +81,12 @@ public final class ResolverAttributeDefinitionDependency  {
         }
 
         final ResolverAttributeDefinitionDependency other = (ResolverAttributeDefinitionDependency) obj;
-        return Objects.equals(getDependencyPluginId(), other.getDependencyPluginId())
-                && Objects.equals(getDependencyAttributeId(), other.getDependencyAttributeId());
+        return Objects.equals(getDependencyPluginId(), other.getDependencyPluginId());
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("pluginId", dependencyPluginId)
-                .add("attributeId", dependencyAttributeId).toString();
+        return MoreObjects.toStringHelper(this).add("pluginId", getDependencyPluginId()).toString();
     }
 }

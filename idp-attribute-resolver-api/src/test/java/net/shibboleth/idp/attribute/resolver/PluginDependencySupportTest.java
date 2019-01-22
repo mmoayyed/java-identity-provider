@@ -309,18 +309,6 @@ public class PluginDependencySupportTest {
         Assert.assertEquals(ad1.hashCode(), ad2.hashCode());
         Assert.assertNotEquals(ad2.hashCode(), ad3.hashCode());
         
-        ad1.setDependencyAttributeId("ra1");
-        ad2.setDependencyAttributeId("bar");
-        Assert.assertNotEquals(ad1, ad2);
-        Assert.assertNotEquals(ad2, ad3);
-        Assert.assertNotEquals(ad1.hashCode(), ad2.hashCode());
-        Assert.assertNotEquals(ad2.hashCode(), ad3.hashCode());
-       
-        ad1.setDependencyAttributeId("bar");
-        Assert.assertEquals(ad1, ad2);
-        Assert.assertNotEquals(ad2, ad3);
-        Assert.assertEquals(ad1.hashCode(), ad2.hashCode());
-        Assert.assertNotEquals(ad2.hashCode(), ad3.hashCode());
     }
 
     @Test public void hashesDataConnectorDependency() {

@@ -61,9 +61,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
 
-    /** The sourceAttributeID attributeName. */
-    @Nullable private String sourceAttributeID;
-
     /** Attribute encoders associated with this definition. */
     @Nonnull private Set<AttributeEncoder<?>> encoders = Collections.emptySet();
 
@@ -185,25 +182,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         final Set<AttributeEncoder<?>> checkedEncoders = new HashSet<>();
         CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
         encoders = ImmutableSet.copyOf(checkedEncoders);
-    }
-
-    /**
-     * Gets the source attribute id.
-     * @deprecated - only used for old style dependencies
-     * @return the source attribute id
-     */
-    public @Deprecated String getSourceAttributeId() {
-        return sourceAttributeID;
-    }
-
-    /**
-     * Sets the source attribute id.
-     * 
-     * @param attributeId the source attribute id
-     */
-    public void setSourceAttributeId(final String attributeId) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        sourceAttributeID = StringSupport.trimOrNull(attributeId);
     }
 
     /** {@inheritDoc} */

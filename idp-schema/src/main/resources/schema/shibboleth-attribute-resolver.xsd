@@ -45,7 +45,6 @@
                 Definitions derived from this type need to explicitly include (as a choice)
                 the Dependency, DisplayName, DisplayDescription and Encoder sub elements
 
-                Definitions derived from this type may add the sourceAttributeID element.
             </documentation>
         </annotation>
         <complexContent>
@@ -386,7 +385,6 @@
                     </element>
                     <element name="ValueMap" type="resolver:ValueMapType" maxOccurs="unbounded"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
             </extension>
         </complexContent>
     </complexType>
@@ -407,7 +405,6 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="scopeDelimiter" type="string">
                     <annotation>
                         <documentation>Delimiter between the value and scope.</documentation>
@@ -460,7 +457,6 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="regex" type="string" use="required">
                     <annotation>
                         <documentation>The regular expression used to split a value.</documentation>
@@ -490,7 +486,6 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="nameIdFormat" type="string">
                     <annotation>
                         <documentation>The SAML 1 NameFormat of the NameID.</documentation>
@@ -518,7 +513,6 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="nameIdFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
@@ -551,7 +545,6 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="scope" type="string" use="required">
                     <annotation>
                         <documentation>Value to use for scoping the attribute.</documentation>
@@ -570,8 +563,6 @@
                 a script attribute corresponding to the script variable whose name is the ID of the definition. This
                 variable is injected into the script by the attribute definition.
 
-                NOTE that in this version Script does not have a sourceAttributeID - all the values for scripts
-                come from the Dependency elements.
             </documentation>
         </annotation>
         <complexContent>
@@ -628,7 +619,6 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="sourceAttributeID" type="string"/>
             </extension>
         </complexContent>
     </complexType>
@@ -686,11 +676,8 @@
                     <element name="SourceAttribute" type="string" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
-                                Attribute IDs which should be used in this definition, rather than the sourceAttributeID
-                                attribute. Each source attribute is available to be used in the Template as
-                                ${attribute_name}. If the source attribute has multiple values, only one value is
-                                available to the template at a time, but the template will be evaluated once for each
-                                value.
+                                Attribute IDs which should be used in this definition.
+                                It is preferred to provide these using the dependencies.
                             </documentation>
                         </annotation>
                     </element>

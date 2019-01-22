@@ -18,7 +18,7 @@
     </AttributeDefinition>
 
     <AttributeDefinition xsi:type="Mapped"
-        id="mapped2" sourceAttributeID="attr1" dependencyOnly="true">
+        id="mapped2" dependencyOnly="true">
         <InputDataConnector ref="static" attributeNames="attr2"/>
         <DefaultValue>undefined</DefaultValue>
         <ValueMap>
