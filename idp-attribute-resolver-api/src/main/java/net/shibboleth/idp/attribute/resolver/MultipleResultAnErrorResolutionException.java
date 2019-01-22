@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 /**
  * A special ResolutionException which is thrown if multiple results were resolved 
- * by a dataconnector and the deployer specified "MultipleResultsAnError". 
+ * by a data connector and the deployer specified "MultipleResultsAnError". 
  */
 public class MultipleResultAnErrorResolutionException extends ResolutionException {
 

@@ -97,9 +97,14 @@ public class ResolvedDataConnectorTest {
         MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new IdPAttribute("attr")));
         dc.setId("Defn");
-        ResolverDataConnectorDependency dep = new ResolverDataConnectorDependency("doo");
-        dep.setAttributeNames(Collections.singletonList("foo"));
-        dc.setDependencies(Collections.singleton((ResolverPluginDependency) dep));
+        
+        final ResolverAttributeDefinitionDependency dep = new ResolverAttributeDefinitionDependency("doo");
+        dep.setDependencyAttributeId("foo");
+        dc.setAttributeDependencies(Collections.singleton(dep));
+        final ResolverDataConnectorDependency ddep = new ResolverDataConnectorDependency("ddoo");
+        ddep.setAttributeNames(Collections.singletonList("foo"));
+        dc.setDataConnectorDependencies(Collections.singleton(ddep));
+
         dc.setPropagateResolutionExceptions(false);
         dc.initialize();
         ResolvedDataConnector resolvedDataConnector = new ResolvedDataConnector(dc, resolvedData);
@@ -110,7 +115,8 @@ public class ResolvedDataConnectorTest {
         Assert.assertEquals(resolvedDataConnector.getResolvedConnector(), dc);
         Assert.assertTrue(resolvedDataConnector.isInitialized());
 
-        Assert.assertEquals(resolvedDataConnector.getDependencies(), dc.getDependencies());
+        Assert.assertEquals(resolvedDataConnector.getAttributeDependencies(), dc.getAttributeDependencies());
+        Assert.assertEquals(resolvedDataConnector.getDataConnectorDependencies(), dc.getDataConnectorDependencies());
         Assert.assertNull(resolvedDataConnector.getActivationCondition());
         Assert.assertFalse(resolvedDataConnector.isPropagateResolutionExceptions());
 

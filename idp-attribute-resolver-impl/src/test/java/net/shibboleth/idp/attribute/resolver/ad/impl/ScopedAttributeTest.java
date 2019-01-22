@@ -25,6 +25,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
@@ -35,7 +38,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
@@ -46,9 +49,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Tester for {@link ScopedAttributeDefinition}.
@@ -70,14 +70,14 @@ public class ScopedAttributeTest {
     @Test public void scopes() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
         scoped.setScope(TEST_SCOPE);
         scoped.setId(TEST_ATTRIBUTE_NAME);
-        scoped.setDependencies(dependencySet);
+        scoped.setDataConnectorDependencies(dependencySet);
         scoped.initialize();
 
         // And resolve
@@ -116,7 +116,7 @@ public class ScopedAttributeTest {
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScope(TEST_SCOPE);
-        attrDef.setDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+        attrDef.setDataConnectorDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID))));
         attrDef.initialize();
 
@@ -144,7 +144,7 @@ public class ScopedAttributeTest {
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScope(TEST_SCOPE);
-        attrDef.setDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+        attrDef.setDataConnectorDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID))));
         attrDef.initialize();
 
@@ -162,10 +162,10 @@ public class ScopedAttributeTest {
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
-        final Set<ResolverPluginDependency> pluginDependencies =
+        final Set<ResolverDataConnectorDependency> pluginDependencies =
                 new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
                         ResolverTestSupport.EPA_ATTRIB_ID)));
-        attrDef.setDependencies(pluginDependencies);
+        attrDef.setDataConnectorDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 
         try {
@@ -188,7 +188,7 @@ public class ScopedAttributeTest {
         attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         Assert.assertNull(attrDef.getScope());
-        attrDef.setDependencies(pluginDependencies);
+        attrDef.setDataConnectorDependencies(pluginDependencies);
         try {
             attrDef.initialize();
             Assert.fail("no Scope - should fail");

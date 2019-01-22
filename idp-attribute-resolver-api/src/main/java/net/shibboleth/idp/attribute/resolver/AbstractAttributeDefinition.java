@@ -212,17 +212,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
         // Set up the dependencies first. Then the initialize in the parent
         // will correctly rehash the dependencies.
-        if (null != getSourceAttributeId()) {
-            for (final ResolverPluginDependency depends : getDependencies()) {
-                if (depends instanceof ResolverAttributeDefinitionDependency) {
-                    // No work needed.  The name is the reference 
-                } else if (depends instanceof ResolverDataConnectorDependency) {
-                    // No work needed.  The names are stored elsewhere 
-                } else {
-                    depends.setDependencyAttributeId(getSourceAttributeId());
-                }
-            }
-        }
         super.doInitialize();
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;

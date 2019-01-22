@@ -94,13 +94,12 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
                     StringSupport.trimOrNull(config.getAttributeNS(null, "propagateResolutionExceptions")));
         }
 
-        final List<Element> dependencyElements =
-                ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);
-        dependencyElements.addAll(
-                ElementSupport.getChildElements(config, InputAttributeDefinitionParser.ELEMENT_NAME));
-        dependencyElements.addAll(
-                ElementSupport.getChildElements(config, InputDataConnectorParser.ELEMENT_NAME));
-        if (null != dependencyElements && !dependencyElements.isEmpty()) {
+        final List<Element> attributeDependencyElements =
+                ElementSupport.getChildElements(config, InputAttributeDefinitionParser.ELEMENT_NAME);
+        final List<Element> dataConnectorDependencyElements =
+                ElementSupport.getChildElements(config, InputDataConnectorParser.ELEMENT_NAME);       
+        if ((null != attributeDependencyElements && !attributeDependencyElements.isEmpty()) ||
+            (null != dataConnectorDependencyElements && !dataConnectorDependencyElements.isEmpty())) {
             if (failOnDependencies()) {
                 log.error("{} Dependencies are not allowed.", getLogPrefix());
                 throw new BeanCreationException(getLogPrefix() + " has meaningless Dependencies statements");
@@ -109,7 +108,10 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
                 log.warn("{} Dependencies are not allowed.", getLogPrefix());
             }
         }
-        builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
+        builder.addPropertyValue("attributeDependencies", 
+                SpringSupport.parseCustomElements(attributeDependencyElements, parserContext));
+        builder.addPropertyValue("dataConnectorDependencies", 
+                SpringSupport.parseCustomElements(dataConnectorDependencyElements, parserContext));
     }
 // Checkstyle: CyclomaticComplexity ON
     

@@ -92,7 +92,10 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
+                PluginDependencySupport.getMergedAttributeValues(workContext, 
+                        getAttributeDependencies(), 
+                        getDataConnectorDependencies(), 
+                        getId());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             final String inputValue;
@@ -139,7 +142,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
                     + "': no regular expression was configured");
         }
 
-        if (getDependencies().isEmpty()) {
+        if (getDataConnectorDependencies().isEmpty() && getAttributeDependencies().isEmpty()) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
                     + "': no dependencies were configured");
         }

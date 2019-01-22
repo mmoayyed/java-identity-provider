@@ -173,7 +173,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
     
-        if (getDependencies().isEmpty()) {
+        if (getAttributeDependencies().isEmpty() && getDataConnectorDependencies().isEmpty()) {
             throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
     
@@ -209,19 +209,22 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             return;
         }
 
-        final Set<String> dependencyAttributeNames = new HashSet<>(getDependencies().size());
-        for (final ResolverPluginDependency dependency: getDependencies()) {
-            if (dependency instanceof ResolverAttributeDefinitionDependency) {
-                dependencyAttributeNames.add( dependency.getDependencyPluginId());
-            } else if (dependency instanceof ResolverDataConnectorDependency) {
-                final ResolverDataConnectorDependency dc = (ResolverDataConnectorDependency) dependency;
-                if (dc.isAllAttributes()) {
-                    return;
-                }
-                dependencyAttributeNames.addAll(dc.getAttributeNames());
+        final Set<String> dependencyAttributeNames = new HashSet<>(getAttributeDependencies().size() +
+                getDataConnectorDependencies().size());
+
+        for (final ResolverAttributeDefinitionDependency attrDep: getAttributeDependencies()) {
+            dependencyAttributeNames.add(attrDep.getDependencyPluginId());
+        }
+        
+        for (final ResolverDataConnectorDependency dcDep: getDataConnectorDependencies()) {
+            if (dcDep.isAllAttributes()) {
+                // No sensible check can be made if wild carding
+                return;
             }
+            dependencyAttributeNames.addAll(dcDep.getAttributeNames());
         }
 
+        
         for (final String s: sourceAttributes) {
             if (!dependencyAttributeNames.contains(s)) {
                 log.warn("{} Source Attribute {} is not provided as a dependency", getLogPrefix(),s);
@@ -338,8 +341,11 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues)
                     throws ResolutionException {
 
-        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
-                PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
+        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes = 
+                PluginDependencySupport.getAllAttributeValues(workContext,
+                                                              getAttributeDependencies(), 
+                                                              getDataConnectorDependencies());
+
         int valueCount = 0;
 
         if (getSourceAttributes().isEmpty()) {

@@ -125,7 +125,7 @@ public class AttributeResolverWorkContext extends BaseContext {
     }
 
     /**
-     * Transfer the attributes from a failover dataconnector to a failed one. This allows up stream processing to
+     * Transfer the attributes from a failover data connector to a failed one. This allows up stream processing to
      * pretend that the failed connector worked OK. The inherent duplication is OK since the code which exploits this
      * does the dedupe.
      *

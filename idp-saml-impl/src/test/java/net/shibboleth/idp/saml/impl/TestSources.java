@@ -30,6 +30,10 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.collect.ImmutableMap;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -40,7 +44,6 @@ import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
@@ -50,10 +53,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.collect.ImmutableMap;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
@@ -192,8 +191,8 @@ public final class TestSources {
         defn.setId(name);
 
         // Set the dependency on the data connector
-        ResolverPluginDependency depend = new ResolverAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        defn.setDependencies(Collections.singleton(depend));
+        ResolverAttributeDefinitionDependency depend = new ResolverAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        defn.setAttributeDependencies(Collections.singleton(depend));
         defn.initialize();
         return defn;
     }
@@ -211,12 +210,12 @@ public final class TestSources {
         return retVal;
     }
 
-    public static ResolverPluginDependency makeResolverPluginDependency(String attributeId) {
+    public static ResolverAttributeDefinitionDependency makeResolverPluginDependency(String attributeId) {
         ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
         return retVal;
     }
     
-    public static ResolverPluginDependency makeResolverPluginDependency(@Nonnull String connectorId, @Nullable String attributeId) {
+    public static ResolverDataConnectorDependency makeResolverPluginDependency(@Nonnull String connectorId, @Nullable String attributeId) {
         ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
         if (null == attributeId) {
             retVal.setAllAttributes(true);

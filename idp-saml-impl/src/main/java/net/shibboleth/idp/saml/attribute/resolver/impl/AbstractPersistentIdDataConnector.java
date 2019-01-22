@@ -118,45 +118,38 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
      *
      * @throws ComponentInitializationException if the dependencies are not aligned correctly
      */
- // Checkstyle: CyclomaticComplexity|MethodLength OFF
     private void doDependencyInformation() throws ComponentInitializationException {
         final StringBuilder dependencyInformation = new StringBuilder();
         boolean seenAttribute = false;
-        for (final ResolverPluginDependency depends : getDependencies()) {
+
+        for (final ResolverAttributeDefinitionDependency attrDep : getAttributeDependencies()) {
             if (seenAttribute) {
                 dependencyInformation.append(", ");
             }
-            if (depends instanceof ResolverAttributeDefinitionDependency) {
-                dependencyInformation.append(depends.getDependencyPluginId());
-                // No other work needed.  The name is the reference
-            } else if (depends instanceof ResolverDataConnectorDependency) {
-                final ResolverDataConnectorDependency dataConnectorDependency =
-                        (ResolverDataConnectorDependency) depends;
-                if (dataConnectorDependency.isAllAttributes()) {
-                    dependencyInformation.append(depends.getDependencyPluginId()).append("/*");
-                } else if (dataConnectorDependency.getAttributeNames().isEmpty()) {
-                    throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
-                } else if (dataConnectorDependency.getAttributeNames().size() == 1) {
-                    dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).
-                                          append('/').
-                                          append(dataConnectorDependency.getAttributeNames().iterator().next());
-                } else {
-                    dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).
-                                          append('/').
-                                          append(dataConnectorDependency.getAttributeNames().toString());
-                }
-                // No work needed.  The names are stored elsewhere
-            } else {
-                if (null == getSourceAttributeId()) {
-                    throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
-                }
-                dependencyInformation.append(depends.getDependencyPluginId()).
+            dependencyInformation.append(attrDep.getDependencyPluginId());
+            seenAttribute = true;
+        }
+
+        for (final ResolverDataConnectorDependency dataConnectorDependency : getDataConnectorDependencies()) {
+            if (seenAttribute) {
+                dependencyInformation.append(", ");
+            }
+            if (dataConnectorDependency.isAllAttributes()) {
+                dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).append("/*");
+            } else if (dataConnectorDependency.getAttributeNames().isEmpty()) {
+                throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
+            } else if (dataConnectorDependency.getAttributeNames().size() == 1) {
+                dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).
                                       append('/').
-                                      append(getSourceAttributeId());
-                depends.setDependencyAttributeId(getSourceAttributeId());
+                                      append(dataConnectorDependency.getAttributeNames().iterator().next());
+            } else {
+                dependencyInformation.append(dataConnectorDependency.getDependencyPluginId()).
+                                      append('/').
+                                      append(dataConnectorDependency.getAttributeNames().toString());
             }
             seenAttribute = true;
         }
+        
         if (!seenAttribute) {
             if (null == getSourceAttributeId()) {
                 throw new ComponentInitializationException(getLogPrefix() + " No source attribute present.");
@@ -169,7 +162,6 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         sourceInformation = dependencyInformation.toString();
         log.debug("{} Source for definition: {}", getLogPrefix(), sourceInformation);
     }
- // Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException { 
@@ -197,7 +189,10 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final List<IdPAttributeValue<?>> attributeValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        getAttributeDependencies(),
+                        getDataConnectorDependencies(),
+                        getId());
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
                     getSourceAttributeInformation(), getId());

@@ -23,12 +23,12 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 
 import org.w3c.dom.Element;
 
 /** Bean definition parser for a {@link ResolverPluginDependency}. */
-public class InputAttributeDefinitionParser extends ResolverPluginDependencyParser {
+public class InputAttributeDefinitionParser extends BaseResolverPluginDependencyParser {
 
     /** Element name. */
     @Nonnull public static final QName ELEMENT_NAME =

@@ -139,7 +139,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         
         final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
         defn.setId("id");
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
     
         final IdPAttribute result =

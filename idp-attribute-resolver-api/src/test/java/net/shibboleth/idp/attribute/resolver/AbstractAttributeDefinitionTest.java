@@ -189,31 +189,31 @@ public class AbstractAttributeDefinitionTest {
 
     }
     
+    
     @Test
     public void dependencies() throws ComponentInitializationException {
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         
-        definition.setDependencies(Collections.singleton((ResolverPluginDependency) new ResolverAttributeDefinitionDependency("plugin")));
+        final ResolverDataConnectorDependency dc  = new ResolverDataConnectorDependency("dc");
+        dc.setAttributeNames(Collections.singletonList("da"));
+        definition.setDataConnectorDependencies(Collections.singleton(dc));
+        definition.setAttributeDependencies(Collections.singleton(new ResolverAttributeDefinitionDependency("ad")));
         definition.initialize();
         
-        Set<ResolverPluginDependency> depends = definition.getDependencies();
+        final Set<ResolverDataConnectorDependency> dDepends = definition.getDataConnectorDependencies();
         
-        Assert.assertEquals(depends.size(), 1);
+        Assert.assertEquals(dDepends.size(), 1);
         Assert.assertNull(definition.getSourceAttributeId());
-        Assert.assertNull(depends.iterator().next().getDependencyAttributeId());
-        
-        definition = new MockAttributeDefinition("foo", null);
-        definition.setSourceAttributeId("source");
-        definition.setDependencies(Collections.singleton((ResolverPluginDependency) new ResolverAttributeDefinitionDependency("source")));
-        definition.initialize();
-        
-        Assert.assertEquals(definition.getSourceAttributeId(), "source");
-        
-        depends = definition.getDependencies();
-        
-        Assert.assertEquals(depends.size(), 1);
-        Assert.assertEquals(depends.iterator().next().getDependencyPluginId(), "source");
+        Assert.assertTrue(dDepends.iterator().next().getAttributeNames().contains("da"));
+        Assert.assertEquals(dDepends.iterator().next().getDependencyPluginId(), "dc");
+
+        final Set<ResolverAttributeDefinitionDependency> aDepends = definition.getAttributeDependencies();
+        Assert.assertEquals(aDepends.size(), 1);
+        Assert.assertNull(definition.getSourceAttributeId());
+        Assert.assertEquals(aDepends.iterator().next().getDependencyPluginId(), "ad");
+
     }
+
     
     private void testInvalidName(@Nonnull MockAttributeDefinition attrdef) {
         try {

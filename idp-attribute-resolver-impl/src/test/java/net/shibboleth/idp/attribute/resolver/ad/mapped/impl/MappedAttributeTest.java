@@ -20,20 +20,20 @@ package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 import java.util.Collections;
 import java.util.Set;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** Test the mapped attribute type. */
 public class MappedAttributeTest {
@@ -54,10 +54,10 @@ public class MappedAttributeTest {
             // expected this
         }
 
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
-        definition.setDependencies(dependencySet);
+        definition.setDataConnectorDependencies(dependencySet);
 
         try {
             definition.initialize();
@@ -96,7 +96,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 "NoSuchAttribute")));
         definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.initialize();
@@ -115,7 +115,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 "NoSuchAttribute")));
         definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.setDefaultValue("");
@@ -140,7 +140,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
         definition.initialize();
@@ -163,7 +163,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         Assert.assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
@@ -185,7 +185,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         Assert.assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
@@ -209,7 +209,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         Assert.assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
@@ -236,7 +236,7 @@ public class MappedAttributeTest {
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         Assert.assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
@@ -273,7 +273,7 @@ public class MappedAttributeTest {
         
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
+        definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         
         definition.setValueMaps(Collections.singleton(valueMap));
@@ -285,10 +285,7 @@ public class MappedAttributeTest {
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, "Val", "val")));
         
-        final IdPAttribute result = definition.resolve(resolutionContext);
-        
-        
-
+        definition.resolve(resolutionContext);
     }
     
 }

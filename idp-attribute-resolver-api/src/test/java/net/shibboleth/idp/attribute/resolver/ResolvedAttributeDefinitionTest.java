@@ -93,9 +93,12 @@ public class ResolvedAttributeDefinitionTest {
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
-        ResolverPluginDependency dep = new ResolverAttributeDefinitionDependency("doo");
+        final ResolverAttributeDefinitionDependency dep = new ResolverAttributeDefinitionDependency("doo");
         dep.setDependencyAttributeId("foo");
-        attrDef.setDependencies(Collections.singleton(dep));
+        attrDef.setAttributeDependencies(Collections.singleton(dep));
+        final ResolverDataConnectorDependency ddep = new ResolverDataConnectorDependency("ddoo");
+        ddep.setAttributeNames(Collections.singletonList("foo"));
+        attrDef.setDataConnectorDependencies(Collections.singleton(ddep));
         attrDef.setPropagateResolutionExceptions(false);
         attrDef.initialize();
 
@@ -103,7 +106,8 @@ public class ResolvedAttributeDefinitionTest {
                 new ResolvedAttributeDefinition(attrDef, new IdPAttribute("foo"));
         resolvedAttributeDefinition.getActivationCondition();
 
-        Assert.assertEquals(resolvedAttributeDefinition.getDependencies(), attrDef.getDependencies());
+        Assert.assertEquals(resolvedAttributeDefinition.getAttributeDependencies(), attrDef.getAttributeDependencies());
+        Assert.assertEquals(resolvedAttributeDefinition.getDataConnectorDependencies(), attrDef.getDataConnectorDependencies());
         Assert.assertNull(resolvedAttributeDefinition.getActivationCondition());
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 

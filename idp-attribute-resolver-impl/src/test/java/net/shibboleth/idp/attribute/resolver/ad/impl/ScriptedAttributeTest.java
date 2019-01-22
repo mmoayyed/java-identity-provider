@@ -40,6 +40,8 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -350,12 +352,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
-        scripted.setDependencies(ds);
+        scripted.setAttributeDependencies(ds);
         scripted.initialize();
 
         // And resolve
@@ -383,12 +385,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("work.script")));
-        scripted.setDependencies(ds);
+        scripted.setAttributeDependencies(ds);
         scripted.initialize();
 
         // And resolve
@@ -431,12 +433,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
-        scripted.setDependencies(Collections.singleton(depend));
+        scripted.setDataConnectorDependencies(Collections.singleton(depend));
         scripted.initialize();
 
         final IdPAttribute result = scripted.resolve(resolutionContext);
@@ -452,13 +454,13 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes2.script")));
-        scripted.setDependencies(ds);
+        scripted.setAttributeDependencies(ds);
         scripted.initialize();
 
         // And resolve
@@ -497,14 +499,14 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverDataConnectorDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("context.script", false)));
-        scripted.setDependencies(ds);
+        scripted.setDataConnectorDependencies(ds);
         scripted.initialize();
 
         // And resolve
@@ -540,13 +542,13 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         connector.setAttributesStrategy(new Locator(exampleData));
         connector.setId("Connector");
 
-        final Set<ResolverPluginDependency> ds =
+        final Set<ResolverDataConnectorDependency> ds =
                 Collections.singleton(TestSources.makeResolverPluginDependency("Connector", null));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript, false)));
-        scripted.setDependencies(ds);
+        scripted.setDataConnectorDependencies(ds);
 
         final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
         final Set<AttributeDefinition> attrDefinitions = Collections.singleton((AttributeDefinition) scripted);

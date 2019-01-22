@@ -76,8 +76,13 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
-        return resolvedConnector.getDependencies();
+    @Override @Nonnull @NonnullElements public Set<ResolverAttributeDefinitionDependency> getAttributeDependencies() {
+        return resolvedConnector.getAttributeDependencies();
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull @NonnullElements public Set<ResolverDataConnectorDependency> getDataConnectorDependencies() {
+        return resolvedConnector.getDataConnectorDependencies();
     }
 
     /** {@inheritDoc} */

@@ -60,11 +60,20 @@ public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
     @Nullable Predicate<ProfileRequestContext> getActivationCondition();
 
     /**
-     * Get the unmodifiable list of dependencies for this plugin.
+     * Get the unmodifiable list of attribute dependencies for this plugin.
      * 
-     * @return unmodifiable list of dependencies for this plugin, never null
+     * @return unmodifiable list of attribute dependencies for this plugin, never null
      */
-    @NonnullAfterInit @NonnullElements @Unmodifiable Set<ResolverPluginDependency> getDependencies();
+    @NonnullAfterInit @NonnullElements @Unmodifiable Set<ResolverAttributeDefinitionDependency>
+        getAttributeDependencies();
+
+    /**
+     * Get the unmodifiable list of data connector dependencies for this plugin.
+     * 
+     * @return unmodifiable list of data connector dependencies for this plugin, never null
+     */
+    @NonnullAfterInit @NonnullElements @Unmodifiable Set<ResolverDataConnectorDependency>
+        getDataConnectorDependencies();
 
     /**
      * Perform the attribute resolution for this plugin.

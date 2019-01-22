@@ -174,7 +174,9 @@ public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final Map<String, List<IdPAttributeValue<?>>> dependsAttributes =
-                PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
+                PluginDependencySupport.getAllAttributeValues(workContext,
+                        getAttributeDependencies(),
+                        getDataConnectorDependencies());
         final T1 executable = searchBuilder.build(resolutionContext, dependsAttributes);
         Map<String, IdPAttribute> resolvedAttributes = null;
         if (resultsCache != null && resolutionContext.getAllowCachedResults()) {

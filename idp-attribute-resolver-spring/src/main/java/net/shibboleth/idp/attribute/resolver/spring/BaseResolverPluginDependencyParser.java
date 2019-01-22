@@ -18,16 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.spring;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.namespace.QName;
-
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,32 +26,19 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Bean definition parser for a {@link ResolverPluginDependency}. */
-public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinitionParser {
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-    /** Element name. */
-    @Nonnull public static final QName ELEMENT_NAME =
-            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Dependency");
+/** Bean definition parser for a {@link ResolverPluginDependency}. */
+public abstract class BaseResolverPluginDependencyParser extends AbstractSingleBeanDefinitionParser {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyParser.class);
-
-    /** {@inheritDoc} */
-    @Override protected Class<? extends ResolverPluginDependency> getBeanClass(@Nullable final Element element) {
-        return ResolverPluginDependency.class;
-    }
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseResolverPluginDependencyParser.class);
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        if (ELEMENT_NAME.getLocalPart().equals(config.getLocalName())) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, ELEMENT_NAME.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    InputDataConnectorParser.ELEMENT_NAME.toString()  + " or "
-                            + InputAttributeDefinitionParser.ELEMENT_NAME.toString());
-        }
-        
         final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
         log.info("Parsing configuration for {} with pluginId: {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);

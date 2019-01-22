@@ -32,11 +32,11 @@ import org.w3c.dom.Element;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Bean definition parser for a {@link ResolverPluginDependency}. */
-public class InputDataConnectorParser extends ResolverPluginDependencyParser {
+public class InputDataConnectorParser extends BaseResolverPluginDependencyParser {
 
     /** Element name. */
     @Nonnull public static final QName ELEMENT_NAME =

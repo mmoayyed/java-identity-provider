@@ -34,6 +34,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -69,7 +71,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
     @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("bar")));
+        defn.setAttributeDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("bar")));
         defn.initialize();
 
         final IdPAttribute attr = new IdPAttribute("bar");
@@ -94,9 +96,9 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.setId(TEST_ATTRIBUTE_NAME);
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
+        defn.setAttributeDependencies(dependencySet);
         defn.initialize();
 
         // And resolve
@@ -140,13 +142,13 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(values);
         
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
         
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
-        defn.setDependencies(Collections.singleton(depend));
+        defn.setDataConnectorDependencies(Collections.singleton(depend));
         defn.setNameIdSPQualifier("doo");
         defn.initialize();
 
@@ -209,9 +211,9 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn2.setId(SECOND_ATTRIBUTE_NAME);
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TEST_ATTRIBUTE_NAME));
-        defn2.setDependencies(dependencySet);
+        defn2.setAttributeDependencies(dependencySet);
         defn2.initialize();
 
         // And resolve
@@ -237,12 +239,12 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
             ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("bar")));
+        defn.setAttributeDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
+        defn.setAttributeDependencies(dependencySet);
         defn.setNameIdFormat(ALTERNATIVE_FORMAT);
         defn.setNameIdQualifier(ALTERNATE_QUALIFIER);
         defn.setNameIdSPQualifier(ALTERNATE_SP_QUALIFIER);

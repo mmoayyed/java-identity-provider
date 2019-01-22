@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.idp.attribute.resolver.AbstractResolverPlugin;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
@@ -42,17 +44,20 @@ public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolv
     /** The component Id. */
     @Nullable private String componentId;
     
-    /** Data Connector property "propagateResolutionExceptions". */
+    /** Plugin property "propagateResolutionExceptions". */
     @Nullable private Boolean propagateResolutionExceptions;
 
-    /** Data Connector property "profileContextStrategy". */
+    /** Plugin property "profileContextStrategy". */
     @Nullable private Function<AttributeResolutionContext, ProfileRequestContext> profileContextStrategy;
 
-    /** Data Connector property "activationCondition". */
+    /** Plugin property "activationCondition". */
     @Nullable private Predicate<ProfileRequestContext> activationCondition;
 
-    /** Data Connector property "dependencies". */
-    @Nullable private Set<ResolverPluginDependency> dependencies;
+    /** Plugin property "attributeDependencies". */
+    @Nullable private Set<ResolverAttributeDefinitionDependency> attributeDependencies;
+
+    /** Plugin property "dataConnectorDependencies". */
+    @Nullable private Set<ResolverDataConnectorDependency> dataConnectorDependencies;
 
     /** Get the component Id.
      * @return the id.
@@ -124,22 +129,41 @@ public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolv
     }
 
     /**
-     * Bean setter in support of {@link AbstractResolverPlugin#setDependencies(Set)}.
+     * Bean setter in support of {@link AbstractResolverPlugin#setAttributeDependencies(Set)}.
      * 
-     * @param pluginDependencies value to set
+     * @param dependencies value to set
      */
-    public void setDependencies(@Nullable final Set<ResolverPluginDependency> pluginDependencies) {
+    public void setAttributeDependencies(@Nullable final Set<ResolverAttributeDefinitionDependency> dependencies) {
 
-        dependencies = pluginDependencies;
+        attributeDependencies = dependencies;
+    }
+    
+    /**
+     * Bean setter in support of {@link AbstractResolverPlugin#setDataConnectorDependencies(Set)}.
+     * 
+     * @param dependencies value to set
+     */
+    public void setDataConnectorDependencies(@Nullable final Set<ResolverDataConnectorDependency> dependencies) {
+
+        dataConnectorDependencies = dependencies;
     }
 
     /**
-     * Bean getter in support of {@link AbstractResolverPlugin#setActivationCondition(Predicate)}.
+     * Bean getter in support of {@link AbstractResolverPlugin#setAttributeDependencies(Set)}.
      * 
-     * @return The value to be set
+     * @return The value
      */
-    @Nullable public Set<ResolverPluginDependency> getDependencies() {
-        return dependencies;
+    @Nullable public Set<ResolverAttributeDefinitionDependency> getAttributeDependencies() {
+        return attributeDependencies;
+    }
+
+    /**
+     * Bean getter in support of {@link AbstractResolverPlugin#setDataConnectorDependencies(Set)}.
+     * 
+     * @return The value
+     */
+    @Nullable public Set<ResolverDataConnectorDependency> getDataConnectorDependencies() {
+        return dataConnectorDependencies;
     }
 
     /** 
@@ -153,8 +177,11 @@ public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolv
         if (null != getActivationCondition()) {
             what.setActivationCondition(getActivationCondition());
         }
-        if (null != getDependencies()) {
-            what.setDependencies(getDependencies());
+        if (null != getAttributeDependencies()) {
+            what.setAttributeDependencies(getAttributeDependencies());
+        }
+        if (null != getDataConnectorDependencies()) {
+            what.setDataConnectorDependencies(getDataConnectorDependencies());
         }
         if (null != getProfileContextStrategy()) {
             what.setProfileContextStrategy(getProfileContextStrategy());

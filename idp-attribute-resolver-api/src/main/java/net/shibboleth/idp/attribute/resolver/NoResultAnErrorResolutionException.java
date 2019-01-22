@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 /**
  * A special ResolutionException which is thrown if no results were resolved 
- * by a dataconnector and the deployer specified "NoResultsAnError". 
+ * by a data connector and the deployer specified "NoResultsAnError". 
  */
 public class NoResultAnErrorResolutionException extends ResolutionException {
 

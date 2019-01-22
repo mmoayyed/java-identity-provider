@@ -36,6 +36,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -68,13 +69,13 @@ public class RegexAtributeTest {
     @Test public void regex() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final  ResolverPluginDependency depend = TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
+        final  ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        attrDef.setDependencies(dependencySet);
+        attrDef.setDataConnectorDependencies(dependencySet);
         attrDef.initialize();
 
         // And resolve
@@ -107,13 +108,13 @@ public class RegexAtributeTest {
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
 
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        attrDef.setDependencies(Collections.singleton(depend));
+        attrDef.setDataConnectorDependencies(Collections.singleton(depend));
         attrDef.initialize();
 
         final IdPAttribute result = attrDef.resolve(resolutionContext);
@@ -135,8 +136,8 @@ public class RegexAtributeTest {
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
-        attrDef.setDependencies(Collections.singleton(depend));
+        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        attrDef.setDataConnectorDependencies(Collections.singleton(depend));
         attrDef.initialize();
 
         try {
@@ -149,14 +150,15 @@ public class RegexAtributeTest {
 
     @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
+        final ResolverDataConnectorDependency depend = 
+                TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         // regex where the first group doesn't match
         attrDef.setRegularExpression(Pattern.compile("([zZ]*)at1-(.+)or"));
-        attrDef.setDependencies(dependencySet);
+        attrDef.setDataConnectorDependencies(dependencySet);
         attrDef.initialize();
 
         // And resolve
@@ -180,9 +182,10 @@ public class RegexAtributeTest {
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
-        final Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
-        attrDef.setDependencies(pluginDependencies);
+        final ResolverDataConnectorDependency depend = 
+                TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        final Set<ResolverDataConnectorDependency> pluginDependencies = Collections.singleton(depend);
+        attrDef.setDataConnectorDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         try {
             attrDef.initialize();
@@ -207,7 +210,7 @@ public class RegexAtributeTest {
         } catch (final ComponentInitializationException e) {
             // OK
         }
-        attrDef.setDependencies(pluginDependencies);
+        attrDef.setDataConnectorDependencies(pluginDependencies);
 
         try {
             attrDef.resolve(new AttributeResolutionContext());

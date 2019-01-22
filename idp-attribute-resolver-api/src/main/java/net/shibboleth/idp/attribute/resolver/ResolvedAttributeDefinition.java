@@ -83,8 +83,13 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
-        return resolvedDefinition.getDependencies();
+    @Override @Nonnull @NonnullElements public Set<ResolverAttributeDefinitionDependency> getAttributeDependencies() {
+        return resolvedDefinition.getAttributeDependencies();
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull @NonnullElements public Set<ResolverDataConnectorDependency> getDataConnectorDependencies() {
+        return resolvedDefinition.getDataConnectorDependencies();
     }
 
     /** {@inheritDoc} */

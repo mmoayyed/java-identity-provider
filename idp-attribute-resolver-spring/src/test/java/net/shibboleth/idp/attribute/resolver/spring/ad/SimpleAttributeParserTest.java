@@ -34,7 +34,8 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
@@ -58,7 +59,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
         Assert.assertTrue(attrDef.getDisplayDescriptions().isEmpty(), "getDisplayDescriptions().isEmpty()");
         Assert.assertTrue(attrDef.getDisplayNames().isEmpty(), "getDisplayNames().isEmpty()");
-        Assert.assertEquals(attrDef.getDependencies().size(), 1);
+        Assert.assertEquals(attrDef.getAttributeDependencies().size(), 1);
         Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(), "getgetAttributeEncoders().isEmpty()");
     }
 
@@ -82,11 +83,16 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertEquals(names.get(new Locale("en")), "NameInEnglish");
         Assert.assertEquals(names.get(new Locale("fr")), "NameEnFrancais");
 
-        Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
-        Assert.assertEquals(dependencies.size(), 3, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("con1", "dep1")));
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep2")));
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3")));
+        Set<ResolverAttributeDefinitionDependency> adDeps = attrDef.getAttributeDependencies();
+        Assert.assertEquals(adDeps.size(), 2, "getAttributeDependencies");
+        Assert.assertTrue(adDeps.contains(TestSources.makeResolverPluginDependency("dep2")));
+        Assert.assertTrue(adDeps.contains(TestSources.makeResolverPluginDependency("dep3")));
+
+        Set<ResolverDataConnectorDependency> dcDeps = attrDef.getDataConnectorDependencies();
+        Assert.assertEquals(dcDeps.size(), 1, "getDataConnectorDependencies");
+        final ResolverDataConnectorDependency dcDep = dcDeps.iterator().next();
+        Assert.assertEquals(dcDep.getDependencyPluginId(), "con1");
+        Assert.assertTrue(dcDep.getAttributeNames().contains("dep1"));
 
         Assert.assertEquals(attrDef.getAttributeEncoders().size(), 1);
         final SAML2StringAttributeEncoder e1 =
@@ -111,12 +117,16 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertEquals(names.size(), 1, "getDisplayNames");
         Assert.assertEquals(names.get(new Locale("en")), "NameInAmerican");
 
-        Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
-        Assert.assertEquals(dependencies.size(), 1, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3")));
+        final Set<ResolverAttributeDefinitionDependency> attrDeps = attrDef.getAttributeDependencies();
+        Assert.assertEquals(attrDeps.size(), 1, "getAttributeDependencies");
+        Assert.assertTrue(attrDeps.contains(TestSources.makeResolverPluginDependency("dep3")));
 
+        final Set<ResolverDataConnectorDependency> dcDeps = attrDef.getDataConnectorDependencies();
+        Assert.assertEquals(dcDeps.size(), 0, "getDataConnectorDependencies");
+
+        
         Assert.assertEquals(attrDef.getAttributeEncoders().size(), 2);
-        List a = new ArrayList(attrDef.getAttributeEncoders());
+        final List a = new ArrayList(attrDef.getAttributeEncoders());
 
         final SAML2StringAttributeEncoder saml2;
         final SAML1StringAttributeEncoder saml1;

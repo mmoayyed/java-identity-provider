@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.impl;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
@@ -73,7 +73,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
 
         registerBeanDefinitionParser(AttributeResolverParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME, new ResolverPluginDependencyParser());
         registerBeanDefinitionParser(InputDataConnectorParser.ELEMENT_NAME, new InputDataConnectorParser());
         registerBeanDefinitionParser(InputAttributeDefinitionParser.ELEMENT_NAME, new InputAttributeDefinitionParser());
 

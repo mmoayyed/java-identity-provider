@@ -28,17 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.MetricContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -47,7 +36,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
+
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Base class for all {@link ResolverPlugin}s.
@@ -71,8 +71,14 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     /** Criterion that must be met for this plugin to be active for the given request. */
     @Nullable private Predicate<ProfileRequestContext> activationCondition;
 
-    /** IDs of the {@link ResolverPlugin}s this plug-in depends on. */
-    @Nonnull @NonnullElements private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
+    /** The {@link ResolverAttributeDefinitionDependency}s this plug-in depends on. */
+    @Nonnull @NonnullElements private Set<ResolverAttributeDefinitionDependency> attributeDependencies =
+            Collections.emptySet();
+    
+    /** The {@link ResolverDataConnectorDependency}s this plug-in depends on. */
+    @Nonnull @NonnullElements private Set<ResolverDataConnectorDependency> dataConnectorDependencies =
+            Collections.emptySet();
+
 
     /** {@inheritDoc} */
     @Override public boolean isPropagateResolutionExceptions() {
@@ -124,31 +130,60 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> pred) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        activationCondition = Constraint.isNotNull(pred, "Activiation condition cannot be null");
+        activationCondition = Constraint.isNotNull(pred, "Activation condition cannot be null");
     }
 
+    /**
+     * Gets the unmodifiable list of attributeDependencies for this plugin.
+     * 
+     * @return unmodifiable list of dependencies for this plugin, never null
+     */
+    @Override @NonnullAfterInit @NonnullElements @Unmodifiable public Set<ResolverAttributeDefinitionDependency>
+            getAttributeDependencies() {
+        return attributeDependencies;
+    }
+    
     /**
      * Gets the unmodifiable list of dependencies for this plugin.
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
-    @Override @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies() {
-        return dependencies;
+    @Override @NonnullAfterInit @NonnullElements @Unmodifiable public Set<ResolverDataConnectorDependency>
+            getDataConnectorDependencies() {
+        return dataConnectorDependencies;
     }
+
 
     /**
      * Sets the list of dependencies for this plugin.
      * 
-     * @param pluginDependencies unmodifiable list of dependencies for this plugin
+     * @param dependencies unmodifiable list of dependencies for this plugin
      */
-    public void setDependencies(@Nullable @NullableElements final Set<ResolverPluginDependency> pluginDependencies) {
+    public void setAttributeDependencies(@Nullable @NullableElements
+            final Set<ResolverAttributeDefinitionDependency> dependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>();
-        CollectionSupport.addIf(checkedDeps, pluginDependencies, Predicates.notNull());
-        dependencies = Collections.unmodifiableSet(checkedDeps);
+        final HashSet<ResolverAttributeDefinitionDependency> checkedDeps = new HashSet<>();
+        CollectionSupport.addIf(checkedDeps, dependencies, Predicates.notNull());
+        attributeDependencies = Collections.unmodifiableSet(checkedDeps);
     }
+    
+    /**
+     * Sets the list of dependencies for this plugin.
+     * 
+     * @param dependencies unmodifiable list of dependencies for this plugin
+     */
+    public void setDataConnectorDependencies(@Nullable @NullableElements
+            final Set<ResolverDataConnectorDependency> dependencies) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        final HashSet<ResolverDataConnectorDependency> checkedDeps = new HashSet<>();
+        CollectionSupport.addIf(checkedDeps, dependencies, Predicates.notNull());
+        dataConnectorDependencies = Collections.unmodifiableSet(checkedDeps);
+    }
+
 
     /**
      * Performs the attribute resolution for this plugin.
@@ -226,19 +261,14 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     /** {@inheritDoc} */
     @Override protected void doDestroy() {
         activationCondition = Predicates.alwaysFalse();
-        dependencies = Collections.emptySet();
-
+        attributeDependencies = Collections.emptySet();
+        dataConnectorDependencies = Collections.emptySet();
         super.doDestroy();
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
-        // rebuild the hash set - we may have modified the dependencies in the
-        // child class initialization.
-        final HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>(dependencies);
-        dependencies = ImmutableSet.copyOf(checkedDeps);
     }
 
     /** {@inheritDoc} */

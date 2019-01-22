@@ -17,16 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import org.bouncycastle.util.Arrays;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIDDataConnectorParser;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.bouncycastle.util.Arrays;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link StoredIDDataConnectorParser}
@@ -47,7 +46,7 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
     @Test public void withSalt() throws ComponentInitializationException {
         final StoredIDDataConnector connector = getDataConnector("resolver/stored.xml", StoredIDDataConnector.class);
         
-        ResolverAttributeDefinitionDependency attrib = (ResolverAttributeDefinitionDependency) connector.getDependencies().iterator().next();
+        final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
         Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
@@ -55,7 +54,7 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
 
     @Test public void withOutSalt() throws ComponentInitializationException {
         final StoredIDDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", StoredIDDataConnector.class);
-        ResolverAttributeDefinitionDependency attrib = (ResolverAttributeDefinitionDependency) connector.getDependencies().iterator().next();
+        final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
         Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         testIt(connector);
     }

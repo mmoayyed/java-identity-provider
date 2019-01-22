@@ -63,7 +63,8 @@ public class PluginDependencySupportTest {
 
         final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Collections.singletonList((ResolverPluginDependency) new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.<ResolverDataConnectorDependency>emptyList(),
                         ResolverTestSupport.EPA_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -81,7 +82,8 @@ public class PluginDependencySupportTest {
 
         final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Collections.singletonList((ResolverPluginDependency)new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.<ResolverDataConnectorDependency>emptyList(),
                         ResolverTestSupport.EPA_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -102,7 +104,9 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAttributeNames(Collections.singletonList(ResolverTestSupport.EPE_ATTRIB_ID));
         final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList((ResolverPluginDependency) depend),
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        Collections.<ResolverAttributeDefinitionDependency>emptyList(),
+                        Collections.singletonList(depend),
                         ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -124,7 +128,9 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAttributeNames(Collections.singleton(ResolverTestSupport.EPE_ATTRIB_ID));
         final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList((ResolverPluginDependency)depend),
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        Collections.<ResolverAttributeDefinitionDependency>emptyList(),
+                        Collections.singletonList(depend),
                         ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -147,7 +153,9 @@ public class PluginDependencySupportTest {
         depend.setAttributeNames(Lists.newArrayList(ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPA_ATTRIB_ID));
 
         final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList((ResolverPluginDependency)depend),
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        Collections.<ResolverAttributeDefinitionDependency>emptyList(),
+                        Collections.singletonList(depend),
                         ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -171,7 +179,9 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAllAttributes(true);
         final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList((ResolverPluginDependency)depend),
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        Collections.<ResolverAttributeDefinitionDependency>emptyList(),
+                        Collections.singletonList(depend),
                         ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -203,7 +213,8 @@ public class PluginDependencySupportTest {
         dependConnector.setAttributeNames(Collections.singleton(ResolverTestSupport.EPA_ATTRIB_ID));
         final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Arrays.asList(dependConnector, new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList(dependConnector),
                         ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
@@ -234,7 +245,8 @@ public class PluginDependencySupportTest {
 
         final Map<String, List<IdPAttributeValue<?>>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
+                        Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList(depend));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -273,7 +285,8 @@ public class PluginDependencySupportTest {
         depend.setAttributeNames(Collections.singleton(ResolverTestSupport.EPA_ATTRIB_ID));
         final Map<String, List<IdPAttributeValue<?>>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
+                        Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        Collections.singletonList(depend));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);

@@ -32,6 +32,8 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -66,7 +68,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
     @Test public void empty() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
 
         final IdPAttribute result =
@@ -79,9 +81,9 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
+        defn.setAttributeDependencies(dependencySet);
         defn.initialize();
 
         // And resolve
@@ -120,13 +122,13 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(values);
         
-        final ResolverPluginDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
+        final ResolverDataConnectorDependency depend = TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
         
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
-        defn.setDependencies(Collections.singleton(depend));
+        defn.setDataConnectorDependencies(Collections.singleton(depend));
         defn.initialize();
 
         // And resolve
@@ -159,12 +161,12 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
     @Test public void nullIssuerID() throws ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
+        defn.setAttributeDependencies(dependencySet);
         defn.initialize();
         final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
@@ -186,12 +188,12 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
         final SAML1NameIdentifierAttributeDefinition defn2 = new SAML1NameIdentifierAttributeDefinition();
         defn2.setId(SECOND_ATTRIBUTE_NAME);
-        defn2.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn2.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TEST_ATTRIBUTE_NAME));
-        defn2.setDependencies(dependencySet);
+        defn2.setAttributeDependencies(dependencySet);
         defn2.initialize();
 
         // And resolve
@@ -215,12 +217,12 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
     @Test public void singleValueWithOptions() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
+        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverAttributeDefinitionDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
+        defn.setAttributeDependencies(dependencySet);
         defn.setNameIdFormat(ALTERNATIVE_FORMAT);
         defn.setNameIdQualifier(ALTERNATE_QUALIFIER);
         defn.initialize();

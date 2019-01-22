@@ -198,7 +198,10 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final List<IdPAttributeValue<?>> unmappedResults =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        getAttributeDependencies(),
+                        getDataConnectorDependencies(),
+                        getId());
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
         // Bucket for results
@@ -241,7 +244,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (getDependencies().isEmpty()) {
+        if (getAttributeDependencies().isEmpty() && getDataConnectorDependencies().isEmpty()) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
                     + "': no dependencies were configured");
         }

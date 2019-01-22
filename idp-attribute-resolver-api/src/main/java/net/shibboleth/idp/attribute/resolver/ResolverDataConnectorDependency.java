@@ -23,20 +23,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A Dependency that references to an Data Connector.
  */
-public final class ResolverDataConnectorDependency extends ResolverPluginDependency {
+public final class ResolverDataConnectorDependency  {
 
+    /** ID of the plugin that will produce the attribute. */
+    @Nonnull @NotEmpty private final String dependencyPluginId;
+
+    
     /** Whether to depend on all the connector's attributes. */
     private boolean allAttributes;
     
@@ -49,11 +50,21 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
      * @param pluginId ID of dependency
      */
     public ResolverDataConnectorDependency(@ParameterName(name="pluginId") final String pluginId) {
-        super(pluginId);
-        
+        dependencyPluginId = pluginId;
         allAttributes = false;
         attributeNames = Collections.emptySet();
     }
+    
+    /**
+     * Gets the ID of the plugin that will produce the attribute.
+     * 
+     * @return ID of the plugin that will produce the attribute, never null or empty
+     */
+    @Nonnull public String getDependencyPluginId() {
+        return dependencyPluginId;
+    }
+
+
 
     /**
      * Get whether all the connector's attributes are part of the dependency.
@@ -90,18 +101,4 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
     public void setAttributeNames(@Nonnull @NotEmpty final Collection<String> names) {
         attributeNames = new HashSet<>(StringSupport.normalizeStringCollection(names));
     }
-   
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated Use {@link #setAttributeNames} instead
-     * @see        #setAttributeNames
-     */
-    @Override @Deprecated public void setDependencyAttributeId(@Nullable final String attributeId) {
-        DeprecationSupport.warn(ObjectType.METHOD,
-                "ResolverDataConnectorDependency#setDependencyAttributeId(String)",
-                null, "#setAttributeNames(Collection<String>)");
-        super.setDependencyAttributeId(attributeId);
-    }
-
 }

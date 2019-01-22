@@ -251,7 +251,9 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
             final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                     PluginDependencySupport.getAllAttributeValues(
-                            (AttributeResolverWorkContext) input[1], getDependencies());
+                            (AttributeResolverWorkContext) input[1],
+                            getAttributeDependencies(),
+                            getDataConnectorDependencies());
 
             for (final Entry<String,List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
                 log.trace("{} Adding dependent attribute '{}' with the following values to the script context: {}",

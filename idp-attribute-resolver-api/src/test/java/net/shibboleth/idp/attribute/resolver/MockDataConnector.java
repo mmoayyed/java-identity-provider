@@ -65,8 +65,13 @@ public class MockDataConnector extends AbstractDataConnector {
      * @param newHashSet
      * @throws ComponentInitializationException 
      */
-    public MockDataConnector(String id, Map<String, IdPAttribute> connectorValues, Set<ResolverPluginDependency> newHashSet) throws ComponentInitializationException {
-        setDependencies(newHashSet);
+    public MockDataConnector(String id, 
+            Map<String, IdPAttribute> connectorValues, 
+            Set<ResolverAttributeDefinitionDependency> attrDepends, 
+            Set<ResolverDataConnectorDependency> dcDepends
+            ) throws ComponentInitializationException {
+        setAttributeDependencies(attrDepends);
+        setDataConnectorDependencies(dcDepends);
         setId(id);
         values = connectorValues;
         initialize();

@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,88 +58,63 @@ public final class PluginDependencySupport {
      * </p>
      * 
      * @param workContext current attribute resolver work context
-     * @param dependencies set of dependencies
+     * @param attributeDependencies set of dependencies on attribute definitions
+     * @param dataConnectorDependencies set of dependencies on data connector definitions
      * @param attributeDefinitionId the attributeID that these values will be associated with.
      * @return the merged value set. Returns an empty set if we were given a DataConnector as a dependency, but not
      *         attribute name
      */
+    // Checkstyle: MethodLength|CyclomaticComplexity OFF
     @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
-            @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies,
+            @Nonnull @NonnullElements final Collection<ResolverAttributeDefinitionDependency> attributeDependencies,
+            @Nonnull @NonnullElements final Collection<ResolverDataConnectorDependency> dataConnectorDependencies,
             @Nonnull final String attributeDefinitionId) {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
-        Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
+        Constraint.isNotNull(attributeDependencies, "Resolver dependency collection cannot be null");
 
         final List<IdPAttributeValue<?>> values = new ArrayList<>();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("GetMergedAttribute Values for {}", attributeDefinitionId);
+        }
 
-        for (final ResolverPluginDependency dependency : dependencies) {
-            Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
+        for (final ResolverAttributeDefinitionDependency attributeDependency : attributeDependencies) {
+            Constraint.isNotNull(attributeDependency, "Resolver attribute dependency cannot be null");
 
-            final String pluginId = dependency.getDependencyPluginId();
+            final String attributeId = attributeDependency.getDependencyPluginId();
+            final ResolvedAttributeDefinition attributeDefinition =
+                    workContext.getResolvedIdPAttributeDefinitions().get(attributeId);
+            final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Merging Attribute Values from Attribute {}", attributeId);
+            }
+            mergeAttributeValues(resolvedAttribute, values);
+        }
 
-            if (dependency instanceof ResolverAttributeDefinitionDependency) {
-                final ResolvedAttributeDefinition attributeDefinition =
-                        workContext.getResolvedIdPAttributeDefinitions().get(pluginId);
-                final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
-                mergeAttributeValues(resolvedAttribute, values);
-            } else if (dependency instanceof ResolverDataConnectorDependency) {
-                // Merge all specified attribute values.
-                final ResolverDataConnectorDependency dataConnectorDependency =
-                        (ResolverDataConnectorDependency) dependency;
-                final ResolvedDataConnector dataConnector =
-                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
-                if (dataConnector != null) { 
-                    final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
-                    if (null != resolvedAttrs) {
-                        for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
-                            if (dataConnectorDependency.isAllAttributes()
-                                    || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
-                                mergeAttributeValues(entry.getValue(), values);
-                            }
+        for (final ResolverDataConnectorDependency dataConnectorDependency : dataConnectorDependencies) {
+            Constraint.isNotNull(dataConnectorDependency, "Resolver data connector dependency cannot be null");
+
+            final String dataConnectorId = dataConnectorDependency.getDependencyPluginId();
+            final ResolvedDataConnector dataConnector = workContext.getResolvedDataConnectors().get(dataConnectorId);
+            if (dataConnector != null) {
+                final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
+                if (null != resolvedAttrs) {
+                    for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
+                        if (dataConnectorDependency.isAllAttributes()
+                                || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
+                            mergeAttributeValues(entry.getValue(), values);
                         }
-                    }
-                }
-            } else {
-                final ResolvedAttributeDefinition attributeDefinition =
-                        workContext.getResolvedIdPAttributeDefinitions().get(pluginId);
-                final String dependencyAttributeId = dependency.getDependencyAttributeId();
-                if (attributeDefinition != null) {
-                    if (null == dependencyAttributeId) {
-                        LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified" +
-                                " as a <Dependency> will be used.", attributeDefinitionId, pluginId);
-                    } else if (!dependencyAttributeId.equals(pluginId)) {
-                        LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}', " +
-                                "but the attribute definition '{}', specified as a <Dependency> will be used as well.",
-                                attributeDefinitionId, dependencyAttributeId, pluginId);
-                    }
-    
-                    final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
-                    mergeAttributeValues(resolvedAttribute, values);
-                    continue;
-                }
-    
-                final ResolvedDataConnector dataConnector =
-                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
-                if (dataConnector != null) {
-                    if (dependency.getDependencyAttributeId() == null) {
-                        LOG.error("Attribute definition '{}' has a data connector"
-                                + " dependency '{}' but no sourceAttributeID.", attributeDefinitionId,
-                                dataConnector.getId());
-                        return Collections.EMPTY_LIST;
-                    }
-    
-                    if (null != dataConnector.getResolvedAttributes()) {
-                        final IdPAttribute resolvedAttribute =
-                                dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId());
-                        mergeAttributeValues(resolvedAttribute, values);
-                        continue;
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Merging Attribute {} from DataConnecteor {}",
+                                    entry.getValue(), dataConnectorId);
+                        }
                     }
                 }
             }
         }
-
         return values;
     }
+    // Checkstyle: MethodLength|CyclomaticComplexity ON
 
     /**
      * Gets the values from all dependencies. Attributes, with the same identifier but from different resolver plugins,
@@ -155,63 +129,62 @@ public final class PluginDependencySupport {
      * </p>
      * 
      * @param workContext current attribute resolver work context
-     * @param dependencies set of dependencies
+     * @param dataConnectorDependencies set of dependencies on data connector definitions
+     * @param attributeDependencies set of dependencies
      * 
      * @return the merged value set
      */
+    // Checkstyle: MethodLength|CyclomaticComplexity OFF
     public static Map<String, List<IdPAttributeValue<?>>> getAllAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
-            @Nonnull final Collection<ResolverPluginDependency> dependencies) {
+            @Nonnull final Collection<ResolverAttributeDefinitionDependency> attributeDependencies,
+            @Nonnull @NonnullElements final Collection<ResolverDataConnectorDependency> dataConnectorDependencies) {
 
         final HashMap<String, List<IdPAttributeValue<?>>> result = new HashMap<>();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting all Attribute Values");
+        }
 
-        for (final ResolverPluginDependency dependency : dependencies) {
-            Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
+        for (final ResolverAttributeDefinitionDependency dependency : attributeDependencies) {
+            Constraint.isNotNull(dependency, "Attribute Definition dependency cannot be null");
 
-            if (dependency instanceof ResolverAttributeDefinitionDependency) {
-                final ResolvedAttributeDefinition attributeDefinition =
-                        workContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
-                if (attributeDefinition != null) {
-                    addAttribute(attributeDefinition.getResolvedAttribute(), result);
+            final String attributeId = dependency.getDependencyPluginId();
+            final ResolvedAttributeDefinition attributeDefinition =
+                    workContext.getResolvedIdPAttributeDefinitions().get(attributeId);
+            if (attributeDefinition != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Adding Attribute {}", attributeId);
                 }
-            } else if (dependency instanceof ResolverDataConnectorDependency) {
-                // Just add those attributes specified
-                final ResolverDataConnectorDependency dataConnectorDependency =
-                        (ResolverDataConnectorDependency) dependency;
-                final ResolvedDataConnector dataConnector =
-                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
-                if (dataConnector != null) { 
-                    final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
-                    if (null != resolvedAttrs) {
-                        for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
-                            if (dataConnectorDependency.isAllAttributes()
-                                    || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
-                                addAttribute(entry.getValue(), result);
+                addAttribute(attributeDefinition.getResolvedAttribute(), result);
+            }
+        }
+        
+        for (final ResolverDataConnectorDependency dataConnectorDependency : dataConnectorDependencies) {
+            Constraint.isNotNull(dataConnectorDependency, "Data Connector dependency cannot be null");
+
+            // Just add those attributes specified
+            final String dataConnectorId = dataConnectorDependency.getDependencyPluginId();
+            final ResolvedDataConnector dataConnector =
+                    workContext.getResolvedDataConnectors().get(dataConnectorId);
+            if (dataConnector != null) { 
+                final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
+                if (null != resolvedAttrs) {
+                    for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
+                        if (dataConnectorDependency.isAllAttributes()
+                                || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
+                            addAttribute(entry.getValue(), result);
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Adding Attribute {} from Data Connector {}",
+                                        entry.getValue(), dataConnectorId);
                             }
                         }
                     }
                 }
-            } else {
-                // deprecated behavior
-                final ResolvedAttributeDefinition attributeDefinition =
-                        workContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
-                if (attributeDefinition != null) {
-                    addAttribute(attributeDefinition.getResolvedAttribute(), result);
-                    continue;
-                }
-    
-                final ResolvedDataConnector dataConnector =
-                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
-                if (dataConnector != null) {
-                    if (null != dataConnector.getResolvedAttributes()) {
-                        mergeAttributes(dataConnector.getResolvedAttributes(), result);
-                    }
-                }
             }
         }
-
         return result;
     }
+    // Checkstyle: MethodLength|CyclomaticComplexity ON
 
     /**
      * Adds the values of the attributes to the target collection of attribute values indexes by attribute ID.

@@ -188,7 +188,10 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
         List<? extends IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
-        inputValues = PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
+        inputValues = PluginDependencySupport.getMergedAttributeValues(workContext,
+                getAttributeDependencies(),
+                getDataConnectorDependencies(),
+                getId());
 
         if (null != inputValues && !inputValues.isEmpty()) {
             if (1 == inputValues.size()) {

@@ -91,9 +91,11 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
-        log.debug("{} Dependencies {} provided unmapped values of {}", getLogPrefix(), getDependencies(),
-                dependencyValues);
+                PluginDependencySupport.getMergedAttributeValues(workContext, 
+                        getAttributeDependencies(), 
+                        getDataConnectorDependencies(), 
+                        getId());
+        log.debug("{} Dependencies provided unmapped values of {}", getLogPrefix(), dependencyValues);
 
         final List<IdPAttributeValue<?>> valueList = new ArrayList<>(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
@@ -145,7 +147,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (getDependencies().isEmpty()) {
+        if (getDataConnectorDependencies().isEmpty() && getAttributeDependencies().isEmpty()) {
             throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
     }

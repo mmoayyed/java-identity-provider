@@ -89,7 +89,10 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
+                PluginDependencySupport.getMergedAttributeValues(workContext,
+                        getAttributeDependencies(), 
+                        getDataConnectorDependencies(), 
+                        getId());
 
         final List<StringAttributeValue> valueList = new ArrayList<>(dependencyValues.size());
 
@@ -120,7 +123,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + "': no scope was configured");
         }
 
-        if (getDependencies().isEmpty()) {
+        if (getDataConnectorDependencies().isEmpty() && getAttributeDependencies().isEmpty()) {
             throw new ComponentInitializationException(getLogPrefix() + "': no dependencies were configured");
         }
     }

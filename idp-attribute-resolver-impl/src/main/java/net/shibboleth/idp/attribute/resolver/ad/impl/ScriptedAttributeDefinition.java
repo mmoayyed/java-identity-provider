@@ -234,7 +234,9 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
             final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                     PluginDependencySupport.getAllAttributeValues(
-                            (AttributeResolverWorkContext) input[1], getDependencies());
+                            (AttributeResolverWorkContext) input[1], 
+                            getAttributeDependencies(), 
+                            getDataConnectorDependencies());
 
             if (dependencyAttributes.containsKey(getId())) {
                 log.debug("{} The attribute ID to be populated is a dependency, not created", getLogPrefix());

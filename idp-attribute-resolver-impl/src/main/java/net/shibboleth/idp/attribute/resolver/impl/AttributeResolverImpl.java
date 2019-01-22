@@ -52,10 +52,8 @@ import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPlugin;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -414,29 +412,15 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         Constraint.isNotNull(plugin, "Plugin dependency can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
-        if (plugin.getDependencies().isEmpty()) {
-            return;
-        }
-
         log.debug("{} Resolving dependencies for '{}'", logPrefix, plugin.getId());
 
-        for (final ResolverPluginDependency dependency : plugin.getDependencies()) {
-            final String pluginId = dependency.getDependencyPluginId();
-            if (dependency instanceof ResolverAttributeDefinitionDependency) {
-                resolveAttributeDefinition(pluginId, resolutionContext);                
-            } else if (dependency instanceof ResolverDataConnectorDependency) {
-                resolveDataConnector(pluginId, resolutionContext);
-            } else if (attributeDefinitions.containsKey(pluginId)) {
-                resolveAttributeDefinition(pluginId, resolutionContext);
-            } else if (dataConnectors.containsKey(pluginId)) {
-                resolveDataConnector(pluginId, resolutionContext);
-            } else {
-                // This will not happen for as long as we test this in initialization
-                throw new ResolutionException("Plugin '" + plugin.getId() + "' contains a dependency on plugin '"
-                        + pluginId + "' which does not exist.");
-            }
+        for (final ResolverAttributeDefinitionDependency attrDependency : plugin.getAttributeDependencies()) {
+            resolveAttributeDefinition(attrDependency.getDependencyPluginId(), resolutionContext);                
         }
 
+        for (final ResolverDataConnectorDependency dependency : plugin.getDataConnectorDependencies()) { 
+            resolveDataConnector(dependency.getDependencyPluginId(), resolutionContext);
+        }
         log.debug("{} Finished resolving dependencies for '{}'", logPrefix, plugin.getId());
     }
 
@@ -559,40 +543,53 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             final Set<String> checkedPlugins) throws ComponentInitializationException {
         final String pluginId = plugin.getId();
 
-        ResolverPlugin<?> dependencyPlugin;
-        for (final ResolverPluginDependency dependency : plugin.getDependencies()) {
+        for (final ResolverAttributeDefinitionDependency attrDependency : plugin.getAttributeDependencies()) {
+            final AttributeDefinition dependencyAttribute;
+            if (checkedPlugins.contains(pluginId)) {
+                continue;
+            }
+
+            if (circularCheckPluginId.equals(attrDependency.getDependencyPluginId())) {
+                throw new ComponentInitializationException(logPrefix + " Plugin '" + circularCheckPluginId
+                        + "' and attribute definition '" + attrDependency.getDependencyPluginId()
+                        + "' have a circular dependency on each other.");
+            }
+            
+            dependencyAttribute = attributeDefinitions.get(attrDependency.getDependencyPluginId());
+            if (dependencyAttribute == null) {
+                throw new ComponentInitializationException(logPrefix + " Plugin '" + plugin.getId()
+                        + "' has a dependency on attribute definition '" + attrDependency.getDependencyPluginId()
+                        + "' which doesn't exist");
+            }
+
+            checkPlugInDependencies(circularCheckPluginId, dependencyAttribute, checkedPlugins);
+            checkedPlugins.add(pluginId);
+        }
+        
+        for (final ResolverDataConnectorDependency dependency : plugin.getDataConnectorDependencies()) {
+            final ResolverPlugin<?> dependencyDataConnector;
+            
             if (checkedPlugins.contains(pluginId)) {
                 continue;
             }
 
             if (circularCheckPluginId.equals(dependency.getDependencyPluginId())) {
                 throw new ComponentInitializationException(logPrefix + " Plugin '" + circularCheckPluginId
-                        + "' and plugin '" + dependency.getDependencyPluginId()
+                        + "' and data connector '" + dependency.getDependencyPluginId()
                         + "' have a circular dependency on each other.");
             }
-            final String dependencyType;
-            if (dependency instanceof ResolverAttributeDefinitionDependency) {
-                dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
-                dependencyType = "Attribute Definition";
-            } else if (dependency instanceof ResolverDataConnectorDependency) {
-                dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());                
-                dependencyType = "Data Connector";
-            } else {
-                dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
-                if (dependencyPlugin == null) {
-                    dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
-                }
-                dependencyType = "Deprecated ";
-            }
-            if (dependencyPlugin == null) {
+            dependencyDataConnector = dataConnectors.get(dependency.getDependencyPluginId());                
+
+            if (dependencyDataConnector == null) {
                 throw new ComponentInitializationException(logPrefix + " Plugin '" + plugin.getId()
-                        + "' has a " + dependencyType + " dependency on plugin '" + dependency.getDependencyPluginId()
+                        + "' has a dependency on data connector '" + dependency.getDependencyPluginId()
                         + "' which doesn't exist");
             }
 
-            checkPlugInDependencies(circularCheckPluginId, dependencyPlugin, checkedPlugins);
+            checkPlugInDependencies(circularCheckPluginId, dependencyDataConnector, checkedPlugins);
             checkedPlugins.add(pluginId);
         }
+
     }
 
     /** {@inheritDoc} */
