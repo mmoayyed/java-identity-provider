@@ -82,6 +82,11 @@
             <artifactId>ldaptive-unboundid</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         
         <!-- Test Dependencies -->
 
@@ -211,10 +216,19 @@
                                     <groupId>ch.qos.logback</groupId>
                                     <artifactId>logback-core</artifactId>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>${slf4j.groupId}</groupId>
-                                    <artifactId>jcl-over-slf4j</artifactId>
-                                </artifactItem>
+						        <!-- Support for JVM metrics, per IDP-1205. -->
+						        <artifactItem>
+						            <groupId>io.dropwizard.metrics</groupId>
+						            <artifactId>metrics-jvm</artifactId>
+						        </artifactItem>
+						        <artifactItem>
+						            <groupId>org.ldaptive</groupId>
+						            <artifactId>ldaptive-unboundid</artifactId>
+						        </artifactItem>
+						        <artifactItem>
+						            <groupId>com.unboundid</groupId>
+						            <artifactId>unboundid-ldapsdk</artifactId>
+						        </artifactItem>
                             </artifactItems>
                             <outputDirectory>${idp.assemblyDirectory}/webapp/WEB-INF/lib/</outputDirectory>
                         </configuration>
