@@ -28,16 +28,14 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Support class for working with {@link ResolverPluginDependency}. */
 public final class PluginDependencySupport {
@@ -50,38 +48,6 @@ public final class PluginDependencySupport {
 
     }
 
-    /**
-     * Gets the values, as a single list, from all dependencies. This method only supports dependencies which contain an
-     * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It is
-     * therefore used inside Attribute definitions which only process a single attribute as input.
-     * 
-     * <p>
-     * <strong>NOTE</strong>, this method does *not* actually trigger any attribute definition or data connector
-     * resolution, it only looks for the cached results of previously resolved plugins within the current work context.
-     * </p>
-     * 
-     * @param workContext current attribute resolver work context
-     * @param dependencies set of dependencies
-     * @deprecated use  {@link PluginDependencySupport#getMergedAttributeValues(
-     *                      AttributeResolverWorkContext, Collection, String)}
-     * @return the merged value set. Returns an empty set if we were given a DataConnector as a dependency, but not
-     *         attribute name
-     */
-    @Deprecated @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
-            @Nonnull final AttributeResolverWorkContext workContext,
-            @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
-        Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
-        Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
-        
-        DeprecationSupport.warn(ObjectType.METHOD, 
-                "PluginDependencySupport#getMergedAttributeValues(AttributeResolverWorkContext, Collection)", 
-                null, 
-                "PluginDependencySupport#getMergedAttributeValues(AttributeResolverWorkContext, Collection, String)");
-        
-        return getMergedAttributeValues(workContext, dependencies, "<unknown>");
-    }
-
-// Checkstyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Gets the values, as a single list, from all dependencies. This method only supports dependencies which contain an
      * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It is
@@ -175,9 +141,7 @@ public final class PluginDependencySupport {
 
         return values;
     }
-// Checkstyle: MethodLength|CyclomaticComplexity ON
 
-// Checkstyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Gets the values from all dependencies. Attributes, with the same identifier but from different resolver plugins,
      * will have their values merged into a single list within this method's returned map. This method is the equivalent
@@ -248,7 +212,6 @@ public final class PluginDependencySupport {
 
         return result;
     }
-// Checkstyle: MethodLength|CyclomaticComplexity ON
 
     /**
      * Adds the values of the attributes to the target collection of attribute values indexes by attribute ID.
