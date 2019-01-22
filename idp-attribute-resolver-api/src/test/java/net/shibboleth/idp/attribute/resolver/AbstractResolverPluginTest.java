@@ -131,18 +131,21 @@ public class AbstractResolverPluginTest {
         adeps.add(dep1);
         adeps.add(dep2);
 
-        ddeps.add(depd1);
-        ddeps.add(depd1);
-        ddeps.add(depd2);
-
         plugin.setAttributeDependencies(adeps);
-        plugin.setDataConnectorDependencies(ddeps);
-        
         Assert.assertNotNull(plugin.getAttributeDependencies());
-        Assert.assertTrue(plugin.getAttributeDependencies().size() == 2);
+        Assert.assertEquals(plugin.getAttributeDependencies().size(), 2);
 
+        ddeps.add(depd1);
+        Assert.assertEquals(ddeps.size(),1);
+        ddeps.add(depd1);
+        Assert.assertEquals(ddeps.size(),1);
+        ddeps.add(depd2);
+        Assert.assertEquals(ddeps.size(),2);
+
+
+        plugin.setDataConnectorDependencies(ddeps);        
         Assert.assertNotNull(plugin.getDataConnectorDependencies());
-        Assert.assertTrue(plugin.getDataConnectorDependencies().size() == 2);
+        Assert.assertEquals(plugin.getDataConnectorDependencies().size(), 2);
 
         try {
             plugin.getAttributeDependencies().add(dep1);

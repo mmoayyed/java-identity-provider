@@ -24,6 +24,10 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import org.bouncycastle.util.Arrays;
+
+import java.util.Objects;
+
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -100,5 +104,34 @@ public final class ResolverDataConnectorDependency  {
      */
     public void setAttributeNames(@Nonnull @NotEmpty final Collection<String> names) {
         attributeNames = new HashSet<>(StringSupport.normalizeStringCollection(names));
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        final int[] input = {getAttributeNames().hashCode(), getDependencyPluginId().hashCode(), isAllAttributes()?1:0};
+        return Arrays.hashCode(input);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        final ResolverDataConnectorDependency other = (ResolverDataConnectorDependency) obj;
+        
+        return Objects.equals(getDependencyPluginId(), other.getDependencyPluginId())
+                && Objects.equals(getAttributeNames(), other.getAttributeNames()) 
+                && (isAllAttributes() == other.isAllAttributes());
     }
 }
