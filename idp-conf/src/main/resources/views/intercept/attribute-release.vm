@@ -79,7 +79,7 @@
                                     <td>
                                         #foreach ($value in $attribute.values)
                                             #if ($replaceDollarWithNewline)
-                                                #set ($encodedValue = $encoder.encodeForHTML($value.getDisplayValue()).replaceAll($encoder.encodeForHTML("$"),"<br>"))
+                                                #set ($encodedValue = $encoder.encodeForHTML($value.getDisplayValue()).replaceAll($encoder.encodeForHTML('$'),"<br>"))
                                             #else
                                                 #set ($encodedValue = $encoder.encodeForHTML($value.getDisplayValue()))
                                             #end
