@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
@@ -280,7 +281,12 @@ public class LDAPDataConnectorTest {
     @Test(expectedExceptions={ResolutionException.class}) public void resolveTemplateExcept() throws ComponentInitializationException, ResolutionException {
         final TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
         builder.setTemplateText("(uid=${resolutionContext.AttributeRecipientID.toString().substring(99, 106)})");
-        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        final Properties props = new Properties();
+        // TODO, should expose a way to set the strict prop underneath
+        props.setProperty("runtime.references.strict", "true");
+        props.setProperty("string.resource.loader.class", "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
+        props.setProperty("resource.loader", "classpath, string");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine(props));
         builder.initialize();
         resolve(builder);
     }
