@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <logger name="net.shibboleth.idp.attribute" level="TRACE"/>
+    <logger name="net.shibboleth.idp.attribute" level="DEBUG"/>
 
     <logger name="net.shibboleth.idp.saml" level="DEBUG"/>
 

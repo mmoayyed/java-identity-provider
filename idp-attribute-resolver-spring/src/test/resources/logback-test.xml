@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <logger name="net.shibboleth.idp.attribute.resolver.spring" level="TRACE"/>
+    <logger name="net.shibboleth.idp.attribute.resolver.spring" level="DEBUG"/>
     <logger name="net.shibboleth.idp.attribute.resolver" level="DEBUG"/>
     <logger name="net.shibboleth.idp.saml.attribute.resolver" level="DEBUG"/>
     <logger name="net.shibboleth.ext.spring" level="DEBUG"/>
-    <logger name="net.shibboleth.ext.spring.util" level="TRACE"/>
+    <logger name="net.shibboleth.ext.spring.util" level="DEBUG"/>
     <logger name="org.springframework" level="WARN"/>
     
 
