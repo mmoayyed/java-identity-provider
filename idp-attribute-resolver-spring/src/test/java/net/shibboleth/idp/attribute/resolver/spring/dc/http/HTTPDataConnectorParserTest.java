@@ -267,8 +267,6 @@ public class HTTPDataConnectorParserTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         
-        connector.resolve(context);
-        
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
         
         Assert.assertEquals(attrs.size(), 2);
