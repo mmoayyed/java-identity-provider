@@ -27,6 +27,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
+import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.auth.AbstractSearchDnResolver;
@@ -94,7 +95,7 @@ public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnR
     /** Escapes LDAP attribute values added to the template context. */
     protected static class EscapingReferenceInsertionEventHandler implements ReferenceInsertionEventHandler {
 
-        @Override public Object referenceInsert(final String reference, final Object value) {
+        @Override public Object referenceInsert(final Context context, final String reference, final Object value) {
             if (value == null) {
                 return null;
             } else if (value instanceof Object[]) {

@@ -34,11 +34,11 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
+import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,7 +232,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     protected static class EscapingReferenceInsertionEventHandler implements ReferenceInsertionEventHandler {
 
         @Override
-        public Object referenceInsert(final String reference, final Object value) {
+        public Object referenceInsert(final Context context, final String reference, final Object value) {
             if (value == null) {
                 return null;
             } else if (value instanceof Object[]) {
@@ -253,7 +253,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
         }
         
         /**
-         * Returns {@link StringEscapeUtils#escapeSql(String)} if value is a string.
+         * Replaces single quotes with two single quotes if value is a {@link String}.
          * 
          * @param value to encode
          *
@@ -261,7 +261,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
          */
         private Object encode(final Object value) {
             if (value instanceof String){ 
-                return StringEscapeUtils.escapeSql((String) value);
+                return ((String) value).replace("'", "''");
             }
             return value;
         }

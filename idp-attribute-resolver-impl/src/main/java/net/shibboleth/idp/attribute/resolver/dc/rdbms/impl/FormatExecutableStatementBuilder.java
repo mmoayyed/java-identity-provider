@@ -30,8 +30,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder}. It generates the SQL statement to
  * be executed by invoking {@link String#format(String, Object...)} with
@@ -109,14 +107,18 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
             for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 for (final IdPAttributeValue<?> value : entry.getValue()) {
                     if (value.getValue() instanceof String){ 
-                        args.add(StringEscapeUtils.escapeSql((String) value.getValue()));
+                        args.add(((String) value.getValue()).replace("'", "''"));
                     } else {
                         args.add(value.getValue());
                     }
                 }
             }
         } else {
-            args.add(StringEscapeUtils.escapeSql(resolutionContext.getPrincipal()));
+            if (resolutionContext.getPrincipal() != null) {
+                args.add(resolutionContext.getPrincipal().replace("'", "''"));
+            } else {
+                args.add(null);
+            }
         }
         return String.format(sqlQuery, args.toArray());
     }
