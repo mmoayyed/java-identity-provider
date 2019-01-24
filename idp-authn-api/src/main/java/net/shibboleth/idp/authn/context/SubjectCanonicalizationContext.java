@@ -45,7 +45,7 @@ import org.opensaml.messaging.context.BaseContext;
 public class SubjectCanonicalizationContext extends BaseContext {
 
     /** Subject to canonicalize. */
-    @Nonnull private Subject subject;
+    @Nullable private Subject subject;
     
     /** Canonical principal name of subject. */
     @Nullable private String principalName;
