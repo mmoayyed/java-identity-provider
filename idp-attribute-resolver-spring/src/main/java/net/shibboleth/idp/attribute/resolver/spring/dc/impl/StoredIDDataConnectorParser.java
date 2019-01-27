@@ -91,7 +91,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
 
         if (config.hasAttributeNS(null, "retryableErrors")) {
             builder.addPropertyValue("retryableErrors",
-                    SpringSupport.getAttributeValueAsManagedList(config.getAttributeNodeNS(null, "retryableErrors")));
+                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "retryableErrors")));
         }
     }
 

@@ -372,13 +372,13 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
             
             if (configElement.hasAttributeNS(null, "acceptStatuses")) {
                 mapper.addPropertyValue("acceptStatuses",
-                        SpringSupport.getAttributeValueAsManagedList(
+                        SpringSupport.getAttributeValueAsList(
                                 configElement.getAttributeNodeNS(null, "acceptStatuses")));
             }
 
             if (configElement.hasAttributeNS(null, "acceptTypes")) {
                 mapper.addPropertyValue("acceptTypes",
-                        SpringSupport.getAttributeValueAsManagedList(
+                        SpringSupport.getAttributeValueAsList(
                                 configElement.getAttributeNodeNS(null, "acceptTypes")));
             }
 
