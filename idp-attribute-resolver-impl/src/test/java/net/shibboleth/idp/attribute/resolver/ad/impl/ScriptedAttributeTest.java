@@ -380,38 +380,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT));
     }
 
-    @Test public void workContext() throws ResolutionException, ComponentInitializationException, ScriptException,
-            IOException {
-
-        // Set the dependency on the data connector
-        final Set<ResolverAttributeDefinitionDependency> ds = new LazySet<>();
-        ds.add(TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
-        scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("work.script")));
-        scripted.setAttributeDependencies(ds);
-        scripted.initialize();
-
-        // And resolve
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
-        attrDefinitions.add(scripted);
-        attrDefinitions.add(TestSources.populatedStaticAttribute());
-
-        final Set<DataConnector> dataDefinitions = new LazySet<>();
-        dataDefinitions.add(TestSources.populatedStaticConnector());
-
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, dataDefinitions);
-        resolver.initialize();
-
-        final AttributeResolutionContext context = generateContext();
-        resolver.resolveAttributes(context);
-        final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
-        final List<IdPAttributeValue<?>> values = attribute.getValues();
-
-        Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
-    }
-
     /**
      * Test resolution of an script which looks at the provided attributes.
      * 

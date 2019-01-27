@@ -33,12 +33,17 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ad.impl.DelegatedWorkContext;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -50,16 +55,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A Data Connector which populates a series of attributes from a provided {@link ProfileRequestContext}.
  */
-@SuppressWarnings("deprecation")
 public class ScriptedDataConnector extends AbstractDataConnector {
 
     /** The id of the object where the results go. */
@@ -226,9 +224,6 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
             log.debug("{} Adding current attribute resolution contexts to script context", getLogPrefix());
             scriptContext.setAttribute("resolutionContext", input[0], ScriptContext.ENGINE_SCOPE);
-            scriptContext.setAttribute("workContext",
-                    new DelegatedWorkContext((AttributeResolverWorkContext) input[1], getLogPrefix()),
-                    ScriptContext.ENGINE_SCOPE);
             
             final ProfileRequestContext prc = prcLookupStrategy.apply((AttributeResolutionContext) input[0]);
             if (null == prc) {
