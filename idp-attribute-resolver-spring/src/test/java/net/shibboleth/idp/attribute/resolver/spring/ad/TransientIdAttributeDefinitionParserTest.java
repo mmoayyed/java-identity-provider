@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

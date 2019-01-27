@@ -19,8 +19,9 @@ package net.shibboleth.idp.attribute.resolver.spring.impl;
 
 import javax.annotation.Nonnull;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
@@ -56,8 +57,6 @@ import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringAttribut
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringNameIDEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 /** Namespace handler for the attribute resolver. */
 @SuppressWarnings("deprecation")

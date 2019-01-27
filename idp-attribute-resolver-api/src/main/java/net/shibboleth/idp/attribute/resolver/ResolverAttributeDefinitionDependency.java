@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.google.common.base.MoreObjects;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;

@@ -51,7 +51,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 /**
  * Test for prescoped attribute definitions.
  */
-@SuppressWarnings("deprecation") 
 public class PrescopedAtributeTest {
     /** The name. resolve to */
     private static final String TEST_ATTRIBUTE_NAME = "prescoped";

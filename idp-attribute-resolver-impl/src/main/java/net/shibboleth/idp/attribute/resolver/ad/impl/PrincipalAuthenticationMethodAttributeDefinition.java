@@ -42,6 +42,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
     private final Logger log = LoggerFactory.getLogger(PrincipalAuthenticationMethodAttributeDefinition.class);
 
     /** {@inheritDoc} */
+    @SuppressWarnings("deprecation")
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {

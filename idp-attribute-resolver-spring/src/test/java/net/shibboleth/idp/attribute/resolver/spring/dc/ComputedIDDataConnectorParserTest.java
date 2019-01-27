@@ -36,7 +36,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link ComputedIDDataConnectorParser}
  */
-@SuppressWarnings("deprecation")
 public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {

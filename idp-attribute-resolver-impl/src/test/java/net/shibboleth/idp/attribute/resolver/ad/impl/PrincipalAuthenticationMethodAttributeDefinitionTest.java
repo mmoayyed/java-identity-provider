@@ -41,6 +41,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         Assert.assertNull(defn.resolve(TestSources.createResolutionContext("princ", "issuer", "recipient")));
     }
     
+    @SuppressWarnings("deprecation")
     @Test
     public void usual() throws ComponentInitializationException, ResolutionException {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();

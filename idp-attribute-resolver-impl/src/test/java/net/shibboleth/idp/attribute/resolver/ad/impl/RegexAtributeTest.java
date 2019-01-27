@@ -52,7 +52,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 /**
  * Test for regex attribute definitions.
  */
-@SuppressWarnings("deprecation")
 public class RegexAtributeTest {
     
     /** The name. */

@@ -17,18 +17,18 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.springframework.beans.factory.BeanCreationException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 /**
  * test for {@link CryptoTransientIdAttributeDefinitionParser}
  */
+@SuppressWarnings("deprecation")
 public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test(enabled = false) public void noAttr() throws ComponentInitializationException {

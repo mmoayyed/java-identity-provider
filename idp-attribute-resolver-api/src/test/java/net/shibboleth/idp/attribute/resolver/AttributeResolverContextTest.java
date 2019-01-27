@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 /** Unit test for {@link AttributeResolutionContext}. */
+@SuppressWarnings("deprecation")
 public class AttributeResolverContextTest {
 
     /** Test instantiation and post-instantiation state. */
