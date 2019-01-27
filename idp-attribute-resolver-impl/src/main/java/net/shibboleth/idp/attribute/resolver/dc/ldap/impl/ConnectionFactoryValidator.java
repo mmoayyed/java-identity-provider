@@ -30,9 +30,6 @@ import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Validator implementation that invokes {@link Connection#open()} to determine if the ConnectionFactory is properly
@@ -48,45 +45,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
     
     /** Whether validate should throw, default value is <code>true</code>. */
     private boolean throwOnValidateError = true;
-    
-    /**
-     * Creates a new connection factory validator.
-     *
-     * @param factory to validate
-     * @deprecated - use the property setters
-     */
-    @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory) {
-        DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory)", 
-                null, "ConnectionFactoryValidator()");
-        setConnectionFactory(factory);
-        setThrowValidateError(true);
-        try {
-            initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
-        }
-    }
-
-    /**
-     * Creates a new connection factory validator.
-     * 
-     * @param factory to validate
-     * @param throwOnError whether {@link #validate()} should throw or log errors
-     * @deprecated - use the property setters
-     */
-    @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory, 
-            final boolean throwOnError) {
-        DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory, boolean)",
-                null, "ConnectionFactoryValidator()");
-        setConnectionFactory(factory);
-        setThrowValidateError(throwOnError);
-        try {
-            initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
-        }
-    }
-    
+       
     /**
      * Constructor.  
      *

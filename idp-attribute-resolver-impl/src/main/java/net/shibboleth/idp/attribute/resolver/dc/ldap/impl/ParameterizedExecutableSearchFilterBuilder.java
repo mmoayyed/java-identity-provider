@@ -31,9 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the search filter to
@@ -45,23 +42,6 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
     /** LDAP search filter. */
     @NonnullAfterInit private String searchFilter;
 
-    /**
-     * Constructor.
-     * 
-     * @param filter used for the LDAP search
-     * @deprecated - use the property setters
-     */
-    @Deprecated public ParameterizedExecutableSearchFilterBuilder(@Nonnull final String filter) {
-        DeprecationSupport.warn(ObjectType.METHOD, "ParameterizedExecutableSearchFilterBuilder(String)",
-                null, "ParameterizedExecutableSearchFilterBuilder()");
-        setSearchFilter(filter);
-        try {
-            initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization.");
-        }
-    }
-    
     /**
      * Constructor.  
      *
