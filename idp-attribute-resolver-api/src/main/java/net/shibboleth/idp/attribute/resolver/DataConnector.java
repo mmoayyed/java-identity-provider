@@ -26,11 +26,24 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 
 /**
  * Base class for data connector resolver plugins.
- * 
- * This interface should be considered as deprecated, and {@link DataConnectorEx} should be used instead.
  */
-@ThreadSafe @Deprecated
+@ThreadSafe
 public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>> {
+
+    /**
+     * Get how long to wait until we declare the connector (potentially) alive again.
+     *
+     * @return how long to wait.
+     */
+     long getNoRetryDelay();
+
+     /**
+      * Get the time when this connector last failed. This will be set for any exception regardless of the setting of
+      * {@link #isPropagateResolutionExceptions()}
+      *
+      * @return when it last failed
+      */
+     long getLastFail();
 
     /**
      * Gets the ID of the {@link DataConnector} whose values will be used in the event that this data connector

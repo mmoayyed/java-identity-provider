@@ -16,6 +16,13 @@
  */
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.util.Collection;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
+import org.joda.time.DateTime;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -25,19 +32,11 @@ import com.google.common.collect.ImmutableMap.Builder;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
-import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
 import net.shibboleth.idp.metrics.ReloadableServiceGaugeSet;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import java.util.Collection;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.joda.time.DateTime;
 
 /**
  * Additional gauges for attribute resolver.
@@ -67,11 +66,9 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
                                 final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
                                 
                                 for (final DataConnector connector: connectors) {
-                                    if (connector instanceof DataConnectorEx) {
-                                        final long lastFail = ((DataConnectorEx) connector).getLastFail();
-                                        if (lastFail > 0) {
-                                            mapBuilder.put(connector.getId(), new DateTime(lastFail));
-                                        }
+                                    final long lastFail = connector.getLastFail();
+                                    if (lastFail > 0) {
+                                        mapBuilder.put(connector.getId(), new DateTime(lastFail));
                                     }
                                 }
                             } finally {

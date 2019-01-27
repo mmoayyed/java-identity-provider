@@ -46,7 +46,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
-import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
@@ -351,21 +350,18 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             return;
         }
 
-        if (connector instanceof DataConnectorEx) {
-            final DataConnectorEx connectorEx = (DataConnectorEx) connector;
-            if (resolveTime < connectorEx.getLastFail() + connectorEx.getNoRetryDelay()) {
-                log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, 
-                        connectorId);
-                final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
-                if (null != failoverDataConnectorId) {
-                    log.debug("{} Data connector '{}' invoking failover data connector '{}'", logPrefix, connectorId,
-                            failoverDataConnectorId);
-                    resolveDataConnector(failoverDataConnectorId, resolutionContext);
-                    workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
-                    return;
-                } else {
-                    throw new ResolutionException("Previous resolve failed");
-                }
+        if (resolveTime < connector.getLastFail() + connector.getNoRetryDelay()) {
+            log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, 
+                    connectorId);
+            final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
+            if (null != failoverDataConnectorId) {
+                log.debug("{} Data connector '{}' invoking failover data connector '{}'", logPrefix, connectorId,
+                        failoverDataConnectorId);
+                resolveDataConnector(failoverDataConnectorId, resolutionContext);
+                workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
+                return;
+            } else {
+                throw new ResolutionException("Previous resolve failed");
             }
         }
 

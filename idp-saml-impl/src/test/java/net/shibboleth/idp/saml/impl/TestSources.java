@@ -40,7 +40,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
+import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
@@ -128,7 +128,7 @@ public final class TestSources {
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    public static DataConnectorEx populatedStaticConnector() throws ComponentInitializationException {
+    public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
         IdPAttribute attr;
         Set<IdPAttribute> attributeSet;
 
