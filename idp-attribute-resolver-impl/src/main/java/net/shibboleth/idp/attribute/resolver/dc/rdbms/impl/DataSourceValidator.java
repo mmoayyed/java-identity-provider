@@ -33,9 +33,6 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Validator implementation that invokes {@link DataSource#getConnection()} to determine if the DataSource is properly
@@ -52,41 +49,6 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
     /** Whether validate should throw, default value is <code>true</code>. */
     private boolean throwOnValidateError = true;
 
-    /**
-     * Creates a new DataSource validator.
-     * 
-     * @param source to validate
-     * @deprecated - use the property setters
-     */
-    @Deprecated public DataSourceValidator(final DataSource source) {
-        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource)", null, "DataSourceValidator()");
-        dataSource = source;
-        try {
-            initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization.");
-        }
-    }
-
-    /**
-     * Creates a new DataSource validator.
-     * 
-     * @param source to validate
-     * @param throwOnError whether {@link #validate()} should throw or log errors
-     * @deprecated - use the property setters
-     */
-    @Deprecated public DataSourceValidator(final DataSource source, final boolean throwOnError) {
-        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource, boolean)",
-                null, "DataSourceValidator()");
-        dataSource = source;
-        throwOnValidateError = throwOnError;
-        try {
-            initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new ConstraintViolationException("Invalid parameterization.");
-        }
-    }
-    
     /**
      * Constructor.
      *
