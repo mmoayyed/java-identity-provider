@@ -17,15 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
-import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
-import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.MutablePropertySources;
@@ -33,6 +24,14 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
+import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
+import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * test for {@link ComputedIDDataConnectorParser}
@@ -44,7 +43,6 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         final ComputedIDDataConnector connector = getDataConnector("resolver/computed.xml", ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertNull(connector.getSourceAttributeId());
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
         Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
@@ -58,7 +56,6 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         final ComputedIDDataConnector connector = getDataConnector("resolver/computedDataConnector.xml", ComputedIDDataConnector.class);
 
         Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertNull(connector.getSourceAttributeId());
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
         Assert.assertEquals(connector.getSourceAttributeInformation(), "DC/theSourceRemainsTheSame");

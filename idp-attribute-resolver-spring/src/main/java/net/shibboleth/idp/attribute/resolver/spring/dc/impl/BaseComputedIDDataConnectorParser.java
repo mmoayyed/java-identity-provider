@@ -100,15 +100,6 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
             builder.addPropertyValue("encoding", config.getAttributeNS(null, "encoding"));
         }
 
-        if (config.hasAttributeNS(null, "sourceAttributeID")) {
-            final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
-            builder.addPropertyValue("sourceAttributeId", sourceAttribute);
-            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "sourceAttributeID",
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart() + " or "
-                            + InputDataConnectorParser.ELEMENT_NAME.getLocalPart());
-        }
-
         final String salt;
         if (AttributeSupport.hasAttribute(config, new QName("salt"))) {
             salt = config.getAttributeNS(null, "salt");

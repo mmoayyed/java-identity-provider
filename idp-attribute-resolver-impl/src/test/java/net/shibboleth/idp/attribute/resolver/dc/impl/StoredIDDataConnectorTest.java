@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.dc.impl;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -28,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
@@ -89,19 +91,16 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
 
         tryInitialize(connector, "No DataSource");
         connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
 
         connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
         connector.setSalt(ComputedIDDataConnectorTest.smallSalt);
@@ -109,7 +108,6 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        connector.setSourceAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
         connector.setSalt(ComputedIDDataConnectorTest.smallSalt);
@@ -125,6 +123,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         } catch (final UninitializedComponentException e) {
             // OK
         }
+        connector.setAttributeDependencies(Collections.singleton(new ResolverAttributeDefinitionDependency("id")));
 
         connector.initialize();
         try {
