@@ -25,7 +25,6 @@ import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalAuthenticationMethodAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalNameAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.RegexSplitAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
@@ -80,8 +79,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new CryptoTransientIdAttributeDefinitionParser());
         registerBeanDefinitionParser(PrescopedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new PrescopedAttributeDefinitionParser());
-        registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionParser.TYPE_NAME_RESOLVER,
-                new PrincipalAuthenticationMethodAttributeDefinitionParser());
         registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new PrincipalNameAttributeDefinitionParser());
         registerBeanDefinitionParser(RegexSplitAttributeDefinitionParser.TYPE_NAME_RESOLVER,
