@@ -216,38 +216,6 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Set how the principal was authenticated.
-     * 
-     * <p>This is deprecated, as the V3 representation of authentication results is more general.</p>
-     * 
-     * @return returns the principalAuthenticationMethod
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    @Nullable public String getPrincipalAuthenticationMethod() {
-        return principalAuthenticationMethod;
-    }
-
-    /**
-     * Get how the principal was authenticated.
-     * 
-     * <p>This is deprecated, as the V3 representation of authentication results is more general.</p>
-     * 
-     * @param method The principalAuthenticationMethod to set
-     * 
-     * @return this context
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    @Nullable public AttributeResolutionContext setPrincipalAuthenticationMethod(@Nullable final String method) {
-        principalAuthenticationMethod = method;
-        
-        return this;
-    }
-
-    /**
      * Set the principal associated with this resolution.
      * 
      * @return Returns the principal.

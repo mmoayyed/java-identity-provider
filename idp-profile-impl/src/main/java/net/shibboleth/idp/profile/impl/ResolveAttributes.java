@@ -24,11 +24,16 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
@@ -44,12 +49,6 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that invokes the {@link AttributeResolver} for the current request.
@@ -343,14 +342,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
             resolutionContext.setPrincipal(null);
         }
         
-        resolutionContext.setPrincipalAuthenticationMethod(null);
-        if (null != authenticationContext) {
-            final AuthenticationResult result = authenticationContext.getAuthenticationResult();
-            if (null != result) {
-                resolutionContext.setPrincipalAuthenticationMethod(result.getAuthenticationFlowId());
-            }
-        }
-
         if (recipientLookupStrategy != null) {
             resolutionContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));
         } else {

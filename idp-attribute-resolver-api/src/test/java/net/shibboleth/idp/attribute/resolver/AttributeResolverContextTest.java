@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 /** Unit test for {@link AttributeResolutionContext}. */
-@SuppressWarnings("deprecation")
+
 public class AttributeResolverContextTest {
 
     /** Test instantiation and post-instantiation state. */
@@ -36,7 +36,6 @@ public class AttributeResolverContextTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         Assert.assertNull(context.getAttributeIssuerID());
         Assert.assertNull(context.getAttributeRecipientID());
-        Assert.assertNull(context.getPrincipalAuthenticationMethod());
         Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
         Assert.assertTrue(context.getRequestedIdPAttributeNames().isEmpty());
         
@@ -45,10 +44,7 @@ public class AttributeResolverContextTest {
         
         context.setAttributeRecipientID("ARID");
         Assert.assertEquals(context.getAttributeRecipientID(), "ARID");
-        
-        context.setPrincipalAuthenticationMethod("PAM");
-        Assert.assertEquals(context.getPrincipalAuthenticationMethod(), "PAM");
-        
+               
         final IdPAttribute attr = new IdPAttribute("AttrId");
         context.setResolvedIdPAttributes(Collections.singleton(attr));
         Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
