@@ -151,7 +151,6 @@ public class AttributeFilterContextTest {
         Assert.assertNull(context.getAttributeIssuerID());
         Assert.assertNull(context.getAttributeRecipientID());
         Assert.assertNull(context.getPrincipal());
-        Assert.assertNull(context.getPrincipalAuthenticationMethod());
 
         context.setAttributeIssuerID("aiid");
         Assert.assertEquals(context.getAttributeIssuerID(), "aiid");
@@ -161,10 +160,6 @@ public class AttributeFilterContextTest {
 
         context.setPrincipal("princ");
         Assert.assertEquals(context.getPrincipal(), "princ");
-
-        context.setPrincipalAuthenticationMethod("princam");
-        Assert.assertEquals(context.getPrincipalAuthenticationMethod(), "princam");
-
     }
 
     @Test public void strategies() {

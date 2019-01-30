@@ -22,11 +22,22 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.RootContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.ProxiedRequesterContext;
+import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
@@ -39,18 +50,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.RootContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.ProxiedRequesterContext;
-import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that invokes the {@link AttributeFilter} for the current request.
@@ -389,21 +388,12 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param profileRequestContext current profile request context
      * @param filterContext context to populate
      */
-    @SuppressWarnings("deprecation")
     private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeFilterContext filterContext) {
         
         filterContext.setMetadataResolver(metadataResolver);
         
         filterContext.setPrincipal(principalNameLookupStrategy.apply(profileRequestContext));
-
-        filterContext.setPrincipalAuthenticationMethod(null);
-        if (null != authenticationContext) {
-            final AuthenticationResult result = authenticationContext.getAuthenticationResult();
-            if (null != result) {
-                filterContext.setPrincipalAuthenticationMethod(result.getAuthenticationFlowId());
-            }
-        }
 
         if (recipientLookupStrategy != null) {
             filterContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));

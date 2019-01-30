@@ -246,26 +246,6 @@ public final class AttributeFilterContext extends BaseContext {
     }
     
     /**
-     * Sets how the principal was authenticated.
-     * 
-     * @return Returns the principalAuthenticationMethod.
-     */
-    @Deprecated
-    @Nullable public String getPrincipalAuthenticationMethod() {
-        return principalAuthenticationMethod;
-    }
-
-    /**
-     * Gets how the principal was authenticated.
-     * 
-     * @param method The principalAuthenticationMethod to set.
-     */
-    @Deprecated
-    public void setPrincipalAuthenticationMethod(@Nullable final String method) {
-        principalAuthenticationMethod = method;
-    }
-
-    /**
      * Get the strategy used to locate the SP's metadata context.
      * 
      * @return lookup strategy
