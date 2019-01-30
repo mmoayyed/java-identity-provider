@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:sec="urn:mace:shibboleth:2.0:security"
-    targetNamespace="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified" version="3.0">
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+	xmlns:sec="urn:mace:shibboleth:2.0:security"
+	targetNamespace="urn:mace:shibboleth:2.0:resolver"
+	elementFormDefault="qualified" version="3.0">
 
     <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
@@ -413,21 +416,6 @@
             </extension>
         </complexContent>
     </complexType>
-
-    <complexType name="PrincipalAuthenticationMethod">
-        <annotation>
-            <documentation>Exposes the principal's authentication method as an attribute definition.</documentation>
-        </annotation>
-        <complexContent>
-            <extension base="resolver:BaseAttributeDefinitionType">
-                <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
-                    <element ref="resolver:AttributeEncoder"/>
-                </choice>
-            </extension>
-        </complexContent>
-     </complexType>
 
     <complexType name="PrincipalName">
         <annotation>
