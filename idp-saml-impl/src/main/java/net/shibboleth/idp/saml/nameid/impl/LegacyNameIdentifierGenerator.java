@@ -23,9 +23,16 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttribute;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.profile.NameIdentifierGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder;
@@ -36,16 +43,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLException;
-import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.profile.NameIdentifierGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 /**
  * Legacy generator of name identifier objects that relies on resolved attributes having
@@ -74,17 +71,13 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
     /** Lookup strategy for {@link AttributeContext}. */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
     
-    /** Type of encoder to check for when looping. */
-    @Nonnull private Class<? extends NameIdentifierAttributeEncoder> encoderType;
     
     /**
      * Constructor.
      * 
-     * @param clazz encoder class type
      */
-    protected LegacyNameIdentifierGenerator(@Nonnull final Class<? extends NameIdentifierAttributeEncoder> clazz) {
+    protected LegacyNameIdentifierGenerator() {
         activationCondition = Predicates.alwaysTrue();
-        encoderType = Constraint.isNotNull(clazz, "Encoder class type cannot be null");
 
         // ProfileRequestContext -> RelyingPartyContext -> AttributeContext
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
@@ -123,47 +116,13 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null, null);
     }
 
-    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     @Nullable public NameIdType generate(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull @NotEmpty final String format) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(format, "Format cannot be null or empty");
-        
-        if (!activationCondition.test(profileRequestContext)) {
-            return null;
-        }
-        
-        final AttributeContext attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
-        if (attributeContext == null || attributeContext.getIdPAttributes().isEmpty()) {
-            log.debug("No AttributeContext or resolved IdPAttributes found, nothing to do");
-            return null;
-        }
-        
-        for (final IdPAttribute idpAttribute : attributeContext.getIdPAttributes().values()) {
-            if (idpAttribute.getValues().isEmpty()) {
-                continue;
-            }
-            for (final AttributeEncoder encoder : idpAttribute.getEncoders()) {
-                if (encoderType.isInstance(encoder) && ((NameIdentifierAttributeEncoder) encoder).test(format)
-                        && encoder.getActivationCondition().test(profileRequestContext)) {
-                    try {
-                        // The encoders throw unless they return an object.
-                        final NameIdType nameId = (NameIdType) encoder.encode(idpAttribute);
-                        log.debug("Encoded attribute {} into name identifier with format {}", idpAttribute.getId(),
-                                format);
-                        return nameId;
-                    } catch (final AttributeEncodingException e) {
-                        log.error("Error encoding IdPAttribute into name identifier", e);
-                    }
-                }
-            }
-        }
-        
-        log.debug("Unable to obtain name identifier from legacy attribute encoders");
+        log.error("Legacy encoding as NameID not supported");
         return null;
     }
-// Checkstyle: CyclomaticComplexity ON
-
 }

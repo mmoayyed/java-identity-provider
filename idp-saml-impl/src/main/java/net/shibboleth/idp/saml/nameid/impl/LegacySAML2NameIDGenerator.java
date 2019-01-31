@@ -17,14 +17,11 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import net.shibboleth.idp.saml.nameid.SAML2NameIDAttributeEncoder;
-
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 
 /**
- * Legacy generator of {@link NameID} objects that relies on resolved attributes having
- * {@link SAML2NameIDAttributeEncoder}s attached.
+ * Legacy generator of {@link NameID} objects that fails
  * 
  * <p>See the base class for additional detail.</p>
  * 
@@ -33,9 +30,5 @@ import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 public class LegacySAML2NameIDGenerator extends LegacyNameIdentifierGenerator<NameID>
         implements SAML2NameIDGenerator {
     
-    /** Constructor. */
-    protected LegacySAML2NameIDGenerator() {
-        super(SAML2NameIDAttributeEncoder.class);
-    }
     
 }
