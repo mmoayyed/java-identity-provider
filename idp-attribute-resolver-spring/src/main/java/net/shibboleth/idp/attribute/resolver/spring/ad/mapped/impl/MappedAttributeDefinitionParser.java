@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AbstractWarningAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -40,7 +41,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition parser for a {@link MappedAttributeDefinition}. */
-public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class MappedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name - ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -108,6 +109,11 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
         builder.addPropertyValue("defaultValue", defaultValue);
         builder.addPropertyValue("valueMaps", valueMaps);
+    }
+
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }
