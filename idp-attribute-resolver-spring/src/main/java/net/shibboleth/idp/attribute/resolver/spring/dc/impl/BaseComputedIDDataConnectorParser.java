@@ -113,17 +113,8 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
      * 
      * @return "Attribute Definition: '<definitionID>' :"
      */
-    @Override
-    @Nonnull @NotEmpty protected String getLogPrefix() {
+    @Override @Nonnull @NotEmpty protected String getLogPrefix() {
         final StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
-    
-    /**
-     * Helper function to assist rewrite from old to new QName.
-     * 
-     * @return the "new" type
-     */
-    protected abstract QName getPreferredName();
-    
 }
