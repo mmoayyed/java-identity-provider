@@ -17,22 +17,26 @@
 
 package net.shibboleth.idp.test.flows.c14n.actions;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.idp.attribute.AttributeEncodingException;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.NameID;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.nameid.SAML2NameIDAttributeEncoder;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.NameID;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  *
@@ -55,23 +59,48 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
         this.attributeName = attributeName;
     }
 
+    private NameID encode(@Nonnull final IdPAttribute attribute) {
+
+        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
+        if (attributeValues == null || attributeValues.isEmpty()) {
+            return null;
+        }
+        final SAMLObjectBuilder<NameID> identifierBuilder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(NameID.DEFAULT_ELEMENT_NAME);
+        final NameID nameId = identifierBuilder.buildObject();
+        final String format;
+        if ("Principal".equals(attributeName)) {
+            format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+        } else {
+            format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient";
+        }
+        nameId.setFormat(format);
+        for (final IdPAttributeValue attrValue : attributeValues) {
+            if (attrValue == null || attrValue.getValue() == null) {
+                continue;
+            }
+            
+            final Object value = attrValue.getValue();
+            if (value instanceof String) {
+                // Check for empty or all-whitespace, but don't trim.
+                if (StringSupport.trimOrNull((String) value) == null) {
+                    continue;
+                }
+                nameId.setValue((String) value);
+                return nameId;
+            } else {
+                continue;
+            }
+        }
+        return null;
+    }
+
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext rpc = profileRequestContext.getSubcontext(RelyingPartyContext.class);
 
-        NameID nid = null;
         final AttributeContext ac = rpc.getSubcontext(AttributeContext.class, false);
-        for (final AttributeEncoder enc : ac.getIdPAttributes().get(getAttributeName()).getEncoders()) {
-            if (enc instanceof SAML2NameIDAttributeEncoder &&
-                    enc.getActivationCondition().apply(profileRequestContext)) {
-                try {
-                    nid = ((SAML2NameIDAttributeEncoder) enc).encode(ac.getIdPAttributes().get(getAttributeName()));
-                } catch (AttributeEncodingException e) {
-                    ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-                    return;
-                }
-            }
-        }
+        final NameID nid = encode(ac.getIdPAttributes().get(getAttributeName()));
         
         if (nid == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

@@ -12,19 +12,10 @@
 
     <!-- Attribute Definitions for webflow testing -->
 
-    <resolver:AttributeDefinition id="transientId" xsi:type="ad:TransientId">
-        <resolver:AttributeEncoder xsi:type="enc:SAML1StringNameIdentifier" nameFormat="urn:mace:shibboleth:1.0:nameIdentifier"/>
-        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
-    </resolver:AttributeDefinition>
+    <resolver:AttributeDefinition id="transientId" xsi:type="ad:TransientId"/>
     
-    <resolver:AttributeDefinition id="cryptoTransientId" xsi:type="ad:CryptoTransientId" dataSealerRef="shibboleth.DataSealer">
-        <resolver:AttributeEncoder xsi:type="enc:SAML1StringNameIdentifier" nameFormat="urn:mace:shibboleth:1.0:nameIdentifier"/>
-        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
-    </resolver:AttributeDefinition>
+    <resolver:AttributeDefinition id="cryptoTransientId" xsi:type="ad:CryptoTransientId" dataSealerRef="shibboleth.DataSealer"/>
 
-    <resolver:AttributeDefinition id="Principal" xsi:type="ad:PrincipalName" >
-        <resolver:AttributeEncoder xsi:type="enc:SAML1StringNameIdentifier" nameFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"/>
-        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"/>
-    </resolver:AttributeDefinition>
+    <resolver:AttributeDefinition id="Principal" xsi:type="ad:PrincipalName"/>
 
 </resolver:AttributeResolver>
