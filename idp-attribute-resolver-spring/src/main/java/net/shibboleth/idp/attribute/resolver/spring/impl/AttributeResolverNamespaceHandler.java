@@ -48,17 +48,14 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConne
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
-import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringNameIdentifierEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1XMLObjectAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2Base64AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringAttributeEncoderParser;
-import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringNameIDEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Namespace handler for the attribute resolver. */
-@SuppressWarnings("deprecation")
 public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
@@ -127,10 +124,7 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML1ScopedStringAttributeEncoderParser());
 
-        registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderParser.TYPE_NAME_RESOLVER,
-                new SAML1StringNameIdentifierEncoderParser());
-
-        registerBeanDefinitionParser(SAML1XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
+         registerBeanDefinitionParser(SAML1XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML1XMLObjectAttributeEncoderParser());
 
         registerBeanDefinitionParser(SAML2Base64AttributeEncoderParser.TYPE_NAME_RESOLVER,
@@ -142,10 +136,7 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(SAML2StringAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML2StringAttributeEncoderParser());
 
-        registerBeanDefinitionParser(SAML2StringNameIDEncoderParser.TYPE_NAME_RESOLVER,
-                new SAML2StringNameIDEncoderParser());
-
-        registerBeanDefinitionParser(SAML2XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
+         registerBeanDefinitionParser(SAML2XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML2XMLObjectAttributeEncoderParser());
     }
     // Checkstyle: MethodLength ON
