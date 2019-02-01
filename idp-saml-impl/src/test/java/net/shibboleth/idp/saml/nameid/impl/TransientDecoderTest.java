@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinitionTest;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
@@ -32,10 +33,13 @@ import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
@@ -129,6 +133,35 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         decoder.decode(id, PRINCIPAL);
     }
 
+    private NameID encode(final IdPAttribute attribute) {
+
+        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
+        if (attributeValues == null || attributeValues.isEmpty()) {
+            return null;
+        }
+        final SAMLObjectBuilder<NameID> identifierBuilder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(NameID.DEFAULT_ELEMENT_NAME);
+        final NameID nameId = identifierBuilder.buildObject();
+        nameId.setFormat("https://example.org/");
+        for (final IdPAttributeValue attrValue : attributeValues) {
+            if (attrValue == null || attrValue.getValue() == null) {
+                continue;
+            }
+            final Object value = attrValue.getValue();
+            if (value instanceof String) {
+                // Check for empty or all-whitespace, but don't trim.
+                if (StringSupport.trimOrNull((String) value) == null) {
+                    continue;
+                }
+                nameId.setValue((String) value);
+                return nameId;
+            } else {
+                continue;
+            }
+        }
+        return null;
+    }
+
     
     @Test public void decode() throws Exception {
         
@@ -147,9 +180,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
     
     
-        final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
-        encoder.setNameFormat("https://example.org/");
-        final NameID nameid = encoder.encode(result);
+        final NameID nameid = encode(result);
 
         final NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor();
         descriptor.setFormats(Collections.singleton("https://example.org/"));
