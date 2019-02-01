@@ -17,10 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.complex.impl;
 
-import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
@@ -29,12 +26,10 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SAMLAttributeDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
-import org.opensaml.saml.saml2.core.Attribute;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for testing complex attribute filter operations.
@@ -59,12 +54,7 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
 
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setId(xmlFileName);
-        connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<Attribute>>() {
-            @Override
-            @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
-                return obj.getAttributes();
-            }
-        });
+        connector.setAttributesStrategy(FunctionSupport.constant(obj.getAttributes()));
 
         connector.initialize();
 

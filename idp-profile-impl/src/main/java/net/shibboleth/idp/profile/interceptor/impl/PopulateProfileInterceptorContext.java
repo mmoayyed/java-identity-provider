@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.interceptor.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -38,9 +39,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -115,12 +114,8 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
         if (activeFlows != null) {
             for (final String id : activeFlows) {
                 final String flowId = ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + id;
-                final Optional<ProfileInterceptorFlowDescriptor> flow = Iterables.tryFind(availableFlows,
-                        new Predicate<ProfileInterceptorFlowDescriptor>() {
-                            public boolean apply(final ProfileInterceptorFlowDescriptor input) {
-                                return input.getId().equals(flowId);
-                            }
-                });
+                final Optional<ProfileInterceptorFlowDescriptor> flow =
+                        Iterables.tryFind(availableFlows, fd -> fd.getId().equals(flowId));
                 
                 if (flow.isPresent()) {
                     log.debug("{} Installing flow {} into interceptor context", getLogPrefix(), flowId);

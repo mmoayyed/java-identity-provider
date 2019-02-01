@@ -19,16 +19,14 @@ package net.shibboleth.idp.profile.audit.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -49,8 +47,8 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
     /** Constructor. */
     public AttributesAuditExtractor() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
     }
     
     /**
@@ -88,7 +86,7 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
     @Override
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         
-        if (activationCondition != null && !activationCondition.apply(input)) {
+        if (activationCondition != null && !activationCondition.test(input)) {
             return Collections.emptyList();
         }
         

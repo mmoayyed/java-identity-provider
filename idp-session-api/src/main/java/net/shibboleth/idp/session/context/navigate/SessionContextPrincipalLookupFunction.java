@@ -27,7 +27,6 @@ import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 public class SessionContextPrincipalLookupFunction implements ContextDataLookupFunction<SessionContext,String> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final SessionContext input) {
         
         if (input != null && input.getIdPSession() != null) {

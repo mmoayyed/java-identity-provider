@@ -45,7 +45,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * An authentication action that runs after a completed authentication flow (or the reuse
  * of an active result) and transfers information from other contexts into a {@link SubjectContext}
@@ -230,7 +229,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 matches.clear();
                 for (final Principal candidate
                         : authenticationContext.getAuthenticationResult().getSupportedPrincipals(p.getClass())) {
-                    if (predicate.apply(new PrincipalSupportingComponent() {
+                    if (predicate.test(new PrincipalSupportingComponent() {
                         public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
                             return Collections.<T>singleton((T) candidate);
                         }

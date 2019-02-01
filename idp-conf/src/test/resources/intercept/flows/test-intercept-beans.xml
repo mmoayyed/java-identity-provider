@@ -18,7 +18,7 @@
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
             p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
         <property name="activeFlowsLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="constant" c:_0-ref="ActivatedFlows" />
+            <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant" c:_0-ref="ActivatedFlows" />
         </property>
     </bean>
 

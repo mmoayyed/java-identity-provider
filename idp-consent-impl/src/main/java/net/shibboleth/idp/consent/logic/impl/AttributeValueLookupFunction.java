@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,9 +38,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-
 /**
  * {@link ContextDataLookupFunction} to return the value of an attribute from an {@link AttributeContext}.
  */
@@ -52,7 +50,7 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
     @Nonnull @NotEmpty private String attributeId;
 
     /** Strategy used to find the {@link AttributeContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
     
     /** Whether to use filtered or unfiltered attributes. */
     private boolean useUnfilteredAttributes;
@@ -68,8 +66,8 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
                         "User attribute ID cannot be null nor empty");
 
         attributeContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                        new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         
         useUnfilteredAttributes = true;
     }
@@ -97,7 +95,6 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
         final AttributeContext attributeContext = attributeContextLookupStrategy.apply(input);

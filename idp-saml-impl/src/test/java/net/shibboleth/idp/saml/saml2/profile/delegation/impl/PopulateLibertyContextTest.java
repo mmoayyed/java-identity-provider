@@ -27,6 +27,7 @@ import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.PopulateLibertyContext.TokenStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -43,7 +44,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /**
@@ -152,10 +152,7 @@ public class PopulateLibertyContextTest extends OpenSAMLInitBaseTestCase {
     
     @Test
     public void testNoResolvedAssertionToken() throws ComponentInitializationException {
-        action.setAssertionTokenStrategy(new Function<ProfileRequestContext, SAML20AssertionToken>() {
-            @Nullable public SAML20AssertionToken apply(@Nullable ProfileRequestContext input) {
-                return null;
-            }});
+        action.setAssertionTokenStrategy(FunctionSupport.constant(null));
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -168,10 +165,7 @@ public class PopulateLibertyContextTest extends OpenSAMLInitBaseTestCase {
     @Test
     public void testActivationCondition() throws ComponentInitializationException {
         //This would otherwise cause to fail
-        action.setAssertionTokenStrategy(new Function<ProfileRequestContext, SAML20AssertionToken>() {
-            @Nullable public SAML20AssertionToken apply(@Nullable ProfileRequestContext input) {
-                return null;
-            }});
+        action.setAssertionTokenStrategy(FunctionSupport.constant(null));
         
         action.setActivationCondition(Predicates.alwaysFalse());
         

@@ -47,22 +47,22 @@ public class ExactPrincipalEvalPredicateFactoryTest {
         
     @Test public void testNoPrincipals() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
-        Assert.assertFalse(factory.getPredicate(foo).apply(sample));
+        Assert.assertFalse(factory.getPredicate(foo).test(sample));
     }
 
     @Test public void testOnePrincipal() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("foo"));
-        Assert.assertTrue(factory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(factory.getPredicate(bar).apply(sample));
+        Assert.assertTrue(factory.getPredicate(foo).test(sample));
+        Assert.assertFalse(factory.getPredicate(bar).test(sample));
     }
 
     @Test public void testMultiplePrincipal() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("foo"));
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("baz"));
-        Assert.assertTrue(factory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(factory.getPredicate(bar).apply(sample));
+        Assert.assertTrue(factory.getPredicate(foo).test(sample));
+        Assert.assertFalse(factory.getPredicate(bar).test(sample));
     }
 
 }

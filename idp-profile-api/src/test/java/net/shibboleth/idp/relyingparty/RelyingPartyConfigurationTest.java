@@ -44,7 +44,7 @@ public class RelyingPartyConfigurationTest {
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
         Assert.assertTrue(config.isDetailedErrors());
-        Assert.assertTrue(config.getDetailedErrorsPredicate().apply(null));
+        Assert.assertTrue(config.getDetailedErrorsPredicate().test(null));
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         config = new RelyingPartyConfiguration();
@@ -55,7 +55,7 @@ public class RelyingPartyConfigurationTest {
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
         Assert.assertFalse(config.isDetailedErrors());
-        Assert.assertFalse(config.getDetailedErrorsPredicate().apply(null));
+        Assert.assertFalse(config.getDetailedErrorsPredicate().test(null));
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();

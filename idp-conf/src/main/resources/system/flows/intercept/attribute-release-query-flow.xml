@@ -48,7 +48,7 @@
     <!-- If global consent has been given by user, skip the rest of the flow. -->
     
     <decision-state id="TestForGlobalAttributeConsent">
-        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)"
+        <if test="GlobalAttributeConsentPredicate.test(opensamlProfileRequestContext)"
             then="proceed" else="CheckPreviousConsents" />
     </decision-state>
     

@@ -25,6 +25,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -41,7 +42,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /**
@@ -131,10 +131,7 @@ public class AddAuthnStatementToAssertionFromInboundAssertionTokenTest extends O
     
     @Test
     public void testNoAssertionToModify() throws ComponentInitializationException {
-        action.setAssertionLookupStrategy(new Function<ProfileRequestContext, Assertion>() {
-            @Nullable public Assertion apply(@Nullable ProfileRequestContext input) {
-                return null;
-            }});
+        action.setAssertionLookupStrategy(FunctionSupport.constant(null));
         
         action.initialize();
         final Event result = action.execute(rc);

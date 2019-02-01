@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.context.navigate.messaging;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
 import org.opensaml.messaging.context.InOutOperationContext;
@@ -24,9 +26,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -48,10 +47,9 @@ public abstract class AbstractRelyingPartyLookupFunction<ResultType>
     
     /** Constructor. */
     public AbstractRelyingPartyLookupFunction() {
-        relyingPartyContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<InOutOperationContext, RelyingPartyContext>(RelyingPartyContext.class),
-                new RecursiveTypedParentContextLookup<MessageContext,InOutOperationContext>(InOutOperationContext.class)
-                );
+        relyingPartyContextLookupStrategy =
+                new ChildContextLookup<>(RelyingPartyContext.class).compose(
+                        new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
     }
 
     /**

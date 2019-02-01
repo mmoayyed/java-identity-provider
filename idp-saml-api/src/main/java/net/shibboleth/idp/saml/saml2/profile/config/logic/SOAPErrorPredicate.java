@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config.logic;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,8 +33,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Predicate that decides whether to handle an error by returning a SOAP fault to a requester
@@ -65,8 +65,7 @@ public class SOAPErrorPredicate extends AbstractRelyingPartyPredicate {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpCtx == null) {

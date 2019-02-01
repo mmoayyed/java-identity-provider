@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,13 +30,11 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -73,8 +73,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
         setEncryptNameIDs(new NoConfidentialityMessageChannelPredicate());
 
         signSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate();
-        clientTLSSOAPRequestsPredicate =
-                Predicates.not(new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate());
+        clientTLSSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate().negate();
         
         qualifiedNameIDFormats = Collections.emptyList();
     }
@@ -138,7 +137,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * 
      * @since 3.4.0
      */
-    public Collection<String> getQualifiedNameIDFormats() {
+    @Nonnull @NonnullElements @NotLive public Collection<String> getQualifiedNameIDFormats() {
         return ImmutableList.copyOf(getIndirectProperty(qualifiedNameIDFormatsLookupStrategy, qualifiedNameIDFormats));
     }
 

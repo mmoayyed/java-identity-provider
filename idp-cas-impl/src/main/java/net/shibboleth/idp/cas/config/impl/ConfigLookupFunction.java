@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.cas.config.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
@@ -45,9 +47,8 @@ public class ConfigLookupFunction<T extends AbstractProtocolConfiguration>
         configClass = clazz;
     }
 
-    @Override
-    @Nullable
-    public T apply(@Nullable final ProfileRequestContext profileRequestContext) {
+    /** {@inheritDoc} */
+    @Nullable public T apply(@Nullable final ProfileRequestContext profileRequestContext) {
         if (profileRequestContext != null) {
             final RelyingPartyContext rpContext = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
             if (rpContext != null && configClass.isInstance(rpContext.getProfileConfig())) {

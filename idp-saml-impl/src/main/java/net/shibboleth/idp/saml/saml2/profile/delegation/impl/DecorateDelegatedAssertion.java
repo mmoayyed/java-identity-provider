@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
-import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -77,8 +77,6 @@ import org.opensaml.xmlsec.signature.KeyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * A profile action which decorates instances of {@link Assertion} appropriately for use as delegation tokens.
  * 
@@ -115,7 +113,6 @@ import com.google.common.base.Function;
  * 
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  */
-@Prototype
 public class DecorateDelegatedAssertion extends AbstractProfileAction {
     
     /** Class logger. */
@@ -162,8 +159,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     
     /** Constructor. */
     public DecorateDelegatedAssertion() {
-        super();
-        
         libertySSOSEndpointURLLookupStrategy = new LibertySSOSEndpointURLStrategy();
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         delegationContextLookupStrategy = new ChildContextLookup<>(DelegationContext.class);

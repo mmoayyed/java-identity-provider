@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,8 +26,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.ResponseAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -45,7 +45,6 @@ public class InResponseToAuditExtractor implements Function<ProfileRequestContex
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {

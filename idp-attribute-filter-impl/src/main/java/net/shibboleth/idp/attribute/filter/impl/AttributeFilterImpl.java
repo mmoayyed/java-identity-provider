@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,8 +50,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -60,7 +59,7 @@ import com.google.common.collect.Iterables;
 public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeFilter> implements AttributeFilter {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeFilterImpl.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeFilterImpl.class);
 
     /** Filter policies used by this engine. */
     private final List<AttributeFilterPolicy> filterPolicies;
@@ -87,7 +86,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
         profileContextStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
+                new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>().compose(
                         new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
     }
 

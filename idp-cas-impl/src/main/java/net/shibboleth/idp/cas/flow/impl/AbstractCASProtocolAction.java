@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
@@ -41,7 +42,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public abstract class AbstractCASProtocolAction<RequestType, ResponseType> extends AbstractProfileAction {
 
     /** Looks up a CAS protocol context from IdP profile request context. */
-    private final Function<ProfileRequestContext, ProtocolContext<RequestType, ResponseType>> protocolLookupFunction;
+    private final Function<ProfileRequestContext,ProtocolContext<RequestType,ResponseType>> protocolLookupFunction;
 
     /** Constructor. */
     public AbstractCASProtocolAction() {

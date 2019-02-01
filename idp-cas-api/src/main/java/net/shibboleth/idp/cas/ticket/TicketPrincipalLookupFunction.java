@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.cas.ticket;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -39,9 +40,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class TicketPrincipalLookupFunction implements Function<ProfileRequestContext, String> {
 
     /** Ticket context lookup function. */
-    private Function<ProfileRequestContext, TicketContext> ticketContextLookupFunction = Functions.compose(
-            new ChildContextLookup<>(TicketContext.class),
-            new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
+    @Nonnull private Function<ProfileRequestContext,TicketContext> ticketContextLookupFunction =
+            new ChildContextLookup<>(TicketContext.class).compose(
+                    new ChildContextLookup<>(ProtocolContext.class));
 
 
     /**
@@ -49,13 +50,12 @@ public class TicketPrincipalLookupFunction implements Function<ProfileRequestCon
      *
      * @param function Ticket context lookup function.
      */
-    public void setTicketContextLookupFunction(@Nonnull final Function<ProfileRequestContext, TicketContext> function) {
+    public void setTicketContextLookupFunction(@Nonnull final Function<ProfileRequestContext,TicketContext> function) {
         ticketContextLookupFunction = Constraint.isNotNull(function, "Ticket lookup function cannot be null");
     }
 
-    @Nullable
-    @Override
-    public String apply(@Nullable final ProfileRequestContext profileRequestContext) {
+    /** {@inheritDoc} */
+    @Nullable public String apply(@Nullable final ProfileRequestContext profileRequestContext) {
         final TicketContext tc = ticketContextLookupFunction.apply(profileRequestContext);
         if (tc != null) {
             final TicketState state = tc.getTicket().getTicketState();
@@ -65,4 +65,5 @@ public class TicketPrincipalLookupFunction implements Function<ProfileRequestCon
         }
         return null;
     }
+    
 }

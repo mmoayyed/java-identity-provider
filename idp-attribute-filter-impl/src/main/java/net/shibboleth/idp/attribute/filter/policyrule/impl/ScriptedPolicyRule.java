@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.filter.policyrule.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,10 +46,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 /**
  * A {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule} that delegates to a JSR-223 script for its actual
@@ -80,9 +79,9 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     public ScriptedPolicyRule() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         prcLookupStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
-                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
-        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
+                new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>().compose(
+                        new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
+        scLookupStrategy = new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class);
     }
 
     /**
@@ -215,7 +214,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
 
     /** {@inheritDoc} */
     @Override public int hashCode() {
-        return Objects.hashCode(script, getId());
+        return Objects.hash(script, getId());
     }
 
     /** {@inheritDoc} */

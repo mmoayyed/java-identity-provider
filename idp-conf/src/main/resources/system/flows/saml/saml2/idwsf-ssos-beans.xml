@@ -80,7 +80,7 @@
             <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.ProcessFrameworkHandler" />
         </constructor-arg>
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="not"
+            <bean parent="shibboleth.Conditions.NOT"
                 c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
         </property>
         <property name="errorEvent">
@@ -95,7 +95,7 @@
             <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.ProcessSenderHandler" />
         </constructor-arg>
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="not"
+            <bean parent="shibboleth.Conditions.NOT"
                 c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
         </property>
         <property name="errorEvent">
@@ -110,7 +110,7 @@
             <bean class="org.opensaml.soap.wsaddressing.messaging.impl.ExtractMessageIDHandler" />
         </constructor-arg>
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="not"
+            <bean parent="shibboleth.Conditions.NOT"
                 c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
         </property>
         <property name="errorEvent">
@@ -129,7 +129,7 @@
             </bean>
         </constructor-arg>
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="not"
+            <bean parent="shibboleth.Conditions.NOT"
                 c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
         </property>
         <property name="errorEvent">

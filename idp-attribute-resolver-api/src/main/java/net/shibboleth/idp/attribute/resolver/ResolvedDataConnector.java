@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 /**
  * A proxy which wraps a resolved data connector and always returns the same attributes. The goal being that once a data

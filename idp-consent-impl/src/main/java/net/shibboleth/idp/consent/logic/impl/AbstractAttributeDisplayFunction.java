@@ -22,15 +22,13 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-
-import com.google.common.base.Function;
 
 /**
  * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method
@@ -68,7 +66,7 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public String apply(@Nullable final IdPAttribute input) {
+    @Nullable public String apply(@Nullable final IdPAttribute input) {
         if (input == null) {
             return "N/A";
         }

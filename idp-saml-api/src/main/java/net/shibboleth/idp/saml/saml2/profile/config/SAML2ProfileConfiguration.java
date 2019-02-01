@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -27,8 +28,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 /**
  * Base interface for SAML 2 profile configurations. 

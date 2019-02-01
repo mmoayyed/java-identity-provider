@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.config.logic;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,9 +30,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * A predicate that evaluates a SSO {@link ProfileRequestContext} and determines whether an attribute statement
@@ -47,7 +46,7 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
     
     /** Constructor. */
     public IncludeAttributeStatementPredicate() {
-        bindingContextLookupStrategy = Functions.compose(new ChildContextLookup<>(SAMLBindingContext.class),
+        bindingContextLookupStrategy = new ChildContextLookup<>(SAMLBindingContext.class).compose(
                 new OutboundMessageContextLookup());
     }
 
@@ -63,8 +62,7 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
     }
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         
         // Check for an artifact binding.
         final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(input);
@@ -78,11 +76,11 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
             if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getIncludeAttributeStatementPredicate().apply(input);
+                        rpc.getProfileConfig()).getIncludeAttributeStatementPredicate().test(input);
             } else if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getIncludeAttributeStatementPredicate().apply(input);
+                        rpc.getProfileConfig()).getIncludeAttributeStatementPredicate().test(input);
             } else if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
                 return true;

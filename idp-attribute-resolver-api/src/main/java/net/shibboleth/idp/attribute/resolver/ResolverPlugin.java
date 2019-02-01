@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,8 +34,6 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 /**
  * Interface defining the base work done by all plugins used within attribute resolution.

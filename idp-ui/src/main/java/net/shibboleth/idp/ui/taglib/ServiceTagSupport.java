@@ -19,6 +19,7 @@ package net.shibboleth.idp.ui.taglib;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,9 +35,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-
 /**
  * Display the serviceName.
  * 
@@ -48,12 +46,12 @@ public class ServiceTagSupport extends BodyTagSupport {
     private static final long serialVersionUID = 4405207268569727209L;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ServiceTagSupport.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceTagSupport.class);
 
     /** Strategy function for access to {@link RelyingPartyUIContext} for input to resolver. */
-    @Nonnull private static Function<ProfileRequestContext, RelyingPartyUIContext> uiContextLookupStrategy = Functions
-            .compose(new ChildContextLookup<AuthenticationContext, RelyingPartyUIContext>(RelyingPartyUIContext.class),
-                    new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(AuthenticationContext.class));
+    @Nonnull private static Function<ProfileRequestContext, RelyingPartyUIContext> uiContextLookupStrategy =
+            new ChildContextLookup<>(RelyingPartyUIContext.class).compose(
+                    new ChildContextLookup<>(AuthenticationContext.class));
 
     /** Bean storage. class reference */
     @Nullable private String cssClass;

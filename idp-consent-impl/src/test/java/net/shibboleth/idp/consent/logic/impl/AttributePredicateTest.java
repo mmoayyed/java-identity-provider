@@ -46,97 +46,97 @@ public class AttributePredicateTest {
 
     @Test public void testWhitelist() {
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
-        Assert.assertTrue(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertTrue(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
     }
 
     @Test public void testBlacklist() {
         p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertTrue(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertTrue(p.test(attribute2));
     }
 
     @Test public void testMatchExpression() {
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
-        Assert.assertTrue(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertTrue(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
     }
 
     @Test public void testWhitelistAndBlacklist() {
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
         p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
 
         p.setBlacklistedAttributeIds(Arrays.asList("attribute2"));
-        Assert.assertTrue(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertTrue(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
     }
 
     @Test public void testWhitelistAndMatchExpression() {
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
-        Assert.assertTrue(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertTrue(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
 
         p.setAttributeIdMatchExpression(Pattern.compile(".*2"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertTrue(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertTrue(p.test(attribute2));
     }
 
     @Test public void testBlacklistAndMatchExpression() {
         p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
 
         p.setAttributeIdMatchExpression(Pattern.compile(".*2"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertTrue(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertTrue(p.test(attribute2));
     }
 
     @Test public void testWhitelistAndBlacklistAndMatchExpression() {
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
         p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
 
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
         p.setBlacklistedAttributeIds(Arrays.asList("attribute2"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
-        Assert.assertTrue(p.apply(attribute1));
-        Assert.assertFalse(p.apply(attribute2));
+        Assert.assertTrue(p.test(attribute1));
+        Assert.assertFalse(p.test(attribute2));
 
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
         p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*2"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertTrue(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertTrue(p.test(attribute2));
 
         p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
         p.setBlacklistedAttributeIds(Arrays.asList("attribute2"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*2"));
-        Assert.assertFalse(p.apply(attribute1));
-        Assert.assertTrue(p.apply(attribute2));
+        Assert.assertFalse(p.test(attribute1));
+        Assert.assertTrue(p.test(attribute2));
     }
 
     @Test public void testNullInput() {
         p = new AttributePredicate();
-        Assert.assertFalse(p.apply(null));
+        Assert.assertFalse(p.test(null));
     }
 
     @Test public void testEmptyAttribute() {
         // no values
         final IdPAttribute emptyAttribute = new IdPAttribute("emptyAttribute");
-        Assert.assertFalse(p.apply(emptyAttribute));
+        Assert.assertFalse(p.test(emptyAttribute));
 
         // empty values
         emptyAttribute.setValues(Arrays.asList(StringAttributeValue.valueOf(""), StringAttributeValue.valueOf(null)));
-        Assert.assertFalse(p.apply(emptyAttribute));
+        Assert.assertFalse(p.test(emptyAttribute));
 
         // empty and non-empty values
         emptyAttribute.setValues(Arrays.asList(StringAttributeValue.valueOf("1"), StringAttributeValue.valueOf("")));
-        Assert.assertTrue(p.apply(emptyAttribute));
+        Assert.assertTrue(p.test(emptyAttribute));
     }
 }

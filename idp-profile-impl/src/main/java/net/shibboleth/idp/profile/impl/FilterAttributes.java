@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -49,9 +51,6 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that invokes the {@link AttributeFilter} for the current request.
@@ -135,36 +134,34 @@ public class FilterAttributes extends AbstractProfileAction {
         issuerLookupStrategy = new ResponderIdLookupFunction();
         recipientLookupStrategy = new RelyingPartyIdLookupFunction();
         
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
 
-        principalNameLookupStrategy = Functions.compose(
-                new SubjectContextPrincipalLookupFunction(),
-                new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class));
+        principalNameLookupStrategy =
+                new SubjectContextPrincipalLookupFunction().compose(
+                        new ChildContextLookup<>(SubjectContext.class));
         
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
         
         // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        metadataContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLMetadataContext.class),
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
-                        new InboundMessageContextLookup()));
+        metadataContextLookupStrategy =
+                new ChildContextLookup<>(SAMLMetadataContext.class).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
+                                new InboundMessageContextLookup()));
                 
         // This is always set to navigate to the root context and then apply the previous function.
-        metadataFromFilterLookupStrategy = Functions.compose(metadataContextLookupStrategy,
-                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+        metadataFromFilterLookupStrategy = metadataContextLookupStrategy.compose(new RootContextLookup<>());
 
         // Default: inbound msg context -> child
-        proxiedRequesterContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(ProxiedRequesterContext.class), new InboundMessageContextLookup());
+        proxiedRequesterContextLookupStrategy =
+                new ChildContextLookup<>(ProxiedRequesterContext.class).compose(new InboundMessageContextLookup());
         
         // This is always set to navigate to the root context and then apply the previous function.
-        proxiesFromFilterLookupStrategy = Functions.compose(proxiedRequesterContextLookupStrategy,
-                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+        proxiesFromFilterLookupStrategy = proxiedRequesterContextLookupStrategy.compose(new RootContextLookup<>());
         
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
-        filterContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeFilterContext.class, true),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        filterContextCreationStrategy = new ChildContextLookup<>(AttributeFilterContext.class, true).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
         
         maskFailures = true;
     }
@@ -271,8 +268,7 @@ public class FilterAttributes extends AbstractProfileAction {
 
         metadataContextLookupStrategy =
                 Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
-        metadataFromFilterLookupStrategy = Functions.compose(metadataContextLookupStrategy,
-                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+        metadataFromFilterLookupStrategy = metadataContextLookupStrategy.compose(new RootContextLookup<>());
     }
 
     /**
@@ -290,8 +286,7 @@ public class FilterAttributes extends AbstractProfileAction {
 
         proxiedRequesterContextLookupStrategy =
                 Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
-        proxiesFromFilterLookupStrategy = Functions.compose(proxiedRequesterContextLookupStrategy,
-                new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
+        proxiesFromFilterLookupStrategy = proxiedRequesterContextLookupStrategy.compose(new RootContextLookup<>());
     }
     
     /**

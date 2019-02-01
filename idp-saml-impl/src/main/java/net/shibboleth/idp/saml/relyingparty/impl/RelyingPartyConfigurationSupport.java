@@ -30,8 +30,6 @@ import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
-import com.google.common.base.Functions;
-
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
@@ -97,7 +95,7 @@ public final class RelyingPartyConfigurationSupport {
         
         final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
                 new StrategyIndirectedPredicate<>(
-                        Functions.compose(new EntityDescriptorLookupFunction(),new SAMLMetadataContextLookupFunction()),
+                        new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
                         new EntityGroupNamePredicate(groupNames, resolver));
         
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
@@ -134,7 +132,7 @@ public final class RelyingPartyConfigurationSupport {
         
         final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
                 new StrategyIndirectedPredicate<>(
-                        Functions.compose(new EntityDescriptorLookupFunction(),new SAMLMetadataContextLookupFunction()),
+                        new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
                         new EntityAttributesPredicate(candidates, trim, matchAll));
         
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();

@@ -18,11 +18,11 @@
 package net.shibboleth.idp.cas.service.impl;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
@@ -202,8 +202,9 @@ public class MetadataServiceRegistry implements ServiceRegistry {
      * set needed to support CAS entities in SAML metadata.
      */
     public static class LoginEndpointPredicate implements Predicate<Endpoint> {
-        @Override
-        public boolean apply(@Nullable final Endpoint endpoint) {
+        
+        /** {@inheritDoc} */
+        public boolean test(@Nullable final Endpoint endpoint) {
             return LOGIN_BINDING.equals(endpoint.getBinding());
         }
     }

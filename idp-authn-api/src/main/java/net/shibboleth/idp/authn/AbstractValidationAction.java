@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,8 +55,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -305,7 +305,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
                         rpCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), rpCtx.getOperator());
                 if (factory != null) {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);
-                    if (predicate.apply(this)) {
+                    if (predicate.test(this)) {
                         log.debug("{} Compatible with principal type '{}' and operator '{}'", getLogPrefix(),
                                 p.getClass(), rpCtx.getOperator());
                         rpCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
@@ -362,7 +362,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         
         // Override cacheability if a predicate is installed.
         if (authenticationContext.isResultCacheable() && resultCachingPredicate != null) {
-            authenticationContext.setResultCacheable(resultCachingPredicate.apply(profileRequestContext));
+            authenticationContext.setResultCacheable(resultCachingPredicate.test(profileRequestContext));
             log.info("{} Predicate indicates authentication result {} be cacheable in a session", getLogPrefix(),
                     authenticationContext.isResultCacheable() ? "will" : "will not");
         }
@@ -461,7 +461,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             final MessageChecker checker = new MessageChecker(message);
             
             for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
-                if (Iterables.any(entry.getValue(), checker)) {
+                if (Iterables.any(entry.getValue(), checker::test)) {
                     authenticationContext.getSubcontext(AuthenticationErrorContext.class,
                             true).getClassifiedErrors().add(entry.getKey());
                     if (!eventSet) {
@@ -503,7 +503,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             final MessageChecker checker = new MessageChecker(message);
             
             for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
-                if (Iterables.any(entry.getValue(), checker)) {
+                if (Iterables.any(entry.getValue(), checker::test)) {
                     authenticationContext.getSubcontext(AuthenticationWarningContext.class,
                             true).getClassifiedWarnings().add(entry.getKey());
                     if (!eventSet) {
@@ -536,7 +536,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         }
         
         /** {@inheritDoc} */
-        public boolean apply(final String input) {
+        public boolean test(final String input) {
             return s.contains(input);
         }
     }

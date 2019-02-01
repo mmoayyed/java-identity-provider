@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,8 +45,6 @@ import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for consent actions which write to a {@link org.opensaml.storage.StorageService}.

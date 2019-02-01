@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.script.ScriptException;
@@ -63,8 +64,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl}. */
 public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
@@ -670,7 +669,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         }
 
         /** {@inheritDoc} */
-        @Override @Nullable public List<Attribute> apply(@Nullable final AttributeResolutionContext input) {
+        @Nullable public List<Attribute> apply(@Nullable final AttributeResolutionContext input) {
             return obj.getAttributes();
         }
 

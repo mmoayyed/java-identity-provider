@@ -68,6 +68,6 @@ public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDef
                 getAttributeEncoder("resolver/saml1StringNameIdentifierConditional.xml", SAML1StringNameIdentifierEncoder.class, context);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
-        Assert.assertFalse(encoder.getActivationCondition().apply(null));
+        Assert.assertFalse(encoder.getActivationCondition().test(null));
     }
 }

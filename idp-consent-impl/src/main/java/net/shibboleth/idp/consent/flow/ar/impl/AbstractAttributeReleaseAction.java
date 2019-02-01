@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.flow.ar.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,9 +36,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Base class for attribute release consent actions.
@@ -63,7 +62,7 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
     @Nullable private AttributeReleaseContext attributeReleaseContext;
 
     /** Strategy used to find the {@link AttributeReleaseContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, AttributeReleaseContext> attributeReleaseContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AttributeReleaseContext> attributeReleaseContextLookupStrategy;
 
     /** The attribute consent flow descriptor. */
     @Nullable private AttributeReleaseFlowDescriptor attributeReleaseFlowDescriptor;
@@ -72,15 +71,15 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
     @Nullable private AttributeContext attributeContext;
 
     /** Strategy used to find the {@link AttributeContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
     /** Constructor. */
     public AbstractAttributeReleaseAction() {
-        attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class, false);
+        attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class);
 
         attributeContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                        new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
     }
 
     /**
@@ -88,7 +87,7 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
      * 
      * @param strategy the attribute context lookup strategy
      */
-    public void setAttributeContextLookupStrategy(final Function<ProfileRequestContext, AttributeContext> strategy) {
+    public void setAttributeContextLookupStrategy(final Function<ProfileRequestContext,AttributeContext> strategy) {
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "Attribute context lookup strategy cannot be null");
     }
@@ -99,7 +98,7 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
      * @param strategy the attribute release context lookup strategy
      */
     public void setAttributeReleaseContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AttributeReleaseContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,AttributeReleaseContext> strategy) {
         attributeReleaseContextLookupStrategy =
                 Constraint.isNotNull(strategy, "Attribute release context lookup strategy cannot be null");
     }

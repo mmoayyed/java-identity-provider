@@ -23,8 +23,7 @@
 
     <!-- Default operation/resource suppliers for access checks. -->
     
-    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
-        factory-method="constant" c:_0="read" />
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="read" />
         
     <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"

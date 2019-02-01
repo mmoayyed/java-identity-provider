@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLException;
@@ -32,8 +33,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
@@ -43,11 +42,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -60,6 +61,7 @@ import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.TrustedNamesCriterion;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,26 +81,24 @@ import org.slf4j.LoggerFactory;
 public class HttpClientProxyValidator implements ProxyValidator {
 
     /** Required https scheme for proxy callbacks. */
-    protected static final String HTTPS_SCHEME = "https";
+    @Nonnull @NotEmpty protected static final String HTTPS_SCHEME = "https";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(HttpClientProxyValidator.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(HttpClientProxyValidator.class);
 
     /** Looks up a ServiceContext from the profile request context. */
-    private final Function<ProfileRequestContext, ServiceContext> serviceCtxLookupFunction = Functions.compose(
-            new ChildContextLookup<ProtocolContext, ServiceContext>(ServiceContext.class),
-            new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
+    @Nonnull private final Function<ProfileRequestContext,ServiceContext> serviceCtxLookupFunction =
+            new ChildContextLookup<>(ServiceContext.class).compose(
+                    new ChildContextLookup<>(ProtocolContext.class));
 
     /** HTTP client that connects to proxy callback endpoint. */
-    private final HttpClient httpClient;
+    @Nonnull private final HttpClient httpClient;
 
     /** HTTP client security parameters. */
-    private final HttpClientSecurityParameters securityParameters;
+    @Nonnull private final HttpClientSecurityParameters securityParameters;
 
     /** List of HTTP response codes permitted for successful proxy callback. */
-    @NotEmpty
-    @NonnullElements
-    private Set<Integer> allowedResponseCodes = Collections.singleton(200);
+    @NotEmpty @NonnullElements private Set<Integer> allowedResponseCodes = Collections.singleton(200);
 
 
     /**

@@ -49,7 +49,7 @@
     </subflow-state>
     
     <decision-state id="ResolveAttributes">
-        <if test="ResolveAttributesPredicate.apply(opensamlProfileRequestContext)"
+        <if test="ResolveAttributesPredicate.test(opensamlProfileRequestContext)"
             then="AttributeResolution"
             else="BuildResponse" />
     </decision-state>
@@ -144,14 +144,14 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
             <evaluate expression="LogEvent" />
         </on-entry>
-        <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
+        <if test="LocalErrorPredicate.test(opensamlProfileRequestContext)"
             then="HandleErrorLocally" else="HandleErrorWithResponse" />
     </decision-state>
 
     <!-- For ECP, local errors mean SOAP faults. -->
     
     <decision-state id="HandleErrorLocally">
-        <if test="opensamlProfileRequestContext.isBrowserProfile() or !SOAPErrorPredicate.apply(opensamlProfileRequestContext)"
+        <if test="opensamlProfileRequestContext.isBrowserProfile() or !SOAPErrorPredicate.test(opensamlProfileRequestContext)"
             then="HandleErrorWithView" else="SOAPFault" />
     </decision-state>
 

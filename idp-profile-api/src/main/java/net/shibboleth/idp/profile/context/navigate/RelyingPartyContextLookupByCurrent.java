@@ -29,7 +29,6 @@ public class RelyingPartyContextLookupByCurrent
         implements ContextDataLookupFunction<MultiRelyingPartyContext,RelyingPartyContext> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public RelyingPartyContext apply(@Nullable final MultiRelyingPartyContext input) {
         if (input == null) {
             return null;

@@ -17,16 +17,16 @@
 
 package net.shibboleth.idp.profile.logic;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.Predicate;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * Base class for a predicate that evaluates a {@link ProfileRequestContext} and requires access to a

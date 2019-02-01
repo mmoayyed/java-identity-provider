@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +48,6 @@ import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -219,8 +219,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     public static class ActivationCondition implements Predicate<ProfileRequestContext> {
 
         /** {@inheritDoc} */
-        @Override
-        public boolean apply(@Nullable final ProfileRequestContext input) {
+        public boolean test(@Nullable final ProfileRequestContext input) {
             
             if (input != null) {
                 final SubjectCanonicalizationContext c14nContext =

@@ -54,7 +54,7 @@ public class ExactPrincipalEvalPredicateFactory implements PrincipalEvalPredicat
         }
 
         /** {@inheritDoc} */
-        public boolean apply(final PrincipalSupportingComponent input) {
+        public boolean test(@Nullable final PrincipalSupportingComponent input) {
             return input != null && input.getSupportedPrincipals(principal.getClass()).contains(principal);
         }
 

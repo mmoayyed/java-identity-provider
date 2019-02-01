@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -44,8 +45,6 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import com.google.common.base.Predicates;
 
 /**
  * Parser for a &lt;Predicate&gt; filter.
@@ -88,7 +87,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
 // Checkstyle: CyclomaticComplexity OFF
     /**
-     * Parser custom element content into a {@link com.google.common.base.Predicate} to pass to the filter constructor.
+     * Parser custom element content into a {@link java.util.function.Predicate} to pass to the filter constructor.
      * 
      * @param element root element to parse
      * 
@@ -129,7 +128,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
                 return scriptPredicateBuilder.getBeanDefinition();
             }
         } else {
-            final BeanDefinitionBuilder orBuilder = BeanDefinitionBuilder.rootBeanDefinition(Predicates.class, "or");
+            final BeanDefinitionBuilder orBuilder =
+                    BeanDefinitionBuilder.rootBeanDefinition(PredicateSupport.class, "or");
             final ManagedList<BeanDefinition> managedList = new ManagedList<>(count);
             if (entityIdPredicateBuilder != null) {
                 managedList.add(entityIdPredicateBuilder.getBeanDefinition());
@@ -248,7 +248,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         } else if (scriptList.size() == 1) {
             return ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, scriptList.get(0));
         } else {
-            final BeanDefinitionBuilder orBuilder = BeanDefinitionBuilder.rootBeanDefinition(Predicates.class, "or");
+            final BeanDefinitionBuilder orBuilder =
+                    BeanDefinitionBuilder.rootBeanDefinition(PredicateSupport.class, "or");
             final ManagedList<BeanDefinition> managedList = new ManagedList<>(scriptList.size());
             for (final Element e : scriptList) {
                 managedList.add(ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, e).getBeanDefinition());

@@ -17,22 +17,15 @@
 
 package net.shibboleth.idp.consent.flow.impl;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /** {@link PopulateConsentContext} unit test. */
 public class PopulateConsentContextTest extends AbstractConsentActionTest {
@@ -44,7 +37,7 @@ public class PopulateConsentContextTest extends AbstractConsentActionTest {
     }
 
     @Test public void testCurrentConsentsFunction() throws Exception {
-        action = new PopulateConsentContext(new MockCurrentConsentsFunction());
+        action = new PopulateConsentContext(FunctionSupport.constant(ConsentTestingSupport.newConsentMap()));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -54,15 +47,6 @@ public class PopulateConsentContextTest extends AbstractConsentActionTest {
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
         Assert.assertNotNull(consentContext);
         Assert.assertEquals(consentContext.getCurrentConsents(), ConsentTestingSupport.newConsentMap());
-    }
-
-    /** Mock function which returns current consents. */
-    private class MockCurrentConsentsFunction implements Function<ProfileRequestContext, Map<String, Consent>> {
-
-        /** {@inheritDoc} */
-        public Map<String, Consent> apply(@Nonnull final ProfileRequestContext input) {
-            return ConsentTestingSupport.newConsentMap();
-        }
     }
 
 }

@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,10 +45,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 /**
  * An authentication action that completes MFA by producing a final {@link AuthenticationResult}
@@ -88,9 +86,9 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
 
     /** Constructor. */
     public FinalizeMultiFactorAuthentication() {
-        multiFactorContextLookupStrategy = Functions.compose(
-                new ChildContextLookup(MultiFactorAuthenticationContext.class),
-                new ChildContextLookup(AuthenticationContext.class));
+        multiFactorContextLookupStrategy =
+                new ChildContextLookup(MultiFactorAuthenticationContext.class).compose(
+                        new ChildContextLookup(AuthenticationContext.class));
                 
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
@@ -202,7 +200,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
         
         // Override cacheability if a predicate is installed.
         if (authenticationContext.isResultCacheable() && resultCachingPredicate != null) {
-            authenticationContext.setResultCacheable(resultCachingPredicate.apply(profileRequestContext));
+            authenticationContext.setResultCacheable(resultCachingPredicate.test(profileRequestContext));
             log.info("{} Predicate indicates authentication result {} be cacheable in a session", getLogPrefix(),
                     authenticationContext.isResultCacheable() ? "will" : "will not");
         }

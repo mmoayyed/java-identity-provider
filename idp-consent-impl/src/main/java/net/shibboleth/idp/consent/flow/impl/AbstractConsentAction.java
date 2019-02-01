@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.flow.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,8 +33,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for consent actions.
@@ -57,11 +57,11 @@ public abstract class AbstractConsentAction extends AbstractProfileInterceptorAc
     @Nullable private ConsentFlowDescriptor consentFlowDescriptor;
 
     /** Strategy used to find the {@link ConsentContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ConsentContext> consentContextLookupStrategy;
 
     /** Constructor. */
     public AbstractConsentAction() {
-        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
+        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
     }
 
     /**

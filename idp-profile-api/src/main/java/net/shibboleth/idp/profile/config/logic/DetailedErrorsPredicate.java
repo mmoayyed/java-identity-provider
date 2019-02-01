@@ -30,11 +30,11 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class DetailedErrorsPredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null && rpc.getConfiguration() != null) {
-                return rpc.getConfiguration().getDetailedErrorsPredicate().apply(input);
+                return rpc.getConfiguration().getDetailedErrorsPredicate().test(input);
             }
         }
         

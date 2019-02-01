@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.context.navigate;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,8 +28,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for a function that takes a {@link ProfileRequestContext} and requires access to an

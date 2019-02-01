@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +40,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -57,7 +57,6 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValuesHashFunction.class);
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> input) {
 
         if (input == null) {

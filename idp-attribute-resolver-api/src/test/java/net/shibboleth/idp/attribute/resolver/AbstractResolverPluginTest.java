@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.HashSet;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +32,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link ResolverPlugin}. */
@@ -170,7 +170,7 @@ public class AbstractResolverPluginTest {
     static class TestFunc implements Function<AttributeResolutionContext, ProfileRequestContext> {
 
         /** {@inheritDoc} */
-        @Override @Nullable public ProfileRequestContext apply(@Nullable AttributeResolutionContext input) {
+        @Nullable public ProfileRequestContext apply(@Nullable AttributeResolutionContext input) {
             return null;
         }
 

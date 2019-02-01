@@ -76,12 +76,12 @@
         c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getProfileConfig().getPolicyName()" />
 
     <!-- Default operation/resource suppliers for access checks. -->
-    <bean id="DefaultOperationLookupStrategy" class="com.google.common.base.Functions" factory-method="constant">
+    <bean id="DefaultOperationLookupStrategy" parent="shibboleth.Functions.Constant">
         <constructor-arg>
             <null/>
         </constructor-arg>
     </bean>
-    <bean id="DefaultResourceLookupStrategy" class="com.google.common.base.Functions" factory-method="constant">
+    <bean id="DefaultResourceLookupStrategy" parent="shibboleth.Functions.Constant">
         <constructor-arg>
             <null/>
         </constructor-arg>

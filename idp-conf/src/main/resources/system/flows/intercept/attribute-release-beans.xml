@@ -39,8 +39,7 @@
 
     <!-- Functions to return a storage key consisting of the user identifier. -->
 
-    <bean id="shibboleth.consent.PrincipalConsentStorageKey"
-        class="com.google.common.base.Functions" factory-method="compose"
+    <bean id="shibboleth.consent.PrincipalConsentStorageKey" parent="shibboleth.Functions.Compose"
         c:g-ref="shibboleth.PrincipalNameLookup.Subject"
         c:f-ref="shibboleth.ChildLookup.SubjectContext" />
         
@@ -68,7 +67,7 @@
         class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey">
         <constructor-arg name="functionB">
-            <bean class="com.google.common.base.Functions" factory-method="constant">
+            <bean parent="shibboleth.Functions.Constant">
                 <constructor-arg>
                     <util:constant
                         static-field="net.shibboleth.idp.consent.flow.storage.impl.AbstractConsentIndexedStorageAction.DEFAULT_STORAGE_INDEX_KEY" />

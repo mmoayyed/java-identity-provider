@@ -33,8 +33,6 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
 import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -107,7 +105,7 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(filter.getDirection(), Direction.INCLUDE);
         
         Assert.assertTrue(filter.getCondition() instanceof ScriptedPredicate);
-        Assert.assertTrue(filter.getCondition().apply(null));
+        Assert.assertTrue(filter.getCondition().test(null));
     }
 
     @Test
@@ -115,8 +113,7 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateScriptOr.xml");
         Assert.assertNotNull(filter);
         Assert.assertEquals(filter.getDirection(), Direction.INCLUDE);
-        Assert.assertSame(filter.getCondition().getClass(), Predicates.or(Predicates.alwaysTrue()).getClass());
-        Assert.assertTrue(filter.getCondition().apply(null));
+        Assert.assertTrue(filter.getCondition().test(null));
     }
 
     @Test
@@ -125,7 +122,7 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         Assert.assertNotNull(filter);
         Assert.assertEquals(filter.getDirection(), Direction.EXCLUDE);
         Assert.assertNotNull(filter.getCondition());
-        Assert.assertSame(filter.getCondition().getClass(), Predicates.or(Predicates.alwaysTrue()).getClass());
+        Assert.assertFalse(filter.getCondition().test(null));
     }
 
     @Test
@@ -136,6 +133,6 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         // hack!
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityTrueResolver.xml");
         Iterable<EntityDescriptor> entities = resolver.resolve(new CriteriaSet(new EntityIdCriterion("https://sp.example.org/sp/TRUE")));
-        Assert.assertTrue(filter.getCondition().apply(entities.iterator().next()));
+        Assert.assertTrue(filter.getCondition().test(entities.iterator().next()));
     }
 }

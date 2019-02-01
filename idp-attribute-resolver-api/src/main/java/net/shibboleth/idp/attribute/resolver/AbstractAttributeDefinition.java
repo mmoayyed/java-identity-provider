@@ -47,7 +47,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.PatternMatchUtils;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;

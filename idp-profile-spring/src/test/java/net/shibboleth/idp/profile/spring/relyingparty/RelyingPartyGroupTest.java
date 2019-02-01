@@ -141,7 +141,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(resolver.getRelyingPartyConfigurations().isEmpty());
 
         final RelyingPartyConfiguration anon = resolver.getUnverifiedConfiguration();
-        Assert.assertFalse(anon.getDetailedErrorsPredicate().apply(null));
+        Assert.assertFalse(anon.getDetailedErrorsPredicate().test(null));
         Assert.assertTrue(anon.getProfileConfigurations().isEmpty());
 
         final RelyingPartyConfiguration def = resolver.getDefaultConfiguration();

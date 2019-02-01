@@ -39,7 +39,7 @@ public class FlowIdLookupFunction implements ContextDataLookupFunction<ProfileRe
     @Nonnull private final Logger log = LoggerFactory.getLogger(FlowIdLookupFunction.class);
 
     /** {@inheritDoc} */
-    @Override @Nullable public String apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }

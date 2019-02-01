@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,7 +49,6 @@ import org.opensaml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -250,7 +250,7 @@ public class DefaultRelyingPartyConfigurationResolver
         }
 
         log.debug("Resolving relying party configuration");
-        if (!verificationPredicate.apply(context)) {
+        if (!verificationPredicate.test(context)) {
             if (getUnverifiedConfiguration() == null) {
                 log.warn("Profile request was unverified, but no such configuration is available");
                 return Collections.emptyList();
@@ -264,7 +264,7 @@ public class DefaultRelyingPartyConfigurationResolver
 
         for (final RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable", configuration.getId());
-            if (configuration.apply(context)) {
+            if (configuration.test(context)) {
                 log.debug("Relying party configuration {} is applicable", configuration.getId());
                 matches.add(configuration);
             } else {
@@ -290,7 +290,7 @@ public class DefaultRelyingPartyConfigurationResolver
         }
         
         log.debug("Resolving relying party configuration");
-        if (!verificationPredicate.apply(context)) {
+        if (!verificationPredicate.test(context)) {
             if (getUnverifiedConfiguration() == null) {
                 log.warn("Profile request was unverified, but no such configuration is available");
                 return null;
@@ -302,7 +302,7 @@ public class DefaultRelyingPartyConfigurationResolver
 
         for (final RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable", configuration.getId());
-            if (configuration.apply(context)) {
+            if (configuration.test(context)) {
                 log.debug("Relying party configuration {} is applicable", configuration.getId());
                 return configuration;
             } else {

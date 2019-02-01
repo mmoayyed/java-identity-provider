@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.flow.ar.impl;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,8 +33,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 /**
  * Attribute consent action to populate the attribute consent context with the attributes for which consent should be
@@ -89,7 +88,7 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
 
         final Map<String, IdPAttribute> consentableAttributes = new TreeMap<>(attributeIdComparator);
         for (final IdPAttribute attribute : attributes.values()) {
-            if (attributePredicate.apply(attribute)) {
+            if (attributePredicate.test(attribute)) {
                 consentableAttributes.put(attribute.getId(), attribute);
             }
         }

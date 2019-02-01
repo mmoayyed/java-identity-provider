@@ -167,12 +167,12 @@
             </bean>
         </property>
         <property name="securityParametersContextLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookupOrCreate.SecurityParameters"
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
         <property name="existingParametersContextLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookup.SecurityParameters"
                 c:f-ref="shibboleth.MessageContextLookup.Outbound" />
         </property>
@@ -284,7 +284,7 @@
 
     <bean id="SignAssertions" class="org.opensaml.saml.common.profile.impl.SignAssertions" scope="prototype">
         <property name="securityParametersLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookup.SecurityParameters"
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>

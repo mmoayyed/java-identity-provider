@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,8 +34,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Action that adds a {@link SAMLSelfEntityContext} to the inbound {@link MessageContext}

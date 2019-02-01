@@ -32,9 +32,8 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Predicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import com.google.common.base.Predicate;
 
 /**
  * Predicate to determine whether consent should be obtained for an attribute.
@@ -90,8 +89,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final IdPAttribute input) {
+    public boolean test(@Nullable final IdPAttribute input) {
 
         if (input == null) {
             return false;

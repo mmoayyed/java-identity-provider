@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,8 +41,6 @@ import org.opensaml.saml.saml1.core.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.Multimap;
 
 /**
@@ -78,10 +77,10 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
     public FilterByQueriedAttributeDesignators(@Nonnull final SAML1AttributeDesignatorsMapperService mapper) {
         mapperService = Constraint.isNotNull(mapper, "MapperService cannot be null");
         
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
         
-        requestLookupStrategy = Functions.compose(new MessageLookup(Request.class), new InboundMessageContextLookup());
+        requestLookupStrategy = new MessageLookup(Request.class).compose(new InboundMessageContextLookup());
     }
 
     /**

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +32,6 @@ import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.idp.authn.AccountLockoutManager;
 import net.shibboleth.idp.authn.context.AuthenticationContext;

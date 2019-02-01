@@ -99,7 +99,7 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
 
         for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows().values()) {
             log.debug("{} Checking flow {} for applicability...", getLogPrefix(), flow.getId());
-            if (flow.apply(profileRequestContext)) {
+            if (flow.test(profileRequestContext)) {
                 interceptorContext.setAttemptedFlow(flow);
                 return flow;
             }

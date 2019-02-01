@@ -24,12 +24,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -120,7 +119,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
      * @deprecated Use {@link #getResolveAttributesPredicate()} instead.
      */
     public boolean resolveAttributes() {
-        return resolveAttributesPredicate.apply(getProfileRequestContext());
+        return resolveAttributesPredicate.test(getProfileRequestContext());
     }
     
     /**
@@ -165,7 +164,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
      * @deprecated Use {@link #getIncludeAttributeStatementPredicate()} instead.
      */
     public boolean includeAttributeStatement() {
-        return includeAttributeStatementPredicate.apply(getProfileRequestContext());
+        return includeAttributeStatementPredicate.test(getProfileRequestContext());
     }
 
     /**

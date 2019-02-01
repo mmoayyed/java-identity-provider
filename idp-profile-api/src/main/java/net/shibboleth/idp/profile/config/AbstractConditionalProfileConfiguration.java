@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.profile.config;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;

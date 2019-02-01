@@ -24,12 +24,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
@@ -189,7 +189,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
         if (newValues != null) {
-            values = ImmutableList.copyOf(Collections2.transform(newValues, convertNullValues));
+            values = ImmutableList.copyOf(Collections2.transform(newValues, convertNullValues::apply));
         } else {
             values = ImmutableList.of();
         }

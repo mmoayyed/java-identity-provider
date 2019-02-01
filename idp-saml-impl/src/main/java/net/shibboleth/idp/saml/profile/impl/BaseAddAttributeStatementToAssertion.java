@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -39,9 +41,6 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Base class for actions that encode an {@link AttributeContext} into a SAML attribute statement.
@@ -94,8 +93,8 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
         statementInOwnAssertion = false;
         ignoringUnencodableAttributes = true;
 
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
         idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
         issuerLookupStrategy = new ResponderIdLookupFunction();
     }

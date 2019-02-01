@@ -25,6 +25,8 @@
                 <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringBooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
+                <bean class="net.shibboleth.ext.spring.config.FunctionToFunctionConverter" />
+                <bean class="net.shibboleth.ext.spring.config.PredicateToPredicateConverter" />
             </set>
         </property>
     </bean>

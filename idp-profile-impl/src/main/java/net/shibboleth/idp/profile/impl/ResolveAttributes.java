@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,9 +50,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that invokes the {@link AttributeResolver} for the current request.
@@ -112,15 +110,15 @@ public final class ResolveAttributes extends AbstractProfileAction {
         issuerLookupStrategy = new ResponderIdLookupFunction();
         recipientLookupStrategy = new RelyingPartyIdLookupFunction();
         
-        principalNameLookupStrategy = Functions.compose(
-                new SubjectContextPrincipalLookupFunction(),
-                new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class));
+        principalNameLookupStrategy =
+                new SubjectContextPrincipalLookupFunction().compose(
+                        new ChildContextLookup<>(SubjectContext.class));
         
         authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
         
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
-        attributeContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class, true),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
         
         attributesLookupStrategy = FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
                 Collections.<String>emptyList());

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -38,8 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /** Unit tests for {@link ConsentSerializer}. */
 public class ConsentSerializerTest {

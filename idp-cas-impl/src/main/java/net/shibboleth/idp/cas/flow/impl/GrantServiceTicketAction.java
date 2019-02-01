@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -57,16 +57,16 @@ import org.springframework.webflow.execution.RequestContext;
 public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(GrantServiceTicketAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(GrantServiceTicketAction.class);
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
+    @Nonnull private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
             new ConfigLookupFunction<>(LoginConfiguration.class);
 
     /** Looks up an IdP session context from IdP profile request context. */
     @Nonnull
     private final Function<ProfileRequestContext, SessionContext> sessionContextFunction =
-            new ChildContextLookup<>(SessionContext.class, false);
+            new ChildContextLookup<>(SessionContext.class);
 
     /** AuthenticationContext lookup function. */
     @Nonnull
@@ -75,9 +75,9 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
 
     /** Function to retrieve subject principal name. */
     @Nonnull
-    private final Function<ProfileRequestContext, String> principalLookupFunction = Functions.compose(
-            new SubjectContextPrincipalLookupFunction(),
-            new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class));
+    private final Function<ProfileRequestContext, String> principalLookupFunction =
+            new SubjectContextPrincipalLookupFunction().compose(
+                    new ChildContextLookup<>(SubjectContext.class));
 
     /** Manages CAS tickets. */
     @Nonnull

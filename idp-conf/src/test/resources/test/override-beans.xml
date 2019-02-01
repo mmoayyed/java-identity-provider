@@ -14,7 +14,7 @@
     <bean id="c14n/SAML2Transform" parent="shibboleth.AbstractSAML2C14NFlowBean"
             p:formats-ref="shibboleth.NameTransformFormats">
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="and">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="and">
                 <constructor-arg>
                     <list>
                         <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
@@ -28,7 +28,7 @@
     <bean id="c14n/SAML1Transform" parent="shibboleth.AbstractSAML1C14NFlowBean"
             p:formats-ref="shibboleth.NameTransformFormats"> 
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="and">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="and">
                 <constructor-arg>
                     <list>
                         <bean class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization.ActivationCondition" />

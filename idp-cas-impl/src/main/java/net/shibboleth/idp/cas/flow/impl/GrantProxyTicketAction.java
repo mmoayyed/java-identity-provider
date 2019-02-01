@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
@@ -121,7 +122,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             log.warn("Invalid proxy ticket configuration: SecurityConfiguration#idGenerator undefined");
             return ProtocolError.IllegalState.event(this);
         }
-        if (validateIdPSessionPredicate.apply(profileRequestContext)) {
+        if (validateIdPSessionPredicate.test(profileRequestContext)) {
             IdPSession session = null;
             try {
                 log.debug("Attempting to retrieve session {}", pgt.getSessionId());

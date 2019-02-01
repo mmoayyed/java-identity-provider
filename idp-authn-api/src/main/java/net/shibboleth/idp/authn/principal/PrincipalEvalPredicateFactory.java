@@ -22,7 +22,7 @@ import java.security.Principal;
 import javax.annotation.Nonnull;
 
 /**
- * Generates a {@link com.google.common.base.Predicate} to evaluate a {@link PrincipalSupportingComponent}
+ * Generates a {@link java.util.function.Predicate} to evaluate a {@link PrincipalSupportingComponent}
  * against a requested form of authentication expressed in terms of a {@link Principal}.
  * 
  * <p>The predicate is constructed around a {@link Principal} to compare in an
@@ -39,7 +39,7 @@ public interface PrincipalEvalPredicateFactory {
      * 
      * @param candidate a {@link Principal} object to evaluate
      * 
-     * @return a {@link com.google.common.base.Predicate} implementing custom matching rules
+     * @return a {@link PrincipalEvalPredicate} implementing custom matching rules
      */
     @Nonnull PrincipalEvalPredicate getPredicate(@Nonnull final Principal candidate);
 }

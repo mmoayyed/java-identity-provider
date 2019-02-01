@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
@@ -37,8 +38,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /** {@link PopulateAuditContext} unit test. */
 public class PopulateAuditContextTest {

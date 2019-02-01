@@ -48,7 +48,6 @@ import com.google.common.collect.ImmutableList;
 public class QualifiedNameIDFormatsLookupFunction extends AbstractRelyingPartyLookupFunction<Collection<String>> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> apply(
             @Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);

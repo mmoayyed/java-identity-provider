@@ -19,11 +19,11 @@ package net.shibboleth.idp.session.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 /**
  * Selection function to retrieve the logout propagation flow descriptor that is suitable for a given {@link SPSession}.
  */
-public class LogoutPropagationFlowDescriptorSelector implements Function<SPSession, LogoutPropagationFlowDescriptor> {
+public class LogoutPropagationFlowDescriptorSelector implements Function<SPSession,LogoutPropagationFlowDescriptor> {
 
     /** List of available flows. */
     private final List<LogoutPropagationFlowDescriptor> availableFlows;
@@ -54,8 +54,7 @@ public class LogoutPropagationFlowDescriptorSelector implements Function<SPSessi
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public LogoutPropagationFlowDescriptor apply(@Nonnull final SPSession input) {
+    @Nullable public LogoutPropagationFlowDescriptor apply(@Nullable final SPSession input) {
         for (final LogoutPropagationFlowDescriptor flowDescriptor : availableFlows) {
             if (flowDescriptor.getSessionType().isInstance(input)) {
                 return flowDescriptor;

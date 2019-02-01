@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
@@ -34,8 +35,7 @@ public class ToggleablePredicate implements Predicate<ProfileRequestContext> {
         result = value;
     }
 
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext profileRequestContext) {
+    public boolean test(@Nullable final ProfileRequestContext profileRequestContext) {
         return result;
     }
 }

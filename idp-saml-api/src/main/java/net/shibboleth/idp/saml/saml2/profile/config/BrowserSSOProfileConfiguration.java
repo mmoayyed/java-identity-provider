@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,8 +43,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -153,7 +153,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     @Deprecated
     public boolean resolveAttributes() {
-        return resolveAttributesPredicate.apply(getProfileRequestContext());
+        return resolveAttributesPredicate.test(getProfileRequestContext());
     }
     
     /**
@@ -199,7 +199,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     @Deprecated
     public boolean includeAttributeStatement() {
-        return includeAttributeStatementPredicate.apply(getProfileRequestContext());
+        return includeAttributeStatementPredicate.test(getProfileRequestContext());
     }
 
     /**
@@ -280,7 +280,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     @Deprecated
     public boolean skipEndpointValidationWhenSigned() {
-        return skipEndpointValidationWhenSignedPredicate.apply(getProfileRequestContext());
+        return skipEndpointValidationWhenSignedPredicate.test(getProfileRequestContext());
     }
 
     /**
@@ -362,7 +362,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     @Deprecated
     public Boolean getAllowingDelegation() {
-        return allowDelegationPredicate.apply(getProfileRequestContext());
+        return allowDelegationPredicate.test(getProfileRequestContext());
     }
 
     /**
@@ -386,7 +386,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @return whether produced assertions may be delegated
      */
     public boolean isAllowingDelegation() {
-        return allowDelegationPredicate.apply(getProfileRequestContext());
+        return allowDelegationPredicate.test(getProfileRequestContext());
     }
     
     

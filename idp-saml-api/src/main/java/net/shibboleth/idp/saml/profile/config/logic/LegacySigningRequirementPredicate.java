@@ -67,7 +67,8 @@ public class LegacySigningRequirementPredicate extends NoIntegrityMessageChannel
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Override
+    public boolean test(@Nullable final ProfileRequestContext input) {
         switch (settingToApply) {
             case ALWAYS:
                 return true;
@@ -76,7 +77,7 @@ public class LegacySigningRequirementPredicate extends NoIntegrityMessageChannel
                 return false;
                 
             case CONDITIONAL:
-                return super.apply(input);
+                return super.test(input);
                 
             default:
                 throw new IllegalArgumentException("Signing requirement setting not one of the supported values");

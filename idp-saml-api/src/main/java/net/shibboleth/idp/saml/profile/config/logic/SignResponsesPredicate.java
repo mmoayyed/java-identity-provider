@@ -30,13 +30,12 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class SignResponsesPredicate extends AbstractRelyingPartyPredicate {
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLProfileConfiguration) {
-                return ((SAMLProfileConfiguration) pc).getSignResponses().apply(input);
+                return ((SAMLProfileConfiguration) pc).getSignResponses().test(input);
             }
         }
         

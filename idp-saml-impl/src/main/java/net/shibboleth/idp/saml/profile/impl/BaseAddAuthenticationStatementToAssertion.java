@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,8 +39,6 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for actions that encode authentication information into a SAML 1 or SAML 2 statement.

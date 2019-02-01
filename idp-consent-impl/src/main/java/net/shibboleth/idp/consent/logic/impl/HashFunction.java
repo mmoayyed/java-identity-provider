@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.cryptacular.util.CodecUtil;
 import org.cryptacular.util.HashUtil;
-
-import com.google.common.base.Function;
 
 /**
  * Function whose output value is a hash of the input value.
@@ -42,6 +42,7 @@ public class HashFunction implements Function<String, String> {
             return null;
         }
 
+        // TODO: replace these with more standard calls
         return CodecUtil.b64(HashUtil.sha256(input));
     }
 }

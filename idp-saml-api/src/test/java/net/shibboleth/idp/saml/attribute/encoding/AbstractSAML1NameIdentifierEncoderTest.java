@@ -36,7 +36,7 @@ public class AbstractSAML1NameIdentifierEncoderTest {
                 return null;
             }
 
-            public boolean apply(String input) {
+            public boolean test(String input) {
                 return false;
             }
         };

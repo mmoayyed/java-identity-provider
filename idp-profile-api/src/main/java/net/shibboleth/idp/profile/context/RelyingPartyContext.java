@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.context;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,8 +28,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
-
-import com.google.common.base.Function;
 
 /**
  * {@link BaseContext} containing relying party specific information, usually a

@@ -18,13 +18,12 @@
 package net.shibboleth.idp.cas.config.impl;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.idp.cas.service.impl.DefaultServiceComparator;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;

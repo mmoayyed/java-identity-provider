@@ -31,13 +31,12 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfigu
 public class ClientTLSArtifactRequestsPredicate extends AbstractRelyingPartyPredicate {
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final MessageContext input) {
+    public boolean test(@Nullable final MessageContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLArtifactConsumerProfileConfiguration) {
-                return ((SAMLArtifactConsumerProfileConfiguration) pc).getClientTLSArtifactRequests().apply(input);
+                return ((SAMLArtifactConsumerProfileConfiguration) pc).getClientTLSArtifactRequests().test(input);
             }
         }
         

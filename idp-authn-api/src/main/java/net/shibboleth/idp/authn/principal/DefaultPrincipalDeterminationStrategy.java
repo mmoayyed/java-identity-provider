@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.principal;
 
 import java.security.Principal;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +31,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * Function that returns the first custom {@link Principal} of a particular type found on the

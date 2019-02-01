@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -32,9 +35,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
@@ -122,7 +122,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
     static class Foo implements Predicate<AttributeFilterContext> {
 
         /** {@inheritDoc} */
-        @Override public boolean apply(@Nullable AttributeFilterContext input) {
+        public boolean test(@Nullable AttributeFilterContext input) {
             return false;
         }
 

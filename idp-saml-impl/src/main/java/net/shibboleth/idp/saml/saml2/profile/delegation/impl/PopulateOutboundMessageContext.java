@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
+import javax.annotation.Nonnull;
+
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
@@ -38,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class PopulateOutboundMessageContext extends AbstractProfileAction {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(PopulateOutboundMessageContext.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(PopulateOutboundMessageContext.class);
 
 //CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */

@@ -19,7 +19,10 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,9 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
@@ -179,7 +179,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         try {
             if (null != activationCondition) {
                 final ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
-                if (!activationCondition.apply(profileRequestContext)) {
+                if (!activationCondition.test(profileRequestContext)) {
                     log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
                     return null;
                 }
@@ -243,7 +243,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
     /** {@inheritDoc} */
     @Override public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hash(getId());
     }
 
     /** {@inheritDoc} */

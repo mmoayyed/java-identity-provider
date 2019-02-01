@@ -34,18 +34,17 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class ResolveAttributesProfileConfigPredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getResolveAttributesPredicate().apply(input);
+                        rpc.getProfileConfig()).getResolveAttributesPredicate().test(input);
             } else if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getResolveAttributesPredicate().apply(input);
+                        rpc.getProfileConfig()).getResolveAttributesPredicate().test(input);
             }
         }
         

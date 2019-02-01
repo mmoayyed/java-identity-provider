@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -40,6 +39,7 @@ import net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAs
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
 
@@ -80,7 +80,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /**
@@ -323,12 +322,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     @Test
     public void testEndpointStrategyProducesNull() throws Exception {
         action.setLibertySSOSEndpointURL(null);
-        action.setLibertySSOSEndpointURLLookupStrategy(
-                new Function<Pair<ProfileRequestContext,HttpServletRequest>, String>() {
-                    public String apply(@Nullable Pair<ProfileRequestContext, HttpServletRequest> input) {
-                        return null;
-                    }
-                });
+        action.setLibertySSOSEndpointURLLookupStrategy(FunctionSupport.constant(null));
         
         action.initialize();
         final Event result = action.execute(rc);

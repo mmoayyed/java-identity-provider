@@ -31,13 +31,12 @@ import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfigura
 public class ClientTLSSOAPLogoutRequestsPredicate extends AbstractRelyingPartyPredicate {
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final MessageContext input) {
+    public boolean test(@Nullable final MessageContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SingleLogoutProfileConfiguration) {
-                return ((SingleLogoutProfileConfiguration) pc).getClientTLSSOAPRequests().apply(input);
+                return ((SingleLogoutProfileConfiguration) pc).getClientTLSSOAPRequests().test(input);
             }
         }
         

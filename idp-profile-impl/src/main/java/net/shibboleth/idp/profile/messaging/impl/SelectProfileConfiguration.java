@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.messaging.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,9 +30,6 @@ import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -67,10 +66,9 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
     
     /** Constructor. */
     public SelectProfileConfiguration() {
-        relyingPartyContextLookupStrategy =   Functions.compose(
-                new ChildContextLookup<InOutOperationContext, RelyingPartyContext>(RelyingPartyContext.class),
-                new RecursiveTypedParentContextLookup<MessageContext,InOutOperationContext>(InOutOperationContext.class)
-                );
+        relyingPartyContextLookupStrategy =
+                new ChildContextLookup<>(RelyingPartyContext.class).compose(
+                        new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
     }
 
     /**

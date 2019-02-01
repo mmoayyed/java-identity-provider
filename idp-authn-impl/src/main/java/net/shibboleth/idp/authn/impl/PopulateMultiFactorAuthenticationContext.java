@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,9 +44,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * An action that creates and populates a {@link MultiFactorAuthenticationContext} with the set of
@@ -82,9 +80,9 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     /** Constructor. */
     PopulateMultiFactorAuthenticationContext() {
         transitionMapLookupStrategy = FunctionSupport.constant(null);
-        multiFactorContextCreationStrategy = Functions.compose(
-                new ChildContextLookup(MultiFactorAuthenticationContext.class, true),
-                new ChildContextLookup(AuthenticationContext.class));
+        multiFactorContextCreationStrategy =
+                new ChildContextLookup(MultiFactorAuthenticationContext.class, true).compose(
+                        new ChildContextLookup(AuthenticationContext.class));
         activeResultLookupStrategy = new DefaultResultLookupStrategy();
     }
     
@@ -230,7 +228,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             final AuthenticationFlowDescriptor descriptor = authenticationContext.getAvailableFlows().get(
                     candidate.getAuthenticationFlowId());
             if (descriptor != null) {
-                if (descriptor.apply(profileRequestContext)) {
+                if (descriptor.test(profileRequestContext)) {
                     if (descriptor.isResultActive(candidate)) {
                         if (authenticationContext.getMaxAge() > 0
                                 && candidate.getAuthenticationInstant() + authenticationContext.getMaxAge()

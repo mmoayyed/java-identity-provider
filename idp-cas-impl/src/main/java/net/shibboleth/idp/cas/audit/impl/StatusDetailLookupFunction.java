@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.cas.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.cas.protocol.AbstractProtocolResponse;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -33,14 +34,14 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
-public class StatusDetailLookupFunction implements Function<ProfileRequestContext, String> {
+public class StatusDetailLookupFunction implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for protocol context. */
-    @Nonnull private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
+    @Nonnull private final Function<ProfileRequestContext,ProtocolContext> protocolContextFunction;
 
     /** Constructor. */
     public StatusDetailLookupFunction() {
-        this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
+        this(new ChildContextLookup<>(ProtocolContext.class));
     }
 
     /**
@@ -48,7 +49,7 @@ public class StatusDetailLookupFunction implements Function<ProfileRequestContex
      *
      * @param protocolLookup lookup strategy for protocol context
      */
-    public StatusDetailLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
+    public StatusDetailLookupFunction(@Nonnull final Function<ProfileRequestContext,ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
@@ -57,8 +58,7 @@ public class StatusDetailLookupFunction implements Function<ProfileRequestContex
      * 
      * {@inheritDoc}
      */
-    @Nullable @Override
-    public String apply(@Nonnull final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
@@ -69,4 +69,5 @@ public class StatusDetailLookupFunction implements Function<ProfileRequestContex
         }
         return null;
     }
+
 }

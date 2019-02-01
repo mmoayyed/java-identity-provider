@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,8 +44,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
@@ -141,7 +141,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @deprecated Use {@link #getDetailedErrorsPredicate()} instead.
      */
     public boolean isDetailedErrors() {
-        return detailedErrorsPredicate.apply(getProfileRequestContext());
+        return detailedErrorsPredicate.test(getProfileRequestContext());
     }
 
     /**
@@ -267,10 +267,10 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        return activationCondition.apply(input);
+        return activationCondition.test(input);
     }
 
     /**

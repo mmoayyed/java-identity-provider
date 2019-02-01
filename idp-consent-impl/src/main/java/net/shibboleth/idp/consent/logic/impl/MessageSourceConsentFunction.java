@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,8 +38,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.NoSuchMessageException;
-
-import com.google.common.base.Function;
 
 /**
  * Function that returns a consent object whose id and value are resolved from a lookup function
@@ -142,7 +141,6 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Map<String,Consent> apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

@@ -50,7 +50,7 @@ public class ProfileInterceptorFlowDescriptorTest {
         Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertTrue(descriptor.isNonBrowserSupported());
         Assert.assertNull(descriptor.getStorageService());
-        Assert.assertTrue(descriptor.apply(prc));
+        Assert.assertTrue(descriptor.test(prc));
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
@@ -88,7 +88,7 @@ public class ProfileInterceptorFlowDescriptorTest {
         descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
         descriptor.initialize();
 
-        Assert.assertFalse(descriptor.apply(prc));
+        Assert.assertFalse(descriptor.test(prc));
     }
 
     @Test public void testMutatingNonBrowserSupport() {

@@ -67,14 +67,14 @@ public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
             final RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
     
             Assert.assertEquals(rpConf.getId(), "the_RP");
-            Assert.assertTrue(rpConf.getDetailedErrorsPredicate().apply(null));
+            Assert.assertTrue(rpConf.getDetailedErrorsPredicate().test(null));
             Assert.assertEquals(rpConf.getProfileConfigurations().size(), 1);
     
             final ProfileRequestContext ctx = new ProfileRequestContext<>();
             final RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
             rpCtx.setRelyingPartyId("the_RP");
             
-            Assert.assertTrue(rpConf.apply(ctx));
+            Assert.assertTrue(rpConf.test(ctx));
             //
             // TODO the EntitiesGroup thing
             //

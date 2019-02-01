@@ -94,7 +94,7 @@
     <!-- If global consent has been given by user, skip the rest of the flow. -->
     
     <decision-state id="TestForGlobalAttributeConsent">
-        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)"
+        <if test="GlobalAttributeConsentPredicate.test(opensamlProfileRequestContext)"
             then="proceed" else="PopulateConsentContext" />
     </decision-state>
 
@@ -111,7 +111,7 @@
     <!-- If consent is required, display page. Otherwise, release attributes.  -->
     
     <decision-state id="IsConsentRequired">
-        <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)"
+        <if test="IsConsentRequiredPredicate.test(opensamlProfileRequestContext)"
             then="DisplayAttributeReleasePage" else="ReleaseAttributes" />
     </decision-state>
 

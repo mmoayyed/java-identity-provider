@@ -22,11 +22,9 @@
     
     <!-- Default operation/resource suppliers for access checks. -->
 
-    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
-        factory-method="constant" c:_0="unlock" />
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="unlock" />
         
-    <bean id="shibboleth.AdminResourceLookupStrategy" class="com.google.common.base.Functions"
-        factory-method="constant" c:_0="keys" />
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.Functions.Constant" c:target="keys" />
     
     <!--  Work beans. -->
         

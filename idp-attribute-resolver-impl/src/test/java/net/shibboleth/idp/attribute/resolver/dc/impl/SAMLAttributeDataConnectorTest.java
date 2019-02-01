@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -36,8 +37,6 @@ import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /**
  * test for the {@link SAMLAttributeDataConnector}

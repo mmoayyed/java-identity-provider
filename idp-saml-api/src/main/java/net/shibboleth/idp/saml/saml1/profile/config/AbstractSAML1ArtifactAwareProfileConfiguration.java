@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.saml.saml1.profile.config;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;

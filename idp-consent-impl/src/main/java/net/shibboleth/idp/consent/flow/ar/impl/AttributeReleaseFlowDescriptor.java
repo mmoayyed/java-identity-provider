@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.flow.ar.impl;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -26,8 +27,6 @@ import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Function;
 
 /**
  * Descriptor for an attribute release flow.

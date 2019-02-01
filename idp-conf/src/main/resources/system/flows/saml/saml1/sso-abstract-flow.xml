@@ -43,7 +43,7 @@
     </subflow-state>
     
     <decision-state id="ResolveAttributes">
-        <if test="ResolveAttributesPredicate.apply(opensamlProfileRequestContext)"
+        <if test="ResolveAttributesPredicate.test(opensamlProfileRequestContext)"
             then="AttributeResolution"
             else="BuildResponse" />
     </decision-state>
@@ -118,7 +118,7 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
             <evaluate expression="LogEvent" />
         </on-entry>
-        <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
+        <if test="LocalErrorPredicate.test(opensamlProfileRequestContext)"
             then="HandleErrorWithView" else="HandleErrorWithResponse" />
     </decision-state>
 

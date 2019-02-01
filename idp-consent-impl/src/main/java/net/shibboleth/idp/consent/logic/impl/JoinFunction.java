@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,13 +28,12 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 
 /**
  * Function to join the result of two functions with a separator.
  */
-public class JoinFunction implements Function<ProfileRequestContext, String> {
+public class JoinFunction implements Function<ProfileRequestContext,String> {
 
     /** Separator. */
     @Nonnull public static final String SEPARATOR = ":";
@@ -68,7 +69,6 @@ public class JoinFunction implements Function<ProfileRequestContext, String> {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

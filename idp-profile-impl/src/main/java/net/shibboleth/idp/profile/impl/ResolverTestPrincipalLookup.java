@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * Returns the principal name from a {@link ResolverTestRequest} message in the inbound message context.
@@ -29,7 +29,6 @@ import com.google.common.base.Function;
 public class ResolverTestPrincipalLookup implements Function<ProfileRequestContext,String> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         
         if (input != null && input.getInboundMessageContext() != null) {

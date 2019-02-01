@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.attribute;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -67,4 +67,5 @@ public interface AttributeEncoder<EncodedType> {
      * @throws AttributeEncodingException if unable to successfully encode attribute
      */
     @Nonnull EncodedType encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException;
+
 }

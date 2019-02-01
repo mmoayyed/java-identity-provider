@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring.impl;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -33,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import com.google.common.base.Function;
-
 /**
  * Strategy for summoning up an {@link AttributeFilterImpl} from a populated {@link ApplicationContext}. We do this by
  * finding all the configured {@link AttributeFilterPolicy} beans and bunging them into the Attribute Filter which we
@@ -47,8 +46,7 @@ public class AttributeFilterServiceStrategy extends AbstractIdentifiableInitiali
     private final Logger log = LoggerFactory.getLogger(AttributeFilterServiceStrategy.class);
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<AttributeFilter>
-            apply(@Nullable final ApplicationContext appContext) {
+    @Nullable public ServiceableComponent<AttributeFilter> apply(@Nullable final ApplicationContext appContext) {
 
         final Collection<AttributeFilterPolicy> afps = appContext.getBeansOfType(AttributeFilterPolicy.class).values();
         log.debug("Creating Attribute Filter {} with  {} Policies", getId(), afps.size());

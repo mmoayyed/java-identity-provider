@@ -55,33 +55,33 @@ public class InexactPrincipalEvalPredicateFactoryTest {
     @Test public void testNoPrincipals() {
         // Scenario: request for foo, result contains nothing, no match.
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
-        Assert.assertFalse(factory.getPredicate(foo).apply(sample));
+        Assert.assertFalse(factory.getPredicate(foo).test(sample));
     }
 
     @Test public void testOnePrincipalMatch() {
         // Scenario: result contains bar, request for foo matches, bar and baz do not
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("bar"));
-        Assert.assertTrue(factory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(factory.getPredicate(bar).apply(sample));
-        Assert.assertFalse(factory.getPredicate(baz).apply(sample));
+        Assert.assertTrue(factory.getPredicate(foo).test(sample));
+        Assert.assertFalse(factory.getPredicate(bar).test(sample));
+        Assert.assertFalse(factory.getPredicate(baz).test(sample));
     }
 
     @Test public void testOnePrincipalNoMatch() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("foo"));
-        Assert.assertFalse(factory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(factory.getPredicate(bar).apply(sample));
-        Assert.assertFalse(factory.getPredicate(baz).apply(sample));
+        Assert.assertFalse(factory.getPredicate(foo).test(sample));
+        Assert.assertFalse(factory.getPredicate(bar).test(sample));
+        Assert.assertFalse(factory.getPredicate(baz).test(sample));
     }
     
     @Test public void testMultiplePrincipalMatch() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("bar"));
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("baz"));
-        Assert.assertTrue(factory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(factory.getPredicate(bar).apply(sample));
-        Assert.assertFalse(factory.getPredicate(baz).apply(sample));
+        Assert.assertTrue(factory.getPredicate(foo).test(sample));
+        Assert.assertFalse(factory.getPredicate(bar).test(sample));
+        Assert.assertFalse(factory.getPredicate(baz).test(sample));
     }
 
     @Test public void testMultiplePrincipalMatchMap() {
@@ -90,17 +90,17 @@ public class InexactPrincipalEvalPredicateFactoryTest {
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("baz"));
         InexactPrincipalEvalPredicateFactory mapFactory = new InexactPrincipalEvalPredicateFactory();
         mapFactory.setMatchingRules(factory.getMatchingRules().asMap());
-        Assert.assertTrue(mapFactory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(mapFactory.getPredicate(bar).apply(sample));
-        Assert.assertFalse(mapFactory.getPredicate(baz).apply(sample));
+        Assert.assertTrue(mapFactory.getPredicate(foo).test(sample));
+        Assert.assertFalse(mapFactory.getPredicate(bar).test(sample));
+        Assert.assertFalse(mapFactory.getPredicate(baz).test(sample));
     }
 
     @Test public void testMultiplePrincipalNoMatch() {
         AuthenticationResult sample = new AuthenticationResult("test", new Subject());
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("foo"));
         sample.getSubject().getPrincipals().add(new UsernamePrincipal("baz"));
-        Assert.assertFalse(factory.getPredicate(foo).apply(sample));
-        Assert.assertFalse(factory.getPredicate(bar).apply(sample));
-        Assert.assertFalse(factory.getPredicate(baz).apply(sample));
+        Assert.assertFalse(factory.getPredicate(foo).test(sample));
+        Assert.assertFalse(factory.getPredicate(bar).test(sample));
+        Assert.assertFalse(factory.getPredicate(baz).test(sample));
     }
 }

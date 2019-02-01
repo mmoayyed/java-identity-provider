@@ -19,6 +19,7 @@ package net.shibboleth.idp.consent.audit.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +31,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 /**
@@ -39,11 +39,11 @@ import com.google.common.collect.Collections2;
 public class CurrentConsentIsApprovedAuditExtractor implements Function<ProfileRequestContext, Collection<Boolean>> {
 
     /** Strategy used to find the {@link ConsentContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ConsentContext> consentContextLookupStrategy;
 
     /** Constructor. */
     public CurrentConsentIsApprovedAuditExtractor() {
-        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
+        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
     }
 
     /**
@@ -53,20 +53,16 @@ public class CurrentConsentIsApprovedAuditExtractor implements Function<ProfileR
      * @param strategy the consent context lookup strategy
      */
     public CurrentConsentIsApprovedAuditExtractor(
-            @Nonnull final Function<ProfileRequestContext, ConsentContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,ConsentContext> strategy) {
         consentContextLookupStrategy = Constraint.isNotNull(strategy, "Consent context lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public Collection<Boolean> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Collection<Boolean> apply(@Nullable final ProfileRequestContext input) {
+        
         final ConsentContext consentContext = consentContextLookupStrategy.apply(input);
         if (consentContext != null && !consentContext.getCurrentConsents().isEmpty()) {
-            return Collections2.transform(consentContext.getCurrentConsents().values(),
-                    new Function<Consent, Boolean>() {
-                        public Boolean apply(final Consent input) {
-                            return input.isApproved();
-                        }
-                    });
+            return Collections2.transform(consentContext.getCurrentConsents().values(), Consent::isApproved);
         } else {
             return Collections.emptyList();
         }

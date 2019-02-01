@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.Predicate;
+
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Abstract base class for predicates operating on an {@link AttributeContext}.
@@ -50,8 +50,9 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
 
     /** Constructor. */
     public AbstractAttributePredicate() {
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         useUnfilteredAttributes = true;
     }
     
@@ -97,8 +98,7 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
     }
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(input);
         if (attributeCtx == null) {

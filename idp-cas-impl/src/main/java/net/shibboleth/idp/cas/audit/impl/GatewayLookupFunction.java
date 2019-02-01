@@ -17,13 +17,15 @@
 
 package net.shibboleth.idp.cas.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -32,13 +34,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
-public class GatewayLookupFunction implements Function<ProfileRequestContext, Boolean> {
+public class GatewayLookupFunction implements Function<ProfileRequestContext,Boolean> {
     /** Lookup strategy for protocol context. */
-    @Nonnull private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
+    @Nonnull private final Function<ProfileRequestContext,ProtocolContext> protocolContextFunction;
 
     /** Constructor. */
     public GatewayLookupFunction() {
-        this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
+        this(new ChildContextLookup<ProfileRequestContext,ProtocolContext>(ProtocolContext.class));
     }
 
     /**
@@ -50,13 +52,8 @@ public class GatewayLookupFunction implements Function<ProfileRequestContext, Bo
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
-    /**
-     * Whether the gateway parameter is true.
-     * 
-     * {@inheritDoc}
-     */
-    @Nullable @Override
-    public Boolean apply(@Nonnull final ProfileRequestContext input) {
+    /** {@inheritDoc} */
+    @Nullable public Boolean apply(@Nullable final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
@@ -67,4 +64,5 @@ public class GatewayLookupFunction implements Function<ProfileRequestContext, Bo
         }
         return null;
     }
+    
 }

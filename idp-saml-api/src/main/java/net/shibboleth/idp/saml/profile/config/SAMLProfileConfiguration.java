@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.profile.config;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -28,8 +29,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-
-import com.google.common.base.Predicate;
 
 /** Common interface for SAML profile configurations. */
 public interface SAMLProfileConfiguration extends ProfileConfiguration {

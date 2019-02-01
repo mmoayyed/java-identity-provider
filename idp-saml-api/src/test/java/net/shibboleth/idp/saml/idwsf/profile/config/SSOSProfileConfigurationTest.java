@@ -42,11 +42,11 @@ public class SSOSProfileConfigurationTest {
         
         SSOSProfileConfiguration config = new SSOSProfileConfiguration();
         Assert.assertNotNull(config.getDelegationPredicate());
-        Assert.assertFalse(config.getDelegationPredicate().apply(prc));
+        Assert.assertFalse(config.getDelegationPredicate().test(prc));
         
         config.setDelegationPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
         Assert.assertNotNull(config.getDelegationPredicate());
-        Assert.assertTrue(config.getDelegationPredicate().apply(prc));
+        Assert.assertTrue(config.getDelegationPredicate().test(prc));
         
     }
     

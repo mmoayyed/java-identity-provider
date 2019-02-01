@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
@@ -31,8 +32,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;

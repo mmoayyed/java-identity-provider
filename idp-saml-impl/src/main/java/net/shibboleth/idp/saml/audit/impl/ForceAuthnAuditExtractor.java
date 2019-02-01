@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -43,7 +43,6 @@ public class ForceAuthnAuditExtractor implements Function<ProfileRequestContext,
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Boolean apply(@Nullable final ProfileRequestContext input) {
         final AuthnRequest request = requestLookupStrategy.apply(input);
         if (request != null) {

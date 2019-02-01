@@ -187,7 +187,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // If not forced, or we just did it, check for an active result for that flow.
 
         final AuthenticationResult activeResult;
-        if (!authenticationContext.isForceAuthn() && flow.getReuseCondition().apply(profileRequestContext)) {
+        if (!authenticationContext.isForceAuthn() && flow.getReuseCondition().test(profileRequestContext)) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
         } else {
             activeResult = null;
@@ -198,7 +198,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                     final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                     if (predicate != null) {
-                        if (predicate.apply(activeResult)) {
+                        if (predicate.test(activeResult)) {
                             selectActiveResult(profileRequestContext, authenticationContext, activeResult);
                             return;
                         }
@@ -225,7 +225,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                 if (predicate != null) {
-                    if (predicate.apply(flow) && flow.apply(profileRequestContext)) {
+                    if (predicate.test(flow) && flow.test(profileRequestContext)) {
                         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
                         return;
                     }
@@ -235,7 +235,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             p.getClass());
                 }
             }
-        } else if (flow.apply(profileRequestContext)) {
+        } else if (flow.test(profileRequestContext)) {
             selectInactiveFlow(profileRequestContext, authenticationContext, flow);
             return;
         }
@@ -279,7 +279,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
             final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
                     activeResult.getAuthenticationFlowId());
-            if (flow != null && flow.getReuseCondition().apply(profileRequestContext)) {
+            if (flow != null && flow.getReuseCondition().test(profileRequestContext)) {
                 resultToSelect = activeResult;
                 if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(activeResult)) {
                     break;
@@ -322,7 +322,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
             if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
                 if (!authenticationContext.isPassive() || flow.isPassiveAuthenticationSupported()) {
-                    if (flow.apply(profileRequestContext)) {
+                    if (flow.test(profileRequestContext)) {
                         selectedFlow = flow;
                         if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(flow)) {
                             break;
@@ -413,7 +413,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                            && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
+                            && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
                         if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
                             selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                             return;
@@ -458,8 +458,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 if (predicate != null) {
                     for (final AuthenticationResult result : activeResults.values()) {
                         final AuthenticationFlowDescriptor flow = availableFlows.get(result.getAuthenticationFlowId());
-                        if (flow != null && flow.getReuseCondition().apply(profileRequestContext)
-                                && predicate.apply(result)) {
+                        if (flow != null && flow.getReuseCondition().test(profileRequestContext)
+                                && predicate.test(result)) {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
                         }
@@ -489,13 +489,13 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 if (predicate != null) {
                     for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                         if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                                && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
+                                && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
                             
                             // Now check for an active result we can use from this flow. Not all results from a flow
                             // will necessarily match the request just because the flow might.
                             final AuthenticationResult result = activeResults.get(descriptor.getId());
-                            if (result == null || !descriptor.getReuseCondition().apply(profileRequestContext)
-                                    || !predicate.apply(result)) {
+                            if (result == null || !descriptor.getReuseCondition().test(profileRequestContext)
+                                    || !predicate.test(result)) {
                                 if (!authenticationContext.isPassive()
                                         || descriptor.isPassiveAuthenticationSupported()) {
                                     selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);

@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,8 +42,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
@@ -177,7 +177,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
 
     /**{@inheritDoc} */
     @Override public boolean includeConditionsNotBefore() {
-        return includeNotBeforePredicate.apply(getProfileRequestContext());
+        return includeNotBeforePredicate.test(getProfileRequestContext());
     }
 
     /**

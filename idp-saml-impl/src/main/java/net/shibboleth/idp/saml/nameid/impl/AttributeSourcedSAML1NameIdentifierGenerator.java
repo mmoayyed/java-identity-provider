@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,8 +52,6 @@ import org.opensaml.saml.saml1.profile.SAML1ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -79,9 +78,9 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
 
     /** Constructor. */
     public AttributeSourcedSAML1NameIdentifierGenerator() {
-        attributeContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<RelyingPartyContext,AttributeContext>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         delimiter = '@';
         attributeSourceIds = Collections.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());

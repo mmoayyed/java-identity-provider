@@ -114,7 +114,7 @@
             p:encryptToSelfParametersStrategy-ref="EncryptToSelfParametersStrategy"
             p:selfRecipientLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple" >
         <property name="encryptionContextLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookup.EncryptionParameters"
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
@@ -124,7 +124,7 @@
             class="org.opensaml.saml.saml2.profile.impl.EncryptAttributes" scope="prototype"
             p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
         <property name="encryptionContextLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookup.EncryptionParameters"
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
@@ -134,7 +134,7 @@
             class="org.opensaml.saml.saml2.profile.impl.EncryptAssertions" scope="prototype"
             p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
         <property name="encryptionContextLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookup.EncryptionParameters"
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>

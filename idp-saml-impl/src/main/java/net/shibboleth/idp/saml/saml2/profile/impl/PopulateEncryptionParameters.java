@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,9 +62,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that resolves and populates {@link EncryptionParameters} on an {@link EncryptionContext}
@@ -129,14 +127,13 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Create context by default.
-        encryptionContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(EncryptionContext.class, true),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        encryptionContextLookupStrategy =
+                new ChildContextLookup<>(EncryptionContext.class, true).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
 
         // Default: outbound msg context -> SAMLPeerEntityContext
         peerContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
-                        new OutboundMessageContextLookup());
+                new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(new OutboundMessageContextLookup());
     }
     
     /**
@@ -151,7 +148,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-    
 
     /**
      * Set the strategy used to look up the {@link EncryptionContext} to set the flags for.
@@ -278,13 +274,13 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         final SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
         
         if (!encryptIdentifiers) {
-            encryptIdentifiers = profileConfiguration.getEncryptNameIDs().apply(profileRequestContext);
+            encryptIdentifiers = profileConfiguration.getEncryptNameIDs().test(profileRequestContext);
             // Encryption can only be optional if the request didn't specify it above.
             encryptionOptional = profileConfiguration.isEncryptionOptional();
         }
         
-        encryptAssertions = profileConfiguration.getEncryptAssertions().apply(profileRequestContext);
-        encryptAttributes = profileConfiguration.getEncryptAttributes().apply(profileRequestContext);
+        encryptAssertions = profileConfiguration.getEncryptAssertions().test(profileRequestContext);
+        encryptAttributes = profileConfiguration.getEncryptAttributes().test(profileRequestContext);
         
         if (!encryptAssertions && !encryptIdentifiers && !encryptAttributes) {
             log.debug("{} No encryption requested, nothing to do", getLogPrefix());

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -42,9 +44,6 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that prepares an outbound {@link MessageContext} and related SAML contexts
@@ -82,8 +81,8 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
     public InitializeOutboundMessageContextForError() {
         
         // Default: outbound msg context -> SAMLBindingContext
-        bindingContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLBindingContext.class, true), new OutboundMessageContextLookup());
+        bindingContextLookupStrategy =
+                new ChildContextLookup<>(SAMLBindingContext.class, true).compose(new OutboundMessageContextLookup());
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }

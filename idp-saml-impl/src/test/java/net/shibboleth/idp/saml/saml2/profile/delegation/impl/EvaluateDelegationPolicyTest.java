@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -34,6 +35,7 @@ import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.EvaluateDelegationPolicy.PolicyMaxChainLengthStrategy;
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -52,7 +54,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /**
@@ -213,10 +214,7 @@ public class EvaluateDelegationPolicyTest extends OpenSAMLInitBaseTestCase {
     
     @Test
     public void testNoDelegatedAssertion() throws ComponentInitializationException {
-        action.setAssertionTokenStrategy(new Function<ProfileRequestContext, Assertion>() {
-            @Nullable public Assertion apply(@Nullable ProfileRequestContext input) {
-                return null;
-            }});
+        action.setAssertionTokenStrategy(FunctionSupport.constant(null));
         
         action.initialize();
         final Event result = action.execute(rc);

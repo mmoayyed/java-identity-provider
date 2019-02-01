@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,8 +46,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -91,12 +92,7 @@ public class ProcessLogout extends AbstractProfileAction {
         sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);
         
-        sessionResolverCriteriaStrategy = new Function<ProfileRequestContext,CriteriaSet>() {
-            @Override
-            public CriteriaSet apply(final ProfileRequestContext input) {
-                return new CriteriaSet(new HttpServletRequestCriterion());
-            }            
-        };
+        sessionResolverCriteriaStrategy = prc -> new CriteriaSet(new HttpServletRequestCriterion());
     }
     
     /**
@@ -199,7 +195,7 @@ public class ProcessLogout extends AbstractProfileAction {
                 return;
             }
             
-            if (checkAddressCondition.apply(profileRequestContext)) {
+            if (checkAddressCondition.test(profileRequestContext)) {
                 final HttpServletRequest request = getHttpServletRequest();
                 if (request != null && request.getRemoteAddr() != null) {
                     try {

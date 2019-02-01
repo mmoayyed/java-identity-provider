@@ -35,10 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import com.google.common.base.Predicate;
-
 /**
- * A {@link Predicate} which calls out to a supplied script.
+ * A {@link java.util.function.Predicate} which calls out to a supplied script.
  */
 public class ScriptedPredicate
         extends net.shibboleth.utilities.java.support.logic.ScriptedPredicate<ProfileRequestContext> {

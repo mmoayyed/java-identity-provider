@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,8 +34,6 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Function;
-
 /**
  * A function to create a {@link BasicSPSession} based on profile execution state.
  * 
@@ -43,7 +43,7 @@ import com.google.common.base.Function;
  * in the {@link net.shibboleth.idp.authn.context.AuthenticationContext}. The session has a 
  * creation time based on the time of execution, and the expiration is based on a configurable lifetime.</p> 
  */
-public class BasicSPSessionCreationStrategy implements Function<ProfileRequestContext, SPSession> {
+public class BasicSPSessionCreationStrategy implements Function<ProfileRequestContext,SPSession> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BasicSPSessionCreationStrategy.class);
@@ -76,7 +76,6 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input);

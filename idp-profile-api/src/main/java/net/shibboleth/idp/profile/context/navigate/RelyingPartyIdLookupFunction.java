@@ -32,7 +32,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class RelyingPartyIdLookupFunction extends AbstractRelyingPartyLookupFunction<String> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);

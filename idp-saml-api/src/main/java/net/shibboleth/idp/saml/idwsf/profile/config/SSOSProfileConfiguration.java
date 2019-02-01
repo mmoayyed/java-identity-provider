@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.idwsf.profile.config;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -25,7 +27,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /** Configuration support for the Liberty ID-WSF SSOS profile. */

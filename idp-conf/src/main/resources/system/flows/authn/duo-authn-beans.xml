@@ -21,16 +21,16 @@
         p:applicationKey="%{idp.duo.applicationKey:none}"
         p:integrationKey="%{idp.duo.integrationKey:none}"
         p:secretKey="%{idp.duo.secretKey:none}" />
-    <bean id="shibboleth.authn.Duo.DuoIntegrationStrategy" class="com.google.common.base.Functions"
-        factory-method="constant" c:_0-ref="shibboleth.authn.Duo.DuoIntegration" />
+    <bean id="shibboleth.authn.Duo.DuoIntegrationStrategy" parent="shibboleth.Functions.Constant"
+        c:target-ref="shibboleth.authn.Duo.DuoIntegration" />
 
     <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegration" class="net.shibboleth.idp.authn.duo.BasicDuoIntegration"
         p:APIHost="%{idp.duo.nonbrowser.apiHost:%{idp.duo.apiHost:none}}"
         p:applicationKey="%{idp.duo.nonbrowser.applicationKey:none}"
         p:integrationKey="%{idp.duo.nonbrowser.integrationKey:none}"
         p:secretKey="%{idp.duo.nonbrowser.secretKey:none}" />
-    <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy" class="com.google.common.base.Functions"
-        factory-method="constant" c:_0-ref="shibboleth.authn.Duo.NonBrowser.DuoIntegration" />
+    <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy" parent="shibboleth.Functions.Constant"
+        c:target-ref="shibboleth.authn.Duo.NonBrowser.DuoIntegration" />
 
 
     <!-- Default username comes from previous c14n or session. -->        

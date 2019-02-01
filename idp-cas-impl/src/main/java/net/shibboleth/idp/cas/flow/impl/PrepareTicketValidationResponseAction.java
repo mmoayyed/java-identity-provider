@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -51,19 +51,20 @@ public class PrepareTicketValidationResponseAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PrepareTicketValidationResponseAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrepareTicketValidationResponseAction.class);
 
     /** Function used to retrieve AttributeContext. */
+    @Nonnull
     private Function<ProfileRequestContext,AttributeContext> attributeContextFunction =
-            Functions.compose(
-                    new ChildContextLookup<>(AttributeContext.class, true),
-                    new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+            new ChildContextLookup<>(AttributeContext.class, true).compose(
+                    new ChildContextLookup<>(RelyingPartyContext.class));
 
     /** Function used to retrieve subject principal. */
-    private Function<ProfileRequestContext,String> principalLookupFunction = new TicketPrincipalLookupFunction();
+    @Nonnull private Function<ProfileRequestContext,String> principalLookupFunction =
+            new TicketPrincipalLookupFunction();
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
+    @Nonnull private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
             new ConfigLookupFunction<>(ValidateConfiguration.class);
 
 

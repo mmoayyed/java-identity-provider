@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,8 +40,6 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Action which adds a {@link DelegationPolicy} element to the {@link Advice} of an {@link Assertion}.
@@ -67,10 +66,10 @@ import com.google.common.base.Function;
 public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
     
     /** Default policy max chain length, when can't otherwise be derived. */
-    public static final Long DEFAULT_POLICY_MAX_CHAIN_LENGTH = 1L;
+    @Nonnull public static final Long DEFAULT_POLICY_MAX_CHAIN_LENGTH = 1L;
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AddDelegationPolicyToAssertion.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(AddDelegationPolicyToAssertion.class);
     
     /** Strategy used to locate the {@link Assertion} to operate on. */
     @Nonnull private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;

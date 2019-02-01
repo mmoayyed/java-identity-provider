@@ -25,14 +25,13 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.logic.Predicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 /**
  * Predicate which evaluates the inbound {@link SAMLPresenterEntityContext#getEntityId()}
@@ -41,7 +40,7 @@ import com.google.common.base.Predicate;
 public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestContext> {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AllowedSAMLPresentersPredicate.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(AllowedSAMLPresentersPredicate.class);
     
     /** The set of allowed presenters. */
     @Nonnull private Set<String> allowedPresenters;
@@ -65,7 +64,7 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         if (input == null || input.getInboundMessageContext() == null) {
             log.debug("ProfileRequestContext or inbound MessageContext were null");
             return false;

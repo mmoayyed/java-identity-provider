@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,9 +45,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * An authentication action that filters out potential authentication flows by comparing an {@link IdPAttribute}'s
@@ -81,9 +79,8 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
     /** Constructor. */
     public FilterFlowsByAttribute() {
         attributeContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                        new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(
-                                AuthenticationContext.class));
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
         filterActiveResults = true;
     }
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.session.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,8 +33,6 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Function;
 
 /**
  * A function to create a {@link SAML1SPSession} based on profile execution state.
@@ -77,7 +77,6 @@ public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestCo
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input);

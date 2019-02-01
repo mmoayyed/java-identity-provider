@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,6 @@ import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 
 /**
@@ -60,10 +60,10 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
     @Nonnull private final Logger log = LoggerFactory.getLogger(CounterStorageKeyFunction.class);
 
     /** Strategy used to find the {@link ProfileInterceptorContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, ProfileInterceptorContext> interceptorContextlookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ProfileInterceptorContext> interceptorContextlookupStrategy;
 
     /** Strategy used to determine the storage storageContext. */
-    @Nonnull private Function<ProfileRequestContext, String> storageContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,String> storageContextLookupStrategy;
 
     /** Constructor. */
     public CounterStorageKeyFunction() {
@@ -201,7 +201,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public List<String> apply(@Nullable final Pair<ProfileRequestContext, List<String>> input) {
+    @Nullable public List<String> apply(@Nullable final Pair<ProfileRequestContext, List<String>> input) {
         if (input == null || input.getFirst() == null || input.getSecond() == null) {
             return null;
         }

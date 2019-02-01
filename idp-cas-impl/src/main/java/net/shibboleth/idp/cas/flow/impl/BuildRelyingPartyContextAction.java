@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
@@ -98,8 +99,16 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         return null;
     }
 
-    private Service query(final String serviceURL) {
-        for (ServiceRegistry registry : serviceRegistries) {
+    /**
+     * Query service registry based on URL.
+     * 
+     * @param serviceURL the URL
+     * 
+     * @return the result of the lookup or null
+     */
+    @Nullable private Service query(final String serviceURL) {
+        
+        for (final ServiceRegistry registry : serviceRegistries) {
             log.debug("Querying {} for CAS service URL {}", registry.getClass().getName(), serviceURL);
             final Service service = registry.lookup(serviceURL);
             if (service != null) {
@@ -108,4 +117,5 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         }
         return null;
     }
+    
 }

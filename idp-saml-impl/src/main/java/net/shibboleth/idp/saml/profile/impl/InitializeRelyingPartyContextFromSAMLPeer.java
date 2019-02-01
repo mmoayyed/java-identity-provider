@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -35,9 +37,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that adds a {@link RelyingPartyContext} to the current {@link ProfileRequestContext} tree
@@ -74,8 +73,8 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
     /** Constructor. */
     public InitializeRelyingPartyContextFromSAMLPeer() {
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class, true);
-        peerEntityContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLPeerEntityContext.class), new InboundMessageContextLookup());
+        peerEntityContextLookupStrategy =
+                new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(new InboundMessageContextLookup());
     }
 
     /**

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,8 +36,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Action that selects the {@link ProfileConfiguration} for the given request and sets it in the looked-up
@@ -118,7 +118,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
                     new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
         } else if (profileConfiguration instanceof ConditionalProfileConfiguration
-                && !((ConditionalProfileConfiguration) profileConfiguration).getActivationCondition().apply(
+                && !((ConditionalProfileConfiguration) profileConfiguration).getActivationCondition().test(
                         profileRequestContext)) {
             log.warn("{} Profile {} is not active for RP configuration {} (RPID {})",
                     new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});

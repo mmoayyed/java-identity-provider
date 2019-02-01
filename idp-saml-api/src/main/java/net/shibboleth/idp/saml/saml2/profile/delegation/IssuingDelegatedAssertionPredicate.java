@@ -17,16 +17,16 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.Predicate;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * A predicate which determines whether issuance of a delegated 
@@ -54,7 +54,7 @@ public class IssuingDelegatedAssertionPredicate implements Predicate<ProfileRequ
     }
     
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return false;
         }

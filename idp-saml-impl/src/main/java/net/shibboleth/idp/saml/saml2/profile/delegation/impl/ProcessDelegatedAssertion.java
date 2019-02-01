@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
@@ -31,14 +33,11 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -58,12 +57,10 @@ import net.shibboleth.utilities.java.support.xml.SerializeSupport;
  * @pre <pre>assertionTokenStrategy.apply(profileRequestContext).getSubject().getNameID() != null</pre>
  * @post <pre>profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class) != null</pre>
  */
-@Prototype
 public class ProcessDelegatedAssertion extends AbstractProfileAction {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(ProcessDelegatedAssertion.class);
-    
+    @Nonnull private Logger log = LoggerFactory.getLogger(ProcessDelegatedAssertion.class);
 
     /** Function used to obtain the requester ID, for purposes of Subject c14n. */
     @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
@@ -94,8 +91,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public void setAssertionTokenStrategy(
-            @Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
+    public void setAssertionTokenStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         assertionTokenStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
@@ -106,8 +102,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public void setRequesterLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         requesterLookupStrategy = strategy;
@@ -118,8 +113,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public void setResponderLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setResponderLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         responderLookupStrategy = strategy;

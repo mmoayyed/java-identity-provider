@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -47,8 +49,6 @@ import org.opensaml.saml.saml1.core.SubjectLocality;
 import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Action that builds an {@link AuthenticationStatement} and adds it to an {@link Assertion} returned by a lookup

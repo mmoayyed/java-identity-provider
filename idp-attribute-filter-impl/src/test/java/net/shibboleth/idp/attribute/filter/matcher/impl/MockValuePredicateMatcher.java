@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
+import java.util.function.Predicate;
+
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import com.google.common.base.Predicate;
 
 public class MockValuePredicateMatcher extends AbstractMatcher {
 
@@ -42,7 +42,7 @@ public class MockValuePredicateMatcher extends AbstractMatcher {
     /** {@inheritDoc} */
     protected boolean compareAttributeValue(IdPAttributeValue value) {
         
-        return valuePredicate.apply(value);
+        return valuePredicate.test(value);
     }
 
 }

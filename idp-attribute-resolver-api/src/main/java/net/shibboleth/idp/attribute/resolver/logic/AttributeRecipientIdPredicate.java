@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.logic;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -27,8 +28,6 @@ import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 /**
  * Predicate that evaluates a {@link ProfileRequestContext} by looking for an attribute recipient

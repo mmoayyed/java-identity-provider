@@ -60,9 +60,7 @@
           c:client-ref="proxyHttpClient"
           c:parameters-ref="proxyHttpSecurity" />
 
-    <bean id="shibboleth.DefaultCASProxyValidateIdPSessionPredicate"
-          class="com.google.common.base.Predicates"
-          factory-method="alwaysFalse" />
+    <bean id="shibboleth.DefaultCASProxyValidateIdPSessionPredicate" parent="shibboleth.Conditions.FALSE" />
 
     <bean id="shibboleth.DefaultCASServiceComparator"
           class="net.shibboleth.idp.cas.service.impl.DefaultServiceComparator" />

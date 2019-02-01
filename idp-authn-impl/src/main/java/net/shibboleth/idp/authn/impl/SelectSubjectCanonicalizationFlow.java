@@ -100,7 +100,7 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
                 log.debug("{} Checking canonicalization flow {} for applicability...", getLogPrefix(),
                         flow.getId());
                 c14nContext.setAttemptedFlow(flow);
-                if (flow.apply(profileRequestContext)) {
+                if (flow.test(profileRequestContext)) {
                     return flow;
                 }
                 log.debug("{} Canonicalization flow {} was not applicable to this request", getLogPrefix(),

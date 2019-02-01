@@ -69,7 +69,7 @@
         
         <transition on="proceed" to="CheckPromptCondition1">
             <set name="flowScope.transitionAfterDestroy" value="'ContinueLogout'" />
-            <set name="flowScope.promptForIdP" value="UserPromptCondition.apply(opensamlProfileRequestContext)" />
+            <set name="flowScope.promptForIdP" value="UserPromptCondition.test(opensamlProfileRequestContext)" />
         </transition>
     </action-state>
 
@@ -111,7 +111,7 @@
     </action-state>
 
     <decision-state id="NextRelyingPartyContext">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext), true).getRelyingPartyContextIterator().hasNext()"
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext),true).getRelyingPartyContextIterator().hasNext()"
             then="SetRPUIInformation" else="LogoutView" />
     </decision-state>
     
@@ -209,7 +209,7 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
             <evaluate expression="LogEvent" />
         </on-entry>
-        <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
+        <if test="LocalErrorPredicate.test(opensamlProfileRequestContext)"
             then="HandleErrorWithView" else="HandleErrorWithResponse" />
     </decision-state>
 

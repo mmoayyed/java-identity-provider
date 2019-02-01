@@ -18,8 +18,8 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import java.util.List;
+import java.util.function.Function;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;

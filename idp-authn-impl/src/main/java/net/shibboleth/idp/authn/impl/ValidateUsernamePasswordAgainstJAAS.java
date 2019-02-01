@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,8 +53,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * An action that checks for a {@link net.shibboleth.idp.authn.context.UsernamePasswordContext} and directly produces an
@@ -91,8 +90,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     @Nonnull private Collection<Pair<String,Subject>> loginConfigurations;
     
     /** Strategy function to dynamically derive the login config(s) to use. */
-    @Nullable
-    private Function<ProfileRequestContext,Collection<Pair<String,Subject>>> loginConfigStrategy;
+    @Nullable private Function<ProfileRequestContext,Collection<Pair<String,Subject>>> loginConfigStrategy;
     
     /** Saved off context. */
     @Nullable private RequestedPrincipalContext requestedPrincipalCtx;
@@ -300,7 +298,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                             return subject.getPrincipals(c);
                         }
                     };
-                    if (predicate.apply(wrapper)) {
+                    if (predicate.test(wrapper)) {
                         log.debug("{} JAAS config '{}' compatible with principal type '{}' and operator '{}'",
                                 getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
                         requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());

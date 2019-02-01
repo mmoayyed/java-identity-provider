@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.function.Function;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -46,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.duosecurity.duoweb.DuoWebException;
-import com.google.common.base.Function;
 
 /**
  * An action that validates a DuoWeb response message and produces an

@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.config.navigate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -28,8 +29,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
-
-import com.google.common.base.Function;
 
 /**
  * A function that returns a {@link EncryptionConfiguration} list intended for self-encryption cases.

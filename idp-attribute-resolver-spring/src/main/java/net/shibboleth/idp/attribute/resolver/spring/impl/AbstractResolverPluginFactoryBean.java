@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.spring.impl;
 
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,9 +30,6 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * A factory bean to collect the parameterization that goes onto a {@link AbstractResolverPlugin}.

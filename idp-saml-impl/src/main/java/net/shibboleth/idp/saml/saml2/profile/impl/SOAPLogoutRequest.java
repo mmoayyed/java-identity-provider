@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -54,9 +56,6 @@ import org.opensaml.soap.client.http.PipelineFactoryHttpSOAPClient;
 import org.opensaml.soap.common.SOAPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Profile action that propagates a prepared {@link LogoutRequest} message to an SP via the SOAP
@@ -119,22 +118,22 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
     /** Constructor. */
     public SOAPLogoutRequest() {
         
-        logoutRequestLookupStrategy = Functions.compose(new MessageLookup<>(LogoutRequest.class),
-                new OutboundMessageContextLookup());
+        logoutRequestLookupStrategy =
+                new MessageLookup<>(LogoutRequest.class).compose(new OutboundMessageContextLookup());
 
         propagationContextLookupStrategy = new ChildContextLookup<>(LogoutPropagationContext.class);
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        metadataContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLMetadataContext.class),
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
-                        new OutboundMessageContextLookup()));
+        metadataContextLookupStrategy =
+                new ChildContextLookup<>(SAMLMetadataContext.class).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
+                                new OutboundMessageContextLookup()));
 
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLEndpointContext
-        endpointContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLEndpointContext.class, true),
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class, true),
-                        new OutboundMessageContextLookup()));
+        endpointContextLookupStrategy =
+                new ChildContextLookup<>(SAMLEndpointContext.class, true).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class, true).compose(
+                                new OutboundMessageContextLookup()));
     }
     
     /**

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.session.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -39,9 +41,6 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * A function to create a {@link SAML2SPSession} based on profile execution state.
@@ -80,8 +79,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     public SAML2SPSessionCreationStrategy(@Positive @Duration final long lifetime) {
         sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        responseLookupStrategy =
-                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
+        responseLookupStrategy = new MessageLookup<>(Response.class).compose(new OutboundMessageContextLookup());
     }
 
     /**
@@ -105,7 +103,6 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input);

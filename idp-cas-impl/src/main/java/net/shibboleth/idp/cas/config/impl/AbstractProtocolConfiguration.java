@@ -18,6 +18,8 @@
 package net.shibboleth.idp.cas.config.impl;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +36,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -132,7 +132,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      */
     @Deprecated
     public boolean isResolveAttributes() {
-        return resolveAttributesPredicate.apply(getProfileRequestContext());
+        return resolveAttributesPredicate.test(getProfileRequestContext());
     }
 
     /**

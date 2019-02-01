@@ -63,7 +63,7 @@ public class PreferExplicitOrderComparator implements Comparator<String> {
             explicitOrder = Collections.emptyList();
         } else {
             // trimmed
-            explicitOrder = Lists.transform(order, TrimOrNullStringFunction.INSTANCE);
+            explicitOrder = Lists.transform(order, TrimOrNullStringFunction.INSTANCE::apply);
 
             // non-null
             explicitOrder = ImmutableList.copyOf(Iterables.filter(explicitOrder, Predicates.notNull()));

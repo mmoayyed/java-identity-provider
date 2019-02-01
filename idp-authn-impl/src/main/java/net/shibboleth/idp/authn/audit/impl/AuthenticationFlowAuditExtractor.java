@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.authn.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
@@ -29,7 +29,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 public class AuthenticationFlowAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
         final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);

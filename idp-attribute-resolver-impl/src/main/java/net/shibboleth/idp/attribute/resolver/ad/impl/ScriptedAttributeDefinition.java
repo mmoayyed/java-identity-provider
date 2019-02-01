@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,8 +49,6 @@ import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
@@ -87,10 +86,10 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     @NonnullAfterInit private AttributeDefinitionScriptEvaluator scriptEvaluator;
 
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
-    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
+    @Nonnull private Function<AttributeResolutionContext,ProfileRequestContext> prcLookupStrategy;
 
     /** Strategy used to locate the {@link SubjectContext} to use. */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
 
     /** The custom object we inject into all scripts. */
     @Nullable private Object customObject;
@@ -152,7 +151,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      *            {@link AttributeResolutionContext}
      */
     public void setProfileRequestContextLookupStrategy(
-            @Nonnull final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
+            @Nonnull final Function<AttributeResolutionContext,ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -167,7 +166,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      *            {@link AttributeResolutionContext}
      */
     public void
-            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,8 +30,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-
-import com.google.common.base.Function;
 
 /**
  * A base class for authentication related actions.
@@ -52,7 +52,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
      * Strategy used to extract, and create if necessary, the {@link AuthenticationContext} from the
      * {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AuthenticationContext> authnCtxLookupStrategy;
     
     /** AuthenticationContext to operate on. */
     @Nullable private AuthenticationContext authnContext;

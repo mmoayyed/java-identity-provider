@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,8 +28,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
@@ -155,7 +154,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
          * <p>Iff there is a valid service and there are no parsing errors and the service does understand
          * principal connectors and there were some configured we will proceed.</p>
          */
-        @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+        public boolean test(@Nullable final ProfileRequestContext input) {
 
             if (null == input) {
                 return false;

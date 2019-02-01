@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
@@ -30,7 +31,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -50,7 +50,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValueMap.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValueMap.class);
 
     /** Return value. */
     private String returnValue;
@@ -109,7 +109,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      */
     /** {@inheritDoc} */
     // CheckStyle: CyclomaticComplexity OFF
-    @Override @Nullable public Set<StringAttributeValue> apply(@Nullable final String attributeValue) {
+    @Nullable public Set<StringAttributeValue> apply(@Nullable final String attributeValue) {
         
         if (attributeValue == null) {
             log.debug("Input value was null, returning empty set");

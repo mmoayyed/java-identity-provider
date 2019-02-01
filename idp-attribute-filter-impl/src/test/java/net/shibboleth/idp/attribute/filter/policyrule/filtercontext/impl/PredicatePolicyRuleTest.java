@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -27,9 +30,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * test for {@link PredicatePolicyRule}.
@@ -83,7 +83,7 @@ public class PredicatePolicyRuleTest {
         }
 
         /** {@inheritDoc} */
-        @Override public boolean apply(@Nullable ProfileRequestContext input) {
+        public boolean test(@Nullable ProfileRequestContext input) {
 
             return what;
         }
@@ -92,7 +92,7 @@ public class PredicatePolicyRuleTest {
     static class ThrowPred implements Predicate<ProfileRequestContext> {
 
         /** {@inheritDoc} */
-        @Override public boolean apply(@Nullable ProfileRequestContext input) {
+        public boolean test(@Nullable ProfileRequestContext input) {
             throw new RuntimeException();
         }
     }

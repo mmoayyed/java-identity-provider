@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,10 +35,6 @@ import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 /**
  * An action that creates an {@link AuthenticationContext} and attaches it to the current {@link ProfileRequestContext}.
@@ -64,8 +63,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     /** Constructor. */
     public InitializeAuthenticationContext() {
         forceAuthnPredicate = new ForceAuthnProfileConfigPredicate();
-        requestLookupStrategy =
-                Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
+        requestLookupStrategy = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
     }
     
     /**
@@ -120,7 +118,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         }
 
         if (!authnCtx.isForceAuthn()) {
-            authnCtx.setForceAuthn(forceAuthnPredicate.apply(profileRequestContext));
+            authnCtx.setForceAuthn(forceAuthnPredicate.test(profileRequestContext));
         }
         
         profileRequestContext.addSubcontext(authnCtx, true);

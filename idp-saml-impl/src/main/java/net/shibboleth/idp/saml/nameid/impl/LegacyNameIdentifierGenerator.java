@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -42,9 +45,6 @@ import org.opensaml.saml.common.profile.NameIdentifierGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -87,8 +87,8 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         encoderType = Constraint.isNotNull(clazz, "Encoder class type cannot be null");
 
         // ProfileRequestContext -> RelyingPartyContext -> AttributeContext
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
     }
 
     /**
@@ -131,7 +131,7 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(format, "Format cannot be null or empty");
         
-        if (!activationCondition.apply(profileRequestContext)) {
+        if (!activationCondition.test(profileRequestContext)) {
             return null;
         }
         
@@ -146,8 +146,8 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
                 continue;
             }
             for (final AttributeEncoder encoder : idpAttribute.getEncoders()) {
-                if (encoderType.isInstance(encoder) && ((NameIdentifierAttributeEncoder) encoder).apply(format)
-                        && encoder.getActivationCondition().apply(profileRequestContext)) {
+                if (encoderType.isInstance(encoder) && ((NameIdentifierAttributeEncoder) encoder).test(format)
+                        && encoder.getActivationCondition().test(profileRequestContext)) {
                     try {
                         // The encoders throw unless they return an object.
                         final NameIdType nameId = (NameIdType) encoder.encode(idpAttribute);

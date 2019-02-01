@@ -23,8 +23,7 @@
 
     <!-- Default operation/resource suppliers for access checks. -->
     
-    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
-        factory-method="constant" c:_0="read" />
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="read" />
         
     <bean id="shibboleth.AdminResourceLookupStrategy"
         class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
@@ -48,9 +47,9 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
                     </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                    <bean parent="shibboleth.Functions.Compose">
                         <constructor-arg name="g">
-                            <bean class="com.google.common.base.Functions" factory-method="compose">
+                            <bean parent="shibboleth.Functions.Compose">
                                 <constructor-arg name="g">
                                     <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLProtocolContextProtocolFunction" />
                                 </constructor-arg>

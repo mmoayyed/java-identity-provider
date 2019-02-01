@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.session.impl;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.session.context.LogoutContext;
@@ -31,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.config.logic;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,8 +32,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
-import com.google.common.base.Function;
 
 /** A predicate implementation that forwards to {@link SAMLProfileConfiguration#getSignAssertions()}. */
 public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
@@ -69,8 +69,7 @@ public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         
         if (honorMetadata) {
             final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(input);
@@ -87,7 +86,7 @@ public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLProfileConfiguration) {
-                return ((SAMLProfileConfiguration) pc).getSignAssertions().apply(input);
+                return ((SAMLProfileConfiguration) pc).getSignAssertions().test(input);
             }
         }
 

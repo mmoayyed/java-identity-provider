@@ -24,7 +24,7 @@
     </decision-state>
 
    <decision-state id="IsConsentRequired">
-        <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
+        <if test="IsConsentRequiredPredicate.test(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
     </decision-state>
 
     <view-state id="DisplayTermsOfUsePage" view="#{flowRequestContext.activeFlow.id}">

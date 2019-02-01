@@ -19,6 +19,7 @@ package net.shibboleth.idp.consent.audit.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,8 +29,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * {@link Function} that returns the current consent IDs from a {@link ConsentContext}.
@@ -41,7 +40,7 @@ public class CurrentConsentIdsAuditExtractor implements Function<ProfileRequestC
 
     /** Constructor. */
     public CurrentConsentIdsAuditExtractor() {
-        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
+        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
     }
 
     /**

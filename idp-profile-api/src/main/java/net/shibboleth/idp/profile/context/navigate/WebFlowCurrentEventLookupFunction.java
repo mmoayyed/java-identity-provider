@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.context.navigate;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -28,8 +29,6 @@ import org.opensaml.profile.context.PreviousEventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 
-import com.google.common.base.Function;
-
 /**
  * A {@link Function} that checks for cases in which the webflow's current event is not reflected by
  * an attached {@link EventContext} and compensates, along with returning a suitably populated context.
@@ -37,7 +36,6 @@ import com.google.common.base.Function;
 public class WebFlowCurrentEventLookupFunction implements Function<ProfileRequestContext,EventContext> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public EventContext apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,7 +32,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageService;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -116,8 +117,8 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(final ProfileRequestContext input) {
-        return activationCondition.apply(input);
+    public boolean test(@Nullable final ProfileRequestContext input) {
+        return activationCondition.test(input);
     }
 
     /** {@inheritDoc} */

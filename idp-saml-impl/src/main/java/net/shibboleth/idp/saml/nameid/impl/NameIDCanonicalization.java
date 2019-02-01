@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,8 +43,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 /**
  * Action to perform subject canonicalization, transforming the input {@link javax.security.auth.Subject}
@@ -138,7 +137,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
         @Nonnull private Logger log = LoggerFactory.getLogger(ActivationCondition.class);
 
         /** {@inheritDoc} */
-        @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+        public boolean test(@Nullable final ProfileRequestContext input) {
 
             if (input != null) {
                 final SubjectCanonicalizationContext c14nContext =

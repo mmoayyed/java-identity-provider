@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,10 +68,7 @@ import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -160,24 +158,24 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        metadataContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLMetadataContext.class),
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
-                        new OutboundMessageContextLookup()));
+        metadataContextLookupStrategy =
+                new ChildContextLookup<>(SAMLMetadataContext.class).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
+                                new OutboundMessageContextLookup()));
         
         // Default: outbound msg context -> SAMLBindingContext
-        bindingContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLBindingContext.class, true), new OutboundMessageContextLookup());
+        bindingContextLookupStrategy =
+                new ChildContextLookup<>(SAMLBindingContext.class, true).compose(new OutboundMessageContextLookup());
 
         // Default: outbound msg context -> SAMLArtifactContext
-        artifactContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLArtifactContext.class, true), new OutboundMessageContextLookup());
+        artifactContextLookupStrategy =
+                new ChildContextLookup<>(SAMLArtifactContext.class, true).compose(new OutboundMessageContextLookup());
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLEndpointContext
-        endpointContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<>(SAMLEndpointContext.class, true),
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class, true),
-                        new OutboundMessageContextLookup()));
+        endpointContextLookupStrategy =
+                new ChildContextLookup<>(SAMLEndpointContext.class, true).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class, true).compose(
+                                new OutboundMessageContextLookup()));
         
         artifactImpliesSecureChannel = true;
     }
@@ -350,7 +348,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 if (profileConfiguration instanceof BrowserSSOProfileConfiguration) {
                     skipValidationSinceSigned =
                             ((BrowserSSOProfileConfiguration) profileConfiguration)
-                                .getSkipEndpointValidationWhenSignedPredicate().apply(profileRequestContext)
+                                .getSkipEndpointValidationWhenSignedPredicate().test(profileRequestContext)
                             && inboundMessage instanceof AuthnRequest
                             && SAMLBindingSupport.isMessageSigned(profileRequestContext.getInboundMessageContext()); 
                 }
@@ -390,7 +388,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         // Compile binding list.
         final List<String> bindings = new ArrayList<>(bindingDescriptors.size());
         for (final BindingDescriptor bindingDescriptor : bindingDescriptors) {
-            if (bindingDescriptor.apply(profileRequestContext)) {
+            if (bindingDescriptor.test(profileRequestContext)) {
                 bindings.add(bindingDescriptor.getId());
             }
         }
@@ -439,13 +437,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(profileRequestContext);
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
         
-        final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
-                new Predicate<BindingDescriptor>() {
-                    @Override
-                    public boolean apply(final BindingDescriptor input) {
-                        return input.getId().equals(bindingURI);
-                    }
-        });
+        final Optional<BindingDescriptor> bindingDescriptor =
+                Iterables.tryFind(bindingDescriptors, b -> b.getId().equals(bindingURI));
 
         if (bindingDescriptor.isPresent()) {
             bindingCtx.setBindingDescriptor(bindingDescriptor.get());
@@ -488,13 +481,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             final SAMLBindingContext bindingCtx =
                     profileRequestContext.getInboundMessageContext().getSubcontext(SAMLBindingContext.class);
             if (bindingCtx != null && bindingCtx.getBindingUri() != null) {
-                final Optional<BindingDescriptor> binding = Iterables.tryFind(bindingDescriptors,
-                        new Predicate<BindingDescriptor>() {
-                            @Override
-                            public boolean apply(final BindingDescriptor input) {
-                                return input.getId().equals(bindingCtx.getBindingUri());
-                            }
-                        });
+                final Optional<BindingDescriptor> binding =
+                        Iterables.tryFind(bindingDescriptors, b -> b.getId().equals(bindingCtx.getBindingUri()));
                 if (binding.isPresent() && binding.get().isSynchronous()) {
                     log.debug("{} Handling request via synchronous binding, preparing outbound binding context for {}",
                             getLogPrefix(), binding.get().getId());

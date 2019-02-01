@@ -21,13 +21,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;

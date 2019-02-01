@@ -18,10 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -35,15 +32,13 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SAMLAttributeDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
-import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-
-import com.google.common.base.Function;
 
 /**
  * Basis of all the matcher and rule parser tests.
@@ -87,12 +82,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setId(xmlFileName);
-        connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<Attribute>>() {
-            @Override @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
-                return obj.getAttributes();
-            }
-        });
-
+        connector.setAttributesStrategy(FunctionSupport.constant(obj.getAttributes()));
         connector.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,8 +46,6 @@ import org.opensaml.saml.common.messaging.context.navigate.AttributeConsumerServ
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
@@ -75,9 +74,8 @@ public class MappedAttributeInMetadataMatcher extends AbstractIdentifiableInitia
     
     /** Constructor. */
     public MappedAttributeInMetadataMatcher() {
-        objectStrategy = Functions.compose(new AttributeConsumerServiceLookupFunction(),
-                new ChildContextLookup<SAMLMetadataContext,AttributeConsumingServiceContext>(
-                        AttributeConsumingServiceContext.class));
+        objectStrategy = new AttributeConsumerServiceLookupFunction().compose(
+                new ChildContextLookup<>(AttributeConsumingServiceContext.class));
     }
 
     /**

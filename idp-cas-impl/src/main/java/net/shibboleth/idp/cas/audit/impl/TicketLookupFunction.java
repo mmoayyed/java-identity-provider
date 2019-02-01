@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.cas.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
@@ -35,12 +36,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * @author Marvin S. Addison
  */
 public class TicketLookupFunction implements Function<ProfileRequestContext, String> {
+    
     /** Lookup strategy for protocol context. */
-    @Nonnull private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
+    @Nonnull private final Function<ProfileRequestContext,ProtocolContext> protocolContextFunction;
 
     /** Constructor. */
     public TicketLookupFunction() {
-        this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
+        this(new ChildContextLookup<>(ProtocolContext.class));
     }
 
     /**
@@ -48,7 +50,7 @@ public class TicketLookupFunction implements Function<ProfileRequestContext, Str
      *
      * @param protocolLookup lookup strategy for protocol context
      */
-    public TicketLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
+    public TicketLookupFunction(@Nonnull final Function<ProfileRequestContext,ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
@@ -57,8 +59,7 @@ public class TicketLookupFunction implements Function<ProfileRequestContext, Str
      * 
      * {@inheritDoc}
      */
-    @Nullable @Override
-    public String apply(@Nonnull final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
@@ -77,4 +78,5 @@ public class TicketLookupFunction implements Function<ProfileRequestContext, Str
         }
         return ticket;
     }
+    
 }

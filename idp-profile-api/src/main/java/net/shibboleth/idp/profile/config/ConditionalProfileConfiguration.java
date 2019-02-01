@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.profile.config;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 /**
  * A {@link ProfileConfiguration} supporting an activation condition.

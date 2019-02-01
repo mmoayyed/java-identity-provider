@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,8 +45,6 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for Spring-aware profile actions.

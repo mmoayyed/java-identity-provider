@@ -24,8 +24,7 @@
     <alias alias="shibboleth.consent.terms-of-use.Key" name="shibboleth.RelyingPartyIdLookup.Simple" />
     
     <!--
-    <bean id="shibboleth.consent.terms-of-use.Key"
-            class="com.google.common.base.Functions" factory-method="compose">
+    <bean id="shibboleth.consent.terms-of-use.Key" parent="shibboleth.Functions.Compose">
         <constructor-arg name="g">
             <bean class="com.google.common.base.Functions" factory-method="forMap" c:defaultValue="terms-of-use">
                 <constructor-arg name="map">

@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,7 +50,6 @@ import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -181,7 +181,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         for (final AttributeEncoder<?> encoder : encoders) {
             if (SAMLConstants.SAML11P_NS.equals(encoder.getProtocol())
                     && encoder instanceof SAML1AttributeEncoder
-                    && encoder.getActivationCondition().apply(profileRequestContext)) {
+                    && encoder.getActivationCondition().test(profileRequestContext)) {
                 log.debug("{} Encoding attribute {} as a SAML 1 Attribute", getLogPrefix(), attribute.getId());
                 try {
                     added = true;
@@ -215,7 +215,6 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
     private class AssertionStrategy implements Function<ProfileRequestContext,Assertion> {
 
         /** {@inheritDoc} */
-        @Override
         @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
             if (input != null && input.getOutboundMessageContext() != null) {
                 final Object outboundMessage = input.getOutboundMessageContext().getMessage();

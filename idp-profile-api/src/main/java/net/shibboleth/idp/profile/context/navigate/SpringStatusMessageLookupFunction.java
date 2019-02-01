@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.context.navigate;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,8 +31,6 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import com.google.common.base.Function;
-
 /**
  * A function that returns a status message to include, if any, in a SAML response based on the current
  * profile request context state, using Spring's {@link MessageSource} functionality.
@@ -41,7 +41,6 @@ public class SpringStatusMessageLookupFunction implements Function<ProfileReques
     @Nonnull private MessageSource messageSource;
     
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input != null && messageSource != null) {
             final SpringRequestContext springContext = input.getSubcontext(SpringRequestContext.class);

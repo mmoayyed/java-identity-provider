@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,8 +51,6 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -98,9 +97,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
         metadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
 
         rpUIContextCreateStrategy =
-                Functions.compose(new ChildContextLookup<>(RelyingPartyUIContext.class, true),
-                        new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(
-                                AuthenticationContext.class, true));
+                new ChildContextLookup<>(RelyingPartyUIContext.class, true).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class, true));
     }
 
     /**

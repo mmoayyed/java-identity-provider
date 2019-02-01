@@ -19,6 +19,7 @@ package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,14 +28,12 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.Predicate;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * Predicate that returns whether consent is required by comparing the previous and current consents from the consent
@@ -54,8 +53,7 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
     /** Constructor. */
     public IsConsentRequiredPredicate() {
         consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
-        consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
+        consentFlowDescriptorLookupStrategy = new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
     }
 
     /**
@@ -80,7 +78,7 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             log.debug("Consent is not required, no profile request context");
             return false;

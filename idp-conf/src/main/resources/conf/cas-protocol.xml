@@ -74,9 +74,7 @@
        | evaluates to true under any condition, a server-side storage service must be enabled for IdP session
        | storage. The most common non-default value is "alwaysTrue."
        -->
-    <bean id="shibboleth.CASProxyValidateIdPSessionPredicate"
-          class="com.google.common.base.Predicates"
-          factory-method="alwaysFalse" />
+    <bean id="shibboleth.CASProxyValidateIdPSessionPredicate" parent="shibboleth.Conditions.FALSE" />
 
     <!--
        | Uncomment the following bean if you want to ignore jsessionid artifacts in service URLs.

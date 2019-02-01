@@ -107,7 +107,7 @@
                     p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         </constructor-arg>
         <property name="activationCondition">
-            <bean class="com.google.common.base.Predicates" factory-method="not"
+            <bean parent="shibboleth.Conditions.NOT"
                 c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
         </property>
         <property name="errorEvent">

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -39,9 +41,6 @@ import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that ensures that the attributes in the ACS (if any) are mapped.
@@ -69,12 +68,9 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
         super();
         // At this point, by default  the SAMLMetadataContext hangs off the SAMLPeerContext
         attributeConsumingServiceContextLookupStrategy =
-                Functions.compose(
-                         new ChildContextLookup(AttributeConsumingServiceContext.class),
-                         Functions.compose(
-                                 new ChildContextLookup<>(SAMLMetadataContext.class),
-                                 Functions.compose(
-                                        new ChildContextLookup<>(SAMLPeerEntityContext.class),
+                new ChildContextLookup(AttributeConsumingServiceContext.class).compose(
+                        new ChildContextLookup<>(SAMLMetadataContext.class).compose(
+                                new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
                                         new InboundMessageContextLookup())));
     }
 

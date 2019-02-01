@@ -112,7 +112,7 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
 
     /** {@inheritDoc} */
     @Override
-    public boolean apply(@Nullable final String input) {
+    public boolean test(@Nullable final String input) {
         return SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(input, format);
     }
     

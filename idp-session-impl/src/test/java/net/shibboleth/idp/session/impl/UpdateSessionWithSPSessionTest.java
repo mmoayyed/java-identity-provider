@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session.impl;
 
 import java.util.Collections;
+import java.util.function.Function;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -29,6 +30,7 @@ import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -40,8 +42,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /** {@link UpdateSessionWithSPSession} unit test. */
 public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
@@ -75,7 +75,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
     
     @Test public void testNoSession() throws ComponentInitializationException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        action.setSPSessionCreationStrategy(new NullStrategy());
+        action.setSPSessionCreationStrategy(FunctionSupport.constant(null));
         action.initialize();
         
         final Event event = action.execute(src);
@@ -89,7 +89,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.createSession("joe");
         prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
         
-        action.setSPSessionCreationStrategy(new NullStrategy());
+        action.setSPSessionCreationStrategy(FunctionSupport.constant(null));
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -130,21 +130,10 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         }
         
         /** {@inheritDoc} */
-        @Override
         public SPSession apply(ProfileRequestContext input) {
             return new BasicSPSession("https://sp.example.org", creationTime, expirationTime);
         }
         
     }
     
-    /** Returns nothing. */
-    private class NullStrategy implements Function<ProfileRequestContext, SPSession> {
-        
-        /** {@inheritDoc} */
-        @Override
-        public SPSession apply(ProfileRequestContext input) {
-            return null;
-        }
-        
-    }
 }

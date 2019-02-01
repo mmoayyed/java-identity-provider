@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.profile.impl;
 
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,9 +45,6 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * Action that extracts a SAML Subject from an inbound message, and prepares a
@@ -146,7 +145,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             return false;
         }
         
-        if (nameIDPolicyPredicate != null && !nameIDPolicyPredicate.apply(profileRequestContext)) {
+        if (nameIDPolicyPredicate != null && !nameIDPolicyPredicate.test(profileRequestContext)) {
             log.warn("{} Consumption of NameID/NameIdentifier blocked by policy", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             return false;

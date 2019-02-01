@@ -64,12 +64,12 @@
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{ '%{idp.authn.resolveAttribute:null}'.trim() }" />
         </property>
         <property name="principalNameLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.PrincipalNameLookup.Session"
                 c:f-ref="shibboleth.ChildLookup.SessionContext" />
         </property>
         <property name="attributeContextCreationStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="compose"
+            <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookupOrCreate.AttributeContext"
                 c:f-ref="shibboleth.ChildLookup.AuthenticationContext" />
         </property>

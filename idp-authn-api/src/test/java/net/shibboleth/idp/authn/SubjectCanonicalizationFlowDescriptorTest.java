@@ -50,7 +50,7 @@ public class SubjectCanonicalizationFlowDescriptorTest {
 
     @Test public void testInstantation() throws ComponentInitializationException {
         Assert.assertEquals(descriptor.getId(), "test");
-        Assert.assertTrue(descriptor.apply(prc));
+        Assert.assertTrue(descriptor.test(prc));
     }
 
     @Test public void testSetters() {
@@ -78,7 +78,7 @@ public class SubjectCanonicalizationFlowDescriptorTest {
         descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
         descriptor.initialize();
 
-        Assert.assertFalse(descriptor.apply(prc));
+        Assert.assertFalse(descriptor.test(prc));
     }
 
 }

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +48,6 @@ import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;

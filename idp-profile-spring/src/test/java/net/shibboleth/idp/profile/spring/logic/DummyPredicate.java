@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.profile.spring.logic;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicate;
 
 /**
  *
@@ -29,7 +29,7 @@ import com.google.common.base.Predicate;
 public class DummyPredicate implements Predicate<ProfileRequestContext> {
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable ProfileRequestContext input) {
+    public boolean test(@Nullable ProfileRequestContext input) {
         return false;
     }
 

@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -42,7 +43,6 @@ import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Ordering;
 
@@ -175,7 +175,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
     private class MockIdPAttributePredicate implements Predicate<IdPAttribute> {
 
         /** {@inheritDoc} */
-        public boolean apply(@Nullable final IdPAttribute input) {
+        public boolean test(@Nullable final IdPAttribute input) {
 
             if (input.getId().equals("attribute1") || input.getId().equals("attribute2")) {
                 return true;

@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.audit.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +30,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -65,12 +65,7 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                 final List<org.opensaml.saml.saml2.core.Assertion> assertions =
                         ((org.opensaml.saml.saml2.core.Response) message).getAssertions();
                 if (!assertions.isEmpty()) {
-                    return Collections2.transform(assertions,
-                            new Function<org.opensaml.saml.saml2.core.Assertion,DateTime>() {
-                                    public DateTime apply(final org.opensaml.saml.saml2.core.Assertion input) {
-                                        return input.getIssueInstant();
-                                    }
-                                });
+                    return Collections2.transform(assertions, org.opensaml.saml.saml2.core.Assertion::getIssueInstant);
                 }
                 
             } else if (message instanceof org.opensaml.saml.saml1.core.Response) {
@@ -78,12 +73,7 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                 final List<org.opensaml.saml.saml1.core.Assertion> assertions =
                         ((org.opensaml.saml.saml1.core.Response) message).getAssertions();
                 if (!assertions.isEmpty()) {
-                    return Collections2.transform(assertions,
-                            new Function<org.opensaml.saml.saml1.core.Assertion,DateTime>() {
-                                    public DateTime apply(final org.opensaml.saml.saml1.core.Assertion input) {
-                                        return input.getIssueInstant();
-                                    }
-                                });
+                    return Collections2.transform(assertions, org.opensaml.saml.saml1.core.Assertion::getIssueInstant);
                 }
                 
             } else if (message instanceof org.opensaml.saml.saml2.core.Assertion) {

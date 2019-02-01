@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Locale;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -25,15 +26,12 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
-
 /**
  * Function which resolves the {@link Locale} from a {@link ProfileRequestContext}.
  */
 public class LocaleLookupFunction implements Function<ProfileRequestContext, Locale> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Locale apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

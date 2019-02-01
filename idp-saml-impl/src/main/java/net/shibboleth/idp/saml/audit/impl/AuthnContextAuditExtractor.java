@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,8 +28,6 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -51,7 +51,6 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {

@@ -18,20 +18,19 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.utilities.java.support.logic.Predicate;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * Predicate to determine whether global consent has been given by user.
@@ -50,8 +49,7 @@ public class GlobalAttributeConsentPredicate implements Predicate<ProfileRequest
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return false;
         }

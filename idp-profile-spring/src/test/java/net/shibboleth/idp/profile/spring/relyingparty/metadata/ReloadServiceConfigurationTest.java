@@ -26,11 +26,11 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.impl.ReloadServiceConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 import org.joda.time.DateTime;
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
@@ -40,8 +40,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
 
@@ -79,11 +77,7 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
         
         final ReloadServiceConfiguration action = new ReloadServiceConfiguration();
         action.setHttpServletResponse(response);
-        action.setServiceLookupStrategy(new Function<ProfileRequestContext,ReloadableService>() {
-            public ReloadableService apply(ProfileRequestContext input) {
-                return null;
-            }
-        });
+        action.setServiceLookupStrategy(FunctionSupport.constant(null));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -99,11 +93,7 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
         
         final ReloadServiceConfiguration action = new ReloadServiceConfiguration();
         action.setHttpServletResponse(response);
-        action.setServiceLookupStrategy(new Function<ProfileRequestContext,ReloadableService>() {
-            public ReloadableService apply(ProfileRequestContext input) {
-                return service;
-            }
-        });
+        action.setServiceLookupStrategy(FunctionSupport.constant(service));
         action.initialize();
 
         final Event event = action.execute(src);

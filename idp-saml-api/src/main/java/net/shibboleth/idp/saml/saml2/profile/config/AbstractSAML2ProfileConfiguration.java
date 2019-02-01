@@ -19,11 +19,12 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 
@@ -139,7 +139,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
 
     /** {@inheritDoc} */
     @Override public boolean isEncryptionOptional() {
-        return encryptionOptionalPredicate.apply(getProfileRequestContext());
+        return encryptionOptionalPredicate.test(getProfileRequestContext());
     }
     
     /**

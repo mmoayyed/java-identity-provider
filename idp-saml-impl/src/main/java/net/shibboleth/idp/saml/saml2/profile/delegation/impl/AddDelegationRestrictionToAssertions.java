@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,9 +51,6 @@ import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-
 /**
  * Action which adds a {@link DelegationRestrictionType} {@link Condition} to each {@link Assertion}
  * contained within the outbound {@link Response}.
@@ -84,7 +82,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
     @Nonnull private Function<ProfileRequestContext,SAMLPresenterEntityContext> presenterContextLookupStrategy;
     
     /** Function used to resolve the Liberty context to populate. */
-    @Nonnull private Function<ProfileRequestContext, LibertySSOSContext> libertyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,LibertySSOSContext> libertyContextLookupStrategy;
     
     /** List of assertions to modify. */
     @Nullable private List<Assertion> assertions;
@@ -105,10 +103,9 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
      * Constructor.
      */
     public AddDelegationRestrictionToAssertions() {
-        responseLookupStrategy =
-                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
+        responseLookupStrategy = new MessageLookup<>(Response.class).compose(new OutboundMessageContextLookup());
         presenterContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(SAMLPresenterEntityContext.class), 
+                new ChildContextLookup<>(SAMLPresenterEntityContext.class).compose( 
                         new InboundMessageContextLookup());
         
         libertyContextLookupStrategy = new ChildContextLookup<>(LibertySSOSContext.class);

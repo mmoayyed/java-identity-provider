@@ -20,7 +20,9 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,10 +53,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 /**
  * A {@link net.shibboleth.idp.attribute.filter.Matcher} that delegates to a JSR-223 script for its actual processing.
@@ -86,9 +85,9 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     public ScriptedMatcher() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         prcLookupStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
-                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
-        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
+                new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>().compose(
+                        new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
+        scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 
     /**
@@ -223,7 +222,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
 
     /** {@inheritDoc} */
     @Override public int hashCode() {
-        return Objects.hashCode(script, getId());
+        return Objects.hash(script, getId());
     }
 
     /** {@inheritDoc} */

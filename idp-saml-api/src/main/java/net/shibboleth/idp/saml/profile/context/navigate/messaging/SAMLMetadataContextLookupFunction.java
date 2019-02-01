@@ -33,7 +33,6 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 public class SAMLMetadataContextLookupFunction extends AbstractRelyingPartyLookupFunction<SAMLMetadataContext> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public SAMLMetadataContext apply(@Nullable final MessageContext input) {
         final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpCtx != null) {

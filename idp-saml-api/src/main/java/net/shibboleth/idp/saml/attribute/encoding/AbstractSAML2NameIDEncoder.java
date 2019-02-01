@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.saml.nameid.SAML2NameIDAttributeEncoder;
@@ -30,7 +32,6 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**

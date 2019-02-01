@@ -27,14 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 
-import com.google.common.base.Function;
-
 /**
  * Function which returns the locale-aware display name of an attribute, defaulting to the
  * attribute ID if the attribute has no display name.
  */
-public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFunction implements
-        Function<IdPAttribute, String> {
+public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFunction {
 
     /**
      * Constructor.

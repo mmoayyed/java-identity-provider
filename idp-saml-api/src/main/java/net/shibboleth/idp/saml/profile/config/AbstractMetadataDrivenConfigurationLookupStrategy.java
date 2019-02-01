@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,8 +43,6 @@ import org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFuncti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
@@ -173,11 +172,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         Constraint.isNotNull(aliases, "Alias collection cannot be null");
         
         propertyAliases = Collections2.transform(StringSupport.normalizeStringCollection(aliases),
-                new Function<String,String>() {
-                    public String apply(final String input) {
-                        return input + (input.endsWith("/") ? propertyName : '/' + propertyName);
-                    }
-                });
+                s -> s + (s.endsWith("/") ? propertyName : '/' + propertyName));
     }
     
     /**
@@ -391,14 +386,14 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     static {
         // Init PRC defaults.
         
-        DEFAULT_PRC_METADATA_LOOKUP = Functions.compose(new EntityDescriptorLookupFunction(),
+        DEFAULT_PRC_METADATA_LOOKUP = new EntityDescriptorLookupFunction().compose(
                 new net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction());
         
         DEFAULT_PRC_PROFILE_ID_LOOKUP = new ProfileIdLookup();
 
         // Init MC defaults.
 
-        DEFAULT_MC_METADATA_LOOKUP = Functions.compose(new EntityDescriptorLookupFunction(),
+        DEFAULT_MC_METADATA_LOOKUP = new EntityDescriptorLookupFunction().compose(
                 new net.shibboleth.idp.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction());
         
         DEFAULT_MC_PROFILE_ID_LOOKUP = new SOAPClientSecurityProfileIdLookupFunction();

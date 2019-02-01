@@ -33,7 +33,7 @@
         
         <transition on="proceed" to="CheckPromptCondition1">
             <set name="flowScope.transitionAfterDestroy" value="'ContinueLogout'" />
-            <set name="flowScope.promptForIdP" value="UserPromptCondition.apply(opensamlProfileRequestContext)" />
+            <set name="flowScope.promptForIdP" value="UserPromptCondition.test(opensamlProfileRequestContext)" />
         </transition>
     </action-state>
 

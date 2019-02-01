@@ -18,10 +18,9 @@
 package net.shibboleth.idp.authn.principal;
 
 import java.security.Principal;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
 
 /**
  * A {@link Predicate} to evaluate a {@link Principal} that represents a requested form of

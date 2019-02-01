@@ -36,7 +36,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class AssertionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {

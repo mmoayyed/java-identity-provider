@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
@@ -38,8 +40,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -460,7 +460,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         }
 
         /** {@inheritDoc} */
-        @Override public boolean apply(@Nullable final ProfileRequestContext input) {
+        public boolean test(@Nullable final ProfileRequestContext input) {
             return value.equals(navigate.apply(input));
         }
     }

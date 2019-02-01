@@ -78,7 +78,7 @@
             </bean>
         </property>
         <property name="activeFlowsLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="constant" c:_0="#{ {'attribute-release-query' } }" />
+            <bean parent="shibboleth.Functions.Constant" c:target="#{ {'attribute-release-query' } }" />
         </property>
     </bean>
 

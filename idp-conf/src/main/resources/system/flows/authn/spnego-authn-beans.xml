@@ -25,9 +25,8 @@
         c:_0="servletRelative:%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}" />
 
     <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.SPNEGO.externalAuthnPathStrategy"
-        class="com.google.common.base.Functions" factory-method="constant"
-        c:_0-ref="shibboleth.authn.SPNEGO.externalAuthnPath" />
+    <bean id="shibboleth.authn.SPNEGO.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+        c:target-ref="shibboleth.authn.SPNEGO.externalAuthnPath" />
 
     <import resource="../../../conf/authn/spnego-authn-config.xml" />
 

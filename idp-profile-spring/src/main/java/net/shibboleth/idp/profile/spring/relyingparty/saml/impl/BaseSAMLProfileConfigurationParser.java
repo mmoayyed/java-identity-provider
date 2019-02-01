@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.saml.impl;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,8 +40,6 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.google.common.base.Predicate;
 
 /**
  * Parser for all classes which extend {@link net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration}

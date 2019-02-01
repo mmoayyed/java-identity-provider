@@ -92,7 +92,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertTrue(resolver.getPersistentCacheKeyGenerator() instanceof AbstractDynamicMetadataResolver.DefaultCacheKeyGenerator);
         
         Assert.assertNotNull(resolver.getInitializationFromCachePredicate());
-        Assert.assertTrue(resolver.getInitializationFromCachePredicate().apply(null));  // always true predicate
+        Assert.assertTrue(resolver.getInitializationFromCachePredicate().test(null));  // always true predicate
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         

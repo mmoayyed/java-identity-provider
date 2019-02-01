@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.impl;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,8 +26,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -69,8 +68,7 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
    }
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<AttributeResolver> apply(
-            @Nullable final ApplicationContext appContext) {
+    @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable final ApplicationContext appContext) {
 
         final Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
         final PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer();

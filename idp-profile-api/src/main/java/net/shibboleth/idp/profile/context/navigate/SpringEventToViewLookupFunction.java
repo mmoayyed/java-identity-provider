@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.context.navigate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,8 +29,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
-
-import com.google.common.base.Function;
 
 /**
  * A function that returns a view name to render based on a Spring Web Flow {@link Event}.
@@ -77,7 +76,6 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final Event input) {
         
         if (input != null) {

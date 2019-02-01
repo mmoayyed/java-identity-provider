@@ -112,7 +112,7 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
 
     /** {@inheritDoc} */
     @Override
-    public boolean apply(final String input) {
+    public boolean test(final String input) {
         return SAML2ObjectSupport.areNameIDFormatsEquivalent(input, format);
     }
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,8 +31,6 @@ import org.opensaml.saml.saml1.core.SubjectStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -51,7 +51,6 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         SAMLObject msg = responseLookupStrategy.apply(input);
         if (msg != null) {

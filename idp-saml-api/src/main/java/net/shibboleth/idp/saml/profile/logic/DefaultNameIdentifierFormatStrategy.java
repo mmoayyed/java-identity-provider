@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,8 +39,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * Function to filter a set of candidate NameIdentifier/NameID Format values derived from an entity's SAML metadata
  * against configuration preferences.
@@ -52,7 +51,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Override the {@link ProfileConfiguration} to look for rather than whatever's populated. */
     @Nullable private String profileId;

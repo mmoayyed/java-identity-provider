@@ -33,7 +33,6 @@ import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 public class SAMLRelyingPartyIdLookupStrategy implements ContextDataLookupFunction<RelyingPartyContext, String> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final RelyingPartyContext input) {
         
         final BaseContext ctx = input != null ? input.getRelyingPartyIdContextTree() : null;

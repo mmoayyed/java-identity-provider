@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +32,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import com.google.common.base.Function;
 
 /** Engine to mine values from {@link IdPAttributePrincipal}s. */
 public class IdPAttributePrincipalValuesFunction extends AbstractInitializableComponent implements
@@ -73,7 +72,7 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final Principal principal) {
+    @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final Principal principal) {
 
         if (null != principal && principal instanceof IdPAttributePrincipal) {
             final IdPAttributePrincipal attributePrincipal = (IdPAttributePrincipal) principal;

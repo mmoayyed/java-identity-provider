@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,15 +31,13 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * Lookup function to return the valid delegated assertion token in effect for the Liberty SSOS request.
  */
 public class DelegatedAssertionLookupStrategy implements Function<ProfileRequestContext, Assertion> {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(DelegatedAssertionLookupStrategy.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(DelegatedAssertionLookupStrategy.class);
     
     /** Function used to resolve the Liberty context to populate. */
     @Nonnull private Function<ProfileRequestContext, LibertySSOSContext> libertyContextLookupStrategy;
@@ -58,8 +58,7 @@ public class DelegatedAssertionLookupStrategy implements Function<ProfileRequest
     }
 
     /** {@inheritDoc} */
-    @Nullable
-    public Assertion apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }

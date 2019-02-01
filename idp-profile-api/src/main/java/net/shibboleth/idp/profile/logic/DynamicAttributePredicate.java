@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
@@ -41,6 +40,7 @@ import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Predicate over an {@link AttributeContext} that derives the value(s) to match based
@@ -78,8 +78,7 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    public boolean test(@Nullable final ProfileRequestContext input) {
         
         final AttributeContext attributeCtx = getAttributeContextLookupStrategy().apply(input);
         if (attributeCtx == null) {

@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
-import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -36,8 +37,6 @@ import org.opensaml.soap.wssecurity.messaging.Token.ValidationStatus;
 import org.opensaml.soap.wssecurity.messaging.WSSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 
 /**
@@ -56,11 +55,10 @@ import com.google.common.base.Function;
  * @post <pre>LibertySSOSContext.getAttestedToken() != null</pre>
  * @post <pre>LibertySSOSContext.getAttestedSubjectConfirmationMethod != null</pre>
  */
-@Prototype
 public class PopulateLibertyContext extends AbstractProfileAction {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(PopulateLibertyContext.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(PopulateLibertyContext.class);
     
     /** Function used to resolve the assertion token to process. */
     @Nonnull private Function<ProfileRequestContext, SAML20AssertionToken> assertionTokenStrategy;

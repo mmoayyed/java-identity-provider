@@ -17,8 +17,9 @@
 
 package net.shibboleth.idp.profile.context.navigate;
 
-import com.google.common.base.Function;
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
@@ -28,10 +29,10 @@ import javax.servlet.ServletRequest;
  *
  * @author Marvin S. Addison
  */
-public class ServletRequestProfileRequestContextLookup implements Function<ServletRequest, ProfileRequestContext> {
+public class ServletRequestProfileRequestContextLookup implements Function<ServletRequest,ProfileRequestContext> {
 
+    /** {@inheritDoc} */
     @Nullable
-    @Override
     public ProfileRequestContext apply(final ServletRequest input) {
         return (ProfileRequestContext) input.getAttribute(ProfileRequestContext.BINDING_KEY);
     }

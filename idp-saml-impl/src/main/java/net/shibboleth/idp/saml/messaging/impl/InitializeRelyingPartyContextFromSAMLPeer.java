@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.messaging.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,9 +31,6 @@ import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.impl.SAMLRelyingPartyIdLookupStrategy;
@@ -70,14 +69,12 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
     
     /** Constructor. */
     public InitializeRelyingPartyContextFromSAMLPeer() {
-        relyingPartyContextCreationStrategy = Functions.compose(
-                new ChildContextLookup<InOutOperationContext, RelyingPartyContext>(RelyingPartyContext.class, true),
-                new RecursiveTypedParentContextLookup<MessageContext,InOutOperationContext>(InOutOperationContext.class)
-                );
-        peerEntityContextLookupStrategy = Functions.compose(
-                new ChildContextLookup<InOutOperationContext, SAMLPeerEntityContext>(SAMLPeerEntityContext.class),
-                new RecursiveTypedParentContextLookup<MessageContext,InOutOperationContext>(InOutOperationContext.class)
-                );
+        relyingPartyContextCreationStrategy =
+                new ChildContextLookup<>(RelyingPartyContext.class, true).compose(
+                        new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
+        peerEntityContextLookupStrategy =
+                new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
+                        new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
     }
 
     /**

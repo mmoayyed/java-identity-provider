@@ -30,7 +30,7 @@ import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link com.google.common.base.Function} over a {@link BaseContext}
+ * A {@link java.util.function.Function} over a {@link BaseContext}
  * which calls out to a Spring Expression.
  * 
  * @param <T> the specific type of context
@@ -104,7 +104,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
     }
 
     /** {@inheritDoc} */
-    @Override public Object apply(@Nullable final T context) {
+    @Nullable public Object apply(@Nullable final T context) {
         return embeddedObject.apply(context);
     }
 

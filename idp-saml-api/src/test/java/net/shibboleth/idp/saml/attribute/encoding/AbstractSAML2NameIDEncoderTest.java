@@ -45,7 +45,7 @@ public class AbstractSAML2NameIDEncoderTest {
                 return null;
             }
 
-            public boolean apply(String input) {
+            public boolean test(String input) {
                 return false;
             }
         };

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,18 +36,16 @@ import org.opensaml.soap.messaging.SOAPMessagingSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * Handler implementation that adds a Liberty sb:Sender header to the outbound SOAP envelope.
  */
 public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AddSenderHandler.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(AddSenderHandler.class);
     
     /** The providerId lookup function. */
-    private Function<MessageContext, String> providerIdLookupFunction;
+    @Nonnull private Function<MessageContext, String> providerIdLookupFunction;
     
     /** The providerId value to send. */
     private String providerId;
@@ -53,7 +53,6 @@ public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
     /** Constructor. *
      */
     public AddSenderHandler() {
-        super();
         providerIdLookupFunction = new SAMLSelfEntityIDLookupFunction();
     }
 

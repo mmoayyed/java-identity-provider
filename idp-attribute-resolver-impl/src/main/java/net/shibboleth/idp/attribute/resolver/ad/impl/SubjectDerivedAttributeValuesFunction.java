@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,31 +38,29 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * A Function which returns {@link IdPAttributeValue}s derived from the {@link java.security.Principal}s
  * associated with the request.  The precise values are determined by an injected {@link Function}.
  */
 public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableInitializableComponent implements
-        Function<ProfileRequestContext, List<IdPAttributeValue<?>>> {
+        Function<ProfileRequestContext,List<IdPAttributeValue<?>>> {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
 
     /** Strategy used to locate the {@link SubjectContext} to use. */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
 
     /**
      * {@link Function} used to generate the values associated with a {@link Principal}
      * 
      * The {@link Function} returns null or an empty list if the {@link Principal} isn't relevant.
      */
-    @Nonnull private Function<Principal, List<IdPAttributeValue<?>>> attributesValueFunction;
+    @Nonnull private Function<Principal,List<IdPAttributeValue<?>>> attributesValueFunction;
 
     /** Constructor. */
     public SubjectDerivedAttributeValuesFunction() {
-        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
+        scLookupStrategy = new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class);
     }
 
     /**
@@ -72,7 +71,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      *            {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
      */
     public void
-            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
@@ -83,15 +82,13 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * 
      * @param engine what to set.
      */
-    public void setAttributeValuesFunction(@Nonnull final Function<Principal, List<IdPAttributeValue<?>>> engine) {
+    public void setAttributeValuesFunction(@Nonnull final Function<Principal,List<IdPAttributeValue<?>>> engine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributesValueFunction = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable
-    public List<IdPAttributeValue<?>> apply(@Nullable final ProfileRequestContext prc) {
+    @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final ProfileRequestContext prc) {
         final SubjectContext cs = scLookupStrategy.apply(prc);
         final List<IdPAttributeValue<?>> results = new ArrayList<>(1);
 

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.HashSet;
+import java.util.function.Function;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -29,8 +30,6 @@ import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /** Unit test for {@link AttributeResolutionContext}. */
 public class AttributeResolutionContextTest {
@@ -121,9 +120,9 @@ public class AttributeResolutionContextTest {
         Assert.assertSame(context.getAttributeIssuerID(), THE_ISSUER);
         Assert.assertSame(context.getAttributeRecipientID(), THE_RECIPIENT);
         
-        final Function<ProfileRequestContext, String> principalFn = new AttributePrincipalLookupFunction();
-        final Function<ProfileRequestContext, String> recipientFn = new AttributeRecipientIdLookupFunction();
-        final Function<ProfileRequestContext, String> issuerFn = new AttributeIssuerIdLookupFunction();
+        final Function<ProfileRequestContext,String> principalFn = new AttributePrincipalLookupFunction();
+        final Function<ProfileRequestContext,String> recipientFn = new AttributeRecipientIdLookupFunction();
+        final Function<ProfileRequestContext,String> issuerFn = new AttributeIssuerIdLookupFunction();
         
         Assert.assertSame(principalFn.apply(profileCtx), THE_PRINCIPAL);
         Assert.assertSame(issuerFn.apply(profileCtx), THE_ISSUER);

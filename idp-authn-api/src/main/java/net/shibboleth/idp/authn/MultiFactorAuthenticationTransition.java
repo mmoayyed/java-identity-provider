@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,8 +34,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * A ruleset for managing the transition out of a step during the multi-factor authn flow.

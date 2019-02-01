@@ -58,7 +58,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
                 getAttributeEncoder("resolver/saml2StringDefault.xml", SAML2StringAttributeEncoder.class);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysTrue());
-        Assert.assertTrue(encoder.getActivationCondition().apply(null));
+        Assert.assertTrue(encoder.getActivationCondition().test(null));
         Assert.assertEquals(encoder.getName(), "Saml2StringName");
         Assert.assertNull(encoder.getFriendlyName()); 
         Assert.assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
@@ -78,7 +78,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
                 getAttributeEncoder("resolver/saml2StringConditional.xml", SAML2StringAttributeEncoder.class, context);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
-        Assert.assertFalse(encoder.getActivationCondition().apply(null));
+        Assert.assertFalse(encoder.getActivationCondition().test(null));
     }
 
     @Test public void conditionalScript() {
@@ -89,7 +89,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
                 getAttributeEncoder("resolver/saml2String.xml", SAML2StringAttributeEncoder.class, context);
 
         Assert.assertTrue(encoder.getActivationCondition() instanceof ScriptedPredicate);
-        Assert.assertFalse(encoder.getActivationCondition().apply(null));
+        Assert.assertFalse(encoder.getActivationCondition().test(null));
     }
 
 }

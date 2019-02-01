@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +42,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * A base class for subject canonicalization actions.
@@ -68,7 +67,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * Strategy used to find the {@link SubjectCanonicalizationContext} from the
      * {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext, SubjectCanonicalizationContext> scCtxLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectCanonicalizationContext> scCtxLookupStrategy;
     
     /** {@link SubjectCanonicalizationContext} to operate on. */
     @Nullable private SubjectCanonicalizationContext scContext;
@@ -101,7 +100,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * @param strategy  lookup strategy function for {@link SubjectCanonicalizationContext}.
      */
     public void setLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectCanonicalizationContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SubjectCanonicalizationContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         scCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");

@@ -28,13 +28,13 @@ public class SAML2SSOSProfileTest extends BaseSAMLProfileTest {
 
         SSOSProfileConfiguration profile = getBean(SSOSProfileConfiguration.class, "saml/ssos.xml", "beans.xml");
 
-        Assert.assertFalse(profile.getDelegationPredicate().apply(null));
+        Assert.assertFalse(profile.getDelegationPredicate().test(null));
     }
 
     @Test public void values() {
         SSOSProfileConfiguration profile =
                 getBean(SSOSProfileConfiguration.class, "saml/ssosValues.xml", "beans.xml");
 
-        Assert.assertTrue(profile.getDelegationPredicate().apply(null));
+        Assert.assertTrue(profile.getDelegationPredicate().test(null));
     }
 }

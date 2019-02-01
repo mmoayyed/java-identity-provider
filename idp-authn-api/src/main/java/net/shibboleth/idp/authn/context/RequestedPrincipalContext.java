@@ -206,7 +206,7 @@ public class RequestedPrincipalContext extends BaseContext {
         for (final Principal requestedPrincipal : requestedPrincipals) {
             final PrincipalEvalPredicate predicate = getPredicate(requestedPrincipal);
             if (predicate != null) {
-                if (predicate.apply(component)) {
+                if (predicate.test(component)) {
                     return true;
                 }
             }

@@ -19,6 +19,7 @@ package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,14 +36,12 @@ import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Multimap;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.utilities.java.support.logic.Predicate;
 
 /**
  * Predicate that determines whether an IdP attribute is required by the requester.
@@ -53,13 +52,13 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
     @Nonnull private final Logger log = LoggerFactory.getLogger(IsAttributeRequiredPredicate.class);
 
     /** Strategy used to find the {@link SAMLMetadataContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> metadataContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
 
     /** Strategy used to find the {@link AttributeConsumingService} from the {@link SAMLMetadataContext}. */
-    @Nonnull private Function<SAMLMetadataContext, AttributeConsumingService> acsLookupStrategy;
+    @Nonnull private Function<SAMLMetadataContext,AttributeConsumingService> acsLookupStrategy;
 
     /** Map of requested attributes. */
-    @Nullable private final Multimap<String, IdPRequestedAttribute> requestedAttributesMap;
+    @Nullable private final Multimap<String,IdPRequestedAttribute> requestedAttributesMap;
 
     /**
      * Constructor.
@@ -67,11 +66,13 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
      * @param request the HTTP request
      */
     public IsAttributeRequiredPredicate(@Nullable final HttpServletRequest request) {
-        metadataContextLookupStrategy = Functions.compose(new ChildContextLookup<>(SAMLMetadataContext.class), Functions
-                .compose(new ChildContextLookup<>(SAMLPeerEntityContext.class), new OutboundMessageContextLookup()));
-        acsLookupStrategy = Functions.compose(new AttributeConsumerServiceLookupFunction(),
-                new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
-                        AttributeConsumingServiceContext.class));
+        metadataContextLookupStrategy =
+                new ChildContextLookup<>(SAMLMetadataContext.class).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
+                                new OutboundMessageContextLookup()));
+        acsLookupStrategy =
+                new AttributeConsumerServiceLookupFunction().compose(
+                        new ChildContextLookup<>(AttributeConsumingServiceContext.class));
         final ProfileRequestContext prc = getProfileRequestContext(request);
         requestedAttributesMap = getRequestedAttributes(prc);
     }
@@ -125,7 +126,7 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final IdPAttribute input) {
+    public boolean test(@Nullable final IdPAttribute input) {
         if (input != null && requestedAttributesMap != null && !requestedAttributesMap.isEmpty()) {
             final Collection<IdPRequestedAttribute> requestedAttrs = requestedAttributesMap.get(input.getId());
             if (requestedAttrs != null) {

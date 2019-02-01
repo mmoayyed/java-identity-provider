@@ -24,6 +24,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -33,9 +35,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import com.google.common.base.Functions;
-import com.google.common.base.Predicates;
 
 /**
  * Parser for the &lt;rp:RelyingParty&gt; element.
@@ -49,7 +48,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
      * {@inheritDoc} The construction of the activation Condition is more complicated than one might suppose. The
      * definition is that if the it matches the relyingPartyID *or* it matches the &lt;EntitiesDescriptor&gt;, then the
      * configuration matches. So we need to
-     * {@link Predicates#or(com.google.common.base.Predicate, com.google.common.base.Predicate)} a
+     * {@link PredicateSupport#or(java.util.function.Predicate, java.util.function.Predicate)} a
      * {@link RelyingPartyIdPredicate} and an {@link EntityGroupNamePredicate} These however may have injected lookup
      * strategies and so these need to be constructed as a BeanDefinition.
      * */
@@ -75,7 +74,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
         
         // This is a lookup function composition to get from the PRC to the SAMLMetadataContext.
         final BeanDefinitionBuilder lookupFunction =
-                BeanDefinitionBuilder.rootBeanDefinition(Functions.class, "compose");
+                BeanDefinitionBuilder.rootBeanDefinition(FunctionSupport.class, "compose");
         lookupFunction.addConstructorArgValue(BeanDefinitionBuilder.genericBeanDefinition(
                 EntityDescriptorLookupFunction.class).getBeanDefinition());
         lookupFunction.addConstructorArgValue(BeanDefinitionBuilder.genericBeanDefinition(
@@ -87,7 +86,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
         indirectPredicate.addConstructorArgValue(lookupFunction.getBeanDefinition());
         indirectPredicate.addConstructorArgValue(egPredicate.getBeanDefinition());
 
-        final BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(Predicates.class);
+        final BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(PredicateSupport.class);
         orPredicate.setFactoryMethod("or");
         orPredicate.addConstructorArgValue(rpPredicate.getBeanDefinition());
         orPredicate.addConstructorArgValue(indirectPredicate.getBeanDefinition());

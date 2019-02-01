@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,8 +28,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 
 /**
  * Function that returns a profile interceptor flow descriptor from a profile request context using a lookup strategy.
@@ -41,7 +41,7 @@ public class FlowDescriptorLookupFunction<T extends ProfileInterceptorFlowDescri
     @Nonnull private final Class<T> interceptorFlowDescriptorType;
 
     /** Profile interceptor context lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext, ProfileInterceptorContext> interceptorContextlookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ProfileInterceptorContext> interceptorContextlookupStrategy;
 
     /**
      * Constructor.
@@ -66,8 +66,7 @@ public class FlowDescriptorLookupFunction<T extends ProfileInterceptorFlowDescri
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public T apply(final ProfileRequestContext input) {
+    @Nullable public T apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }

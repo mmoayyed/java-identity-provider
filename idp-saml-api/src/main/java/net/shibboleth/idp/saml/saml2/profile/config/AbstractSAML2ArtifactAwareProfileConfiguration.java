@@ -17,12 +17,11 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate;
@@ -63,7 +62,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
     protected AbstractSAML2ArtifactAwareProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         signArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate();
-        clientTLSArtifactRequestsPredicate = Predicates.not(new NoIntegrityMessageChannelPredicate());
+        clientTLSArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate().negate();
     }
     
     /** {@inheritDoc} */

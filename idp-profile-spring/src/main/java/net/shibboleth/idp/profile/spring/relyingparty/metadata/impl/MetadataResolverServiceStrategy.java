@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -36,8 +37,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationContext;
 
-import com.google.common.base.Function;
-
 /**
  * Strategy for summoning up a {@link MetadataResolver} from a populated {@link ApplicationContext}. <br/>
  * This is made somewhat complex by the need to chain multiple, top level Metadata Resolvers, but to not combine, non
@@ -50,8 +49,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
         Function<ApplicationContext, ServiceableComponent<MetadataResolver>> {
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<MetadataResolver>
-            apply(@Nullable final ApplicationContext appContext) {
+    @Nullable public ServiceableComponent<MetadataResolver> apply(@Nullable final ApplicationContext appContext) {
         final Collection<RelyingPartyMetadataProvider> resolvers =
                 appContext.getBeansOfType(RelyingPartyMetadataProvider.class).values();
 

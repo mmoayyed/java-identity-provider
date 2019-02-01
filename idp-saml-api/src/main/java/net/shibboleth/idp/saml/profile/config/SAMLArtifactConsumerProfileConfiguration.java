@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import org.opensaml.messaging.context.MessageContext;
-
-import com.google.common.base.Predicate;
 
 /**
  * Common interface for SAML profile configurations involving artifact consumption, for example artifact
@@ -43,5 +43,4 @@ public interface SAMLArtifactConsumerProfileConfiguration extends SAMLProfileCon
      */
     @Nonnull Predicate<MessageContext> getClientTLSArtifactRequests(); 
 
-    
 }

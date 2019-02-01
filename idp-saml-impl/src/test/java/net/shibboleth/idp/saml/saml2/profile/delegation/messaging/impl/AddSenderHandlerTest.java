@@ -17,14 +17,11 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
-import javax.annotation.Nullable;
-
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.openliberty.xmltooling.soapbinding.Sender;
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.soap.SOAPMessagingBaseTestCase;
@@ -32,8 +29,6 @@ import org.opensaml.soap.messaging.SOAPMessagingSupport;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
 
 /**
  *
@@ -73,12 +68,7 @@ public class AddSenderHandlerTest extends SOAPMessagingBaseTestCase {
     public void testInputPresentNonDefaultStrategy() throws ComponentInitializationException, MessageHandlerException {
         getMessageContext().getSubcontext(TestContext.class, true).value="urn:test:abc123";
         
-        handler.setProviderIdLookupFunction(new Function<MessageContext, String>() {
-            @Nullable public String apply(@Nullable MessageContext input) {
-                return input.getSubcontext(TestContext.class).value;
-            }
-        });
-        
+        handler.setProviderIdLookupFunction(mc -> mc.getSubcontext(TestContext.class).value);
         handler.initialize();
         handler.invoke(getMessageContext());
         

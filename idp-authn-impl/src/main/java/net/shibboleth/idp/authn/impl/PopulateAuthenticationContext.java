@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +39,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -194,7 +194,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
                 final String flowId = desc.getId().substring(desc.getId().indexOf('/') + 1);
                 if (activeFlows.contains(flowId)) {
                     if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
-                            && desc.apply(profileRequestContext)) {
+                            && desc.test(profileRequestContext)) {
                         authenticationContext.getPotentialFlows().put(desc.getId(), desc);
                     } else {
                         log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.getId());
@@ -207,7 +207,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         } else {
             for (final AuthenticationFlowDescriptor desc : potentialFlows) {
                 if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
-                        && desc.apply(profileRequestContext)) {
+                        && desc.test(profileRequestContext)) {
                     authenticationContext.getPotentialFlows().put(desc.getId(), desc);
                 } else {
                     log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.getId());

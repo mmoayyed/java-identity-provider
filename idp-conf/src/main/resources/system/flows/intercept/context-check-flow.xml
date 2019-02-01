@@ -22,7 +22,7 @@
     </action-state>
     
     <decision-state id="CheckCondition">
-        <if test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.context-check.Condition').apply(opensamlProfileRequestContext)"
+        <if test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.context-check.Condition').test(opensamlProfileRequestContext)"
             then="proceed" else="ContextCheckDenied" />
     </decision-state>
     

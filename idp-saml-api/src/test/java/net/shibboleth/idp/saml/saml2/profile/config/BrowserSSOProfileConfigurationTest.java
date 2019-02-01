@@ -28,13 +28,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link BrowserSSOProfileConfiguration}. */

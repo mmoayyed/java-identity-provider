@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +48,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -311,8 +311,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
-        return activationCondition.apply(input);
+    public boolean test(@Nullable final ProfileRequestContext input) {
+        return activationCondition.test(input);
     }
     
     /**

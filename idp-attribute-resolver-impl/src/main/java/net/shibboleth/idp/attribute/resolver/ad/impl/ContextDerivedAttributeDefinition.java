@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,8 +38,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * An attribute definition which returns an attribute attributes derived from the {@link ProfileRequestContext}
  * associated with the request via a plugged in {@link Function}.
@@ -46,17 +45,17 @@ import com.google.common.base.Function;
 public class ContextDerivedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
 
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
-    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
+    @Nonnull private Function<AttributeResolutionContext,ProfileRequestContext> prcLookupStrategy;
 
     /**
      * Function used to generate the values associated with the {@link ProfileRequestContext}
      * 
      * The function returns null or an empty list if the context isn't relevant.
      */
-    @Nonnull private Function<ProfileRequestContext, List<IdPAttributeValue<?>>> attributeValuesFunction;
+    @Nonnull private Function<ProfileRequestContext,List<IdPAttributeValue<?>>> attributeValuesFunction;
 
     /** Constructor. */
     public ContextDerivedAttributeDefinition() {
@@ -71,7 +70,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      *            {@link AttributeResolutionContext}
      */
     public void setProfileRequestContextLookupStrategy(
-            @Nonnull final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
+            @Nonnull final Function<AttributeResolutionContext,ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
@@ -83,7 +82,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      * @param function what to set.
      */
     public void setAttributeValuesFunction(
-            @Nonnull final Function<ProfileRequestContext, List<IdPAttributeValue<?>>> function) {
+            @Nonnull final Function<ProfileRequestContext,List<IdPAttributeValue<?>>> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributeValuesFunction = Constraint.isNotNull(function, "Attribute Function cannot be null");
     }
@@ -93,7 +92,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
-        @Nullable final List<IdPAttributeValue<?>> results = attributeValuesFunction.apply(prc);
+        final List<IdPAttributeValue<?>> results = attributeValuesFunction.apply(prc);
 
         if (null == results) {
             log.debug("{} Generated no values.", getLogPrefix());

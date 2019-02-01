@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.audit.impl;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,9 +43,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.SAMLObject;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * Action that produces F-TICKS log entries for successful SAML SSO responses. 
@@ -90,12 +88,12 @@ public class WriteFTICKSLog extends AbstractProfileAction {
     public WriteFTICKSLog() {
         relyingPartyLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
-        usernameLookupStrategy = Functions.compose(new SubjectContextPrincipalLookupFunction(),
+        usernameLookupStrategy = new SubjectContextPrincipalLookupFunction().compose(
                 new ChildContextLookup(SubjectContext.class));
         authenticationMethodLookupStrategy = new AuthnContextAuditExtractor(
-                Functions.compose(new MessageLookup(SAMLObject.class), new OutboundMessageContextLookup()));
+                new MessageLookup(SAMLObject.class).compose(new OutboundMessageContextLookup()));
         statusCodeLookupStrategy = new StatusCodeAuditExtractor(
-                Functions.compose(new MessageLookup(SAMLObject.class), new OutboundMessageContextLookup()));
+                new MessageLookup(SAMLObject.class).compose(new OutboundMessageContextLookup()));
     }
     
     /**

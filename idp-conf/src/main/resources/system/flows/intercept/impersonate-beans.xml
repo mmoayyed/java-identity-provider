@@ -58,7 +58,7 @@
 		            <key>
 		                <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.IMPERSONATING_USERNAME"/>
 		            </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                    <bean parent="shibboleth.Functions.Compose"
                         <constructor-arg name="g">
                             <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextImpersonatingPrincipalLookupFunction" />
                         </constructor-arg>

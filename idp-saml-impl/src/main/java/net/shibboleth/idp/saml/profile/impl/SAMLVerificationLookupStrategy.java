@@ -37,7 +37,6 @@ import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 public class SAMLVerificationLookupStrategy implements ContextDataLookupFunction<RelyingPartyContext,Boolean> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Boolean apply(@Nullable final RelyingPartyContext input) {
         
         final BaseContext ctx = input != null ? input.getRelyingPartyIdContextTree() : null;

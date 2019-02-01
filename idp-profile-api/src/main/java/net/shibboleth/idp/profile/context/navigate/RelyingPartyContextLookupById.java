@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.context.navigate;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -27,8 +29,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import com.google.common.base.Function;
 
 /**
  * A function that returns a {@link RelyingPartyContext} based on ID.
@@ -56,7 +56,6 @@ public class RelyingPartyContextLookupById
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public RelyingPartyContext apply(@Nullable final Pair<MultiRelyingPartyContext,String> input) {
         if (input == null || input.getFirst() == null) {
             return null;

@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.session.context.navigate;
 
-import org.opensaml.profile.context.ProfileRequestContext;
+import java.util.function.Function;
 
-import com.google.common.base.Function;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -31,7 +31,6 @@ import net.shibboleth.idp.session.context.SessionContext;
 public class CanonicalUsernameLookupStrategy implements Function<ProfileRequestContext, String> {
 
     /** {@inheritDoc} */
-    @Override
     public String apply(final ProfileRequestContext input) {
         
         if (input != null) {

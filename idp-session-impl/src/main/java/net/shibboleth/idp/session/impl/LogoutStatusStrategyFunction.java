@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -27,8 +28,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.StatusCode;
-
-import com.google.common.base.Function;
 
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -63,7 +62,7 @@ public class LogoutStatusStrategyFunction implements Function<ProfileRequestCont
     }
 
     /** {@inheritDoc} */
-    public @Nullable List<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
         
         final LogoutContext logoutCtx = logoutContextLookupStrategy.apply(input);
         if (logoutCtx != null) {

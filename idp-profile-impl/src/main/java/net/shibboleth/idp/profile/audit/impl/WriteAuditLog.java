@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -62,7 +62,7 @@ import com.google.common.collect.ImmutableMap;
 public class WriteAuditLog extends AbstractProfileAction {
 
     /** Formatter used to convert timestamps to strings. */
-    private static DateTimeFormatter v2Formatter = ISODateTimeFormat.basicDateTimeNoMillis();
+    @Nonnull private static DateTimeFormatter v2Formatter = ISODateTimeFormat.basicDateTimeNoMillis();
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(WriteAuditLog.class);

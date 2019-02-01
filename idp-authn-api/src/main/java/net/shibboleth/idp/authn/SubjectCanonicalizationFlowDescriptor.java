@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.FlowDescriptor;
@@ -27,7 +29,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -64,10 +65,10 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(final ProfileRequestContext input) {
-        return activationCondition.apply(input);
+    @Override public boolean test(final ProfileRequestContext input) {
+        return activationCondition.test(input);
     }
-
+    
     /** {@inheritDoc} */
     @Override public int hashCode() {
         return getId().hashCode();

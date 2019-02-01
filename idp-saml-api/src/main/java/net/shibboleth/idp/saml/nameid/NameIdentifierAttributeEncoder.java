@@ -19,9 +19,9 @@ package net.shibboleth.idp.saml.nameid;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 
-import org.opensaml.saml.common.SAMLObject;
+import java.util.function.Predicate;
 
-import com.google.common.base.Predicate;
+import org.opensaml.saml.common.SAMLObject;
 
 /**
  * Marker interface for {@link AttributeEncoder} that produces SAML name identifiers

@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -31,10 +34,6 @@ import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 /**
  * Call out to an externally define predicate.
@@ -53,7 +52,7 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
     /** Constructor. */
     public PredicatePolicyRule() {
         profileContextStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>(),
+                new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>().compose(
                         new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
     }
 
@@ -112,17 +111,16 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * {@inheritDoc}
      */
     @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         final ProfileRequestContext pc = profileContextStrategy.apply(filterContext);
-
         if (null == pc) {
             log.warn("{} Could not locate profile context", getLogPrefix());
             return Tristate.FAIL;
         }
 
         try {
-            if (rulePredicate.apply(pc)) {
+            if (rulePredicate.test(pc)) {
                 log.trace("{} Predicate returned false", getLogPrefix());
                 return Tristate.TRUE;
             }

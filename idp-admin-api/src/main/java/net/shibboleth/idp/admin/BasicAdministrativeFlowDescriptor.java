@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,9 +53,7 @@ import org.opensaml.saml.ext.saml2mdui.InformationURL;
 import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -77,10 +77,10 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     @Nullable private String loggingId;
     
     /** Whether this flow supports non-browser clients. */
-    private Predicate<ProfileRequestContext> supportsNonBrowserPredicate;
+    @Nonnull private Predicate<ProfileRequestContext> supportsNonBrowserPredicate;
 
     /** Whether user authentication is required. */
-    private Predicate<ProfileRequestContext> authenticatedPredicate;
+    @Nonnull private Predicate<ProfileRequestContext> authenticatedPredicate;
     
     /** Expose user interface details. */
     @Nonnull private final UIInfo uiInfo;
@@ -138,7 +138,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     
     /** {@inheritDoc} */
     public boolean isNonBrowserSupported() {
-        return supportsNonBrowserPredicate.apply(getProfileRequestContext());
+        return supportsNonBrowserPredicate.test(getProfileRequestContext());
     }
 
     /**
@@ -162,7 +162,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     
     /** {@inheritDoc} */
     public boolean isAuthenticated() {
-        return authenticatedPredicate.apply(getProfileRequestContext());
+        return authenticatedPredicate.test(getProfileRequestContext());
     }
     
     /**
@@ -304,7 +304,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
 
     /** {@inheritDoc} */
     public boolean resolveAttributes() {
-        return resolveAttributesPredicate.apply(getProfileRequestContext());
+        return resolveAttributesPredicate.test(getProfileRequestContext());
     }
 
     /**

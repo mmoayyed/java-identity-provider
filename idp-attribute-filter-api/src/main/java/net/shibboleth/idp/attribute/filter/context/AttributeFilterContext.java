@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +39,6 @@ import org.opensaml.profile.context.ProxiedRequesterContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.filter.AttributeFilter} interface. */
@@ -46,10 +46,10 @@ import com.google.common.base.Predicates;
 public final class AttributeFilterContext extends BaseContext {
 
     /** Attributes which are to be filtered. */
-    @Nonnull private Map<String, IdPAttribute> prefilteredAttributes;
+    @Nonnull private Map<String,IdPAttribute> prefilteredAttributes;
 
     /** Attributes which have been filtered. */
-    @Nonnull private Map<String, IdPAttribute> filteredAttributes;
+    @Nonnull private Map<String,IdPAttribute> filteredAttributes;
 
     /** Optional, supplemental metadata resolver. */
     @Nullable private MetadataResolver metadataResolver;

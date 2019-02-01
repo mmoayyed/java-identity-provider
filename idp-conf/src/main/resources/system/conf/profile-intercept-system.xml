@@ -75,8 +75,7 @@
         p:nonBrowserSupported="false" />
 
     <!-- Function to lookup consent-specific audit context as a child of the consent context. -->
-    <bean id="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        class="com.google.common.base.Functions" factory-method="compose">
+    <bean id="shibboleth.consent.ChildLookup.ConsentAuditContext" parent="shibboleth.Functions.Compose">
         <constructor-arg name="g">
             <bean id="shibboleth.ChildLookup.AuditContext"
                 class="org.opensaml.messaging.context.navigate.ChildContextLookup"
@@ -99,7 +98,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                    <bean parent="shibboleth.Functions.Compose"
                         c:g-ref="shibboleth.PrincipalNameLookup.Subject"
                         c:f-ref="shibboleth.ChildLookup.SubjectContext" />
                 </entry>

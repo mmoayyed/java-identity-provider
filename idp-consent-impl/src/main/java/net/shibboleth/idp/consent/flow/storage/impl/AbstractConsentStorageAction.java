@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.flow.storage.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -35,8 +37,6 @@ import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Base class for consent actions which interact with a {@link StorageService}.
@@ -63,10 +63,10 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentStorageAction.class);
 
     /** Strategy used to determine the storage context. */
-    @NonnullAfterInit private Function<ProfileRequestContext, String> storageContextLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,String> storageContextLookupStrategy;
 
     /** Strategy used to determine the storage key. */
-    @NonnullAfterInit private Function<ProfileRequestContext, String> storageKeyLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,String> storageKeyLookupStrategy;
 
     /** Storage serializer. */
     @NonnullAfterInit private StorageSerializer storageSerializer;

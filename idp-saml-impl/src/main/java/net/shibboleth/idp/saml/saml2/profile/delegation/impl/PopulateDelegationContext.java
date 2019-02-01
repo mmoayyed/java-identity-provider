@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +30,6 @@ import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLooku
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationRequest;
-import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -58,8 +58,6 @@ import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * A profile action which determines whether issuance of a delegated 
@@ -116,11 +114,10 @@ import com.google.common.base.Function;
  * @event {@link EventIds#MESSAGE_PROC_ERROR}
  * @event {@link EventIds#INVALID_SEC_CFG}
  */
-@Prototype
 public class PopulateDelegationContext extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PopulateDelegationContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateDelegationContext.class);
     
     // Configured data
     
@@ -171,8 +168,6 @@ public class PopulateDelegationContext extends AbstractProfileAction {
      * Constructor.
      */
     public PopulateDelegationContext() {
-        super();
-        
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         samlMetadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
         delegationContextLookupStrategy = new ChildContextLookup<>(DelegationContext.class, true);
@@ -346,7 +341,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
             final BrowserSSOProfileConfiguration config = 
                     (BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig();
-            delegationAllowed = config.getAllowDelegation().apply(profileRequestContext);
+            delegationAllowed = config.getAllowDelegation().test(profileRequestContext);
         } else {
             log.debug("ProfileConfiguration does not support delegation: {}", 
                     relyingPartyContext.getProfileConfig().getClass().getName());

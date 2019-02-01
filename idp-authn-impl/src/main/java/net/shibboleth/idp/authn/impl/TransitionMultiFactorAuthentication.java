@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -38,9 +40,6 @@ import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * An authentication action that acts as the master evaluation step regulating execution
@@ -104,9 +103,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
     /** Constructor. */
     TransitionMultiFactorAuthentication() {
-        multiFactorContextLookupStrategy = Functions.compose(
-                new ChildContextLookup(MultiFactorAuthenticationContext.class),
-                new ChildContextLookup(AuthenticationContext.class));
+        multiFactorContextLookupStrategy =
+                new ChildContextLookup(MultiFactorAuthenticationContext.class).compose(
+                        new ChildContextLookup(AuthenticationContext.class));
         
         eventContextLookupStrategy = new WebFlowCurrentEventLookupFunction();
         
@@ -267,7 +266,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         // infinite recursion is the configuration of transitions supplied by the deployer.
         final AuthenticationResult activeResult = mfaContext.getActiveResults().get(flowId);
         if (activeResult != null) {
-            if (flow.getReuseCondition().apply(profileRequestContext)) {
+            if (flow.getReuseCondition().test(profileRequestContext)) {
                 log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
                 activeResult.setLastActivityInstantToNow();
                 ActionSupport.buildProceedEvent(profileRequestContext);

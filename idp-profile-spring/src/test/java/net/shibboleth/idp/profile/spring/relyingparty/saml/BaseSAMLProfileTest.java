@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.function.Predicate;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -35,8 +36,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-
-import com.google.common.base.Predicate;
 
 public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
@@ -78,11 +77,11 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
     }
 
     protected static void assertTruePredicate(final Predicate<ProfileRequestContext> predicate) {
-        Assert.assertTrue(predicate.apply(null));
+        Assert.assertTrue(predicate.test(null));
     }
 
     protected static void assertFalsePredicate(final Predicate<ProfileRequestContext> predicate) {
-        Assert.assertFalse(predicate.apply(null));
+        Assert.assertFalse(predicate.test(null));
     }
 
     protected static void assertConditionalPredicate(final Predicate<ProfileRequestContext> predicate) {
@@ -92,11 +91,11 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
             mc.setConfidentialityActive(true);
             mc.setIntegrityActive(true);
-            Assert.assertFalse(predicate.apply(prc));
+            Assert.assertFalse(predicate.test(prc));
 
             mc.setConfidentialityActive(false);
             mc.setIntegrityActive(false);
-            Assert.assertTrue(predicate.apply(prc));
+            Assert.assertTrue(predicate.test(prc));
         } catch (final ComponentInitializationException e) {
             Assert.fail("ComponentInitializationException");
         }

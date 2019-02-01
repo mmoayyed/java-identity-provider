@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,9 +45,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * An action that extracts a resolved {@link IdPAttribute} value from an {@link AttributeContext} child obtained via
@@ -86,9 +84,9 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
         delimiter = '@';
         attributeSourceIds = Collections.emptyList();
         
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,SubjectCanonicalizationContext>(
-                        SubjectCanonicalizationContext.class));
+        attributeContextLookupStrategy =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(SubjectCanonicalizationContext.class));
     }
     
     /**

@@ -37,7 +37,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.core.io.Resource;
 
 /**
- * A {@link com.google.common.base.Function} over a {@link BaseContext}
+ * A {@link java.util.function.Function} over a {@link BaseContext}
  * which calls out to a supplied script.
  * 
  * @param <T> the specific type of context
@@ -95,7 +95,6 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     }
 
     /** {@inheritDoc} */
-    @Override
     public Object apply(@Nullable final T context) {
 
         if (null != context && !inputClass.isInstance(context)) {

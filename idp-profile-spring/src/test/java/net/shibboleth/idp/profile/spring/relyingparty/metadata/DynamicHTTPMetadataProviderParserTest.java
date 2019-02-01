@@ -21,6 +21,8 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
@@ -41,9 +43,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
@@ -87,7 +86,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertTrue(resolver.getPersistentCacheKeyGenerator() instanceof AbstractDynamicMetadataResolver.DefaultCacheKeyGenerator);
         
         Assert.assertNotNull(resolver.getInitializationFromCachePredicate());
-        Assert.assertTrue(resolver.getInitializationFromCachePredicate().apply(null));  // always true predicate
+        Assert.assertTrue(resolver.getInitializationFromCachePredicate().test(null));  // always true predicate
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         

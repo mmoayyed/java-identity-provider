@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.flow.impl;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -28,8 +29,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * Consent action which populates the current consents of a consent context with the output value of a function whose

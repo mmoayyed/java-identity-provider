@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -31,8 +33,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * A profile action that selects a logout propagation flow to invoke.

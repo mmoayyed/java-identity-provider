@@ -22,12 +22,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,8 +37,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Function;
-
 /**
  * Function that returns a map of consent objects representing consent to attribute release. Each consent object
  * represents consent to an attribute. The id of each consent object is an attribute id, and the value of each consent
@@ -47,23 +46,22 @@ import com.google.common.base.Function;
 public class AttributeReleaseConsentFunction implements Function<ProfileRequestContext, Map<String, Consent>> {
 
     /** Strategy used to find the {@link ConsentContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ConsentContext> consentContextLookupStrategy;
 
     /** Consent flow descriptor lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext, ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
 
     /** Strategy used to find the {@link AttributeReleaseContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, AttributeReleaseContext> attributeReleaseContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AttributeReleaseContext> attributeReleaseContextLookupStrategy;
 
     /** Function used to compute the hash of an attribute's values. */
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
 
     /** Constructor. */
     public AttributeReleaseConsentFunction() {
-        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
-        consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
-        attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class, false);
+        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
+        consentFlowDescriptorLookupStrategy = new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
+        attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class);
         attributeValuesHashFunction = new AttributeValuesHashFunction();
     }
 

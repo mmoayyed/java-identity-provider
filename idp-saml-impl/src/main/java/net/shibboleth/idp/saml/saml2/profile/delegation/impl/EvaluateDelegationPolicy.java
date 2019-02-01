@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +29,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
-import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -43,9 +44,6 @@ import org.opensaml.saml.saml2.core.Condition;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * Action which implements policy controls to decide whether an SSO request based
@@ -76,14 +74,13 @@ import com.google.common.base.Predicate;
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#INVALID_SEC_CFG}
  */
-@Prototype
 public class EvaluateDelegationPolicy extends AbstractProfileAction {
     
     /** Default policy max chain length, when can't otherwise be derived. */
-    public static final Long DEFAULT_POLICY_MAX_CHAIN_LENGTH = 1L;
+    @Nonnull public static final Long DEFAULT_POLICY_MAX_CHAIN_LENGTH = 1L;
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(EvaluateDelegationPolicy.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(EvaluateDelegationPolicy.class);
     
     // Configured data
     
@@ -234,7 +231,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
      * @return true if check passes, false if not
      */
     protected boolean checkAllowedDelegate(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (!delegationPredicate.apply(profileRequestContext)) {
+        if (!delegationPredicate.test(profileRequestContext)) {
             log.warn("Delegation predicate eval indicates delegated token use NOT allowed");
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
             return false;
