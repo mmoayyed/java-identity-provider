@@ -91,6 +91,8 @@
         <property name="deadProperties">
             <list>
                 <value>idp.authn.flows.initial</value>
+                <value>idp.nameid.saml1.legacyGenerator</value>
+                <value>idp.nameid.saml2.legacyGenerator</value>
             </list>
         </property>
     </bean>

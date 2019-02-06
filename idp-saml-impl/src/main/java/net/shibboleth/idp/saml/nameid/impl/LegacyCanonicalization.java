@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -34,7 +33,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -54,16 +52,18 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      */
     public LegacyCanonicalization(@Nonnull @ParameterName(name="resolverService") 
                         final ReloadableService<AttributeResolver> resolverService) {
-        Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
+        
     }
     
 //CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        log.error("legacy C14N no supported");
+        log.error("Legacy PrincipalConnectors no longer supported");
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+        
+        return false;
     }
 //CheckStyle: ReturnCount ON
     
@@ -84,16 +84,13 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
      */
     public static class ActivationCondition implements Predicate<ProfileRequestContext> {
 
-        /** Service used to get the resolver used to fetch attributes. */
-        @Nullable private final ReloadableService<AttributeResolver> attributeResolverService;
-
         /**
          * Constructor.
          * 
          * @param service the service we need to interrogate.
          */
         public ActivationCondition(final @ParameterName(name="service") ReloadableService<AttributeResolver> service) {
-            attributeResolverService = service;
+            
         }
 
         /**
@@ -105,4 +102,5 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
             return false;
         }
     }
+    
 }
