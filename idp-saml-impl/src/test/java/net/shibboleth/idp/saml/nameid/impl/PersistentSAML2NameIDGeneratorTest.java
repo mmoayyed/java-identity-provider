@@ -308,22 +308,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test
-    @SuppressWarnings("deprecation")
-    public void testStoredIdDeprecated() throws Exception {
-        final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
-        store.setDataSource(testSource);
-        store.initialize();
-        
-        final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setIDStore(store);
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
-        
-        testStoredIdLogic();
-    }
-
-    @Test
     public void testComputedAndStoredId() throws Exception {
         final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
         strategy.setSalt(salt);
@@ -343,34 +327,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         testComputedAndStoredIdLogic();
 
         store.deactivate(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, RESULT, null);
-        
-        final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotEquals(id.getValue(), RESULT);
-        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
-        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
-    }
-
-    @Test
-    @SuppressWarnings("deprecation")
-    public void testComputedAndStoredIdDeprecated() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.initialize();
-
-        final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
-        store.setDataSource(testSource);
-        store.initialize();
-        
-        final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
-        strategy2.setIDStore(store);
-        strategy2.setComputedIdStrategy(strategy);
-        strategy2.initialize();
-        
-        generator.setPersistentIdGenerator(strategy2);
-        
-        testComputedAndStoredIdLogic();
-
-        store.deactivate(RESULT, null);
         
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotEquals(id.getValue(), RESULT);

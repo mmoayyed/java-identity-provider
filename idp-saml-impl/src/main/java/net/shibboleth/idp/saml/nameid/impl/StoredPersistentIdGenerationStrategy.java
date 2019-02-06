@@ -23,9 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.saml.nameid.IPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
-import net.shibboleth.idp.saml.nameid.PersistentIdStore;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -41,7 +39,6 @@ import org.slf4j.LoggerFactory;
  * Manages persistent IDs via a {@link PersistentIdStore}, generating them either randomly or via a
  * {@link ComputedPersistentIdGenerationStrategy} (for compatibility with existing data).
  */
-@SuppressWarnings("deprecation")
 public class StoredPersistentIdGenerationStrategy extends AbstractInitializableComponent
         implements PersistentIdGenerationStrategy {
 
@@ -54,33 +51,18 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
     /** A DataSource to auto-provision a {@link JDBCPersistentIdStoreEx} instance. */
     @Nullable private DataSource dataSource;
     
-    /** Deprecated version of persistent identifier data store. */
-    @Nullable private PersistentIdStore deprecatedStore;
-    
     /** Optional generator of computed ID values. */
     @Nullable private ComputedPersistentIdGenerationStrategy computedIdStrategy;
 
     /**
-     * Set an {@link IPersistentIdStore} used to store the IDs.
-     * 
-     * <p>The marker interface is used, allowing injection of either the broken or the updated
-     * version of the interface.</p>
+     * Set a {@link PersistentIdStoreEx} used to store the IDs.
      * 
      * @param store the ID store to use
      */
-    public void setIDStore(@Nullable final IPersistentIdStore store) {
+    public void setIDStore(@Nullable final PersistentIdStoreEx store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (store instanceof PersistentIdStoreEx) {
-            pidStore = (PersistentIdStoreEx) store;
-            deprecatedStore = null;
-        } else if (store instanceof PersistentIdStore) {
-            deprecatedStore = (PersistentIdStore) store;
-            pidStore = null;
-        } else {
-            pidStore = null;
-            deprecatedStore = null;
-        }
+        pidStore = (PersistentIdStoreEx) store;
     }
     
     /**
@@ -117,30 +99,6 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
                 newStore.setDataSource(dataSource);
                 newStore.initialize();
                 pidStore = newStore;
-            } else if (deprecatedStore != null) {
-                if (deprecatedStore instanceof JDBCPersistentIdStore) {
-                    log.warn("Transferring settings from deprecated JDBCPersistentStore, please update configuration");
-                    final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
-                    // Don't validate the database because legacy configs won't have primary key defined.
-                    newStore.setVerifyDatabase(false);
-                    newStore.setDataSource(((JDBCPersistentIdStore) deprecatedStore).getDataSource());
-                    newStore.setQueryTimeout(((JDBCPersistentIdStore) deprecatedStore).getQueryTimeout());
-                    newStore.setLocalEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getLocalEntityColumn());
-                    newStore.setPeerEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getPeerEntityColumn());
-                    newStore.setPersistentIdColumn(((JDBCPersistentIdStore) deprecatedStore).getPersistentIdColumn());
-                    newStore.setPrincipalNameColumn(((JDBCPersistentIdStore) deprecatedStore).getPrincipalNameColumn());
-                    newStore.setSourceIdColumn(((JDBCPersistentIdStore) deprecatedStore).getSourceIdColumn());
-                    newStore.setPeerProvidedIdColumn(
-                            ((JDBCPersistentIdStore) deprecatedStore).getPeerProvidedIdColumn());
-                    newStore.setCreateTimeColumn(((JDBCPersistentIdStore) deprecatedStore).getCreateTimeColumn());
-                    newStore.setDeactivationTimeColumn(
-                            ((JDBCPersistentIdStore) deprecatedStore).getDeactivationTimeColumn());
-                    newStore.initialize();
-                    pidStore = newStore;
-                } else {
-                    throw new ComponentInitializationException(
-                            "Non-JDBC version of deprecated PersistentIdStore interface is not usable in this version");
-                }
             }
             
             if (null == pidStore) {

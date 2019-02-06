@@ -22,7 +22,6 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.nameid.IPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -32,7 +31,7 @@ import org.joda.time.DateTime;
  * Storage and retrieval interface for SAML persistent IDs redesigned to support appropriately
  * atomic behavior.
  */
-public interface PersistentIdStoreEx extends IPersistentIdStore {
+public interface PersistentIdStoreEx {
     
     /**
      * Get the {@link PersistentIdEntry} for a previously issued ID triple.
