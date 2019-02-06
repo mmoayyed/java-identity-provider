@@ -19,18 +19,13 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 import javax.security.auth.Subject;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinitionTest;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
@@ -40,10 +35,8 @@ import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -54,7 +47,6 @@ import org.testng.annotations.Test;
 /**
  * test for {@link CryptoTransientNameIdentifierDecoder}.
  */
-@SuppressWarnings("deprecation")
 public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private final static long TIMEOUT = 5000;
@@ -105,37 +97,27 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
         strategy.setIdLifetime(TIMEOUT);
         strategy.initialize();
 
-        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
-        defn.setId("defn");
-        defn.initialize();
-
-        final AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);
-
-        final IdPAttribute result = defn.resolve(context);
-
-        final List<IdPAttributeValue<?>> values = result.getValues();
-        Assert.assertEquals(values.size(), 1);
-        final String code = ((StringAttributeValue) values.get(0)).getValue();
-
-        final NameIdentifier nameID =
-                ((SAMLObjectBuilder<NameIdentifier>) XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
-                        NameIdentifier.DEFAULT_ELEMENT_NAME)).buildObject();
-        nameID.setFormat("https://example.org/");
-        nameID.setNameQualifier(TestSources.IDP_ENTITY_ID);
-        nameID.setValue(code);
+        final TransientSAML1NameIdentifierGenerator generator = new TransientSAML1NameIdentifierGenerator();
+        generator.setId("id");
+        generator.setTransientIdGenerator(strategy);
+        generator.initialize();
+    
+        ProfileRequestContext prc =
+                new RequestContextBuilder().setInboundMessageIssuer(TestSources.SP_ENTITY_ID).buildProfileRequestContext();
+        prc.getSubcontext(SubjectContext.class, true).setPrincipalName(TestSources.PRINCIPAL_ID);
+        
+        final NameIdentifier nameID = generator.generate(prc, generator.getFormat());
 
         final NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
         desc.setId("C14NDesc");
-        desc.setFormats(Collections.singleton("https://example.org/"));
+        desc.setFormats(Collections.singleton(generator.getFormat()));
         desc.initialize();
         
         final NameIdentifierCanonicalization canon = new NameIdentifierCanonicalization();
         canon.setDecoder(decoder);
         canon.initialize();
 
-        final ProfileRequestContext prc = new ProfileRequestContext<>();
+        prc = new ProfileRequestContext<>();
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         final Subject subject = new Subject();
 

@@ -3,13 +3,13 @@
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
 	xmlns:sec="urn:mace:shibboleth:2.0:security"
 	targetNamespace="urn:mace:shibboleth:2.0:resolver"
-	elementFormDefault="qualified" version="3.0">
+	elementFormDefault="qualified" version="4.0">
 
     <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
     <annotation>
-        <documentation>Shibboleth 2.0 Attribute Resolver configuration schema
+        <documentation>Shibboleth V4 Attribute Resolver configuration schema
         </documentation>
     </annotation>
 
@@ -316,31 +316,6 @@
                 <attribute name="attributeValuesFunctionRef" type="string" use="required">
                     <annotation>
                         <documentation>The Function to generate the Attribute Values given a PRC</documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="CryptoTransientId">
-        <annotation>
-            <documentation>An attribute definition used to construct stateless transient subject identifiers.</documentation>
-        </annotation>
-        <complexContent>
-            <extension base="resolver:BaseAttributeDefinitionType">
-                <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
-                    <element ref="resolver:AttributeEncoder"/>
-                </choice>
-                <attribute name="dataSealerRef" type="string" use="required">
-                    <annotation>
-                        <documentation>Object used to protect and encrypt identifiers</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="lifetime" type="string">
-                    <annotation>
-                        <documentation>Lifetime of issued identifiers</documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -673,31 +648,6 @@
                 <attribute name="velocityEngine" type="string">
                     <annotation>
                         <documentation>Name of the velocity engine defined within the application.</documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="TransientId">
-        <annotation>
-            <documentation>A attribute definition used to construct transient subject identifiers.</documentation>
-        </annotation>
-        <complexContent>
-            <extension base="resolver:BaseAttributeDefinitionType">
-                <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
-                    <element ref="resolver:AttributeEncoder"/>
-                </choice>
-                <attribute name="storageServiceRef" type="string" default="shibboleth.StorageService">
-                    <annotation>
-                        <documentation>Storage service used to store created identifiers</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="lifetime" type="string">
-                    <annotation>
-                        <documentation>Lifetime of issued identifiers</documentation>
                     </annotation>
                 </attribute>
             </extension>

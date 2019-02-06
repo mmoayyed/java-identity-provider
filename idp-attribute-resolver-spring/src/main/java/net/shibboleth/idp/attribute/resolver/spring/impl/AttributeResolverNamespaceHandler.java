@@ -23,7 +23,6 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalNameAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.RegexSplitAttributeDefinitionParser;
@@ -34,7 +33,6 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDef
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TemplateAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
@@ -72,8 +70,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(InputAttributeDefinitionParser.ELEMENT_NAME, new InputAttributeDefinitionParser());
 
         // Attribute Resolvers
-        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME_RESOLVER,
-                new CryptoTransientIdAttributeDefinitionParser());
         registerBeanDefinitionParser(PrescopedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new PrescopedAttributeDefinitionParser());
         registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME_RESOLVER,
@@ -97,8 +93,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new SimpleAttributeDefinitionParser());
         registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new TemplateAttributeDefinitionParser());
-        registerBeanDefinitionParser(TransientIdAttributeDefinitionParser.TYPE_NAME_RESOLVER,
-                new TransientIdAttributeDefinitionParser());
         registerBeanDefinitionParser(SourceValueParser.TYPE_NAME_RESOLVER, new SourceValueParser());
         registerBeanDefinitionParser(ValueMapParser.TYPE_NAME_RESOLVER, new ValueMapParser());
         registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME_RESOLVER,

@@ -22,7 +22,6 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

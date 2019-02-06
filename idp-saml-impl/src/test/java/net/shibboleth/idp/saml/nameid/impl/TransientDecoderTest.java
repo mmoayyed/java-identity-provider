@@ -17,28 +17,22 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinitionTest;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
@@ -46,7 +40,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link BaseTransientDecoder} unit test. */
-@SuppressWarnings("deprecation")
 public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private static final String RECIPIENT="TheRecipient";
@@ -131,36 +124,6 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
         decoder.decode(id, PRINCIPAL);
     }
-
-    private NameID encode(final IdPAttribute attribute) {
-
-        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
-        if (attributeValues == null || attributeValues.isEmpty()) {
-            return null;
-        }
-        final SAMLObjectBuilder<NameID> identifierBuilder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(NameID.DEFAULT_ELEMENT_NAME);
-        final NameID nameId = identifierBuilder.buildObject();
-        nameId.setFormat("https://example.org/");
-        for (final IdPAttributeValue attrValue : attributeValues) {
-            if (attrValue == null || attrValue.getValue() == null) {
-                continue;
-            }
-            final Object value = attrValue.getValue();
-            if (value instanceof String) {
-                // Check for empty or all-whitespace, but don't trim.
-                if (StringSupport.trimOrNull((String) value) == null) {
-                    continue;
-                }
-                nameId.setValue((String) value);
-                return nameId;
-            } else {
-                continue;
-            }
-        }
-        return null;
-    }
-
     
     @Test public void decode() throws Exception {
         
@@ -169,20 +132,19 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         strategy.setIdStore(store);        
         strategy.initialize();
         
-        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
-        defn.setId("id");
-        defn.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
-        defn.initialize();
+        final TransientSAML2NameIDGenerator generator = new TransientSAML2NameIDGenerator();
+        generator.setId("id");
+        generator.setTransientIdGenerator(strategy);
+        generator.initialize();    
     
-        final IdPAttribute result =
-                defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
-                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
-    
-    
-        final NameID nameid = encode(result);
+        ProfileRequestContext prc =
+                new RequestContextBuilder().setInboundMessageIssuer(TestSources.SP_ENTITY_ID).buildProfileRequestContext();
+        prc.getSubcontext(SubjectContext.class, true).setPrincipalName(TestSources.PRINCIPAL_ID);
+        
+        final NameID nameid = generator.generate(prc, generator.getFormat());
 
         final NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor();
-        descriptor.setFormats(Collections.singleton("https://example.org/"));
+        descriptor.setFormats(Collections.singleton(generator.getFormat()));
         descriptor.setId("NameIdFlowDescriptor");
         descriptor.initialize();
         final NameIDCanonicalization canon = new NameIDCanonicalization();
@@ -194,7 +156,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         canon.setDecoder(decoder);
         canon.initialize();
         
-        final ProfileRequestContext prc = new ProfileRequestContext<>();
+        prc = new ProfileRequestContext<>();
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameid));
