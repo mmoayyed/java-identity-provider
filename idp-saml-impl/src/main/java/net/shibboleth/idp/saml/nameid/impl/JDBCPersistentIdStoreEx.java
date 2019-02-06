@@ -690,7 +690,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, persistentId);
         
         try (final Connection dbConn = getConnection(true)) {
-            final PreparedStatement statement = dbConn.prepareStatement(deactivateSQL);
+            final PreparedStatement statement = dbConn.prepareStatement(attachSQL);
             statement.setQueryTimeout((int) (queryTimeout / 1000));
             statement.setString(1, spProvidedId);
             statement.setString(2, nameQualifier);
