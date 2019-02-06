@@ -4,9 +4,5 @@
 
     <!-- Attribute Definitions for webflow testing -->
 
-    <AttributeDefinition id="transientId" xsi:type="TransientId"/>
-    
-    <AttributeDefinition id="cryptoTransientId" xsi:type="CryptoTransientId" dataSealerRef="shibboleth.DataSealer"/>
-
     <AttributeDefinition id="Principal" xsi:type="PrincipalName"/>
 </AttributeResolver>
