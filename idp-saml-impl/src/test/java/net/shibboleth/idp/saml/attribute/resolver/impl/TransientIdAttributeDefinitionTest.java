@@ -27,9 +27,9 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.nameid.TransientIdParameters;
 import net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy;
 import net.shibboleth.idp.saml.nameid.impl.TransientIdGenerationStrategy;
+import net.shibboleth.idp.saml.nameid.impl.TransientIdParameters;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;

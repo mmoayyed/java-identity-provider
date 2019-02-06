@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.nameid;
+package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
