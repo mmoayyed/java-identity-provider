@@ -20,12 +20,14 @@ package net.shibboleth.idp.test.flows.c14n.actions;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 
@@ -36,6 +38,8 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.idp.saml.nameid.impl.TransientSAML1NameIdentifierGenerator;
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -45,20 +49,16 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
     
     private String attributeName;
 
-    /**
-     * @return Returns the attributeName.
-     */
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    /**
-     * @param attributeName The attributeName to set.
-     */
-    public void setAttributeName(String attributeName) {
+    private TransientSAML1NameIdentifierGenerator generator;
+    
+    public void setAttributeName(@Nullable final String attributeName) {
         this.attributeName = attributeName;
     }
 
+    public void setGenerator(@Nullable final TransientSAML1NameIdentifierGenerator gen) {
+        generator = gen;
+    }
+    
     private NameIdentifier encode(IdPAttribute attribute) {
         final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
@@ -69,13 +69,7 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
                 NameIdentifier.DEFAULT_ELEMENT_NAME);
 
         final NameIdentifier nameId = identifierBuilder.buildObject();
-        final String format;
-        if ("Principal".equals(attributeName)) {
-            format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
-        } else {
-            format="urn:mace:shibboleth:1.0:nameIdentifier";
-        }
-        nameId.setFormat(format);
+        nameId.setFormat(NameIdentifier.UNSPECIFIED);
         for (final IdPAttributeValue attrValue : attributeValues) {
             if (attrValue == null || attrValue.getValue() == null) {
                 continue;
@@ -98,9 +92,20 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext rpc = profileRequestContext.getSubcontext(RelyingPartyContext.class);
-
-        final AttributeContext ac = rpc.getSubcontext(AttributeContext.class, false);
-        final NameIdentifier nid = encode(ac.getIdPAttributes().get(getAttributeName()));
+        
+        NameIdentifier nid = null;
+        
+        if (generator != null) {
+            try {
+                nid = generator.generate(profileRequestContext, SAMLConstants.SAML1_NAMEID_TRANSIENT);
+            } catch (final SAMLException e) {
+                
+            }
+        } else {
+            final AttributeContext ac = rpc.getSubcontext(AttributeContext.class);
+            nid = encode(ac.getIdPAttributes().get(attributeName));
+        }
+        
         if (nid == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
@@ -116,4 +121,5 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
         scc.setRequesterId(rpc.getRelyingPartyId());
         scc.setResponderId(rpc.getConfiguration().getResponderId());
     }
+    
 }

@@ -36,7 +36,7 @@ public class TestC14N extends AbstractFlowTest {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TestC14N.class);
 
-    @Test(enabled=false) public void testTransientNameID() {
+    @Test public void testTransientNameID() {
 
         final FlowExecutionResult result = flowExecutor.launchExecution("transientNameID", null, externalContext);
 
@@ -44,7 +44,7 @@ public class TestC14N extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome());
     }
 
-    @Test(enabled=false) public void testCryptoTransientNameID() {
+    @Test public void testCryptoTransientNameID() {
 
         final FlowExecutionResult result = flowExecutor.launchExecution("cryptoTransientNameID", null, externalContext);
 
@@ -60,7 +60,7 @@ public class TestC14N extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome());
     }
 
-    @Test(enabled=false) public void testTransientNameIdentifier() {
+    @Test public void testTransientNameIdentifier() {
 
         final FlowExecutionResult result =
                 flowExecutor.launchExecution("transientNameIdentifier", null, externalContext);
@@ -69,7 +69,7 @@ public class TestC14N extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome());
     }
 
-    @Test(enabled=false) public void testCryptoTransientNameIdentifier() {
+    @Test public void testCryptoTransientNameIdentifier() {
 
         final FlowExecutionResult result =
                 flowExecutor.launchExecution("cryptoTransientNameIdentifier", null, externalContext);

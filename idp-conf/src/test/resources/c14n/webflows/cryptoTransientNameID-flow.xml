@@ -7,7 +7,6 @@
     
     <action-state id="PopulateResolution">
         <evaluate expression="PopulateResolution" />
-        <evaluate expression="ResolveAttributes" />
         <evaluate expression="PopulateSAML2C14NCrypto" />
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
