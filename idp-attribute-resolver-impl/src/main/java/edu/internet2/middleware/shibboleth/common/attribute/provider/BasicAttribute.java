@@ -17,11 +17,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * A class which is here solely to provide compatibility for V2 scripted attribute definitions. The assumption is that a
@@ -29,8 +28,6 @@ import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl;
  */
 public class BasicAttribute extends ScriptedIdPAttributeImpl {
 
-    /** Log. */
-    private Logger log = LoggerFactory.getLogger(ScriptedIdPAttributeImpl.class);
 
     /**
      * Constructor.
@@ -39,6 +36,6 @@ public class BasicAttribute extends ScriptedIdPAttributeImpl {
      */
     public BasicAttribute(final String id) {
         super(new IdPAttribute(id), "Scripted Attribute Definition: ");
-        log.info("{}  Use of V2 emulated class \"BasicAttribute\", consider replacing this code", getLogPrefix());
+        DeprecationSupport.warnOnce(ObjectType.CLASS, "edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute", null, "IdPAttribute");
     }
 }
