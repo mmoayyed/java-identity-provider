@@ -161,7 +161,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
                         return true;
                     }
                 } catch (final RuntimeException e) {
-                    log.info("{} is not a valid date for the configured date parser", dateString);
+                    log.warn("{} is not a valid date for the configured date parser", dateString, e);
                 }
             }
         }
