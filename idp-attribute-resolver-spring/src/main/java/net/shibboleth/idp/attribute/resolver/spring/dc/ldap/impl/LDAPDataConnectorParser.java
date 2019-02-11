@@ -624,24 +624,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             final BeanDefinitionBuilder poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
             if (minPoolSize == null) {
-                final String poolInitialSize =
-                        AttributeSupport.getAttributeValue(configElement, new QName("poolInitialSize"));
-                if (poolInitialSize != null) {
-                    poolConfig.addPropertyValue("minPoolSize", poolInitialSize);
-                } else {
-                    poolConfig.addPropertyValue("minPoolSize", 0);
-                }
+                poolConfig.addPropertyValue("minPoolSize", 0);
             } else {
                 poolConfig.addPropertyValue("minPoolSize", minPoolSize);
             }
             if (maxPoolSize == null) {
-                final String poolMaxIdleSize =
-                        AttributeSupport.getAttributeValue(configElement, new QName("poolMaxIdleSize"));
-                if (poolMaxIdleSize != null) {
-                    poolConfig.addPropertyValue("maxPoolSize", poolMaxIdleSize);
-                } else {
-                    poolConfig.addPropertyValue("maxPoolSize", 3);
-                }
+                poolConfig.addPropertyValue("maxPoolSize", 3);
             } else {
                 poolConfig.addPropertyValue("maxPoolSize", maxPoolSize);
             }
