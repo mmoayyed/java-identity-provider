@@ -26,7 +26,9 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
@@ -73,6 +75,7 @@ public class V2SAMLProfileRequestContext {
      * @return attribute ID
      */
     @Nullable protected String getId() {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getId()", null, null);
         return id;
     }
 
@@ -82,6 +85,7 @@ public class V2SAMLProfileRequestContext {
      * @return the Principal.
      */
     public String getPrincipalName() {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPrincipalName()", null, null);
         return resolutionContext.getPrincipal();
     }
 
@@ -91,6 +95,7 @@ public class V2SAMLProfileRequestContext {
      * @return the entityId.
      */
     public String getPeerEntityId() {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPeerEntityId()", null, null);
         return resolutionContext.getAttributeRecipientID();
     }
 
@@ -100,6 +105,7 @@ public class V2SAMLProfileRequestContext {
      * @return the entityId.
      */
     public String getLocalEntityId() {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getLocalEntityId()", null, null);
         return resolutionContext.getAttributeIssuerID();
     }
 

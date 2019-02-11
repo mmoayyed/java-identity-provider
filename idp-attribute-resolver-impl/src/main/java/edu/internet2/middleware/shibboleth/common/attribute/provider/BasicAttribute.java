@@ -36,6 +36,8 @@ public class BasicAttribute extends ScriptedIdPAttributeImpl {
      */
     public BasicAttribute(final String id) {
         super(new IdPAttribute(id), "Scripted Attribute Definition: ");
-        DeprecationSupport.warnOnce(ObjectType.CLASS, "edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute", null, "IdPAttribute");
+        DeprecationSupport.warnOnce(ObjectType.CLASS,
+                "edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute",
+                null, "IdPAttribute");
     }
 }
