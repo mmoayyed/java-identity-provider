@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.cas.proxy.impl;
 
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.io.IOException;
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.cert.CertificateException;
 
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
@@ -28,25 +29,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.cas.flow.impl.AbstractFlowActionTest;
-import net.shibboleth.idp.cas.protocol.ProtocolContext;
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.ServiceContext;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import net.shibboleth.idp.cas.flow.impl.AbstractFlowActionTest;
+import net.shibboleth.idp.cas.protocol.ProtocolContext;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.ServiceContext;
 
 /**
  * Unit test for {@link HttpClientProxyValidator} class.
@@ -58,6 +57,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
     @Autowired
     private HttpClientProxyValidator validator;
 
+    @SuppressWarnings("unused")
     @Autowired
     private ApplicationContext context;
 

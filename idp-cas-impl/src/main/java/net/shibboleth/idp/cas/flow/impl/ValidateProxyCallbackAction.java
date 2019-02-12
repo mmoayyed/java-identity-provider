@@ -22,31 +22,28 @@ import java.net.URISyntaxException;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.client.utils.URIBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
-import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.protocol.ProtocolParam;
+import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.proxy.ProxyIdentifiers;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.ProtocolParam;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.apache.http.client.utils.URIBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Validates the proxy callback URL provided in the service ticket validation request and creates a PGT when
