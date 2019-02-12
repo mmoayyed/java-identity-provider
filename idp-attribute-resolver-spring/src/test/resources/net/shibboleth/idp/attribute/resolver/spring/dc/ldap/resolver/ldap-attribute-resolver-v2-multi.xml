@@ -16,7 +16,7 @@
         connectTimeout="PT2S"
         responseTimeout="PT4S">
         
-        <ResultCache elementTimeToLive="PT10S" maximumCachedElements="25"/>
+        <ResultCache expireAfterAccess="PT10S" maximumCachedElements="25"/>
 
         <Column columnName="homephone" attributeID="phonenumber" />
 

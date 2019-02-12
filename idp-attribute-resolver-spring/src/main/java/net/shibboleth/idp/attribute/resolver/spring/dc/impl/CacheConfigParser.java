@@ -28,8 +28,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -80,7 +78,6 @@ public class CacheConfigParser {
         configElement = config;
     }
 
-// Checkstyle: CyclomaticComplexity OFF
     /**
      * Creates a new cache bean definition from a v2 XML configuration.
      * 
@@ -90,14 +87,6 @@ public class CacheConfigParser {
      */
     @Nonnull public BeanDefinition createCache(@Nonnull final ParserContext parserContext) {
 
-        final String defaultCache = AttributeSupport.getAttributeValue(configElement, new QName("cacheResults"));
-        if (defaultCache != null) {
-            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "cacheResults",
-                    parserContext != null ? parserContext.getReaderContext().getResource().getDescription() : null,
-                            RESULT_CACHE_RESOLVER.toString());
-            return null;
-        }
-        
         final List<Element> cacheElements = ElementSupport.getChildElements(configElement, RESULT_CACHE_RESOLVER);
         if (cacheElements.isEmpty()) {
             return null;
@@ -108,13 +97,6 @@ public class CacheConfigParser {
         }
         
         final Element cacheElement = cacheElements.get(0);
-        final String elementTimeToLive =
-                AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
-        if (null != elementTimeToLive) {
-            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "elementTimeToLive",
-                    parserContext != null ? parserContext.getReaderContext().getResource().getDescription() : null,
-                            "expireAfterAccess");
-        }
         final String expireAfterWrite =
                 AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterWrite"));
         final String expireAfterAccess =
@@ -122,15 +104,12 @@ public class CacheConfigParser {
         
         final BeanDefinitionBuilder cache;
         if (expireAfterWrite != null) {
-            if (null != expireAfterAccess || null != elementTimeToLive) {
+            if (null != expireAfterAccess ) {
                 log.warn("ResultCache: Attribute 'expireAfterAccess' is mutually exclusive with 'expireAfterWrite'."
                         + " Used 'expireAfterWrite'.");
             }
             cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
             cache.addConstructorArgValue(expireAfterWrite);            
-        } else if (elementTimeToLive != null) {
-            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
-            cache.addConstructorArgValue(elementTimeToLive);
         } else {
             cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
             cache.addConstructorArgValue(expireAfterAccess);
@@ -139,7 +118,6 @@ public class CacheConfigParser {
                 AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements")));
         return cache.getBeanDefinition();
     }
-// Checkstyle: CyclomaticComplexity ON
     
     /** Helper function to return size provided with a suitable default.
      * 

@@ -24,11 +24,11 @@
         poolIdleTestPeriod="360"/>
         <Column columnName="homephone" attributeID="phonenumber" />
         
-        <ResultCache elementTimeToLive="PT10S"/>
+        <ResultCache expireAfterAccess="PT10S"/>
         
         <FailoverDataConnector ref="2123"/>
         
-        <ResultCache elementTimeToLive="PT10S" maximumCachedElements="25"/>
+        <ResultCache expireAfterAccess="PT10S" maximumCachedElements="25"/>
 
         <InputAttributeDefinition ref="321"/>
         

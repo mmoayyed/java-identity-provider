@@ -53,7 +53,7 @@
             validateFilter="%{connectionPool.validator.filter}"
             failFastInitialize="%{connectionPool.failFastInitialize}"/>
         <ResultCache
-            elementTimeToLive="%{cache.TTL}"
+            expireAfterAccess="%{cache.TTL}"
             maximumCachedElements="%{cache.maxSize}"/>
     </DataConnector>
     

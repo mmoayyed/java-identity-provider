@@ -158,10 +158,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             if (AttributeSupport.hasAttribute(config, new QName("queryUsesStoredProcedure"))) {
                 DeprecationSupport.warn(ObjectType.ATTRIBUTE,  "queryUsesStoredProcedure", prefix, null);
             }
-            if (AttributeSupport.hasAttribute(config, new QName("cacheResults"))) {
-                DeprecationSupport.warn(ObjectType.ATTRIBUTE,  "cacheResults", prefix, "<ResultCache>");
-            }
-
         }
 
         /**

@@ -21,7 +21,7 @@
         
         <FailoverDataConnector ref="2123"/>
         
-        <ResultCache elementTimeToLive="PT10S" maximumCachedElements="25"/>
+        <ResultCache expireAfterAccess="PT10S" maximumCachedElements="25"/>
 
         <Column columnName="homephone" attributeID="phonenumber" />
 
@@ -56,7 +56,7 @@
             ]]>
         </FilterTemplate>
         
-        <ResultCache maximumCachedElements="20"/>
+        <ResultCache expireAfterAccess="20"/>
         
         <FilterTemplate>
             <![CDATA[

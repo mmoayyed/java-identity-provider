@@ -27,7 +27,7 @@
             ]]>
         </QueryTemplate>
         <ResultCache
-            elementTimeToLive="%{cache.TTL}"
+            expireAfterAccess="%{cache.TTL}"
             maximumCachedElements="%{cache.maxSize}"/>
     </DataConnector>
     

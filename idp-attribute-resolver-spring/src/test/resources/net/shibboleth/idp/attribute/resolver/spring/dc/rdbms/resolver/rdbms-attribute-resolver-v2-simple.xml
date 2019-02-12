@@ -15,7 +15,7 @@
         jdbcPassword=""/>
         <QueryTemplate><![CDATA[SELECT * FROM people WHERE userid='%s']]></QueryTemplate>
         <Column columnName="homephone" attributeID="phonenumber" />
-        <ResultCache elementTimeToLive="PT10S"/>
+        <ResultCache expireAfterAccess="PT10S"/>
     </DataConnector>
     
 </AttributeResolver>
