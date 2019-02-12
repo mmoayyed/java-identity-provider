@@ -162,6 +162,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void testEqualsHashToString() {
         final ScriptedPolicyRule rule = newScriptedPolicyRule(trueReturnScript);
 

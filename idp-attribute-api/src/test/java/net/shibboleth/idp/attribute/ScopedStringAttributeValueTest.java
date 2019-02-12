@@ -61,6 +61,7 @@ public class ScopedStringAttributeValueTest {
     }
 
     /** Test equality of two objects. */
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equality() {
         ScopedStringAttributeValue value1 = new ScopedStringAttributeValue(" foo ", " bar ");
         ScopedStringAttributeValue value2 = new ScopedStringAttributeValue("foo", "bar");

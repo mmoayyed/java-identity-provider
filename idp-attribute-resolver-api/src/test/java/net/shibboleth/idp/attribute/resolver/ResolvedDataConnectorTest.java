@@ -64,6 +64,7 @@ public class ResolvedDataConnectorTest {
 
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equalsHashToString() throws ComponentInitializationException {
         MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new IdPAttribute("attr")));

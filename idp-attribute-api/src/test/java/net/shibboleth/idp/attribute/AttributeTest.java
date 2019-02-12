@@ -371,6 +371,7 @@ public class AttributeTest {
         
     }
     
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void cloneToString() {
         IdPAttribute attrib = new IdPAttribute("foo");
         IdPAttribute dupl = new IdPAttribute("foo");

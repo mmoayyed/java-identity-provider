@@ -271,6 +271,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void testEqualsHashToString() {
 
         final ScriptedMatcher matcher = newScriptedMatcher(addedValuesScript);

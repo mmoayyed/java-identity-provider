@@ -41,6 +41,7 @@ public class EmptyAttributeValueTest {
     }
 
     /** Test equality of two objects. */
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equality() {
         EmptyAttributeValue value1 = new EmptyAttributeValue(EmptyType.NULL_VALUE);
         EmptyAttributeValue value2 = new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE);

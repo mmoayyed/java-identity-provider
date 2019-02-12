@@ -58,6 +58,7 @@ public class ResolvedAttributeDefinitionTest {
 
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equalsHashToString() throws ComponentInitializationException {
         IdPAttribute attribute = new IdPAttribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();

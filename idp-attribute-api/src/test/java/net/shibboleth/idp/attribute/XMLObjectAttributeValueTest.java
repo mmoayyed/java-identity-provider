@@ -64,6 +64,7 @@ public class XMLObjectAttributeValueTest extends XMLObjectBaseTestCase {
     }
 
     /** Test equality of two objects. */
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equality() {
         XMLObjectAttributeValue value1 = new XMLObjectAttributeValue(xsId1);
         XMLObjectAttributeValue value2 = new XMLObjectAttributeValue(xsId2);

@@ -47,6 +47,7 @@ public class StringAttributeValueTest {
     }
 
     /** Test equality of two objects. */
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equality() {
         StringAttributeValue value1 = new StringAttributeValue(" foo ");
         StringAttributeValue value2 = new StringAttributeValue("foo");

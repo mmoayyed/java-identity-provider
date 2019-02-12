@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
  */
 public class LocalizedStringAttributeValueTest {
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void localizedStringAttributeValue() {
         Set foo = new HashSet();
         

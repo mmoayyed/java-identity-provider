@@ -46,6 +46,7 @@ public class ByteAttributeValueTest {
     }
 
     /** Test equality of two objects. */
+    @SuppressWarnings("unlikely-arg-type")
     @Test public void equality() {
         ByteAttributeValue value1 = new ByteAttributeValue(DATA1);
         ByteAttributeValue value2 = new ByteAttributeValue(DATAEQUALS1);
