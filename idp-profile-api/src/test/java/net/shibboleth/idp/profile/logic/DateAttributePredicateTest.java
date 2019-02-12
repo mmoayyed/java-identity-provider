@@ -94,7 +94,7 @@ public class DateAttributePredicateTest {
             final String attribute,
             final String[] values,
             final boolean expected) throws Exception {
-        assertEquals(predicate.apply(createProfileRequestContext(attribute, values)), expected);
+        assertEquals(predicate.test(createProfileRequestContext(attribute, values)), expected);
     }
 
     private ProfileRequestContext createProfileRequestContext(final String name, final String[] values) {

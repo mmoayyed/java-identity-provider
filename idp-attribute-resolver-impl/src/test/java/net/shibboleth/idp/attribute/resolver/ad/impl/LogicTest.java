@@ -42,14 +42,14 @@ public class LogicTest {
     @Test public void empty() {
         final ProfileRequestContext pfc = new ProfileRequestContext<>();
         
-        Assert.assertFalse(aiip.apply(pfc));
-        Assert.assertFalse(app.apply(pfc));
-        Assert.assertFalse(arip.apply(pfc));
+        Assert.assertFalse(aiip.test(pfc));
+        Assert.assertFalse(app.test(pfc));
+        Assert.assertFalse(arip.test(pfc));
 
         pfc.getSubcontext(AttributeResolutionContext.class, true);
-        Assert.assertFalse(aiip.apply(pfc));
-        Assert.assertFalse(app.apply(pfc));
-        Assert.assertFalse(arip.apply(pfc));
+        Assert.assertFalse(aiip.test(pfc));
+        Assert.assertFalse(app.test(pfc));
+        Assert.assertFalse(arip.test(pfc));
     }
     
     @Test public void wrong() {
@@ -60,9 +60,9 @@ public class LogicTest {
         arc.setPrincipal("badValue");
         arc.setAttributeRecipientID("badValue");
         
-        Assert.assertFalse(aiip.apply(pfc));
-        Assert.assertFalse(app.apply(pfc));
-        Assert.assertFalse(arip.apply(pfc));
+        Assert.assertFalse(aiip.test(pfc));
+        Assert.assertFalse(app.test(pfc));
+        Assert.assertFalse(arip.test(pfc));
     }
 
     @Test public void correct() {
@@ -73,8 +73,8 @@ public class LogicTest {
         arc.setPrincipal("Principal");
         arc.setAttributeRecipientID("ARI");
         
-        Assert.assertTrue(aiip.apply(pfc));
-        Assert.assertTrue(app.apply(pfc));
-        Assert.assertTrue(arip.apply(pfc));
+        Assert.assertTrue(aiip.test(pfc));
+        Assert.assertTrue(app.test(pfc));
+        Assert.assertTrue(arip.test(pfc));
     }
 }

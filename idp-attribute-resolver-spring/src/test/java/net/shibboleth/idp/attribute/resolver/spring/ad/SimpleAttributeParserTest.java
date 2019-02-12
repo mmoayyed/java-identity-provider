@@ -167,10 +167,10 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         ProfileRequestContext prc = new ProfileRequestContext<>();
         RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
         rpContext.setRelyingPartyId("p1");
-        Assert.assertTrue(pre.apply(prc));
+        Assert.assertTrue(pre.test(prc));
         rpContext.setRelyingPartyId("p2 p3");
-        Assert.assertFalse(pre.apply(prc));
+        Assert.assertFalse(pre.test(prc));
         rpContext.setRelyingPartyId("p3");
-        Assert.assertTrue(pre.apply(prc));
+        Assert.assertTrue(pre.test(prc));
     }
 }

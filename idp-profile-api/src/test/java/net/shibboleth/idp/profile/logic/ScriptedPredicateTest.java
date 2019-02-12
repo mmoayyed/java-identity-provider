@@ -46,25 +46,25 @@ public class ScriptedPredicateTest {
 
     @Test public void simple() throws ScriptException {
         ScriptedPredicate test = ScriptedPredicate.inlineScript("new java.lang.Boolean(true);");
-        Assert.assertTrue(test.apply(withChild));
+        Assert.assertTrue(test.test(withChild));
 
         test = ScriptedPredicate.inlineScript("true");
-        Assert.assertTrue(test.apply(withChild));
+        Assert.assertTrue(test.test(withChild));
 
         test = ScriptedPredicate.inlineScript("false");
-        Assert.assertFalse(test.apply(withChild));
+        Assert.assertFalse(test.test(withChild));
 
         test = ScriptedPredicate.inlineScript("\"thirty\"");
-        Assert.assertFalse(test.apply(withChild));
+        Assert.assertFalse(test.test(withChild));
     }
     
     @Test public void custom() throws ScriptException {
         ScriptedPredicate test = ScriptedPredicate.inlineScript("custom;");
         test.setCustomObject(Boolean.valueOf(true));
-        Assert.assertTrue(test.apply(withChild));
+        Assert.assertTrue(test.test(withChild));
 
         test.setCustomObject(Boolean.valueOf(false));
-        Assert.assertFalse(test.apply(withChild));
+        Assert.assertFalse(test.test(withChild));
 
     }
     @Test public void inlineBean() throws ScriptException {
@@ -80,9 +80,9 @@ public class ScriptedPredicateTest {
             ctx.refresh();
             final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
 
-            Assert.assertTrue(rule.apply(withChild));
+            Assert.assertTrue(rule.test(withChild));
 
-            Assert.assertFalse(rule.apply(noChild));
+            Assert.assertFalse(rule.test(noChild));
         } finally {
             ctx.close();
         }
@@ -101,9 +101,9 @@ public class ScriptedPredicateTest {
             ctx.refresh();
             final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
 
-            Assert.assertTrue(rule.apply(withChild));
+            Assert.assertTrue(rule.test(withChild));
 
-            Assert.assertFalse(rule.apply(noChild));
+            Assert.assertFalse(rule.test(noChild));
         } finally {
             ctx.close();
         }

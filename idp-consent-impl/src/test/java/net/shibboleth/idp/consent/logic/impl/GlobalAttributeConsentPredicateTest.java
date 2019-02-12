@@ -46,23 +46,23 @@ public class GlobalAttributeConsentPredicateTest {
     }
 
     @Test public void testNullInput() {
-        Assert.assertFalse(p.apply(null));
+        Assert.assertFalse(p.test(null));
     }
 
     @Test public void testNullConsentContext() {
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testNoPreviousConsents() {
         prc.addSubcontext(new ConsentContext());
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testNonGlobalPreviousConsents() {
         final ConsentContext consentContext = new ConsentContext();
         consentContext.getPreviousConsents().putAll(ConsentTestingSupport.newConsentMap());
         prc.addSubcontext(consentContext);
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testApprovedGlobalConsent() {
@@ -72,7 +72,7 @@ public class GlobalAttributeConsentPredicateTest {
         final ConsentContext consentContext = new ConsentContext();
         consentContext.getPreviousConsents().put(globalConsent.getId(), globalConsent);
         prc.addSubcontext(consentContext);
-        Assert.assertTrue(p.apply(prc));
+        Assert.assertTrue(p.test(prc));
     }
 
     @Test public void testNotApprovedGlobalConsent() {
@@ -82,7 +82,7 @@ public class GlobalAttributeConsentPredicateTest {
         final ConsentContext consentContext = new ConsentContext();
         consentContext.getPreviousConsents().put(globalConsent.getId(), globalConsent);
         prc.addSubcontext(consentContext);
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
 }
