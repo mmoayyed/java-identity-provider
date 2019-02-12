@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.spnego.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,8 +79,9 @@ public class GSSAcceptorLoginModule {
         options.put("storeKey", "true");
 
         try {
-            krbModule = (LoginModule) Class.forName(loginModuleClassName).newInstance();
-        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            krbModule = (LoginModule) Class.forName(loginModuleClassName).getDeclaredConstructor().newInstance();
+        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException |
+                IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             log.error("Unable to instantiate JAAS module for Kerberos", e);
             // no module available; login() will throw an exception later
             krbModule = null;

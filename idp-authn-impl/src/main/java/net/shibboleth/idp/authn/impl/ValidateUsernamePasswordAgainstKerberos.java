@@ -193,7 +193,8 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
             @Nonnull final AuthenticationContext authenticationContext) {
         
         try {
-            final LoginModule clientLoginModule = (LoginModule) Class.forName(loginModuleClassName).newInstance();
+            final LoginModule clientLoginModule = (LoginModule) Class.forName(loginModuleClassName).
+                    getDeclaredConstructor().newInstance();
             clientLoginModule.initialize(getSubject(), new SimpleCallbackHandler(), new HashMap(), clientOptions);
             if (!clientLoginModule.login() || !clientLoginModule.commit()) {
                 clientLoginModule.abort();
@@ -254,7 +255,8 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
         
         LoginModule serverLoginModule = null;
         try {
-            serverLoginModule = (LoginModule) Class.forName(loginModuleClassName).newInstance();
+            serverLoginModule = (LoginModule) Class.forName(loginModuleClassName).
+                    getDeclaredConstructor().newInstance();
             final Subject serverSubject = new Subject();
             serverLoginModule.initialize(serverSubject, null, new HashMap(), serverOptions);
             if (!serverLoginModule.login() || !serverLoginModule.commit()) {
