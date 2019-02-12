@@ -34,6 +34,8 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -58,6 +60,15 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
     /** {@inheritDoc} */
     @Override protected Class<ScriptedDataConnector> getNativeBeanClass() {
         return ScriptedDataConnector.class;
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
+        if (isNative(config)) {
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, ATTR_SPRING_RESOURCE, null,null);
+        }
+        super.doParse(config, parserContext, builder);
     }
 
     /** {@inheritDoc} */
