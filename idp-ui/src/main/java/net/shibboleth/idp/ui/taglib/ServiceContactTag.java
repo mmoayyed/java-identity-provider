@@ -55,28 +55,25 @@ public class ServiceContactTag extends ServiceTagSupport {
      * 
      * @param type in value
      */
-    // Checkstyle: ReturnCount OFF
     public void setContactType(@Nullable final String type) {
         if (null == type || 0 == type.length()) {
             log.warn("no parameter provided to contactType");
             return;
         }
-        if (type.equals(ContactPersonTypeEnumeration.ADMINISTRATIVE)) {
+        if (type.equals(ContactPersonTypeEnumeration.ADMINISTRATIVE.toString())) {
             contactType = ContactPersonTypeEnumeration.ADMINISTRATIVE;
-        } else if (type.equals(ContactPersonTypeEnumeration.BILLING)) {
+        } else if (type.equals(ContactPersonTypeEnumeration.BILLING.toString())) {
             contactType = ContactPersonTypeEnumeration.BILLING;
-        } else if (type.equals(ContactPersonTypeEnumeration.OTHER)) {
+        } else if (type.equals(ContactPersonTypeEnumeration.OTHER.toString())) {
             contactType = ContactPersonTypeEnumeration.OTHER;
-        } else if (type.equals(ContactPersonTypeEnumeration.SUPPORT)) {
+        } else if (type.equals(ContactPersonTypeEnumeration.SUPPORT.toString())) {
             contactType = ContactPersonTypeEnumeration.SUPPORT;
-        } else if (type.equals(ContactPersonTypeEnumeration.TECHNICAL)) {
+        } else if (type.equals(ContactPersonTypeEnumeration.TECHNICAL.toString())) {
             contactType = ContactPersonTypeEnumeration.TECHNICAL;
         } else {
             log.warn("parameter provided to contactType:" + type + " is invalid");
-            return;
         }
     }
-    // Checkstyle: ReturnCount ON
 
     /**
      * Set the contact name.
