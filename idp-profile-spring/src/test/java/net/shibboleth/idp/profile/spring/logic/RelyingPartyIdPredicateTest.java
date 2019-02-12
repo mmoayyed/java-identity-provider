@@ -36,7 +36,7 @@ public class RelyingPartyIdPredicateTest {
         ProfileRequestContext prc = new ProfileRequestContext();
         RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
         rpc.setRelyingPartyId(rpId);
-        return rpIdPredicate.apply(prc);
+        return rpIdPredicate.test(prc);
     }
     
     

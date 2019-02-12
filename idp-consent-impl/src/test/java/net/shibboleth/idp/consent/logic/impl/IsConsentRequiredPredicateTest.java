@@ -154,13 +154,13 @@ public class IsConsentRequiredPredicateTest {
     }
 
     @Test public void testNullInput() {
-        Assert.assertFalse(p.apply(null));
+        Assert.assertFalse(p.test(null));
     }
 
     @Test public void testNullConsentContext() {
         Assert.assertNull(prc.getSubcontext(ConsentContext.class));
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testNullConsentFlowDescriptor() {
@@ -171,7 +171,7 @@ public class IsConsentRequiredPredicateTest {
         Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class));
         Assert.assertNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testNoPreviousConsents() {
@@ -182,7 +182,7 @@ public class IsConsentRequiredPredicateTest {
         prc.getSubcontext(ConsentContext.class).getCurrentConsents().put("test", new Consent());
         setUpDescriptor(false);
 
-        Assert.assertTrue(p.apply(prc));
+        Assert.assertTrue(p.test(prc));
     }
 
     @Test public void testNoCurrentConsents() {
@@ -196,63 +196,63 @@ public class IsConsentRequiredPredicateTest {
 
         setUpDescriptor(false);
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testMatchingPreviousAndCurrentConsents() {
         setUpMatchingPreviousAndCurrentConsents();
         setUpDescriptor(false);
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testInPreviousButNotCurrentConsents() {
         setUpInPreviousButNotCurrentConsents();
         setUpDescriptor(false);
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testInCurrentButNotPreviousConsents() {
         setUpInCurrentButNotPreviousConsents();
         setUpDescriptor(false);
 
-        Assert.assertTrue(p.apply(prc));
+        Assert.assertTrue(p.test(prc));
     }
 
     @Test public void testMatchingPreviousAndCurrentConsentsCompareValues() {
         setUpMatchingPreviousAndCurrentConsents();
         setUpDescriptor(true);
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testInPreviousButNotCurrentConsentsCompareValues() {
         setUpInPreviousButNotCurrentConsents();
         setUpDescriptor(true);
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testInCurrentButNotPreviousConsentsCompareValues() {
         setUpInCurrentButNotPreviousConsents();
         setUpDescriptor(true);
 
-        Assert.assertTrue(p.apply(prc));
+        Assert.assertTrue(p.test(prc));
     }
 
     @Test public void testInPreviousAndCurrentConsentsWithDifferentValue() {
         setUpInPreviousAndCurrentConsentsWithDifferentValue();
         setUpDescriptor(false);
 
-        Assert.assertFalse(p.apply(prc));
+        Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testInPreviousAndCurrentConsentsWithDifferentValueCompareValues() {
         setUpInPreviousAndCurrentConsentsWithDifferentValue();
         setUpDescriptor(true);
 
-        Assert.assertTrue(p.apply(prc));
+        Assert.assertTrue(p.test(prc));
     }
 
 }
