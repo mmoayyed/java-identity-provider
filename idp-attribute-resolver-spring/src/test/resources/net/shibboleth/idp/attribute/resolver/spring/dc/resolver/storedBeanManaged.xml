@@ -11,9 +11,7 @@
 	
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
-    <SimpleManagedConnection
-        jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
-        jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore" />
+    <BeanManagedConnection>dataSource</BeanManagedConnection>
         
         <FailoverDataConnector ref="sddsadas"/>
         <FailoverDataConnector ref="sddsadas"/>

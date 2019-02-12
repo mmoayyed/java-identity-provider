@@ -41,7 +41,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -196,28 +195,13 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals("myDatabase", id);
         Assert.assertEquals(300000, dataConnector.getNoRetryDelay());
 
-        if ( dataConnector.getDataSource() instanceof ComboPooledDataSource) {
-            final ComboPooledDataSource dataSource = (ComboPooledDataSource) dataConnector.getDataSource();
-            Assert.assertNotNull(dataSource);
-            Assert.assertEquals("jdbc:hsqldb:mem:RDBMSDataConnectorStore", dataSource.getJdbcUrl());
-            Assert.assertEquals("SA", dataSource.getUser());
-            Assert.assertEquals(3, dataSource.getAcquireIncrement());
-            Assert.assertEquals(24, dataSource.getAcquireRetryAttempts());
-            Assert.assertEquals(5000, dataSource.getAcquireRetryDelay());
-            Assert.assertEquals(true, dataSource.isBreakAfterAcquireFailure());
-            Assert.assertEquals(1, dataSource.getMinPoolSize());
-            Assert.assertEquals(5, dataSource.getMaxPoolSize());
-            Assert.assertEquals(300, dataSource.getMaxIdleTime());
-            Assert.assertEquals(360, dataSource.getIdleConnectionTestPeriod());
-        } else {
-            final BasicDataSource dataSource = (BasicDataSource) dataConnector.getDataSource();
-            Assert.assertNotNull(dataSource);
-            Assert.assertEquals(dataSource.getUrl(), "jdbc:hsqldb:mem:RDBMSDataConnectorStore");
-            Assert.assertEquals(dataSource.getUsername(), "SA");
-            Assert.assertEquals(dataSource.getMaxTotal(), 20);
-            Assert.assertEquals(dataSource.getMaxIdle(), 5);
-            Assert.assertEquals(dataSource.getMaxWaitMillis(), 5000);
-        }
+        final BasicDataSource dataSource = (BasicDataSource) dataConnector.getDataSource();
+        Assert.assertNotNull(dataSource);
+        Assert.assertEquals(dataSource.getUrl(), "jdbc:hsqldb:mem:RDBMSDataConnectorStore");
+        Assert.assertEquals(dataSource.getUsername(), "SA");
+        Assert.assertEquals(dataSource.getMaxTotal(), 20);
+        Assert.assertEquals(dataSource.getMaxIdle(), 5);
+        Assert.assertEquals(dataSource.getMaxWaitMillis(), 5000);
 
         Assert.assertFalse(dataConnector.isConnectionReadOnly());
         final DataSourceValidator validator = (DataSourceValidator) dataConnector.getValidator();

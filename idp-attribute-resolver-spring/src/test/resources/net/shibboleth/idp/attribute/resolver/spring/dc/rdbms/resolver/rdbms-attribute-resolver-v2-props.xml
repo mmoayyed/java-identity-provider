@@ -8,19 +8,9 @@
         multipleResultsIsError="%{multipleResultsIsError}"
         readOnlyConnection="%{readOnlyConnection}"
         noRetryDelay="%{noRetryDelay}">
-      <ApplicationManagedConnection
-        jdbcDriver="%{datasource.driverClass}"
-        jdbcURL="%{datasource.jdbcUrl}"
-        jdbcUserName="%{datasource.user}"
-        jdbcPassword="%{datasource.password}"
-        poolAcquireIncrement="%{datasource.acquireIncrement}"
-        poolAcquireRetryAttempts="%{datasource.acquireRetryAttempts}"
-        poolAcquireRetryDelay="%{datasource.acquireRetryDelay}"
-        poolBreakAfterAcquireFailure="%{datasource.breakAfterAcquireFailure}"
-        poolMinSize="%{datasource.minPoolSize}"
-        poolMaxSize="%{datasource.maxPoolSize}" 
-        poolMaxIdleTime="%{datasource.maxIdleTime}"
-        poolIdleTestPeriod="%{datasource.idleConnectionTestPeriod}"/>
+
+      <SimpleManagedConnection jdbcDriver="%{datasource.driverClass}" jdbcURL="%{datasource.jdbcUrl}"
+        jdbcUserName="%{datasource.user}" jdbcPassword="%{datasource.password}" />
         <QueryTemplate>
             <![CDATA[
                 ${statementBuilder.selectStatement}

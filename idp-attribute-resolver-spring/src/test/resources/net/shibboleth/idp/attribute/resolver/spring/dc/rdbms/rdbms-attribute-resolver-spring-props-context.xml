@@ -5,12 +5,9 @@
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
     default-init-method="initialize"
     default-destroy-method="destroy">
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" p:driverClass="%{datasource.driverClass}"
-        p:jdbcUrl="%{datasource.jdbcUrl}" p:user="%{datasource.user}" p:password="%{datasource.password}"
-        p:acquireIncrement="%{datasource.acquireIncrement}" p:acquireRetryAttempts="%{datasource.acquireRetryAttempts}"
-        p:acquireRetryDelay="%{datasource.acquireRetryDelay}" p:breakAfterAcquireFailure="%{datasource.breakAfterAcquireFailure}"
-        p:minPoolSize="%{datasource.minPoolSize}" p:maxPoolSize="%{datasource.maxPoolSize}" p:maxIdleTime="%{datasource.maxIdleTime}"
-        p:idleConnectionTestPeriod="%{datasource.idleConnectionTestPeriod}" />
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close" p:driverClassName="org.hsqldb.jdbc.JDBCDriver"
+        p:maxTotal="20" p:maxIdle="5" p:maxWaitMillis="5000" p:url="jdbc:hsqldb:mem:RDBMSDataConnectorStore" p:username="SA" p:password=""  />
+
     <bean id="connectionReadOnly" class="java.lang.Boolean" factory-method="valueOf">
         <constructor-arg value="%{dataConnector.readOnlyConnection}" />
     </bean>

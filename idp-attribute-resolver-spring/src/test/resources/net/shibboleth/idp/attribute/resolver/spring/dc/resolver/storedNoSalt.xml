@@ -10,7 +10,7 @@
 	generatedAttributeID="jenny"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 	<InputAttributeDefinition ref="theSourceRemainsTheSame"/>
-    <ApplicationManagedConnection
+    <SimpleManagedConnection
         jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
         jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore" />
         

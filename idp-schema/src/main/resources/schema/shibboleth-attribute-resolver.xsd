@@ -957,13 +957,6 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="resolver:ApplicationManagedConnection">
-                        <annotation>
-                            <documentation>
-                                DEPRECATED A connection, or pool of connections, to the database managed by the data connector.
-                            </documentation>
-                        </annotation>
-                    </element>
                     <element ref="resolver:SimpleManagedConnection">
                         <annotation>
                             <documentation>
@@ -1325,6 +1318,7 @@
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
+                    <element ref="resolver:SimpleManagedConnection"/>
                     <element ref="resolver:ContainerManagedConnection">
                         <annotation>
                             <documentation>
@@ -1333,20 +1327,13 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="resolver:ApplicationManagedConnection">
+                    <element name="BeanManagedConnection" type="string">
                         <annotation>
                             <documentation>
-                                A connection, or pool of connections, to the database managed by the data connector.
+                                A connection, or pool of connections, to the database configured in a Spring bean.
                             </documentation>
                         </annotation>
                     </element>
-                        <element name="BeanManagedConnection" type="string">
-                            <annotation>
-                                <documentation>
-                                    A connection, or pool of connections, to the database configured in a Spring bean.
-                                </documentation>
-                            </annotation>
-                        </element>
                 </choice>
                 <attribute name="queryTimeout" type="string">
                     <annotation>
@@ -1698,104 +1685,6 @@
         <attribute name="jdbcPassword" type="string">
             <annotation>
                 <documentation>The password to use while connecting to the database.</documentation>
-            </annotation>
-        </attribute>
-    </complexType>
-
-    <element name="ApplicationManagedConnection" type="resolver:ApplicationManagedConnectionType">
-        <annotation>
-            <documentation>
-                DEPRECATED
-                Describes a database connection source that is managed by the attribute resolver data connector.
-            </documentation>
-        </annotation>
-    </element>
-
-    <complexType name="ApplicationManagedConnectionType">
-        <attribute name="jdbcDriver" type="string" use="required">
-            <annotation>
-                <documentation>
-                    This is the full qualified class name of the JDBC driver used to connect to the database.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="jdbcURL" type="string" use="required">
-            <annotation>
-                <documentation>
-                    The JDBC URL for the database. These are usually of the form
-                    jdbc:databaseProduceName:databaseSpecificInformation. For example, jdbc:hsql:mem:MyDatabase
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="jdbcUserName" type="string">
-            <annotation>
-                <documentation>The user name to use while connecting to the database.</documentation>
-            </annotation>
-        </attribute>
-        <attribute name="jdbcPassword" type="string">
-            <annotation>
-                <documentation>The password to use while connecting to the database.</documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolAcquireIncrement" type="string">
-            <annotation>
-                <documentation>
-                    The number of new connections that will be created when the pool is exhausted.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolAcquireRetryAttempts" type="string">
-            <annotation>
-                <documentation>
-                    The number of times the pool will try to establish a connection to a database.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolAcquireRetryDelay" type="string">
-            <annotation>
-                <documentation>
-                    The amount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
-                    after it has failed.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolBreakAfterAcquireFailure" type="string">
-            <annotation>
-                <documentation>
-                    A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
-                    connection can not be established after the acquire retry attempts is reached.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolMinSize" type="string">
-            <annotation>
-                <documentation>
-                    The minimum number of connections the pool will establish with the database. A value of zero means
-                    there is no minimum.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolMaxSize" type="string">
-            <annotation>
-                <documentation>
-                    The maximum number of connections the pool will establish with the database. A value of zero means
-                    there is no maximum.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolMaxIdleTime" type="string">
-            <annotation>
-                <documentation>
-                    The maximum time, in seconds, that an established connection will remain idle before it is closed.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="poolIdleTestPeriod" type="string">
-            <annotation>
-                <documentation>
-                    The interval, in seconds, that the pool will scan idle established connections, using the validation
-                    query, for liveness.
-                </documentation>
             </annotation>
         </attribute>
     </complexType>

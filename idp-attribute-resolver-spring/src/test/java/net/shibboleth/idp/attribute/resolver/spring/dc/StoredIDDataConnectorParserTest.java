@@ -17,14 +17,23 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIDDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RDBMSDataConnectorParserTest;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -52,6 +61,39 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
+
+    protected StoredIDDataConnector getStoredDataConnector(final String... beanDefinitions) throws IOException {
+        final GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
+        context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
+
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
+                new StringToResourceConverter())));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.setValidating(true);
+        beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
+        context.refresh();
+
+        return (StoredIDDataConnector) context.getBean(StoredIDDataConnector.class);
+    }
+
+    @Test public void beanManaged() throws ComponentInitializationException, IOException {
+        final StoredIDDataConnector connector = getStoredDataConnector(DATACONNECTOR_FILE_PATH + "resolver/storedBeanManaged.xml", 
+                DATACONNECTOR_FILE_PATH + "rdbms/rdbms-attribute-resolver-spring-context.xml");
+        final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
+        Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
+        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        testIt(connector);
+    }
+
+
 
     @Test public void withOutSalt() throws ComponentInitializationException {
         final StoredIDDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", StoredIDDataConnector.class);

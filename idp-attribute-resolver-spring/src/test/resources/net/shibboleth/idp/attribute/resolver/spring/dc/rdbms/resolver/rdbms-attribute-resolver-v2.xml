@@ -9,19 +9,11 @@
         readOnlyConnection="false"
         noRetryDelay="PT5M">
 
-      <ApplicationManagedConnection
+      <SimpleManagedConnection
         jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
         jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore"
         jdbcUserName="SA"
-        jdbcPassword=""
-        poolAcquireIncrement="3"
-        poolAcquireRetryAttempts="24"
-        poolAcquireRetryDelay="5000"
-        poolBreakAfterAcquireFailure="true"
-        poolMinSize="1"
-        poolMaxSize="5" 
-        poolMaxIdleTime="300"
-        poolIdleTestPeriod="360"/>
+        jdbcPassword=""/>
         <Column columnName="homephone" attributeID="phonenumber" />
         
         <ResultCache expireAfterAccess="PT10S"/>

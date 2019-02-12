@@ -37,8 +37,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.w3c.dom.Element;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
@@ -54,10 +52,6 @@ public class ManagedConnectionParser {
     @Nonnull public static final QName CONTAINER_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ContainerManagedConnection");
     
-    /** resolver: ApplicationManagedConnection (legacy).*/
-    @Nonnull public static final QName APPLICATION_MANAGED_CONNECTION_RESOLVER =
-            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
-
     /** resolver:BeanManagedConnection.*/
     @Nonnull public static final QName BEAN_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "BeanManagedConnection");
@@ -92,15 +86,11 @@ public class ManagedConnectionParser {
         final List<Element> containerManagedElements =
                 ElementSupport.getChildElements(configElement, CONTAINER_MANAGED_CONNECTION_RESOLVER);
 
-        final List<Element> applicationManagedElements =
-                ElementSupport.getChildElements(configElement, APPLICATION_MANAGED_CONNECTION_RESOLVER);
-
         final List<Element> simpleManagedElements =
                 ElementSupport.getChildElements(configElement, SIMPLE_MANAGED_CONNECTION_RESOLVER);
 
-        if ((simpleManagedElements.size() + containerManagedElements.size() + applicationManagedElements.size()) > 1) {
-            LOG.warn("Only one <ApplicationManagedConnection>, <SimpleManagedConnection> or"
-                     +" <ContainerManagedConnection> is allowed per DataConnector");
+        if ((simpleManagedElements.size() + containerManagedElements.size() ) > 1) {
+            LOG.warn("Only one <SimpleManagedConnection> or <ContainerManagedConnection> is allowed per DataConnector");
         }
         
         if (!simpleManagedElements.isEmpty()) {
@@ -111,10 +101,6 @@ public class ManagedConnectionParser {
             return createContainerManagedDataSource(containerManagedElements.get(0));
         }
 
-        if (!applicationManagedElements.isEmpty()) {
-            return createApplicationManagedDataSource(applicationManagedElements.get(0));
-        }
-        
         return null;
     }
 
@@ -195,108 +181,6 @@ public class ManagedConnectionParser {
         return dataSource.getBeanDefinition();
     }
 
-    /**
-     * Creates an application managed data source bean definition.
-     * 
-     * @param applicationManagedElement to parse
-     * 
-     * @return data source bean definition
-     */
-    // Checkstyle: CyclomaticComplexity|MethodLength OFF
-    @Deprecated @Nonnull protected BeanDefinition createApplicationManagedDataSource(
-            @Nonnull final Element applicationManagedElement) {
-
-        DeprecationSupport.warn(ObjectType.ELEMENT,
-                APPLICATION_MANAGED_CONNECTION_RESOLVER.getLocalPart(),
-                null,
-                BEAN_MANAGED_CONNECTION_RESOLVER.getLocalPart() + " or " +
-                SIMPLE_MANAGED_CONNECTION_RESOLVER.getLocalPart());
-
-        Constraint.isNotNull(applicationManagedElement, "ApplicationManagedConnection element cannot be null");
-        final BeanDefinitionBuilder dataSource =
-                BeanDefinitionBuilder.genericBeanDefinition(ComboPooledDataSource.class);
-
-        final BeanDefinitionBuilder jdbcDriver =
-                BeanDefinitionBuilder.rootBeanDefinition(ManagedConnectionParser.class, "loadJdbcDriver");
-        jdbcDriver.addConstructorArgValue(AttributeSupport.getAttributeValue(applicationManagedElement, new QName(
-                "jdbcDriver")));
-        dataSource.addPropertyValue("driverClass", jdbcDriver.getBeanDefinition());
-        dataSource.addPropertyValue("jdbcUrl",
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcURL")));
-        dataSource.addPropertyValue("user",
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcUserName")));
-        dataSource.addPropertyValue("password",
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("jdbcPassword")));
-
-        final String poolAcquireIncrement =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireIncrement"));
-        if (poolAcquireIncrement != null) {
-            dataSource.addPropertyValue("acquireIncrement", poolAcquireIncrement);
-        } else {
-            dataSource.addPropertyValue("acquireIncrement", 3);
-        }
-
-        final String poolAcquireRetryAttempts =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryAttempts"));
-        if (poolAcquireRetryAttempts != null) {
-            dataSource.addPropertyValue("acquireRetryAttempts", poolAcquireRetryAttempts);
-        } else {
-            dataSource.addPropertyValue("acquireRetryAttempts", 36);
-        }
-
-        final String poolAcquireRetryDelay =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolAcquireRetryDelay"));
-        if (poolAcquireRetryDelay != null) {
-            dataSource.addPropertyValue("acquireRetryDelay", poolAcquireRetryDelay);
-        } else {
-            dataSource.addPropertyValue("acquireRetryDelay", 5000);
-        }
-
-        final String poolBreakAfterAcquireFailure =
-                AttributeSupport
-                        .getAttributeValue(applicationManagedElement, new QName("poolBreakAfterAcquireFailure"));
-        if (poolBreakAfterAcquireFailure != null) {
-            dataSource.addPropertyValue("breakAfterAcquireFailure", poolBreakAfterAcquireFailure);
-        } else {
-            dataSource.addPropertyValue("breakAfterAcquireFailure", true);
-        }
-
-        final String poolMinSize =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMinSize"));
-        if (poolMinSize != null) {
-            dataSource.addPropertyValue("minPoolSize", poolMinSize);
-        } else {
-            dataSource.addPropertyValue("minPoolSize", 2);
-        }
-
-        final String poolMaxSize =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMaxSize"));
-        if (poolMaxSize != null) {
-            dataSource.addPropertyValue("maxPoolSize", poolMaxSize);
-        } else {
-            dataSource.addPropertyValue("maxPoolSize", 50);
-        }
-
-        final String poolMaxIdleTime =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolMaxIdleTime"));
-        if (poolMaxIdleTime != null) {
-            dataSource.addPropertyValue("maxIdleTime", poolMaxIdleTime);
-        } else {
-            dataSource.addPropertyValue("maxIdleTime", 600);
-        }
-
-        final String poolIdleTestPeriod =
-                AttributeSupport.getAttributeValue(applicationManagedElement, new QName("poolIdleTestPeriod"));
-        if (poolIdleTestPeriod != null) {
-            dataSource.addPropertyValue("idleConnectionTestPeriod", poolIdleTestPeriod);
-        } else {
-            dataSource.addPropertyValue("idleConnectionTestPeriod", 180);
-        }
-
-        return dataSource.getBeanDefinition();
-    }
-
-    // Checkstyle: MethodLength|CyclomaticComplexity ON
 
     /**
      * Factory builder a container managed datasource.
@@ -356,13 +240,11 @@ public class ManagedConnectionParser {
 
         final List<Element> managedElements = ElementSupport.getChildElements(config, 
                 CONTAINER_MANAGED_CONNECTION_RESOLVER);
-        managedElements.addAll(ElementSupport.getChildElements(config, APPLICATION_MANAGED_CONNECTION_RESOLVER));
         managedElements.addAll(ElementSupport.getChildElements(config, SIMPLE_MANAGED_CONNECTION_RESOLVER));
         
         if (managedElements.size() > 0) {
             LOG.warn("<BeanManagedConnection> is incompatible with <ContainerManagedConnection>"
-                    + ", <SimpleManagedConnection> or <ApplicationManagedConnection>. The "
-                    + "<BeanManagedConnection> has been used");
+                    + "or <SimpleManagedConnection>. The <BeanManagedConnection> has been used");
         }
         
         return StringSupport.trimOrNull(ElementSupport.getElementContentAsString(beanManagedElements.get(0)));
