@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +26,16 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.PairwiseId;
+import net.shibboleth.idp.attribute.PairwiseIdStore;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
@@ -65,16 +70,19 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     @Nonnull private final Logger log = LoggerFactory.getLogger(PersistentSAML2NameIDGenerator.class);
 
     /** Strategy function to lookup SubjectContext. */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
 
     /** Strategy function to lookup AttributeContext. */
-    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
     /** Attribute(s) to use as an identifier source. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
 
-    /** Generation strategy for IDs. */
-    @NonnullAfterInit private PersistentIdGenerationStrategy persistentIdStrategy;
+    /** Store for IDs. */
+    @NonnullAfterInit private PairwiseIdStore pidStore;
+    
+    /** A DataSource to auto-provision a {@link JDBCPairwiseIdStore} instance. */
+    @Nullable private DataSource dataSource;
 
     /** Predicate to select whether to look at filtered or unfiltered attributes. */
     private boolean useUnfilteredAttributes;
@@ -98,7 +106,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * @param strategy lookup function to use
      */
     public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
@@ -110,7 +118,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * @param strategy lookup function to use
      */
     public void setAttributeContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         attributeContextLookupStrategy =
@@ -130,16 +138,28 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     }
 
     /**
-     * Set the generation strategy for the persistent ID.
+     * Set a {@link PairwiseIdStore} to use.
      * 
-     * @param strategy generation strategy
+     * @param store the id store
      */
-    public void setPersistentIdGenerator(@Nonnull final PersistentIdGenerationStrategy strategy) {
+    public void setPersistentIdStore(@Nullable final PairwiseIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        persistentIdStrategy = Constraint.isNotNull(strategy, "PersistentIdGenerationStrategy cannot be null");
+        
+        pidStore = store;
     }
 
+    /**
+     * Set a data source to inject into an auto-provisioned instance of {@link JDBCPairwiseIdStore}
+     * to use as the store.
+     * 
+     * @param source data source
+     */
+    public void setDataSource(@Nullable final DataSource source) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        dataSource = source;
+    }
+    
     /**
      * Set whether to source the input attributes from the unfiltered set.
      * 
@@ -155,10 +175,22 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (persistentIdStrategy == null) {
-            throw new ComponentInitializationException("PersistentIdGenerationStrategy cannot be null");
-        } else if (attributeSourceIds.isEmpty()) {
+        if (attributeSourceIds.isEmpty()) {
             throw new ComponentInitializationException("Attribute source ID list cannot be empty");
+        }
+
+        if (null == pidStore) {
+            if (dataSource != null) {
+                log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
+                final JDBCPairwiseIdStore newStore = new JDBCPairwiseIdStore();
+                newStore.setDataSource(dataSource);
+                newStore.initialize();
+                pidStore = newStore;
+            }
+            
+            if (null == pidStore) {
+                throw new ComponentInitializationException("PairwiseIdStore cannot be null");
+            }
         }
     }
 
@@ -167,7 +199,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     @Override @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
 
-        Function<ProfileRequestContext, String> lookup = getDefaultIdPNameQualifierLookupStrategy();
+        Function<ProfileRequestContext,String> lookup = getDefaultIdPNameQualifierLookupStrategy();
         final String responderId = lookup != null ? lookup.apply(profileRequestContext) : null;
         if (responderId == null) {
             log.debug("No responder identifier, can't generate persistent ID");
@@ -208,24 +240,35 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                 continue;
             }
 
+            PairwiseId pid = new PairwiseId();
+            pid.setIssuerEntityID(responderId);
+            pid.setRecipientEntityID(relyingPartyId);
+            pid.setPrincipalName(subjectCtx.getPrincipalName());
+            
             final List<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
-                if (value instanceof ScopedStringAttributeValue) {
-                    log.debug("Generating persistent NameID from Scoped String-valued attribute {}", sourceId);
-                    return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
-                            ((ScopedStringAttributeValue) value).getValue() + '@'
-                                    + ((ScopedStringAttributeValue) value).getScope());
-                } else if (value instanceof StringAttributeValue) {
-                    // Check for all whitespace, but don't trim the value used.
-                    if (StringSupport.trimOrNull((String) value.getValue()) == null) {
-                        log.debug("Skipping all-whitespace string value");
-                        continue;
+                try {
+                    if (value instanceof ScopedStringAttributeValue) {
+                        log.debug("Generating persistent NameID from Scoped String-valued attribute {}", sourceId);
+                        pid.setSourceSystemId(((ScopedStringAttributeValue) value).getValue() + '@'
+                                + ((ScopedStringAttributeValue) value).getScope());
+                        pid = pidStore.getBySourceValue(pid, true);
+                        return pid.getPairwiseId();
+                    } else if (value instanceof StringAttributeValue) {
+                        // Check for all whitespace, but don't trim the value used.
+                        if (StringSupport.trimOrNull((String) value.getValue()) == null) {
+                            log.debug("Skipping all-whitespace string value");
+                            continue;
+                        }
+                        log.debug("Generating persistent NameID from String-valued attribute {}", sourceId);
+                        pid.setSourceSystemId((String) value.getValue());
+                        pid = pidStore.getBySourceValue(pid, true);
+                        return pid.getPairwiseId();
+                    } else {
+                        log.info("Unrecognized attribute value type: {}", value.getClass().getName());
                     }
-                    log.debug("Generating persistent NameID from String-valued attribute {}", sourceId);
-                    return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
-                            (String) value.getValue());
-                } else {
-                    log.info("Unrecognized attribute value type: {}", value.getClass().getName());
+                } catch (final IOException e) {
+                    throw new SAMLException(e);
                 }
             }
         }

@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.nameid.impl;
+package net.shibboleth.idp.attribute.impl;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -26,6 +27,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.PairwiseId;
+import net.shibboleth.idp.attribute.PairwiseIdStore;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base32Support;
@@ -36,26 +39,26 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The basis of a {@link PersistentIdGenerationStrategy} that generates a unique ID by computing the hash of
- * a given attribute value, the entity ID of the inbound message issuer, and a provided salt.
+ * A {@link PairwiseIdStore} that generates a pairwise ID by computing the hash of
+ * a given attribute value, the entity ID of the recipient, and a provided salt.
  * 
  * <p>The original implementation and values in common use relied on base64 encoding of the result,
  * but due to discovery of the lack of appropriate case handling of identifiers by applications, the
- * ability to use base32 has been added to eliminate the possibility of case conflicts.</p> 
+ * ability to use base32 has been added to eliminate the possibility of case conflicts.</p>
+ * 
+ * @since 4.0.0
  */
-public class ComputedPersistentIdGenerationStrategy extends AbstractInitializableComponent
-        implements PersistentIdGenerationStrategy {
+public class ComputedPairwiseIdStore extends AbstractInitializableComponent implements PairwiseIdStore {
 
     /** An override trigger to apply to all relying parties. */
     @Nonnull @NotEmpty public static final String WILDCARD_OVERRIDE = "*";
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedPersistentIdGenerationStrategy.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedPairwiseIdStore.class);
 
     /** Post-digest encoding types. */
     public enum Encoding {
@@ -79,7 +82,7 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     @Nonnull private Map<String,Map<String,String>> exceptionMap;
     
     /** Constructor. */
-    public ComputedPersistentIdGenerationStrategy() {
+    public ComputedPairwiseIdStore() {
         algorithm = "SHA";
         encoding = Encoding.BASE64;
         exceptionMap = Collections.emptyMap();
@@ -110,13 +113,26 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     }
     
     /**
+     * Set the salt used when computing the ID.
+     * 
+     * <p>An empty/null input is ignored.</p>
+     * 
+     * @param newValue used when computing the ID
+     */
+    public void setSalt(@Nullable final String newValue) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        if (newValue != null && !newValue.isEmpty()) {
+            salt = newValue.getBytes();
+        }
+    }
+    
+    /**
      * Set the base64-encoded salt used when computing the ID.
      * 
      * <p>An empty/null input is ignored.</p>
      * 
      * @param newValue used when computing the ID
-     * 
-     * @since 3.3.0
      */
     public void setEncodedSalt(@Nullable final String newValue) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -130,8 +146,6 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
      * Get the JCE algorithm name of the digest algorithm to use (default is SHA).
      * 
      * @return JCE message digest algorithm
-     * 
-     * @since 3.4.0
      */
     @Nonnull @NotEmpty public String getAlgorithm() {
         return algorithm;
@@ -152,8 +166,6 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
      * Get the post-digest encoding to use.
      * 
      * @return encoding
-     * 
-     * @since 3.4.0
      */
     @Nonnull public Encoding getEncoding() {
         return encoding;
@@ -217,37 +229,42 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
             throw new ComponentInitializationException("Salt must be at least 16 bytes in size");
         }
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String assertingPartyId,
-            @Nonnull @NotEmpty final String relyingPartyId, @Nonnull @NotEmpty final String principalName,
-            @Nonnull @NotEmpty final String sourceId) throws SAMLException {
+    @Nullable public PairwiseId getBySourceValue(@Nonnull final PairwiseId pid, final boolean allowCreate)
+            throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-     
-        final byte[] effectiveSalt = getEffectiveSalt(principalName, relyingPartyId);
+        Constraint.isNotNull(pid, "Input PairwiseId object cannot be null");
+        Constraint.isNotEmpty(pid.getRecipientEntityID(), "Recipient entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getPrincipalName(), "Principal name cannot be null or empty");
+        Constraint.isNotEmpty(pid.getSourceSystemId(), "Source system ID cannot be null or empty");
+    
+        final byte[] effectiveSalt = getEffectiveSalt(pid.getPrincipalName(), pid.getRecipientEntityID());
         if (effectiveSalt == null) {
-            throw new SAMLException("Generation blocked by exception rule");
+            log.warn("Pairwise ID generation blocked for relying party ({})", pid.getRecipientEntityID());
+            throw new IOException("Pairwise ID generation blocked by exception rule");
         }
         
         try {
             final MessageDigest md = MessageDigest.getInstance(algorithm);
-            md.update(relyingPartyId.getBytes());
+            md.update(pid.getRecipientEntityID().getBytes());
             md.update((byte) '!');
-            md.update(sourceId.getBytes());
+            md.update(pid.getSourceSystemId().getBytes());
             md.update((byte) '!');
 
             if (encoding == Encoding.BASE32) {
-                return Base32Support.encode(md.digest(effectiveSalt), Base32Support.UNCHUNKED);
+                pid.setPairwiseId(Base32Support.encode(md.digest(effectiveSalt), Base32Support.UNCHUNKED));
             } else if (encoding == Encoding.BASE64) {
-                return Base64Support.encode(md.digest(effectiveSalt), Base64Support.UNCHUNKED);
+                pid.setPairwiseId(Base64Support.encode(md.digest(effectiveSalt), Base64Support.UNCHUNKED));
             } else {
-                throw new SAMLException("Desired encoding was not recognized, unable to compute ID");
+                throw new IOException("Desired encoding was not recognized, unable to compute ID");
             }
         } catch (final NoSuchAlgorithmException e) {
             log.error("Digest algorithm {} is not supported", algorithm);
-            throw new SAMLException("Digest algorithm was not supported, unable to compute ID", e);
+            throw new IOException("Digest algorithm was not supported, unable to compute ID", e);
         }
+        
+        return pid;
     }
     
     /**

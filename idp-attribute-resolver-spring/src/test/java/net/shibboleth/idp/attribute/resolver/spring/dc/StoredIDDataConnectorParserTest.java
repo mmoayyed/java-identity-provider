@@ -30,39 +30,46 @@ import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIDDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RDBMSDataConnectorParserTest;
-import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link StoredIDDataConnectorParser}
+ * Test for {@link StoredIDDataConnectorParser}.
  */
 public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
-    private void testIt(final StoredIDDataConnector connector) throws ComponentInitializationException {
+    private void testIt(final PairwiseIdDataConnector connector) throws ComponentInitializationException {
+        
+        final JDBCPairwiseIdStore store = (JDBCPairwiseIdStore) connector.getPairwiseIdStore();
+        
         Assert.assertEquals(connector.getId(), "stored");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(connector.getTransactionRetries(), 5);
-        Assert.assertEquals(connector.getQueryTimeout(), 5000);
-        Assert.assertEquals(connector.getFailFast(), false);
-        Assert.assertTrue(Arrays.equals(connector.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
+        Assert.assertEquals(store.getTransactionRetries(), 5);
+        Assert.assertEquals(store.getQueryTimeout(), 5000);
+        Assert.assertEquals(store.getVerifyDatabase(), false);
+        Assert.assertTrue(Arrays.equals(store.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
         
         connector.initialize();
     }
     
     @Test public void withSalt() throws ComponentInitializationException {
-        final StoredIDDataConnector connector = getDataConnector("resolver/stored.xml", StoredIDDataConnector.class);
-        
+        final PairwiseIdDataConnector connector = getDataConnector("resolver/stored.xml", PairwiseIdDataConnector.class);
+        final JDBCPairwiseIdStore store = (JDBCPairwiseIdStore) connector.getPairwiseIdStore();
+        final ComputedPairwiseIdStore store2 = (ComputedPairwiseIdStore) store.getInitialValueStore();
+
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
         Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
-        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        Assert.assertEquals(store2.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
 
-    protected StoredIDDataConnector getStoredDataConnector(final String... beanDefinitions) throws IOException {
+    protected PairwiseIdDataConnector getStoredDataConnector(final String... beanDefinitions) throws IOException {
         final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
@@ -81,22 +88,25 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
         beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
         context.refresh();
 
-        return (StoredIDDataConnector) context.getBean(StoredIDDataConnector.class);
+        return (PairwiseIdDataConnector) context.getBean(PairwiseIdDataConnector.class);
     }
 
     @Test public void beanManaged() throws ComponentInitializationException, IOException {
-        final StoredIDDataConnector connector = getStoredDataConnector(DATACONNECTOR_FILE_PATH + "resolver/storedBeanManaged.xml", 
+        final PairwiseIdDataConnector connector = getStoredDataConnector(DATACONNECTOR_FILE_PATH + "resolver/storedBeanManaged.xml", 
                 DATACONNECTOR_FILE_PATH + "rdbms/rdbms-attribute-resolver-spring-context.xml");
+        final JDBCPairwiseIdStore store = (JDBCPairwiseIdStore) connector.getPairwiseIdStore();
+        final ComputedPairwiseIdStore store2 = (ComputedPairwiseIdStore) store.getInitialValueStore();
+        
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
         Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
-        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        Assert.assertEquals(store2.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
 
 
 
     @Test public void withOutSalt() throws ComponentInitializationException {
-        final StoredIDDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", StoredIDDataConnector.class);
+        final PairwiseIdDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", PairwiseIdDataConnector.class);
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
         Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         testIt(connector);

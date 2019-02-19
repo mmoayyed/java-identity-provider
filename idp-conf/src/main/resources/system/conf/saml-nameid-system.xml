@@ -28,7 +28,7 @@
     <bean id="shibboleth.SAML2PersistentGenerator" lazy-init="true"
             class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
             p:useUnfilteredAttributes="%{idp.persistentId.useUnfilteredAttributes:true}"
-            p:persistentIdGenerator-ref="#{'%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}'.trim()}">
+            p:persistentIdStore-ref="#{'%{idp.persistentId.store:%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}}'.trim()}">
         <property name="attributeSourceIds">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.persistentId.sourceAttribute:}'.trim()}" />
         </property>
@@ -58,22 +58,20 @@
         p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ComputedPersistentIdGenerator" lazy-init="true"
-        class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
+        class="net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore"
         p:salt="%{idp.persistentId.salt:}"
         p:encodedSalt="%{idp.persistentId.encodedSalt:}"
         p:exceptionMap="#{getObject('%{idp.persistentId.exceptionMap:shibboleth.ComputedIdExceptionMap}'.trim())}"
         p:algorithm="%{idp.persistentId.algorithm:SHA}"
-        p:encoding="#{ T(net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding).%{idp.persistentId.encoding:BASE64} }" />
+        p:encoding="#{ T(net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore.Encoding).%{idp.persistentId.encoding:BASE64} }" />
 
-    <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
-        class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
-        p:computedIdStrategy="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}'.trim())}"
-        p:IDStore="#{getObject('%{idp.persistentId.store:undefined}'.trim())}"
+    <bean id="shibboleth.StoredPersistentIdGenerator" parent="shibboleth.JDBCPersistentIdStore" lazy-init="true"
         p:dataSource="#{getObject('%{idp.persistentId.dataSource:undefined}'.trim())}" />
     
     <!-- Parent bean for users to configure a custom ID store rather than a data source only. -->
     <bean id="shibboleth.JDBCPersistentIdStore" abstract="true"
-        class="net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStoreEx" />
+        class="net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore"
+        p:initialValueStore="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}'.trim())}" />
     
     <!--
     This is the actual service being exposed, and it takes a pair of generators that are

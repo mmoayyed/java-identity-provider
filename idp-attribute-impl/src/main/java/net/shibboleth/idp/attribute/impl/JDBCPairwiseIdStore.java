@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.nameid.impl;
+package net.shibboleth.idp.attribute.impl;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -34,7 +34,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
+import net.shibboleth.idp.attribute.DurablePairwiseIdStore;
+import net.shibboleth.idp.attribute.PairwiseId;
+import net.shibboleth.idp.attribute.PairwiseIdStore;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
@@ -47,15 +49,13 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
-import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JDBC-based storage management for SAML persistent IDs.
+ * JDBC-based storage management for pairwise IDs.
  * 
- * <p>The general DDL for the database is:
+ * <p>The general DDL for the database, which is unchanged for compatibility, is:</p>
  * 
  * <pre>
  * CREATE TABLE shibpid (
@@ -70,13 +70,15 @@ import org.slf4j.LoggerFactory;
  *      PRIMARY KEY (localEntity, peerEntity, persistentId)
  *     );</pre>.
  *    
- * The first three columns should be defined as the primary key of the table, and the other columns
+ * <p>The first three columns should be defined as the primary key of the table, and the other columns
  * should be indexed.</p>
+ * 
+ * @since 4.0.0
  */
-public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent implements PersistentIdStoreEx {
+public class JDBCPairwiseIdStore extends AbstractInitializableComponent implements DurablePairwiseIdStore {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(JDBCPersistentIdStoreEx.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(JDBCPairwiseIdStore.class);
     
     /** JDBC data source for retrieving connections. */
     @NonnullAfterInit private DataSource dataSource;
@@ -137,9 +139,12 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     
     /** Parameterized delete statement used to clear dummy rows after verification. */
     @NonnullAfterInit private String deleteSQL;
+    
+    /** Optional hook for obtaining initial values from a primary store, usually a computed algorithm. */
+    @Nullable private PairwiseIdStore initialValueStore;
 
     /** Constructor. */
-    public JDBCPersistentIdStoreEx() {
+    public JDBCPairwiseIdStore() {
         transactionRetry = 3;
         retryableErrors = Arrays.asList("23000", "23505");
         queryTimeout = 5000;
@@ -437,6 +442,29 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         
         deleteSQL = Constraint.isNotNull(StringSupport.trimOrNull(sql), "SQL statement cannot be null or empty");
     }
+        
+    /**
+     * Get a store to use to produce the first value for a given issuer/recipient pair.
+     * 
+     * @return initial value source
+     */
+    @Nullable public PairwiseIdStore getInitialValueStore() {
+        return initialValueStore;
+    }
+
+    /**
+     * Set a store to use to produce the first value for a given issuer/recipient pair.
+     * 
+     * <p>This is typically used to draw the "first" (often only) value for a given pairwise
+     * relationship from an algorithm instead of a random value requiring storage to know.</p>
+     * 
+     * @param store initial value source
+     */
+    public void setInitialValueStore(@Nullable final PairwiseIdStore store) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        initialValueStore = store;
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -444,7 +472,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         super.doInitialize();
         
         if (null == dataSource) {
-            throw new ComponentInitializationException(getLogPrefix() + " No database connection provided");
+            throw new ComponentInitializationException("DataSource cannot be null");
         }
         
         if (getByIssuedSelectSQL == null) {
@@ -492,181 +520,179 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         
         try {
             verifyDatabase();
-            log.info("{} Data source successfully verified", getLogPrefix());
+            log.info("DataSource successfully verified");
         } catch (final SQLException e) {
             if (verifyDatabase) {
-                log.error("{} Exception verifying database", getLogPrefix(), e);
+                log.error("Exception verifying database", e);
                 throw new ComponentInitializationException(
                         "The database was not reachable or was not defined with an appropriate table + primary key");
             } else {
-                log.warn("{} The database was not reachable or was not defined with an appropriate table + primary key",
-                        getLogPrefix(), e);
+                log.warn("The database was not reachable or was not defined with an appropriate table + primary key",e);
             }
         }
     }
 
+    // Checkstyle: MethodLength|CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
-    @Nullable public PersistentIdEntry getByIssuedValue(@Nonnull @NotEmpty final String nameQualifier,
-            @Nonnull @NotEmpty final String spNameQualifier, @Nonnull @NotEmpty final String persistentId)
-                    throws IOException {
+    @Nullable public PairwiseId getBySourceValue(@Nonnull final PairwiseId pid, final boolean allowCreate)
+            throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
-        log.debug("{} Selecting previously issued persistent ID entry", getLogPrefix(), getByIssuedSelectSQL);
-
-        log.trace("{} Prepared statement: {}", getLogPrefix(), getByIssuedSelectSQL);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, nameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, spNameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, persistentId);
-
-        try (final Connection dbConn = getConnection(true)) {
-            final PreparedStatement statement = dbConn.prepareStatement(getByIssuedSelectSQL);
-            statement.setQueryTimeout((int) (queryTimeout / 1000));
-
-            statement.setString(1, nameQualifier);
-            statement.setString(2, spNameQualifier);
-            statement.setString(3, persistentId);
-
-            final List<PersistentIdEntry> entries = buildIdentifierEntries(statement.executeQuery());
-
-            if (entries == null || entries.size() == 0) {
-                return null;
-            }
-
-            if (entries.size() > 1) {
-                log.warn("{} More than one record found, only the first will be returned", getLogPrefix());
-            }
-
-            return entries.get(0);
-        } catch (final SQLException e) {
-            throw new IOException(e);
-        }
-    }
-
-// Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber OFF
-    /** {@inheritDoc} */
-    @Override
-    @Nullable public PersistentIdEntry getBySourceValue(@Nonnull @NotEmpty final String nameQualifier,
-            @Nonnull @NotEmpty final String spNameQualifier, @Nonnull @NotEmpty final String sourceId,
-            @Nonnull @NotEmpty final String principal, final boolean allowCreate,
-            @Nullable final ComputedPersistentIdGenerationStrategy computedIdStrategy) throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(pid, "Input PairwiseId object cannot be null");
+        Constraint.isNotEmpty(pid.getIssuerEntityID(), "Issuer entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getRecipientEntityID(), "Recipient entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getPrincipalName(), "Principal name cannot be null or empty");
+        Constraint.isNotEmpty(pid.getSourceSystemId(), "Source system ID cannot be null or empty");
         
-        log.debug("{} Obtaining persistent ID for source ID: {}", getLogPrefix(), sourceId);
+        log.debug("Obtaining pairwise ID for source ID: {}", pid.getSourceSystemId());
 
-        log.trace("{} Prepared statement: {}", getLogPrefix(), getBySourceSelectSQL);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, nameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, spNameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, sourceId);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, nameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 5, spNameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6, sourceId);
+        log.trace("Prepared statement: {}", getBySourceSelectSQL);
+        log.trace("Setting prepared statement parameter {}: {}", 1, pid.getIssuerEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 2, pid.getRecipientEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 3, pid.getSourceSystemId());
+        log.trace("Setting prepared statement parameter {}: {}", 4, pid.getIssuerEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 5, pid.getRecipientEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 6, pid.getSourceSystemId());
 
         int retries = transactionRetry;
         while (true) {
             try (final Connection dbConn = getConnection(false)) {
                 final PreparedStatement statement = dbConn.prepareStatement(getBySourceSelectSQL);
                 statement.setQueryTimeout((int) (queryTimeout / 1000));
-                statement.setString(1, nameQualifier);
-                statement.setString(2, spNameQualifier);
-                statement.setString(3, sourceId);
-                statement.setString(4, nameQualifier);
-                statement.setString(5, spNameQualifier);
-                statement.setString(6, sourceId);
+                statement.setString(1, pid.getIssuerEntityID());
+                statement.setString(2, pid.getRecipientEntityID());
+                statement.setString(3, pid.getSourceSystemId());
+                statement.setString(4, pid.getIssuerEntityID());
+                statement.setString(5, pid.getRecipientEntityID());
+                statement.setString(6, pid.getSourceSystemId());
         
-                log.debug("{} Getting active and/or last inactive persistent Id entry", getLogPrefix());
-                final List<PersistentIdEntry> entries = buildIdentifierEntries(statement.executeQuery());
+                log.debug("Getting active and/or last inactive pairwise ID entry");
+                final List<PairwiseId> entries = buildIdentifierEntries(statement.executeQuery());
                 if (entries != null && entries.size() > 0 && (entries.get(0).getDeactivationTime() == null
-                        || entries.get(0).getDeactivationTime().getTime() > System.currentTimeMillis())) {
-                    log.debug("{} Returning existing active persistent ID: {}", getLogPrefix(),
-                            entries.get(0).getPersistentId());
+                        || entries.get(0).getDeactivationTime() > System.currentTimeMillis())) {
                     dbConn.commit();
+                    log.debug("Returning existing active pairwise ID: {}", entries.get(0).getPairwiseId());
                     return entries.get(0);
                 } else if (!allowCreate) {
-                    log.debug("{} No existing persistent ID and creation is not permitted", getLogPrefix());
                     dbConn.commit();
+                    log.debug("No existing pairwise ID and creation is not permitted by caller");
                     return null;
                 }
 
-                final PersistentIdEntry newEntry = new PersistentIdEntry();
-                newEntry.setIssuerEntityId(nameQualifier);
-                newEntry.setRecipientEntityId(spNameQualifier);
-                newEntry.setSourceId(sourceId);
-                newEntry.setPrincipalName(principal);
-                newEntry.setCreationTime(new Timestamp(System.currentTimeMillis()));
+                pid.setCreationTime(System.currentTimeMillis());
+                
+                // Circumvent final modifier on parameter.
+                PairwiseId retValue = pid;
 
-                if ((entries == null || entries.size() == 0) && computedIdStrategy != null) {
-                    log.debug("{} Issuing new computed persistent ID", getLogPrefix());
-                    newEntry.setPersistentId(
-                            computedIdStrategy.generate(nameQualifier, spNameQualifier, principal, sourceId));
+                if ((entries == null || entries.size() == 0) && initialValueStore != null) {
+                    log.debug("Issuing new pairwise ID using initial value store");
+                    retValue = initialValueStore.getBySourceValue(pid, allowCreate);
                 } else {
-                    log.debug("{} Issuing new random persistent ID", getLogPrefix());
-                    newEntry.setPersistentId(UUID.randomUUID().toString());
+                    log.debug("Issuing new random pairwise ID");
+                    retValue.setPairwiseId(UUID.randomUUID().toString());
                     if (entries != null && entries.size() > 0) {
-                        newEntry.setPeerProvidedId(entries.get(0).getPeerProvidedId());
+                        retValue.setPeerProvidedId(entries.get(0).getPeerProvidedId());
                     }
                 }
-                store(newEntry, dbConn);
+                store(retValue, dbConn);
                 dbConn.commit();
-                return newEntry;
+                return retValue;
             } catch (final SQLException e) {
                 boolean retry = false;
                 for (final String msg : retryableErrors) {
                     if (e.getSQLState() != null && e.getSQLState().contains(msg)) {
-                        log.warn("{} Caught retryable SQL exception", getLogPrefix(), e);
+                        log.warn("Caught retryable SQL exception", e);
                         retry = true;
+                        break;
                     }
                 }
                 
                 if (retry) {
                     if (--retries < 0) {
-                        log.warn("{} Error retryable, but retry limit exceeded", getLogPrefix());
+                        log.warn("Error retryable, but retry limit exceeded");
                         throw new IOException(e);
                     } else {
-                        log.info("{} Retrying persistent ID lookup/create operation", getLogPrefix());
+                        log.info("Retrying pairwise ID lookup/create operation");
                     }
                 } else {
                     throw new IOException(e);
                 }
-            } catch (final SAMLException e) {
-                throw new IOException(e);
             }
         }
     }
-// Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber ON
+// Checkstyle: MethodLength|CyclomaticComplexity ON
     
     /** {@inheritDoc} */
-    @Override
-    public void deactivate(@Nonnull @NotEmpty final String nameQualifier,
-            @Nonnull @NotEmpty final String spNameQualifier, @Nonnull @NotEmpty final String persistentId,
-            @Nullable final DateTime deactivation) throws IOException {
+    @Nullable public PairwiseId getByIssuedValue(@Nonnull final PairwiseId pid) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(pid, "Input PairwiseId object cannot be null");
+        Constraint.isNotEmpty(pid.getIssuerEntityID(), "Issuer entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getRecipientEntityID(), "Recipient entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getPairwiseId(), "Pairwise ID cannot be null or empty");
+    
+        log.debug("Selecting previously issued pairwise ID entry", getByIssuedSelectSQL);
+    
+        log.trace("Prepared statement: {}", getByIssuedSelectSQL);
+        log.trace("Setting prepared statement parameter {}: {}", 1, pid.getIssuerEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 2, pid.getRecipientEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 3, pid.getPairwiseId());
+    
+        try (final Connection dbConn = getConnection(true)) {
+            final PreparedStatement statement = dbConn.prepareStatement(getByIssuedSelectSQL);
+            statement.setQueryTimeout((int) (queryTimeout / 1000));
+    
+            statement.setString(1, pid.getIssuerEntityID());
+            statement.setString(2, pid.getRecipientEntityID());
+            statement.setString(3, pid.getPairwiseId());
+    
+            final List<PairwiseId> entries = buildIdentifierEntries(statement.executeQuery());
+    
+            if (entries == null || entries.size() == 0) {
+                return null;
+            }
+    
+            if (entries.size() > 1) {
+                log.warn("More than one record found, only the first will be returned");
+            }
+    
+            return entries.get(0);
+        } catch (final SQLException e) {
+            throw new IOException(e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void deactivate(@Nonnull final PairwiseId pid) throws IOException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(pid, "Input PairwiseId object cannot be null");
+        Constraint.isNotEmpty(pid.getIssuerEntityID(), "Issuer entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getRecipientEntityID(), "Recipient entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getPairwiseId(), "Pairwise ID cannot be null or empty");
         
         final Timestamp deactivationTime;
-        if (deactivation == null) {
+        if (pid.getDeactivationTime() == null) {
             deactivationTime = new Timestamp(System.currentTimeMillis());
         } else {
-            deactivationTime = new Timestamp(deactivation.getMillis());
+            deactivationTime = new Timestamp(pid.getDeactivationTime());
         }
 
-        log.debug("Deactivating persistent id {} as of {}", persistentId, deactivationTime);
+        log.debug("Deactivating pairwise ID {} as of {}", pid.getPairwiseId(), deactivationTime);
 
-        log.trace("{} Prepared statement: {}", getLogPrefix(), deactivateSQL);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, deactivationTime);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, nameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, spNameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, persistentId);
+        log.trace("Prepared statement: {}", deactivateSQL);
+        log.trace("Setting prepared statement parameter {}: {}", 1, deactivationTime);
+        log.trace("Setting prepared statement parameter {}: {}", 2, pid.getIssuerEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 3, pid.getRecipientEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 4, pid.getPairwiseId());
         
         try (final Connection dbConn = getConnection(true)) {
             final PreparedStatement statement = dbConn.prepareStatement(deactivateSQL);
             statement.setQueryTimeout((int) (queryTimeout / 1000));
             statement.setTimestamp(1, deactivationTime);
-            statement.setString(2, nameQualifier);
-            statement.setString(3, spNameQualifier);
-            statement.setString(4, persistentId);
+            statement.setString(2, pid.getIssuerEntityID());
+            statement.setString(3, pid.getRecipientEntityID());
+            statement.setString(4, pid.getPairwiseId());
             final int rowCount = statement.executeUpdate();
             if (rowCount != 1) {
-                log.warn("{} Unexpected result, statement affected {} rows", getLogPrefix(), rowCount);
+                log.warn("Unexpected result, statement affected {} rows", rowCount);
             }
             
         } catch (final SQLException e) {
@@ -675,37 +701,39 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void attach(@Nonnull @NotEmpty final String nameQualifier, @Nonnull @NotEmpty final String spNameQualifier,
-            @Nonnull @NotEmpty final String persistentId, @Nonnull @NotEmpty final String spProvidedId)
-            throws IOException {
+    public void attach(@Nonnull final PairwiseId pid) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(pid, "Input PairwiseId object cannot be null");
+        Constraint.isNotEmpty(pid.getIssuerEntityID(), "Issuer entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getRecipientEntityID(), "Recipient entityID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getPairwiseId(), "Pairwise ID cannot be null or empty");
+        Constraint.isNotEmpty(pid.getPeerProvidedId(), "Peer-provided ID cannot be null or empty");
 
-        log.debug("Attaching SPProvidedID {} to persistent id {}", spProvidedId, persistentId);
+        log.debug("Attaching peer-provided ID {} to pairwise id {}", pid.getPeerProvidedId(), pid.getPairwiseId());
 
-        log.trace("{} Prepared statement: {}", getLogPrefix(), attachSQL);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, spProvidedId);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, nameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, spNameQualifier);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, persistentId);
+        log.trace("Prepared statement: {}", attachSQL);
+        log.trace("Setting prepared statement parameter {}: {}", 1, pid.getPeerProvidedId());
+        log.trace("Setting prepared statement parameter {}: {}", 2, pid.getIssuerEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 3, pid.getRecipientEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 4, pid.getPairwiseId());
         
         try (final Connection dbConn = getConnection(true)) {
             final PreparedStatement statement = dbConn.prepareStatement(attachSQL);
             statement.setQueryTimeout((int) (queryTimeout / 1000));
-            statement.setString(1, spProvidedId);
-            statement.setString(2, nameQualifier);
-            statement.setString(3, spNameQualifier);
-            statement.setString(4, persistentId);
+            statement.setString(1, pid.getPeerProvidedId());
+            statement.setString(2, pid.getIssuerEntityID());
+            statement.setString(3, pid.getRecipientEntityID());
+            statement.setString(4, pid.getPairwiseId());
             final int rowCount = statement.executeUpdate();
             if (rowCount != 1) {
-                log.warn("{} Unexpected result, statement affected {} rows", getLogPrefix(), rowCount);
+                log.warn("Unexpected result, statement affected {} rows", rowCount);
             }
         } catch (final SQLException e) {
             throw new IOException(e);
         }
     }
     
-// Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber ON
+// Checkstyle: MethodLength|CyclomaticComplexity ON
     
     /**
      * Store a record containing the values from the input object.
@@ -715,45 +743,45 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
      * 
      * @throws SQLException if an error occurs
      */
-    void store(@Nonnull final PersistentIdEntry entry, @Nonnull final Connection dbConn) throws SQLException {
+    void store(@Nonnull final PairwiseId entry, @Nonnull final Connection dbConn) throws SQLException {
         
-        log.debug("{} Storing new persistent ID entry", getLogPrefix());
+        log.debug("Storing new pairwise ID entry");
         
-        if (StringSupport.trimOrNull(entry.getIssuerEntityId()) == null
-                || StringSupport.trimOrNull(entry.getRecipientEntityId()) == null
-                || StringSupport.trimOrNull(entry.getPersistentId()) == null
+        if (StringSupport.trimOrNull(entry.getIssuerEntityID()) == null
+                || StringSupport.trimOrNull(entry.getRecipientEntityID()) == null
+                || StringSupport.trimOrNull(entry.getPairwiseId()) == null
                 || StringSupport.trimOrNull(entry.getPrincipalName()) == null
-                || StringSupport.trimOrNull(entry.getSourceId()) == null
+                || StringSupport.trimOrNull(entry.getSourceSystemId()) == null
                 || entry.getCreationTime() == null) {
             throw new SQLException("Required field was empty/null, store operation not possible");
         }
         
-        log.trace("{} Prepared statement: {}", getLogPrefix(), insertSQL);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, entry.getIssuerEntityId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, entry.getRecipientEntityId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, entry.getPersistentId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, entry.getPrincipalName());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 5, entry.getSourceId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6, entry.getPeerProvidedId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 7, entry.getCreationTime());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 8, entry.getDeactivationTime());
+        log.trace("Prepared statement: {}", insertSQL);
+        log.trace("Setting prepared statement parameter {}: {}", 1, entry.getIssuerEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 2, entry.getRecipientEntityID());
+        log.trace("Setting prepared statement parameter {}: {}", 3, entry.getPairwiseId());
+        log.trace("Setting prepared statement parameter {}: {}", 4, entry.getPrincipalName());
+        log.trace("Setting prepared statement parameter {}: {}", 5, entry.getSourceSystemId());
+        log.trace("Setting prepared statement parameter {}: {}", 6, entry.getPeerProvidedId());
+        log.trace("Setting prepared statement parameter {}: {}", 7, entry.getCreationTime());
+        log.trace("Setting prepared statement parameter {}: {}", 8, entry.getDeactivationTime());
         
         final PreparedStatement statement = dbConn.prepareStatement(insertSQL);
         statement.setQueryTimeout((int) (queryTimeout / 1000));
     
-        statement.setString(1, entry.getIssuerEntityId());
-        statement.setString(2, entry.getRecipientEntityId());
-        statement.setString(3, entry.getPersistentId());
+        statement.setString(1, entry.getIssuerEntityID());
+        statement.setString(2, entry.getRecipientEntityID());
+        statement.setString(3, entry.getPairwiseId());
         statement.setString(4, entry.getPrincipalName());
-        statement.setString(5, entry.getSourceId());
+        statement.setString(5, entry.getSourceSystemId());
         if (entry.getPeerProvidedId() != null) {
             statement.setString(6, entry.getPeerProvidedId());
         } else {
             statement.setNull(6, Types.VARCHAR);
         }
-        statement.setTimestamp(7, entry.getCreationTime());
+        statement.setTimestamp(7, new Timestamp(entry.getCreationTime()));
         if (entry.getDeactivationTime() != null) {
-            statement.setTimestamp(8, entry.getDeactivationTime());
+            statement.setTimestamp(8, new Timestamp(entry.getDeactivationTime()));
         } else {
             statement.setNull(8, Types.TIMESTAMP);
         }
@@ -787,18 +815,16 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         
         final String uuid = UUID.randomUUID().toString();
         
-        final PersistentIdEntry newEntry = new PersistentIdEntry();
-        newEntry.setIssuerEntityId("http://dummy.com/idp/" + uuid);
-        newEntry.setRecipientEntityId("http://dummy.com/sp/" + uuid);
-        newEntry.setSourceId("dummy");
+        final PairwiseId newEntry = new PairwiseId();
+        newEntry.setIssuerEntityID("http://dummy.com/idp/" + uuid);
+        newEntry.setRecipientEntityID("http://dummy.com/sp/" + uuid);
+        newEntry.setSourceSystemId("dummy");
         newEntry.setPrincipalName("dummy");
-        newEntry.setCreationTime(new Timestamp(System.currentTimeMillis()));
-        newEntry.setPersistentId(uuid);
+        newEntry.setCreationTime(System.currentTimeMillis());
+        newEntry.setPairwiseId(uuid);
         
         try (final Connection conn = getConnection(true)) {
             store(newEntry, conn);
-        } finally {
-            
         }
 
         boolean keyMissing = false;
@@ -807,11 +833,9 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             keyMissing = true;
         } catch (final SQLException e) {
             if (e.getSQLState() != null && !retryableErrors.contains(e.getSQLState())) {
-                log.warn("{} Duplicate insert failed as required with SQL State '{}', ensure this value is "
-                        + "configured as a retryable error", getLogPrefix(), e.getSQLState());
+                log.warn("Duplicate insert failed as required with SQL State '{}', ensure this value is "
+                        + "configured as a retryable error", e.getSQLState());
             }
-        } finally {
-            
         }
 
         try (final Connection conn = getConnection(true)) {
@@ -819,8 +843,6 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             statement.setQueryTimeout((int) (queryTimeout / 1000));
             statement.setString(1, "http://dummy.com/idp/" + uuid);
             statement.executeUpdate();
-        } finally {
-            
         }
         
         if (keyMissing) {
@@ -829,43 +851,41 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     }
     
     /**
-     * Builds a list of {@link PersistentIdEntry}s from a result set.
+     * Build a list of {@link PairwiseId} objects from a result set.
      * 
      * @param resultSet the result set
      * 
-     * @return list of {@link PersistentIdEntry}s
+     * @return list of {@link PairwiseId} objects
      * 
      * @throws SQLException thrown if there is a problem reading the information from the database
      */
-    @Nonnull @NonnullElements @Live private List<PersistentIdEntry> buildIdentifierEntries(
+    @Nonnull @NonnullElements @Live private List<PairwiseId> buildIdentifierEntries(
             @Nonnull final ResultSet resultSet) throws SQLException {
-        final ArrayList<PersistentIdEntry> entries = new ArrayList<>();
+        
+        final ArrayList<PairwiseId> entries = new ArrayList<>();
     
         while (resultSet.next()) {
-            final PersistentIdEntry entry = new PersistentIdEntry();
-            entry.setIssuerEntityId(resultSet.getString(issuerColumn));
-            entry.setRecipientEntityId(resultSet.getString(recipientColumn));
+            final PairwiseId entry = new PairwiseId();
+            entry.setIssuerEntityID(resultSet.getString(issuerColumn));
+            entry.setRecipientEntityID(resultSet.getString(recipientColumn));
             entry.setPrincipalName(resultSet.getString(principalNameColumn));
-            entry.setPersistentId(resultSet.getString(persistentIdColumn));
-            entry.setSourceId(resultSet.getString(sourceIdColumn));
+            entry.setPairwiseId(resultSet.getString(persistentIdColumn));
+            entry.setSourceSystemId(resultSet.getString(sourceIdColumn));
             entry.setPeerProvidedId(resultSet.getString(peerProvidedIdColumn));
-            entry.setCreationTime(resultSet.getTimestamp(creationTimeColumn));
-            entry.setDeactivationTime(resultSet.getTimestamp(deactivationTimeColumn));
+            Timestamp ts = resultSet.getTimestamp(creationTimeColumn);
+            if (ts != null) {
+                entry.setCreationTime(ts.getTime());
+            }
+            ts = resultSet.getTimestamp(deactivationTimeColumn);
+            if (ts != null) {
+                entry.setDeactivationTime(ts.getTime());
+            }
             entries.add(entry);
     
-            log.trace("{} Entry {} added to results", getLogPrefix(), entry.toString());
+            log.trace("Entry {} added to results", entry.toString());
         }
     
         return entries;
-    }
-
-    /**
-     * Return a string which is to be prepended to all log messages.
-     * 
-     * @return "Stored Id Store:"
-     */
-    @Nonnull @NotEmpty private String getLogPrefix() {
-        return "Stored Id Store:";
     }
     
 }

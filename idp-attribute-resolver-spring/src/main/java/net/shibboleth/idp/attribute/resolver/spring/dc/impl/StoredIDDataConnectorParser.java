@@ -18,32 +18,24 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 
 import javax.annotation.Nonnull;
-import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for {@link StoredIDDataConnector}.
  */
-public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
+public class StoredIDDataConnectorParser extends ComputedIDDataConnectorParser {
 
     /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
@@ -53,23 +45,30 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<StoredIDDataConnector> getBeanClass(final Element element) {
-        return StoredIDDataConnector.class;
-    }
-
-    /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
 
-        log.debug("{} doParse {}", getLogPrefix(), config);
-        final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
+        builder.addPropertyValue("pairwiseIdStore", doJDBCPairwiseIdStore(config, parserContext));
+    }
+
+    /**
+     * Parse the config and define a bean for a {@link JDBCPairwiseIdStore}.
+     * 
+     * @param config the XML element being parsed
+     * @param parserContext the object encapsulating the current state of the parsing process
+     * @return bean definition for the store object to inject
+     */
+    @Nonnull protected BeanDefinition doJDBCPairwiseIdStore(@Nonnull final Element config,
+            @Nonnull final ParserContext parserContext) {
+        
+        final BeanDefinitionBuilder builder =
+                BeanDefinitionBuilder.genericBeanDefinition(JDBCPairwiseIdStore.class);
+        builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
+
         final String beanDataSource = ManagedConnectionParser.getBeanDataSourceID(config);
-        if (springResources != null) {
-            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "springResources in StoredIDDataConnector",
-                    parserContext.getReaderContext().getResource().getDescription(), "<BeanManagedConnection> element");
-            builder.addPropertyValue("dataSource", getDataSource(springResources.split(";")));
-        } else if (beanDataSource != null) {
+        if (beanDataSource != null) {
             builder.addPropertyReference("dataSource", beanDataSource);
         } else {
             builder.addPropertyValue("dataSource", getv2DataSource(config));
@@ -85,7 +84,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         }
 
         if (config.hasAttributeNS(null, "failFast")) {
-            builder.addPropertyValue("failFast",
+            builder.addPropertyValue("verifyDatabase",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "failFast")));
         }
 
@@ -93,37 +92,14 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
             builder.addPropertyValue("retryableErrors",
                     SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "retryableErrors")));
         }
-    }
 
-    /**
-     * Creates a Spring bean factory from the supplied spring resources.
-     * 
-     * @param springResources to load bean definitions from
-     * 
-     * @return bean factory
-     */
-    @Nonnull protected BeanFactory createBeanFactory(@Nonnull final String... springResources) {
-        final GenericApplicationContext ctx = new FilesystemGenericApplicationContext();
-        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
-        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-        definitionReader.setNamespaceAware(true);
-        definitionReader.loadBeanDefinitions(springResources);
-        ctx.refresh();
-        return ctx.getBeanFactory();
+        if (config.hasAttributeNS(null, "salt")) {
+            builder.addPropertyValue("initialValueStore", doComputedPairwiseIdStore(config, parserContext));
+        }
+        
+        return builder.getBeanDefinition();
     }
-
-    /**
-     * Get the dataSource from the configuration.
-     * 
-     * @param springResource location of a spring resource.
-     * @return the DataSource
-     */
-    protected DataSource getDataSource(@Nonnull final String... springResource) {
-        final BeanFactory beanFactory = createBeanFactory(springResource);
-        return beanFactory.getBean(DataSource.class);
-    }
-
- 
+     
     /**
      * Get the dataSource from a v2 configuration.
      * 
@@ -135,4 +111,5 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         final ManagedConnectionParser parser = new ManagedConnectionParser(config);
         return parser.createDataSource();
     }
+
 }

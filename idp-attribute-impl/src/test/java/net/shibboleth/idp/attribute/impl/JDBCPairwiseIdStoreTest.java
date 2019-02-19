@@ -15,63 +15,54 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.nameid.impl;
+package net.shibboleth.idp.attribute.impl;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
+import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.io.CharStreams;
-
-/** Tests for {@link JDBCPersistentIdStoreEx}. */
-public class DatabaseBackedIDStoreTest {
-    
-    private final Logger log = LoggerFactory.getLogger(DatabaseBackedIDStoreTest.class);
+/** Tests for {@link JDBCPairwiseIdStore}. */
+public class JDBCPairwiseIdStoreTest {
 
     private DataSource testSource;
     
-    public static String convertStreamToString(java.io.InputStream is) throws IOException {
-        return CharStreams.toString(new InputStreamReader(is));
-    }
+    public static final String INIT_FILE = "/net/shibboleth/idp/attribute/impl/StoredIdStore.sql";
+    public static final String DELETE_FILE = "/net/shibboleth/idp/attribute/impl/DeleteStore.sql";
     
     @BeforeMethod
     public void setupSource() throws IOException, IOException  {
-        testSource = DatabaseTestingSupport.GetMockDataSource(PersistentSAML2NameIDGeneratorTest.INIT_FILE, "PersistentIdStore");
+        testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "PersistentIdStore");
     }
     
     @AfterMethod public void teardown() {
-        DatabaseTestingSupport.InitializeDataSource(PersistentSAML2NameIDGeneratorTest.DELETE_FILE, testSource);
+        DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
 
     
     @Test public void initializeAndGetters() throws ComponentInitializationException, IOException {
 
-        JDBCPersistentIdStoreEx store = new JDBCPersistentIdStoreEx();
+        final JDBCPairwiseIdStore store = new JDBCPairwiseIdStore();
         try {
             store.initialize();
             Assert.fail("Need to initialize the source");
         } catch (final ComponentInitializationException e) {
-            // OK 
+            // OK
         }
         store.setDataSource(testSource);
         
@@ -80,7 +71,7 @@ public class DatabaseBackedIDStoreTest {
         store.setQueryTimeout(1);
         
         try {
-            store.getBySourceValue("foo", "foo", "foo", "foo", true, null);
+            store.getBySourceValue(new PairwiseId(), true);
             Assert.fail("need to initialize first");
         } catch (final UninitializedComponentException e) {
             // OK
@@ -104,72 +95,69 @@ public class DatabaseBackedIDStoreTest {
         Assert.assertEquals(store.getQueryTimeout(), 1);
     }
     
-    private boolean comparePersistentIdEntrys(@Nonnull PersistentIdEntry one, @Nonnull PersistentIdEntry other)
+    private boolean comparePersistentIdEntrys(@Nonnull PairwiseId one, @Nonnull PairwiseId other)
     {
         //
         // Do not compare times
         //
-        boolean result = Objects.equals(one.getPersistentId(), other.getPersistentId()) &&
-                Objects.equals(one.getIssuerEntityId(), other.getIssuerEntityId()) &&
-                Objects.equals(one.getRecipientEntityId(), other.getRecipientEntityId()) &&
-                Objects.equals(one.getSourceId(), other.getSourceId()) &&
+        return Objects.equals(one.getPairwiseId(), other.getPairwiseId()) &&
+                Objects.equals(one.getIssuerEntityID(), other.getIssuerEntityID()) &&
+                Objects.equals(one.getRecipientEntityID(), other.getRecipientEntityID()) &&
+                Objects.equals(one.getSourceSystemId(), other.getSourceSystemId()) &&
                 Objects.equals(one.getPrincipalName(), other.getPrincipalName()) &&
                 Objects.equals(one.getPeerProvidedId(), other.getPeerProvidedId()) &&
                 Objects.equals(one.getDeactivationTime(), other.getDeactivationTime());
-        if (!result) {
-            log.warn("Not equals: {} and {}", one, other);
-        }
-        return result;
     }
    
     @Test public void storeEntry() throws ComponentInitializationException, IOException, SQLException {
-        JDBCPersistentIdStoreEx store = new JDBCPersistentIdStoreEx();
+        final JDBCPairwiseIdStore store = new JDBCPairwiseIdStore();
         store.setDataSource(testSource);
         store.setVerifyDatabase(true);
         store.initialize();
         
-        final PersistentIdEntry id = new PersistentIdEntry();
+        final PairwiseId id = new PairwiseId();
         String persistentId = UUID.randomUUID().toString();
         
-        id.setIssuerEntityId(DatabaseTestingSupport.IDP_ENTITY_ID);
-        id.setRecipientEntityId(DatabaseTestingSupport.SP_ENTITY_ID);
+        id.setIssuerEntityID(DatabaseTestingSupport.IDP_ENTITY_ID);
+        id.setRecipientEntityID(DatabaseTestingSupport.SP_ENTITY_ID);
         id.setPrincipalName(DatabaseTestingSupport.PRINCIPAL_ID);
-        id.setSourceId("localID");
+        id.setSourceSystemId("localID");
         id.setPeerProvidedId("PeerprovidedId");
-        id.setPersistentId(persistentId);
-        id.setCreationTime(new Timestamp(System.currentTimeMillis()));
+        id.setPairwiseId(persistentId);
+        id.setCreationTime(System.currentTimeMillis());
         
         try (final Connection conn = testSource.getConnection()) {
             store.store(id, conn);
-        } finally {
-            
         }
         
-        PersistentIdEntry gotback = store.getByIssuedValue(DatabaseTestingSupport.IDP_ENTITY_ID,
-                DatabaseTestingSupport.SP_ENTITY_ID, persistentId);
+        PairwiseId id2 = new PairwiseId();
+        id2.setIssuerEntityID(DatabaseTestingSupport.IDP_ENTITY_ID);
+        id2.setRecipientEntityID(DatabaseTestingSupport.SP_ENTITY_ID);
+        id2.setPairwiseId(persistentId);
+        id2 = store.getByIssuedValue(id2);
         
-        Assert.assertNull(gotback.getDeactivationTime());
-        Assert.assertTrue(comparePersistentIdEntrys(gotback, id));
+        Assert.assertNull(id2.getDeactivationTime());
+        Assert.assertTrue(comparePersistentIdEntrys(id2, id));
         
-        store.deactivate(DatabaseTestingSupport.IDP_ENTITY_ID, DatabaseTestingSupport.SP_ENTITY_ID, persistentId, null);
+        store.deactivate(id2);
         
-        Assert.assertNull(store.getByIssuedValue(DatabaseTestingSupport.IDP_ENTITY_ID,
-                DatabaseTestingSupport.SP_ENTITY_ID, persistentId));
+        Assert.assertNull(store.getByIssuedValue(id2));
      
         persistentId = UUID.randomUUID().toString();
-        id.setPersistentId(persistentId);
+        id.setPairwiseId(persistentId);
         id.setPeerProvidedId(null);
-        id.setRecipientEntityId(DatabaseTestingSupport.SP_ENTITY_ID + "2");
+        id.setRecipientEntityID(DatabaseTestingSupport.SP_ENTITY_ID + "2");
         try (final Connection conn = testSource.getConnection()) {
             store.store(id, conn);
-        } finally {
-            
         }
         
-        gotback = store.getByIssuedValue(DatabaseTestingSupport.IDP_ENTITY_ID,
-                DatabaseTestingSupport.SP_ENTITY_ID + "2", persistentId);
-        Assert.assertNull(gotback.getDeactivationTime());
-        Assert.assertTrue(comparePersistentIdEntrys(gotback, id));
+        PairwiseId id3 = new PairwiseId();
+        id3.setIssuerEntityID(DatabaseTestingSupport.IDP_ENTITY_ID);
+        id3.setRecipientEntityID(DatabaseTestingSupport.SP_ENTITY_ID + "2");
+        id3.setPairwiseId(persistentId);
+        id3 = store.getByIssuedValue(id3);
+        Assert.assertNull(id3.getDeactivationTime());
+        Assert.assertTrue(comparePersistentIdEntrys(id3, id));
     }
     
 }

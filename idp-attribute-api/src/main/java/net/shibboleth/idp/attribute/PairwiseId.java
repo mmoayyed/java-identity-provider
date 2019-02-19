@@ -15,50 +15,48 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.nameid;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
+package net.shibboleth.idp.attribute;
 
 import javax.annotation.Nullable;
 
-/** Object representing a persistent identifier entry in storage. */
-public class PersistentIdEntry implements Serializable {
-
-    /** Serial version UID. */
-    private static final long serialVersionUID = -8711779466442306767L;
+/**
+ * Object representing a pairwise/targeted identifier entry as a storage input/output.
+ * 
+ * @since 4.0.0
+ */
+public class PairwiseId {
 
     /** ID of the entity that issued that identifier. */
-    @Nullable private String issuerEntityId;
+    @Nullable private String issuerEntityID;
 
     /** ID of the entity to which the identifier was issued. */
-    @Nullable private String recipientEntityId;
+    @Nullable private String recipientEntityID;
 
     /** Name of the principal represented by the identifier. */
     @Nullable private String principalName;
 
-    /** Underlying source ID of the entry. */
-    @Nullable private String sourceId;
+    /** Underlying unique key/ID of the principal. */
+    @Nullable private String sourceSystemId;
 
-    /** The persistent identifier. */
-    @Nullable private String persistentId;
+    /** The identifier. */
+    @Nullable private String pairwiseId;
 
-    /** ID, associated with the persistent identifier, provided by the peer. */
+    /** A secondary identifier attached to the record by the recipient. */
     @Nullable private String peerProvidedId;
 
     /** Time the identifier was created. */
-    @Nullable private Timestamp creationTime;
+    @Nullable private Long creationTime;
 
     /** Time the identifier was deactivated. */
-    @Nullable private Timestamp deactivationTime;
+    @Nullable private Long deactivationTime;
 
     /**
      * Get the ID of the entity that issued the identifier.
      * 
      * @return ID of the entity that issued the identifier
      */
-    @Nullable public String getIssuerEntityId() {
-        return issuerEntityId;
+    @Nullable public String getIssuerEntityID() {
+        return issuerEntityID;
     }
 
     /**
@@ -66,8 +64,8 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id ID of the entity that issued the identifier
      */
-    public void setIssuerEntityId(@Nullable final String id) {
-        issuerEntityId = id;
+    public void setIssuerEntityID(@Nullable final String id) {
+        issuerEntityID = id;
     }
 
     /**
@@ -75,8 +73,8 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return ID of the entity to which the identifier was issued
      */
-    @Nullable public String getRecipientEntityId() {
-        return recipientEntityId;
+    @Nullable public String getRecipientEntityID() {
+        return recipientEntityID;
     }
 
     /**
@@ -84,8 +82,8 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id ID of the entity to which the identifier was issued
      */
-    public void setRecipientEntityId(@Nullable final String id) {
-        recipientEntityId = id;
+    public void setRecipientEntityID(@Nullable final String id) {
+        recipientEntityID = id;
     }
 
     /**
@@ -107,39 +105,41 @@ public class PersistentIdEntry implements Serializable {
     }
 
     /**
-     * Get the source ID underlying the persistent identifier.
+     * Get the underlying unique key/ID from the source IDM system, which may be more
+     * stable than the "name".
      * 
-     * @return source ID underlying the persistent identifier
+     * @return the principal's unique key or ID
      */
-    @Nullable public String getSourceId() {
-        return sourceId;
+    @Nullable public String getSourceSystemId() {
+        return sourceSystemId;
     }
 
     /**
-     * Set the source ID underlying the persistent identifier.
+     * Set the underlying unique key/ID from the source IDM system, which may be more
+     * stable than the "name".
      * 
-     * @param id source ID underlying the persistent identifier
+     * @param id principal's unique key or ID
      */
-    public void setSourceId(@Nullable final String id) {
-        sourceId = id;
+    public void setSourceSystemId(@Nullable final String id) {
+        sourceSystemId = id;
     }
 
     /**
-     * Get the persistent identifier.
+     * Get the pairwise identifier.
      * 
-     * @return the persistent identifier
+     * @return the pairwise identifier
      */
-    @Nullable public String getPersistentId() {
-        return persistentId;
+    @Nullable public String getPairwiseId() {
+        return pairwiseId;
     }
 
     /**
-     * Set the persistent identifier.
+     * Set the pairwise identifier.
      * 
-     * @param id the persistent identifier
+     * @param id the pairwise identifier
      */
-    public void setPersistentId(@Nullable final String id) {
-        persistentId = id;
+    public void setPairwiseId(@Nullable final String id) {
+        pairwiseId = id;
     }
 
     /**
@@ -165,7 +165,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return time the identifier was created
      */
-    @Nullable public Timestamp getCreationTime() {
+    @Nullable public Long getCreationTime() {
         return creationTime;
     }
 
@@ -174,7 +174,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param time time the identifier was created
      */
-    public void setCreationTime(@Nullable final Timestamp time) {
+    public void setCreationTime(@Nullable final Long time) {
         creationTime = time;
     }
 
@@ -183,7 +183,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return time the identifier was deactivated
      */
-    @Nullable public Timestamp getDeactivationTime() {
+    @Nullable public Long getDeactivationTime() {
         return deactivationTime;
     }
 
@@ -192,22 +192,22 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param time the time the identifier was deactivated
      */
-    public void setDeactivationTime(@Nullable final Timestamp time) {
+    public void setDeactivationTime(@Nullable final Long time) {
         deactivationTime = time;
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder stringForm = new StringBuilder("PersistentIdEntry{");
-        stringForm.append("persistentId:").append(persistentId).append(", ");
-        stringForm.append("localEntityId:").append(issuerEntityId).append(", ");
-        stringForm.append("recipientEntityId:").append(recipientEntityId).append(", ");
-        stringForm.append("sourceId:").append(sourceId).append(", ");
+        final StringBuilder stringForm = new StringBuilder("PairwiseId {");
+        stringForm.append("pairwiseId:").append(pairwiseId).append(", ");
+        stringForm.append("issuerEntityID:").append(issuerEntityID).append(", ");
+        stringForm.append("recipientEntityID:").append(recipientEntityID).append(", ");
+        stringForm.append("sourceSystemId:").append(sourceSystemId).append(", ");
         stringForm.append("principalName:").append(principalName).append(", ");
         stringForm.append("peerProvidedId:").append(peerProvidedId).append(", ");
         stringForm.append("creationTime:").append(creationTime).append(", ");
-        stringForm.append("deactivationTime:").append(deactivationTime).append(", ");
+        stringForm.append("deactivationTime:").append(deactivationTime);
         stringForm.append("}");
         return stringForm.toString();
     }

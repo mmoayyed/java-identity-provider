@@ -22,21 +22,21 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
-import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -54,13 +54,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     /** Value calculated using V2 version. DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */
     private static final String RESULT = "Vl6z6K70iLc4AuBoNeb59Dj1rGw=";
 
-    private static final String RESULT2 = "kLyH1uEvYigEvg1ZLh/QXeW1VAs=";
-
-    private static final String B32RESULT = "KZPLH2FO6SELOOAC4BUDLZXZ6Q4PLLDM";
-
     private static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-
-    private static final String salt2 = "thisisaspecialsalt";
 
     public static final String INIT_FILE = "/net/shibboleth/idp/saml/impl/nameid/StoredIdStore.sql";
     public static final String DELETE_FILE = "/net/shibboleth/idp/saml/impl/nameid/DeleteStore.sql";
@@ -90,28 +84,18 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testInvalidConfig() throws ComponentInitializationException {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        final ComputedPairwiseIdStore strategy = new ComputedPairwiseIdStore();
         strategy.setSalt(salt);
         strategy.initialize();
         
         generator.initialize();
-        generator.setPersistentIdGenerator(strategy);
+        generator.setPersistentIdStore(strategy);
         generator.initialize();
     }
 
     @Test
-    public void testSaltSetters() throws ComponentInitializationException {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        Assert.assertEquals(salt, strategy.getSalt());
-        
-        strategy.setEncodedSalt(Base64Support.encode(salt, false));
-        Assert.assertEquals(salt, strategy.getSalt());
-    }
-
-    @Test
     public void testNoResponderId() throws Exception {
-        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdStore(new ComputedPairwiseIdStore());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -120,7 +104,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testNoRequesterId() throws Exception {
-        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdStore(new ComputedPairwiseIdStore());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -131,7 +115,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     
     @Test
     public void testNoSubject() throws Exception {
-        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdStore(new ComputedPairwiseIdStore());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -140,7 +124,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testNoSource() throws Exception {
-        generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
+        generator.setPersistentIdStore(new ComputedPairwiseIdStore());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -151,80 +135,14 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
                 Collections.singleton(new IdPAttribute("SOURCE")));
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
     }
-
-    @Test(expectedExceptions=SAMLException.class)
-    public void testRevoked() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.setExceptionMap(Collections.singletonMap("foo",
-                Collections.<String,String>singletonMap(TestSources.SP_ENTITY_ID, null)));
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
-        generator.initialize();
-        
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
-        Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
-        
-        final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
-        generator.generate(prc, NameID.PERSISTENT);
-    }
-    
-    @Test(expectedExceptions=SAMLException.class)
-    public void testRevokedWildcardRP() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.setExceptionMap(Collections.singletonMap("foo",
-                Collections.<String,String>singletonMap(ComputedPersistentIdGenerationStrategy.WILDCARD_OVERRIDE, null)));
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
-        generator.initialize();
-        
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
-        Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
-        
-        final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
-        generator.generate(prc, NameID.PERSISTENT);
-    }
-    
-    @Test(expectedExceptions=SAMLException.class)
-    public void testRevokedWildcardUser() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.setExceptionMap(Collections.singletonMap(ComputedPersistentIdGenerationStrategy.WILDCARD_OVERRIDE,
-                Collections.<String,String>singletonMap(TestSources.SP_ENTITY_ID, null)));
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
-        generator.initialize();
-        
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
-        Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
-        
-        final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
-        generator.generate(prc, NameID.PERSISTENT);
-    }
     
     @Test
     public void testComputedId() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        final ComputedPairwiseIdStore strategy = new ComputedPairwiseIdStore();
         strategy.setSalt(salt);
         strategy.initialize();
 
-        generator.setPersistentIdGenerator(strategy);
+        generator.setPersistentIdStore(strategy);
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -244,89 +162,32 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     }
     
     @Test
-    public void testComputedIdOverride() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.setExceptionMap(Collections.singletonMap(ComputedPersistentIdGenerationStrategy.WILDCARD_OVERRIDE,
-                Collections.<String,String>singletonMap(TestSources.SP_ENTITY_ID, salt2)));
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
-        generator.initialize();
-        
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
-        Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
-        
-        final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
-        final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
-        Assert.assertEquals(id.getValue(), RESULT2);
-        Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
-        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
-        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
-    }
-
-    @Test
-    public void testBase32ComputedId() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.setEncoding(Encoding.BASE32);
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
-        generator.initialize();
-        
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
-        Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
-        
-        final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
-        final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
-        Assert.assertEquals(id.getValue(), B32RESULT);
-        Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
-        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
-        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
-    }
-
-    @Test
     public void testStoredId() throws Exception {
-        final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setDataSource(testSource);
-        strategy.initialize();
-
-        generator.setPersistentIdGenerator(strategy);
+        generator.setDataSource(testSource);
         
         testStoredIdLogic();
     }
 
     @Test
     public void testComputedAndStoredId() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        final ComputedPairwiseIdStore strategy = new ComputedPairwiseIdStore();
         strategy.setSalt(salt);
         strategy.initialize();
 
-        final JDBCPersistentIdStoreEx store = new JDBCPersistentIdStoreEx();
+        final JDBCPairwiseIdStore store = new JDBCPairwiseIdStore();
         store.setDataSource(testSource);
+        store.setInitialValueStore(strategy);
         store.initialize();
         
-        final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
-        strategy2.setIDStore(store);
-        strategy2.setComputedIdStrategy(strategy);
-        strategy2.initialize();
-        
-        generator.setPersistentIdGenerator(strategy2);
+        generator.setPersistentIdStore(store);
         
         testComputedAndStoredIdLogic();
 
-        store.deactivate(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, RESULT, null);
+        final PairwiseId pid = new PairwiseId();
+        pid.setIssuerEntityID(TestSources.IDP_ENTITY_ID);
+        pid.setRecipientEntityID(TestSources.SP_ENTITY_ID);
+        pid.setPairwiseId(RESULT);
+        store.deactivate(pid);
         
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotEquals(id.getValue(), RESULT);

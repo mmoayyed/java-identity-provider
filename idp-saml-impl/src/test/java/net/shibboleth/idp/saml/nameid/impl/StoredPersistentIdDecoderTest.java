@@ -26,6 +26,7 @@ import javax.sql.DataSource;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -67,17 +68,13 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
 
     @BeforeMethod public void setUp() throws SQLException, IOException, ComponentInitializationException {
         
-        final JDBCPersistentIdStoreEx store = new JDBCPersistentIdStoreEx();
+        final JDBCPairwiseIdStore store = new JDBCPairwiseIdStore();
         store.setDataSource(testSource);
         store.initialize();
         
-        final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setIDStore(store);
-        strategy.initialize();
-        
         generator = new PersistentSAML2NameIDGenerator();
         generator.setId("test");
-        generator.setPersistentIdGenerator(strategy);
+        generator.setPersistentIdStore(store);
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         
         decoder = new StoredPersistentIdDecoder();

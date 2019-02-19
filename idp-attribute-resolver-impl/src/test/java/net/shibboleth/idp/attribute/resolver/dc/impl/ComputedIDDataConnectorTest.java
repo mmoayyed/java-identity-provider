@@ -33,6 +33,8 @@ import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -43,15 +45,13 @@ import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
-import net.shibboleth.idp.saml.attribute.resolver.impl.AbstractPersistentIdDataConnector;
-import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
- * Test for {@link AbstractPersistentIdDataConnector}
+ * Test for {@link PairwiseIdDataConnector} with computed store.
  */
 public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -71,7 +71,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     protected static final byte smallSalt[] = {0, 1, 2};
 
-    private static void testInit(final AbstractPersistentIdDataConnector connector, final String failMessage) {
+    private static void testInit(final PairwiseIdDataConnector connector, final String failMessage) {
         try {
             connector.initialize();
             Assert.fail(failMessage);
@@ -81,13 +81,17 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void dataConnector() throws ComponentInitializationException, ResolutionException {
-        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
-
+        
+        final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+        store.setSalt(salt);
+        store.initialize();
+        
+        final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setAttributeDependencies(Collections.singleton(TestSources.makeAttributeDefinitionDependency(
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
         testInit(connector, "No salt");
-        connector.setSalt(salt);
+        connector.setPairwiseIdStore(store);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.initialize();
 
@@ -119,43 +123,35 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
     }
 
-    @Test public void getters() throws ComponentInitializationException {
-        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
-        connector.setId(TEST_CONNECTOR_NAME);
-        connector.setAttributeDependencies(Collections.singleton(TestSources.makeAttributeDefinitionDependency(
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
-        connector.setSalt(smallSalt);
-        connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
-        Assert.assertEquals(connector.getSalt(), smallSalt);
-        testInit(connector, "Small salt");
-        connector.setSalt(salt);
-        connector.initialize();
-
-        try {
-            connector.setSalt(smallSalt);
-            Assert.fail("setting after init");
-        } catch (final UnmodifiableComponentException e) {
-            // OK'
-        }
-
-        Assert.assertEquals(connector.getSalt(), salt);
-    }
-
     private AttributeResolver constructResolver(final int values) throws ComponentInitializationException {
-        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
-
+        final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();        
         return constructResolver(connector, values, false);
     }
 
-    protected static AttributeResolver constructResolver(final ComputedIDDataConnector connector, final int values, final boolean noSalt)
+    protected static AttributeResolver constructResolver(final PairwiseIdDataConnector connector, final int values, final boolean noSalt)
             throws ComponentInitializationException {
+        
+        if (!noSalt) {
+            final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+            store.setSalt(salt);
+            store.initialize();
+            if (connector.getPairwiseIdStore() != null) {
+                ((JDBCPairwiseIdStore) connector.getPairwiseIdStore()).setInitialValueStore(store);
+            } else {
+                connector.setPairwiseIdStore(store);
+            }
+        }
+        
+        if (connector.getPairwiseIdStore() != null) {
+            ((InitializableComponent) connector.getPairwiseIdStore()).initialize();
+        }
+        
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setAttributeDependencies(Collections.singleton(TestSources.makeAttributeDefinitionDependency(
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
-        if (!noSalt) {
-            connector.setSalt(salt);
-        }
 
+        connector.initialize();
+        
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
         simple.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency(TEST_CONNECTOR_NAME,
@@ -172,14 +168,25 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private AttributeResolver constructResolverWithNonString(final String dependantOn)
             throws ComponentInitializationException {
-        return constructResolverWithNonString(new ComputedIDDataConnector(), dependantOn);
+        return constructResolverWithNonString(new PairwiseIdDataConnector(), dependantOn);
     }
 
-    protected static AttributeResolver constructResolverWithNonString(final ComputedIDDataConnector connector,
+    protected static AttributeResolver constructResolverWithNonString(final PairwiseIdDataConnector connector,
             final String dependantOn) throws ComponentInitializationException {
+        
+        final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+        store.setSalt(salt);
+        
+        if (connector.getPairwiseIdStore() != null) {
+            ((JDBCPairwiseIdStore) connector.getPairwiseIdStore()).setInitialValueStore(store);
+        } else {
+            connector.setPairwiseIdStore(store);
+        }
+        ((InitializableComponent) connector.getPairwiseIdStore()).initialize();
+        
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setAttributeDependencies(Collections.singleton(TestSources.makeAttributeDefinitionDependency(dependantOn)));
-        connector.setSalt(salt);
+        connector.initialize();
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
@@ -195,12 +202,12 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
-    protected static AbstractPersistentIdDataConnector connectorFromResolver(final AttributeResolver resolver) {
-        return (AbstractPersistentIdDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
+    protected static PairwiseIdDataConnector connectorFromResolver(final AttributeResolver resolver) {
+        return (PairwiseIdDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
     
-    @Test(expectedExceptions={ComponentInitializationException.class,}) public void noSalt() throws ComponentInitializationException {
-        connectorFromResolver(constructResolver(new ComputedIDDataConnector(), 1, true)).initialize();
+    @Test(expectedExceptions={ComponentInitializationException.class,}) public void noStore() throws ComponentInitializationException {
+        connectorFromResolver(constructResolver(new PairwiseIdDataConnector(), 1, true)).initialize();
     }
 
     @Test public void altDataConnector() throws ComponentInitializationException, ResolutionException {
@@ -291,12 +298,16 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void case425() throws ComponentInitializationException, ResolutionException {
 
-        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+        store.setSalt(salt);
+        store.initialize();
+
+        final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency(
                 TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR)));
-        connector.setSalt(salt);
         connector.setGeneratedAttributeId("wibble");
+        connector.setPairwiseIdStore(store);
         connector.initialize();
 
         final Set<DataConnector> set = new HashSet<>(2);
@@ -342,12 +353,15 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         final ResolverDataConnectorDependency depend = TestSources.makeDataConnectorDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
+        final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+        store.setSalt(salt);
+        store.initialize();
 
-        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataConnectorDependencies(Collections.singleton(depend));
-        connector.setSalt(salt);
         connector.setGeneratedAttributeId("wibble");
+        connector.setPairwiseIdStore(store);
         connector.initialize();
 
         
@@ -371,12 +385,15 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         final ResolverDataConnectorDependency depend = TestSources.makeDataConnectorDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID);
 
+        final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+        store.setSalt(salt);
+        store.initialize();
 
-        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataConnectorDependencies(Collections.singleton(depend));
-        connector.setSalt(salt);
         connector.setGeneratedAttributeId("wibble");
+        connector.setPairwiseIdStore(store);
         connector.initialize();
 
         final Map<String, IdPAttribute> result = connector.resolve(resolutionContext);

@@ -27,10 +27,12 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.DurablePairwiseIdStore;
+import net.shibboleth.idp.attribute.PairwiseId;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
-import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -38,8 +40,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
- * An abstract action which contains the logic to decode SAML persistent IDs that are managed with a store.
- * This reverses the work done by {@link StoredPersistentIdGenerationStrategy}.
+ * An abstract decoder which contains the logic to decode SAML persistent IDs that are managed with a
+ * {@link DurablePairwiseIdStore}.
  */
 public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder {
 
@@ -47,27 +49,27 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredPersistentIdDecoder.class);
 
     /** Updated version of persistent identifier data store layer. */
-    @NonnullAfterInit private PersistentIdStoreEx pidStore;
+    @NonnullAfterInit private DurablePairwiseIdStore pidStore;
 
-    /** A DataSource to auto-provision a {@link JDBCPersistentIdStoreEx} instance. */
+    /** A DataSource to auto-provision a {@link JDBCPairwiseIdStore} instance. */
     @Nullable private DataSource dataSource;
     
     /**
-     * Set a data store to use.
+     * Set a {@link DurablePairwiseIdStore} to use.
      * 
-     * @param store the data store
+     * @param store the id store
      */
-    public void setPersistentIdStore(@Nullable final PersistentIdStoreEx store) {
+    public void setPersistentIdStore(@Nullable final DurablePairwiseIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        pidStore = (PersistentIdStoreEx) store;
+        pidStore = store;
     }
 
     /**
-     * Set a data source to inject into an auto-provisioned instance of {@link JDBCPersistentIdStoreEx}
-     * to use as the storage strategy.
+     * Set a data source to inject into an auto-provisioned instance of {@link JDBCPairwiseIdStore}
+     * to use as the store.
      * 
-     * @param source the data source
+     * @param source data source
      */
     public void setDataSource(@Nullable final DataSource source) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -81,8 +83,8 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
     
         if (null == pidStore) {
             if (dataSource != null) {
-                log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
-                final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
+                log.debug("Creating JDBCPairwiseIdStore instance around supplied DataSource");
+                final JDBCPairwiseIdStore newStore = new JDBCPairwiseIdStore();
                 // Don't validate the database because this side is just reading data.
                 newStore.setVerifyDatabase(false);
                 newStore.setDataSource(dataSource);
@@ -91,7 +93,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
             }
             
             if (null == pidStore) {
-                throw new ComponentInitializationException("PersistentIdStore cannot be null");
+                throw new ComponentInitializationException("PairwiseIdStore cannot be null");
             }
         }
     }
@@ -122,12 +124,16 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
         }
         
         try {
-            final PersistentIdEntry entry = pidStore.getByIssuedValue(issuerID, recipientID, nameID.getValue());
-            if (entry == null || entry.getPrincipalName() == null) {
+            PairwiseId pid = new PairwiseId();
+            pid.setIssuerEntityID(issuerID);
+            pid.setRecipientEntityID(recipientID);
+            pid.setPairwiseId(nameID.getValue());
+            pid = pidStore.getByIssuedValue(pid);
+            if (pid == null || pid.getPrincipalName() == null) {
                 log.info("No entry found for persistent ID {}", nameID.getValue());
                 return null;
             }
-            return entry.getPrincipalName();
+            return pid.getPrincipalName();
         } catch (final IOException e) {
             log.error("I/O error looking up persistent ID", e);
             return null;

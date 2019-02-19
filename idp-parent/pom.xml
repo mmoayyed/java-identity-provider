@@ -40,6 +40,7 @@
 
         <module>../idp-admin-impl</module>
         <module>../idp-authn-impl</module>
+        <module>../idp-attribute-impl</module>
         <module>../idp-attribute-resolver-impl</module>
         <module>../idp-attribute-filter-impl</module>
         <module>../idp-cas-impl</module>

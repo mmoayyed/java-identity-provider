@@ -20,9 +20,12 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -30,20 +33,63 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for configuring {@link ComputedIDDataConnector}.
  */
-public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
+public class ComputedIDDataConnectorParser extends PairwiseIdDataConnectorParser {
 
     /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "ComputedId");
 
-    /** {@inheritDoc} */
-    @Override protected Class<ComputedIDDataConnector> getBeanClass(final Element element) {
-        return ComputedIDDataConnector.class;
-    }
-
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnectorParser.class);
+    
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "computedId");
+
+        builder.addPropertyValue("pairwiseIdStore", doComputedPairwiseIdStore(config, parserContext));
     }
+
+    /**
+     * Parse the config and define a bean for a {@link ComputedPairwiseIdStore}.
+     * 
+     * @param config the XML element being parsed
+     * @param parserContext the object encapsulating the current state of the parsing process
+     * @return bean definition for the store object to inject
+     */
+    @Nonnull protected BeanDefinition doComputedPairwiseIdStore(@Nonnull final Element config,
+            @Nonnull final ParserContext parserContext) {
+        
+        final BeanDefinitionBuilder builder =
+                BeanDefinitionBuilder.genericBeanDefinition(ComputedPairwiseIdStore.class);
+        builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
+
+        if (config.hasAttributeNS(null, "algorithm")) {
+            builder.addPropertyValue("algorithm", config.getAttributeNS(null, "algorithm"));
+        }
+
+        if (config.hasAttributeNS(null, "encoding")) {
+            builder.addPropertyValue("encoding", config.getAttributeNS(null, "encoding"));
+        }
+
+        final String salt;
+        if (config.hasAttributeNS(null, "salt")) {
+            salt = config.getAttributeNS(null, "salt");
+        } else {
+            salt = null;
+        }
+        
+        if (null == salt) {
+            log.debug("{} No salt provided", getLogPrefix());
+        } else {
+            log.debug("{} See TRACE log for the salt value", getLogPrefix());
+            log.trace("{} Salt: '{}'", getLogPrefix(), salt);
+        }
+
+        builder.addPropertyValue("salt", salt);
+
+        return builder.getBeanDefinition();
     }
+
+}

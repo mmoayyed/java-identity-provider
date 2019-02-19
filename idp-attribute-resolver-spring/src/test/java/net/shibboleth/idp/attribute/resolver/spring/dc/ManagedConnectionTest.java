@@ -40,8 +40,9 @@ import javax.sql.DataSource;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
+import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -49,13 +50,13 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
 
-    @Test(enabled=false) public void simple() throws ComponentInitializationException, NamingException {
+    @Test(enabled=true) public void simple() throws ComponentInitializationException, NamingException {
         if (!NamingManager.hasInitialContextFactoryBuilder()) {
             NamingManager.setInitialContextFactoryBuilder(new ContextFactoryBuilder() );
         }
 
-        final  StoredIDDataConnector connector = getDataConnector("resolver/containerManagedConnection.xml", StoredIDDataConnector.class);
-        MyDataSource source = (MyDataSource) connector.getDataSource();
+        final PairwiseIdDataConnector connector = getDataConnector("resolver/containerManagedConnection.xml", PairwiseIdDataConnector.class);
+        MyDataSource source = (MyDataSource) ((JDBCPairwiseIdStore) connector.getPairwiseIdStore()).getDataSource();
         assertEquals(source.getEnvironment().size(), 2);
         assertEquals(source.getEnvironment().get("foo"), "Bar");
         assertEquals(source.getEnvironment().get("yellow"), "green");
@@ -98,115 +99,92 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
 
         /** {@inheritDoc} */
         public Object addToEnvironment(String propName, Object propVal) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public void bind(Name name, Object obj) throws NamingException {
-            // TODO Auto-generated method stub
             
         }
 
         /** {@inheritDoc} */
         public void bind(String name, Object obj) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public void close() throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public Name composeName(Name name, Name prefix) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public String composeName(String name, String prefix) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public Context createSubcontext(Name name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public Context createSubcontext(String name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public void destroySubcontext(Name name) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public void destroySubcontext(String name) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public Hashtable<?, ?> getEnvironment() throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public String getNameInNamespace() throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public NameParser getNameParser(Name name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public NameParser getNameParser(String name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public Object lookup(Name name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -220,56 +198,41 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
 
         /** {@inheritDoc} */
         public Object lookupLink(Name name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public Object lookupLink(String name) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public void rebind(Name name, Object obj) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public void rebind(String name, Object obj) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public Object removeFromEnvironment(String propName) throws NamingException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         /** {@inheritDoc} */
         public void rename(Name oldName, Name newName) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public void rename(String oldName, String newName) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public void unbind(Name name) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
 
         /** {@inheritDoc} */
         public void unbind(String name) throws NamingException {
-            // TODO Auto-generated method stub
-            
         }
     }
     
