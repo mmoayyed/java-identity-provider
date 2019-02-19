@@ -35,14 +35,14 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for {@link StoredIDDataConnector}.
  */
-public class StoredIDDataConnectorParser extends ComputedIDDataConnectorParser {
+public class StoredIdDataConnectorParser extends ComputedIdDataConnectorParser {
 
     /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
                 new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StoredId");
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIdDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,

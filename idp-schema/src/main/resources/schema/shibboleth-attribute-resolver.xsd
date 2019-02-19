@@ -936,6 +936,37 @@
         </complexContent>
     </complexType>
 
+    <complexType name="PairwiseId">
+        <annotation>
+            <documentation>
+                An ID created by digesting the requesting entityID, an attribute value (usually a user identifier), and a salt.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <choice maxOccurs="unbounded" minOccurs="0">
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
+                </choice>
+                <attribute name="pairwiseIdStoreRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            Bean name of the PairwiseIdStore to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="generatedAttributeID" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute produced by this data connector.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="RelationalDatabase">
         <annotation>
             <documentation>

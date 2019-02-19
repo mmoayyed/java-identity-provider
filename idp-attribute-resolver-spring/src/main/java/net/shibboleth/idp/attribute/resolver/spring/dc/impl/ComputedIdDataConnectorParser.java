@@ -33,14 +33,14 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for configuring {@link ComputedIDDataConnector}.
  */
-public class ComputedIDDataConnectorParser extends PairwiseIdDataConnectorParser {
+public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser {
 
     /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "ComputedId");
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIdDataConnectorParser.class);
     
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,

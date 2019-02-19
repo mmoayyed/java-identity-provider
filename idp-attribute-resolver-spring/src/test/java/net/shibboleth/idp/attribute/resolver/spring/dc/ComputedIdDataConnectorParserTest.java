@@ -31,13 +31,13 @@ import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore.Encoding;
 import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIdDataConnectorParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * Test for {@link ComputedIDDataConnectorParser}.
+ * Test for {@link ComputedIdDataConnectorParser}.
  */
-public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
+public class ComputedIdDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {
         final PairwiseIdDataConnector connector = getDataConnector("resolver/computed.xml", PairwiseIdDataConnector.class);

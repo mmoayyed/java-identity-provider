@@ -37,10 +37,11 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttribu
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.http.impl.HTTPDataConnectorParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIdDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.PairwiseIdDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIDDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIdDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
@@ -99,14 +100,16 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new MappedAttributeDefinitionParser());
         
         // Data Connectors
-        registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME_RESOLVER, 
-                new ComputedIDDataConnectorParser());
+        registerBeanDefinitionParser(ComputedIdDataConnectorParser.TYPE_NAME_RESOLVER, 
+                new ComputedIdDataConnectorParser());
         registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME_RESOLVER, new RDBMSDataConnectorParser());
         registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME_RESOLVER, new LDAPDataConnectorParser());
+        registerBeanDefinitionParser(PairwiseIdDataConnectorParser.TYPE_NAME_RESOLVER,
+                new PairwiseIdDataConnectorParser());
         registerBeanDefinitionParser(HTTPDataConnectorParser.TYPE_NAME, new HTTPDataConnectorParser());
         registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_RESOLVER, new ScriptDataConnectorParser());
         registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME_RESOLVER, new StaticDataConnectorParser());
-        registerBeanDefinitionParser(StoredIDDataConnectorParser.TYPE_NAME_RESOLVER, new StoredIDDataConnectorParser());
+        registerBeanDefinitionParser(StoredIdDataConnectorParser.TYPE_NAME_RESOLVER, new StoredIdDataConnectorParser());
 
 
         // Encoders
