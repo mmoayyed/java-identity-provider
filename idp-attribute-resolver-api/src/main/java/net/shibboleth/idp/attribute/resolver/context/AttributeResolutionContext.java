@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableMap;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
-public class AttributeResolutionContext extends BaseContext {
+public final class AttributeResolutionContext extends BaseContext {
 
     /** (internal) Names of the attributes that have been requested to be resolved. */
     @Nonnull @NonnullElements private Set<String> requestedAttributeNames;

@@ -31,7 +31,7 @@ import org.opensaml.messaging.context.BaseContext;
  * 
  * @since 3.4.0
  */
-public class LockoutManagerContext extends BaseContext {
+public final class LockoutManagerContext extends BaseContext {
 
     /** Account lockout key. */
     @Nullable private String key;

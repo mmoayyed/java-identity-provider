@@ -28,7 +28,7 @@ import org.opensaml.messaging.context.BaseContext;
  * 
  * @parent {@link AuthenticationContext}
  */
-public class KerberosTicketContext extends BaseContext {
+public final class KerberosTicketContext extends BaseContext {
 
     /** Kerberos ticket to be validated. */
     private KerberosTicket ticket;

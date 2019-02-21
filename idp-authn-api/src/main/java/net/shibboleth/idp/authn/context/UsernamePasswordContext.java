@@ -29,7 +29,7 @@ import org.opensaml.messaging.context.BaseContext;
  * @parent {@link AuthenticationContext}
  * @added After extracting a username/password pair during authentication
  */
-public class UsernamePasswordContext extends BaseContext {
+public final class UsernamePasswordContext extends BaseContext {
 
     /** The username. */
     private String username;

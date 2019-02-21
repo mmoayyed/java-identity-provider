@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableList;
  * @parent {@link AuthenticationContext}
  * @added After authentication fails
  */
-public class AuthenticationErrorContext extends BaseContext {
+public final class AuthenticationErrorContext extends BaseContext {
 
     /** Ordered list of exceptions encountered. */
     @Nonnull @NonnullElements private List<Exception> exceptions;

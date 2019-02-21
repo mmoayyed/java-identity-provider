@@ -25,7 +25,7 @@ import net.shibboleth.idp.session.IdPSession;
 import org.opensaml.messaging.context.BaseContext;
 
 /** A {@link BaseContext} that holds an {@link IdPSession}. */
-public class SessionContext extends BaseContext {
+public final class SessionContext extends BaseContext {
 
     /** IdP session wrapped by this adapter. */
     private IdPSession session;

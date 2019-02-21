@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  *
  * @author Marvin S. Addison
  */
-public class LogoutPropagationContext extends BaseContext {
+public final class LogoutPropagationContext extends BaseContext {
 
     /** Logout propagation result. */
     public enum Result {

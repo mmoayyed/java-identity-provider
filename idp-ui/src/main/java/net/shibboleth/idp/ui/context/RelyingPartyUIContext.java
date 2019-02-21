@@ -58,7 +58,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * The context which carries the user interface information.
  */
-public class RelyingPartyUIContext extends BaseContext {
+public final class RelyingPartyUIContext extends BaseContext {
 
     /** The log. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RelyingPartyUIContext.class);

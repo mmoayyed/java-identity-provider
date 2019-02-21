@@ -27,7 +27,7 @@ import org.opensaml.saml.saml2.core.Assertion;
  * Context, usually attached to {@link net.shibboleth.idp.authn.context.AuthenticationContext},
  * that carries a SAML {@link Assertion} to be validated.
  */
-public class SAMLContext extends BaseContext {
+public final class SAMLContext extends BaseContext {
 
     /** The assertion to be validated. */
     @Nullable private Assertion assertion;

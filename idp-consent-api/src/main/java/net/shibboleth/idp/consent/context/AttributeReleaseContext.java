@@ -35,7 +35,7 @@ import com.google.common.base.MoreObjects;
  * 
  * Holds the attributes for which consent is obtained.
  */
-public class AttributeReleaseContext extends BaseContext {
+public final class AttributeReleaseContext extends BaseContext {
 
     /** Attributes to be consented to. */
     @Nonnull @NonnullElements @Live private Map<String, IdPAttribute> consentableAttributes;

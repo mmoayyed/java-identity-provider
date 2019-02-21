@@ -29,7 +29,7 @@ import com.google.common.base.MoreObjects;
  * <p>This context acts as a public interface between other flows and flows that implement
  * consent-related functionality.</p>
  */
-public class ConsentManagementContext extends BaseContext {
+public final class ConsentManagementContext extends BaseContext {
 
     /** Whether to revoke consent previously granted. */
     private boolean revokeConsent;

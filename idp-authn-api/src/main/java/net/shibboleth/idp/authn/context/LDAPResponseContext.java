@@ -32,7 +32,7 @@ import com.google.common.base.MoreObjects;
  * @parent {@link AuthenticationContext}
  * @added After an LDAP authentication attempt
  */
-public class LDAPResponseContext extends BaseContext {
+public final class LDAPResponseContext extends BaseContext {
 
     /** Authentication response. */
     @Nullable private AuthenticationResponse authenticationResponse;

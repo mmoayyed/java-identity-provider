@@ -39,7 +39,7 @@ import org.opensaml.messaging.context.BaseContext;
  * @parent {@link AuthenticationContext}
  * @added After a warning is generated during authentication
  */
-public class AuthenticationWarningContext extends BaseContext {
+public final class AuthenticationWarningContext extends BaseContext {
 
     /** Warning conditions detected through classified warning messages. */
     private Collection<String> classifiedWarnings;

@@ -64,7 +64,7 @@ import com.google.common.collect.ImmutableList;
  * @parent {@link AuthenticationContext}
  * @added Before the authentication process begins
  */
-public class RequestedPrincipalContext extends BaseContext {
+public final class RequestedPrincipalContext extends BaseContext {
 
     /** The registry of predicate factories for custom principal evaluation. */
     @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;

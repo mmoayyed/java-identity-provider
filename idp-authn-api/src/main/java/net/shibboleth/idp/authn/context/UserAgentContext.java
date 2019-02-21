@@ -33,7 +33,7 @@ import org.opensaml.messaging.context.BaseContext;
  * 
  * @parent {@link org.opensaml.profile.context.ProfileRequestContext}, {@link AuthenticationContext}
  */
-public class UserAgentContext extends BaseContext {
+public final class UserAgentContext extends BaseContext {
 
     /** Address of the user-agent host. */
     @Nullable private InetAddress address;

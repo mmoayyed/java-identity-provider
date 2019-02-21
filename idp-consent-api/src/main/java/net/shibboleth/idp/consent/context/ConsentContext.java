@@ -35,7 +35,7 @@ import com.google.common.base.MoreObjects;
  * 
  * Holds consent previously given as well as obtained from user input.
  */
-public class ConsentContext extends BaseContext {
+public final class ConsentContext extends BaseContext {
 
     /** Map of previous consent read from storage and keyed by consent id. */
     @Nonnull @NonnullElements @Live private Map<String, Consent> previousConsents;

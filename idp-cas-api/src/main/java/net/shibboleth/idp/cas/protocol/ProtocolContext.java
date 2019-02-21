@@ -27,7 +27,7 @@ import org.opensaml.messaging.context.BaseContext;
  * @param <RequestType> request type
  * @param <ResponseType> response type
  */
-public class ProtocolContext<RequestType, ResponseType> extends BaseContext {
+public final class ProtocolContext<RequestType, ResponseType> extends BaseContext {
     /** CAS protocol request. */
     private RequestType request;
 

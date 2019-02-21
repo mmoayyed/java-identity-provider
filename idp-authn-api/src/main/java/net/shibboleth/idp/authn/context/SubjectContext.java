@@ -52,7 +52,7 @@ import com.google.common.collect.ImmutableList;
  * @parent {@link org.opensaml.profile.context.ProfileRequestContext}
  * @added After the subject of a request is determined
  */
-public class SubjectContext extends BaseContext {
+public final class SubjectContext extends BaseContext {
 
     /** Canonical principal name of an impersonating identity. */
     @Nullable private String impersonatingPrincipalName;

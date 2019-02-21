@@ -43,7 +43,7 @@ import org.opensaml.messaging.context.BaseContext;
  * 
  * @since 3.3.0
  */
-public class MultiFactorAuthenticationContext extends BaseContext {
+public final class MultiFactorAuthenticationContext extends BaseContext {
 
     /** Map of login "factors" (flows) and the transition rules to run after them. */
     @Nonnull @NonnullElements private Map<String,MultiFactorAuthenticationTransition> transitionMap;

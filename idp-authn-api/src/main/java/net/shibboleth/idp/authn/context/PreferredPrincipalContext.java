@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @since 3.4.0
  */
-public class PreferredPrincipalContext extends BaseContext {
+public final class PreferredPrincipalContext extends BaseContext {
 
     /** The principals reflecting the preference. */
     @Nonnull @NonnullElements private List<Principal> preferredPrincipals;

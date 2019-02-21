@@ -36,7 +36,7 @@ import org.opensaml.messaging.context.BaseContext;
  * A {@link BaseContext} which holds flows that are available to be executed, the last flow attempted, and any flow
  * result.
  */
-public class ProfileInterceptorContext extends BaseContext {
+public final class ProfileInterceptorContext extends BaseContext {
 
     /** The last flow attempted. */
     @Nullable private ProfileInterceptorFlowDescriptor attemptedFlow;

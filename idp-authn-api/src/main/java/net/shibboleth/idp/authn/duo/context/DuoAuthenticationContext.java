@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
  * @parent {@link AuthenticationContext}
  * @added After extracting the Duo factor and device or passcode during authentication
  */
-public class DuoAuthenticationContext extends BaseContext {
+public final class DuoAuthenticationContext extends BaseContext {
 
     /** Username. */
     @Nullable private String username;

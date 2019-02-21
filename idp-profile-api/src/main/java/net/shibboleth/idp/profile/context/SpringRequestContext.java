@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>Actions that make use of this context type are specific to Spring Web Flow and cannot
  * be orchestrated without that technology.</p>
  */
-public class SpringRequestContext extends BaseContext {
+public final class SpringRequestContext extends BaseContext {
 
     /** The request context represented. */
     @Nullable private RequestContext context;

@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
  * associated with a particular service request.
  */
 @NotThreadSafe
-public class AttributeContext extends BaseContext {
+public final class AttributeContext extends BaseContext {
 
     /** The attributes tracked by this context. */
     @Nonnull private Map<String, IdPAttribute> attributes;

@@ -42,7 +42,7 @@ import org.opensaml.messaging.context.BaseContext;
  * @parent {@link org.opensaml.profile.context.ProfileRequestContext}
  * @added At the end of a login flow or before any other execution of the subject canonicalization flow
  */
-public class SubjectCanonicalizationContext extends BaseContext {
+public final class SubjectCanonicalizationContext extends BaseContext {
 
     /** Subject to canonicalize. */
     @Nullable private Subject subject;

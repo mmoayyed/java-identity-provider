@@ -46,7 +46,7 @@ import org.opensaml.messaging.context.BaseContext;
  * </p>
  */
 @NotThreadSafe
-public class AttributeResolverWorkContext extends BaseContext {
+public final class AttributeResolverWorkContext extends BaseContext {
 
     /** Attribute definitions that have been resolved and the resultant attribute. */
     @Nonnull @NonnullElements private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;

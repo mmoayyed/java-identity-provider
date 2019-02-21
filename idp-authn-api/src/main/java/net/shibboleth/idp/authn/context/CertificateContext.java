@@ -39,7 +39,7 @@ import com.google.common.collect.Collections2;
  * @parent {@link AuthenticationContext}
  * @added After extraction of a certificate during authentication
  */
-public class CertificateContext extends BaseContext {
+public final class CertificateContext extends BaseContext {
 
     /** The certificate to be validated. */
     @Nullable private Certificate certificate;
