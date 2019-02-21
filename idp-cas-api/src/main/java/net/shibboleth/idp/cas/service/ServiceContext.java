@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class ServiceContext extends BaseContext {
+public final class ServiceContext extends BaseContext {
     /** Service metadata held by context. */
     @Nonnull private final Service serviceMetadata;
 

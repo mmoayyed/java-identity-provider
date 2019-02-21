@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class TicketContext extends BaseContext {
+public final class TicketContext extends BaseContext {
     /** Ticket held by this context. */
     @Nonnull private final Ticket t;
 
