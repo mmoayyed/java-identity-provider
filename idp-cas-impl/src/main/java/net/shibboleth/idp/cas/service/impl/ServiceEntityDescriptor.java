@@ -19,24 +19,19 @@ package net.shibboleth.idp.cas.service.impl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.Namespace;
-import org.opensaml.core.xml.NamespaceManager;
+import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.schema.XSBooleanValue;
 import org.opensaml.core.xml.util.AttributeMap;
-import org.opensaml.core.xml.util.IDIndex;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.EntityGroupName;
 import org.opensaml.saml.saml2.metadata.AdditionalMetadataLocation;
 import org.opensaml.saml.saml2.metadata.AffiliationDescriptor;
@@ -51,22 +46,16 @@ import org.opensaml.saml.saml2.metadata.PDPDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.xmlsec.signature.Signature;
-import org.w3c.dom.Element;
 
 /**
  * Adapts CAS protocol service metadata onto SAML metadata.
  *
  * @author Marvin S. Addison
  */
-public class ServiceEntityDescriptor implements EntityDescriptor {
+public class ServiceEntityDescriptor extends AbstractXMLObject implements EntityDescriptor {
 
     /** Underlying CAS service. */
-    private final Service svc;
-
-    /** The multimap holding class-indexed instances of additional info associated with this XML object. */
-    @Nonnull
-    private final LockableClassToInstanceMultiMap<Object> objectMetadata;
-
+    @Nonnull private final Service svc;
 
     /**
      * Creates a new instance that wraps the given CAS service.
@@ -74,14 +63,15 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * @param service CAS service metadata object.
      */
     public ServiceEntityDescriptor(@Nonnull final Service service) {
+        super(SAMLConstants.SAML20MD_NS, EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME, SAMLConstants.SAML20MD_PREFIX);
+        
         svc = Constraint.isNotNull(service, "Service cannot be null");
-        objectMetadata = new LockableClassToInstanceMultiMap<>(true);
         if (StringSupport.trimOrNull(service.getGroup()) != null) {
-            objectMetadata.put(new EntityGroupName(service.getGroup()));
+            getObjectMetadata().put(new EntityGroupName(service.getGroup()));
         }
     }
 
-    @Override
+    /** {@inheritDoc} */
     public String getEntityID() {
         return svc.getName();
     }
@@ -91,13 +81,13 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setEntityID(final String id) {
+    public void setEntityID(final String id) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public String getID() {
-        return svc.getName();
+        return null;
     }
 
     /**
@@ -105,11 +95,11 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setID(final String newID) {
+    public void setID(final String newID) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public Extensions getExtensions() {
         return null;
     }
@@ -119,61 +109,61 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setExtensions(final Extensions extensions) {
+    public void setExtensions(final Extensions extensions) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public List<RoleDescriptor> getRoleDescriptors() {
         return Collections.emptyList();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public List<RoleDescriptor> getRoleDescriptors(final QName typeOrName) {
         return Collections.emptyList();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public List<RoleDescriptor> getRoleDescriptors(final QName typeOrName, final String supportedProtocol) {
         return Collections.emptyList();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public IDPSSODescriptor getIDPSSODescriptor(final String supportedProtocol) {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public SPSSODescriptor getSPSSODescriptor(final String supportedProtocol) {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public AuthnAuthorityDescriptor getAuthnAuthorityDescriptor(final String supportedProtocol) {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public AttributeAuthorityDescriptor getAttributeAuthorityDescriptor(final String supportedProtocol) {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public PDPDescriptor getPDPDescriptor(final String supportedProtocol) {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public AffiliationDescriptor getAffiliationDescriptor() {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public void setAffiliationDescriptor(final AffiliationDescriptor descriptor) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public Organization getOrganization() {
         return null;
     }
@@ -183,27 +173,26 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setOrganization(final Organization organization) {
+    public void setOrganization(final Organization organization) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public List<ContactPerson> getContactPersons() {
         return Collections.emptyList();
     }
 
-    @Override
+    /** {@inheritDoc} */
     public List<AdditionalMetadataLocation> getAdditionalMetadataLocations() {
         return Collections.emptyList();
     }
 
-    @Nonnull
-    @Override
-    public AttributeMap getUnknownAttributes() {
+    /** {@inheritDoc} */
+    @Nonnull public AttributeMap getUnknownAttributes() {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public Long getCacheDuration() {
         return null;
     }
@@ -213,24 +202,22 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setCacheDuration(final Long duration) {
+    public void setCacheDuration(final Long duration) {
         throw new UnsupportedOperationException();
     }
 
-    @Nullable
-    @Override
-    public String getSignatureReferenceID() {
+    /** {@inheritDoc} */
+    @Nullable public String getSignatureReferenceID() {
         return null;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public boolean isSigned() {
         return false;
     }
 
-    @Nullable
-    @Override
-    public Signature getSignature() {
+    /** {@inheritDoc} */
+    @Nullable public Signature getSignature() {
         return null;
     }
 
@@ -239,16 +226,16 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setSignature(@Nullable final Signature newSignature) {
+    public void setSignature(@Nullable final Signature newSignature) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
+    
+    /** {@inheritDoc} */
     public boolean isValid() {
         return true;
     }
 
-    @Override
+    /** {@inheritDoc} */
     public DateTime getValidUntil() {
         return DateTime.now().plusDays(1);
     }
@@ -258,169 +245,14 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setValidUntil(final DateTime validUntil) {
+    public void setValidUntil(final DateTime validUntil) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void detach() {}
-
-    @Nullable
-    @Override
-    public Element getDOM() {
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public QName getElementQName() {
-        return new QName(AbstractProtocolConfiguration.PROTOCOL_URI, "cas");
-    }
-
-    @Nonnull
-    @Override
-    public IDIndex getIDIndex() {
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public NamespaceManager getNamespaceManager() {
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public Set<Namespace> getNamespaces() {
-        return Collections.emptySet();
-    }
-
-    @Nullable
-    @Override
-    public String getNoNamespaceSchemaLocation() {
-        return null;
-    }
-
-    @Nullable
+    /** {@inheritDoc} */
     @Override
     public List<XMLObject> getOrderedChildren() {
         return Collections.emptyList();
     }
 
-    @Nullable
-    @Override
-    public XMLObject getParent() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public String getSchemaLocation() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public QName getSchemaType() {
-        return null;
-    }
-
-    @Override
-    public boolean hasChildren() {
-        return false;
-    }
-
-    @Override
-    public boolean hasParent() {
-        return false;
-    }
-
-    @Override
-    public void releaseChildrenDOM(final boolean propagateRelease) {}
-
-    @Override
-    public void releaseDOM() {}
-
-    @Override
-    public void releaseParentDOM(final boolean propagateRelease) {}
-
-    @Nullable
-    @Override
-    public XMLObject resolveID(@Nonnull final String id) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public XMLObject resolveIDFromRoot(@Nonnull final String id) {
-        return null;
-    }
-
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     * 
-     * {@inheritDoc}
-     */
-    @Override public void setDOM(@Nullable final Element dom) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setNoNamespaceSchemaLocation(@Nullable final String location) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     * 
-     * {@inheritDoc}
-     */
-    @Override public void setParent(@Nullable final XMLObject parent) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     * 
-     * {@inheritDoc}
-     */
-    @Override public void setSchemaLocation(@Nullable final String location) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Nullable
-    @Override
-    public Boolean isNil() {
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public XSBooleanValue isNilXSBoolean() {
-        return null;
-    }
-
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     * 
-     * {@inheritDoc}
-     */
-    @Override public void setNil(@Nullable final Boolean newNil) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     * 
-     * {@inheritDoc}
-     */
-    @Override public void setNil(@Nullable final XSBooleanValue newNil) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Nonnull
-    @Override
-    public LockableClassToInstanceMultiMap<Object> getObjectMetadata() {
-        return objectMetadata;
-    }
 }
