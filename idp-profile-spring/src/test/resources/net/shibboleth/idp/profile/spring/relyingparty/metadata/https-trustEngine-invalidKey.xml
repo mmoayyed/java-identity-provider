@@ -7,7 +7,10 @@
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
-	id="HTTPSEntity" xsi:type="metadata:HTTPMetadataProvider" metadataURL="%{metadataURL}">
+	id="HTTPSEntity"
+    xsi:type="metadata:FileBackedHTTPMetadataProvider"
+    backingFile="%{DIR}/spoolhttpstrustengineinvalidkey.xml" 
+    metadataURL="%{metadataURL}">
     
     <metadata:TLSTrustEngine>
         <security:TrustEngine id="trustEngine" xsi:type="security:StaticExplicitKey">

@@ -8,7 +8,8 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="HTTPSEntityWithIndexes" 
-    xsi:type="metadata:HTTPMetadataProvider" 
+    xsi:type="metadata:FileBackedHTTPMetadataProvider"
+    backingFile="%{DIR}/spoolhttpsindexies.xml"
     metadataURL="%{metadataURL}"
     indexesRef="metadata.Indexes"
     > 

@@ -8,7 +8,8 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="HTTPSEntityWithTimeouts" 
-    xsi:type="metadata:HTTPMetadataProvider" 
+    xsi:type="metadata:FileBackedHTTPMetadataProvider"
+    backingFile="%{DIR}/spoolhttpstimeouts.xml"
     metadataURL="%{metadataURL}"
     connectionTimeout="PT2M30S"
     connectionRequestTimeout="PT2M30S"

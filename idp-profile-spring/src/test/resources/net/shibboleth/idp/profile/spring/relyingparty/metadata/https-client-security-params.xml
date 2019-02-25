@@ -8,8 +8,11 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="HTTPSEntityWithClientSecurityParams" 
-    xsi:type="metadata:HTTPMetadataProvider" 
+    xsi:type="metadata:FileBackedHTTPMetadataProvider" 
     metadataURL="%{metadataURL}"
+    
+    backingFile="%{DIR}/spoolClientSecurityParams.xml"
+    
     httpClientSecurityParametersRef="metadata.HttpClientSecurityParameters"
     > 
 
