@@ -171,8 +171,9 @@ public class PairwiseIdDataConnector extends AbstractDataConnector {
             throw new ComponentInitializationException("PairwiseIdStore cannot be null");
         }
         
-        // Set up the dependencies first. Then the initialize in the parent
-        // will correctly rehash the dependencies.
+        // Set up the dependencies before initializing the parent.
+        // This should not be needed and longer since we do not specify the sourceAttributeId
+        // as part of the Object's hash any more (since V4.0)
         doDependencyInformation();
         super.doInitialize();
 
