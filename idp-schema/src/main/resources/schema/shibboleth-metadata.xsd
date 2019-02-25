@@ -1009,27 +1009,6 @@
         </annotation>
     </element>
 
-    <complexType name="ChainingFilter">
-        <annotation>
-            <documentation>
-                A filter that executes other filters in the order they appear in the configuration.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="shibmd:MetadataFilterType">
-                <sequence>
-                    <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                A filter to be applied to metadata after it has been parsed and validated.
-                            </documentation>
-                        </annotation>
-                    </element>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
     <complexType name="RequiredValidUntil">
         <annotation>
             <documentation>
