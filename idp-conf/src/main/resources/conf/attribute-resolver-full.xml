@@ -257,13 +257,16 @@
 
     <!-- Example Static Connector -->
 
-    <!-- Example Relational Database Connector -->
+    <!-- Example Relational Database Connector.  
+         In practice a <SimpleManagedConnection> is enough to get you going but you should consider a
+         <BeanManagedConnection> fully configured for your particular environment -->
+    
 <!--
     <DataConnector id="mySIS" xsi:type="RelationalDatabase">
-        <ApplicationManagedConnection jdbcDriver="oracle.jdbc.driver.OracleDriver"
-                                         jdbcURL="jdbc:oracle:thin:@db.example.org:1521:SomeDB" 
-                                         jdbcUserName="myid" 
-                                         jdbcPassword="mypassword" />
+        <SimpleManagedConnection jdbcDriver="oracle.jdbc.driver.OracleDriver"
+                                 jdbcURL="jdbc:oracle:thin:@db.example.org:1521:SomeDB" 
+                                 jdbcUserName="myid" 
+                                 jdbcPassword="mypassword" />
         <QueryTemplate>
             <![CDATA[
                 SELECT * FROM student WHERE gzbtpid = '$resolutionContext.principal'
