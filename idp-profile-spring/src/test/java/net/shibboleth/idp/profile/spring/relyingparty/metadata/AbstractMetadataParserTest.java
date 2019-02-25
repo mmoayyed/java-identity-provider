@@ -122,7 +122,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
      * @param context the context
      * @throws IOException
      */
-    protected void setDirectoryPlaceholder(final GenericApplicationContext context, final String svnDir) throws IOException {
+    protected void setDirectoryPlaceholder(final GenericApplicationContext context) throws IOException {
         final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
         placeholderConfig.setPlaceholderPrefix("%{");
         placeholderConfig.setPlaceholderSuffix("}");
@@ -131,9 +131,6 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         final MockPropertySource mockEnvVars = new MockPropertySource();
         mockEnvVars.setProperty("DIR", workspaceDirName);
         mockEnvVars.setProperty("TMPDIR", tempDirName);
-        if (null != svnDir) {
-            mockEnvVars.setProperty("SVNDIR", svnDir);            
-        }
 
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
         placeholderConfig.setPropertySources(propertySources);
@@ -142,7 +139,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
     }
     
-    protected ApplicationContext getApplicationContext2(final String contextName, final PropertySource propSource, final String svnDir, final String... files) throws IOException {
+    protected ApplicationContext getApplicationContext(final String contextName, final PropertySource propSource, final String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -156,7 +153,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
             context.getEnvironment().getPropertySources().addFirst(propSource);
         }
         
-        setDirectoryPlaceholder(context, svnDir);
+        setDirectoryPlaceholder(context);
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + contextName);
@@ -177,17 +174,12 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         
         return context;
     }
-    
-    protected ApplicationContext getApplicationContext2(final String contextName, final String svnDir, final String... files) throws IOException {
-        return getApplicationContext2(contextName, null, svnDir, files);
-    }
-    
     protected ApplicationContext getApplicationContext(final String contextName, final String... files) throws IOException {
-        return getApplicationContext2(contextName, null, files);
+        return getApplicationContext(contextName, null, files);
     }
 
-    protected <T> T getBean2(final Class<T> claz, final PropertySource propSource, final String svnDir, final String... files) throws IOException {
-        final ApplicationContext context = getApplicationContext2(claz.getCanonicalName(), propSource, svnDir, files);
+    protected <T> T getBean(final Class<T> claz, final PropertySource propSource, final String... files) throws IOException {
+        final ApplicationContext context = getApplicationContext(claz.getCanonicalName(), propSource, files);
 
         if (context.containsBean("shibboleth.ParserPool")) {
             parserPool = context.getBean("shibboleth.ParserPool");
@@ -205,18 +197,10 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         return claz.cast(rpProvider.getEmbeddedResolver());
     }
     
-    protected <T> T getBean2(final Class<T> claz, final String svnDir, final String... files) throws IOException {
-        return getBean2(claz, null, svnDir, files);
-    }
-    
-    protected <T> T getBean(final Class<T> claz, final PropertySource propSource, final String... files) throws IOException {
-        return getBean2(claz, propSource, null, files);
-    }
-    
     protected <T> T getBean(final Class<T> claz, final String... files) throws IOException {
-        return getBean2(claz, null, null, files);
+        return getBean(claz, null, files);
     }
-    
+        
     protected MockPropertySource singletonPropertySource(final String name, final String value) {
         MockPropertySource propSource = new MockPropertySource("localProperties");
         propSource.setProperty(name, value);
