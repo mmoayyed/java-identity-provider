@@ -30,7 +30,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test parsing Basic File System & Resource Credentials
+ * test parsing Basic File System and Resource Credentials
  */
 public class BasicResourceParserTest extends AbstractSecurityParserTest {
 
