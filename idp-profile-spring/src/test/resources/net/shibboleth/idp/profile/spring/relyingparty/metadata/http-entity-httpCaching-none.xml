@@ -5,10 +5,9 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="HTTPEntity" 
-    xsi:type="metadata:HTTPMetadataProvider" 
-    httpCaching="memory"
-    httpMaxCacheEntries="100"
-    httpMaxCacheEntrySize="104857600"
+    xsi:type="metadata:FileBackedHTTPMetadataProvider"
+    backingFile="%{DIR}/spoolhttpentitycaching none.xml"
+    httpCaching="none"
     metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>

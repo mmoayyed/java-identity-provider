@@ -4,13 +4,11 @@
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
-	id="HTTPEntity" 
-    xsi:type="metadata:HTTPMetadataProvider" 
-    httpCaching="file"
-    httpCacheDirectory="#{systemProperties['java.io.tmpdir']}/httpProviderCacheTest"
-    httpMaxCacheEntries="100"
-    httpMaxCacheEntrySize="104857600"
-    metadataURL="%{metadataURL}"> 
+    parserPoolRef="myParserPool"  requestTimeout="PT40M" basicAuthPassword="pass" basicAuthUser="user" disregardTLSCertificate="true" 
+    	id="HTTPEntities" xsi:type="metadata:FileBackedHTTPMetadataProvider"
+        backingFile="%{DIR}/spoolhttpentitiesClient.xml"
+    	httpClientRef="apacheClient"
+    	metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>
                                    

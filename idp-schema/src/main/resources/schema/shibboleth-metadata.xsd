@@ -120,7 +120,23 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="shibmd:HTTPMetadataProvider">
+            <extension base="shibmd:ReloadingMetadataProviderType">
+                <sequence>
+                    <element name="TLSTrustEngine"  minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                                This element conflicts with and overriddes the tlsTrustEngineRef attribute.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element ref="security:TrustEngine" minOccurs="1" maxOccurs="1" />
+                            </sequence>
+                        </complexType>
+                    </element>
+                </sequence>
                 <attribute name="backingFile" type="string" use="required">
                     <annotation>
                         <documentation>
@@ -142,32 +158,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="HTTPMetadataProvider">
-        <annotation>
-            <documentation>A metadata provider that periodically pulls metadata from a given URL.</documentation>
-        </annotation>
-        <complexContent>
-            <extension base="shibmd:ReloadingMetadataProviderType">
-                <sequence>
-                    <element name="TLSTrustEngine"  minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                TrustEngine used to evaluate HTTPS server TLS certificates.
-                            
-                                This element conflicts with and overriddes the tlsTrustEngineRef attribute.
-                            </documentation>
-                        </annotation>
-                        <complexType>
-                            <sequence>
-                                <element ref="security:TrustEngine" minOccurs="1" maxOccurs="1" />
-                            </sequence>
-                        </complexType>
-                    </element>
-                </sequence>
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>

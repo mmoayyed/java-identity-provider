@@ -151,7 +151,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
             DeprecationSupport.warn(ObjectType.ELEMENT, ResourceNamespaceHandler.HTTP_ELEMENT_NAME.toString(),
                     parserContext.getReaderContext().getResource().getDescription(),
-                    HTTPMetadataProviderParser.ELEMENT_NAME.toString());
+                    FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.toString());
             parseHTTPResource(resources.get(0), parserContext, builder);
 
         } else if (ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.equals(qName)) {

@@ -5,7 +5,9 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
     proxyHost="localhost" proxyUser="user" proxyPassword="pass" proxyPort="123"
-	id="HTTPProxy" xsi:type="metadata:HTTPMetadataProvider" metadataURL="%{metadataURL}"> 
+	id="HTTPProxy" xsi:type="metadata:FileBackedHTTPMetadataProvider"
+    backingFile="%{DIR}/spoolhttpproxy.xml" 
+    metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>
                                    

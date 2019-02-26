@@ -17,10 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
-import java.util.Iterator;
-
 import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
@@ -37,30 +34,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     private static final String ENTITY_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml";
     
     private static final String ENTITIES_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entities.xml";
-    
-    @Test public void entity() throws Exception {
-        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
-                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
-
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "HTTPEntity.xml", "beans.xml");
         
-        Assert.assertEquals(resolver.getId(), "HTTPEntity");
-        
-   
-        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
-        Assert.assertTrue(resolver.isFailFastInitialization());
-        Assert.assertTrue(resolver.isRequireValidMetadata());
-        
-        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
-        Assert.assertFalse(entities.hasNext());
-
-        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
-        Assert.assertEquals(resolver.getExpirationWarningThreshold(), 1000*60*60*12);
-        Assert.assertSame(resolver.getParserPool(), parserPool);
-        
-        Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
-    }
-    
     @Test(enabled=false) public void httpsNoTrustEngine() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPSResourceURL(REPO_IDP, ENTITY_XML));
@@ -139,24 +113,11 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         getBean(HTTPMetadataResolver.class, propSource, "HTTPProxy.xml", "beans.xml");
     }
 
-    @Test public void entities() throws Exception {
-        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
-                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITIES_XML, false));
-
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "HTTPEntities.xml", "beans.xml");
-        
-        Assert.assertEquals(resolver.getId(), "HTTPEntities");
-        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
-        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
-        Assert.assertNotSame(resolver.getParserPool(), parserPool);
-        
-    }
-    
     @Test public void httpClient() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITIES_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "HTTPEntitiesClient.xml", "beans.xml", "httpClient.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entities-client.xml", "beans.xml", "httpClient.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntities");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
@@ -169,7 +130,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "HTTPEntity-httpCaching-none.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-none.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
@@ -180,7 +141,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "HTTPEntity-httpCaching-memory.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-memory.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
@@ -193,7 +154,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "HTTPEntity-httpCaching-file.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-file.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));

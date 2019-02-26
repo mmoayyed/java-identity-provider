@@ -19,17 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
-import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -40,14 +30,14 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /**
  * Parser for a FilesystemMetadataProvider.
  */
-public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
-
-    /** Element name. */
-    @Nonnull public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
-            "HTTPMetadataProvider");
+public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Default caching type. */
     @Nonnull @NotEmpty private static final String DEFAULT_CACHING = "none";
@@ -55,21 +45,10 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
 
-    /** {@inheritDoc} */
-    @Override protected Class<? extends HTTPMetadataResolver> getNativeBeanClass(final Element element) {
-        return HTTPMetadataResolver.class;
-    }
-
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
-        
-        if (ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element))) {
-            DeprecationSupport.warn(ObjectType.XSITYPE, ELEMENT_NAME.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.toString());
-        } 
         
         super.doNativeParse(element, parserContext, builder);
 

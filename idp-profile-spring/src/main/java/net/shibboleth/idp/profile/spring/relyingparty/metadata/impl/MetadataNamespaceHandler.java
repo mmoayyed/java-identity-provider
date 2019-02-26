@@ -61,10 +61,6 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(LocalDynamicMetadataProviderParser.ELEMENT_NAME,
                 new LocalDynamicMetadataProviderParser());
 
-        // TODO: deprecated, remove in 4.0
-        registerBeanDefinitionParser(HTTPMetadataProviderParser.ELEMENT_NAME, new HTTPMetadataProviderParser());
-        
-
         // Resources
         registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());
 
