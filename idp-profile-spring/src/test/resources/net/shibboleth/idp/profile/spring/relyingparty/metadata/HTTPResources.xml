@@ -31,13 +31,8 @@
         p:maxCacheEntries="3000"
         p:cacheDirectory-ref="theDir"/>
         
-    <bean id="theParent" class="org.springframework.core.io.FileSystemResource" c:file-ref="theDir"/>
-
-    <bean id="thefile" factory-bean="theParent" factory-method="createRelative" c:relativePath="wibble"/>
-        
     <bean id="fileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
         c:client-ref="fileClient" c:url="%{resourceURL}"
-        c:resource-ref="thefile"/>
-
+        c:backingFile="#{getObject('theDir').getPath()}/fileResource.xml"/>
 
 </beans>
