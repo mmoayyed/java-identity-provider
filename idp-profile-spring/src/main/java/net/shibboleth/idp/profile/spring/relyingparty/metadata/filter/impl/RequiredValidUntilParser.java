@@ -20,15 +20,16 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
+import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Parser for a &lt;RequiredValidUntil&gt; filter.
@@ -45,18 +46,18 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
         // IDP-693 maxValidityInterval is a duration or a value in seconds - so we need a factory
-        return RequiredValidUntilFactoryBean.class;
+        return RequiredValidUntilFilter.class;
     }
 
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
-        if (element.hasAttributeNS(null, "maxValidityInterval")) {
-            builder.addPropertyValue("maxValidityInterval",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidityInterval")));
-        } else {
-            log.warn("Metadata filter " + TYPE_NAME.getLocalPart() + " without maxValidityInterval is a no-op.");
+
+        String maxValidity=StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidityInterval"));
+        if (null == maxValidity) {
+            maxValidity = "P14D";
         }
+        builder.addPropertyValue("maxValidityInterval",maxValidity);
     }
 
     /** {@inheritDoc} */

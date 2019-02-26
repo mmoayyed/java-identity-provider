@@ -35,7 +35,7 @@ public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntil.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
-        Assert.assertEquals(filter.getMaxValidityInterval(), 0);
+        Assert.assertEquals(filter.getMaxValidityInterval(), 14*3600*24*1000);
     }
     
     @Test public void param() throws IOException {
@@ -49,6 +49,6 @@ public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntilParamNonDuration.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
-        Assert.assertEquals(filter.getMaxValidityInterval(), 2*1000);
+        Assert.assertEquals(filter.getMaxValidityInterval(), 2);
     }
 }

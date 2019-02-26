@@ -1011,12 +1011,10 @@
                 <attribute name="maxValidityInterval" type="string">
                     <annotation>
                         <documentation>
-                            This is deprecated in V3.4
-                        
                             The maximum amount of time, from now, which the validUntil attribute may be set.
                             This provides an upper limit to the lifetime of any metadata.
 
-                            Interval is expressed in  ISO8601 duration notation (but had previously ben specified as seconds)
+                            Interval is expressed in  ISO8601 duration notation. Default is P14D (14 days)
                         </documentation>
                     </annotation>
                 </attribute>
