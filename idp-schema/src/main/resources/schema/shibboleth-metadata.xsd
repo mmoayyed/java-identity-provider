@@ -167,11 +167,6 @@
                         <documentation>The URL from which to retrieve the metadata.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="disregardSslCertificate" type="string">
-                    <annotation>
-                        <documentation>This is deprecated, use disregardTLSCertificate instead.</documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="disregardTLSCertificate" type="string">
                     <annotation>
                         <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
@@ -491,7 +486,7 @@
                             org.apache.http.client.HttpClient object.
                             
                             This attribute conflicts with and overrides the other HttpClient-related properties: 
-                            disregardSslCertificate, disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
+                            disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
                        </documentation>
                     </annotation>
                 </attribute>
@@ -509,11 +504,6 @@
                             MIME types which are supported by this provider when requesting metadata from the
                             HTTP server. The HTTP response Content-Type will also be validated against this list.
                         </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="disregardSslCertificate" type="string">
-                    <annotation>
-                        <documentation>This is deprecated, use disregardTLSCertificate instead.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="disregardTLSCertificate" type="string">

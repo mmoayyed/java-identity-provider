@@ -94,11 +94,6 @@ public final class HTTPMetadataProvidersParserSupport {
         if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
             tlsSocketFactoryBuilder.addPropertyValue("connectionDisregardTLSCertificate",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "disregardTLSCertificate")));
-        } else if (element.hasAttributeNS(null, "disregardSslCertificate")) {
-            DeprecationSupport.warn(ObjectType.ATTRIBUTE, "disregardSslCertificate",
-                    parserContext.getReaderContext().getResource().getDescription(), "disregardTLSCertificate");
-            tlsSocketFactoryBuilder.addPropertyValue("connectionDisregardTLSCertificate",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardSslCertificate")));
         }
 
         if (httpClientSecurityParametersRef != null) {

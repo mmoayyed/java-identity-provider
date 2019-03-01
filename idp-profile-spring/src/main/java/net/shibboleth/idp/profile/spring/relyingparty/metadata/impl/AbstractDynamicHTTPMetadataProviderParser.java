@@ -90,13 +90,12 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                     || element.hasAttributeNS(null, "socketTimeout")
                     || element.hasAttributeNS(null, "maxConnectionsTotal")
                     || element.hasAttributeNS(null, "maxConnectionsPerRoute")
-                    || element.hasAttributeNS(null, "disregardSslCertificate")
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
                 log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, "
                     + "connectionRequestTimeout, socketTimeout, maxConnectionsTotal, maxConnectionsPerRoute, "
-                    + "disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, "
+                    + "disregardTLSCertificate, proxyHost, proxyPort, "
                     + "proxyUser and proxyPassword");
             }
         } else {
