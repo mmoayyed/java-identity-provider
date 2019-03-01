@@ -3,9 +3,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Collections" %>
-<%@ page import="org.joda.time.DateTime" %>
-<%@ page import="org.joda.time.format.DateTimeFormatter" %>
-<%@ page import="org.joda.time.format.ISODateTimeFormat" %>
+<%@ page import="java.time.Instant" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.ChainingMetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.MetadataResolver" %>
@@ -21,9 +20,9 @@
 <%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
 <%
 final RequestContext requestContext = (RequestContext) request.getAttribute("flowRequestContext");
-final DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
-final DateTime now = DateTime.now();
-final DateTime startupTime = new DateTime(requestContext.getActiveFlow().getApplicationContext().getStartupDate());
+final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
+final Instant now = Instant.now();
+final Instant startupTime = Instant.ofEpochMilli(requestContext.getActiveFlow().getApplicationContext().getStartupDate());
 %>### Operating Environment Information
 operating_system: <%= System.getProperty("os.name") %>
 operating_system_version: <%= System.getProperty("os.version") %>
@@ -35,22 +34,22 @@ maximum_memory: <%= Runtime.getRuntime().maxMemory() / 1048576 %> MB
 
 ### Identity Provider Information
 idp_version: <%= Version.getVersion() %>
-start_time: <%= startupTime.toString(dateTimeFormatter) %>
-current_time: <%= now.toString(dateTimeFormatter) %>
-uptime: <%= now.getMillis() - startupTime.getMillis() %> ms
+start_time: <%= dateTimeFormatter.format(startupTime) %>
+current_time: <%= dateTimeFormatter.format(now) %>
+uptime: <%= now.toEpochMilli() - startupTime.toEpochMilli() %> ms
 
 <%
 for (final ReloadableService service : (Collection<ReloadableService>) request.getAttribute("services")) {
-    final DateTime successfulReload = service.getLastSuccessfulReloadInstant();
-    final DateTime lastReload = service.getLastReloadAttemptInstant();
+    final Instant successfulReload = service.getLastSuccessfulReloadInstant();
+    final Instant lastReload = service.getLastReloadAttemptInstant();
     final Throwable cause = service.getReloadFailureCause();
 
     out.println("service: " + ((IdentifiedComponent) service).getId());
     if (successfulReload != null) {
-        out.println("last successful reload attempt: " + successfulReload.toString(dateTimeFormatter));
+        out.println("last successful reload attempt: " + dateTimeFormatter.format(successfulReload));
     }
     if (lastReload != null) {
-        out.println("last reload attempt: " + lastReload.toString(dateTimeFormatter));
+        out.println("last reload attempt: " + dateTimeFormatter.format(lastReload));
     }
     if (cause != null) {
         out.println("last failure cause: " + cause.getClass().getName() + ": " + cause.getMessage());
@@ -82,30 +81,30 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
                 }
                 
                 for (final RefreshableMetadataResolver resolver : resolvers) {
-                    final DateTime lastRefresh = resolver.getLastRefresh();
-                    final DateTime lastUpdate = resolver.getLastUpdate();
+                    final Instant lastRefresh = resolver.getLastRefresh();
+                    final Instant lastUpdate = resolver.getLastUpdate();
 
-                    DateTime lastSuccessfulRefresh = null;
+                    Instant lastSuccessfulRefresh = null;
                     if (resolver instanceof ExtendedRefreshableMetadataResolver) {
                         lastSuccessfulRefresh = ((ExtendedRefreshableMetadataResolver)resolver).getLastSuccessfulRefresh();
                     }
-                    DateTime rootValidUntil = null;
+                    Instant rootValidUntil = null;
                     if (resolver instanceof ExtendedBatchMetadataResolver) {
                         rootValidUntil = ((ExtendedBatchMetadataResolver)resolver).getRootValidUntil();
                     }
     
                     out.println("\tmetadata source: " + resolver.getId());
                     if (lastRefresh != null) {
-                        out.println("\tlast refresh attempt: " + lastRefresh.toString(dateTimeFormatter));
+                        out.println("\tlast refresh attempt: " + dateTimeFormatter.format(lastRefresh));
                     }
                     if (lastSuccessfulRefresh != null) {
-                        out.println("\tlast successful refresh: " + lastSuccessfulRefresh.toString(dateTimeFormatter));
+                        out.println("\tlast successful refresh: " + dateTimeFormatter.format(lastSuccessfulRefresh));
                     }
                     if (lastUpdate != null) {
-                        out.println("\tlast update: " + lastUpdate.toString(dateTimeFormatter));
+                        out.println("\tlast update: " + dateTimeFormatter.format(lastUpdate));
                     }
                     if (rootValidUntil != null) {
-                        out.println("\troot validUntil: " + rootValidUntil.toString(dateTimeFormatter));
+                        out.println("\troot validUntil: " + dateTimeFormatter.format(rootValidUntil));
                     }
                     out.println();
                 }
@@ -119,10 +118,9 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
             try {
                 AttributeResolver resolver = component.getComponent();
                 for (final DataConnector connector: resolver.getDataConnectors().values()) {
-                    final long lastFail = connector.getLastFail();
-                    if (0 != lastFail) {
-                        DateTime failDateTime = new DateTime(lastFail);
-                        out.println("\tDataConnector " +  connector.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
+                    final Instant lastFail = connector.getLastFail();
+                    if (null != lastFail) {
+                        out.println("\tDataConnector " +  connector.getId() + ": last failed at " + dateTimeFormatter.format(lastFail));
                     } else {
                         out.println("\tDataConnector " +  connector.getId() + ": has never failed");
                     }
