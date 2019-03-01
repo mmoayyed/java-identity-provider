@@ -18,13 +18,9 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +34,6 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
