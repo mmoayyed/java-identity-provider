@@ -261,13 +261,6 @@ public final class HTTPMetadataProvidersParserSupport {
 
         clientBuilder.setLazyInit(true);
 
-        //Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
-        if (element.hasAttributeNS(null, "requestTimeout")) {
-            DeprecationSupport.warn(ObjectType.ATTRIBUTE, "requestTimeout",
-                    parserContext.getReaderContext().getResource().getDescription(), "connectionTimeout");
-            clientBuilder.addPropertyValue("connectionTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "requestTimeout")));
-        }
         if (element.hasAttributeNS(null, "connectionTimeout")) {
             clientBuilder.addPropertyValue("connectionTimeout",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "connectionTimeout")));

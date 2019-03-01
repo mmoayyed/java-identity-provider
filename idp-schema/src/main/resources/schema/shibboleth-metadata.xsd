@@ -172,15 +172,6 @@
                         <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="requestTimeout" type="string">
-                    <annotation>
-                        <documentation>
-                            DEPRECATED: Use connectionTimeout.
-                            The maximum length of time to wait for the remote server to response.
-                            Timeout is expressed in ISO8601 duration notation.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="connectionTimeout" type="string">
                     <annotation>
                         <documentation>
@@ -476,7 +467,7 @@
                             org.apache.http.client.HttpClient object.
                             
                             This attribute conflicts with and overrides the other HttpClient-related properties: 
-                            disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
+                            disregardTLSCertificate, proxyHost, proxyPort, proxyUser, proxyPassword.
                        </documentation>
                     </annotation>
                 </attribute>
@@ -499,15 +490,6 @@
                 <attribute name="disregardTLSCertificate" type="string">
                     <annotation>
                         <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="requestTimeout" type="string">
-                    <annotation>
-                        <documentation>
-                            DEPRECATED: Use connectionTimeout.
-                            The maximum length of time to wait for the remote server to response.
-                            Timeout is expressed in ISO8601 duration notation.
-                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="connectionTimeout" type="string">

@@ -84,8 +84,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));
-            if (element.hasAttributeNS(null, "requestTimeout")
-                    || element.hasAttributeNS(null, "connectionTimeout")
+            if (element.hasAttributeNS(null, "connectionTimeout")
                     || element.hasAttributeNS(null, "connectionRequestTimeout")
                     || element.hasAttributeNS(null, "socketTimeout")
                     || element.hasAttributeNS(null, "maxConnectionsTotal")
@@ -93,7 +92,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, "
+                log.warn("httpClientRef overrides settings for connectionTimeout, "
                     + "connectionRequestTimeout, socketTimeout, maxConnectionsTotal, maxConnectionsPerRoute, "
                     + "disregardTLSCertificate, proxyHost, proxyPort, "
                     + "proxyUser and proxyPassword");
@@ -140,8 +139,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                         httpClientSecurityParametersRef, httpClientSecurityParameters);
 
         // Set up non standard defaults
-        // Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
-        if (!element.hasAttributeNS(null, "requestTimeout") && !element.hasAttributeNS(null, "connectionTimeout")) {
+        if (!element.hasAttributeNS(null, "connectionTimeout")) {
             clientBuilder.addPropertyValue("connectionTimeout", DEFAULT_CONNECTION_TIMEOUT);
         }
 

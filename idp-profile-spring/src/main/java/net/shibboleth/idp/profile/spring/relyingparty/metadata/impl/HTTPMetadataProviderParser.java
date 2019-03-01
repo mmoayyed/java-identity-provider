@@ -69,14 +69,13 @@ public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetada
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));
-            if (element.hasAttributeNS(null, "requestTimeout")
-                    || element.hasAttributeNS(null, "connectionTimeout")
+            if (element.hasAttributeNS(null, "connectionTimeout")
                     || element.hasAttributeNS(null, "connectionRequestTimeout")
                     || element.hasAttributeNS(null, "socketTimeout")
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, " 
+                log.warn("httpClientRef overrides settings for connectionTimeout, " 
                     + "connectionRequestTimeout, socketTimeout, disregardTLSCertificate, "
                     + " proxyHost, proxyPort, proxyUser and proxyPassword");
             }
