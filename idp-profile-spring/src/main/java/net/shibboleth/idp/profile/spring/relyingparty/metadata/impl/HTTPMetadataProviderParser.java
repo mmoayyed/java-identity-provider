@@ -59,13 +59,6 @@ public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetada
                     parserContext.getReaderContext().getResource())));
         }
 
-        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
-            log.error("{}: maintainExpiredMetadata is not supported", parserContext.getReaderContext().getResource()
-                    .getDescription());
-            throw new BeanDefinitionParsingException(new Problem("maintainExpiredMetadata is not supported",
-                    new Location(parserContext.getReaderContext().getResource())));
-        }
-
         final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
         final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element,
                 HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);

@@ -172,11 +172,6 @@
                         <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="string">
-                    <annotation>
-                        <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="cacheDuration" type="string">
                     <annotation>
                         <documentation> This is deprecated, use maxRefreshDelay instead.</documentation>
