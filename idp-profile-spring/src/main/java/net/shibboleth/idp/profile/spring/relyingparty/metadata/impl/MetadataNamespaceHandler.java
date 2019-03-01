@@ -31,7 +31,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.Predi
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.RequiredValidUntilParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SchemaValidationParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationParser;
-import net.shibboleth.idp.profile.spring.resource.impl.ClasspathResourceParser;
 
 /** Namespace handler for <code>urn:mace:shibboleth:2.0:metadata</code>. */
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -60,9 +59,6 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
                 new DynamicHTTPMetadataProviderParser());
         registerBeanDefinitionParser(LocalDynamicMetadataProviderParser.ELEMENT_NAME,
                 new LocalDynamicMetadataProviderParser());
-
-        // Resources
-        registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());
 
         // Filters
         registerBeanDefinitionParser(RequiredValidUntilParser.TYPE_NAME, new RequiredValidUntilParser());

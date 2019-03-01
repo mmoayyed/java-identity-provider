@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
-    xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:res="urn:mace:shibboleth:2.0:resource" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" elementFormDefault="qualified">
 
     <annotation>
@@ -11,8 +11,6 @@
         schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd"/>
     <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
         schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"/>
-    <import namespace="urn:mace:shibboleth:2.0:resource"
-        schemaLocation="http://shibboleth.net/schema/idp/shibboleth-resource.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security"
         schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
@@ -52,18 +50,6 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:ReloadingMetadataProviderType">
-                <sequence>
-                    <element name="MetadataResource" type="res:ResourceType" minOccurs="0">
-                        <annotation>
-                            <documentation>The resource from which metadata will be read.</documentation>
-                        </annotation>
-                    </element>
-                </sequence>
-                <attribute name="maxCacheDuration" type="string">
-                    <annotation>
-                        <documentation>This property is deprecated, use maxRefreshDelay instead.</documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="resourceRef" type="string">
                     <annotation>
                         <documentation>the name of a bean with the (Spring) resource to use</documentation>
