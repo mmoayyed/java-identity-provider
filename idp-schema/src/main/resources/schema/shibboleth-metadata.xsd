@@ -1016,16 +1016,6 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
-                <sequence>
-                    <element name="ExtensionSchema" type="string" minOccurs="0" maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                Classpath location of schema files that will be used, in addition to those included in
-                                OpenSAML, to validate an incoming metadata file.
-                            </documentation>
-                        </annotation>
-                    </element>
-                </sequence>
                 <attribute name="schemaBuilderRef" type="string">
                     <annotation>
                         <documentation>
