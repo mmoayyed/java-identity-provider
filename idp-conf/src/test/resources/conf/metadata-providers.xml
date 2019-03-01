@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file is an EXAMPLE metadata configuration file. -->
 <MetadataProvider id="ShibbolethMetadata" xsi:type="ChainingMetadataProvider"
-	xmlns="urn:mace:shibboleth:2.0:metadata" xmlns:resource="urn:mace:shibboleth:2.0:resource"
-	xmlns:security="urn:mace:shibboleth:2.0:security"
-	xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
-    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
-                        urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
+    xmlns="urn:mace:shibboleth:2.0:metadata" xmlns:security="urn:mace:shibboleth:2.0:security"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
                         urn:oasis:names:tc:SAML:2.0:assertion http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
@@ -20,7 +16,7 @@
 
 	<!-- Example metadata provider. -->
 
-    <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes">
+    <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="exampleMetadata">
         <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="false"> <!-- TODO -->
             <PublicKey>
                 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
@@ -49,11 +45,8 @@
             </saml:Attribute>
             <Entity>https://sp.example.org</Entity>
         </MetadataFilter>
-        <MetadataResource xsi:type="resource:ClasspathResource" file="/metadata/example-metadata.xml" />
     </MetadataProvider>
 
-    <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes">
-        <MetadataResource xsi:type="resource:ClasspathResource" file="/metadata/example-sp123-metadata.xml" />
-    </MetadataProvider>
+    <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="exampleMetadata"/>
 
 </MetadataProvider>

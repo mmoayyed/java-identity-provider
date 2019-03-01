@@ -58,5 +58,13 @@
 	<jdbc:embedded-database id="testbed.PairwiseIdDataSource" generate-name="true">
 	    <jdbc:script location="classpath:/META-INF/net/shibboleth/idp/StoredIdStore.sql"/>
 	</jdbc:embedded-database>
+    
+    <bean id="exampleMetadata" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="/metadata/example-metadata.xml"/>
+    </bean>
+          
+    <bean id="exampleMetadata-sp123" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="/metadata/example-sp123-metadata.xml"/>
+    </bean>
       
 </beans>
