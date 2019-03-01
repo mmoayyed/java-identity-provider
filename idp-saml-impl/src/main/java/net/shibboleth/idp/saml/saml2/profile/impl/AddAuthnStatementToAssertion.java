@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -42,7 +43,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -189,7 +189,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
                 bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
 
         final AuthnStatement statement = statementBuilder.buildObject();
-        statement.setAuthnInstant(new DateTime(getAuthenticationResult().getAuthenticationInstant()));
+        statement.setAuthnInstant(getAuthenticationResult().getAuthenticationInstant());
         
         final AuthnContext authnContext = authnContextBuilder.buildObject();
         statement.setAuthnContext(authnContext);
@@ -232,7 +232,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         if (sessionLifetimeLookupStrategy != null) {
             final Long lifetime = sessionLifetimeLookupStrategy.apply(profileRequestContext);
             if (lifetime != null && lifetime > 0) {
-                statement.setSessionNotOnOrAfter(new DateTime().plus(lifetime));
+                statement.setSessionNotOnOrAfter(Instant.now().plusMillis(lifetime));
             }
         }
         

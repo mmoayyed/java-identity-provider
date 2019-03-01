@@ -19,6 +19,7 @@ package net.shibboleth.idp.log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -126,11 +126,11 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
     /** {@inheritDoc} */
     @Override protected synchronized boolean shouldReload() {
         try {
-            final DateTime lastReload = getLastSuccessfulReloadInstant();
+            final Instant lastReload = getLastSuccessfulReloadInstant();
             if (null == lastReload) {
                 return true;
             }
-            return configurationResource.lastModified() > lastReload.getMillis();
+            return configurationResource.lastModified() > lastReload.toEpochMilli();
         } catch (final IOException e) {
             statusManager.add(new ErrorStatus(
                     "Error checking last modified time of logging service configuration resource "

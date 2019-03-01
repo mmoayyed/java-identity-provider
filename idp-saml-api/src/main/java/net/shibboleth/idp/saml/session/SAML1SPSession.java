@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.saml.session;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.session.BasicSPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 /**
  * Marker subtype for a SAML 1 session, adds no actual information other than its identity as
@@ -37,8 +37,8 @@ public class SAML1SPSession extends BasicSPSession {
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
-    public SAML1SPSession(@Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
-            @Duration @Positive final long expiration) {
+    public SAML1SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
+            @Nonnull final Instant expiration) {
         super(id, creation, expiration);
     }
 

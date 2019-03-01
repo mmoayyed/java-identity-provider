@@ -258,9 +258,10 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
                 "AuthenticationResult was not produced by this flow");
 
         final long now = System.currentTimeMillis();
-        if (getLifetime() > 0 && result.getAuthenticationInstant() + getLifetime() <= now) {
+        if (getLifetime() > 0 && result.getAuthenticationInstant().plusMillis(getLifetime()).toEpochMilli() <= now) {
             return false;
-        } else if (getInactivityTimeout() > 0 && result.getLastActivityInstant() + getInactivityTimeout() <= now) {
+        } else if (getInactivityTimeout() > 0
+                && result.getLastActivityInstant().plusMillis(getInactivityTimeout()).toEpochMilli() <= now) {
             return false;
         }
 

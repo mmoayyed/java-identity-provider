@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.time.Instant;
 import java.util.Arrays;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
@@ -171,7 +172,8 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         sessionCtx.getIdPSession().addAuthenticationResult(ac.getAuthenticationResult());
         
-        long ts = System.currentTimeMillis() + 5 * 60 * 1000;
+        // Limit granularity to milliseconds for storage roundtrip.
+        final Instant ts = Instant.ofEpochMilli(System.currentTimeMillis()).plusSeconds(300);
         ac.getAuthenticationResult().setLastActivityInstant(ts);
         
         final Event event = action.execute(src);

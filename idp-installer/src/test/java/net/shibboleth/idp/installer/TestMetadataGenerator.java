@@ -23,12 +23,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.List;
 
 import net.shibboleth.idp.installer.ant.impl.MetadataGeneratorTask;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -64,9 +64,9 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
 
             final EntityDescriptor entity = (EntityDescriptor) unmarshallElement(out.getAbsolutePath());
             
-            final DateTime validUntil = entity.getValidUntil();
-            Assert.assertTrue(validUntil.isBefore(1000 + System.currentTimeMillis()));
-            Assert.assertTrue(validUntil.isAfter(System.currentTimeMillis()-1000));
+            final Instant validUntil = entity.getValidUntil();
+            Assert.assertTrue(validUntil.isBefore(Instant.now().plusSeconds(1)));
+            Assert.assertTrue(validUntil.isAfter(Instant.now().minusSeconds(1)));
             
             
             final IDPSSODescriptor idpsso = entity.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);

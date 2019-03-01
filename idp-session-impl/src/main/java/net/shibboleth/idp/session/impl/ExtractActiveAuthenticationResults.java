@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -110,7 +111,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
         }
         
         final long maxAge = authenticationContext.getMaxAge();
-        final long now = System.currentTimeMillis();
+        final Instant now = Instant.now();
         
         final List<AuthenticationResult> actives = new ArrayList<>();
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
@@ -123,8 +124,8 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
             }
             
             if (descriptor.isResultActive(result)) {
-                if (maxAge > 0 && result.getAuthenticationInstant() + maxAge < now) {
-                    log.debug("{} Authentication result {} exceeds maxAge setting, skiping it", getLogPrefix(),
+                if (maxAge > 0 && result.getAuthenticationInstant().plusMillis(maxAge).isBefore(now)) {
+                    log.debug("{} Authentication result {} exceeds maxAge setting, skipping it", getLogPrefix(),
                             result.getAuthenticationFlowId());
                     continue;
                 }

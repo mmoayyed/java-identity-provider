@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.session.impl;
 
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -29,8 +30,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -232,7 +231,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
         final LogoutRequest object = requestBuilder.buildObject();
         
         object.setID(idGenerator.generateIdentifier());
-        object.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
+        object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);
 
         try {

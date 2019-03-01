@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -32,7 +32,7 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the first authentication timestamp from an assertions in a response. */
-public class AuthnInstantAuditExtractor implements Function<ProfileRequestContext,DateTime> {
+public class AuthnInstantAuditExtractor implements Function<ProfileRequestContext,Instant> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -48,7 +48,7 @@ public class AuthnInstantAuditExtractor implements Function<ProfileRequestContex
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Nullable public DateTime apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Instant apply(@Nullable final ProfileRequestContext input) {
         SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             

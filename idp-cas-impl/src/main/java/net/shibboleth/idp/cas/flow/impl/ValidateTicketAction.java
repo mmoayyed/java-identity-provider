@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
@@ -105,7 +107,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             return ProtocolError.TicketRetrievalError.event(this);
         }
 
-        if (ticket == null || ticket.getExpirationInstant().isBeforeNow()) {
+        if (ticket == null || ticket.getExpirationInstant().isBefore(Instant.now())) {
             return ProtocolError.TicketExpired.event(this);
         }
 

@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.testng.annotations.Test;
 import com.google.common.cache.Cache;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -170,7 +172,7 @@ public class RDBMSDataConnectorParserTest {
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter())));
+                new StringToResourceConverter(), new StringToDurationConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
@@ -193,7 +195,7 @@ public class RDBMSDataConnectorParserTest {
 
         final String id = dataConnector.getId();
         Assert.assertEquals("myDatabase", id);
-        Assert.assertEquals(300000, dataConnector.getNoRetryDelay());
+        Assert.assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
 
         final BasicDataSource dataSource = (BasicDataSource) dataConnector.getDataSource();
         Assert.assertNotNull(dataSource);

@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.saml.attribute.mapping.impl;
 
+import java.time.Instant;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
     @Nullable private SAML2AttributesMapper attributesMapper;
 
     /** Date when the cache was last refreshed. */
-    @Nullable private DateTime lastReload;
+    @Nullable private Instant lastReload;
 
     /**
      * Constructor.
@@ -104,7 +104,7 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
         SAML2AttributesMapper am = null;
         try {
             // Get date before we get the component. That way we'll not leak changes.
-            final DateTime when = attributeResolverService.getLastSuccessfulReloadInstant();
+            final Instant when = attributeResolverService.getLastSuccessfulReloadInstant();
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
                 if (!captiveServiceReloadFailed) {

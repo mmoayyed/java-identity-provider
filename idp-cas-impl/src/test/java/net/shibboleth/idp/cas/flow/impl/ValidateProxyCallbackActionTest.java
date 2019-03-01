@@ -19,6 +19,7 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import java.net.URI;
 import java.security.cert.CertificateException;
+import java.time.Instant;
 
 import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
@@ -27,7 +28,6 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;

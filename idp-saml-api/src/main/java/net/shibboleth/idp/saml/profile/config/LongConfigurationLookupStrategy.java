@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.time.Instant;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBoolean;
@@ -78,8 +78,8 @@ public class LongConfigurationLookupStrategy extends AbstractMetadataDrivenConfi
             final Integer value = ((XSInteger) object).getValue(); 
             return value != null ? value.longValue() : null;
         } else if (object instanceof XSDateTime) {
-            final DateTime dt = ((XSDateTime) object).getValue();
-            return dt != null ? dt.getMillis() : null;
+            final Instant dt = ((XSDateTime) object).getValue();
+            return dt != null ? dt.toEpochMilli() : null;
         } else if (object instanceof XSAny) {
             final XSAny wc = (XSAny) object;
             if (wc.getUnknownAttributes().isEmpty() && wc.getUnknownXMLObjects().isEmpty()) {

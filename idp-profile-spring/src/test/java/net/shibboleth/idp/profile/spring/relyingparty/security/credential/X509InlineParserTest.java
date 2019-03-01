@@ -18,10 +18,10 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
 import java.io.IOException;
+import java.time.Instant;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.AbstractSecurityParserTest;
 
-import org.joda.time.DateTime;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.beans.factory.BeanCreationException;
@@ -40,7 +40,7 @@ public class X509InlineParserTest extends AbstractSecurityParserTest {
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 1);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));
 
-        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), DateTime.parse("2024-04-08T13:39:18Z").getMillis());
+        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
     }
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void wrongCert() throws IOException {
@@ -51,11 +51,11 @@ public class X509InlineParserTest extends AbstractSecurityParserTest {
         final BasicX509Credential credential =
                 (BasicX509Credential) getBean(Credential.class, true, "credential/inlineKeyCertCrl.xml");
 
-        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), DateTime.parse("2024-04-08T13:39:18Z").getMillis());
+        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 3);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));
         Assert.assertEquals(credential.getCRLs().size(), 1);
-        Assert.assertEquals(credential.getCRLs().iterator().next().getNextUpdate().getTime(), DateTime.parse("2007-09-02T14:14:48Z").getMillis());
+        Assert.assertEquals(credential.getCRLs().iterator().next().getNextUpdate().getTime(), Instant.parse("2007-09-02T14:14:48Z").toEpochMilli());
     }
     
 }

@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import javax.annotation.Nonnull;
+import java.time.Instant;
 
-import org.joda.time.Instant;
+import javax.annotation.Nonnull;
 
 /**
  * Extended CAS ticket management service.

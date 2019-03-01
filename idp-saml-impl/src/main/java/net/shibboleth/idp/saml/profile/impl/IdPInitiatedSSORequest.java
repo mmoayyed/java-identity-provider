@@ -17,17 +17,14 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -58,7 +55,7 @@ public class IdPInitiatedSSORequest {
     @Nullable private final String relayState;
 
     /** The current time, at the service provider, in milliseconds since the epoch. */
-    @Positive private final long time;
+    @Nonnull private final Instant time;
 
     /**
      * Constructor.
@@ -71,7 +68,7 @@ public class IdPInitiatedSSORequest {
      * @param newTime current time at the SP, in milliseconds since the epoch, must be greater than zero
      */
     public IdPInitiatedSSORequest(@Nonnull @NotEmpty final String newEntityId, @Nullable final String url,
-            @Nullable final String target, @Nullable @Positive final Long newTime) {
+            @Nullable final String target, @Nullable final Instant newTime) {
         
         entityId = Constraint.isNotNull(StringSupport.trimOrNull(newEntityId),
                 "Service provider ID cannot be null or empty");
@@ -80,9 +77,9 @@ public class IdPInitiatedSSORequest {
         relayState = StringSupport.trimOrNull(target);
         
         if (newTime != null) {
-            time = Constraint.isGreaterThan(0, newTime, "Time must be greater than 0");
+            time = newTime;
         } else {
-            time = System.currentTimeMillis();
+            time = Instant.now();
         }
     }
 
@@ -118,7 +115,7 @@ public class IdPInitiatedSSORequest {
      * 
      * @return current time at the SP, in milliseconds since the epoch 
      */
-    public long getTime() {
+    @Nonnull public Instant getTime() {
         return time;
     }
 
@@ -129,7 +126,7 @@ public class IdPInitiatedSSORequest {
             .add("entityId", entityId)
             .add("acsURL", acsURL)
             .add("relayState", relayState)
-            .add("time", new DateTime(time, ISOChronology.getInstanceUTC()))
+            .add("time", time)
             .toString();
     }
 
@@ -153,7 +150,7 @@ public class IdPInitiatedSSORequest {
             result = prime * result + 0;
         }
 
-        result = prime * result + (int) (time ^ (time >>> 32));
+        result = prime * result + (int) (time.toEpochMilli() ^ (time.toEpochMilli() >>> 32));
 
         return result;
     }
@@ -175,7 +172,7 @@ public class IdPInitiatedSSORequest {
 
         final IdPInitiatedSSORequest other = (IdPInitiatedSSORequest) obj;
         return Objects.equals(entityId, other.entityId) && Objects.equals(acsURL, other.acsURL)
-                && Objects.equals(relayState, other.relayState) && time == other.time;
+                && Objects.equals(relayState, other.relayState) && time.equals(other.time);
     }
     
 }

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +39,6 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBase64Binary;
@@ -353,9 +353,9 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
         } else if (xmlObj instanceof XSInteger) {
             toMatch = ((XSInteger) xmlObj).getValue().toString();
         } else if (xmlObj instanceof XSDateTime) {
-            final DateTime dt = ((XSDateTime) xmlObj).getValue();
+            final Instant dt = ((XSDateTime) xmlObj).getValue();
             if (dt != null) {
-                toMatch = ((XSDateTime) xmlObj).getDateTimeFormatter().print(dt);
+                toMatch = ((XSDateTime) xmlObj).getDateTimeFormatter().format(dt);
             }
         } else if (xmlObj instanceof XSBase64Binary) {
             toMatch = ((XSBase64Binary) xmlObj).getValue();

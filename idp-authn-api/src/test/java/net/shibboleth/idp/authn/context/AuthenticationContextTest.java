@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.context;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -36,12 +37,12 @@ public class AuthenticationContextTest {
 
     /** Tests initiation instant instantiation. */
     public void testInitiationInstant() throws Exception {
-        long start = System.currentTimeMillis();
+        Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
         AuthenticationContext ctx = new AuthenticationContext();
-        Assert.assertTrue(ctx.getInitiationInstant() > start);
+        Assert.assertTrue(ctx.getInitiationInstant().isAfter(start));
     }
 
     /** Tests mutating forcing authentication. */
@@ -93,14 +94,14 @@ public class AuthenticationContextTest {
     /** Tests setting completion instant. */
     public void testCompletionInstant() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();
-        Assert.assertEquals(ctx.getCompletionInstant(), 0);
+        Assert.assertNull(ctx.getCompletionInstant());
 
-        long now = System.currentTimeMillis();
+        Instant now = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
         ctx.setCompletionInstant();
-        Assert.assertTrue(ctx.getCompletionInstant() > now);
+        Assert.assertTrue(ctx.getCompletionInstant().isAfter(now));
     }
     
     /** Tests RequestedPrincipalContext helpers. */

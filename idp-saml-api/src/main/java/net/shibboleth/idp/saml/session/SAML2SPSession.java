@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.session;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -30,9 +31,7 @@ import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.session.BasicSPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -59,8 +58,8 @@ public class SAML2SPSession extends BasicSPSession {
      * @param assertedNameID the NameID asserted to the SP
      * @param assertedIndex the SessionIndex asserted to the SP
      */
-    public SAML2SPSession(@Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
-            @Duration @Positive final long expiration, @Nonnull final NameID assertedNameID,
+    public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
+            @Nonnull final Instant expiration, @Nonnull final NameID assertedNameID,
             @Nonnull @NotEmpty final String assertedIndex) {
         super(id, creation, expiration);
         

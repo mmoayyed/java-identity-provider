@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 
 import javax.servlet.http.Cookie;
@@ -72,11 +74,11 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
     protected void adjustProperties() throws ComponentInitializationException {
         sessionManager.setTrackSPSessions(true);
         sessionManager.setSecondaryServiceIndex(true);
-        sessionManager.setSessionSlop(900 * 60 * 1000);
+        sessionManager.setSessionSlop(Duration.ofSeconds(900));
         final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
         registry.setMappings(
                 Collections.<Class<? extends SPSession>,StorageSerializer<? extends SPSession>>singletonMap(
-                        BasicSPSession.class, new BasicSPSessionSerializer(900 * 60 * 1000)));
+                        BasicSPSession.class, new BasicSPSessionSerializer(Duration.ofSeconds(900))));
         registry.initialize();
         sessionManager.setSPSessionSerializerRegistry(registry);
     }
@@ -118,8 +120,9 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
 
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        // Limit granularity to milliseconds for storage roundtrip.
+        final Instant creation = Instant.ofEpochMilli(System.currentTimeMillis());
+        final Instant expiration = creation.plusSeconds(3600);
 
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);

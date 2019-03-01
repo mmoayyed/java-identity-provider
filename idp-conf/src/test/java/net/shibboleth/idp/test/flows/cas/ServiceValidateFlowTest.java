@@ -18,6 +18,7 @@
 package net.shibboleth.idp.test.flows.cas;
 
 import java.net.URI;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
@@ -34,8 +35,6 @@ import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
@@ -112,7 +111,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://test.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
@@ -148,7 +147,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://slo.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
@@ -193,7 +192,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://test.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
@@ -223,7 +222,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://test.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
@@ -249,7 +248,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-pnqph79ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://alt-username.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
@@ -281,7 +280,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://no-attrs.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);

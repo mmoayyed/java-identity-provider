@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -44,7 +46,7 @@ public class BasicSPSessionSerializerTest {
     private BasicSPSessionSerializer serializer;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
-        serializer = new BasicSPSessionSerializer(0);
+        serializer = new BasicSPSessionSerializer(Duration.ZERO);
         serializer.initialize();
     }
 
@@ -80,15 +82,15 @@ public class BasicSPSessionSerializerTest {
     }
     
     @Test public void testBasic() throws Exception {
-        long exp = INSTANT + 60000L;
+        final Instant exp = Instant.ofEpochMilli(INSTANT).plusSeconds(60);
         
-        BasicSPSession session = new BasicSPSession("test", INSTANT, exp);
+        BasicSPSession session = new BasicSPSession("test", Instant.ofEpochMilli(INSTANT), exp);
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "basicSPSession.json");
         Assert.assertEquals(s, s2);
         
-        SPSession session2 = serializer.deserialize(1, CONTEXT, KEY, s2, exp);
+        SPSession session2 = serializer.deserialize(1, CONTEXT, KEY, s2, exp.toEpochMilli());
 
         Assert.assertEquals(session.getId(), session2.getId());
         Assert.assertEquals(session.getCreationInstant(), session2.getCreationInstant());

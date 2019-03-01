@@ -17,19 +17,16 @@
 
 package net.shibboleth.idp.session;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.joda.time.DateTime;
 
 import com.google.common.base.MoreObjects;
 
@@ -43,10 +40,10 @@ public class BasicSPSession implements SPSession {
     @Nonnull @NotEmpty private final String serviceId;
     
     /** The time, in milliseconds since the epoch, when this session was created. */
-    @Duration @Positive private final long creationInstant;
+    @Nonnull private final Instant creationInstant;
 
     /** The time, in milliseconds since the epoch, when this session expires. */
-    @Duration @Positive private final long expirationInstant;
+    @Nonnull private final Instant expirationInstant;
     
     /**
      * Constructor.
@@ -55,44 +52,40 @@ public class BasicSPSession implements SPSession {
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
-    public BasicSPSession(@Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
-            @Duration @Positive final long expiration) {
+    public BasicSPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
+            @Nonnull final Instant expiration) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
-        creationInstant = Constraint.isGreaterThan(0, creation, "Creation instant must be greater than 0");
-        expirationInstant = Constraint.isGreaterThan(0, expiration, "Expiration instant must be greater than 0");
+        creationInstant = Constraint.isNotNull(creation, "Creation instant cannot be null");
+        expirationInstant = Constraint.isNotNull(expiration, "Expiration instant cannot be null");
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getId() {
         return serviceId;
     }
     
     /** {@inheritDoc} */
-    @Override @Duration @Positive public long getCreationInstant() {
+    @Nonnull public Instant getCreationInstant() {
         return creationInstant;
     }
 
     /** {@inheritDoc} */
-    @Override @Duration @Positive public long getExpirationInstant() {
+    @Nonnull public Instant getExpirationInstant() {
         return expirationInstant;
     }
 
     /** {@inheritDoc} */
-    @Override
     public String getSPSessionKey() {
         // A basic session doesn't have a secondary lookup key.
         return null;
     }
     
     /** {@inheritDoc} */
-    @Override
     public int hashCode() {
         return serviceId.hashCode();
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
@@ -110,11 +103,10 @@ public class BasicSPSession implements SPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", serviceId)
-                .add("creationInstant", new DateTime(creationInstant))
-                .add("expirationInstant", new DateTime(expirationInstant)).toString();
+                .add("creationInstant", creationInstant)
+                .add("expirationInstant", expirationInstant).toString();
     }
     
 }

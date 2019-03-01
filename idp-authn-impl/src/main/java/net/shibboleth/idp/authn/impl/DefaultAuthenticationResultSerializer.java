@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -162,7 +163,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = generatorFactory.createGenerator(sink);
             gen.writeStartObject().write(FLOW_ID_FIELD, instance.getAuthenticationFlowId())
-                    .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant())
+                    .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant().toEpochMilli())
                     .writeStartArray(PRINCIPAL_ARRAY_FIELD);
 
             for (final Principal p : instance.getSubject().getPrincipals()) {
@@ -195,7 +196,6 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 
             return sink.toString();
         } catch (final JsonException e) {
-            log.error("Exception while serializing AuthenticationResult", e);
             throw new IOException("Exception while serializing AuthenticationResult", e);
         }
     }
@@ -225,8 +225,8 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
 
             final AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
-            result.setAuthenticationInstant(authnInstant);
-            result.setLastActivityInstant(expiration != null ? expiration : authnInstant);
+            result.setAuthenticationInstant(Instant.ofEpochMilli(authnInstant));
+            result.setLastActivityInstant(Instant.ofEpochMilli(expiration != null ? expiration : authnInstant));
             result.setPreviousResult(true);
 
             final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
@@ -264,7 +264,6 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             return result;
 
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
-            log.error("Exception while parsing AuthenticationResult", e);
             throw new IOException("Found invalid data structure while parsing AuthenticationResult", e);
         }
     }

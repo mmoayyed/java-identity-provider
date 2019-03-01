@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.time.Duration;
+
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -50,8 +52,8 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         manager.setStorageService(ss);
         manager.setLockoutKeyStrategy(keyStrategy);
         manager.setMaxAttempts(3);
-        manager.setCounterInterval(3000);
-        manager.setLockoutDuration(5000);
+        manager.setCounterInterval(Duration.ofSeconds(3));
+        manager.setLockoutDuration(Duration.ofSeconds(5));
         manager.initialize();
         
         ((MockHttpServletRequest) src.getExternalContext().getNativeRequest()).setRemoteAddr("192.168.1.1");

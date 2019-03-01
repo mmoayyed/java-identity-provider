@@ -18,7 +18,8 @@
 package net.shibboleth.idp.consent.flow.impl;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+
+import java.time.Duration;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -37,7 +38,7 @@ public class ConsentFlowDescriptorTest {
     @Test public void testInstantation() {
         Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertFalse(descriptor.compareValues());
-        Assert.assertEquals(Long.valueOf(DOMTypeSupport.durationToLong("P1Y")), descriptor.getLifetime());
+        Assert.assertEquals(Duration.ofDays(365), descriptor.getLifetime());
     }
 
     @Test public void testCompareValues() {
@@ -51,16 +52,12 @@ public class ConsentFlowDescriptorTest {
         descriptor.setLifetime(null);
     }
 
-    @Test(expectedExceptions = ConstraintViolationException.class) public void testNegativeLifetime() {
-        descriptor.setLifetime(-10L);
-    }
-
     @Test public void testLifetime() {
-        Long lifetime = Long.valueOf(1000);
+        Duration lifetime = Duration.ofSeconds(1);
         descriptor.setLifetime(lifetime);
         Assert.assertEquals(descriptor.getLifetime(), lifetime);
 
-        lifetime = 0L;
+        lifetime = Duration.ZERO;
         descriptor.setLifetime(lifetime);
         Assert.assertEquals(descriptor.getLifetime(), lifetime);
     }

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
+import java.time.Instant;
+
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
@@ -103,7 +105,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
     /** Test that the authentication statement is properly added. */
     @Test public void testAddAuthenticationStatement() throws Exception {
-        final long now = System.currentTimeMillis();
+        final Instant now = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
         
@@ -136,7 +138,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         Assert.assertNotNull(assertion.getAuthenticationStatements().get(0));
 
         final AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
-        Assert.assertTrue(authenticationStatement.getAuthenticationInstant().getMillis() > now);
+        Assert.assertTrue(authenticationStatement.getAuthenticationInstant().isAfter(now));
         Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Test");
         
         Assert.assertNotNull(authenticationStatement.getSubjectLocality());

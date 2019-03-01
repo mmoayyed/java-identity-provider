@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorFactory
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -127,12 +126,8 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
         }
 
         if (config.hasAttributeNS(null, ATTR_NORETRYDELAY)) {
-            final String noRetryDelay = StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_NORETRYDELAY));
-            final BeanDefinitionBuilder duration =
-                    BeanDefinitionBuilder.rootBeanDefinition(AbstractDataConnectorParser.class, "buildDuration");
-            duration.addConstructorArgValue(noRetryDelay);
-            duration.addConstructorArgValue(1);
-            builder.addPropertyValue("noRetryDelay", duration.getBeanDefinition());
+            builder.addPropertyValue("noRetryDelay",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_NORETRYDELAY)));
         }
 
         if (isNative(config)) {
@@ -185,19 +180,6 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @see #doParse(Element, BeanDefinitionBuilder)
      */
     protected abstract void doV2Parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
-
-    /**
-     * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
-     * while resolving property replacement.
-     * 
-     * @param duration string format
-     * @param divisor to modify the duration with
-     * 
-     * @return result of the division
-     */
-    public static long buildDuration(final String duration, final long divisor) {
-        return DOMTypeSupport.durationToLong(duration) / divisor;
-    }
 
     /**
      * Return a string which is to be prepended to all log messages.

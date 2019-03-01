@@ -35,7 +35,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
-import org.joda.time.DateTime;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.slf4j.Logger;
@@ -52,7 +51,8 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -225,8 +225,9 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
 
             jsonMapper = new ObjectMapper().registerModule(
                     new MetricsModule(rateUnit, durationUnit, true, metricFilter));
-            jsonMapper.registerModule(new JodaModule());
+            jsonMapper.registerModule(new JavaTimeModule());
             jsonMapper.setDateFormat(new SimpleDateFormat(dateTimeFormat != null ? dateTimeFormat : DEFAULT_DT_FORMAT));
+            jsonMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
             
             isInitialized = true;
         }

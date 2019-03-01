@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -162,7 +164,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
      * @throws MessageDecodingException thrown if the time parameter given by the service provider is non-numeric or a
      *             negative time
      */
-    @Nullable protected Long getTime(@Nonnull final HttpServletRequest request) throws MessageDecodingException {
+    @Nullable protected Instant getTime(@Nonnull final HttpServletRequest request) throws MessageDecodingException {
         final String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         if (timeString == null) {
             return null;
@@ -173,7 +175,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
             if (time < 0) {
                 throw new MessageDecodingException("Shibboleth Authentication Request contained a negative time value");
             }
-            return time * 1000;
+            return Instant.ofEpochSecond(time);
         } catch (final NumberFormatException e) {
             throw new MessageDecodingException("Shibboleth Authentication Request contained a non-numeric time value");
         }

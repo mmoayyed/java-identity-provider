@@ -85,9 +85,6 @@ public class ExternalAuthentication {
     /** Request attribute that indicates whether the authentication requires passive authentication. */
     @Nonnull @NotEmpty public static final String PASSIVE_AUTHN_PARAM = "isPassive";
 
-    /** Request attribute that provides which authentication method should be attempted. */
-    @Deprecated @Nonnull @NotEmpty public static final String AUTHN_METHOD_PARAM = "authnMethod";
-
     /** Request attribute that provides the entity ID of the relying party that is requesting authentication. */
     @Nonnull @NotEmpty public static final String RELYING_PARTY_PARAM = "relyingParty";
 

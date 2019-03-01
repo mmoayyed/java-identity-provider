@@ -18,6 +18,8 @@
 package net.shibboleth.idp.cas.session.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.json.JsonObject;
@@ -25,9 +27,7 @@ import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
@@ -38,16 +38,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
 
     /** Field name of CAS ticket. */
-    @Nonnull @NotEmpty
-    private static final String TICKET_FIELD = "st";
-
+    @Nonnull @NotEmpty private static final String TICKET_FIELD = "st";
 
     /**
      * Constructor.
      *
-     * @param offset milliseconds to subtract from record expiration to establish session expiration value
+     * @param offset time to subtract from record expiration to establish session expiration value
      */
-    public CASSPSessionSerializer(@Duration @NonNegative @ParameterName(name="offset") final long offset) {
+    public CASSPSessionSerializer(@Nonnull @ParameterName(name="offset") final Duration offset) {
         super(offset);
     }
 
@@ -59,13 +57,11 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
         generator.write(TICKET_FIELD, ((CASSPSession) instance).getTicketId());
     }
 
-    @Nonnull
+    /** {@inheritDoc} */
     @Override
-    protected SPSession doDeserialize(
-            @Nonnull final JsonObject obj,
-            @Nonnull @NotEmpty final String id,
-            final long creation,
-            final long expiration) throws IOException {
+    @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj, @Nonnull @NotEmpty final String id,
+            @Nonnull final Instant creation, @Nonnull final Instant expiration) throws IOException {
         return new CASSPSession(id, creation, expiration, obj.getString(TICKET_FIELD));
     }
+    
 }

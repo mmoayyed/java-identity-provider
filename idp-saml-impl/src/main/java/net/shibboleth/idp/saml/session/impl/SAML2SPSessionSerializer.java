@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.session.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 
@@ -37,11 +39,8 @@ import org.opensaml.saml.saml2.core.NameID;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -72,7 +71,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
      * 
      * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
-    public SAML2SPSessionSerializer(@Duration @NonNegative @ParameterName(name="offset") final long offset) {
+    public SAML2SPSessionSerializer(@Nonnull @ParameterName(name="offset") final Duration offset) {
         super(offset);
         
         parserPool = Constraint.isNotNull(XMLObjectProviderRegistrySupport.getParserPool(),
@@ -107,7 +106,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     /** {@inheritDoc} */
     @Override
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj, @Nonnull @NotEmpty final String id, 
-            @Duration @Positive final long creation, @Duration @Positive final long expiration) throws IOException {
+            @Nonnull final Instant creation, @Nonnull final Instant expiration) throws IOException {
         
         final String rawNameID = obj.getString(NAMEID_FIELD);
         final String sessionIndex = obj.getString(SESSION_INDEX_FIELD);

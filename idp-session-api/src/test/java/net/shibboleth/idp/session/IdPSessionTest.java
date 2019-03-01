@@ -21,6 +21,8 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import java.time.Instant;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,13 +31,13 @@ public class IdPSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() throws Exception {
-        long start = System.currentTimeMillis();
+        final Instant start = Instant.now();
         Thread.sleep(50);
 
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
         Assert.assertNotNull(session.getAuthenticationResults());
         Assert.assertFalse(session.getAuthenticationResults().iterator().hasNext());
-        Assert.assertTrue(session.getCreationInstant() > start);
+        Assert.assertTrue(session.getCreationInstant().isAfter(start));
         Assert.assertEquals(session.getId(), "test");
         Assert.assertEquals(session.getPrincipalName(), "foo");
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
@@ -75,12 +77,12 @@ public class IdPSessionTest {
     @Test public void testLastActivityInstant() throws Exception {
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
 
-        long now = System.currentTimeMillis();
+        final Instant now = Instant.now();
         // this is here to allow the event's last activity time to deviate from the time 'now'
         Thread.sleep(50);
 
-        session.setLastActivityInstant(System.currentTimeMillis());
-        Assert.assertTrue(session.getLastActivityInstant() > now);
+        session.setLastActivityInstant(Instant.now());
+        Assert.assertTrue(session.getLastActivityInstant().isAfter(now));
 
         session.setLastActivityInstant(now);
         Assert.assertEquals(session.getLastActivityInstant(), now);
@@ -101,8 +103,8 @@ public class IdPSessionTest {
     /** Tests adding service sessions. 
      * @throws SessionException */
     @Test public void testAddSPSessions() throws SessionException {
-        long now = System.currentTimeMillis();
-        long exp = now + 60000L;
+        final Instant now = Instant.now();
+        final Instant exp = now.plusSeconds(60);
         
         BasicSPSession svcSession1 = new BasicSPSession("svc1", now, exp);
         BasicSPSession svcSession2 = new BasicSPSession("svc2", now, exp);
@@ -152,8 +154,8 @@ public class IdPSessionTest {
     /** Tests removing service sessions. 
      * @throws SessionException */
     @Test public void testRemoveSPSession() throws SessionException {
-        long now = System.currentTimeMillis();
-        long exp = now + 60000L;
+        final Instant now = Instant.now();
+        final Instant exp = now.plusSeconds(60);
 
         BasicSPSession svcSession1 = new BasicSPSession("svc1", now, exp);
         BasicSPSession svcSession2 = new BasicSPSession("svc2", now, exp);
@@ -231,7 +233,7 @@ public class IdPSessionTest {
          * @param canonicalName
          */
         public DummyIdPSession(String sessionId, String canonicalName) {
-            super(sessionId, canonicalName, System.currentTimeMillis());
+            super(sessionId, canonicalName, Instant.now());
         }
 
         /** {@inheritDoc} */

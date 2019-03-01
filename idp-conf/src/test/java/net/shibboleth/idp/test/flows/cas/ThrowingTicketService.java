@@ -22,7 +22,8 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import org.joda.time.Instant;
+
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,55 +35,46 @@ import javax.annotation.Nullable;
  */
 public class ThrowingTicketService implements TicketServiceEx {
     @Nonnull
-    @Override
     public ServiceTicket createServiceTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull String sessionId, @Nonnull String service, boolean renew) {
         throw new RuntimeException("createServiceTicket failed for ticket " + id);
     }
 
     @Nonnull
-    @Override
     public ServiceTicket createServiceTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull String service, @Nonnull TicketState state, boolean renew) {
         throw new RuntimeException("createServiceTicket failed for ticket " + id);
     }
 
     @Nullable
-    @Override
     public ServiceTicket removeServiceTicket(@Nonnull String id) {
         throw new RuntimeException("removeServiceTicket failed for ticket " + id);
     }
 
     @Nonnull
-    @Override
     public ProxyGrantingTicket createProxyGrantingTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull ServiceTicket serviceTicket) {
         throw new RuntimeException("createProxyGrantingTicket failed for ticket " + id);
     }
 
     @Nonnull
-    @Override
     public ProxyGrantingTicket createProxyGrantingTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull ProxyTicket proxyTicket) {
         throw new RuntimeException("createProxyGrantingTicket failed for ticket " + id);
     }
 
     @Nullable
-    @Override
     public ProxyGrantingTicket fetchProxyGrantingTicket(@Nonnull String id) {
         throw new RuntimeException("fetchProxyGrantingTicket failed for ticket " + id);
     }
 
     @Nullable
-    @Override
     public ProxyGrantingTicket removeProxyGrantingTicket(@Nonnull String id) {
         throw new RuntimeException("removeProxyGrantingTicket failed for ticket " + id);
     }
 
     @Nonnull
-    @Override
     public ProxyTicket createProxyTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull ProxyGrantingTicket pgt, @Nonnull String service) {
         throw new RuntimeException("createProxyTicket failed for ticket " + id);
     }
 
     @Nullable
-    @Override
     public ProxyTicket removeProxyTicket(@Nonnull String id) {
         throw new RuntimeException("removeProxyTicket failed for ticket " + id);
     }

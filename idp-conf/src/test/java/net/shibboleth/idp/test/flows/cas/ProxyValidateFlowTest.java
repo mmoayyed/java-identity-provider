@@ -29,8 +29,6 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +36,8 @@ import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
+
+import java.time.Instant;
 
 /**
  * Tests the flow behind the <code>/proxyValidate</code> endpoint.
@@ -161,17 +161,17 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     private ProxyTicket createProxyTicket(final String sessionId, final String principal) {
         final ServiceTicket st = ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://service.example.org/",
                 new TicketState(sessionId, principal, Instant.now(), "Password"),
                 false);
         final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
-                DateTime.now().plusSeconds(10).toInstant(),
+                Instant.now().plusSeconds(10),
                 st);
         return ticketService.createProxyTicket(
                 new TicketIdentifierGenerationStrategy("PT", 25).generateIdentifier(),
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 pgt,
                 "https://proxyA.example.org/");
     }

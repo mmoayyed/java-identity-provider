@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.mapping;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBase64Binary;
@@ -106,9 +106,9 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
 
         } else if (object instanceof XSDateTime) {
 
-            final DateTime dt = ((XSDateTime) object).getValue();
+            final Instant dt = ((XSDateTime) object).getValue();
             if (dt != null) {
-                retVal = ((XSDateTime) object).getDateTimeFormatter().print(dt);
+                retVal = ((XSDateTime) object).getDateTimeFormatter().format(dt);
             } else {
                 retVal = null;
             }

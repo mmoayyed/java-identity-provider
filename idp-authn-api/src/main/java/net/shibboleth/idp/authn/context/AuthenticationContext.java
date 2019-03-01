@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.context;
 
 import java.lang.reflect.Constructor;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,11 +41,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -67,8 +66,8 @@ import com.google.common.collect.Collections2;
  */
 public final class AuthenticationContext extends BaseContext {
 
-    /** Time, in milliseconds since the epoch, when the authentication process started. */
-    @Positive private final long initiationInstant;
+    /** Time when the authentication process started. */
+    @Nonnull private final Instant initiationInstant;
 
     /** Whether to require fresh subject interaction to succeed. */
     private boolean forceAuthn;
@@ -115,12 +114,12 @@ public final class AuthenticationContext extends BaseContext {
     /** Result may be cached for reuse in the normal way. */
     private boolean resultCacheable;
     
-    /** Time, in milliseconds since the epoch, when authentication process completed. */
-    @NonNegative private long completionInstant;
+    /** Time when authentication process completed. */
+    @Nullable private Instant completionInstant;
 
     /** Constructor. */
     public AuthenticationContext() {
-        initiationInstant = System.currentTimeMillis();
+        initiationInstant = Instant.now();
         
         availableFlows = new HashMap<>();
         potentialFlows = new LinkedHashMap<>();
@@ -137,7 +136,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return time when the authentication process started
      */
-    @Positive public long getInitiationInstant() {
+    @Nonnull public Instant getInitiationInstant() {
         return initiationInstant;
     }
 
@@ -502,12 +501,11 @@ public final class AuthenticationContext extends BaseContext {
     }
         
     /**
-     * Get the time, in milliseconds since the epoch, when the authentication process ended. A value of 0 indicates
-     * that authentication has not yet completed.
+     * Get the time when the authentication process ended.
      * 
      * @return time when the authentication process ended
      */
-    @NonNegative public long getCompletionInstant() {
+    @Nullable public Instant getCompletionInstant() {
         return completionInstant;
     }
 
@@ -517,7 +515,7 @@ public final class AuthenticationContext extends BaseContext {
      * @return this authentication context
      */
     @Nonnull public AuthenticationContext setCompletionInstant() {
-        completionInstant = System.currentTimeMillis();
+        completionInstant = Instant.now();
         return this;
     }
 
@@ -680,7 +678,7 @@ public final class AuthenticationContext extends BaseContext {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("initiationInstant", new DateTime(initiationInstant))
+                .add("initiationInstant", initiationInstant)
                 .add("isPassive", isPassive)
                 .add("forceAuthn", forceAuthn)
                 .add("hintedName", hintedName)
@@ -692,7 +690,7 @@ public final class AuthenticationContext extends BaseContext {
                 .add("authenticationStateMap", stateMap)
                 .add("resultCacheable", resultCacheable)
                 .add("authenticationResult", authenticationResult)
-                .add("completionInstant", new DateTime(completionInstant))
+                .add("completionInstant", completionInstant)
                 .toString();
     }
 

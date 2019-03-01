@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.saml.session.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -37,8 +38,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -62,7 +61,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2SPSessionCreationStrategy.class);
     
     /** Lifetime of sessions to create. */
-    @Positive @Duration private final long sessionLifetime;
+    @Nonnull private final Duration sessionLifetime;
     
     /** RelyingPartyContext lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -76,8 +75,8 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
      * @param lifetime lifetime in milliseconds, determines upper bound for expiration of
      * {@link SAML2SPSession} to be created
      */
-    public SAML2SPSessionCreationStrategy(@Positive @Duration final long lifetime) {
-        sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
+    public SAML2SPSessionCreationStrategy(@Nonnull final Duration lifetime) {
+        sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         responseLookupStrategy = new MessageLookup<>(Response.class).compose(new OutboundMessageContextLookup());
     }
@@ -120,17 +119,17 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         final Pair<Assertion, AuthnStatement> result = getAssertionAndStatement(input);
         if (result == null) {
             log.info("Creating BasicSPSession in the absence of necessary information");
-            final long now = System.currentTimeMillis();
-            return new BasicSPSession(issuer, now, now + sessionLifetime);
+            final Instant now = Instant.now();
+            return new BasicSPSession(issuer, now, now.plus(sessionLifetime));
         }
         
-        final long now = System.currentTimeMillis();
-        final DateTime sessionBound = result.getSecond().getSessionNotOnOrAfter();
-        final long expiration;
+        final Instant now = Instant.now();
+        final Instant sessionBound = result.getSecond().getSessionNotOnOrAfter();
+        final Instant expiration;
         if (sessionBound != null) {
-            expiration = sessionBound.getMillis(); 
+            expiration = sessionBound;
         } else {
-            expiration = now + sessionLifetime;
+            expiration = now.plus(sessionLifetime);
         }
         
         return new SAML2SPSession(issuer, now, expiration, result.getFirst().getSubject().getNameID(),

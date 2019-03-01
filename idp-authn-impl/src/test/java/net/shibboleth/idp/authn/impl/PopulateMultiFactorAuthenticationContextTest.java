@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 
@@ -90,17 +91,17 @@ public class PopulateMultiFactorAuthenticationContextTest {
     @Test public void testResults() throws ComponentInitializationException {
         final Subject subject = new Subject();
         AuthenticationResult result = new AuthenticationResult("foo", new Subject());
-        result.setAuthenticationInstant(System.currentTimeMillis() - 7200 * 1000);
+        result.setAuthenticationInstant(Instant.now().minusSeconds(7200));
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         result = new AuthenticationResult("bar", new Subject());
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         result = new AuthenticationResult("baz", new Subject());
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         result = new AuthenticationResult("bav", new Subject());
-        result.setAuthenticationInstant(System.currentTimeMillis() - 1000 * 1000);
+        result.setAuthenticationInstant(Instant.now().minusSeconds(1000));
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         result = new AuthenticationResult("bag", new Subject());
-        result.setAuthenticationInstant(System.currentTimeMillis() - 2000 * 1000);
+        result.setAuthenticationInstant(Instant.now().minusSeconds(2000));
         subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
         
         ac.getActiveResults().put("authn/MFA", new AuthenticationResult("authn/MFA", subject));

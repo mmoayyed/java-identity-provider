@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -337,8 +338,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
-        final long resolveTime = System.currentTimeMillis();
-
+        
         if (workContext.getResolvedDataConnectors().containsKey(connectorId)) {
             log.trace("{} Data connector '{}' was already resolved, nothing to do", logPrefix, connectorId);
             return;
@@ -350,8 +350,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             return;
         }
 
-        if (resolveTime < connector.getLastFail() + connector.getNoRetryDelay()) {
-            log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, 
+        final Instant resolveTime = Instant.now();
+        
+        if (connector.getLastFail() != null
+                && resolveTime.isBefore(connector.getLastFail().plus(connector.getNoRetryDelay()))) {
+            log.debug("{} Data connector '{}' failed to resolve previously, still waiting", logPrefix, 
                     connectorId);
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {

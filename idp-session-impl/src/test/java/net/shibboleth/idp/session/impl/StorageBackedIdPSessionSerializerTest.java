@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Instant;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -113,7 +114,7 @@ public class StorageBackedIdPSessionSerializerTest {
     @Test public void testBasic() throws Exception {
         long exp = INSTANT + (60 * 60 * 1000);
         
-        StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", INSTANT);
+        StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", Instant.ofEpochMilli(INSTANT));
         session.doBindToAddress("127.0.0.1");
         
         String s = serializer.serialize(session);
@@ -129,21 +130,21 @@ public class StorageBackedIdPSessionSerializerTest {
     }
 
     @Test public void testComplex() throws Exception {
-        long exp = INSTANT + (60 * 60 * 1000);
+        final Instant exp = Instant.ofEpochMilli(INSTANT).plusSeconds(3600);
         
-        StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", INSTANT);
+        StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", Instant.ofEpochMilli(INSTANT));
         session.doBindToAddress("127.0.0.1");
         session.doAddAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));
-        session.doAddSPSession(new BasicSPSession("bar", INSTANT, exp));
-        session.doAddSPSession(new BasicSPSession("baz", INSTANT, exp));
+        session.doAddSPSession(new BasicSPSession("bar", Instant.ofEpochMilli(INSTANT), exp));
+        session.doAddSPSession(new BasicSPSession("baz", Instant.ofEpochMilli(INSTANT), exp));
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "complexIdPSession." + (TestSupport.isJavaV8OrLater() ? "jdk8" : "json"));
         Assert.assertEquals(s, s2);
         
-        StorageBackedIdPSession session2 = serializer.deserialize(1, "test", KEY, s2, exp);
+        StorageBackedIdPSession session2 = serializer.deserialize(1, "test", KEY, s2, exp.toEpochMilli());
 
         Assert.assertEquals(session.getId(), session2.getId());
         Assert.assertEquals(session.getPrincipalName(), session2.getPrincipalName());

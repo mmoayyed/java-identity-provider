@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Instant;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,6 @@ import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,14 +103,14 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
     }
 
     /** {@inheritDoc} */
-    @Nonnull
     @Override
+    @Nonnull
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final ProxyGrantingTicket pgt = (ProxyGrantingTicket) getCASTicket(profileRequestContext);
-        if (pgt == null || pgt.getExpirationInstant().isBeforeNow()) {
+        if (pgt == null || pgt.getExpirationInstant().isBefore(Instant.now())) {
             return ProtocolError.TicketExpired.event(this);
         }
         final ProxyConfiguration config = configLookupFunction.apply(profileRequestContext);
@@ -151,7 +151,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             log.debug("Granting proxy ticket for {}", request.getTargetService());
             pt = casTicketService.createProxyTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
-                    DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
+                    Instant.now().plusMillis(config.getTicketValidityPeriod()),
                     pgt,
                     request.getTargetService());
         } catch (final RuntimeException e) {

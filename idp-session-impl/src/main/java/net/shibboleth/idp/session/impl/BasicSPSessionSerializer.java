@@ -18,6 +18,8 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -26,11 +28,8 @@ import javax.json.JsonObject;
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 /**
  * A serializer for {@link BasicSPSession} objects.
@@ -43,15 +42,15 @@ public class BasicSPSessionSerializer extends AbstractSPSessionSerializer {
      * 
      * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
-    public BasicSPSessionSerializer(@Duration @NonNegative @ParameterName(name="offset") final long offset) {
+    public BasicSPSessionSerializer(@Nonnull @ParameterName(name="offset") final Duration offset) {
         super(offset);
     }
 
     /** {@inheritDoc} */
     @Override 
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
-            @Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
-            @Duration @Positive final long expiration) throws IOException {
+            @Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
+            @Nonnull final Instant expiration) throws IOException {
         
         return new BasicSPSession(id, creation, expiration);
     }

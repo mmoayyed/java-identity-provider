@@ -25,8 +25,6 @@ import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +36,9 @@ import org.testng.annotations.Test;
 import javax.annotation.Nonnull;
 
 import static org.testng.Assert.*;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Tests the flow behind the <code>/proxy</code> endpoint.
@@ -165,13 +166,13 @@ public class ProxyFlowTest extends AbstractFlowTest {
     private ProxyGrantingTicket createProxyGrantingTicket(final String sessionId, final String principal) {
         final ServiceTicket st = ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
-                DateTime.now().plusSeconds(10).toInstant(),
+                Instant.now().plusSeconds(10),
                 "https://service.example.org/",
                 new TicketState(sessionId, principal, Instant.now(), "Password"),
                 false);
         return ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
-                DateTime.now().plusHours(1).toInstant(),
+                Instant.now().plus(1, ChronoUnit.HOURS),
                 st);
     }
 }

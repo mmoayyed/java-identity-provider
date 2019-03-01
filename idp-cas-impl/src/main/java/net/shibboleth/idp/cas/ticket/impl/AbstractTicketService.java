@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.ticket.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,6 @@ import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyGrantingTicketSeria
 import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ServiceTicketSerializer;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.Instant;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
@@ -186,7 +186,7 @@ public abstract class AbstractTicketService implements TicketServiceEx {
         final String context = context(ticket.getClass());
         try {
             final String sessionId = ticket.getSessionId();
-            final long expiry = ticket.getExpirationInstant().getMillis();
+            final long expiry = ticket.getExpirationInstant().toEpochMilli();
             log.debug("Storing mapping of {} to {} in context {}", ticket, sessionId, context);
             if (!storageService.create(context, ticket.getId(), sessionId, expiry)) {
                 throw new RuntimeException("Failed to store ticket " + ticket);

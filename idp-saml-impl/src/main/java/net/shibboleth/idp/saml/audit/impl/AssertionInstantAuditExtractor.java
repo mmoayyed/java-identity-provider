@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
@@ -35,7 +35,7 @@ import com.google.common.collect.Collections2;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the IssueInstant attribute from the assertions in a response. */
-public class AssertionInstantAuditExtractor implements Function<ProfileRequestContext,Collection<DateTime>> {
+public class AssertionInstantAuditExtractor implements Function<ProfileRequestContext,Collection<Instant>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -51,7 +51,7 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<DateTime> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Collection<Instant> apply(@Nullable final ProfileRequestContext input) {
         SAMLObject message = responseLookupStrategy.apply(input);
         if (message != null) {
             

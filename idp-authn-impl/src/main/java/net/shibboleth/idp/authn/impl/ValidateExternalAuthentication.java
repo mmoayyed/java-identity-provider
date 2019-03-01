@@ -180,8 +180,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         
         if (authenticationContext.getAuthenticationResult() != null) {
             if (extContext.getAuthnInstant() != null) {
-                authenticationContext.getAuthenticationResult().setAuthenticationInstant(
-                        extContext.getAuthnInstant().getMillis());
+                authenticationContext.getAuthenticationResult().setAuthenticationInstant(extContext.getAuthnInstant());
             }
             if (extContext.isPreviousResult()) {
                 authenticationContext.getAuthenticationResult().setPreviousResult(true);

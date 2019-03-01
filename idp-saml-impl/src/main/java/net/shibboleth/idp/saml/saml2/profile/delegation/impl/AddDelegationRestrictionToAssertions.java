@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.function.Function;
 
@@ -28,7 +29,6 @@ import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -97,7 +97,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
     @Nullable private String presenterEntityID;
     
     /** The instant of delegation. */
-    @Nullable private DateTime delegationInstant;
+    @Nullable private Instant delegationInstant;
     
     /**
      * Constructor.
@@ -200,7 +200,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
         }
         
         //TODO do we have a single harmonized "issue instant" for the outbound request data?
-        delegationInstant = new DateTime();
+        delegationInstant = Instant.now();
         
         return super.doPreExecute(profileRequestContext);
     }

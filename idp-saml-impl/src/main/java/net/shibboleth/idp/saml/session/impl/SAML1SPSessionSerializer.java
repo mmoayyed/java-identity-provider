@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.session.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -26,9 +28,7 @@ import javax.json.JsonObject;
 import net.shibboleth.idp.saml.session.SAML1SPSession;
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 
 /**
  * A serializer for {@link SAML1SPSession} objects.
@@ -41,14 +41,14 @@ public class SAML1SPSessionSerializer extends AbstractSPSessionSerializer {
      * 
      * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
-    public SAML1SPSessionSerializer(@Duration @NonNegative @Nonnull @ParameterName(name="offset") final long offset) {
+    public SAML1SPSessionSerializer(@Nonnull @ParameterName(name="offset") final Duration offset) {
         super(offset);
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull protected SPSession doDeserialize(final JsonObject obj, final String id,
-            final long creation, final long expiration) throws IOException {
+            @Nonnull final Instant creation, @Nonnull final Instant expiration) throws IOException {
         
         return new SAML1SPSession(id, creation, expiration);
     }

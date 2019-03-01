@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,7 +68,7 @@ public class DefaultAuthenticationResultSerializerTest {
     
     private static final String KEY = "_key";
     
-    private static final long INSTANT = 1378827849463L;
+    private static final Instant INSTANT = Instant.ofEpochMilli(1378827849463L);
     
     private static final long ACTIVITY = 1378827556778L;
     
@@ -326,7 +327,7 @@ public class DefaultAuthenticationResultSerializerTest {
     private AuthenticationResult createResult(String flowId, Subject subject) {
         final AuthenticationResult result = new AuthenticationResult(flowId, subject);
         result.setAuthenticationInstant(INSTANT);
-        result.setLastActivityInstant(ACTIVITY);
+        result.setLastActivityInstant(Instant.ofEpochMilli(ACTIVITY));
         return result;
     }
     

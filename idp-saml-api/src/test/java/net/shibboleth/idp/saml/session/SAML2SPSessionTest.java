@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.session;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import java.time.Instant;
+
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
@@ -35,49 +37,49 @@ public class SAML2SPSessionTest extends OpenSAMLInitBaseTestCase {
         nameID.setValue("joe@example.org");
         nameID.setFormat(NameID.EMAIL);
         
-        long start = System.currentTimeMillis();
+        Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        SAML2SPSession session = new SAML2SPSession("test", System.currentTimeMillis(),
-                System.currentTimeMillis() + 60000L, nameID, "1234567890");
+        SAML2SPSession session = new SAML2SPSession("test", Instant.now(),
+                Instant.now().plusSeconds(60), nameID, "1234567890");
         Assert.assertEquals(session.getId(), "test");
-        Assert.assertTrue(session.getCreationInstant() > start);
-        Assert.assertTrue(session.getExpirationInstant() > session.getCreationInstant());
+        Assert.assertTrue(session.getCreationInstant().isAfter(start));
+        Assert.assertTrue(session.getExpirationInstant().isAfter(session.getCreationInstant()));
         Assert.assertSame(session.getNameID(), nameID);
         Assert.assertEquals(session.getSessionIndex(), "1234567890");
         Assert.assertEquals(session.getSPSessionKey(), "joe@example.org");
 
         try {
-            new SAML2SPSession(null, 0, 0, null, null);
+            new SAML2SPSession(null, Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("", 0, 0, null, null);
+            new SAML2SPSession("", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("  ", 0, 0, null, null);
+            new SAML2SPSession("  ", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", 0, 0, null, null);
+            new SAML2SPSession("foo", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", start, 0, null, null);
+            new SAML2SPSession("foo", start, Instant.ofEpochMilli(0), null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

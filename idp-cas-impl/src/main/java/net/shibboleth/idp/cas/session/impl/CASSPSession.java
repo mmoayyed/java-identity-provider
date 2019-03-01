@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.cas.session.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.session.BasicSPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -34,22 +34,20 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class CASSPSession extends BasicSPSession {
 
     /** Validated ticket that started the SP session. */
-    @Nonnull @NotEmpty
-    private final String ticket;
-
+    @Nonnull @NotEmpty private final String ticket;
 
     /**
      * Creates a new CAS SP session.
      *
      * @param id         the identifier of the service associated with this session
-     * @param creation   creation time of session, in milliseconds since the epoch
-     * @param expiration expiration time of session, in milliseconds since the epoch
+     * @param creation   creation time of session
+     * @param expiration expiration time of session
      * @param ticketId   ticket ID used to gain access to the service
      */
     public CASSPSession(
             @Nonnull @NotEmpty final String id,
-            @Duration @Positive final long creation,
-            @Duration @Positive final long expiration,
+            @Nonnull final Instant creation,
+            @Nonnull final Instant expiration,
             @Nonnull @NotEmpty final String ticketId) {
         super(id, creation, expiration);
         ticket = Constraint.isNotNull(StringSupport.trimOrNull(ticketId), "Ticket ID cannot be null or empty");
@@ -60,8 +58,7 @@ public class CASSPSession extends BasicSPSession {
      * 
      * @return ticket ID
      */
-    @Nonnull @NotEmpty
-    public String getTicketId() {
+    @Nonnull @NotEmpty public String getTicketId() {
         return ticket;
     }
 

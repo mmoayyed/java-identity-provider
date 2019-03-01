@@ -25,8 +25,6 @@ import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -125,7 +123,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         nip.setAllowCreate(true);
         authnRequest.setNameIDPolicy(nip);
         authnRequest.setAssertionConsumerServiceURL(ssoRequest.getAssertionConsumerServiceURL());
-        authnRequest.setIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        authnRequest.setIssueInstant(ssoRequest.getTime());
         authnRequest.setVersion(SAMLVersion.VERSION_20);
         authnRequest.setID(getMessageID());
         

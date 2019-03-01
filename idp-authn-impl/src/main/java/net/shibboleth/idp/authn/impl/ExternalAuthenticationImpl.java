@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -40,6 +41,8 @@ import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.consent.context.ConsentManagementContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Implementation of the {@link ExternalAuthentication} API that handles moving information in and out
@@ -94,7 +97,6 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation")
     @Override
     protected void doStart(@Nonnull final HttpServletRequest request) throws ExternalAuthenticationException {
         final AuthenticationContext authnContext = profileRequestContext.getSubcontext(AuthenticationContext.class);
@@ -110,18 +112,13 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         request.setAttribute(PASSIVE_AUTHN_PARAM, authnContext.isPassive());
         request.setAttribute(FORCE_AUTHN_PARAM, authnContext.isForceAuthn());
                 
-        final Collection<Principal> principals = authnContext.getAttemptedFlow().getSupportedPrincipals();
-        if (!principals.isEmpty()) {
-            request.setAttribute(AUTHN_METHOD_PARAM, principals.iterator().next().getName());
-        }
-        
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx != null) {
             request.setAttribute(RELYING_PARTY_PARAM, rpCtx.getRelyingPartyId());
         }
     }
 
- // Checkstyle: CyclomaticComplexity OFF
+ // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
     protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
@@ -156,7 +153,12 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         
         attr = request.getAttribute(AUTHENTICATION_INSTANT_KEY);
         if (attr != null && attr instanceof DateTime) {
-            extContext.setAuthnInstant((DateTime) attr);
+            // This is a V4 deprecation, do not remove until V5.
+            DeprecationSupport.warn(ObjectType.CLASS, DateTime.class.getName(), "ExternalAuthentication",
+                    Instant.class.getName());
+            extContext.setAuthnInstant(Instant.ofEpochMilli(((DateTime) attr).getMillis()));
+        } else if (attr != null && attr instanceof Instant) {
+            extContext.setAuthnInstant((Instant) attr);
         }
         
         attr = request.getAttribute(AUTHENTICATING_AUTHORITIES_KEY);
@@ -193,7 +195,7 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         
         response.sendRedirect(extContext.getFlowExecutionUrl());
     }
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
 
     /** {@inheritDoc} */
     @Override

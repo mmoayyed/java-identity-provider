@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.ticket.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,7 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 
-import org.joda.time.Instant;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +177,7 @@ public class EncodingTicketService extends AbstractTicketService {
         final String opaque;
         try {
             opaque = dataSealer.wrap(
-                    serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant().getMillis());
+                    serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant().toEpochMilli());
         } catch (final Exception e) {
             throw new RuntimeException("Ticket encoding failed", e);
         }

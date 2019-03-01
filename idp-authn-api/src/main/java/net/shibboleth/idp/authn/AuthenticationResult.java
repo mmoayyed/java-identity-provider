@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -31,12 +32,9 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.joda.time.DateTime;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
@@ -58,11 +56,11 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** The identifier of the flow used to produce this result. */
     @Nonnull @NotEmpty private final String authenticationFlowId;
     
-    /** The time, in milliseconds since the epoch, that the authentication completed. */
-    @Positive private long authenticationInstant;
+    /** The time that the authentication completed. */
+    @Nonnull private Instant authenticationInstant;
 
-    /** The last time, in milliseconds since the epoch, this result was used to bypass authentication. */
-    @Positive private long lastActivityInstant;
+    /** The last time this result was used to bypass authentication. */
+    @Nonnull private Instant lastActivityInstant;
     
     /** Tracks whether a result was loaded from a previous session or created as part of the current request. */
     private boolean previousResult;
@@ -80,7 +78,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         authenticationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(flowId),
                 "Authentication flow ID cannot be null nor empty");
         subject = Constraint.isNotNull(newSubject, "Subject list cannot be null or empty");
-        authenticationInstant = System.currentTimeMillis();
+        authenticationInstant = Instant.now();
         lastActivityInstant = authenticationInstant;
     }
 
@@ -121,46 +119,46 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
 
     /**
-     * Get the time, in milliseconds since the epoch, that the authentication completed.
+     * Get the time that the authentication completed.
      * 
-     * @return time, in milliseconds since the epoch, that the authentication completed, never non-positive
+     * @return time that the authentication completed
      */
-    @Positive public long getAuthenticationInstant() {
+    @Nonnull public Instant getAuthenticationInstant() {
         return authenticationInstant;
     }
 
     /**
-     * Set the time, in milliseconds since the epoch, that the authentication completed.
+     * Set the time that the authentication completed.
      * 
-     * @param instant time, in milliseconds since the epoch, that the authentication completed, never non-positive
+     * @param instant time that the authentication completed, never non-positive
      */
-    public void setAuthenticationInstant(@Positive final long instant) {
-        authenticationInstant = Constraint.isGreaterThan(0, instant, "Authentication instant must be greater than 0");
+    public void setAuthenticationInstant(@Nonnull final Instant instant) {
+        authenticationInstant = Constraint.isNotNull(instant, "Authentication instant cannot be null");
     }
     
     /**
-     * Get the last time, in milliseconds since the epoch, this result was used for authentication.
+     * Get the last time this result was used for authentication.
      * 
-     * @return last time, in milliseconds since the epoch, this result was used for authentication
+     * @return last time this result was used for authentication
      */
-    @Positive public long getLastActivityInstant() {
+    @Nonnull public Instant getLastActivityInstant() {
         return lastActivityInstant;
     }
     
     /**
-     * Set the last time, in milliseconds since the epoch, result was used for authentication.
+     * Set the last time result was used for authentication.
      * 
-     * @param instant last time, in milliseconds since the epoch, result was used to bypass authentication
+     * @param instant last time result was used to bypass authentication
      */
-    public void setLastActivityInstant(@Positive final long instant) {
-        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+    public void setLastActivityInstant(@Nonnull final Instant instant) {
+        lastActivityInstant = Constraint.isNotNull(instant, "Last activity instant cannot be null");
     }
 
     /**
-     * Set the last activity instant, in milliseconds since the epoch, for this result to the current time.
+     * Set the last activity instant for this result to the current time.
      */
     public void setLastActivityInstantToNow() {
-        lastActivityInstant = System.currentTimeMillis();
+        lastActivityInstant = Instant.now();
     }
     
     /**
@@ -204,7 +202,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
 
         if (obj instanceof AuthenticationResult) {
             return Objects.equals(getAuthenticationFlowId(), ((AuthenticationResult) obj).getAuthenticationFlowId())
-                    && getAuthenticationInstant() == ((AuthenticationResult) obj).getAuthenticationInstant();
+                    && getAuthenticationInstant().equals(((AuthenticationResult) obj).getAuthenticationInstant());
         }
 
         return false;
@@ -215,8 +213,8 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     public String toString() {
         return MoreObjects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
                 .add("authenticatedPrincipal", getSubjectName())
-                .add("authenticationInstant", new DateTime(authenticationInstant))
-                .add("lastActivityInstant", new DateTime(lastActivityInstant))
+                .add("authenticationInstant", authenticationInstant)
+                .add("lastActivityInstant", lastActivityInstant)
                 .add("previousResult", previousResult).toString();
     }
     

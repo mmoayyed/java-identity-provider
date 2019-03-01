@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.time.Instant;
 import java.util.Arrays;
 
 import javax.security.auth.Subject;
@@ -111,7 +112,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
      * @throws InterruptedException 
      * @throws ComponentInitializationException */
     @Test public void testAddAuthenticationStatement() throws InterruptedException, ComponentInitializationException {
-        final long now = System.currentTimeMillis();
+        final Instant now = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
         
@@ -144,7 +145,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(assertion.getAuthnStatements().get(0));
 
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
-        Assert.assertTrue(authenticationStatement.getAuthnInstant().getMillis() > now);
+        Assert.assertTrue(authenticationStatement.getAuthnInstant().isAfter(now));
         Assert.assertNotNull(authenticationStatement.getSessionIndex());
         Assert.assertNull(authenticationStatement.getSessionNotOnOrAfter());
 

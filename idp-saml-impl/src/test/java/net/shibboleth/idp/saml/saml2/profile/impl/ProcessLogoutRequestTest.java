@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,11 +101,11 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
     protected void adjustProperties() throws ComponentInitializationException {
         sessionManager.setTrackSPSessions(true);
         sessionManager.setSecondaryServiceIndex(true);
-        sessionManager.setSessionSlop(900 * 60 * 1000);
+        sessionManager.setSessionSlop(Duration.ofSeconds(900 * 60));
         final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
         final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> mappings = new HashMap<>();
-        mappings.put(SAML1SPSession.class, new SAML1SPSessionSerializer(900 * 60 * 1000));
-        mappings.put(SAML2SPSession.class, new SAML2SPSessionSerializer(900 * 60 * 1000));
+        mappings.put(SAML1SPSession.class, new SAML1SPSessionSerializer(Duration.ofSeconds(900 * 60)));
+        mappings.put(SAML2SPSession.class, new SAML2SPSessionSerializer(Duration.ofSeconds(900 * 60)));
         registry.setMappings(mappings);
         registry.initialize();
         sessionManager.setSPSessionSerializerRegistry(registry);
@@ -162,8 +165,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
@@ -190,8 +193,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
@@ -227,8 +230,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
@@ -266,8 +269,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
@@ -303,8 +306,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
@@ -331,8 +334,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2").iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
+        Assert.assertEquals(sp.getCreationInstant(), creation.truncatedTo(ChronoUnit.MILLIS));
+        Assert.assertEquals(sp.getExpirationInstant(), expiration.truncatedTo(ChronoUnit.MILLIS));
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId2, sp.getNameID()));
         Assert.assertEquals(sp.getSessionIndex(), "index2");
         
@@ -349,8 +352,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
@@ -378,8 +381,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         ((LogoutRequest) prc.getInboundMessageContext().getMessage()).getSessionIndexes().add(sessionIndex);
 
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
@@ -424,8 +427,8 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
 
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);

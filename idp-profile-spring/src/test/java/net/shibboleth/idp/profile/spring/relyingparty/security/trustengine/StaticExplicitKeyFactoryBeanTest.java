@@ -18,12 +18,12 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Iterator;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.AbstractSecurityParserTest;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.joda.time.DateTime;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.trust.TrustEngine;
@@ -57,7 +57,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 1);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));
 
-        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), DateTime.parse("2024-04-08T13:39:18Z").getMillis());
+        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
     }
     
     @Test public void multipleCert() throws IOException, ResolverException {
@@ -91,6 +91,6 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
         Assert.assertTrue(credentials.hasNext());
         final X509Credential second = (X509Credential) credentials.next();
         Assert.assertEquals(second.getEntityCertificateChain().size(), 1);
-        Assert.assertEquals(second.getEntityCertificate().getNotAfter().getTime(), DateTime.parse("2024-04-08T13:39:18Z").getMillis());
+        Assert.assertEquals(second.getEntityCertificate().getNotAfter().getTime(), Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
     }
 }

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -30,8 +31,6 @@ import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -97,7 +96,7 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     }
 
     protected static Instant expiry() {
-        return DateTime.now().plusSeconds(30).toInstant();
+        return Instant.now().plusSeconds(30);
     }
 
     protected String generateServiceTicketId() {

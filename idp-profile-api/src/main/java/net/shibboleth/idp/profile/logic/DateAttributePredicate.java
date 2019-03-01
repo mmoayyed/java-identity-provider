@@ -25,8 +25,9 @@ import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -53,10 +56,13 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     @Nonnull @NotEmpty private final String attributeName;
 
     /** Formatter used to parse string-based date attribute values. */
-    @Nonnull private final DateTimeFormatter dateTimeFormatter;
+    @Nullable private DateTimeFormatter dateTimeFormatter;
+    
+    /** Legacy formatter used to parse string-based date attribute values. */
+    @Deprecated @Nullable private org.joda.time.format.DateTimeFormatter legacyFormatter;
 
     /** Offset from system time used for date comparisons. */
-    @Nullable private org.joda.time.Duration systemTimeOffset;
+    @Nonnull private java.time.Duration systemTimeOffset;
     
     /** Result of predicate if attribute is missing or has no values. */
     private boolean resultIfMissing;
@@ -64,11 +70,37 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     /**
      * Create a new instance that performs date comparisons against the given attribute
      * using ISO date/time format parser by default.
+     * 
+     * <p>This is deprecated in favor of the Java 8 API version.</p>
      *
      * @param attribute Attribute name that provides candidate date values to test.
      */
+    @Deprecated
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
+        // This isn't easily reproducible with Java 8's API, so I'm just going to
+        // deprecate the "no formatter supplied" scenario.
         this(attribute, ISODateTimeFormat.dateOptionalTimeParser());
+    }
+
+    /**
+     * Create a new instance that performs date comparisons against the given attribute
+     * using the given date parser.
+     * 
+     * <p>This is deprecated in favor of the Java 8 API version.</p>
+     *
+     * @param attribute Attribute name that provides candidate date values to test.
+     * @param formatter Date/time parser.
+     */
+    @Deprecated
+    public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
+            @Nonnull @ParameterName(name="formatter") final org.joda.time.format.DateTimeFormatter formatter) {
+        // This is a V4 deprecation, don't remove until V5.
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "Joda-Time-based constructor",
+                DateAttributePredicate.class.getName(), "(see Javadoc)");
+        
+        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
+        legacyFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
+        systemTimeOffset = java.time.Duration.ZERO;
     }
 
     /**
@@ -78,12 +110,12 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      * @param attribute Attribute name that provides candidate date values to test.
      * @param formatter Date/time parser.
      */
-    @Deprecated
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
             @Nonnull @ParameterName(name="formatter") final DateTimeFormatter formatter) {
+        
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
         dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
-        resultIfMissing = false;
+        systemTimeOffset = java.time.Duration.ZERO;
     }
 
     /**
@@ -96,9 +128,9 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
             @Nonnull @NotEmpty @ParameterName(name="formatString") final String formatString) {
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
-        dateTimeFormatter = DateTimeFormat.forPattern(
+        dateTimeFormatter = DateTimeFormatter.ofPattern(
                 Constraint.isNotNull(formatString, "Format string cannot be null"));
-        resultIfMissing = false;
+        systemTimeOffset = java.time.Duration.ZERO;
     }
     
     /**
@@ -110,18 +142,35 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      */
     @Deprecated
     public void setSystemTimeOffset(@Nonnull final org.joda.time.Duration offset) {
-        systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot be null");
+        // This is a V4 deprecation, don't remove until V5.
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "Joda-Time-based setSystemTimeOffset",
+                DateAttributePredicate.class.getName(), "setOffset");
+        systemTimeOffset = java.time.Duration.ofMillis(
+                Constraint.isNotNull(offset, "Offset cannot be null").getMillis());
     }
 
     /**
-     * Set the system time offset, which affects the reference date for comparisons.
-     * By default all comparisons are against system time, i.e. zero offset.
+     * Set the system time offset in milliseconds, which affects the reference date for comparisons.
+     * 
+     * <p>By default all comparisons are against system time, i.e. zero offset.</p>
      *
      * @param offset System time offset. A negative value decreases the target date (sooner);
      *                         a positive value increases the target date (later).
      */
     @Duration public void setOffset(@Duration final long offset) {
-        systemTimeOffset = org.joda.time.Duration.millis(offset);
+        systemTimeOffset = java.time.Duration.ofMillis(offset);
+    }
+
+    /**
+     * Set the system time offset, which affects the reference date for comparisons.
+     * 
+     * <p>By default all comparisons are against system time, i.e. zero offset.</p>
+     *
+     * @param offset System time offset. A negative value decreases the target date (sooner);
+     *                         a positive value increases the target date (later).
+     */
+    public void setOffset(@Nonnull final java.time.Duration offset) {
+        systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot be null");
     }
     
     /**
@@ -141,7 +190,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean hasMatch(@Nonnull @NonnullElements final Map<String, IdPAttribute> attributeMap) {
+    protected boolean hasMatch(@Nonnull @NonnullElements final Map<String,IdPAttribute> attributeMap) {
         
         final IdPAttribute attribute = attributeMap.get(attributeName);
         if (attribute == null) {
@@ -152,13 +201,21 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
             return resultIfMissing;
         }
         
+        final Instant now = Instant.now();
+        
         String dateString;
         for (final IdPAttributeValue<?> value : attribute.getValues()) {
             if (value instanceof StringAttributeValue) {
                 dateString = ((StringAttributeValue) value).getValue();
                 try {
-                    if (dateTimeFormatter.parseDateTime(dateString).plus(systemTimeOffset).isAfterNow()) {
-                        return true;
+                    if (dateTimeFormatter != null) {
+                        if (Instant.from(dateTimeFormatter.parse(dateString)).plus(systemTimeOffset).isAfter(now)) {
+                            return true;
+                        }
+                    } else {
+                        if (legacyFormatter.parseDateTime(dateString).plus(systemTimeOffset.toMillis()).isAfterNow()) {
+                            return true;
+                        }
                     }
                 } catch (final RuntimeException e) {
                     log.warn("{} is not a valid date for the configured date parser", dateString, e);

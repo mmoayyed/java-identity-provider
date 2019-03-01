@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.ticket.serialization.impl;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +36,6 @@ import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import org.joda.time.Instant;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,12 +98,12 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
         try (final JsonGenerator gen = generatorFactory.createGenerator(buffer)) {
             gen.writeStartObject()
                     .write(SERVICE_FIELD, ticket.getService())
-                    .write(EXPIRATION_FIELD, ticket.getExpirationInstant().getMillis());
+                    .write(EXPIRATION_FIELD, ticket.getExpirationInstant().toEpochMilli());
             if (ticket.getTicketState() != null) {
                 gen.writeStartObject(STATE_FIELD)
                         .write(SESSION_FIELD, ticket.getTicketState().getSessionId())
                         .write(PRINCIPAL_FIELD, ticket.getTicketState().getPrincipalName())
-                        .write(AUTHN_INSTANT_FIELD, ticket.getTicketState().getAuthenticationInstant().getMillis())
+                        .write(AUTHN_INSTANT_FIELD, ticket.getTicketState().getAuthenticationInstant().toEpochMilli())
                         .write(AUTHN_METHOD_FIELD, ticket.getTicketState().getAuthenticationMethod())
                         .writeEnd();
             }
@@ -128,14 +128,14 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
         try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
             final JsonObject to = reader.readObject();
             final String service = to.getString(SERVICE_FIELD);
-            final Instant expiry = new Instant(to.getJsonNumber(EXPIRATION_FIELD).longValueExact());
+            final Instant expiry = Instant.ofEpochMilli(to.getJsonNumber(EXPIRATION_FIELD).longValueExact());
             final JsonObject so = to.getJsonObject(STATE_FIELD);
             final TicketState state;
             if (so != null) {
                 state = new TicketState(
                         so.getString(SESSION_FIELD),
                         so.getString(PRINCIPAL_FIELD),
-                        new Instant(so.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact()),
+                        Instant.ofEpochMilli(so.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact()),
                         so.getString(AUTHN_METHOD_FIELD));
             } else {
                 state = null;

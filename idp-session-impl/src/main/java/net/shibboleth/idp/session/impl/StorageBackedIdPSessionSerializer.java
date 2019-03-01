@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.time.Instant;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -104,7 +105,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
         try {
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = jsonProvider.createGenerator(sink);
-            gen.writeStartObject().write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
+            gen.writeStartObject().write(CREATION_INSTANT_FIELD, instance.getCreationInstant().toEpochMilli())
                     .write(PRINCIPAL_NAME_FIELD, instance.getPrincipalName());
 
             if (instance.getAddress(AbstractIdPSession.AddressFamily.IPV4) != null) {
@@ -169,15 +170,17 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             // Create new object if necessary.
             StorageBackedIdPSession objectToPopulate = targetObject;
             if (objectToPopulate == null) {
-                final long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
+                final Instant creation =
+                        Instant.ofEpochMilli(obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact());
                 final String principalName = obj.getString(PRINCIPAL_NAME_FIELD);
                 objectToPopulate = new StorageBackedIdPSession(sessionManager, context, principalName, creation);
             }
 
             // Populate fields in-place, bypassing any storage interactions.
             objectToPopulate.setVersion(version);
-            objectToPopulate.doSetLastActivityInstant(expiration - sessionManager.getSessionTimeout()
-                    - sessionManager.getSessionSlop());
+            objectToPopulate.doSetLastActivityInstant(
+                    Instant.ofEpochMilli(expiration).minus(sessionManager.getSessionTimeout()).minus(
+                            sessionManager.getSessionSlop()));
             if (obj.containsKey(IPV4_ADDRESS_FIELD)) {
                 objectToPopulate.doBindToAddress(obj.getString(IPV4_ADDRESS_FIELD));
             }

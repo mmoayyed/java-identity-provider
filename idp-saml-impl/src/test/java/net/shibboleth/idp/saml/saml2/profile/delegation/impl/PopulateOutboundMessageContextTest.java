@@ -19,7 +19,8 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.joda.time.DateTime;
+import java.time.Instant;
+
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
@@ -51,7 +52,7 @@ public class PopulateOutboundMessageContextTest {
     
     @Test
     public void testBasic() throws ComponentInitializationException {
-        DateTime now = new DateTime();
+        Instant now = Instant.now();
         prc.getInboundMessageContext().getSubcontext(WSAddressingContext.class, true).setMessageIDURI("urn:test:abc123");
         prc.getOutboundMessageContext().getSubcontext(SAMLMessageInfoContext.class, true).setMessageIssueInstant(now);
         
@@ -67,7 +68,7 @@ public class PopulateOutboundMessageContextTest {
     
     @Test
     public void testNoInboundMessageID() throws ComponentInitializationException {
-        DateTime now = new DateTime();
+        Instant now = Instant.now();
         prc.getOutboundMessageContext().getSubcontext(SAMLMessageInfoContext.class, true).setMessageIssueInstant(now);
         
         action.initialize();

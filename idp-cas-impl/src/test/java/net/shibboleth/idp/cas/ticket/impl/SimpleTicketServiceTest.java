@@ -21,13 +21,14 @@ import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Unit test for {@link SimpleTicketService} class.
@@ -103,7 +104,7 @@ public class SimpleTicketServiceTest {
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
                 expiry(),
                 TEST_SERVICE,
-                new TicketState(TEST_SESSION_ID, "bob", Instant.now(), "Password"),
+                new TicketState(TEST_SESSION_ID, "bob", Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password"),
                 false);
     }
 
@@ -115,6 +116,6 @@ public class SimpleTicketServiceTest {
     }
 
     private static Instant expiry() {
-        return DateTime.now().plusSeconds(10).toInstant();
+        return Instant.now().plusSeconds(10).truncatedTo(ChronoUnit.MILLIS);
     }
 }

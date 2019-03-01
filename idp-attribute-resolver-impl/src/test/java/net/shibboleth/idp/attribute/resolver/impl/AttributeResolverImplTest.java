@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -340,7 +341,7 @@ public class AttributeResolverImplTest {
         final MockDataConnector dc2 = new MockDataConnector("dc2", Collections.singletonMap("Atr", i2Val));
         dc2.initialize();
         dc1.setFailoverDataConnectorId("dc2");
-        dc1.setNoRetryDelay(3000);
+        dc1.setNoRetryDelay(Duration.ofSeconds(3));
         dc1.initialize();
         
         final HashSet<DataConnector> connectors = new HashSet<>(2);

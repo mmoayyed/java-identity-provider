@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.cas.ticket.serialization.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import org.joda.time.Instant;
 
 /**
  * Serializes service tickets in simple field-delimited form.

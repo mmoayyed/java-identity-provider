@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,10 +29,9 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import org.joda.time.DateTime;
-import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.util.AttributeMap;
+import org.opensaml.saml.common.AbstractSAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.EntityGroupName;
 import org.opensaml.saml.saml2.metadata.AdditionalMetadataLocation;
@@ -52,7 +53,7 @@ import org.opensaml.xmlsec.signature.Signature;
  *
  * @author Marvin S. Addison
  */
-public class ServiceEntityDescriptor extends AbstractXMLObject implements EntityDescriptor {
+public class ServiceEntityDescriptor extends AbstractSAMLObject implements EntityDescriptor {
 
     /** Underlying CAS service. */
     @Nonnull private final Service svc;
@@ -236,17 +237,13 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public DateTime getValidUntil() {
-        return DateTime.now().plusDays(1);
+    public Instant getValidUntil() {
+        return Instant.now().plus(1, ChronoUnit.DAYS);
     }
 
-    /**
-     * Throws {@link UnsupportedOperationException}.
-     * 
-     * {@inheritDoc}
-     */
-    public void setValidUntil(final DateTime validUntil) {
-        throw new UnsupportedOperationException();
+    /** {@inheritDoc} */
+    public void setValidUntil(final Instant validUntil) {
+        throw new UnsupportedOperationException();        
     }
 
     /** {@inheritDoc} */

@@ -20,6 +20,8 @@ package net.shibboleth.idp.session;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,10 +33,7 @@ import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.stream.JsonGenerator;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -59,26 +58,25 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSPSessionSerializer.class);
 
     /** Milliseconds to subtract from record expiration to establish session expiration value. */
-    @Duration @NonNegative private final long expirationOffset;
+    @Nonnull private final Duration expirationOffset;
     
     /**
      * Constructor.
      * 
-     * @param offset milliseconds to subtract from record expiration to establish session expiration value
+     * @param offset time to subtract from record expiration to establish session expiration value
      */
-    protected AbstractSPSessionSerializer(@Duration @NonNegative final long offset) {
-        expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");
+    protected AbstractSPSessionSerializer(@Nonnull final Duration offset) {
+        expirationOffset = Constraint.isNotNull(offset, "Offset cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final SPSession instance) throws IOException {
         try {
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = Json.createGenerator(sink);
             gen.writeStartObject()
                 .write(SERVICE_ID_FIELD, instance.getId())
-                .write(CREATION_INSTANT_FIELD, instance.getCreationInstant());
+                .write(CREATION_INSTANT_FIELD, instance.getCreationInstant().toEpochMilli());
             
             doSerializeAdditional(instance, gen);
             
@@ -92,7 +90,6 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull public SPSession deserialize(final long version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
                     throws IOException {
@@ -110,9 +107,9 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             final JsonObject obj = (JsonObject) st;
             
             final String serviceId = obj.getString(SERVICE_ID_FIELD);
-            final long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
+            final Instant creation = Instant.ofEpochMilli(obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact());
 
-            return doDeserialize(obj, serviceId, creation, expiration - expirationOffset);
+            return doDeserialize(obj, serviceId, creation, Instant.ofEpochMilli(expiration).minus(expirationOffset));
             
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing SPSession", e);
@@ -148,8 +145,8 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
      * @return the newly constructed object
      * @throws IOException if an error occurs during deserialization
      */
-    @Nonnull @Duration protected abstract SPSession doDeserialize(@Nonnull final JsonObject obj,
-            @Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
-            @Duration @Positive final long expiration) throws IOException;
+    @Nonnull protected abstract SPSession doDeserialize(@Nonnull final JsonObject obj,
+            @Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
+            @Nonnull final Instant expiration) throws IOException;
     
 }

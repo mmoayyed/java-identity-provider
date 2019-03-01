@@ -28,8 +28,6 @@ import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +36,8 @@ import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
+
+import java.time.Instant;
 
 /**
  * Tests the flow behind the <code>/validate</code> endpoint.
@@ -69,7 +69,7 @@ public class ValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://test.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);

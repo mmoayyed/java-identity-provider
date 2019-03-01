@@ -27,6 +27,7 @@
                 <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
                 <bean class="net.shibboleth.ext.spring.config.FunctionToFunctionConverter" />
                 <bean class="net.shibboleth.ext.spring.config.PredicateToPredicateConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToDurationConverter" />
             </set>
         </property>
     </bean>
@@ -411,7 +412,7 @@
     <bean id="shibboleth.X509TrustManager" abstract="true"
         class="org.opensaml.security.trust.impl.TrustEngineX509TrustManager" />
     
-    <!-- Default Jackson ObjectMapper with JodaTime support. -->
+    <!-- Default Jackson ObjectMapper. -->
     
     <bean id="shibboleth.JSONObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 
@@ -427,7 +428,7 @@
             p:targetObject-ref="shibboleth.JSONObjectMapper"
             p:targetMethod="registerModule">
         <property name="arguments">
-            <bean class="com.fasterxml.jackson.datatype.joda.JodaModule" />
+            <bean class="com.fasterxml.jackson.datatype.jsr310.JavaTimeModule" />
         </property>
     </bean>
 

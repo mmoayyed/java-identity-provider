@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.audit.impl;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,14 +39,11 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -61,9 +61,6 @@ import com.google.common.collect.ImmutableMap;
  */
 public class WriteAuditLog extends AbstractProfileAction {
 
-    /** Formatter used to convert timestamps to strings. */
-    @Nonnull private static DateTimeFormatter v2Formatter = ISODateTimeFormat.basicDateTimeNoMillis();
-
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(WriteAuditLog.class);
     
@@ -73,10 +70,10 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Map of log category to formatting tokens and literals to output. */
     @Nonnull @NotEmpty private Map<String,List<String>> formattingMap;
 
-    /** Formatting string for {@link DateTime} fields. */
-    @Nullable private String dateTimeFormat;
+    /** Formatter for date/time fields. */
+    @Nonnull private DateTimeFormatter dateTimeFormatter;
     
-    /** Convert {@link DateTime} fields to default time zone. */
+    /** Convert date/time fields to default time zone. */
     private boolean useDefaultTimeZone;
 
     /** The Spring RequestContext to operate on. */
@@ -92,6 +89,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
         formattingMap = Collections.emptyMap();
+        dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
     }
 
     /**
@@ -171,18 +169,20 @@ public class WriteAuditLog extends AbstractProfileAction {
 // Checkstyle: CyclomaticComplexity ON
 
     /**
-     * Set the {@link DateTime} formatting string to apply when extracting {@link DateTime}-valued fields.
+     * Set the formatting string to apply when extracting date/time fields.
      * 
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        dateTimeFormat = StringSupport.trimOrNull(format);
+        if (format != null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
+        }
     }
     
     /**
-     * Convert {@link DateTime}-valued fields to default time zone.
+     * Convert date/time fields to default time zone.
      * 
      * @param flag flag to set
      */
@@ -190,6 +190,16 @@ public class WriteAuditLog extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         useDefaultTimeZone = flag;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (useDefaultTimeZone) {
+            dateTimeFormatter = dateTimeFormatter.withZone(ZoneId.systemDefault());
+        }
     }
 
     /** {@inheritDoc} */
@@ -232,14 +242,7 @@ public class WriteAuditLog extends AbstractProfileAction {
                         final String field = token.substring(1);
                         
                         if (IdPAuditFields.EVENT_TIME.equals(field)) {
-                            if (dateTimeFormat != null) {
-                                record.append(new DateTime(
-                                        useDefaultTimeZone ? DateTimeZone.getDefault() : DateTimeZone.UTC).toString(
-                                                dateTimeFormat));
-                            } else {
-                                record.append(new DateTime().toString(v2Formatter.withZone(
-                                        useDefaultTimeZone ? DateTimeZone.getDefault() : DateTimeZone.UTC)));
-                            }
+                            record.append(dateTimeFormatter.format(Instant.now()));
                         } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
                             final Event event = requestContext.getCurrentEvent();
                             if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {

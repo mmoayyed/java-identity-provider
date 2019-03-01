@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -68,7 +70,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
         registry.setMappings(
                 Collections.<Class<? extends SPSession>,StorageSerializer<? extends SPSession>>singletonMap(
-                        BasicSPSession.class, new BasicSPSessionSerializer(900 * 60 * 1000)));
+                        BasicSPSession.class, new BasicSPSessionSerializer(Duration.ofSeconds(900))));
         registry.initialize();
         sessionManager.setSPSessionSerializerRegistry(registry);
     }
@@ -102,8 +104,8 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.createSession("joe");
         prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
         
-        final long creation = System.currentTimeMillis();
-        final long expiration = creation + 3600 * 60 * 1000;
+        final Instant creation = Instant.now();
+        final Instant expiration = creation.plusSeconds(3600);
         
         action.setSPSessionCreationStrategy(new DummyStrategy(creation, expiration));
         action.initialize();
@@ -119,12 +121,12 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
     /** Returns a simple example session. */
     private class DummyStrategy implements Function<ProfileRequestContext, SPSession> {
 
-        private long creationTime;
+        private Instant creationTime;
         
-        private long expirationTime;
+        private Instant expirationTime;
         
         /** Constructor. */
-        DummyStrategy(final long creation, final long expiration) {
+        DummyStrategy(final Instant creation, final Instant expiration) {
             creationTime = creation;
             expirationTime = expiration;
         }

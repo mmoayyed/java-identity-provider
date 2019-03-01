@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -36,8 +37,6 @@ import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -123,11 +122,11 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             final TicketState state = new TicketState(
                     session.getId(),
                     getPrincipalName(profileRequestContext),
-                    new Instant(authnResult.getAuthenticationInstant()),
+                    authnResult.getAuthenticationInstant(),
                     authnResult.getAuthenticationFlowId());
             ticket = ticketServiceEx.createServiceTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
-                    DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
+                    Instant.now().plusMillis(config.getTicketValidityPeriod()),
                     request.getService(),
                     state,
                     request.isRenew());
@@ -186,7 +185,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     private AuthenticationResult getLatestAuthenticationResult(final IdPSession session) {
         AuthenticationResult latest = null;
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
-            if (latest == null || result.getAuthenticationInstant() > latest.getAuthenticationInstant()) {
+            if (latest == null || result.getAuthenticationInstant().isAfter(latest.getAuthenticationInstant())) {
                 latest = result;
             }
         }

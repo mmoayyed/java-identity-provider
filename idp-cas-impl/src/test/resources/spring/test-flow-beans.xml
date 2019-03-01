@@ -24,6 +24,7 @@
                 <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringBooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToDurationConverter" />
             </set>
         </property>
     </bean>

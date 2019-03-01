@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBase64Binary;
@@ -124,8 +125,8 @@ public abstract class AbstractCollectionConfigurationLookupStrategy<T1,T2>
             final Integer value = ((XSInteger) object).getValue();
             return value != null ? value.toString() : null;
         } else if (object instanceof XSDateTime) {
-            final DateTime dt = ((XSDateTime) object).getValue();
-            return dt != null ? Long.toString(dt.getMillis()) : null;
+            final Instant dt = ((XSDateTime) object).getValue();
+            return dt != null ? Long.toString(dt.toEpochMilli()) : null;
         } else if (object instanceof XSBase64Binary) {
             return ((XSBase64Binary) object).getValue();
         } else if (object instanceof XSAny) {

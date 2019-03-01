@@ -38,7 +38,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -51,8 +50,9 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * Action that outputs one or more {@link Metric} objects.
@@ -148,7 +148,7 @@ public class OutputMetrics extends AbstractProfileAction {
     }
     
     /**
-     * Set the {@link DateTime} formatting string to apply when writing {@link DateTime}-valued fields.
+     * Set the formatting string to apply when writing date/time fields.
      * 
      * @param format formatting string
      */
@@ -254,8 +254,9 @@ public class OutputMetrics extends AbstractProfileAction {
             
             final ObjectMapper mapper = new ObjectMapper().registerModule(
                     new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, true, filter));
-            mapper.registerModule(new JodaModule());
+            mapper.registerModule(new JavaTimeModule());
             mapper.setDateFormat(new SimpleDateFormat(dateTimeFormat != null ? dateTimeFormat : DEFAULT_DT_FORMAT));
+            mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
             
             if (jsonpCallbackName != null) {
                 response.setContentType("application/javascript");

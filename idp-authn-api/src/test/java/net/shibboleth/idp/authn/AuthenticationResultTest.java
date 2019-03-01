@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import java.time.Instant;
+
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -31,12 +33,12 @@ public class AuthenticationResultTest {
 
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() throws Exception {
-        long start = System.currentTimeMillis();
+        Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
         AuthenticationResult event = new AuthenticationResult("test", new UsernamePrincipal("bob"));
-        Assert.assertTrue(event.getAuthenticationInstant() > start);
+        Assert.assertTrue(event.getAuthenticationInstant().isAfter(start));
         Assert.assertEquals(event.getAuthenticationFlowId(), "test");
         
         Assert.assertTrue(event.getSubject().getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("bob")));

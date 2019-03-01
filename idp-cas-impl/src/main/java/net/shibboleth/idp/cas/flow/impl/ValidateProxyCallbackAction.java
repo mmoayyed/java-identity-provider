@@ -19,12 +19,11 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +124,7 @@ public class ValidateProxyCallbackAction
         try {
             log.debug("Attempting proxy authentication to {}", proxyCallbackUri);
             proxyValidator.validate(profileRequestContext, proxyCallbackUri);
-            final Instant expiration = DateTime.now().plus(config.getTicketValidityPeriod()).toInstant();
+            final Instant expiration = Instant.now().plusMillis(config.getTicketValidityPeriod());
             if (ticket instanceof ServiceTicket) {
                 ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
             } else {

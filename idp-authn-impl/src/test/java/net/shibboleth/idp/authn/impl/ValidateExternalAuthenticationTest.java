@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -33,7 +34,6 @@ import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.action.EventIds;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -120,7 +120,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
         eac.setPrincipalName("foo");
-        final DateTime ts = DateTime.now().minus(3600);
+        final Instant ts = Instant.now().minusSeconds(3600);
         eac.setAuthnInstant(ts);
         eac.setPreviousResult(true);
         
@@ -128,7 +128,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertTrue(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ts.getMillis(), ac.getAuthenticationResult().getAuthenticationInstant());
+        Assert.assertEquals(ts, ac.getAuthenticationResult().getAuthenticationInstant());
     }
 
     @Test public void testAuthnAuthorities() {

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,10 +26,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
  * A context representing the state of an externalized authentication attempt,
@@ -52,10 +53,10 @@ public final class ExternalAuthenticationContext extends BaseContext {
     @Nullable private Subject subject;
 
     /** Time of authentication. */
-    @Nullable private DateTime authnInstant;
+    @Nullable private Instant authnInstant;
     
     /** Proxied authenticating sources. */
-    @Nonnull private Collection<String> authenticatingAuthorities;
+    @Nonnull @NonnullElements private Collection<String> authenticatingAuthorities;
     
     /** Error message. */
     @Nullable private String authnError;
@@ -168,7 +169,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @return time of authentication
      */
-    @Nullable public DateTime getAuthnInstant() {
+    @Nullable public Instant getAuthnInstant() {
         return authnInstant;
     }
 
@@ -179,7 +180,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public ExternalAuthenticationContext setAuthnInstant(@Nullable final DateTime instant) {
+    @Nonnull public ExternalAuthenticationContext setAuthnInstant(@Nullable final Instant instant) {
         authnInstant = instant;
         
         return this;
@@ -192,7 +193,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @since 3.4.0
      */
-    @Nonnull @Live public Collection<String> getAuthenticatingAuthorities() {
+    @Nonnull @NonnullElements @Live public Collection<String> getAuthenticatingAuthorities() {
         return authenticatingAuthorities;
     }
 

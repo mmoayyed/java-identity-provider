@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AbstractResolverPluginFactoryBean;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -84,7 +84,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     @Nullable private String failoverDataConnectorId;
 
     /** Data Connector property "noRetryDelay". */
-    @Nullable @Duration private Long noRetryDelay;
+    @Nullable private Duration noRetryDelay;
 
     /**
      * Data Connector property "failoverDataConnectorId".
@@ -109,7 +109,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * 
      * @return the value of property to set or null if never set
      */
-    @Nullable @Duration public Long getNoRetryDelay() {
+    @Nullable public Duration getNoRetryDelay() {
         return noRetryDelay;
     }
     
@@ -118,7 +118,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * 
      * @param delay the value to set
      */
-    @Duration public void setNoRetryDelay(@Nullable @Duration final Long delay) {
+    public void setNoRetryDelay(@Nullable final Duration delay) {
         noRetryDelay = delay;
     }
 

@@ -16,12 +16,11 @@
  */
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-
-import org.joda.time.DateTime;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
@@ -55,9 +54,9 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
 // Checkstyle: AnonInnerLength OFF
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "failure"),
-                new Gauge<Map<String,DateTime>>() {
-                    public Map<String,DateTime> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                new Gauge<Map<String,Instant>>() {
+                    public Map<String,Instant> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
                         final ServiceableComponent<AttributeResolver> component =
                                 getService().getServiceableComponent();
                         if (component != null) {
@@ -66,9 +65,8 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
                                 final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
                                 
                                 for (final DataConnector connector: connectors) {
-                                    final long lastFail = connector.getLastFail();
-                                    if (lastFail > 0) {
-                                        mapBuilder.put(connector.getId(), new DateTime(lastFail));
+                                    if (connector.getLastFail() != null) {
+                                        mapBuilder.put(connector.getId(), connector.getLastFail());
                                     }
                                 }
                             } finally {

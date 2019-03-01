@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.session.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -30,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.session.SAML1SPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -44,13 +44,13 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * The session has a creation time based on the time of execution, and the expiration is based on
  * a configurable lifetime.</p> 
  */
-public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestContext, SPSession> {
+public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestContext,SPSession> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1SPSessionCreationStrategy.class);
     
     /** Lifetime of sessions to create. */
-    @Positive @Duration private final long sessionLifetime;
+    @Nonnull private final Duration sessionLifetime;
 
     /** RelyingPartyContext lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -60,8 +60,8 @@ public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestCo
      * 
      * @param lifetime lifetime in milliseconds, determines expiration of {@link SPSession} to be created
      */
-    public SAML1SPSessionCreationStrategy(@Positive @Duration final long lifetime) {
-        sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
+    public SAML1SPSessionCreationStrategy(@Nonnull final Duration lifetime) {
+        sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
@@ -91,8 +91,8 @@ public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestCo
             return null;
         }
         
-        final long now = System.currentTimeMillis();
-        return new SAML1SPSession(issuer, now, now + sessionLifetime);
+        final Instant now = Instant.now();
+        return new SAML1SPSession(issuer, now, now.plus(sessionLifetime));
     }
 
 }

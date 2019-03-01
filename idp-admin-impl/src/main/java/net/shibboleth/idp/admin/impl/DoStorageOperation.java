@@ -18,6 +18,7 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -190,7 +190,7 @@ public class DoStorageOperation extends AbstractProfileAction {
                         g.writeNumberField("version", record.getVersion());
                         if (record.getExpiration() != null) {
                             g.writeFieldName("expiration");
-                            g.writeObject(new DateTime(record.getExpiration()));
+                            g.writeObject(Instant.ofEpochMilli(record.getExpiration()));
                         }
                         g.close();
                     } else {

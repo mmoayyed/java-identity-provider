@@ -21,8 +21,9 @@ import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDec
 import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
@@ -52,15 +53,13 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
     
     private String messageID;
     
-    private Long time;
+    private Instant time;
     
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
-        // Note: protocol takes time in seconds, so divide by 1000.
-        // Components usually produce milliseconds, so later multiply or divide by 1000 in assertions as appropriate.
-        time = System.currentTimeMillis()/1000;
+        time = Instant.now();
         
-        messageID = "_" + sessionID + "!" + time.toString();
+        messageID = "_" + sessionID + "!" + Long.toUnsignedString(time.getEpochSecond());
         
         request = new MockHttpServletRequest();
         request.setRequestedSessionId(sessionID);
@@ -75,7 +74,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM,  entityId);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM,  acsUrl);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TARGET_PARAM,  relayState);
-        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  time.toString());
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  Long.toUnsignedString(time.getEpochSecond()));
         
         decoder.decode();
         
@@ -87,7 +86,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         Assert.assertEquals(ssoRequest.getEntityId(), entityId, "Incorrect decoded entityId value");
         Assert.assertEquals(ssoRequest.getAssertionConsumerServiceURL(), acsUrl, "Incorrect decoded ACS URL value");
         Assert.assertEquals(ssoRequest.getRelayState(), relayState, "Incorrect decoded relay state value");
-        Assert.assertEquals(Long.valueOf(ssoRequest.getTime()/1000), time, "Incorrect decoded time value");
+        Assert.assertEquals(ssoRequest.getTime(), time.truncatedTo(ChronoUnit.SECONDS), "Incorrect decoded time value");
         
         Assert.assertEquals(messageContext.getSubcontext(SAMLPeerEntityContext.class, true).getEntityId(), entityId,
                 "Incorrect decoded entityId value in peer context");
@@ -98,16 +97,17 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
                 "Incorrect binding URI in binding context");
         
         SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
-        Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), new DateTime(time*1000, ISOChronology.getInstanceUTC()),
+        Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), time.truncatedTo(ChronoUnit.SECONDS),
                 "Incorrect decoded issue instant value in message info context");
-        Assert.assertEquals(msgInfoContext.getMessageId(), messageID, "Incorrect decoded message ID value in message info context");
+        Assert.assertEquals(msgInfoContext.getMessageId(), messageID,
+                "Incorrect decoded message ID value in message info context");
     }
 
     @Test(expectedExceptions=MessageDecodingException.class)
     public void testMissingTarget() throws MessageDecodingException {
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM,  entityId);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM,  acsUrl);
-        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  time.toString());
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  Long.toUnsignedString(time.getEpochSecond()));
         
         decoder.decode();
     }

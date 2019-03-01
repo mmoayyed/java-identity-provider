@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.cas.ticket;
 
+import java.time.Instant;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.joda.time.Instant;
 
 /**
  * Supplemental state data to be stored with a ticket.

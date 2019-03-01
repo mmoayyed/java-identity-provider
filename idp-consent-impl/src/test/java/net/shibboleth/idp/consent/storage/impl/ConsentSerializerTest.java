@@ -33,7 +33,6 @@ import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -65,8 +64,6 @@ public class ConsentSerializerTest {
     protected Consent consent1;
 
     protected Consent consent2;
-
-    protected DateTime expiration;
 
     protected Map<String, Consent> consents;
 

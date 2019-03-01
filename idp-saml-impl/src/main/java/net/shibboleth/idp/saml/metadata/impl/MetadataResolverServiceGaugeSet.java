@@ -16,12 +16,12 @@
  */
 package net.shibboleth.idp.saml.metadata.impl;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.ExtendedBatchMetadataResolver;
 import org.opensaml.saml.metadata.resolver.ExtendedRefreshableMetadataResolver;
@@ -60,9 +60,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "update"),
-                new Gauge<Map<String,DateTime>>() {
-                    public Map<String,DateTime> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                new Gauge<Map<String,Instant>>() {
+                    public Map<String,Instant> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
                         final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
                         if (component != null) {
                             try {                                
@@ -83,9 +83,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "refresh"),
-                new Gauge<Map<String,DateTime>>() {
-                    public Map<String,DateTime> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                new Gauge<Map<String,Instant>>() {
+                    public Map<String,Instant> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
                         final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
                         if (component != null) {
                             try {                                
@@ -108,9 +108,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         // Checkstyle: AnonInnerLength OFF
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
-                new Gauge<Map<String,DateTime>>() {
-                    public Map<String,DateTime> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                new Gauge<Map<String,Instant>>() {
+                    public Map<String,Instant> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
                         final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
                         if (component != null) {
                             try {                                
@@ -135,9 +135,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted up
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
-                new Gauge<Map<String,DateTime>>() {
-                    public Map<String,DateTime> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                new Gauge<Map<String,Instant>>() {
+                    public Map<String,Instant> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
                         final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
                         if (component != null) {
                             try {                                

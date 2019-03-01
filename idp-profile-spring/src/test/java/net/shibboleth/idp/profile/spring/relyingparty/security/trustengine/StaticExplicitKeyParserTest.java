@@ -18,11 +18,11 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
 import java.io.IOException;
+import java.time.Instant;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.AbstractSecurityParserTest;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.joda.time.DateTime;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.trust.impl.ExplicitKeyTrustEngine;
@@ -45,7 +45,7 @@ public class StaticExplicitKeyParserTest extends AbstractSecurityParserTest {
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 1);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));
 
-        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), DateTime.parse("2024-04-08T13:39:18Z").getMillis());
+        Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
         
     }
 }

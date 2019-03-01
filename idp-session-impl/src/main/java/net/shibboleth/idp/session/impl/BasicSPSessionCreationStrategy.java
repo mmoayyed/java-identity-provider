@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -30,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -49,7 +49,7 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
     @Nonnull private final Logger log = LoggerFactory.getLogger(BasicSPSessionCreationStrategy.class);
     
     /** Lifetime of sessions to create. */
-    @Positive @Duration private final long sessionLifetime;
+    @Nonnull private final Duration sessionLifetime;
 
     /** RelyingPartyContext lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -59,8 +59,8 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
      * 
      * @param lifetime lifetime in milliseconds, determines expiration of {@link SPSession} to be created
      */
-    public BasicSPSessionCreationStrategy(@Positive @Duration final long lifetime) {
-        sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
+    public BasicSPSessionCreationStrategy(@Nonnull final Duration lifetime) {
+        sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
@@ -90,8 +90,8 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
             return null;
         }
         
-        final long now = System.currentTimeMillis();
-        return new BasicSPSession(issuer, now, now + sessionLifetime);
+        final Instant now = Instant.now();
+        return new BasicSPSession(issuer, now, now.plus(sessionLifetime));
     }
 
 }

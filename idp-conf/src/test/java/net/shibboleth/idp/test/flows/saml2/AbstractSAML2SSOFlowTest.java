@@ -18,6 +18,7 @@
 package net.shibboleth.idp.test.flows.saml2;
 
 import java.net.MalformedURLException;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +27,6 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -69,7 +69,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
             URLBuilder urlBuilder = new URLBuilder(baseUrl);
             urlBuilder.setPath(destinationPath);
             return urlBuilder.buildURL();
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             log.error("Couldn't parse base URL, reverting to internal default destination");
             return "http://localhost:8080" + destinationPath;
         }
@@ -83,7 +83,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
             URLBuilder urlBuilder = new URLBuilder(baseUrl);
             urlBuilder.setPath(destinationPath);
             return urlBuilder.buildURL();
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             log.error("Couldn't parse base URL, reverting to internal default destination: {}", baseUrl);
             return "http://localhost:8080" + destinationPath;
         }
@@ -97,7 +97,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
             URLBuilder urlBuilder = new URLBuilder(baseUrl);
             urlBuilder.setPath(destinationPath);
             return urlBuilder.buildURL();
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             log.error("Couldn't parse base URL, reverting to internal default destination: {}", baseUrl);
             return "http://localhost:8080" + destinationPath;
         }
@@ -109,7 +109,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
                         AuthnRequest.DEFAULT_ELEMENT_NAME);
 
         authnRequest.setID(idGenerator.generateIdentifier());
-        authnRequest.setIssueInstant(new DateTime());
+        authnRequest.setIssueInstant(Instant.now());
         authnRequest.setAssertionConsumerServiceURL(getAcsUrl(servletRequest));
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
 

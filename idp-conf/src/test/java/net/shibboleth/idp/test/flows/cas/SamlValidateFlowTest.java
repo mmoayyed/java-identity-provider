@@ -25,8 +25,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,6 +36,8 @@ import org.testng.annotations.Test;
 import javax.annotation.Nonnull;
 
 import static org.testng.Assert.*;
+
+import java.time.Instant;
 
 /**
  * Tests the flow behind the <code>/samlValidate</code> endpoint.
@@ -75,7 +75,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://test.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
@@ -122,7 +122,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.createSession(principal);
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                DateTime.now().plusSeconds(5).toInstant(),
+                Instant.now().plusSeconds(5),
                 "https://no-attrs.example.org/",
                 new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);

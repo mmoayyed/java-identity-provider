@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,7 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -109,7 +110,7 @@ public class WriteProfileInterceptorResultToStorageTest {
     }
 
     @Test public void testCreateStorageRecordWithExpiration() throws Exception {
-        final Long expiration = DateTime.now().getMillis() + 1000 * 60;
+        final Long expiration = Instant.now().plusSeconds(60).toEpochMilli();
         final MockProfileInterceptorResult result =
                 new MockProfileInterceptorResult("context", "key", "value", expiration);
         prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
@@ -125,7 +126,7 @@ public class WriteProfileInterceptorResultToStorageTest {
     }
 
     @Test public void testUpdateStorageRecord() throws Exception {
-        final Long expiration = DateTime.now().getMillis() + 1000 * 60;
+        final Long expiration = Instant.now().plusSeconds(60).toEpochMilli();
         MockProfileInterceptorResult result = new MockProfileInterceptorResult("context", "key", "value", null);
         prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
 

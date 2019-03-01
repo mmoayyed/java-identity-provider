@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.metadata.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
@@ -73,7 +73,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     @Nullable private SAML2AttributesMapper attributesMapper;
 
     /** Date when the cache was last refreshed. */
-    @Nullable private DateTime lastReload;
+    @Nullable private Instant lastReload;
 
     /**
      * Constructor.
@@ -137,7 +137,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         SAML2AttributesMapper am = null;
         try {
             // get date before we get the component. That way we'll not leak changes.
-            final DateTime when = attributeResolverService.getLastSuccessfulReloadInstant();
+            final Instant when = attributeResolverService.getLastSuccessfulReloadInstant();
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
                 if (!refreshFailed) {

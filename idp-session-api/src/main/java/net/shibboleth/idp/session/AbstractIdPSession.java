@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -28,17 +29,14 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +81,10 @@ public abstract class AbstractIdPSession implements IdPSession {
     @Nonnull @NotEmpty private final String principalName;
 
     /** Time, in milliseconds since the epoch, when this session was created. */
-    @Duration private final long creationInstant;
+    @Nonnull private final Instant creationInstant;
 
     /** Last activity instant, in milliseconds since the epoch, for this session. */
-    @Duration private long lastActivityInstant;
+    @Nonnull private Instant lastActivityInstant;
 
     /** Addresses to which the session is bound. */
     @Nullable private String ipV4Address;
@@ -108,12 +106,12 @@ public abstract class AbstractIdPSession implements IdPSession {
      * @param creationTime creation time of session in milliseconds
      */
     public AbstractIdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName,
-            @Positive final long creationTime) {
+            @Nonnull final Instant creationTime) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID cannot be null or empty");
         principalName = Constraint.isNotNull(StringSupport.trimOrNull(canonicalName),
                 "Principal name cannot be null or empty.");
         
-        creationInstant = Constraint.isGreaterThan(0, creationTime, "Creation time must be greater than 0");
+        creationInstant = Constraint.isNotNull(creationTime, "Creation time cannot be null");
         lastActivityInstant = creationTime;
 
         authenticationResults = new ConcurrentHashMap(5);
@@ -121,25 +119,22 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getId() {
         return id;
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getPrincipalName() {
         return principalName;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public long getCreationInstant() {
+    @Nonnull public Instant getCreationInstant() {
         return creationInstant;
     }
 
     /** {@inheritDoc} */
-    @Override @Duration public long getLastActivityInstant() {
+    @Nonnull public Instant getLastActivityInstant() {
         return lastActivityInstant;
     }
 
@@ -149,7 +144,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      * @throws SessionException if an error occurs updating the session
      */
-    @Duration public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
+    public void setLastActivityInstant(@Nonnull final Instant instant) throws SessionException {
         doSetLastActivityInstant(instant);
     }
     
@@ -161,8 +156,8 @@ public abstract class AbstractIdPSession implements IdPSession {
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
-    @Duration public void doSetLastActivityInstant(@Duration @Positive final long instant) {
-        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+    public void doSetLastActivityInstant(@Nonnull final Instant instant) {
+        lastActivityInstant = Constraint.isNotNull(instant, "Last activity instant cannot be null");
     }
 
     /**
@@ -219,27 +214,23 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         return ImmutableSet.copyOf(Optional.presentInstances(authenticationResults.values()));
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
         final Optional<AuthenticationResult> mapped = authenticationResults.get(StringSupport.trimOrNull(flowId));
         return (mapped != null) ? mapped.orNull() : null;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
             throws SessionException {
         return doAddAuthenticationResult(result);
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException {
         return doRemoveAuthenticationResult(result);
     }
@@ -388,14 +379,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean checkTimeout() throws SessionException {
-        setLastActivityInstant(System.currentTimeMillis());
+        setLastActivityInstant(Instant.now());
         return true;
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -413,18 +402,16 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
     /** {@inheritDoc} */
-    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
                 .add("IPv4", ipV4Address).add("IPv6", ipV6Address)
-                .add("creationInstant", new DateTime(creationInstant))
-                .add("lastActivityInstant", new DateTime(lastActivityInstant))
+                .add("creationInstant", creationInstant)
+                .add("lastActivityInstant", lastActivityInstant)
                 .add("authenticationResults", getAuthenticationResults()).add("spSessions", getSPSessions())
                 .toString();
     }

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.flow.storage.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
@@ -27,7 +28,6 @@ import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -58,7 +58,7 @@ public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageActi
             final String value =
                     getStorageSerializer().serialize(Collections.singletonMap(globalConsent.getId(), globalConsent));
 
-            final long expiration = DateTime.now().plus(getConsentFlowDescriptor().getLifetime()).getMillis();
+            final long expiration = Instant.now().plus(getConsentFlowDescriptor().getLifetime()).toEpochMilli();
 
             final ProfileInterceptorResult result =
                     new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);

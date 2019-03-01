@@ -19,6 +19,8 @@ package net.shibboleth.idp.cas.ticket.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -30,7 +32,6 @@ import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 import org.apache.commons.codec.binary.Base32;
-import org.joda.time.Instant;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
@@ -85,7 +86,7 @@ public class EncodingTicketServiceTest {
     public void testCreateRemoveServiceTicketSuccess() throws Exception {
         final TicketState state = newState("aloysius");
         final String service = "https://www.example.com/s1/";
-        final Instant expiry = new Instant().plus(5000);
+        final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
         final ServiceTicket st1 = ticketService.createServiceTicket(id, expiry, service, state, true);
         assertNotNull(st1);
@@ -93,7 +94,7 @@ public class EncodingTicketServiceTest {
         final ServiceTicket st2 = ticketService.removeServiceTicket(st1.getId());
         assertNotNull(st2);
         assertEquals(st1.getId(), st2.getId());
-        assertEquals(expiry, st2.getExpirationInstant());
+        assertEquals(expiry.truncatedTo(ChronoUnit.MILLIS), st2.getExpirationInstant());
         assertEquals(service, st2.getService());
         assertTrue(st2.isRenew());
         assertEquals(state.getSessionId(), st2.getSessionId());
@@ -108,7 +109,7 @@ public class EncodingTicketServiceTest {
     public void testCreateRemoveServiceTicketInvalid() throws Exception {
         final ServiceTicket st1 = ticketService.createServiceTicket(
                 String.valueOf(System.currentTimeMillis()),
-                new Instant().plus(5000),
+                Instant.now().plusSeconds(5),
                 "https://www.example.com/s2/",
                 newState("bartholomew"),
                 true);
@@ -122,7 +123,7 @@ public class EncodingTicketServiceTest {
         final String service = "https://www.google.com/maps/place/Mountain+Lake+Lodge/"
                 + "@37.3554696,-80.539459,17z/data=!3m1!4b1!4m5!3m4!1s0x884dc6a58faa2119:0x17f3cc6a2c82b614!"
                 + "8m2!3d37.3554696!4d-80.537265";
-        final Instant expiry = new Instant().plus(5000);
+        final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
         final ServiceTicket st1 = ticketService.createServiceTicket(id, expiry, service, state, true);
         assertNotNull(st1);
@@ -134,7 +135,7 @@ public class EncodingTicketServiceTest {
     public void testCreateRemoveProxyTicketSuccess() throws Exception {
         final ProxyGrantingTicket pgt = newPGT(newState("donegal"), "https://www.example.com/s1/");
         final String service = "https://www.example.com/s2/";
-        final Instant expiry = new Instant().plus(5000);
+        final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
         final ProxyTicket pt1 = ticketService.createProxyTicket(id, expiry, pgt, service);
         assertNotNull(pt1);
@@ -142,7 +143,7 @@ public class EncodingTicketServiceTest {
         final ProxyTicket pt2 = ticketService.removeProxyTicket(pt1.getId());
         assertNotNull(pt2);
         assertEquals(pt1.getId(), pt2.getId());
-        assertEquals(expiry, pt2.getExpirationInstant());
+        assertEquals(expiry.truncatedTo(ChronoUnit.MILLIS), pt2.getExpirationInstant());
         assertEquals(service, pt2.getService());
         assertEquals(pgt.getId(), pt2.getPgtId());
         assertEquals(pgt.getTicketState(), pt2.getTicketState());
@@ -156,7 +157,7 @@ public class EncodingTicketServiceTest {
     public void testCreateRemoveProxyTicketInvalid() throws Exception {
         final ProxyGrantingTicket pgt = newPGT(newState("esquire"), "https://www.example.com/s1/");
         final String service = "https://www.example.com/s2/";
-        final Instant expiry = new Instant().plus(5000);
+        final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
         final ProxyTicket pt1 = ticketService.createProxyTicket(id, expiry, pgt, service);
         assertNotNull(pt1);
@@ -164,12 +165,13 @@ public class EncodingTicketServiceTest {
     }
 
     private TicketState newState(final String principal) {
-        return new TicketState(sessionIdGenerator.generateIdentifier(), principal, new Instant(), "authn/Password");
+        return new TicketState(sessionIdGenerator.generateIdentifier(), principal,
+                Instant.now().truncatedTo(ChronoUnit.MILLIS), "authn/Password");
     }
 
     private ProxyGrantingTicket newPGT(final TicketState state, final String service) {
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
-                pgtIdGenerator.generateIdentifier(), service, new Instant().plus(300000), "PGT-12345");
+                pgtIdGenerator.generateIdentifier(), service, Instant.now().plusSeconds(300), "PGT-12345");
         pgt.setTicketState(state);
         return pgt;
     }

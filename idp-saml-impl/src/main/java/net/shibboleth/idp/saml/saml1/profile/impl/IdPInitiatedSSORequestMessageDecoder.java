@@ -24,8 +24,6 @@ import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDec
 import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
@@ -64,7 +62,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends
         messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
         
         final SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
-        msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        msgInfoContext.setMessageIssueInstant(ssoRequest.getTime());
         msgInfoContext.setMessageId(getMessageID());
         
         populateBindingContext(messageContext);

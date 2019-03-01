@@ -18,13 +18,14 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageCapabilities;
 import org.opensaml.storage.StorageCapabilitiesEx;
@@ -37,7 +38,6 @@ import net.shibboleth.idp.authn.AccountLockoutManager;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.LockoutManagerContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
@@ -67,10 +67,10 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     @Nonnull private Function<ProfileRequestContext,Integer> maxAttemptsLookupStrategy;
 
     /** Lookup function for interval after which counter is reset. */
-    @Nonnull private Function<ProfileRequestContext,Long> counterIntervalLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Duration> counterIntervalLookupStrategy;
 
     /** Lookup function for duration of lockout. */
-    @Nonnull private Function<ProfileRequestContext,Long> lockoutDurationLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Duration> lockoutDurationLookupStrategy;
     
     /** Controls whether attempts against locked accounts extend duration. */
     private boolean extendLockoutDuration;
@@ -78,8 +78,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     /** Constructor. */
     public StorageBackedAccountLockoutManager() {
         setMaxAttempts(5);
-        setCounterInterval(5 * 60 * 1000);
-        setLockoutDuration(5 * 60 * 1000);
+        setCounterInterval(Duration.ofMinutes(5));
+        setLockoutDuration(Duration.ofMinutes(5));
     }
 
     /**
@@ -147,12 +147,11 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * 
      * @param window counter window
      */
-    @Duration
-    public void setCounterInterval(@Duration @Positive final long window) {
+    public void setCounterInterval(@Nonnull final Duration window) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         counterIntervalLookupStrategy = FunctionSupport.constant(
-                Constraint.isGreaterThan(0, window, "Counter interval must be greater than 0"));
+                Constraint.isNotNull(window, "Counter interval cannot be null"));
     }
     
     /**
@@ -162,7 +161,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * 
      * @param strategy lookup function
      */
-    public void setCounterIntervalLookupStrategy(@Nonnull final Function<ProfileRequestContext,Long> strategy) {
+    public void setCounterIntervalLookupStrategy(@Nonnull final Function<ProfileRequestContext,Duration> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         counterIntervalLookupStrategy = Constraint.isNotNull(strategy,
@@ -176,12 +175,11 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * 
      * @param duration lockout duration
      */
-    @Duration
-    public void setLockoutDuration(@Duration @Positive final long duration) {
+    public void setLockoutDuration(@Nonnull final Duration duration) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         lockoutDurationLookupStrategy = FunctionSupport.constant(
-                Constraint.isGreaterThan(0, duration, "Lockout duration must be greater than 0"));
+                Constraint.isNotNull(duration, "Lockout duration cannot be null"));
     }
     
     /**
@@ -191,7 +189,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * 
      * @param strategy lookup function
      */
-    public void setLockoutDurationLookupStrategy(@Nonnull final Function<ProfileRequestContext,Long> strategy) {
+    public void setLockoutDurationLookupStrategy(@Nonnull final Function<ProfileRequestContext,Duration> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         lockoutDurationLookupStrategy = Constraint.isNotNull(strategy,
@@ -248,8 +246,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             if (counter >= maxAttemptsLookupStrategy.apply(profileRequestContext)) {
                 // Recover time of last attempt from the record expiration and find the time elapsed since.
                 // If that's under the lockout duration, we're locked out.
-                final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext);
-                final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext);
+                final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
+                final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
                 final long lastAttempt = sr.getExpiration() - Math.max(lockoutDuration, counterInterval);
                 final long timeDifference = System.currentTimeMillis() - lastAttempt;
                 if (timeDifference <= lockoutDuration) {
@@ -319,7 +317,6 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         }
         
         // Read back account record, initializing counter to zero otherwise.
-
         log.debug("Reading account lockout data for '{}'", key);
         
         int counter = 0;
@@ -340,8 +337,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         }
         
         final long now = System.currentTimeMillis();
-        final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext);
-        final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext);
+        final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
+        final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
         
         // Compute last access time by backing off from record expiration.
         long lastAccess = now;
@@ -358,7 +355,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         ++counter;
         final long expiration = System.currentTimeMillis() + Math.max(lockoutDuration, counterInterval);
 
-        log.debug("Invalid login count for '{}' will be {}, expiring at {}", key, counter, new DateTime(expiration));
+        log.debug("Invalid login count for '{}' will be {}, expiring at {}", key, counter,
+                Instant.ofEpochMilli(expiration));
 
         // Create or update as required. Retry on errors.
         if (sr == null) {

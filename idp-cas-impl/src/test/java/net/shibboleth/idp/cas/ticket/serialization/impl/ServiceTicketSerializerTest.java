@@ -19,10 +19,12 @@ package net.shibboleth.idp.cas.ticket.serialization.impl;
 
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import org.joda.time.Instant;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Unit test for {@link ServiceTicketSerializer}.
@@ -36,7 +38,7 @@ public class ServiceTicketSerializerTest {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-616ea1550eef862761e5931bdccaaba0",
                 "https://nobody.example.org",
-                Instant.now(),
+                Instant.now().truncatedTo(ChronoUnit.MILLIS),
                 true);
         final String serialized = serializer.serialize(st1);
         final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
@@ -52,9 +54,10 @@ public class ServiceTicketSerializerTest {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
                 "https://nobody.example.org",
-                Instant.now(),
+                Instant.now().truncatedTo(ChronoUnit.MILLIS),
                 true);
-        st1.setTicketState(new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob", Instant.now(), "Password"));
+        st1.setTicketState(new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
+                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password"));
         final String serialized = serializer.serialize(st1);
         final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
         assertEquals(st2.getId(), st1.getId());

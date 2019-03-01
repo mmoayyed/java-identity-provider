@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.metadata;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +33,6 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.ClearableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
@@ -191,7 +192,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
 
     /** {@inheritDoc} */
     @Override
-    public DateTime getLastRefresh() {
+    public Instant getLastRefresh() {
         if (resolver instanceof RefreshableMetadataResolver) {
             return ((RefreshableMetadataResolver) resolver).getLastRefresh();
         } else {
@@ -201,7 +202,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
 
     /** {@inheritDoc} */
     @Override
-    public DateTime getLastUpdate() {
+    public Instant getLastUpdate() {
         if (resolver instanceof RefreshableMetadataResolver) {
             return ((RefreshableMetadataResolver) resolver).getLastUpdate();
         } else {

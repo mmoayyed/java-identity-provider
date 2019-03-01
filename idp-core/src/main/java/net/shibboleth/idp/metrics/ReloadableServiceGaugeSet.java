@@ -33,13 +33,12 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-
-import org.joda.time.DateTime;
 
 /**
  * A set of gauges for a reloadable service.
@@ -67,16 +66,16 @@ public class ReloadableServiceGaugeSet extends AbstractInitializableComponent im
 
         gauges.put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "reload", "success"),
-                new Gauge<DateTime>() {
-                    public DateTime getValue() {
+                new Gauge<Instant>() {
+                    public Instant getValue() {
                         return service.getLastSuccessfulReloadInstant();
                     }
                 });
         
         gauges.put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "reload", "attempt"),
-                new Gauge<DateTime>() {
-                    public DateTime getValue() {
+                new Gauge<Instant>() {
+                    public Instant getValue() {
                         return service.getLastReloadAttemptInstant();
                     }
                 });

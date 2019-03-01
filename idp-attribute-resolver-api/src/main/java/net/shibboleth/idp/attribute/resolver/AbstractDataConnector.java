@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -26,7 +28,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -50,11 +51,16 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     @Nullable private String logPrefix;
 
     /** When did this connector last fail? */
-    private long lastFail;
+    @Nullable private Instant lastFail;
 
     /** How long to wait until we declare the connector live again. */
-    @Duration private long noRetryDelay;
+    @Nonnull private Duration noRetryDelay;
 
+    /** Constructor. */
+    public AbstractDataConnector() {
+        noRetryDelay = Duration.ZERO; 
+    }
+    
     /**
      * Gets the ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      * experiences an error.
@@ -62,7 +68,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @return ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    @Override @Nullable public String getFailoverDataConnectorId() {
+    @Nullable public String getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 
@@ -85,14 +91,14 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      *
      * @param time what to set
      */
-    public void setLastFail(final long time) {
+    public void setLastFail(@Nullable final Instant time) {
         lastFail = time;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override public long getLastFail() {
+    @Nullable public Instant getLastFail() {
         return lastFail;
     }
 
@@ -101,12 +107,12 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      *
      * @param delay what to set
      */
-    @Duration public void setNoRetryDelay(@Duration final long delay) {
+    public void setNoRetryDelay(@Nonnull final Duration delay) {
         noRetryDelay = delay;
     }
 
     /** {@inheritDoc} */
-    @Override @Duration public long getNoRetryDelay() {
+    @Nonnull public Duration getNoRetryDelay() {
         return noRetryDelay;
     }
 
@@ -117,7 +123,8 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * {@link #doDataConnectorResolve(AttributeResolutionContext, AttributeResolverWorkContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
-    @Override @Nullable public final Map<String, IdPAttribute> doResolve(
+    @Override
+    @Nullable public final Map<String, IdPAttribute> doResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
@@ -128,7 +135,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
             // Do not record these failures, they are 'expected'
             throw e;
         } catch (final Exception e) {
-            setLastFail(System.currentTimeMillis());
+            setLastFail(Instant.now());
             throw e;
         }
 
@@ -176,7 +183,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @return "Data connector '<definitionID>' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
-        // local cache of cached entry to allow unsynchronised clearing of per class cache.
+        // local cache of cached entry to allow unsynchronized clearing of per class cache.
         String prefix = logPrefix;
         if (null == prefix) {
             final StringBuilder builder = new StringBuilder("Data Connector '").append(getId()).append("':");

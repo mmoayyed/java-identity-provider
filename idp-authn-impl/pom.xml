@@ -95,6 +95,12 @@
             <version>${duoweb.version}</version>
         </dependency>
 
+        <!-- DEPRECATED - remove in V5 -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->

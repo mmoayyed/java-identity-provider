@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.ticket.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -27,7 +29,6 @@ import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.joda.time.Instant;
 import org.opensaml.storage.StorageService;
 
 /**

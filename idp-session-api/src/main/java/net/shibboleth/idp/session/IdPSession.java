@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session;
 
+import java.time.Instant;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -27,7 +28,6 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
@@ -53,14 +53,14 @@ public interface IdPSession extends IdentifiedComponent {
      * 
      * @return time this session was created, never less than 0
      */
-    @Positive public long getCreationInstant();
+    @Nonnull public Instant getCreationInstant();
     
     /**
      * Get the last activity instant, in milliseconds since the epoch, for the session.
      * 
      * @return last activity instant, in milliseconds since the epoch, for the session, never less than 0
      */
-    @Positive public long getLastActivityInstant();
+    @Nonnull public Instant getLastActivityInstant();
     
     /**
      * Test the session's validity based on the supplied client address, possibly binding it

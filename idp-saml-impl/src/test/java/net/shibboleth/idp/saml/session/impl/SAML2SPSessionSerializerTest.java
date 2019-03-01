@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 
@@ -36,7 +38,7 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
 
     private static final String DATAPATH = "/net/shibboleth/idp/saml/impl/session/";
     
-    private static final long INSTANT = 1378827849463L;
+    private static final Instant INSTANT = Instant.ofEpochMilli(1378827849463L);
     
     private static final String SESSION_INDEX = "1234567890";
     
@@ -47,33 +49,33 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
     private SAML2SPSessionSerializer serializer;
     
     @BeforeMethod public void setUp() {
-        serializer = new SAML2SPSessionSerializer(0);
+        serializer = new SAML2SPSessionSerializer(Duration.ofMillis(0));
     }
 
     @Test public void testInvalid() throws Exception {
         try {
-            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noNameID.json"), INSTANT);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noNameID.json"), INSTANT.toEpochMilli());
             Assert.fail();
         } catch (IOException e) {
             
         }
         
         try {
-            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noSessionIndex.json"), INSTANT);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noSessionIndex.json"), INSTANT.toEpochMilli());
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalidXML.json"), INSTANT);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalidXML.json"), INSTANT.toEpochMilli());
             Assert.fail();
         } catch (IOException e) {
             
         }
 
         try {
-            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalidNameID.json"), INSTANT);
+            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalidNameID.json"), INSTANT.toEpochMilli());
             Assert.fail();
         } catch (IOException e) {
             
@@ -81,7 +83,7 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void testValid() throws Exception {
-        long exp = INSTANT + 60000L;
+        final Instant exp = INSTANT.plusSeconds(60);
         
         NameID nameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
         nameID.setValue("joe@example.org");
@@ -92,7 +94,7 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
         String s2 = fileToString(DATAPATH + "saml2SPSession.json");
         Assert.assertEquals(s, s2);
         
-        SAML2SPSession session2 = (SAML2SPSession) serializer.deserialize(1, CONTEXT, KEY, s2, exp);
+        SAML2SPSession session2 = (SAML2SPSession) serializer.deserialize(1, CONTEXT, KEY, s2, exp.toEpochMilli());
 
         Assert.assertEquals(session.getId(), session2.getId());
         Assert.assertEquals(session.getCreationInstant(), session2.getCreationInstant());

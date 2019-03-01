@@ -20,8 +20,9 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -54,15 +55,13 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
     
     private String messageID;
     
-    private Long time;
+    private Instant time;
     
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
-        // Note: protocol takes time in seconds, so divide by 1000.
-        // Components usually produce milliseconds, so later multiply or divide by 1000 in assertions as appropriate.
-        time = System.currentTimeMillis()/1000;
+        time = Instant.now();
         
-        messageID = "_" + sessionID + "!" + time.toString();
+        messageID = "_" + sessionID + "!" + Long.toUnsignedString(time.getEpochSecond());
         
         request = new MockHttpServletRequest();
         request.setRequestedSessionId(sessionID);
@@ -77,7 +76,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM,  entityId);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM,  acsUrl);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TARGET_PARAM,  relayState);
-        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  time.toString());
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  Long.toString(time.getEpochSecond()));
         
         decoder.decode();
         
@@ -88,7 +87,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         
         Assert.assertEquals(authnRequest.getIssuer().getValue(), entityId, "Incorrect decoded message entityId value");
         Assert.assertEquals(authnRequest.getAssertionConsumerServiceURL(), acsUrl, "Incorrect decoded message ACS URL value");
-        Assert.assertEquals(authnRequest.getIssueInstant(), new DateTime(time*1000, ISOChronology.getInstanceUTC()),
+        Assert.assertEquals(authnRequest.getIssueInstant(), time.truncatedTo(ChronoUnit.SECONDS),
                 "Incorrect decoded message issue instant value");
         Assert.assertEquals(authnRequest.getID(), messageID, "Incorrect decoded message ID value");
         
@@ -96,14 +95,16 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
                 "Incorrect decoded entityId value in peer context");
         
         SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
-        Assert.assertEquals(bindingContext.getRelayState(), relayState, "Incorrect decoded relay state value in binding context");
+        Assert.assertEquals(bindingContext.getRelayState(), relayState,
+                "Incorrect decoded relay state value in binding context");
         Assert.assertEquals(bindingContext.getBindingUri(), "urn:mace:shibboleth:2.0:profiles:AuthnRequest",
                 "Incorrect binding URI in binding context");
         
         SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
-        Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), new DateTime(time*1000, ISOChronology.getInstanceUTC()),
+        Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), time.truncatedTo(ChronoUnit.SECONDS),
                 "Incorrect decoded issue instant value in message info context");
-        Assert.assertEquals(msgInfoContext.getMessageId(), messageID, "Incorrect decoded message ID value in message info context");
+        Assert.assertEquals(msgInfoContext.getMessageId(), messageID,
+                "Incorrect decoded message ID value in message info context");
     }
 
 }

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
+import java.time.Instant;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,7 +30,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
-import org.joda.time.DateTime;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -57,7 +57,7 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
     }
 
     @Test public void service() {
-        final DateTime time = service.getLastReloadAttemptInstant();
+        final Instant time = service.getLastReloadAttemptInstant();
 
         service.reload();
         Assert.assertNotEquals(time, service.getLastReloadAttemptInstant());
@@ -87,7 +87,7 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
     }
     
     @Test public void serviceAction() throws ComponentInitializationException {
-        final DateTime time = service.getLastReloadAttemptInstant();
+        final Instant time = service.getLastReloadAttemptInstant();
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
         

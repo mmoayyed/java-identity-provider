@@ -33,6 +33,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,9 +44,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.RequestBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Helpers for DuoWeb and Duo AuthAPI operations.
@@ -131,7 +130,7 @@ public final class DuoSupport {
         final String ikey = duo.getIntegrationKey();
         final String skey = duo.getSecretKey();
         final int sigVersion = 2;
-        final String date = new DateTime().toString(RFC_2822_DATE_FORMAT);
+        final String date = RFC_2822_DATE_FORMAT.format(LocalDateTime.now());
         final String canon = canonRequest(request, date, sigVersion);
         final String sig = Util.hmacSign(skey, canon);
 
@@ -204,7 +203,7 @@ public final class DuoSupport {
     }
     
     static {
-        RFC_2822_DATE_FORMAT = DateTimeFormat.forPattern("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z");
+        RFC_2822_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z");
     }
     
 }

@@ -26,13 +26,13 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.joda.time.DateTime;
 import org.springframework.context.support.ApplicationObjectSupport;
 
 /**
@@ -68,9 +68,9 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
 
         gauges.put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, "starttime"),
-                new Gauge<DateTime>() {
-                    public DateTime getValue() {
-                        return new DateTime(getApplicationContext().getStartupDate());
+                new Gauge<Instant>() {
+                    public Instant getValue() {
+                        return Instant.ofEpochMilli(getApplicationContext().getStartupDate());
                     }
                 });
         

@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.cas.service.Service;
@@ -27,8 +30,6 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -50,36 +51,30 @@ import org.springframework.webflow.execution.RequestContext;
 public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(UpdateIdPSessionWithSPSessionAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(UpdateIdPSessionWithSPSessionAction.class);
 
     /** Looks up IdP sessions. */
-    @Nonnull
-    private final SessionResolver sessionResolver;
+    @Nonnull private final SessionResolver sessionResolver;
 
     /** Lifetime of sessions to create. */
-    @Positive
-    @Duration
-    private final long sessionLifetime;
+    @Nonnull private final Duration sessionLifetime;
 
 
     /**
      * Creates a new instance with given parameters.
      *
      * @param resolver Session resolver component
-     * @param lifetime lifetime in milliseconds, determines upper bound for expiration of the
-     * {@link CASSPSession} to be created
+     * @param lifetime determines upper bound for expiration of the {@link CASSPSession} to be created
      */
-    public UpdateIdPSessionWithSPSessionAction(
-            @Nonnull final SessionResolver resolver,
-            @Positive@Duration final long lifetime) {
+    public UpdateIdPSessionWithSPSessionAction(@Nonnull final SessionResolver resolver,
+            @Nonnull final Duration lifetime) {
         sessionResolver = Constraint.isNotNull(resolver, "Session resolver cannot be null.");
-        sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
+        sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");
     }
 
-    @Nonnull
+    /** {@inheritDoc} */
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
+    @Nonnull protected Event doExecute(final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final Ticket ticket = getCASTicket(profileRequestContext);
@@ -95,11 +90,11 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
             log.warn("Possible sign of misconfiguration, IdPSession resolution error: {}", e);
         }
         if (session != null) {
-            final long now = System.currentTimeMillis();
+            final Instant now = Instant.now();
             final SPSession sps = new CASSPSession(
                     ticket.getService(),
                     now,
-                    now + sessionLifetime,
+                    now.plus(sessionLifetime),
                     ticket.getId());
             log.debug("Created SP session {}", sps);
             try {

@@ -19,6 +19,8 @@ package net.shibboleth.idp.session;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import java.time.Instant;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,45 +29,32 @@ public class BasicSPSessionTest {
 
     /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() throws Exception {
-        long start = System.currentTimeMillis();
+        final Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        BasicSPSession session = new BasicSPSession("test", System.currentTimeMillis(),
-                System.currentTimeMillis() + 60000L);
+        BasicSPSession session = new BasicSPSession("test", Instant.now(),
+                Instant.now().plusSeconds(60));
         Assert.assertEquals(session.getId(), "test");
-        Assert.assertTrue(session.getCreationInstant() > start);
-        Assert.assertTrue(session.getExpirationInstant() > session.getCreationInstant());
+        Assert.assertTrue(session.getCreationInstant().isAfter(start));
+        Assert.assertTrue(session.getExpirationInstant().isAfter(session.getCreationInstant()));
 
         try {
-            new BasicSPSession(null, 0, 0);
+            new BasicSPSession(null, Instant.ofEpochMilli(0), Instant.ofEpochMilli(0));
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicSPSession("", 0, 0);
+            new BasicSPSession("", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0));
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicSPSession("  ", 0, 0);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-        try {
-            new BasicSPSession("foo", 0, 0);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new BasicSPSession("foo", start, 0);
+            new BasicSPSession("  ", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0));
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

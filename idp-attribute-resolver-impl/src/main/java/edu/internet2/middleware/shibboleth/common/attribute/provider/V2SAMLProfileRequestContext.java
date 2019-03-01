@@ -17,6 +17,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -136,7 +136,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @return null
      */
-    public DateTime getInboundSAMLMessageIssueInstant() {
+    public Instant getInboundSAMLMessageIssueInstant() {
         unsupportedMethod("getInboundSAMLMessageIssueInstant");
         return null;
     }
@@ -236,7 +236,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @return null
      */
-    public DateTime getOutboundSAMLMessageIssueInstant() {
+    public Instant getOutboundSAMLMessageIssueInstant() {
         unsupportedMethod("getOutboundSAMLMessageIssueInstant");
         return null;
     }
@@ -353,7 +353,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundSAMLMessageIssueInstant(final DateTime param) {
+    public void setInboundSAMLMessageIssueInstant(final Instant param) {
         unsupportedMethod("setInboundSAMLMessageIssueInstant");
     }
 
@@ -447,7 +447,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLMessageIssueInstant(final DateTime param) {
+    public void setOutboundSAMLMessageIssueInstant(final Instant param) {
         unsupportedMethod("setOutboundSAMLMessageIssueInstant");
 
     }

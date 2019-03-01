@@ -12,7 +12,7 @@
     <logger name="net.shibboleth.idp.cas" level="DEBUG"/>
 
     <root>
-        <level value="warn" />
+        <level value="WARN" />
         <appender-ref ref="STDOUT" />
     </root>
     

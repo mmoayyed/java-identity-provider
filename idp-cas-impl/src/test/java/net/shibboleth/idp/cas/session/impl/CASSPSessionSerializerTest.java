@@ -21,20 +21,24 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class CASSPSessionSerializerTest {
 
-    private CASSPSessionSerializer serializer = new CASSPSessionSerializer(0);
+    private CASSPSessionSerializer serializer = new CASSPSessionSerializer(Duration.ZERO);
 
     @Test
     public void testSerializeDeserialize() throws Exception{
-        final long exp = 1410539474000000000L;
+        final Instant exp = Instant.ofEpochMilli(1410539474000000000L);
         final CASSPSession original = new CASSPSession(
                 "https://foo.example.com/shibboleth",
-                1410532279838046000L,
+                Instant.ofEpochMilli(1410532279838046000L),
                 exp,
                 "ST-1234126-ABC1346DEADBEEF");
         final String serialized = serializer.serialize(original);
-        final CASSPSession deserialized = (CASSPSession) serializer.deserialize(1, "context", "key", serialized, exp);
+        final CASSPSession deserialized =
+                (CASSPSession) serializer.deserialize(1, "context", "key", serialized, exp.toEpochMilli());
         assertEquals(deserialized.getId(), original.getId());
         assertEquals(deserialized.getCreationInstant(), original.getCreationInstant());
         assertEquals(deserialized.getExpirationInstant(), original.getExpirationInstant());

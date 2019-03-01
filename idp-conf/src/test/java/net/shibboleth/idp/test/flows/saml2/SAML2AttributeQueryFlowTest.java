@@ -18,6 +18,7 @@
 package net.shibboleth.idp.test.flows.saml2;
 
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +26,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSAny;
@@ -149,7 +149,7 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         final Subject subject = SAML2ActionTestingSupport.buildSubject("jdoe");
 
         final AttributeQuery attributeQuery = SAML2ActionTestingSupport.buildAttributeQueryRequest(subject);
-        attributeQuery.setIssueInstant(new DateTime());
+        attributeQuery.setIssueInstant(Instant.now());
         attributeQuery.getIssuer().setValue(SP_ENTITY_ID);
         attributeQuery.setID(new SecureRandomIdentifierGenerationStrategy().generateIdentifier());
 

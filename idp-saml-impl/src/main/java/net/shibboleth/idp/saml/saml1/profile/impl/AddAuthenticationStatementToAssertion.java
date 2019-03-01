@@ -38,7 +38,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -161,7 +160,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
                 bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
-        statement.setAuthenticationInstant(new DateTime(getAuthenticationResult().getAuthenticationInstant()));
+        statement.setAuthenticationInstant(getAuthenticationResult().getAuthenticationInstant());
         
         if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null
                 && requestedPrincipalContext.getMatchingPrincipal() instanceof AuthenticationMethodPrincipal) {

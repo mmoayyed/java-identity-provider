@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.consent.flow.impl;
 
+import java.time.Duration;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 /**
  * Descriptor for a consent flow.
@@ -37,8 +36,8 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /** Whether consent equality includes comparing consent values. */
     private boolean compareValues;
 
-    /** Time in milliseconds to expire consent storage records. Default value: 1 year. */
-    @Nonnull @Duration @NonNegative private Long lifetime;
+    /** Time to expire consent storage records. Default value: 1 year. */
+    @Nonnull private Duration lifetime;
 
     /** Maximum number of records stored in the storage service. */
     private int maxStoredRecords;
@@ -51,7 +50,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
 
     /** Constructor. */
     public ConsentFlowDescriptor() {
-        lifetime = DOMTypeSupport.durationToLong("P1Y");
+        lifetime = Duration.ofDays(365);
         expandedStorageThreshold = 1024 * 1024;
     }
 
@@ -65,11 +64,11 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     }
 
     /**
-     * Time in milliseconds to expire consent storage records.
+     * Time to expire consent storage records.
      * 
-     * @return time in milliseconds to expire consent storage records
+     * @return time to expire consent storage records
      */
-    @Nonnull @NonNegative @Duration public Long getLifetime() {
+    @Nonnull public Duration getLifetime() {
         return lifetime;
     }
 
@@ -112,15 +111,14 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     }
 
     /**
-     * Set time in milliseconds to expire consent storage records.
+     * Set time to expire consent storage records.
      * 
-     * @param consentLifetime time in milliseconds to expire consent storage records
+     * @param consentLifetime time to expire consent storage records
      */
-    @Duration public void setLifetime(@Nonnull @Duration @NonNegative final Long consentLifetime) {
+    public void setLifetime(@Nonnull final Duration consentLifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(consentLifetime, "Lifetime cannot be null");
 
-        lifetime = Constraint.isGreaterThanOrEqual(0, consentLifetime, "Lifetime must be greater than or equal to 0");
+        lifetime = Constraint.isNotNull(consentLifetime, "Lifetime cannot be null");
     }
 
     /**

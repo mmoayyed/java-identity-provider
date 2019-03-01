@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.session;
 
+import java.time.Instant;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
@@ -37,14 +39,14 @@ public interface SPSession extends IdentifiedComponent {
      * 
      * @return time, in milliseconds since the epoch, when this session was created, never less than 0
      */
-    @Positive long getCreationInstant();
+    @Nonnull Instant getCreationInstant();
 
     /**
      * Get the time, in milliseconds since the epoch, when this session will expire.
      * 
      * @return time, in milliseconds since the epoch, when this session will expire, never less than 0
      */
-    @Positive long getExpirationInstant();
+    @Nonnull Instant getExpirationInstant();
     
     /**
      * Get a unique key identifying this subject's session with the service.

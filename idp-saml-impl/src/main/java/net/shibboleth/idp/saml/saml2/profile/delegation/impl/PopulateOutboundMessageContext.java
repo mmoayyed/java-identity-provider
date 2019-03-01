@@ -19,9 +19,10 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -76,7 +77,7 @@ public class PopulateOutboundMessageContext extends AbstractProfileAction {
             outboundMessageContext.getSubcontext(WSSecurityContext.class, true).setTimestampCreated(
                     samlMsgInfoCtx.getMessageIssueInstant());
         } else {
-            outboundMessageContext.getSubcontext(WSSecurityContext.class, true).setTimestampCreated(new DateTime());
+            outboundMessageContext.getSubcontext(WSSecurityContext.class, true).setTimestampCreated(Instant.now());
         }
         log.debug("Set outbound WS-Security Timestamp Created: {}", 
                 outboundMessageContext.getSubcontext(WSSecurityContext.class).getTimestampCreated());

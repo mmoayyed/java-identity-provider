@@ -24,6 +24,8 @@ import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import java.time.Instant;
+
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -49,8 +51,8 @@ public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.setInboundMessageContext(null);
                
-        final SAML2SPSession session = new SAML2SPSession("https://sp.example.org", System.currentTimeMillis(),
-                System.currentTimeMillis() + 1800000, SAML2ActionTestingSupport.buildNameID("jdoe"), "foo");
+        final SAML2SPSession session = new SAML2SPSession("https://sp.example.org", Instant.now(),
+                Instant.now().plusSeconds(1800), SAML2ActionTestingSupport.buildNameID("jdoe"), "foo");
         prc.getSubcontext(LogoutPropagationContext.class, true).setSession(session);
         
         action = new PrepareInboundMessageContext();

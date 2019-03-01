@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.audit.impl;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,12 +35,11 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -76,10 +78,10 @@ public class PopulateAuditContext extends AbstractProfileAction {
     /** Map allowing substitutions of values during field extraction. */
     @Nonnull private Map<String,String> fieldReplacements;
     
-    /** Formatting string for {@link DateTime} fields. */
-    @Nullable private String dateTimeFormat;
+    /** Formatter for date/time fields. */
+    @Nonnull private DateTimeFormatter dateTimeFormatter;
     
-    /** Convert {@link DateTime} fields to default time zone. */
+    /** Convert date/time fields to default time zone. */
     private boolean useDefaultTimeZone;
     
     /** {@link AuditContext} to populate. */
@@ -91,6 +93,8 @@ public class PopulateAuditContext extends AbstractProfileAction {
         fieldExtractors = Collections.emptyMap();
         fieldsToExtract = Collections.emptySet();
         fieldReplacements = Collections.emptyMap();
+        
+        dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
     }
 
     /**
@@ -181,18 +185,20 @@ public class PopulateAuditContext extends AbstractProfileAction {
     }
     
     /**
-     * Set the {@link DateTime} formatting string to apply when extracting {@link DateTime}-valued fields.
+     * Set the formatting string to apply when extracting date/time fields.
      * 
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        dateTimeFormat = StringSupport.trimOrNull(format);
+        if (format != null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
+        }
     }
     
     /**
-     * Convert {@link DateTime}-valued fields to default time zone.
+     * Convert date/time fields to default time zone.
      * 
      * @param flag flag to set
      */
@@ -202,6 +208,16 @@ public class PopulateAuditContext extends AbstractProfileAction {
         useDefaultTimeZone = flag;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (useDefaultTimeZone) {
+            dateTimeFormatter = dateTimeFormatter.withZone(ZoneId.systemDefault());
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -258,10 +274,8 @@ public class PopulateAuditContext extends AbstractProfileAction {
     private void addField(@Nonnull @NotEmpty final String key, @Nullable final Object value) {
         
         if (value != null) {
-            if (value instanceof DateTime) {
-                final DateTime dt = useDefaultTimeZone
-                        ? ((DateTime) value).withZone(DateTimeZone.getDefault()) : (DateTime) value;
-                auditCtx.getFieldValues(key).add(dt.toString(dateTimeFormat));
+            if (value instanceof TemporalAccessor) {
+                auditCtx.getFieldValues(key).add(dateTimeFormatter.format((TemporalAccessor) value));
             } else {
                 String s = value.toString();
                 if (fieldReplacements.containsKey(s)) {

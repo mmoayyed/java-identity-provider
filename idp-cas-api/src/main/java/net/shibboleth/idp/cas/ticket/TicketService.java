@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import org.joda.time.Instant;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -27,7 +29,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
-import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
@@ -101,7 +102,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
             @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
 
-        final DateTime now = DateTime.now();
+        final Instant now = Instant.now();
 
         final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final TicketValidationResponse ticketResponse = getCASResponse(profileRequestContext);
@@ -114,7 +115,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
 
         final Response response = newSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
         response.setID(request.getTicket());
-        response.setIssueInstant(DateTime.now());
+        response.setIssueInstant(now);
         final Status status = newSAMLObject(Status.class, Status.DEFAULT_ELEMENT_NAME);
         final StatusCode code = newSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
         code.setValue(StatusCode.SUCCESS);
@@ -188,7 +189,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
      * @return new authentication statement
      */
     private AuthenticationStatement newAuthenticationStatement(
-            final DateTime authnInstant, final String authnMethod, final String principal) {
+            final Instant authnInstant, final String authnMethod, final String principal) {
         final AuthenticationStatement authnStatement = newSAMLObject(
                 AuthenticationStatement.class, AuthenticationStatement.DEFAULT_ELEMENT_NAME);
         authnStatement.setAuthenticationInstant(authnInstant);

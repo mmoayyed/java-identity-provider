@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.time.Duration;
+
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 
@@ -60,7 +62,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         cookieManager.initialize();
         
         sessionManager = new StorageBackedSessionManager();
-        sessionManager.setSessionTimeout(5000);
+        sessionManager.setSessionTimeout(Duration.ofSeconds(5));
         sessionManager.setStorageService(storageService);
         sessionManager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
         sessionManager.setHttpServletRequest(requestProxy);

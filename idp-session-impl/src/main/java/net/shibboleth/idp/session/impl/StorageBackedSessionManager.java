@@ -18,6 +18,8 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -38,12 +40,9 @@ import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -125,11 +124,11 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** Servlet response to write to. */
     @Nullable private HttpServletResponse httpResponse;
 
-    /** Inactivity timeout for sessions in milliseconds. */
-    @Duration @Positive private long sessionTimeout;
+    /** Inactivity timeout for sessions. */
+    @Nonnull private Duration sessionTimeout;
 
-    /** Amount of time in milliseconds to defer expiration of records for better handling of logout. */
-    @Duration @NonNegative private long sessionSlop;
+    /** Amount of time to defer expiration of records for better handling of logout. */
+    @Nonnull private Duration sessionSlop;
 
     /** Indicates that storage service failures should be masked as much as possible. */
     private boolean maskStorageFailure;
@@ -172,7 +171,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      */
     public StorageBackedSessionManager() {
-        sessionTimeout = 60 * 60 * 1000;
+        sessionTimeout = Duration.ofHours(1);
+        sessionSlop = Duration.ZERO;
         serializer = new StorageBackedIdPSessionSerializer(this, null);
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
@@ -203,43 +203,43 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Get the session inactivity timeout policy in milliseconds.
+     * Get the session inactivity timeout policy.
      * 
      * @return inactivity timeout
      */
-    @Duration @Positive public long getSessionTimeout() {
+    @Nonnull public Duration getSessionTimeout() {
         return sessionTimeout;
     }
 
     /**
-     * Set the session inactivity timeout policy in milliseconds, must be greater than zero.
+     * Set the session inactivity timeout policy.
      * 
      * @param timeout the policy to set
      */
-    @Duration public void setSessionTimeout(@Duration @Positive final long timeout) {
+    public void setSessionTimeout(@Nonnull final Duration timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        sessionTimeout = Constraint.isGreaterThan(0, timeout, "Timeout must be greater than zero");
+        sessionTimeout = Constraint.isNotNull(timeout, "Timeout cannot be null");
     }
 
     /**
-     * Get the amount of time in milliseconds to defer expiration of records.
+     * Get the amount of time to defer expiration of records.
      * 
-     * @return expiration deferrence time
+     * @return expiration amount of time to defer expiration of records
      */
-    @Duration @Positive public long getSessionSlop() {
+    @Nonnull public Duration getSessionSlop() {
         return sessionSlop;
     }
 
     /**
-     * Set the amount of time in milliseconds to defer expiration of records.
+     * Set the amount of time to defer expiration of records.
      * 
-     * @param slop the policy to set
+     * @param slop amount of time to defer expiration of records
      */
-    @Duration public void setSessionSlop(@Duration @NonNegative final long slop) {
+    public void setSessionSlop(@Nonnull final Duration slop) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        sessionSlop = Constraint.isGreaterThanOrEqual(0, slop, "Slop must be greater than or equal to zero");
+        sessionSlop = Constraint.isNotNull(slop, "Slop cannot be null");
     }
 
     /**
@@ -514,14 +514,14 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         }
 
         final StorageBackedIdPSession newSession =
-                new StorageBackedIdPSession(this, sessionId, principalName, System.currentTimeMillis());
+                new StorageBackedIdPSession(this, sessionId, principalName, Instant.now());
         if (remoteAddr != null) {
             newSession.doBindToAddress(remoteAddr);
         }
 
         try {
             if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
-                    newSession.getCreationInstant() + sessionTimeout + sessionSlop)) {
+                    newSession.getCreationInstant().plus(sessionTimeout).plus(sessionSlop).toEpochMilli())) {
                 throw new SessionException("A duplicate session ID was generated, unable to create session");
             }
         } catch (final IOException e) {
@@ -675,7 +675,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                         final String updated = sessionList.getValue() + idpSession.getId() + ',';
                         if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
                                 Math.max(sessionList.getExpiration(), 
-                                         spSession.getExpirationInstant() + sessionSlop)) == null) {
+                                         spSession.getExpirationInstant().plus(sessionSlop).toEpochMilli())) == null) {
                             log.debug("Secondary index record disappeared, retrying as insert");
                             indexBySPSession(idpSession, spSession, attempts - 1);
                         }
@@ -684,7 +684,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                                 serviceId, serviceKey);
                     }
                 } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
-                        spSession.getExpirationInstant() + sessionSlop)) {
+                        spSession.getExpirationInstant().plus(sessionSlop).toEpochMilli())) {
                     log.debug("Secondary index record appeared, retrying as update");
                     indexBySPSession(idpSession, spSession, attempts - 1);
                 }

@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -35,7 +38,7 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
      *
      * @return how long to wait.
      */
-     long getNoRetryDelay();
+     @Nonnull Duration getNoRetryDelay();
 
      /**
       * Get the time when this connector last failed. This will be set for any exception regardless of the setting of
@@ -43,7 +46,7 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
       *
       * @return when it last failed
       */
-     long getLastFail();
+     @Nullable Instant getLastFail();
 
     /**
      * Gets the ID of the {@link DataConnector} whose values will be used in the event that this data connector
