@@ -23,9 +23,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
-import org.springframework.beans.factory.parsing.Location;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -51,13 +48,6 @@ public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetada
             final BeanDefinitionBuilder builder) {
         
         super.doNativeParse(element, parserContext, builder);
-
-        if (element.hasAttributeNS(null, "cacheDuration")) {
-            log.error("{}: cacheDuration is not supported",
-                    parserContext.getReaderContext().getResource().getDescription());
-            throw new BeanDefinitionParsingException(new Problem("cacheDuration is not supported", new Location(
-                    parserContext.getReaderContext().getResource())));
-        }
 
         final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
         final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element,
