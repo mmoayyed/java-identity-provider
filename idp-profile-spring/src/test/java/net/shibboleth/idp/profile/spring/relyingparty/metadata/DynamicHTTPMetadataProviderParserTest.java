@@ -325,7 +325,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
                 RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
         
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                propSource, "dynamic-httpCaching-none.xml", "beans.xml");
+                propSource, "dynamic-httpCaching-none.xml", "beans.xml", "httpClient.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -342,7 +342,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
                 RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
         
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                propSource, "dynamic-httpCaching-memory.xml", "beans.xml");
+                propSource, "dynamic-httpCaching-memory.xml", "beans.xml", "httpClient.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -359,7 +359,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
                 RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
         
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                propSource, "dynamic-httpCaching-file.xml", "beans.xml");
+                propSource, "dynamic-httpCaching-file.xml", "beans.xml", "httpClient.xml");
         
         final String entityID = "https://www.example.org/sp";
         

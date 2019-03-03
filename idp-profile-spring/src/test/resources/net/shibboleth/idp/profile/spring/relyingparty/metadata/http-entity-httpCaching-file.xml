@@ -7,10 +7,7 @@
 	id="HTTPEntity" 
     xsi:type="metadata:FileBackedHTTPMetadataProvider"
     backingFile="%{DIR}/spoolhttpentitycaching-file.xml"
-    httpCaching="file"
-    httpCacheDirectory="#{systemProperties['java.io.tmpdir']}/httpProviderCacheTest"
-    httpMaxCacheEntries="100"
-    httpMaxCacheEntrySize="104857600"
+    httpClientRef="fileClient"
     metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>

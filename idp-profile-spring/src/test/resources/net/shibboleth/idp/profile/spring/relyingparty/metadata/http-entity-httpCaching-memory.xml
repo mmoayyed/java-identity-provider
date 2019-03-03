@@ -7,9 +7,7 @@
 	id="HTTPEntity" 
     xsi:type="metadata:FileBackedHTTPMetadataProvider"
     backingFile="%{DIR}/spoolhttpcaching-memory.xml"
-    httpCaching="memory"
-    httpMaxCacheEntries="100"
-    httpMaxCacheEntrySize="104857600"
+    httpClientRef="memClient"
     metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>

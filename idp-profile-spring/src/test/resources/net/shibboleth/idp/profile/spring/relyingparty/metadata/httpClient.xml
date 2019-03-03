@@ -10,10 +10,14 @@
 	default-init-method="initialize" default-destroy-method="destroy">
 
 	<bean id="clientBuilder" class="net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder"
-		p:userAgent="disguised/1.0.0 hidden/3.4.5" />
+		p:userAgent="disguised/1.0.0 hidden/3.4.5" lazy-init="true"/>
 
     <bean id="apacheClient"
         factory-bean="clientBuilder"
-        factory-method="buildClient"/>
+        factory-method="buildClient" lazy-init="true"/>
+       
+    <bean id="noneClient" class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean" lazy-init="true"/>
+    <bean id="fileClient" class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean" lazy-init="true"/>
+    <bean id="memClient" class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean" lazy-init="true"/>
 
 </beans>

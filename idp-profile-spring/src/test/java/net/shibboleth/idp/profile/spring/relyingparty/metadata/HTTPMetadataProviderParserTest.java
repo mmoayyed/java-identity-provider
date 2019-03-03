@@ -130,7 +130,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-none.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-none.xml", "beans.xml", "httpClient.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
@@ -141,7 +141,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-memory.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-memory.xml", "beans.xml", "httpClient.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
@@ -154,7 +154,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-file.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "http-entity-httpCaching-file.xml", "beans.xml", "httpClient.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPEntity");
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));

@@ -5,7 +5,7 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="dynamicHttpCachingNone" 
-    httpCaching="none"
+    httpClientRef="noneClient"
     xsi:type="metadata:DynamicHTTPMetadataProvider" >
     
     <!-- Note: use of the transformRef here is mostly just to facilitate testing. -->
