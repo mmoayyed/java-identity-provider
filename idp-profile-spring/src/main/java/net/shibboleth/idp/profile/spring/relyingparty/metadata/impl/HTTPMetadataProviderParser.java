@@ -27,7 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -37,7 +37,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Default caching type. */
-    @Nonnull @NotEmpty private static final String DEFAULT_CACHING = "none";
+    private static final Class DEFAULT_CACHING_CLASS = HttpClientFactoryBean.class;
 
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
@@ -111,7 +111,7 @@ public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetada
             @Nullable final BeanDefinition httpClientSecurityParameters) {
 
         return HTTPMetadataProvidersParserSupport.buildCommonClientBuilder(element, parserContext,
-                HTTPMetadataProviderParser.DEFAULT_CACHING, httpClientSecurityParametersRef,
+                HTTPMetadataProviderParser.DEFAULT_CACHING_CLASS, httpClientSecurityParametersRef,
                 httpClientSecurityParameters).getBeanDefinition();
     }
     

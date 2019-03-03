@@ -21,10 +21,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-import net.shibboleth.utilities.java.support.xml.XMLConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,13 +28,18 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+import net.shibboleth.utilities.java.support.xml.XMLConstants;
+
 /**
  * Parser for abstract dynamic HTTP metadata resolvers.
  */
 public abstract class AbstractDynamicHTTPMetadataProviderParser extends AbstractDynamicMetadataProviderParser {
 
     /** Default caching type . */
-    private static final String DEFAULT_CACHING = "memory";
+    private static final Class DEFAULT_CACHING_CLASS = InMemoryCachingHttpClientFactoryBean.class;
 
     /** Default max total connections. */
     private static final Integer DEFAULT_MAX_CONNECTIONS_TOTAL = 100;
@@ -135,8 +136,11 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
             @Nullable final BeanDefinition httpClientSecurityParameters) {
 
         final BeanDefinitionBuilder clientBuilder = 
-                HTTPMetadataProvidersParserSupport.buildCommonClientBuilder(element, parserContext, DEFAULT_CACHING,
-                        httpClientSecurityParametersRef, httpClientSecurityParameters);
+                HTTPMetadataProvidersParserSupport.buildCommonClientBuilder(element,
+                        parserContext,
+                        DEFAULT_CACHING_CLASS ,
+                        httpClientSecurityParametersRef,
+                        httpClientSecurityParameters);
 
         // Set up non standard defaults
         if (!element.hasAttributeNS(null, "connectionTimeout")) {

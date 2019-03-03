@@ -7,7 +7,6 @@
 	id="HTTPEntity" 
     xsi:type="metadata:FileBackedHTTPMetadataProvider"
     backingFile="%{DIR}/spoolhttpentitycaching none.xml"
-    httpClientRef="noneClient"
     metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>

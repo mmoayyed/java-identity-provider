@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
-    xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata"
+    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:security="urn:mace:shibboleth:2.0:security"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    elementFormDefault="qualified">
 
     <annotation>
         <documentation>Schema describing metadata providers and filters.</documentation>
@@ -231,38 +232,6 @@
                     <annotation>
                         <documentation>
                             The password to provide, during basic authentication, when connecting to the remote server.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
-                    <annotation>
-                        <documentation>
-                            The type of HttpClient caching to perform. Defaults to 'none'.
-                            Deprecated in favor of httpClientRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpCacheDirectory" type="string">
-                    <annotation>
-                        <documentation>
-                            The path to the HttpClient cache directory. Only used if caching type is 'file'.
-                            Deprecated in favor of httpClientRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpMaxCacheEntries" type="string">
-                    <annotation>
-                        <documentation>
-                            The maximum number of responses to cache.
-                            Deprecated in favor of httpClientRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpMaxCacheEntrySize" type="string">
-                    <annotation>
-                        <documentation>
-                            The maximum response body size which may be cached, in bytes. 
-                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -567,38 +536,6 @@
                             The password to provide, during basic authentication, when connecting to the remote server.
                             This is a convenience property for the case of a single basic auth user credential, and is 
                             mutually exclusive with setting a credentialsProviderRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
-                    <annotation>
-                        <documentation>
-                            The type of HttpClient caching to perform. Defaults to 'memory'.
-                            Deprecated in favor of httpClientRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpCacheDirectory" type="string">
-                    <annotation>
-                        <documentation>
-                            The path to the HttpClient cache directory. Only used if caching type is 'file'.
-                            Deprecated in favor of httpClientRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpMaxCacheEntries" type="string">
-                    <annotation>
-                        <documentation>
-                            The maximum number of responses to cache.
-                            Deprecated in favor of httpClientRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="httpMaxCacheEntrySize" type="string">
-                    <annotation>
-                        <documentation>
-                            The maximum response body size which may be cached, in bytes.
-                            Deprecated in favor of httpClientRef.
                         </documentation>
                     </annotation>
                 </attribute>
