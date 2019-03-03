@@ -23,15 +23,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
@@ -49,6 +40,13 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Parser for xsi:type="SignatureValidation".
@@ -128,10 +126,6 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
 
         if (element.hasAttributeNS(null, "requireSignedRoot")) {
             builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedRoot"));
-        } else if (element.hasAttributeNS(null, "requireSignedMetadata")) {
-            DeprecationSupport.warn(ObjectType.ATTRIBUTE, "requireSignedMetadata",
-                    parserContext.getReaderContext().getResource().getDescription(), "requireSignedRoot");
-            builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedMetadata"));
         }
 
         if (element.hasAttributeNS(null, "defaultCriteriaRef")) {

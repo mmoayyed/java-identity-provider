@@ -940,14 +940,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="requireSignedMetadata" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag indicating whether a signature is required on the incoming metadata's root element.
-                            Deprecated: Use 'requireSignedRoot' instead.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="certificateFile" type="string">
                     <annotation>
                         <documentation>
