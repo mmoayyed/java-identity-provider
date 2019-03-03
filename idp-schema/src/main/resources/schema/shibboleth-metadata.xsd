@@ -269,11 +269,6 @@
                         <documentation>The path to the metadata file.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="string">
-                    <annotation>
-                        <documentation>This is deprecated, use requireValidMetadata instead.</documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -313,16 +308,6 @@
                                         <annotation>
                                             <documentation>
                                                 Name of the Velocity Engine defined within the application.
-                                            </documentation>
-                                        </annotation>
-                                    </attribute>
-                                    <attribute name="encoded" type="string">
-                                        <annotation>
-                                            <documentation>
-                                                Deprecated, use encodingStyle instead.
-                                                
-                                                Boolean flag indicating whether the entityID should be URL form-encoded
-                                                before substitution into the template.
                                             </documentation>
                                         </annotation>
                                     </attribute>

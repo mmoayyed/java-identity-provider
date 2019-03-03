@@ -252,23 +252,6 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     }
 
     @Test
-    public void testTemplateWithLegacyEncoded() throws Exception {
-        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
-                RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
-        
-        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                propSource, "dynamicTemplateWithLegacyEncoded.xml", "beans.xml");
-        
-        final String entityID = "https://www.example.org/sp";
-        
-        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
-        
-        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
-        Assert.assertNotNull(ed);
-        Assert.assertEquals(ed.getEntityID(), entityID);
-    }
-
-    @Test
     public void testMDQ() throws Exception {
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicMetadataQueryProtocol.xml", "beans.xml");

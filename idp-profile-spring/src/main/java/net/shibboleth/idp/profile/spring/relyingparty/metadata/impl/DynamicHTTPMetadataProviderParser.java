@@ -31,10 +31,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
@@ -151,7 +148,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
     }
 
     /**
-     * Parse the 'encodingStyle' and 'encoded' attributes for Template element types.
+     * Parse the 'encodingStyle' attributes for Template element types.
      * @param template the Template element
      * 
      * @return the encoding style as a string
@@ -160,15 +157,6 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         String encodingStyle = null;
         if (template.hasAttributeNS(null, "encodingStyle")) {
             encodingStyle = StringSupport.trimOrNull(template.getAttributeNS(null, "encodingStyle"));
-        } else if (template.hasAttributeNS(null, "encoded")) {
-            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "encoded", null, "'encodingStyle'");
-            final Boolean encoded = 
-                    AttributeSupport.getAttributeValueAsBoolean(template.getAttributeNodeNS(null, "encoded"));
-            if (encoded != null && encoded) {
-                encodingStyle = "form";
-            } else {
-                encodingStyle = "none";
-            }
         }
         if (encodingStyle == null) {
             encodingStyle = "form";
