@@ -21,11 +21,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.TLSSocketFactoryFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -34,29 +40,11 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.opensaml.security.httpclient.HttpClientSecurityParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
-import org.springframework.beans.factory.parsing.Location;
-import org.springframework.beans.factory.parsing.Problem;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 /**
  * Helper class for Spring configuration of HTTP metadata providers.
  */
 public final class HTTPMetadataProvidersParserSupport {
     
-    /** BASIC auth username. */
-    @Nonnull @NotEmpty public static final String BASIC_AUTH_USER = "basicAuthUser";
-
-    /** BASIC auth password. */
-    @Nonnull @NotEmpty public static final String BASIC_AUTH_PASSWORD = "basicAuthPassword";
-
     /** The URL for the metadata. */
     @Nonnull @NotEmpty public static final String METADATA_URL = "metadataURL";
 
@@ -106,32 +94,6 @@ public final class HTTPMetadataProvidersParserSupport {
         }
 
         return tlsSocketFactoryBuilder.getBeanDefinition();
-    }
-
-    /**
-     * Build the BeanDefinition for the POJO with the username and password.
-     * 
-     * @param element the HTTPMetadataProvider element
-     * @param parserContext parser context
-     * 
-     * @return the bean definition with the username and password.
-     */
-    @Nonnull protected static BeanDefinition buildBasicCredentials(final Element element,
-            @Nonnull final ParserContext parserContext) {
-        final BeanDefinitionBuilder builder =
-                BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
-
-        DeprecationSupport.warn(ObjectType.ATTRIBUTE, BASIC_AUTH_USER,
-                parserContext.getReaderContext().getResource().getDescription(), "httpClientSecurityParametersRef");
-        DeprecationSupport.warn(ObjectType.ATTRIBUTE, BASIC_AUTH_PASSWORD,
-                parserContext.getReaderContext().getResource().getDescription(), "httpClientSecurityParametersRef");
-
-        builder.setLazyInit(true);
-
-        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, BASIC_AUTH_USER)));
-        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, BASIC_AUTH_PASSWORD)));
-
-        return builder.getBeanDefinition();
     }
 
     /**

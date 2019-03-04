@@ -103,12 +103,6 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                     httpClientSecurityParametersRef, httpClientSecurityParameters));
         }
 
-        if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER) ||
-           element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
-            builder.addPropertyValue("basicCredentials",
-                    HTTPMetadataProvidersParserSupport.buildBasicCredentials(element, parserContext));
-        }
-
         if (element.hasAttributeNS(null, "supportedContentTypes")) {
             final List<String> supportedContentTypes =
                     StringSupport.stringToList(

@@ -85,13 +85,6 @@ public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetada
         }
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null,
                 HTTPMetadataProvidersParserSupport.METADATA_URL)));
-
-        if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER)
-                || element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
-            builder.addPropertyValue("basicCredentials",
-                    HTTPMetadataProvidersParserSupport.buildBasicCredentials(element, parserContext));
-        }
-
     }
 // Checkstyle: CyclomaticComplexity ON
 

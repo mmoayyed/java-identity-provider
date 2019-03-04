@@ -221,20 +221,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="basicAuthUser" type="string">
-                    <annotation>
-                        <documentation>
-                            The user name to provide, during basic authentication, when connecting to the remote server.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="basicAuthPassword" type="string">
-                    <annotation>
-                        <documentation>
-                            The password to provide, during basic authentication, when connecting to the remote server.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="tlsTrustEngineRef" type="string">
                     <annotation>
                         <documentation>
@@ -504,24 +490,6 @@
                 <attribute name="proxyPassword" type="string">
                     <annotation>
                         <documentation>Password for the HTTP proxy through which connections will be made.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="basicAuthUser" type="string">
-                    <annotation>
-                        <documentation>
-                            The user name to provide, during basic authentication, when connecting to the remote server.
-                            This is a convenience property for the case of a single basic auth user credential, and is 
-                            mutually exclusive with setting a credentialsProviderRef.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="basicAuthPassword" type="string">
-                    <annotation>
-                        <documentation>
-                            The password to provide, during basic authentication, when connecting to the remote server.
-                            This is a convenience property for the case of a single basic auth user credential, and is 
-                            mutually exclusive with setting a credentialsProviderRef.
-                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="tlsTrustEngineRef" type="string">
