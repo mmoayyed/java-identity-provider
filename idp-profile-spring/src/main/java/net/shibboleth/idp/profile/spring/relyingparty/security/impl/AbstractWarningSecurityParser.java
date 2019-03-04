@@ -26,12 +26,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.HTTPMetadataProvidersParserSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Base class to issue a deprecation warning on activation.
- * @deprecated remove all super classes in V4. 
+ * @deprecated remove all super classes in V4.
  */
 @Deprecated
 public class AbstractWarningSecurityParser extends AbstractSingleBeanDefinitionParser {
@@ -40,24 +41,28 @@ public class AbstractWarningSecurityParser extends AbstractSingleBeanDefinitionP
      * @param element what to inspect
      * @return if it is.
      */
-    private boolean isDescendantOfSignatureFilter(final Element element) {
+    private boolean isAllowedDescendant(final Element element) {
         final Node parent = element.getParentNode();
         if ((null == parent)||!(parent instanceof Element)) {
             return false;
         }
         if (AbstractMetadataProviderParser.SECURITY_NAMESPACE.equals(parent.getNamespaceURI())) {
-            return isDescendantOfSignatureFilter((Element) parent);
+            return isAllowedDescendant((Element) parent);
         }
         final QName filterQname = AbstractMetadataProviderParser.METADATA_FILTER_ELEMENT_NAME;
-        return filterQname.getNamespaceURI().equals(parent.getNamespaceURI())&&
-                filterQname.getLocalPart().equals(parent.getLocalName());
+        final QName trustEngineQname = HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME;
+        
+        return (filterQname.getNamespaceURI().equals(parent.getNamespaceURI()) &&
+                filterQname.getLocalPart().equals(parent.getLocalName())) ||
+               (trustEngineQname.getNamespaceURI().equals(parent.getNamespaceURI())&&
+                trustEngineQname.getLocalPart().equals(parent.getLocalName()));
     }
     
     /** {@inheritDoc} */
     @Override
     protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
         
-        if (!isDescendantOfSignatureFilter(element)){
+        if (!isAllowedDescendant(element)){
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, 
                     element.getPrefix() +":" + element.getLocalName(), null, null);
         }
@@ -68,7 +73,7 @@ public class AbstractWarningSecurityParser extends AbstractSingleBeanDefinitionP
     @Override
     protected void doParse(final Element element, final ParserContext parserContext, 
             final BeanDefinitionBuilder builder) {
-        if (!isDescendantOfSignatureFilter(element)){
+        if (!isAllowedDescendant(element)){
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, element.getPrefix() +":" + element.getLocalName(), 
                 parserContext.getReaderContext().getResource().getDescription(), null);
         }
