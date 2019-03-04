@@ -101,6 +101,8 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     @BeforeTest public void setupDataConnectors() throws LDAPException {
 
+        System.setProperty("org.ldaptive.provider", "org.ldaptive.provider.unboundid.UnboundIDProvider");
+        
         // LDAP
         final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10391));
@@ -120,6 +122,8 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
      */
     @AfterTest public void teardownDataConnectors() {
         directoryServer.shutDown(true);
+        
+        System.clearProperty("org.ldaptive.provider");
     }
     
     private ReloadableService<AttributeResolver> getResolver(final String file) {
