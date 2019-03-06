@@ -43,6 +43,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
@@ -159,6 +160,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         context.setDisplayName("ApplicationContext: " + contextName);
         service.setConverters(new HashSet<>(Arrays.asList(
                 new DurationToLongConverter(),
+                new StringToDurationConverter(),
                 new StringToIPRangeConverter(),
                 new StringToResourceConverter())));
         service.afterPropertiesSet();

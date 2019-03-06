@@ -346,8 +346,12 @@ public class HTTPDataConnectorParserTest {
         context.setDisplayName("ApplicationContext: " + HTTPDataConnectorParserTest.class);
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter(), new StringToDurationConverter())));
+        service.setConverters(new HashSet<>(Arrays.asList(
+                new DurationToLongConverter(),
+                new StringToDurationConverter(),
+                new StringToIPRangeConverter(),
+                new StringToResourceConverter(),
+                new StringToDurationConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
