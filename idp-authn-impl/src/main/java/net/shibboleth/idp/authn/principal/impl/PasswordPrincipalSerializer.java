@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -47,7 +49,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 /**
  * Principal serializer for {@link PasswordPrincipal} that encrypts the password.
@@ -113,7 +114,7 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
         try {
             gen.writeStartObject()
                .write(PASSWORD_FIELD, sealer.wrap(principal.getName(),
-                       System.currentTimeMillis() + DOMTypeSupport.durationToLong("P1Y")))
+                       Instant.now().plus(Duration.ofDays(365))))
                .writeEnd();
         } catch (final DataSealerException e) {
             throw new IOException(e);

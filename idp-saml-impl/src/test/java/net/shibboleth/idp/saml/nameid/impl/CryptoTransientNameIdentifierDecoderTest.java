@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
@@ -49,7 +50,7 @@ import org.testng.annotations.Test;
  */
 public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTestCase {
 
-    private final static long TIMEOUT = 5000;
+    private final static Duration TIMEOUT = Duration.ofSeconds(5);
 
     private DataSealer dataSealer;
 

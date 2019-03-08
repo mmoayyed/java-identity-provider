@@ -176,8 +176,7 @@ public class EncodingTicketService extends AbstractTicketService {
     private <T extends Ticket> T encode(final Class<T> ticketClass, final T ticket, final String prefix) {
         final String opaque;
         try {
-            opaque = dataSealer.wrap(
-                    serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant().toEpochMilli());
+            opaque = dataSealer.wrap(serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant());
         } catch (final Exception e) {
             throw new RuntimeException("Ticket encoding failed", e);
         }

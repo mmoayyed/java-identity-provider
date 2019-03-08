@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
@@ -51,8 +53,8 @@ import org.testng.annotations.Test;
  */
 public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
-    private final static long TIMEOUT = 50000;
-
+    private final static Duration TIMEOUT = Duration.ofSeconds(5);
+    
     private final static String PRINCIPAL = "ThePrincipal";
 
     private final static String ISSUER = "https://idp.example.org/issuer";
@@ -98,11 +100,11 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         decoder.initialize();
     }
     
-    private String code(final String principalName, final String attributeRecipientID, final long timeout)
+    private String code(final String principalName, final String attributeRecipientID, final Duration timeout)
             throws DataSealerException {
         final String principalTokenId =
                 new StringBuilder().append(attributeRecipientID).append("!").append(principalName).toString();
-        return dataSealer.wrap(principalTokenId, System.currentTimeMillis() + timeout);
+        return dataSealer.wrap(principalTokenId, Instant.now().plus(timeout));
     }
 
     private String code(final String principalName, final String attributeIssuerID, final String attributeRecipientID)
@@ -119,7 +121,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
     @Test(expectedExceptions = NameDecoderException.class)
     public void timeout()
             throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
-        final String ct = code(PRINCIPAL, RECIPIENT, -10);
+        final String ct = code(PRINCIPAL, RECIPIENT, Duration.ofMillis(-5));
 
         decoder.decode(ct, RECIPIENT);
     }
@@ -136,7 +138,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         final String principalTokenId =
                 new StringBuilder().append(ISSUER).append("!").append(RECIPIENT).append("+").append(PRINCIPAL)
                         .toString();
-        final String ct = dataSealer.wrap(principalTokenId, System.currentTimeMillis() + TIMEOUT);
+        final String ct = dataSealer.wrap(principalTokenId, Instant.now().plus(TIMEOUT));
 
         Assert.assertNull(decoder.decode(ct, RECIPIENT));
     }

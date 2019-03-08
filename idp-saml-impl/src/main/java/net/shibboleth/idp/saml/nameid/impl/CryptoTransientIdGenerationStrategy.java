@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -47,12 +48,12 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
 
-    /** Length, in milliseconds, tokens are valid. */
-    @Duration @Positive private long idLifetime;
+    /** Length tokens are valid. */
+    @Nonnull private Duration idLifetime;
 
     /** Constructor. */
     public CryptoTransientIdGenerationStrategy() {
-        idLifetime = 1000 * 60 * 60 * 4;
+        idLifetime = Duration.ofHours(4);
     }
 
     /**
@@ -67,23 +68,26 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
     }
     
     /**
-     * Get the time, in milliseconds, ids are valid.
+     * Get the time ids are valid.
      * 
-     * @return  time, in milliseconds, ids are valid
+     * @return  time ids are valid
      */
-    @Positive @Duration public long getIdLifetime() {
+    @Nonnull public Duration getIdLifetime() {
         return idLifetime;
     }
 
     /**
-     * Set the time, in milliseconds, ids are valid.
+     * Set the time ids are valid.
      * 
-     * @param lifetime time, in milliseconds, ids are valid
+     * @param lifetime time ids are valid
      */
-    @Duration public void setIdLifetime(@Duration @Positive final long lifetime) {
+    public void setIdLifetime(@Nonnull final Duration lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        idLifetime = Constraint.isGreaterThan(0, lifetime, "ID lifetime must be positive");
+        Constraint.isNotNull(lifetime, "Lifetime cannot be null");
+        Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "Lifetime must be positive");
+        
+        idLifetime = lifetime;
     }
 
     /** {@inheritDoc} */
@@ -105,7 +109,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
         principalTokenIdBuilder.append(relyingPartyId).append("!").append(principalName);
 
         try {
-            return dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
+            return dataSealer.wrap(principalTokenIdBuilder.toString(), Instant.now().plus(idLifetime));
         } catch (final DataSealerException e) {
             throw new SAMLException("Exception wrapping principal identifier", e);
         }

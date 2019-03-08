@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -40,7 +41,7 @@ import org.testng.annotations.Test;
 /** Unit test for {@link TransientSAML1NameIdentifierGenerator} using crypto-based generator. */
 public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
-    private static final long TIMEOUT = 500;
+    private static final Duration TIMEOUT = Duration.ofMillis(500);
     
     private DataSealer sealer;
     
@@ -126,7 +127,7 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
 
         Assert.assertEquals(decode, rpc.getRelyingPartyId() + "!" + "jdoe");
 
-        Thread.sleep(TIMEOUT*2);
+        Thread.sleep(TIMEOUT.multipliedBy(2).toMillis());
         try {
             sealer.unwrap(val);
             Assert.fail("Timeout not set correctly");
