@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
@@ -32,6 +35,7 @@ import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -79,6 +83,13 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         setTestContext(context);
         context.setDisplayName("ApplicationContext: ");
 
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        context.setDisplayName("ApplicationContext: ");
+        service.setConverters(new HashSet<>(Arrays.asList(new StringToDurationConverter())));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+        
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 

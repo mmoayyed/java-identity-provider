@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,6 +34,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
@@ -46,6 +49,7 @@ import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -132,6 +136,13 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        context.setDisplayName("ApplicationContext: ");
+        service.setConverters(new HashSet<>(Arrays.asList(new StringToDurationConverter())));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+        
         final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 

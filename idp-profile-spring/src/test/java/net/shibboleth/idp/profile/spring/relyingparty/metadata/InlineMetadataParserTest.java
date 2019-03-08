@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.service.ReloadableSpringService;
@@ -84,7 +85,10 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: ");
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
+        service.setConverters(new HashSet<>(Arrays.asList(
+                new DurationToLongConverter(),
+                new StringToIPRangeConverter(),
+                new StringToDurationConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

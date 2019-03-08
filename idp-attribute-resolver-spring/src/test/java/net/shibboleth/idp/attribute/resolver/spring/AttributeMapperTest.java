@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -37,6 +40,7 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -67,6 +71,14 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeMapperTest.class);
 
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        context.setDisplayName("ApplicationContext: ");
+        service.setConverters(new HashSet<>(Arrays.asList(
+                new StringToDurationConverter())));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+        
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
