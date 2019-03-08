@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.authn.spnego.impl;
 
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +44,7 @@ import net.shibboleth.utilities.java.support.codec.Base64Support;
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSName;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -244,7 +244,7 @@ public class SPNEGOAuthnControllerTest {
     public void givenSuccessfulGSSContextAcceptorInstantiation_continueSPNEGO_shouldHaveSetAcceptorInSPNEGOContext()
             throws ExternalAuthenticationException, IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(false);
@@ -276,7 +276,7 @@ public class SPNEGOAuthnControllerTest {
             throws ExternalAuthenticationException, IOException, LoginException, GSSException,
             PrivilegedActionException, Exception {
         RuntimeException e = new RuntimeException();
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenThrow(e);
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenThrow(e);
         MockHttpServletRequest req = buildSPNEGOHttpServletRequest(NEGOTIATE_HEADER_DATA);
         ModelAndView mv =
                 mockedGSSController.continueSPNEGO(TEST_CONVERSATION_KEY, "Negotiate " + NEGOTIATE_HEADER_DATA, req,
@@ -290,7 +290,7 @@ public class SPNEGOAuthnControllerTest {
     @Test
     public void withoutGSSContext_continueSPNEGO_shouldReturnModelAndView() throws LoginException, GSSException,
             PrivilegedActionException, ExternalAuthenticationException, IOException, Exception {
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(null);
         MockHttpServletRequest req = buildSPNEGOHttpServletRequest(NEGOTIATE_HEADER_DATA);
@@ -302,7 +302,7 @@ public class SPNEGOAuthnControllerTest {
     @Test
     public void withoutGSSContext_continueSPNEGO_shouldReplyUnauthorizedNegotiate() throws LoginException,
             GSSException, PrivilegedActionException, ExternalAuthenticationException, IOException, Exception {
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(null);
         MockHttpServletRequest req = buildSPNEGOHttpServletRequest(NEGOTIATE_HEADER_DATA);
@@ -315,7 +315,7 @@ public class SPNEGOAuthnControllerTest {
     public void givenGSSContextNotEstablished_continueSPNEGO_shouldReturnModelAndView() throws LoginException,
             GSSException, PrivilegedActionException, ExternalAuthenticationException, IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(false);
@@ -329,7 +329,7 @@ public class SPNEGOAuthnControllerTest {
     public void givenGSSContextNotEstablished_continueSPNEGO_shouldReplyUnauthorizedNegotiate() throws LoginException,
             GSSException, PrivilegedActionException, ExternalAuthenticationException, IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(false);
@@ -345,7 +345,7 @@ public class SPNEGOAuthnControllerTest {
             IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
         GSSException gssException = new GSSException(0);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(true);
@@ -364,7 +364,7 @@ public class SPNEGOAuthnControllerTest {
             PrivilegedActionException, ExternalAuthenticationException, IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
         GSSName mockGssName = mock(GSSName.class);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(true);
@@ -381,7 +381,7 @@ public class SPNEGOAuthnControllerTest {
             IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
         GSSName mockGssName = mock(GSSName.class);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(true);
@@ -400,7 +400,7 @@ public class SPNEGOAuthnControllerTest {
             throws LoginException, GSSException, PrivilegedActionException, ExternalAuthenticationException,
             IOException, Exception {
         GSSContext mockGSSContext = mock(GSSContext.class);
-        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+        when(mockGSSContextAcceptor.acceptSecContext(ArgumentMatchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
                 "tokenBytes".getBytes());
         when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
         when(mockGSSContext.isEstablished()).thenReturn(true);
