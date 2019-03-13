@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Function;
@@ -66,14 +67,14 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(resolver.getParserPool());
         Assert.assertTrue(resolver.getIndexes().isEmpty());
         
-        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Long.valueOf(10*60*1000L));
+        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Duration.ofMinutes(10));
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
-        Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(10*60*1000L));
-        Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(8*60*60*1000L));
-        Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(8*60*60*1000L));
+        Assert.assertEquals(resolver.getMinCacheDuration(), Duration.ofMinutes(10));
+        Assert.assertEquals(resolver.getMaxCacheDuration(), Duration.ofHours(8));
+        Assert.assertEquals(resolver.getMaxIdleEntityData(), Duration.ofHours(8));
         Assert.assertTrue(resolver.isRemoveIdleEntityData());
-        Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(30*60*1000L));
-        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Long.valueOf(0l));
+        Assert.assertEquals(resolver.getCleanupTaskInterval(), Duration.ofMinutes(30));
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Duration.ZERO);
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), 
                 Arrays.asList("application/samlmetadata+xml", "application/xml", "text/xml"));
@@ -90,7 +91,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(2*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Duration.ofSeconds(2));
         
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
@@ -162,7 +163,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(30*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Duration.ofSeconds(30));
     }
     
     @Test
@@ -191,7 +192,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(30*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Duration.ofSeconds(30));
     }
     
     @Test
@@ -205,14 +206,14 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNull(resolver.getMetadataFilter());
         Assert.assertNotNull(resolver.getParserPool());
         
-        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Long.valueOf(5*60*1000L));
+        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Duration.ofMinutes(5));
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.50f);
-        Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(5*60*1000L));
-        Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(4*60*60*1000L));
-        Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(2*60*60*1000L));
+        Assert.assertEquals(resolver.getMinCacheDuration(), Duration.ofMinutes(5));
+        Assert.assertEquals(resolver.getMaxCacheDuration(), Duration.ofHours(4));
+        Assert.assertEquals(resolver.getMaxIdleEntityData(), Duration.ofHours(2));
         Assert.assertFalse(resolver.isRemoveIdleEntityData());
-        Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(20*60*1000L));
-        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Long.valueOf(3*60*60*1000L));
+        Assert.assertEquals(resolver.getCleanupTaskInterval(), Duration.ofMinutes(20));
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Duration.ofHours(3));
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), Collections.singletonList("text/xml"));
         

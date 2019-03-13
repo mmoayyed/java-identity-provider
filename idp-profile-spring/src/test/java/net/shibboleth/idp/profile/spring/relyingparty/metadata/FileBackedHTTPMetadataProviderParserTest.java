@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.time.Duration;
 import java.util.Iterator;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -56,11 +57,11 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
         Assert.assertFalse(entities.hasNext());
 
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
-        Assert.assertEquals(resolver.getExpirationWarningThreshold(), 1000*60*60*12);
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Duration.ofHours(12));
         Assert.assertSame(resolver.getParserPool(), parserPool);
 
         Assert.assertEquals(resolver.isInitializeFromBackupFile(), false);
-        Assert.assertEquals(resolver.getBackupFileInitNextRefreshDelay(), 10*1000);
+        Assert.assertEquals(resolver.getBackupFileInitNextRefreshDelay(), Duration.ofSeconds(10));
 
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
