@@ -57,7 +57,6 @@ public class StorageBackedIdPSessionSerializerTest {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         final MemoryStorageService storageService = new MemoryStorageService();
         storageService.setId("TestStorageService");
-        storageService.setCleanupInterval(0);
         storageService.initialize();
 
         CookieManager cookieManager = new CookieManager();

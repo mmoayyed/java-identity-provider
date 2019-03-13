@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Timer;
 
@@ -79,7 +80,7 @@ public class MetadataServiceRegistryTest {
         final Resource metadata = ResourceHelper.of(new ClassPathResource("/metadata/cas-test-metadata.xml"));
         metadataResolver = new ResourceBackedMetadataResolver(new Timer(true), metadata);
         metadataResolver.setParserPool(XMLObjectProviderRegistrySupport.getParserPool());
-        metadataResolver.setMaxRefreshDelay(500000);
+        metadataResolver.setMaxRefreshDelay(Duration.ofSeconds(500));
         metadataResolver.setId("cas");
         metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new EndpointMetadataIndex(
                 new MetadataServiceRegistry.LoginEndpointPredicate())));

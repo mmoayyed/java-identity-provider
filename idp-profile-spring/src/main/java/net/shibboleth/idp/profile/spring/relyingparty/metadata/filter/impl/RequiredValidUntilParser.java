@@ -29,7 +29,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Parser for a &lt;RequiredValidUntil&gt; filter.
@@ -53,11 +52,9 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
 
-        String maxValidity=StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidityInterval"));
-        if (null == maxValidity) {
-            maxValidity = "P14D";
+        if (element.hasAttributeNS(null, "maxValidityInterval")) {
+            builder.addPropertyValue("maxValidityInterval", element.getAttributeNS(null, "maxValidityInterval"));
         }
-        builder.addPropertyValue("maxValidityInterval",maxValidity);
     }
 
     /** {@inheritDoc} */

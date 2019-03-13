@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -75,14 +76,14 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNull(resolver.getMetadataFilter());
         Assert.assertNotNull(resolver.getParserPool());
         
-        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Long.valueOf(10*60*1000L));
+        Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Duration.ofMinutes(10));
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
-        Assert.assertEquals(resolver.getMinCacheDuration(), Long.valueOf(10*60*1000L));
-        Assert.assertEquals(resolver.getMaxCacheDuration(), Long.valueOf(8*60*60*1000L));
-        Assert.assertEquals(resolver.getMaxIdleEntityData(), Long.valueOf(8*60*60*1000L));
+        Assert.assertEquals(resolver.getMinCacheDuration(), Duration.ofMinutes(10));
+        Assert.assertEquals(resolver.getMaxCacheDuration(), Duration.ofHours(8));
+        Assert.assertEquals(resolver.getMaxIdleEntityData(), Duration.ofHours(8));
         Assert.assertTrue(resolver.isRemoveIdleEntityData());
-        Assert.assertEquals(resolver.getCleanupTaskInterval(), Long.valueOf(30*60*1000L));
-        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Long.valueOf(0l));
+        Assert.assertEquals(resolver.getCleanupTaskInterval(), Duration.ofMinutes(30));
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Duration.ZERO);
         
         Assert.assertFalse(resolver.isPersistentCachingEnabled());
         
@@ -96,7 +97,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Long.valueOf(2*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), Duration.ofSeconds(2));
         
     }
         
@@ -126,7 +127,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNull(resolver.resolveSingle(criteria));
         
         // Sleep past the negative lookup cache expiration
-        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration(), TimeUnit.MILLISECONDS);
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis(), TimeUnit.MILLISECONDS);
         
         // In this case, will be the same instance since using in-memory map-based store.
         Assert.assertSame(resolver.resolveSingle(criteria), entity);
@@ -166,7 +167,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNull(resolver.resolveSingle(criteria));
         
         // Sleep past the negative lookup cache expiration
-        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration(), TimeUnit.MILLISECONDS);
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis(), TimeUnit.MILLISECONDS);
         
         EntityDescriptor resolved = resolver.resolveSingle(criteria);
         Assert.assertNotNull(resolved);

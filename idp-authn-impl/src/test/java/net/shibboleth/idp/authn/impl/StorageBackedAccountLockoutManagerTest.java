@@ -42,7 +42,6 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         
         final MemoryStorageService ss = new MemoryStorageService();
         ss.setId("test");
-        ss.setCleanupInterval(0);
         ss.initialize();
         
         final UsernameIPLockoutKeyStrategy keyStrategy = new UsernameIPLockoutKeyStrategy();

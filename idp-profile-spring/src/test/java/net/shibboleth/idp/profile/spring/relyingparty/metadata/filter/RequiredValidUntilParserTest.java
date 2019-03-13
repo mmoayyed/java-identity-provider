@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
 
@@ -35,20 +36,20 @@ public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntil.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
-        Assert.assertEquals(filter.getMaxValidityInterval(), 14*3600*24*1000);
+        Assert.assertEquals(filter.getMaxValidityInterval(), Duration.ofDays(14));
     }
     
     @Test public void param() throws IOException {
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntilParam.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
-        Assert.assertEquals(filter.getMaxValidityInterval(), 2*3600*24*1000);
+        Assert.assertEquals(filter.getMaxValidityInterval(), Duration.ofDays(2));
     }
 
     @Test public void nonDuration() throws IOException {
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/requiredValidUntilParamNonDuration.xml");
 
         final RequiredValidUntilFilter filter = (RequiredValidUntilFilter) resolver.getMetadataFilter();
-        Assert.assertEquals(filter.getMaxValidityInterval(), 2);
+        Assert.assertEquals(filter.getMaxValidityInterval(), Duration.ofMillis(2));
     }
 }
