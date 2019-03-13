@@ -14,6 +14,7 @@
             <list>
                 <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter"/>
                 <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter"/>
+                <bean class="net.shibboleth.ext.spring.config.StringToDurationConverter"/>
             </list>
         </property>
     </bean>
