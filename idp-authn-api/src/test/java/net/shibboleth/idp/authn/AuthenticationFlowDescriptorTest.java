@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -46,27 +47,27 @@ public class AuthenticationFlowDescriptorTest {
 
     /** Tests mutating lifetime. */
     @Test public void testLifetime() {
-        descriptor.setLifetime(10);
-        Assert.assertEquals(descriptor.getLifetime(), 10);
+        descriptor.setLifetime(Duration.ofMillis(10));
+        Assert.assertEquals(descriptor.getLifetime(), Duration.ofMillis(10));
 
         try {
-            descriptor.setLifetime(-10);
+            descriptor.setLifetime(Duration.ofMillis(-10));
             Assert.fail();
         } catch (ConstraintViolationException e) {
-            Assert.assertEquals(descriptor.getLifetime(), 10);
+            Assert.assertEquals(descriptor.getLifetime(), Duration.ofMillis(10));
         }
     }
 
     /** Tests mutating inactivity timeout. */
     @Test public void testInactivityTimeout() {
-        descriptor.setInactivityTimeout(10);
-        Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
+        descriptor.setInactivityTimeout(Duration.ofMillis(10));
+        Assert.assertEquals(descriptor.getInactivityTimeout(), Duration.ofMillis(10));
 
         try {
-            descriptor.setInactivityTimeout(-10);
+            descriptor.setInactivityTimeout(Duration.ofMillis(-10));
             Assert.fail();
         } catch (ConstraintViolationException e) {
-            Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
+            Assert.assertEquals(descriptor.getInactivityTimeout(), Duration.ofMillis(10));
         }
     }
     
@@ -126,15 +127,15 @@ public class AuthenticationFlowDescriptorTest {
         
         Thread.sleep(20);
         
-        descriptor.setLifetime(10);
+        descriptor.setLifetime(Duration.ofMillis(10));
         Assert.assertFalse(descriptor.isResultActive(result));
         
-        descriptor.setLifetime(5000);
+        descriptor.setLifetime(Duration.ofSeconds(5));
         Assert.assertTrue(descriptor.isResultActive(result));
         
         Thread.sleep(20);
         
-        descriptor.setInactivityTimeout(10);
+        descriptor.setInactivityTimeout(Duration.ofMillis(10));
         Assert.assertFalse(descriptor.isResultActive(result));
         
         result.setLastActivityInstantToNow();

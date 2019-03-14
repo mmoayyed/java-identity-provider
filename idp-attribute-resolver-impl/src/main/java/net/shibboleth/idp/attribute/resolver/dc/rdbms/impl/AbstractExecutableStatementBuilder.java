@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Basis of statement builder. The derived classes just have to provide the per request sql string.
@@ -41,24 +43,32 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
         ExecutableSearchBuilder<ExecutableStatement> {
 
     /** Query timeout. */
-    private int queryTimeout = 5000;
+    @Nonnull private Duration queryTimeout;
 
+    /** Constructor. */
+    public AbstractExecutableStatementBuilder() {
+        queryTimeout = Duration.ofSeconds(5);
+    }
+    
     /**
      * Gets the timeout of the SQL query.
      * 
-     * @return timeout of the SQL query in seconds
+     * @return timeout of the SQL query
      */
-    public int getQueryTimeout() {
+    @Nonnull public Duration getQueryTimeout() {
         return queryTimeout;
     }
 
     /**
      * Sets the timeout of the SQL query.
      * 
-     * @param timeout of the SQL query in seconds
+     * @param timeout of the SQL query
      */
-    public void setQueryTimeout(final int timeout) {
+    public void setQueryTimeout(@Nonnull final Duration timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(timeout, "Query timeout cannot be null");
+        Constraint.isFalse(timeout.isNegative(), "Query timeout cannot be negative");
+        
         queryTimeout = timeout;
     }
 
@@ -89,7 +99,7 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
             /** {@inheritDoc} */
             @Nonnull public ResultSet execute(@Nonnull final Connection connection) throws SQLException {
                 final Statement stmt = connection.createStatement();
-                stmt.setQueryTimeout(queryTimeout);
+                stmt.setQueryTimeout((int) queryTimeout.toSeconds());
                 return stmt.executeQuery(query);
             }
 

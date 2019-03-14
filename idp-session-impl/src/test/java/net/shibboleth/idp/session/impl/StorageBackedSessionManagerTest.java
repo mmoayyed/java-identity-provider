@@ -80,15 +80,15 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         
         AuthenticationFlowDescriptor foo = new AuthenticationFlowDescriptor();
         foo.setId("AuthenticationFlow/Foo");
-        foo.setLifetime(60 * 1000);
-        foo.setInactivityTimeout(60 * 1000);
+        foo.setLifetime(Duration.ofMinutes(1));
+        foo.setInactivityTimeout(Duration.ofMinutes(1));
         foo.setResultSerializer(resultSerializer);
         foo.initialize();
         
         AuthenticationFlowDescriptor bar = new AuthenticationFlowDescriptor();
         bar.setId("AuthenticationFlow/Bar");
-        bar.setLifetime(60 * 1000);
-        bar.setInactivityTimeout(60 * 1000);
+        bar.setLifetime(Duration.ofMinutes(1));
+        bar.setInactivityTimeout(Duration.ofMinutes(1));
         bar.setResultSerializer(resultSerializer);
         bar.initialize();
         

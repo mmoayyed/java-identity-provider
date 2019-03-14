@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.consent.storage.impl;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorResult;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 /**
  * The result of a consent flow, suitable for storage.
@@ -44,7 +44,7 @@ public class ConsentResult extends AbstractProfileInterceptorResult {
             @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key,
             @Nonnull @NotEmpty final String value,
-            @Nullable @Positive @Duration final Long expiration) {
+            @Nullable final Instant expiration) {
         super(context, key, value, expiration);
     }
 

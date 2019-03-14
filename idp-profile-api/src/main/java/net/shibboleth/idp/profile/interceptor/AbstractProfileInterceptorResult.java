@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -43,7 +43,7 @@ public abstract class AbstractProfileInterceptorResult extends AbstractIdentifia
     @Nonnull @NotEmpty private String storageValue;
 
     /** Storage expiration. */
-    @Nullable @Positive @Duration private Long storageExpiration;
+    @Nullable private Instant storageExpiration;
 
     /**
      * Constructor.
@@ -57,35 +57,36 @@ public abstract class AbstractProfileInterceptorResult extends AbstractIdentifia
             @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key,
             @Nonnull @NotEmpty final String value,
-            @Nullable @Positive @Duration final Long expiration) {
+            @Nullable final Instant expiration) {
 
         storageContext =
                 Constraint.isNotNull(StringSupport.trimOrNull(context), "Storage context cannot be null nor empty");
         storageKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Storage key cannot be null nor empty");
         storageValue = Constraint.isNotNull(StringSupport.trimOrNull(value), "Storage value cannot be null nor empty");
         if (expiration != null) {
-            storageExpiration = Constraint.isGreaterThan(0, expiration, "Storage expiration must be greater than 0");
+            Constraint.isGreaterThan(0, expiration.toEpochMilli(), "Storage expiration must be greater than 0");
+            storageExpiration = expiration;
         }
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public String getStorageContext() {
+    @Nonnull @NotEmpty public String getStorageContext() {
         return storageContext;
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public String getStorageKey() {
+    @Nonnull @NotEmpty public String getStorageKey() {
         return storageKey;
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public String getStorageValue() {
+    @Nonnull @NotEmpty public String getStorageValue() {
         return storageValue;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable @Positive @Duration public Long getStorageExpiration() {
+    @Nullable public Instant getStorageExpiration() {
         return storageExpiration;
     }
+    
 }

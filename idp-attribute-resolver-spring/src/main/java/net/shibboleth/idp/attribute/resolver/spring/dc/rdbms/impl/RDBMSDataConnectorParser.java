@@ -39,7 +39,6 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorPars
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -203,11 +202,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
             final String queryTimeout = AttributeSupport.getAttributeValue(configElement, new QName("queryTimeout"));
             if (queryTimeout != null) {
-                final BeanDefinitionBuilder duration =
-                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
-                duration.addConstructorArgValue(queryTimeout);
-                duration.addConstructorArgValue(1);
-                templateBuilder.addPropertyValue("queryTimeout", duration.getBeanDefinition());
+                templateBuilder.addPropertyValue("queryTimeout", queryTimeout);
             }
 
             final List<Element> queryTemplates = ElementSupport.getChildElementsByTagNameNS(configElement, 
@@ -331,19 +326,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         @Nonnull @NotEmpty private String getLogPrefix() {
             return logPrefix;
         }
-
-        /**
-         * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
-         * while resolving property replacement.
-         * 
-         * @param duration the duration (which may have gone through spring translation from iso to long)
-         * @param divisor to modify the duration with
-         * 
-         * @return result of the division
-         */
-        @Duration public static long buildDuration(@Duration final long duration, final long divisor) {
-            return duration / divisor;
-        } 
     }
     
 }

@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.logic;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -147,18 +146,6 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
                 DateAttributePredicate.class.getName(), "setOffset");
         systemTimeOffset = java.time.Duration.ofMillis(
                 Constraint.isNotNull(offset, "Offset cannot be null").getMillis());
-    }
-
-    /**
-     * Set the system time offset in milliseconds, which affects the reference date for comparisons.
-     * 
-     * <p>By default all comparisons are against system time, i.e. zero offset.</p>
-     *
-     * @param offset System time offset. A negative value decreases the target date (sooner);
-     *                         a positive value increases the target date (later).
-     */
-    @Duration public void setOffset(@Duration final long offset) {
-        systemTimeOffset = java.time.Duration.ofMillis(offset);
     }
 
     /**

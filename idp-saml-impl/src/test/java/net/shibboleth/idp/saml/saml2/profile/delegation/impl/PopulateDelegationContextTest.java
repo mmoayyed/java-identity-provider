@@ -377,26 +377,6 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertFalse(delegationContext.getSubjectConfirmationCredentials().isEmpty());
     }
     
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testRequestedViaConditionsAllowedViaLegacyBoolean() throws Exception {
-        authnRequest.setConditions(buildDelegationRequestConditions());
-        
-        browserSSOProfileConfig.setAllowingDelegation(true);
-        
-        action.initialize();
-        final Event result = action.execute(rc);
-        ActionTestingSupport.assertProceedEvent(result);
-        
-        
-        DelegationContext delegationContext = prc.getSubcontext(DelegationContext.class);
-        Assert.assertNotNull(delegationContext);
-        Assert.assertEquals(delegationContext.isIssuingDelegatedAssertion(), true);
-        Assert.assertEquals(delegationContext.getDelegationRequested(), DelegationRequest.REQUESTED_REQUIRED);
-        Assert.assertNotNull(delegationContext.getSubjectConfirmationCredentials());
-        Assert.assertFalse(delegationContext.getSubjectConfirmationCredentials().isEmpty());
-    }
-    
     @Test
     public void testRequiredNoKeyDescriptors() throws Exception {
         samlMetadataContext.getRoleDescriptor().getKeyDescriptors().clear();

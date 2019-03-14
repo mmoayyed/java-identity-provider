@@ -23,6 +23,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -48,97 +49,72 @@ public class BrowserSSOProfileConfigurationTest {
         Assert.assertEquals(config.getId(), BrowserSSOProfileConfiguration.PROFILE_ID);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.resolveAttributes());
+        Assert.assertTrue(config.getResolveAttributesPredicate().test(null));
         
         config.setResolveAttributes(false);
-        Assert.assertFalse(config.resolveAttributes());
+        Assert.assertFalse(config.getResolveAttributesPredicate().test(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIndirectResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setResolveAttributesPredicate(Predicates.<ProfileRequestContext>alwaysFalse());
-        Assert.assertFalse(config.resolveAttributes());
+        config.setResolveAttributesPredicate(Predicates.alwaysFalse());
+        Assert.assertFalse(config.getResolveAttributesPredicate().test(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.includeAttributeStatement());
+        Assert.assertTrue(config.getIncludeAttributeStatementPredicate().test(null));
 
         config.setIncludeAttributeStatement(false);
-        Assert.assertFalse(config.includeAttributeStatement());
+        Assert.assertFalse(config.getIncludeAttributeStatementPredicate().test(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIndirectIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setIncludeAttributeStatementPredicate(Predicates.<ProfileRequestContext>alwaysFalse());
-        Assert.assertFalse(config.includeAttributeStatement());
+        config.setIncludeAttributeStatementPredicate(Predicates.alwaysFalse());
+        Assert.assertFalse(config.getIncludeAttributeStatementPredicate().test(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testSkipEndpointValidationWhenSigned() {
         BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertFalse(config.skipEndpointValidationWhenSigned());
+        Assert.assertFalse(config.getSkipEndpointValidationWhenSignedPredicate().test(null));
 
         config.setSkipEndpointValidationWhenSigned(true);
-        Assert.assertTrue(config.skipEndpointValidationWhenSigned());
+        Assert.assertTrue(config.getSkipEndpointValidationWhenSignedPredicate().test(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIndirectEndpointValidationWhenSigned(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setSkipEndpointValidationWhenSignedPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
-        Assert.assertTrue(config.skipEndpointValidationWhenSigned());
+        config.setSkipEndpointValidationWhenSignedPredicate(Predicates.alwaysTrue());
+        Assert.assertTrue(config.getSkipEndpointValidationWhenSignedPredicate().test(null));
     }
     
     @Test
     public void testMaximumSPSessionLifeTime() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertEquals(config.getMaximumSPSessionLifetime(), 0);
+        Assert.assertNull(config.getMaximumSPSessionLifetime());
 
-        config.setMaximumSPSessionLifetime(1000);
-        Assert.assertEquals(config.getMaximumSPSessionLifetime(), 1000);
+        config.setMaximumSPSessionLifetime(Duration.ofSeconds(1));
+        Assert.assertEquals(config.getMaximumSPSessionLifetime(), Duration.ofSeconds(1));
     }
     
     @Test
     public void testIndirectMaximumSPSessionLifeTime() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setMaximumSPSessionLifetimeLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(1000L));
-        Assert.assertEquals(config.getMaximumSPSessionLifetime(), 1000);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testAllowingDelegation() {
-        // Note: testing the deprecated boolean value variant
-        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertFalse(config.isAllowingDelegation());
-        Assert.assertFalse(config.getAllowingDelegation());
-        
-        config.setAllowingDelegation(false);
-        Assert.assertFalse(config.isAllowingDelegation());
-        Assert.assertFalse(config.getAllowingDelegation());
-        Assert.assertEquals(config.getAllowingDelegation(), Boolean.FALSE);
-
-        config.setAllowingDelegation(true);
-        Assert.assertTrue(config.isAllowingDelegation());
-        Assert.assertTrue(config.getAllowingDelegation());
-        Assert.assertEquals(config.getAllowingDelegation(), Boolean.TRUE);
+        config.setMaximumSPSessionLifetimeLookupStrategy(FunctionSupport.constant(Duration.ofSeconds(1)));
+        Assert.assertEquals(config.getMaximumSPSessionLifetime(), Duration.ofSeconds(1));
     }
     
     @Test

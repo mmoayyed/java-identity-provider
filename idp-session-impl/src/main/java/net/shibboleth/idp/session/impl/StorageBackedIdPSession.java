@@ -254,8 +254,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         if (flow != null) {
             try {
                 if (!sessionManager.getStorageService().updateExpiration(getId(), result.getAuthenticationFlowId(),
-                        result.getLastActivityInstant().toEpochMilli() + flow.getInactivityTimeout()
-                            + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)) {
+                        result.getLastActivityInstant().plus(flow.getInactivityTimeout()).plus(
+                            AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET).toEpochMilli())) {
                     log.warn("Skipping update, AuthenticationResult for flow {} in session {} not found in storage",
                             flowId, getId());
                 }
@@ -585,13 +585,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             boolean success = false;
             do {
                 success = sessionManager.getStorageService().create(getId(), flowId, result, flow,
-                        result.getLastActivityInstant().toEpochMilli() + flow.getInactivityTimeout()
-                            + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET);
+                        result.getLastActivityInstant().plus(flow.getInactivityTimeout()).plus(
+                            AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET).toEpochMilli());
                 if (!success) {
                     // The record already exists, so we need to overwrite via an update.
                     success = sessionManager.getStorageService().update(getId(), flowId, result, flow,
-                            result.getLastActivityInstant().toEpochMilli() + flow.getInactivityTimeout()
-                                + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET);
+                            result.getLastActivityInstant().plus(flow.getInactivityTimeout()).plus(
+                                AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET).toEpochMilli());
                 }
             } while (!success && attempts-- > 0);
             

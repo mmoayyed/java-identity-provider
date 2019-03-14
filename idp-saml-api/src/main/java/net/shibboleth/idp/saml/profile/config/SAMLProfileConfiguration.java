@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -27,7 +28,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /** Common interface for SAML profile configurations. */
@@ -55,11 +55,11 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
     @Nonnull Predicate<ProfileRequestContext> getSignResponses();
 
     /**
-     * Get the lifetime of generated assertions in milliseconds.
+     * Get the lifetime of generated assertions.
      * 
-     * @return lifetime of generated assertions in milliseconds
+     * @return lifetime of generated assertions
      */
-    @Positive long getAssertionLifetime();
+    @Nonnull Duration getAssertionLifetime();
 
     /**
      * Get an unmodifiable set of audiences, in addition to the relying party(ies) to which the IdP is issuing the

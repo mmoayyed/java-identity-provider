@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +38,6 @@ import javax.sql.DataSource;
 import net.shibboleth.idp.attribute.DurablePairwiseIdStore;
 import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.attribute.PairwiseIdStore;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -83,8 +83,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     /** JDBC data source for retrieving connections. */
     @NonnullAfterInit private DataSource dataSource;
 
-    /** Timeout of SQL queries in milliseconds. */
-    @Duration @NonNegative private long queryTimeout;
+    /** Timeout of SQL queries. */
+    @Nonnull private Duration queryTimeout;
 
     /** Number of times to retry a transaction if it rolls back. */
     @NonNegative private int transactionRetry;
@@ -147,7 +147,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     public JDBCPairwiseIdStore() {
         transactionRetry = 3;
         retryableErrors = Arrays.asList("23000", "23505");
-        queryTimeout = 5000;
+        queryTimeout = Duration.ofSeconds(5);
         verifyDatabase = true;
         
         tableName = "shibpid";
@@ -184,21 +184,23 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     /**
      * Get the SQL query timeout.
      * 
-     * @return the timeout in milliseconds
+     * @return the timeout
      */
-    @NonNegative @Duration public long getQueryTimeout() {
+    @Nonnull public Duration getQueryTimeout() {
         return queryTimeout;
     }
     
     /**
-     * Set the SQL query timeout. Defaults to 5000.
+     * Set the SQL query timeout. Defaults to 5s.
      * 
-     * @param timeout the timeout to set in milliseconds
+     * @param timeout the timeout to set
      */
-    @Duration public void setQueryTimeout(@Duration @NonNegative final long timeout) {
+    public void setQueryTimeout(@Nonnull final Duration timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(timeout, "Timeout cannot be null");
+        Constraint.isFalse(timeout.isNegative(), "Timeout cannot be negative");
         
-        queryTimeout = Constraint.isGreaterThanOrEqual(0, timeout, "Timeout must be greater than or equal to 0");
+        queryTimeout = timeout;
     }
 
     /**
@@ -557,7 +559,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         while (true) {
             try (final Connection dbConn = getConnection(false)) {
                 final PreparedStatement statement = dbConn.prepareStatement(getBySourceSelectSQL);
-                statement.setQueryTimeout((int) (queryTimeout / 1000));
+                statement.setQueryTimeout((int) queryTimeout.toSeconds());
                 statement.setString(1, pid.getIssuerEntityID());
                 statement.setString(2, pid.getRecipientEntityID());
                 statement.setString(3, pid.getSourceSystemId());
@@ -638,7 +640,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     
         try (final Connection dbConn = getConnection(true)) {
             final PreparedStatement statement = dbConn.prepareStatement(getByIssuedSelectSQL);
-            statement.setQueryTimeout((int) (queryTimeout / 1000));
+            statement.setQueryTimeout((int) queryTimeout.toSeconds());
     
             statement.setString(1, pid.getIssuerEntityID());
             statement.setString(2, pid.getRecipientEntityID());
@@ -685,7 +687,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         
         try (final Connection dbConn = getConnection(true)) {
             final PreparedStatement statement = dbConn.prepareStatement(deactivateSQL);
-            statement.setQueryTimeout((int) (queryTimeout / 1000));
+            statement.setQueryTimeout((int) queryTimeout.toSeconds());
             statement.setTimestamp(1, deactivationTime);
             statement.setString(2, pid.getIssuerEntityID());
             statement.setString(3, pid.getRecipientEntityID());
@@ -719,7 +721,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         
         try (final Connection dbConn = getConnection(true)) {
             final PreparedStatement statement = dbConn.prepareStatement(attachSQL);
-            statement.setQueryTimeout((int) (queryTimeout / 1000));
+            statement.setQueryTimeout((int) queryTimeout.toSeconds());
             statement.setString(1, pid.getPeerProvidedId());
             statement.setString(2, pid.getIssuerEntityID());
             statement.setString(3, pid.getRecipientEntityID());
@@ -767,7 +769,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         log.trace("Setting prepared statement parameter {}: {}", 8, entry.getDeactivationTime());
         
         final PreparedStatement statement = dbConn.prepareStatement(insertSQL);
-        statement.setQueryTimeout((int) (queryTimeout / 1000));
+        statement.setQueryTimeout((int) queryTimeout.toSeconds());
     
         statement.setString(1, entry.getIssuerEntityID());
         statement.setString(2, entry.getRecipientEntityID());
@@ -840,7 +842,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
 
         try (final Connection conn = getConnection(true)) {
             final PreparedStatement statement = conn.prepareStatement(deleteSQL);
-            statement.setQueryTimeout((int) (queryTimeout / 1000));
+            statement.setQueryTimeout((int) queryTimeout.toSeconds());
             statement.setString(1, "http://dummy.com/idp/" + uuid);
             statement.executeUpdate();
         }

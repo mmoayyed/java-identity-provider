@@ -41,8 +41,6 @@ public class ProxyConfiguration extends AbstractProtocolConfiguration {
     /** Creates a new instance. */
     public ProxyConfiguration() {
         super(PROFILE_ID);
-        // Proxy tickets valid for 15s by default
-        setTicketValidityPeriod(15000);
     }
 
     /** {@inheritDoc} */

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
@@ -109,32 +110,32 @@ public class PopulateMultiFactorAuthenticationContextTest {
         AuthenticationFlowDescriptor desc = new AuthenticationFlowDescriptor();
         desc.setId("foo");
         desc.setResultSerializer(new DefaultAuthenticationResultSerializer());
-        desc.setLifetime(3600 * 1000);
+        desc.setLifetime(Duration.ofHours(1));
         desc.initialize();
         ac.getAvailableFlows().put(desc.getId(), desc);
 
         desc = new AuthenticationFlowDescriptor();
         desc.setId("bar");
         desc.setResultSerializer(new DefaultAuthenticationResultSerializer());
-        desc.setLifetime(3600 * 1000);
+        desc.setLifetime(Duration.ofHours(1));
         desc.initialize();
         ac.getAvailableFlows().put(desc.getId(), desc);
 
         desc = new AuthenticationFlowDescriptor();
         desc.setId("bav");
         desc.setResultSerializer(new DefaultAuthenticationResultSerializer());
-        desc.setLifetime(3600 * 1000);
+        desc.setLifetime(Duration.ofHours(1));
         desc.initialize();
         ac.getAvailableFlows().put(desc.getId(), desc);
 
         desc = new AuthenticationFlowDescriptor();
         desc.setId("bag");
         desc.setResultSerializer(new DefaultAuthenticationResultSerializer());
-        desc.setLifetime(3600 * 1000);
+        desc.setLifetime(Duration.ofHours(1));
         desc.initialize();
         ac.getAvailableFlows().put(desc.getId(), desc);
 
-        ac.setMaxAge(1800 * 1000);
+        ac.setMaxAge(Duration.ofMinutes(30));
         
         action.setTransitionMapLookupStrategy(
                 FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(

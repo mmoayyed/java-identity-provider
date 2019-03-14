@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.config.navigate;
 
+import java.time.Duration;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
@@ -33,10 +35,10 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * 
  * <p>If a specific setting is unavailable, zero is returned.</p>
  */
-public class SessionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
+public class SessionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Duration> {
 
     /** {@inheritDoc} */
-    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Duration apply(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();

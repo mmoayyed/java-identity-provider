@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.impl;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -67,8 +68,8 @@ public class JDBCPairwiseIdStoreTest {
         store.setDataSource(testSource);
         
         Assert.assertEquals(store.getDataSource(), testSource);
-        Assert.assertEquals(store.getQueryTimeout(), 5000);
-        store.setQueryTimeout(1);
+        Assert.assertEquals(store.getQueryTimeout(), Duration.ofSeconds(5));
+        store.setQueryTimeout(Duration.ofMillis(1));
         
         try {
             store.getBySourceValue(new PairwiseId(), true);
@@ -86,13 +87,13 @@ public class JDBCPairwiseIdStoreTest {
         }
         store.initialize();
         try {
-            store.setQueryTimeout(0);
+            store.setQueryTimeout(Duration.ZERO);
             Assert.fail("work after initialize");
         } catch (final UnmodifiableComponentException e) {
             // OK
         }
         Assert.assertEquals(store.getDataSource(), testSource);
-        Assert.assertEquals(store.getQueryTimeout(), 1);
+        Assert.assertEquals(store.getQueryTimeout(), Duration.ofMillis(1));
     }
     
     private boolean comparePersistentIdEntrys(@Nonnull PairwiseId one, @Nonnull PairwiseId other)

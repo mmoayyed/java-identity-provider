@@ -21,6 +21,8 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
+import java.time.Duration;
+
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -41,7 +43,6 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
     @Test public void testNonForced() throws Exception {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setForceAuthn(false);
-        authCtx.setMaxAge(0);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -62,7 +63,7 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
 
     @Test public void testPartialFiltering() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        authCtx.setMaxAge(3600 * 1000);
+        authCtx.setMaxAge(Duration.ofHours(1));
         authCtx.getPotentialFlows().get("test2").setForcedAuthenticationSupported(true);
         
         final Event event = action.execute(src);

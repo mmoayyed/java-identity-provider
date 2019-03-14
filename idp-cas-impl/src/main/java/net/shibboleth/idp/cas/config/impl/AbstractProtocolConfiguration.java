@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.config.impl;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -27,9 +27,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -50,34 +48,26 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
 
     /** Lookup function to supply {@link #ticketValidityPeriod} property. */
-    @Nullable private Function<ProfileRequestContext, Long> ticketValidityPeriodLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,Duration> ticketValidityPeriodLookupStrategy;
 
     /** Validity time period of tickets. */
-    @Duration @Positive private long ticketValidityPeriod;
+    @Nonnull private Duration ticketValidityPeriod;
 
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
 
     /**
      * Creates a new configuration instance.
-     * 
-     * @param profileId Unique profile identifier.
+     *
+     * @param profileId Unique profile identifier
      */
     public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
-        this(profileId, 15000L);
-    }
-
-    /**
-     * Creates a new configuration instance.
-     *
-     * @param profileId Unique profile identifier.
-     * @param ticketTTL Ticket validity period in milliseconds.
-     */
-    public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId, @Positive final long ticketTTL) {
         super(profileId);
+        
         resolveAttributesPredicate = Predicates.alwaysTrue();
-        ticketValidityPeriod = ticketTTL;
-        setSecurityConfiguration(new SecurityConfiguration(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES),
+        ticketValidityPeriod = Duration.ofSeconds(15);
+        
+        setSecurityConfiguration(new SecurityConfiguration(Duration.ofMinutes(5),
                 new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength())));
     }
 
@@ -91,21 +81,22 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     /**
      * Get ticket validity period.
      * 
-     * @return Ticket validity period in milliseconds.
+     * @return ticket validity period
      */
-    @Positive @Duration public long getTicketValidityPeriod() {
-        return Constraint.isGreaterThan(0,
-                getIndirectProperty(ticketValidityPeriodLookupStrategy, ticketValidityPeriod),
-                "Ticket validity period must be positive.");
+    @Nonnull public Duration getTicketValidityPeriod() {
+        return getIndirectProperty(ticketValidityPeriodLookupStrategy, ticketValidityPeriod);
     }
 
     /**
      * Sets the ticket validity period.
      * 
-     * @param millis Ticket validity period in milliseconds.
+     * @param ticketTTL ticket validity period
      */
-    @Duration public void setTicketValidityPeriod(@Duration @Positive final long millis) {
-        ticketValidityPeriod = Constraint.isGreaterThan(0, millis, "Ticket validity period must be positive.");
+    public void setTicketValidityPeriod(@Nonnull final Duration ticketTTL) {
+        Constraint.isNotNull(ticketTTL, "Ticket lifetime cannot be null");
+        Constraint.isFalse(ticketTTL.isNegative() || ticketTTL.isZero(), "Ticket lifetime must be greater than 0");
+
+        ticketValidityPeriod = ticketTTL;
     }
 
     /**
@@ -115,7 +106,8 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * 
      * @since 3.3.0
      */
-    public void setTicketValidityPeriodLookupStrategy(@Nullable final Function<ProfileRequestContext, Long> strategy) {
+    public void setTicketValidityPeriodLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Duration> strategy) {
         ticketValidityPeriodLookupStrategy = strategy;
     }
 

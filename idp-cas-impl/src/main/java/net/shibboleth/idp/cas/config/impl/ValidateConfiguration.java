@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.config.impl;
 
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.function.Function;
 
@@ -72,9 +73,11 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
 
     /** Creates a new instance. */
     public ValidateConfiguration() {
+        super(PROFILE_ID);
+        
         // Ticket validity period for this configuration container applies to proxy-granting tickets
         // Default to 12H
-        super(PROFILE_ID, 12 * 60 * 60 * 1000);
+        setTicketValidityPeriod(Duration.ofHours(12));
         
         pgtIOUGenerator = new TicketIdentifierGenerationStrategy("PGTIOU", 50);
         serviceComparator = new DefaultServiceComparator();

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 import java.util.function.Function;
@@ -91,7 +92,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
     @NonnullAfterInit private Function<ProfileRequestContext,AuthnContextClassRefPrincipal> classRefLookupStrategy;
 
     /** Strategy used to determine SessionNotOnOrAfter value to set. */
-    @Nullable private Function<ProfileRequestContext,Long> sessionLifetimeLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,Duration> sessionLifetimeLookupStrategy;
         
     /** Constructor. */
     public AddAuthnStatementToAssertion() {
@@ -127,7 +128,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      * 
      * @param strategy lookup strategy
      */
-    public void setSessionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
+    public void setSessionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Duration> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         sessionLifetimeLookupStrategy = strategy;
@@ -230,9 +231,9 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         }
         
         if (sessionLifetimeLookupStrategy != null) {
-            final Long lifetime = sessionLifetimeLookupStrategy.apply(profileRequestContext);
-            if (lifetime != null && lifetime > 0) {
-                statement.setSessionNotOnOrAfter(Instant.now().plusMillis(lifetime));
+            final Duration lifetime = sessionLifetimeLookupStrategy.apply(profileRequestContext);
+            if (lifetime != null && lifetime.toMillis() > 0) {
+                statement.setSessionNotOnOrAfter(Instant.now().plus(lifetime));
             }
         }
         

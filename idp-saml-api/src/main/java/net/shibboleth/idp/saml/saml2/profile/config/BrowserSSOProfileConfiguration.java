@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.security.Principal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +33,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -53,7 +53,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         implements AuthenticationProfileConfiguration {
     
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
+    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
         
     /** Bit constant for RequestedAuthnContext feature. */
     public static final int FEATURE_AUTHNCONTEXT = 0x1;
@@ -71,13 +71,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
     /** Lookup function to supply {@link #maximumSPSessionLifetime} property. */
-    @Nullable private Function<ProfileRequestContext,Long> maximumSPSessionLifetimeLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
     
-    /**
-     * The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. A value
-     * of 0 (the default) indicates no cap is put on the SP's session lifetime.
-     */
-    @Duration @NonNegative private long maximumSPSessionLifetime;
+    /** The maximum amount of time the service provider should maintain a session for the user. */
+    @Nullable private Duration maximumSPSessionLifetime;
 
     /** 
      * The predicate used to determine if produced assertions may be delegated.
@@ -133,27 +130,12 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         includeAttributeStatementPredicate = Predicates.alwaysTrue();
         forceAuthnPredicate = Predicates.alwaysFalse();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
-        maximumSPSessionLifetime = 0;
         maximumTokenDelegationChainLength = 1;
         allowDelegationPredicate = Predicates.<ProfileRequestContext>alwaysFalse();
         defaultAuthenticationContexts = Collections.emptyList();
         authenticationFlows = Collections.emptySet();
         postAuthenticationFlows = Collections.emptyList();
         nameIDFormatPrecedence = Collections.emptyList();
-    }
-    
-    /**
-     * Get whether attributes should be resolved during the profile.
-     *
-     * <p>Default is true</p>
-     * 
-     * @return true iff attributes should be resolved
-     * 
-     * @deprecated Use {@link #getResolveAttributesPredicate()} instead.
-     */
-    @Deprecated
-    public boolean resolveAttributes() {
-        return resolveAttributesPredicate.test(getProfileRequestContext());
     }
     
     /**
@@ -186,20 +168,6 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     public void setResolveAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         resolveAttributesPredicate = Constraint.isNotNull(condition, "Resolve attributes predicate cannot be null");
-    }
-
-    /**
-     * Get whether responses to the authentication request should include an attribute statement.
-     *
-     * <p>Default is true</p>
-     *
-     * @return whether responses to the authentication request should include an attribute statement
-     * 
-     * @deprecated Use {@link #getIncludeAttributeStatementPredicate()} instead.
-     */
-    @Deprecated
-    public boolean includeAttributeStatement() {
-        return includeAttributeStatementPredicate.test(getProfileRequestContext());
     }
 
     /**
@@ -272,18 +240,6 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
     
     /**
-     * Get whether the response endpoint should be validated if the request is signed.
-     * 
-     * @return whether the response endpoint should be validated if the request is signed
-     * 
-     * @deprecated Use {@link #getSkipEndpointValidationWhenSignedPredicate()} instead.
-     */
-    @Deprecated
-    public boolean skipEndpointValidationWhenSigned() {
-        return skipEndpointValidationWhenSignedPredicate.test(getProfileRequestContext());
-    }
-
-    /**
      * Set whether the response endpoint should be validated if the request is signed.
      * 
      * @param skip whether the response endpoint should be validated if the request is signed
@@ -318,27 +274,26 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
-     * Get the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
-     * based on the authentication assertion. A value of 0 is interpreted as an unlimited lifetime.
+     * Get the maximum amount of time the service provider should maintain a session for the user
+     * based on the authentication assertion. A null or 0 is interpreted as an unlimited lifetime.
      * 
      * @return max lifetime of service provider should maintain a session
      */
-    @NonNegative @Duration public long getMaximumSPSessionLifetime() {
-        return Constraint.isGreaterThanOrEqual(0,
-                getIndirectProperty(maximumSPSessionLifetimeLookupStrategy, maximumSPSessionLifetime),
-                "Maximum SP session lifetime must be greater or equal to 0");
+    @Nullable public Duration getMaximumSPSessionLifetime() {
+        return getIndirectProperty(maximumSPSessionLifetimeLookupStrategy, maximumSPSessionLifetime);
     }
 
     /**
-     * Set the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
-     * based on the authentication assertion. A value of 0 is interpreted as an unlimited lifetime.
+     * Set the maximum amount of time the service provider should maintain a session for the user
+     * based on the authentication assertion. A null or 0 is interpreted as an unlimited lifetime.
      * 
      * @param lifetime max lifetime of service provider should maintain a session
      */
-    @Duration public void setMaximumSPSessionLifetime(@Duration @NonNegative final long lifetime) {
-        maximumSPSessionLifetime =
-                Constraint.isGreaterThanOrEqual(0, lifetime,
-                        "Maximum SP session lifetime must be greater than or equal to 0");
+    public void setMaximumSPSessionLifetime(@Nullable final Duration lifetime) {
+        Constraint.isFalse(lifetime != null && lifetime.isNegative(),
+                "Maximum SP session lifetime must be greater than or equal to 0");
+        
+        maximumSPSessionLifetime = lifetime;
     }
     
     /**
@@ -349,53 +304,15 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 3.3.0
      */
     public void setMaximumSPSessionLifetimeLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Long> strategy) {
+            @Nullable final Function<ProfileRequestContext,Duration> strategy) {
         maximumSPSessionLifetimeLookupStrategy = strategy;
     }
-
-    /**
-     * Get whether produced assertions may be delegated.
-     * 
-     * @return whether produced assertions may be delegated, as a {@link Boolean}.  May be null.
-     * 
-     * @deprecated use instead {@link #getAllowDelegation()} predicate
-     */
-    @Deprecated
-    public Boolean getAllowingDelegation() {
-        return allowDelegationPredicate.test(getProfileRequestContext());
-    }
-
-    /**
-     * Set whether produced assertions may be delegated.
-     * 
-     * @param isAllowed whether produced assertions may be delegated
-     */
-    @Deprecated
-    public void setAllowingDelegation(final Boolean isAllowed) {
-        if (isAllowed != null) {
-            allowDelegationPredicate = isAllowed ? Predicates.<ProfileRequestContext>alwaysTrue()
-                    : Predicates.<ProfileRequestContext>alwaysFalse();
-        } else {
-            allowDelegationPredicate = Predicates.alwaysFalse();
-        }
-    }
-
-    /**
-     * Get whether produced assertions may be delegated.
-     * 
-     * @return whether produced assertions may be delegated
-     */
-    public boolean isAllowingDelegation() {
-        return allowDelegationPredicate.test(getProfileRequestContext());
-    }
-    
     
     /**
      * Get the predicate used to determine if produced assertions may be delegated.
      * 
      * @return predicate used to determine if produced assertions may be delegated
      */
-
     @Nonnull public Predicate<ProfileRequestContext> getAllowDelegation() {
         return allowDelegationPredicate;
     }
@@ -405,7 +322,6 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * 
      * @param  predicate used to determine if produced assertions may be delegated
      */
-
     public void setAllowDelegation(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         allowDelegationPredicate = Constraint.isNotNull(predicate, "Allow delegation predicate cannot be null");
     }

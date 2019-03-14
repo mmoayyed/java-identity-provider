@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -36,40 +37,24 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class FormatExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
 
     /** SQL query string. */
-    private String sqlQuery;
-
-    /**
-     * Constructor.
-     */
-    public FormatExecutableStatementBuilder() {
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        if (null == sqlQuery) {
-            throw new  ComponentInitializationException(
-                    "FormatExecutableStatementBuilder: SQL query can not be null");
-        }
-        if (getQueryTimeout() <= 0) {
-            throw new ComponentInitializationException(
-                    "FormatExecutableStatementBuilder: Query timeout must be greater than zero");
-        }
-        super.doInitialize();
-    }
+    @NonnullAfterInit private String sqlQuery;
     
     /** Set the query to search the database. 
      * @param query query to search the database
      */
     public void setQuery(@Nonnull final String query) {
-        sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");        
+        sqlQuery = Constraint.isNotNull(query, "SQL query cannot be null");        
     }
-    
-    /** Set the search timeout.
-     * @param timeout search timeout
-     */
-    public void setTimeOut(@Nonnull final int timeout) {
-        setQueryTimeout((int) Constraint.isGreaterThanOrEqual(0, timeout, "Query timeout must be greater than zero"));
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (null == sqlQuery) {
+            throw new  ComponentInitializationException(
+                    "FormatExecutableStatementBuilder: SQL query cannot be null");
+        }
     }
 
     /** {@inheritDoc} */

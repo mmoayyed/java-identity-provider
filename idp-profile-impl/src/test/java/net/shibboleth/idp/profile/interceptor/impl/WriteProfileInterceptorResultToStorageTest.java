@@ -28,9 +28,7 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorResult;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
@@ -110,7 +108,7 @@ public class WriteProfileInterceptorResultToStorageTest {
     }
 
     @Test public void testCreateStorageRecordWithExpiration() throws Exception {
-        final Long expiration = Instant.now().plusSeconds(60).toEpochMilli();
+        final Instant expiration = Instant.now().plusSeconds(60);
         final MockProfileInterceptorResult result =
                 new MockProfileInterceptorResult("context", "key", "value", expiration);
         prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
@@ -122,11 +120,11 @@ public class WriteProfileInterceptorResultToStorageTest {
         final StorageRecord storageRecord = ss.read("context", "key");
         Assert.assertNotNull(storageRecord);
         Assert.assertEquals(storageRecord.getValue(), "value");
-        Assert.assertEquals(storageRecord.getExpiration(), expiration);
+        Assert.assertEquals(storageRecord.getExpiration(), Long.valueOf(expiration.toEpochMilli()));
     }
 
     @Test public void testUpdateStorageRecord() throws Exception {
-        final Long expiration = Instant.now().plusSeconds(60).toEpochMilli();
+        final Instant expiration = Instant.now().plusSeconds(60);
         MockProfileInterceptorResult result = new MockProfileInterceptorResult("context", "key", "value", null);
         prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
 
@@ -150,14 +148,14 @@ public class WriteProfileInterceptorResultToStorageTest {
         storageRecord = ss.read("context", "key");
         Assert.assertNotNull(storageRecord);
         Assert.assertEquals(storageRecord.getValue(), "value2");
-        Assert.assertEquals(storageRecord.getExpiration(), expiration);
+        Assert.assertEquals(storageRecord.getExpiration(), Long.valueOf(expiration.toEpochMilli()));
     }
 
     private class MockProfileInterceptorResult extends AbstractProfileInterceptorResult {
 
         public MockProfileInterceptorResult(@Nonnull @NotEmpty final String context,
                 @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
-                @Nullable @Positive @Duration final Long expiration) {
+                @Nullable final Instant expiration) {
             super(context, key, value, expiration);
         }
     }

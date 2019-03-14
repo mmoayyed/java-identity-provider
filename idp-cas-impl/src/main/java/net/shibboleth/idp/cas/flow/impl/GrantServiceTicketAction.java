@@ -126,7 +126,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     authnResult.getAuthenticationFlowId());
             ticket = ticketServiceEx.createServiceTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
-                    Instant.now().plusMillis(config.getTicketValidityPeriod()),
+                    Instant.now().plus(config.getTicketValidityPeriod()),
                     request.getService(),
                     state,
                     request.isRenew());

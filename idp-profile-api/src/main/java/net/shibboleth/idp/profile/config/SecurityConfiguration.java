@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.profile.config;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
@@ -38,8 +36,8 @@ import org.opensaml.xmlsec.SignatureValidationConfiguration;
 /** Configuration for security behavior of profiles. */
 public class SecurityConfiguration {
 
-    /** Acceptable clock skew expressed in milliseconds. */
-    @Duration @Positive private final long clockSkew;
+    /** Acceptable clock skew. */
+    @Nonnull private final Duration clockSkew;
 
     /** Generator used to generate various secure IDs (e.g., message identifiers). */
     @Nonnull private final IdentifierGenerationStrategy idGenerator;
@@ -69,7 +67,7 @@ public class SecurityConfiguration {
      * {@link SecureRandomIdentifierGenerationStrategy} using the SHA1PRNG algorithm.
      */
     public SecurityConfiguration() {
-        clockSkew = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
+        clockSkew = Duration.ofMinutes(5);
         idGenerator = new SecureRandomIdentifierGenerationStrategy();
     }
 
@@ -79,18 +77,20 @@ public class SecurityConfiguration {
      * @param skew the clock skew, must be greater than 0
      * @param generator the identifier generator, must not be null
      */
-    public SecurityConfiguration(@Duration @Positive final long skew,
-            @Nonnull final IdentifierGenerationStrategy generator) {
-        clockSkew = (int) Constraint.isGreaterThan(0, skew, "Clock skew must be greater than 0");
+    public SecurityConfiguration(@Nonnull final Duration skew, @Nonnull final IdentifierGenerationStrategy generator) {
+        Constraint.isNotNull(skew, "Clock skew cannot be null");
+        Constraint.isFalse(skew.isNegative() || skew.isZero(), "Clock skew must be greater than 0");
+        
+        clockSkew = skew;
         idGenerator = Constraint.isNotNull(generator, "Identifier generator cannot be null");
     }
 
     /**
-     * Get the acceptable clock skew expressed in milliseconds.
+     * Get the acceptable clock skew.
      * 
-     * @return acceptable clock skew expressed in milliseconds
+     * @return acceptable clock skew
      */
-    @Positive public long getClockSkew() {
+    @Nonnull public Duration getClockSkew() {
         return clockSkew;
     }
 

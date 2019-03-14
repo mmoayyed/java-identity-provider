@@ -124,7 +124,7 @@ public class ValidateProxyCallbackAction
         try {
             log.debug("Attempting proxy authentication to {}", proxyCallbackUri);
             proxyValidator.validate(profileRequestContext, proxyCallbackUri);
-            final Instant expiration = Instant.now().plusMillis(config.getTicketValidityPeriod());
+            final Instant expiration = Instant.now().plus(config.getTicketValidityPeriod());
             if (ticket instanceof ServiceTicket) {
                 ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
             } else {

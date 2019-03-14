@@ -19,6 +19,8 @@ package net.shibboleth.idp.authn;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,11 +35,8 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -68,7 +67,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "authn/";
 
     /** Additional allowance for storage of result records to avoid race conditions during use. */
-    public static final long STORAGE_EXPIRATION_OFFSET;
+    @Nonnull public static final Duration STORAGE_EXPIRATION_OFFSET;
 
     /** Whether this flow supports non-browser clients. */
     private boolean supportsNonBrowser;
@@ -82,11 +81,11 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Whether this flow allows reuse of its results. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
 
-    /** Maximum amount of time in milliseconds, since first usage, a flow should be considered active. */
-    @Duration @NonNegative private long lifetime;
+    /** Maximum amount of time since first usage that a flow should be considered active. */
+    @Nullable private Duration lifetime;
 
-    /** Maximum amount of time in milliseconds, since last usage, a flow should be considered active. */
-    @Duration @Positive private long inactivityTimeout;
+    /** Maximum amount of time since last usage that a flow should be considered active. */
+    @Nonnull private Duration inactivityTimeout;
 
     /**
      * Supported principals, indexed by type, that the flow can produce. Implemented for the moment using the Subject
@@ -109,7 +108,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         reuseCondition = Predicates.alwaysTrue();
         supportedPrincipals = new Subject();
         activationCondition = Predicates.alwaysTrue();
-        inactivityTimeout = 30 * 60 * 1000;
+        inactivityTimeout = Duration.ofMinutes(30);
         principalWeightMap = Collections.emptyMap();
     }
     
@@ -200,29 +199,31 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Get the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A value
-     * of 0 indicates that there is no upper limit on the lifetime on an active flow.
+     * Get the maximum amount of time, since first usage, a flow should be considered active. A null
+     * indicates that there is no upper limit on the lifetime on an active flow.
      * 
-     * @return maximum amount of time in milliseconds a flow should be considered active, never less than 0
+     * @return maximum amount of time a flow should be considered active
      */
-    @NonNegative @Duration public long getLifetime() {
+    @Nullable public Duration getLifetime() {
         return lifetime;
     }
 
     /**
-     * Set the maximum amount of time in milliseconds, since first usage, a flow should be considered active. A value
-     * of 0 indicates that there is no upper limit on the lifetime on an active flow.
+     * Set the maximum amount of time, since first usage, a flow should be considered active. A null value
+     * indicates that there is no upper limit on the lifetime on an active flow.
      * 
-     * @param flowLifetime the lifetime for the flow, must be 0 or greater
+     * @param flowLifetime the lifetime for the flow
      */
-    @Duration public void setLifetime(@Duration @NonNegative final long flowLifetime) {
+    public void setLifetime(@Nullable final Duration flowLifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isFalse(flowLifetime != null && (flowLifetime.isNegative() || flowLifetime.isZero()),
+                "Lifetime must be null or greater than 0");
 
-        lifetime = Constraint.isGreaterThanOrEqual(0, flowLifetime, "Lifetime must be greater than or equal to 0");
+        lifetime = flowLifetime;
     }
 
     /**
-     * Get the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
+     * Get the maximum amount of time, since the last usage, a flow should be considered active.
      * 
      * <p>
      * Defaults to 30 minutes.
@@ -230,19 +231,21 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @return the duration
      */
-    @Duration @Positive public long getInactivityTimeout() {
+    @Nonnull public Duration getInactivityTimeout() {
         return inactivityTimeout;
     }
 
     /**
-     * Set the maximum amount of time in milliseconds, since the last usage, a flow should be considered active.
+     * Set the maximum amount of time, since the last usage, a flow should be considered active.
      * 
      * @param timeout the flow inactivity timeout, must be greater than zero
      */
-    @Duration public void setInactivityTimeout(@Duration @Positive final long timeout) {
+    public void setInactivityTimeout(@Nonnull final Duration timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(timeout, "Inactivity timeout cannot be null");
+        Constraint.isFalse(timeout.isNegative() || timeout.isZero(), "Inactivity timeout must be greater than 0");
 
-        inactivityTimeout = Constraint.isGreaterThan(0, timeout, "Inactivity timeout must be greater than 0");
+        inactivityTimeout = timeout;
     }
 
     /**
@@ -257,11 +260,10 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         Constraint.isTrue(result.getAuthenticationFlowId().equals(getId()),
                 "AuthenticationResult was not produced by this flow");
 
-        final long now = System.currentTimeMillis();
-        if (getLifetime() > 0 && result.getAuthenticationInstant().plusMillis(getLifetime()).toEpochMilli() <= now) {
+        final Instant now = Instant.now();
+        if (getLifetime() != null && now.isAfter(result.getAuthenticationInstant().plus(getLifetime()))) {
             return false;
-        } else if (getInactivityTimeout() > 0
-                && result.getLastActivityInstant().plusMillis(getInactivityTimeout()).toEpochMilli() <= now) {
+        } else if (now.isAfter(result.getLastActivityInstant().plus(getInactivityTimeout()))) {
             return false;
         }
 
@@ -370,7 +372,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
         // Back the expiration off by the inactivity timeout to recover the last activity time.
         return resultSerializer.deserialize(version, context, key, value, (expiration != null) ? expiration
-                - inactivityTimeout - STORAGE_EXPIRATION_OFFSET : null);
+                - inactivityTimeout.toMillis() - STORAGE_EXPIRATION_OFFSET.toMillis() : null);
     }
 
     /**
@@ -448,6 +450,6 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
     
     static {
-        STORAGE_EXPIRATION_OFFSET = 10 * 60 * 1000;
+        STORAGE_EXPIRATION_OFFSET = Duration.ofMinutes(10);
     }
 }

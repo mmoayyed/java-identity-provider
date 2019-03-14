@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,11 +30,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -65,10 +64,10 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     @Nullable private Predicate<ProfileRequestContext> includeNotBeforePredicate;
 
     /** Lookup function to supply {@link #assertionLifetime} property. */
-    @Nullable private Function<ProfileRequestContext,Long> assertionLifetimeLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,Duration> assertionLifetimeLookupStrategy;
 
-    /** Lifetime of an assertion in milliseconds. Default value: 5 minutes */
-    @Positive @Duration private long assertionLifetime;
+    /** Lifetime of an assertion. Default value: 5 minutes */
+    @Nonnull private Duration assertionLifetime;
 
     /** Lookup function to supply {@link #assertionAudiences} property. */
     @Nullable private Function<ProfileRequestContext,Collection<String>> assertionAudiencesLookupStrategy;
@@ -88,7 +87,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
         signResponsesPredicate = Predicates.alwaysFalse();
         signAssertionsPredicate = Predicates.alwaysFalse();
         includeNotBeforePredicate = Predicates.alwaysTrue();
-        assertionLifetime = 5 * 60 * 1000;
+        assertionLifetime = Duration.ofMinutes(5);
         assertionAudiences = Collections.emptySet();
     }
 
@@ -104,7 +103,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     }
     
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getSignAssertions() {
+    @Nonnull public Predicate<ProfileRequestContext> getSignAssertions() {
         return signAssertionsPredicate;
     }
 
@@ -119,7 +118,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getSignRequests() {
+    @Nonnull public Predicate<ProfileRequestContext> getSignRequests() {
         return signRequestsPredicate;
     }
 
@@ -135,7 +134,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getSignResponses() {
+    @Nonnull public Predicate<ProfileRequestContext> getSignResponses() {
         return signResponsesPredicate;
     }
 
@@ -150,18 +149,20 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     }
 
     /** {@inheritDoc} */
-    @Override @Positive @Duration public long getAssertionLifetime() {
-        return Constraint.isGreaterThan(0, getIndirectProperty(assertionLifetimeLookupStrategy, assertionLifetime),
-                "Assertion lifetime must be greater than 0");
+    @Nonnull public Duration getAssertionLifetime() {
+        return getIndirectProperty(assertionLifetimeLookupStrategy, assertionLifetime);
     }
 
     /**
      * Set the lifetime of an assertion.
      * 
-     * @param lifetime lifetime of an assertion in milliseconds
+     * @param lifetime lifetime of an assertion
      */
-    @Duration public void setAssertionLifetime(@Positive @Duration final long lifetime) {
-        assertionLifetime = Constraint.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
+    public void setAssertionLifetime(@Nonnull final Duration lifetime) {
+        Constraint.isNotNull(lifetime, "Assertion lifetime cannot be null");
+        Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "Assertion lifetime must be greater than 0");
+        
+        assertionLifetime = lifetime;
     }
 
     /**
@@ -171,12 +172,12 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
      * 
      * @since 3.3.0
      */
-    public void setAssertionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
+    public void setAssertionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Duration> strategy) {
         assertionLifetimeLookupStrategy = strategy;
     }
 
     /**{@inheritDoc} */
-    @Override public boolean includeConditionsNotBefore() {
+    public boolean includeConditionsNotBefore() {
         return includeNotBeforePredicate.test(getProfileRequestContext());
     }
 
@@ -215,24 +216,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion() {
+    @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion() {
         return ImmutableSet.copyOf(getIndirectProperty(assertionAudiencesLookupStrategy, assertionAudiences));
-    }
-
-    /**
-     * Set the set of audiences, in addition to the relying party(ies) to which the IdP is issuing the assertion, with
-     * which an assertion may be shared.
-     * 
-     * @param audiences the additional audiences
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    public void setAdditionalAudienceForAssertion(@Nonnull @NonnullElements final Collection<String> audiences) {
-        LoggerFactory.getLogger(AbstractSAMLProfileConfiguration.class).warn(
-                "Use of deprecated property name 'additionalAudienceForAssertion', please correct to "
-                    + "'additionalAudiencesForAssertion'");
-        setAdditionalAudiencesForAssertion(audiences);
     }
 
     /**

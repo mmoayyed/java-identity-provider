@@ -640,6 +640,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 final BeanDefinitionBuilder period =
                         BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
                 period.addConstructorArgValue(validateTimerPeriod);
+                // Convert to seconds.
                 period.addConstructorArgValue(1000);
                 poolConfig.addPropertyValue("validatePeriod", period.getBeanDefinition());
             } else {

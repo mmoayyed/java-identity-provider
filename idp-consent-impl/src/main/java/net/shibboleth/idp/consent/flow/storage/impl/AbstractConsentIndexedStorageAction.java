@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.flow.storage.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -323,16 +324,18 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         final String context = result.getStorageContext();
         final String key = result.getStorageKey();
         final String value = result.getStorageValue();
-        final Long expiration = result.getStorageExpiration();
+        final Instant expiration = result.getStorageExpiration();
 
         // Create / update loop until we succeed or exhaust attempts.
         int attempts = 10;
         boolean success = false;
         do {
-            success = getStorageService().create(context, key, value, expiration);
+            success = getStorageService().create(context, key, value,
+                    expiration != null ? expiration.toEpochMilli() : null);
             if (!success) {
                 // The record already exists, so we need to overwrite via an update.
-                success = getStorageService().update(context, key, value, expiration);
+                success = getStorageService().update(context, key, value,
+                        expiration != null ? expiration.toEpochMilli() : null);
             }
         } while (!success && attempts-- > 0);
 

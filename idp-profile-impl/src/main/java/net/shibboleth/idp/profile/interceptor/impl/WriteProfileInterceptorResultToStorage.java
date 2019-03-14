@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.interceptor.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -108,16 +109,17 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
         final String context = result.getStorageContext();
         final String key = result.getStorageKey();
         final String value = result.getStorageValue();
-        final Long expiration = result.getStorageExpiration();
+        final Instant expiration = result.getStorageExpiration();
 
         // Create / update loop until we succeed or exhaust attempts.
         int attempts = 10;
         boolean success = false;
         do {
-            success = storageService.create(context, key, value, expiration);
+            success = storageService.create(context, key, value, expiration != null ? expiration.toEpochMilli() : null);
             if (!success) {
                 // The record already exists, so we need to overwrite via an update.
-                success = storageService.update(context, key, value, expiration);
+                success = storageService.update(context, key, value,
+                        expiration != null ? expiration.toEpochMilli() : null);
             }
         } while (!success && attempts-- > 0);
 

@@ -18,10 +18,11 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
@@ -58,13 +59,13 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** Size, in bytes, of the identifier. */
     private int idSize;
 
-    /** Length, in milliseconds, identifiers are valid. */
-    @Duration @Positive private long idLifetime;
+    /** Length identifiers are valid. */
+    @Nonnull private Duration idLifetime;
 
     /** Constructor. */
     public StoredTransientIdGenerationStrategy() {
         idSize = 16;
-        idLifetime = 1000 * 60 * 60 * 4;
+        idLifetime = Duration.ofHours(4);
     }
 
     /**
@@ -110,23 +111,26 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     }
     
     /**
-     * Get the time, in milliseconds, ids are valid.
+     * Get the time ids are valid.
      * 
-     * @return  time, in milliseconds, ids are valid
+     * @return  time ids are valid
      */
-    @Positive public long getIdLifetime() {
+    @Nonnull public Duration getIdLifetime() {
         return idLifetime;
     }
 
     /**
-     * Set the time, in milliseconds, ids are valid.
+     * Set the time ids are valid.
      * 
-     * @param lifetime time, in milliseconds, ids are valid
+     * @param lifetime time ids are valid
      */
-    public void setIdLifetime(@Duration @Positive final long lifetime) {
+    public void setIdLifetime(@Nonnull final Duration lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        idLifetime = Constraint.isGreaterThan(0, lifetime, "ID lifetime must be positive");
+        Constraint.isNotNull(lifetime, "ID lifetime cannot be null");
+        Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "ID lifetime must be greater than 0");
+        
+        idLifetime = lifetime;
     }
 
     /** {@inheritDoc} */
@@ -143,7 +147,6 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     }
     
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
             @Nonnull @NotEmpty final String principalName) throws SAMLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -163,11 +166,11 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     
             log.debug("Creating new transient ID '{}'", id);
     
-            final long expiration = System.currentTimeMillis() + idLifetime;
+            final Instant expiration = Instant.now().plus(idLifetime);
     
             int collisions = 0;
             while (collisions < 5) {
-                if (idStore.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration)) {
+                if (idStore.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration.toEpochMilli())) {
                     return id;
                 } else {
                     ++collisions;

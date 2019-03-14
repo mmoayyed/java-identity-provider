@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.context;
 
 import java.lang.reflect.Constructor;
 import java.security.Principal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,9 +37,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -78,8 +77,8 @@ public final class AuthenticationContext extends BaseContext {
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
     
-    /** Allowed time in ms since an {@link AuthenticationResult} was created that it can be reused for this request. */
-    @NonNegative @Duration private long maxAge;
+    /** Allowed time since an {@link AuthenticationResult} was created that it can be reused for this request. */
+    @Nullable private Duration maxAge;
 
     /** Lookup strategy for a fixed event to return from validators for testing. */
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
@@ -330,33 +329,36 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
-     * Get duration in milliseconds since an {@link AuthenticationResult} was created that
+     * Get duration since an {@link AuthenticationResult} was created that
      * allows it to be reused for this request.
      * 
-     * <p>If zero, no constraint is applied.</p>
+     * <p>If null, no constraint is applied.</p>
      * 
-     * @return duration in milliseconds, or zero
+     * @return duration
      * 
      * @since 3.4.0
      */
-    @NonNegative @Duration public long getMaxAge() {
+    @Nullable public Duration getMaxAge() {
         return maxAge;
     }
     
     /**
-     * Set duration in milliseconds since an {@link AuthenticationResult} was created that
+     * Set duration since an {@link AuthenticationResult} was created that
      * allows it to be reused for this request.
      * 
-     * <p>Set to zero to apply no constraint.</p>
+     * <p>Set to null to apply no constraint.</p>
      * 
-     * @param age duration in milliseconds, or zero
+     * @param age duration
      * 
      * @return this context
      * 
      * @since 3.4.0
      */
-    @Nonnull public AuthenticationContext setMaxAge(@NonNegative @Duration final long age) {
-        maxAge = Constraint.isGreaterThanOrEqual(0, age, "MaxAge cannot be negative");
+    @Nonnull public AuthenticationContext setMaxAge(@Nullable final Duration age) {
+        
+        Constraint.isFalse(age != null && (age.isNegative() || age.isZero()), "MaxAge must be null or greater than 0");
+        
+        maxAge = age;
         return this;
     }
     

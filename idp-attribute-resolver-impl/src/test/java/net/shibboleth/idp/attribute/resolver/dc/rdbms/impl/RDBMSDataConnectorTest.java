@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -393,7 +394,7 @@ public class RDBMSDataConnectorTest {
       return builder;
     }
 
-    static protected FormatExecutableStatementBuilder newFormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final int timeout) {
+    static protected FormatExecutableStatementBuilder newFormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final Duration timeout) {
         final FormatExecutableStatementBuilder builder = new FormatExecutableStatementBuilder();
         builder.setQuery(query);
         builder.setQueryTimeout(timeout);

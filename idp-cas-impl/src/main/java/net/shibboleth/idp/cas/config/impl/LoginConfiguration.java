@@ -94,8 +94,6 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** Creates a new instance. */
     public LoginConfiguration() {
         super(PROFILE_ID);
-        // Service tickets valid for 15s by default
-        setTicketValidityPeriod(15000);
         authenticationFlows = Collections.emptySet();
         postAuthenticationFlows = Collections.emptyList();
         defaultAuthenticationContexts = Collections.emptyList();

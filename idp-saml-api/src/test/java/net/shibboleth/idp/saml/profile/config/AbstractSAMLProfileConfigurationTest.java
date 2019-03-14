@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -81,20 +82,20 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testAssertionLifetime() {
         final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertTrue(config.getAssertionLifetime() > 0);
+        Assert.assertTrue(config.getAssertionLifetime().toMillis() > 0);
 
-        config.setAssertionLifetime(100);
-        Assert.assertEquals(config.getAssertionLifetime(), 100);
+        config.setAssertionLifetime(Duration.ofMillis(100));
+        Assert.assertEquals(config.getAssertionLifetime(), Duration.ofMillis(100));
 
         try {
-            config.setAssertionLifetime(0);
+            config.setAssertionLifetime(Duration.ZERO);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            config.setAssertionLifetime(-100);
+            config.setAssertionLifetime(Duration.ofMillis(-100));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
@@ -103,11 +104,12 @@ public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testIndirectAssertionLifetime() {
         final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        config.setAssertionLifetimeLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(500L));
-        Assert.assertEquals(config.getAssertionLifetime(), 500L);
+        config.setAssertionLifetimeLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,Duration>constant(Duration.ofMillis(500)));
+        Assert.assertEquals(config.getAssertionLifetime(), Duration.ofMillis(500));
 
-        config.setAssertionLifetimeLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(null));
-        Assert.assertEquals(config.getAssertionLifetime(), 5 * 60 * 1000);
+        config.setAssertionLifetimeLookupStrategy(FunctionSupport.<ProfileRequestContext,Duration>constant(null));
+        Assert.assertEquals(config.getAssertionLifetime(), Duration.ofMinutes(5));
     }
 
     @Test public void testIncludeNotBefore() {
@@ -125,13 +127,12 @@ public class AbstractSAMLProfileConfigurationTest {
         Assert.assertFalse(config.includeConditionsNotBefore());
     }
 
-    @SuppressWarnings("deprecation")
     @Test public void testAdditionalAudiencesForAssertion() {
         final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
 
-        config.setAdditionalAudienceForAssertion(Arrays.asList("", null, " foo"));
+        config.setAdditionalAudiencesForAssertion(Arrays.asList("", null, " foo"));
 
         final Set<String> audiences = config.getAdditionalAudiencesForAssertion();
         Assert.assertNotNull(audiences);
@@ -145,7 +146,7 @@ public class AbstractSAMLProfileConfigurationTest {
             // expected this
         }
 
-        config.setAdditionalAudienceForAssertion(Collections.<String>emptyList());
+        config.setAdditionalAudiencesForAssertion(Collections.<String>emptyList());
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
     }

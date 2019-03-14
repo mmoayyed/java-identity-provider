@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.time.Duration;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -29,8 +30,9 @@ import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.converter.Converter;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 
 /**
  * A strategy function that examines SAML metadata associated with a relying party and derives Long-valued
@@ -38,22 +40,22 @@ import net.shibboleth.ext.spring.config.DurationToLongConverter;
  * 
  * @since 3.4.0
  */
-public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenConfigurationLookupStrategy<Long> {
+public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenConfigurationLookupStrategy<Duration> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DurationConfigurationLookupStrategy.class);
 
     /** Converter to handle duration strings. */
-    @Nonnull private final DurationToLongConverter durationConverter;
+    @Nonnull private final Converter<String,Duration> durationConverter;
 
     /** Constructor. */
     public DurationConfigurationLookupStrategy() {
-        durationConverter = new DurationToLongConverter();
+        durationConverter = new StringToDurationConverter();
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Long doTranslate(@Nonnull final Attribute tag) {
+    @Nullable protected Duration doTranslate(@Nonnull final Attribute tag) {
         
         final List<XMLObject> values = tag.getAttributeValues();
         if (values.size() != 1) {
@@ -61,7 +63,7 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
             return null;
         }
         
-        log.debug("Converting tag '{}' to Long duration property", tag.getName());
+        log.debug("Converting tag '{}' to Duration property", tag.getName());
         return xmlObjectToDuration(values.get(0));
     }
     
@@ -73,7 +75,7 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
      * 
      * @return the converted value, or null
      */
-    @Nullable private Long xmlObjectToDuration(@Nonnull final XMLObject object) {
+    @Nullable private Duration xmlObjectToDuration(@Nonnull final XMLObject object) {
         if (object instanceof XSString) {
             final String value = ((XSString) object).getValue();
             if (value != null) {
@@ -88,7 +90,7 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
             }
         } else if (object instanceof XSInteger) {
             final Integer value = ((XSInteger) object).getValue();
-            return value != null ? value.longValue() : null;
+            return value != null ? Duration.ofMillis(value.longValue()) : null;
         } else if (object instanceof XSAny) {
             final XSAny wc = (XSAny) object;
             if (wc.getUnknownAttributes().isEmpty() && wc.getUnknownXMLObjects().isEmpty()) {
@@ -106,7 +108,7 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
             }
         }
         
-        log.error("Unsupported conversion to Long duration from XMLObject type ({})", object.getClass().getName());
+        log.error("Unsupported conversion to Duration from XMLObject type ({})", object.getClass().getName());
         return null;
     }
 // Checkstyle: CyclomaticComplexity ON

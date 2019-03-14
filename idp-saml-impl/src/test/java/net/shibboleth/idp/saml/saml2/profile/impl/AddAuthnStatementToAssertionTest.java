@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 
@@ -162,7 +163,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     /** Test that the authentication statement is properly added. */
     @Test public void testSessionNotOnOrAfter() {
         final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
-        ssoConfig.setMaximumSPSessionLifetime(60 * 60 * 1000);
+        ssoConfig.setMaximumSPSessionLifetime(Duration.ofHours(1));
         ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
         prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(ssoConfig);
         
