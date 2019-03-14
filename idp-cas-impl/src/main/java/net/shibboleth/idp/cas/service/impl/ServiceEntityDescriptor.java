@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -194,7 +195,7 @@ public class ServiceEntityDescriptor extends AbstractSAMLObject implements Entit
     }
 
     /** {@inheritDoc} */
-    public Long getCacheDuration() {
+    public Duration getCacheDuration() {
         return null;
     }
 
@@ -203,7 +204,7 @@ public class ServiceEntityDescriptor extends AbstractSAMLObject implements Entit
      * 
      * {@inheritDoc}
      */
-    public void setCacheDuration(final Long duration) {
+    public void setCacheDuration(final Duration duration) {
         throw new UnsupportedOperationException();
     }
 
