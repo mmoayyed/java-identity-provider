@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -27,6 +28,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -51,7 +53,7 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         Assert.assertEquals(connector.getId(), "stored");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(store.getTransactionRetries(), 5);
-        Assert.assertEquals(store.getQueryTimeout(), 5000);
+        Assert.assertEquals(store.getQueryTimeout(), Duration.ofSeconds(5));
         Assert.assertEquals(store.getVerifyDatabase(), false);
         Assert.assertTrue(Arrays.equals(store.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
         
@@ -75,8 +77,11 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter())));
+        service.setConverters(new HashSet<>(Arrays.asList(
+                new DurationToLongConverter(),
+                new StringToIPRangeConverter(),
+                new StringToResourceConverter(),
+                new StringToDurationConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
