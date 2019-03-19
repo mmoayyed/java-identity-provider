@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +64,6 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorPars
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -735,8 +735,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return result of the division
          */
-        @Duration public static long buildDuration(@Duration final long duration, final long divisor) {
-            return duration / divisor;
+        public static long buildDuration(@Nonnull final Duration duration, final long divisor) {
+            return duration.toMillis() / divisor;
         } 
 
         /**
