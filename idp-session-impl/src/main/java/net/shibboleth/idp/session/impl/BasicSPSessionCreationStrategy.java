@@ -57,7 +57,7 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
     /**
      * Constructor.
      * 
-     * @param lifetime lifetime in milliseconds, determines expiration of {@link SPSession} to be created
+     * @param lifetime determines expiration of {@link SPSession} to be created
      */
     public BasicSPSessionCreationStrategy(@Nonnull final Duration lifetime) {
         sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");

@@ -80,10 +80,10 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** A canonical name for the subject of the session. */
     @Nonnull @NotEmpty private final String principalName;
 
-    /** Time, in milliseconds since the epoch, when this session was created. */
+    /** Time when this session was created. */
     @Nonnull private final Instant creationInstant;
 
-    /** Last activity instant, in milliseconds since the epoch, for this session. */
+    /** Last activity instant for this session. */
     @Nonnull private Instant lastActivityInstant;
 
     /** Addresses to which the session is bound. */
@@ -103,7 +103,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * 
      * @param sessionId identifier for this session
      * @param canonicalName canonical name of subject
-     * @param creationTime creation time of session in milliseconds
+     * @param creationTime creation time of session
      */
     public AbstractIdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName,
             @Nonnull final Instant creationTime) {
@@ -139,9 +139,9 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /**
-     * Set the last activity instant, in milliseconds since the epoch, for the session.
+     * Set the last activity instant for the session.
      * 
-     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
+     * @param instant last activity instant for the session
      * @throws SessionException if an error occurs updating the session
      */
     public void setLastActivityInstant(@Nonnull final Instant instant) throws SessionException {
@@ -149,12 +149,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
     
     /**
-     * Set the last activity instant, in milliseconds since the epoch, for the session.
+     * Set the last activity instant for the session.
      * 
      * <p>This manipulates only the internal state of the object. The {@link #setLastActivityInstant(long)}
      * method must be overridden to support other persistence requirements.</p>
      * 
-     * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
+     * @param instant last activity instant for the session
      */
     public void doSetLastActivityInstant(@Nonnull final Instant instant) {
         lastActivityInstant = Constraint.isNotNull(instant, "Last activity instant cannot be null");

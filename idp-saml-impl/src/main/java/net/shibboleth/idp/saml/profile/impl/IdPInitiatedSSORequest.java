@@ -54,7 +54,7 @@ public class IdPInitiatedSSORequest {
     /** An opaque value to be returned to the service provider with the authentication response. */
     @Nullable private final String relayState;
 
-    /** The current time, at the service provider, in milliseconds since the epoch. */
+    /** The current time, at the service provider. */
     @Nonnull private final Instant time;
 
     /**
@@ -65,7 +65,7 @@ public class IdPInitiatedSSORequest {
      * @param newEntityId entity ID of the requesting SP
      * @param url assertion consumer service endpoint at the SP to which to deliver the response
      * @param target opaque value to be returned to the SP with the response
-     * @param newTime current time at the SP, in milliseconds since the epoch, must be greater than zero
+     * @param newTime current time at the SP
      */
     public IdPInitiatedSSORequest(@Nonnull @NotEmpty final String newEntityId, @Nullable final String url,
             @Nullable final String target, @Nullable final Instant newTime) {
@@ -111,9 +111,9 @@ public class IdPInitiatedSSORequest {
     }
 
     /**
-     * Get the current time at the SP, in milliseconds since the epoch.
+     * Get the current time at the SP.
      * 
-     * @return current time at the SP, in milliseconds since the epoch 
+     * @return current time at the SP 
      */
     @Nonnull public Instant getTime() {
         return time;

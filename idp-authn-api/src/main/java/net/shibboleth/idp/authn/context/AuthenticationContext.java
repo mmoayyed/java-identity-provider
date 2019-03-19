@@ -131,7 +131,7 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Get the time, in milliseconds since the epoch, when the authentication process started.
+     * Get the time when the authentication process started.
      * 
      * @return time when the authentication process started
      */

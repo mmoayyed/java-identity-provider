@@ -72,8 +72,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     /**
      * Constructor.
      * 
-     * @param lifetime lifetime in milliseconds, determines upper bound for expiration of
-     * {@link SAML2SPSession} to be created
+     * @param lifetime determines upper bound for expiration of {@link SAML2SPSession} to be created
      */
     public SAML2SPSessionCreationStrategy(@Nonnull final Duration lifetime) {
         sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");

@@ -53,8 +53,8 @@ public class SAML2SPSession extends BasicSPSession {
      * Constructor.
      *
      * @param id the identifier of the service associated with this session
-     * @param creation creation time of session, in milliseconds since the epoch
-     * @param expiration expiration time of session, in milliseconds since the epoch
+     * @param creation creation time of session
+     * @param expiration expiration time of session
      * @param assertedNameID the NameID asserted to the SP
      * @param assertedIndex the SessionIndex asserted to the SP
      */

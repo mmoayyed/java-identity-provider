@@ -35,16 +35,16 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 public interface SPSession extends IdentifiedComponent {
 
     /**
-     * Get the time, in milliseconds since the epoch, when this session was created.
+     * Get the time when this session was created.
      * 
-     * @return time, in milliseconds since the epoch, when this session was created, never less than 0
+     * @return time when this session was created
      */
     @Nonnull Instant getCreationInstant();
 
     /**
-     * Get the time, in milliseconds since the epoch, when this session will expire.
+     * Get the time when this session will expire.
      * 
-     * @return time, in milliseconds since the epoch, when this session will expire, never less than 0
+     * @return time when this session will expire
      */
     @Nonnull Instant getExpirationInstant();
     

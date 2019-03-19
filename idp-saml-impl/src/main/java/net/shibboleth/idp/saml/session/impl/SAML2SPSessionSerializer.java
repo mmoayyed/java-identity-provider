@@ -69,7 +69,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     /**
      * Constructor.
      * 
-     * @param offset milliseconds to subtract from record expiration to establish session expiration value
+     * @param offset time to subtract from record expiration to establish session expiration value
      */
     public SAML2SPSessionSerializer(@Nonnull @ParameterName(name="offset") final Duration offset) {
         super(offset);

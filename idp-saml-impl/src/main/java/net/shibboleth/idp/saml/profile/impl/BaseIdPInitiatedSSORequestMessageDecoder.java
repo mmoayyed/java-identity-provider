@@ -156,7 +156,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
     }
 
     /**
-     * Gets the current time, in milliseconds since the epoch, at the SP, if set.
+     * Gets the current time at the SP, if set.
      * 
      * @param request current HTTP request
      * 

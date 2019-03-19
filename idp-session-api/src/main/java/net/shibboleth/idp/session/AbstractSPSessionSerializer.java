@@ -139,8 +139,8 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
      * 
      * @param obj JSON structure to parse
      * @param id the identifier of the service associated with this session
-     * @param creation creation time of session, in milliseconds since the epoch
-     * @param expiration expiration time of session, in milliseconds since the epoch
+     * @param creation creation time of session
+     * @param expiration expiration time of session
      * 
      * @return the newly constructed object
      * @throws IOException if an error occurs during deserialization

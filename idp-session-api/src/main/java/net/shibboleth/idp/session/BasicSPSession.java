@@ -39,18 +39,18 @@ public class BasicSPSession implements SPSession {
     /** The unique identifier of the service. */
     @Nonnull @NotEmpty private final String serviceId;
     
-    /** The time, in milliseconds since the epoch, when this session was created. */
+    /** The time when this session was created. */
     @Nonnull private final Instant creationInstant;
 
-    /** The time, in milliseconds since the epoch, when this session expires. */
+    /** The time when this session expires. */
     @Nonnull private final Instant expirationInstant;
     
     /**
      * Constructor.
      * 
      * @param id the identifier of the service associated with this session
-     * @param creation creation time of session, in milliseconds since the epoch
-     * @param expiration expiration time of session, in milliseconds since the epoch
+     * @param creation creation time of session
+     * @param expiration expiration time of session
      */
     public BasicSPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
             @Nonnull final Instant expiration) {

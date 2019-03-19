@@ -49,16 +49,16 @@ public interface IdPSession extends IdentifiedComponent {
     @Nonnull @NotEmpty public String getPrincipalName();
 
     /**
-     * Get the time, in milliseconds since the epoch, when this session was created.
+     * Get the time when this session was created.
      * 
-     * @return time this session was created, never less than 0
+     * @return time this session was created
      */
     @Nonnull public Instant getCreationInstant();
     
     /**
-     * Get the last activity instant, in milliseconds since the epoch, for the session.
+     * Get the last activity instant for the session.
      * 
-     * @return last activity instant, in milliseconds since the epoch, for the session, never less than 0
+     * @return last activity instant for the session
      */
     @Nonnull public Instant getLastActivityInstant();
     

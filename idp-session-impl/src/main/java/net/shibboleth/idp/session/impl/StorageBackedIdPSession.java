@@ -68,7 +68,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      * @param manager parent SessionManager instance
      * @param sessionId unique ID of session
      * @param canonicalName canonical name of session subject
-     * @param creationTime creation time of session in milliseconds
+     * @param creationTime creation time of session
      */
     public StorageBackedIdPSession(@Nonnull final StorageBackedSessionManager manager,
             @Nonnull @NotEmpty final String sessionId, @Nonnull @NotEmpty final String canonicalName,

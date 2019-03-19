@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -68,8 +69,8 @@ public class RequestContextBuilder {
     /** The ID of the inbound message. */
     private String inboundMessageId = NO_VAL;
 
-    /** The issue instant of the inbound message in milliseconds. */
-    private long inboundMessageIssueInstant;
+    /** The issue instant of the inbound message. */
+    private Instant inboundMessageIssueInstant;
 
     /** The issuer of the inbound message. */
     private String inboundMessageIssuer = NO_VAL;
@@ -80,8 +81,8 @@ public class RequestContextBuilder {
     /** The ID of the outbound message. */
     private String outboundMessageId = NO_VAL;
 
-    /** The issue instant of the outbound message in milliseconds. */
-    private long outboundMessageIssueInstant;
+    /** The issue instant of the outbound message. */
+    private Instant outboundMessageIssueInstant;
 
     /** The issuer of the outbound message. */
     private String outboundMessageIssuer = NO_VAL;
@@ -170,13 +171,13 @@ public class RequestContextBuilder {
     }
 
     /**
-     * Sets the issue instant of the inbound message in milliseconds.
+     * Sets the issue instant of the inbound message
      * 
-     * @param instant issue instant of the inbound message in milliseconds
+     * @param instant issue instant of the inbound message
      * 
      * @return this builder
      */
-    @Nonnull public RequestContextBuilder setInboundMessageIssueInstant(final long instant) {
+    @Nonnull public RequestContextBuilder setInboundMessageIssueInstant(@Nullable final Instant instant) {
         inboundMessageIssueInstant = instant;
         return this;
     }
@@ -218,13 +219,13 @@ public class RequestContextBuilder {
     }
 
     /**
-     * Sets the issue instant of the outbound message in milliseconds.
+     * Sets the issue instant of the outbound message
      * 
-     * @param instant issue instant of the outbound message in milliseconds
+     * @param instant issue instant of the outbound message
      * 
      * @return this builder
      */
-    @Nonnull public RequestContextBuilder setOutboundMessageIssueInstant(final long instant) {
+    @Nonnull public RequestContextBuilder setOutboundMessageIssueInstant(@Nullable final Instant instant) {
         outboundMessageIssueInstant = instant;
         return this;
     }
