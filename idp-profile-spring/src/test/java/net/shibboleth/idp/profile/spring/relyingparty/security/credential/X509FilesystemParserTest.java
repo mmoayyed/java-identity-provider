@@ -39,7 +39,7 @@ public class X509FilesystemParserTest extends AbstractSecurityParserTest {
     }
 
     @Test public void certOnly() throws IOException {
-        final BasicX509Credential credential = lookup("fileCertOnly.xml");
+        final BasicX509Credential credential = lookup("resourceCertOnly.xml");
 
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 1);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));
@@ -49,15 +49,15 @@ public class X509FilesystemParserTest extends AbstractSecurityParserTest {
     }
 
     @Test(expectedExceptions = {BeanCreationException.class,}) public void twoCert() throws IOException {
-        lookup("fileTwoCert.xml");
+        lookup("resourceTwoCert.xml");
     }
 
     @Test(expectedExceptions = {BeanCreationException.class,}) public void wrongCert() throws IOException {
-        lookup("fileWrongCert.xml");
+        lookup("resourceWrongCert.xml");
     }
 
     @Test public void certKeyCrl() throws IOException {
-        final BasicX509Credential credential = lookup("fileKeyCertCrl.xml");
+        final BasicX509Credential credential = lookup("resourceKeyCertCrl.xml");
 
         Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(),
                 Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
@@ -69,7 +69,7 @@ public class X509FilesystemParserTest extends AbstractSecurityParserTest {
     }
 
     @Test public void certElementsKeyNames() throws IOException {
-        final BasicX509Credential credential = lookup("fileCertElementsKeyName.xml");
+        final BasicX509Credential credential = lookup("resourceCertElementsKeyName.xml");
 
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 1);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));

@@ -19,42 +19,22 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import javax.xml.namespace.QName;
 
+import org.w3c.dom.Element;
+
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.w3c.dom.Element;
 
 /**
  * Parser for BasicFilesystem and BasicResourceBacked Credentials.
  */
 public class BasicResourceCredentialParser extends AbstractBasicCredentialParser {
 
-    /** Element Name for Filesystem. */
-    public static final QName TYPE_NAME_FILESYSTEM = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
-            "BasicFilesystem");
-
     /** Type for Resource. */
     public static final QName TYPE_NAME_RESOURCE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "BasicResourceBacked");
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(BasicResourceCredentialParser.class);
-
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
         return BasicResourceCredentialFactoryBean.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
-        if (TYPE_NAME_FILESYSTEM.equals(DOMTypeSupport.getXSIType(element))) {
-            log.warn("Credential type '{}' has been deprecated; use the compatible Credential type '{}'",
-                    TYPE_NAME_FILESYSTEM.getLocalPart(), TYPE_NAME_RESOURCE.getLocalPart());
-        }
-        super.doParse(element, builder);
     }
 }

@@ -11,7 +11,7 @@
 
 	<metadata:MetadataFilter xsi:type="metadata:SignatureValidation">
         <security:TrustEngine id="MyTrustEngine" xsi:type="security:StaticExplicitKeySignature">
-            <security:Credential id="IdPCredential" xsi:type="security:X509Filesystem">
+            <security:Credential id="IdPCredential" xsi:type="security:X509ResourceBacked">
                 <security:Certificate>%{DIR}/filter/switch.pem</security:Certificate>
             </security:Credential>
         </security:TrustEngine>

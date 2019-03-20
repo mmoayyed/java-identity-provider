@@ -7,7 +7,7 @@
 	<security:TrustedName>Name2</security:TrustedName>
 	<security:TrustedName>Name3</security:TrustedName>
 	<security:ValidationInfo id="PKIXFS"
-		xsi:type="security:PKIXFilesystem" verifyDepth="99" />
+		xsi:type="security:PKIXResourceBacked" verifyDepth="99" />
 	<security:ValidationInfo id="PKIXIL"
 		xsi:type="security:PKIXInline" verifyDepth="98" />
 	<security:ValidationOptions

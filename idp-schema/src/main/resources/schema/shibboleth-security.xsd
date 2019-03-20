@@ -16,20 +16,6 @@
         </complexContent>
     </complexType>
 
-    <complexType name="X509Filesystem">
-        <annotation>
-            <documentation>
-                Allows credential components to be specified by filesystem path. Keys, Certificates, and CRLs may be
-                PKCS#12, DER, or PEM encoded and may be encrypted or not.
-                
-                This credential is deprecated in favor of X509ResourceBacked
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="sec:X509Credential"/>
-        </complexContent>
-    </complexType>
-    
     <complexType name="X509ResourceBacked">
         <annotation>
             <documentation>
@@ -84,20 +70,6 @@
             <documentation>
                 Allows credentials to be components to be specified as content within the child elements.
                 Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="sec:BasicCredential"/>
-        </complexContent>
-    </complexType>
-    
-    <complexType name="BasicFilesystem">
-        <annotation>
-            <documentation>
-                Allows credential components to be specified by filesystem path.
-                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-                
-                This is deprecated in favor of BasicResourceBacked
             </documentation>
         </annotation>
         <complexContent>
@@ -240,20 +212,6 @@
             <documentation>
                 Allows PKIX validation info components to be specified as content within the child elements.
                 Certificates and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="sec:PKIXValidationInfoType"/>
-        </complexContent>
-    </complexType>
-    
-    <complexType name="PKIXFilesystem">
-        <annotation>
-            <documentation>
-                Allows PKIX validation info components to be specified by filesystem path.
-                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
-                
-                This method is deprecated in favor of the PKIXResourceBacked type employing a filesystem resource.
             </documentation>
         </annotation>
         <complexContent>

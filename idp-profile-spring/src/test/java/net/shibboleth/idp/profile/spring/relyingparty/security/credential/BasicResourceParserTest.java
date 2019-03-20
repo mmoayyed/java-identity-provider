@@ -36,25 +36,25 @@ public class BasicResourceParserTest extends AbstractSecurityParserTest {
 
     @Test public void publicOnly() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, "credential/filePublicOnly.xml");
+                (BasicCredential) getBean(Credential.class, "credential/resourcePublicOnly.xml");
 
         Assert.assertNull(credential.getPrivateKey());
     }
 
     @Test(expectedExceptions={BeanCreationException.class,}) public void wrongCert() throws IOException {
-        getBean(Credential.class, "credential/fileWrongPublic.xml");
+        getBean(Credential.class, "credential/resourceWrongPublic.xml");
     }
 
     @Test public void publicPrivate() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, "credential/filePublicPrivate.xml");
+                (BasicCredential) getBean(Credential.class, "credential/resourcePublicPrivate.xml");
         Assert.assertNotNull(credential.getPrivateKey());
 
     }
     
     @Test public void secretBase64() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, "credential/fileSecretAESBase64.xml");
+                (BasicCredential) getBean(Credential.class, "credential/resourceSecretAESBase64.xml");
         Assert.assertNotNull(credential.getSecretKey());
         SecretKey key = credential.getSecretKey();
         Assert.assertEquals(key.getAlgorithm(), "AES");
@@ -62,7 +62,7 @@ public class BasicResourceParserTest extends AbstractSecurityParserTest {
     
     @Test public void secretHex() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, "credential/fileSecretAESHex.xml");
+                (BasicCredential) getBean(Credential.class, "credential/resourceSecretAESHex.xml");
         Assert.assertNotNull(credential.getSecretKey());
         SecretKey key = credential.getSecretKey();
         Assert.assertEquals(key.getAlgorithm(), "AES");
@@ -70,7 +70,7 @@ public class BasicResourceParserTest extends AbstractSecurityParserTest {
     
     @Test public void secretBinary() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, "credential/fileSecretAESBinary.xml");
+                (BasicCredential) getBean(Credential.class, "credential/resourceSecretAESBinary.xml");
         Assert.assertNotNull(credential.getSecretKey());
         SecretKey key = credential.getSecretKey();
         Assert.assertEquals(key.getAlgorithm(), "AES");

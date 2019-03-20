@@ -212,7 +212,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     }
 
     /**
-     * Build (the definition) for a X509Filesystem Credential.
+     * Build (the definition) for a X509 Credential.
      * 
      * @param attribute the name of the certificate file
      * @return the bean definition.

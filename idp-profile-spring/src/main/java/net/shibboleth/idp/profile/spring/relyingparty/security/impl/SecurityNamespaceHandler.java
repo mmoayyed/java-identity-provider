@@ -50,14 +50,10 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
     /** {@inheritDoc} */
     @Override public void init() {
         // Credentials
-        registerBeanDefinitionParser(X509ResourceCredentialParser.TYPE_NAME_FILESYSTEM,
-                new X509ResourceCredentialParser());
         registerBeanDefinitionParser(X509ResourceCredentialParser.TYPE_NAME_RESOURCE,
                 new X509ResourceCredentialParser());
         registerBeanDefinitionParser(X509InlineCredentialParser.TYPE_NAME, new X509InlineCredentialParser());
         registerBeanDefinitionParser(BasicInlineCredentialParser.TYPE_NAME, new BasicInlineCredentialParser());
-        registerBeanDefinitionParser(BasicResourceCredentialParser.TYPE_NAME_FILESYSTEM,
-                new BasicResourceCredentialParser());
         registerBeanDefinitionParser(BasicResourceCredentialParser.TYPE_NAME_RESOURCE,
                 new BasicResourceCredentialParser());
 
@@ -67,8 +63,6 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
 
         // Validation Info
-        registerBeanDefinitionParser(PKIXResourceValidationInfoParser.TYPE_NAME_FILESYSTEM,
-                new PKIXResourceValidationInfoParser());
         registerBeanDefinitionParser(PKIXResourceValidationInfoParser.TYPE_NAME_RESOURCE,
                 new PKIXResourceValidationInfoParser());
         registerBeanDefinitionParser(PKIXInlineValidationInfoParser.SCHEMA_TYPE, new PKIXInlineValidationInfoParser());

@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
 import com.google.common.io.ByteStreams;
 
 /**
- * Factory bean for BasicFilesystem &amp; BasicResourceBacked Credentials.
+ * Spring bean factory for producing a {@link org.opensaml.security.credential.BasicCredential} from {@link Resource}s.
  */
 public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
 

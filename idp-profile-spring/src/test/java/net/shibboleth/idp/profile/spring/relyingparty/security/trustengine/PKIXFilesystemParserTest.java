@@ -36,14 +36,14 @@ public class PKIXFilesystemParserTest extends AbstractSecurityParserTest {
     }
 
     @Test public void simple() throws IOException {
-        final BasicPKIXValidationInformation info = lookup("filesystemValidationInfo.xml");
+        final BasicPKIXValidationInformation info = lookup("resourceValidationInfo.xml");
         Assert.assertNull(info.getVerificationDepth());
         Assert.assertTrue(info.getCertificates().isEmpty());
         Assert.assertTrue(info.getCRLs().isEmpty());
     }
     
     @Test public void complex() throws IOException {
-        final BasicPKIXValidationInformation info = lookup("filesystemValidationInfoValues.xml");
+        final BasicPKIXValidationInformation info = lookup("resourceValidationInfoValues.xml");
         Assert.assertEquals(info.getVerificationDepth().intValue(), 99);
         Assert.assertEquals(info.getCertificates().size(), 2);
         Assert.assertEquals(info.getCRLs().size(), 1);
