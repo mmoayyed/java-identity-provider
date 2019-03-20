@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,12 +26,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -58,9 +59,11 @@ public class CacheConfigParser {
      * we do not own the implemented class */
     private static final long DEFAULT_CACHE_ENTRIES = 500;
 
-    /** Documented cache lifetime (4 hours).  Unfortunately it has to be here since
-     * we do not own the implemented class */
-    private static final long DEFAULT_TTL_MS = 4 * 60 * 60 * 1000;
+    /**
+     * Documented cache lifetime (4 hours).  Unfortunately it has to be here since
+     * we do not own the implemented class.
+     */
+    @Nonnull private static final Duration DEFAULT_TTL_MS = Duration.ofHours(4);
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);
@@ -136,11 +139,11 @@ public class CacheConfigParser {
      * @param timeToLive duration string
      * @return the input as a long, or DEFAULT_TTL_MS
      */
-    private static long getTimeToLiveMs(@Nullable final String timeToLive) {
+    @Nonnull private static Duration getTimeToLive(@Nullable final String timeToLive) {
         if (timeToLive != null) {
-            return DOMTypeSupport.durationToLong(timeToLive);
+            return new StringToDurationConverter().convert(timeToLive);
         }  else {
-            return  DEFAULT_TTL_MS;   
+            return DEFAULT_TTL_MS;   
         }
     }
     
@@ -160,7 +163,7 @@ public class CacheConfigParser {
         
         return CacheBuilder.newBuilder()
                     .maximumSize(getMaxSize(maximumSize))
-                    .expireAfterAccess(getTimeToLiveMs(timeToLive), TimeUnit.MILLISECONDS)
+                    .expireAfterAccess(getTimeToLive(timeToLive).toMillis(), TimeUnit.MILLISECONDS)
                     .build();
     }
     
@@ -180,7 +183,7 @@ public class CacheConfigParser {
         
         return CacheBuilder.newBuilder()
                     .maximumSize(getMaxSize(maximumSize))
-                    .expireAfterWrite(getTimeToLiveMs(timeToLive), TimeUnit.MILLISECONDS)
+                    .expireAfterWrite(getTimeToLive(timeToLive).toMillis(), TimeUnit.MILLISECONDS)
                     .build();
     }
     
