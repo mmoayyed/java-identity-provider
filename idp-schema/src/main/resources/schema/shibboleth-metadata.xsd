@@ -219,14 +219,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="tlsTrustEngineRefX" type="string">
-                    <annotation>
-                        <documentation>
-                            A reference to an externally-defined Spring bean which specifies an
-                            instance of TrustEngine used to evaluate HTTPS server TLS certificates.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <!-- Need to deal with socket factory -->
             </extension>
         </complexContent>
@@ -484,14 +476,6 @@
                 <attribute name="proxyPassword" type="string">
                     <annotation>
                         <documentation>Password for the HTTP proxy through which connections will be made.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="tlsTrustEngineRefX" type="string">
-                    <annotation>
-                        <documentation>
-                            A reference to an externally-defined Spring bean which specifies an
-                            instance of TrustEngine used to evaluate HTTPS server TLS certificates.
-                        </documentation>
                     </annotation>
                 </attribute>
                 <!-- Need to deal with socket factory -->
