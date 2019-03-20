@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -343,7 +344,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
         writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
 
-        writer.write(" validUntil=\"" + DOMTypeSupport.longToDateTime(System.currentTimeMillis()) + "\"");
+        writer.write(" validUntil=\"" + DOMTypeSupport.instantToDateTime(Instant.now()) + "\"");
         
         writer.write(" entityID=\"");
         writer.write(getEntityID());

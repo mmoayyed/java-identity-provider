@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -342,7 +343,7 @@ public class MetadataGenerator {
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
         writeNameSpace(SAMLConstants.SAML20PREQ_ATTRR_PREFIX, SAMLConstants.SAML20PREQ_ATTR_NS);
 
-        writer.write(" validUntil=\"" + DOMTypeSupport.longToDateTime(System.currentTimeMillis()) + "\"");
+        writer.write(" validUntil=\"" + DOMTypeSupport.instantToDateTime(Instant.now()) + "\"");
         
         writer.write(" entityID=\"");
         writer.write(getEntityID());
