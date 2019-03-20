@@ -33,7 +33,7 @@ public class PKIXValidationOptionsParserTest extends AbstractSecurityParserTest 
     
     
     @Test public void simple() throws IOException {
-        PKIXValidationOptions what = getBean(PKIXValidationOptions.class, false, "trustengine/validationOptions.xml");
+        PKIXValidationOptions what = getBean(PKIXValidationOptions.class, "trustengine/validationOptions.xml");
 
         Assert.assertTrue(what.isProcessCredentialCRLs());
         Assert.assertTrue(what.isProcessEmptyCRLs());
@@ -42,7 +42,7 @@ public class PKIXValidationOptionsParserTest extends AbstractSecurityParserTest 
     }
     
     @Test public void complex() throws IOException {
-        PKIXValidationOptions what = getBean(PKIXValidationOptions.class, false, "trustengine/validationOptionsValues.xml");
+        PKIXValidationOptions what = getBean(PKIXValidationOptions.class, "trustengine/validationOptionsValues.xml");
 
         Assert.assertFalse(what.isProcessCredentialCRLs());
         Assert.assertFalse(what.isProcessEmptyCRLs());

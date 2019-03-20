@@ -43,7 +43,7 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
 
     @Test public void simple() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
-                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIX.xml");
+                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, "trustengine/staticPKIX.xml");
         
         Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 
@@ -67,7 +67,7 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
     
     @Test public void nameCheckDisabled() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
-                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIX-nameCheckDisabled.xml");
+                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, "trustengine/staticPKIX-nameCheckDisabled.xml");
         
         Assert.assertNull(engine.getX509CredentialNameEvaluator());
 
@@ -91,7 +91,7 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
 
     @Test public void values() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
-                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXValues.xml");
+                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, "trustengine/staticPKIXValues.xml");
         
         Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 
@@ -125,7 +125,7 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
     
     @Test public void certPath() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
-                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXValuesCertPathOpts.xml");
+                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, "trustengine/staticPKIXValuesCertPathOpts.xml");
         
         Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 

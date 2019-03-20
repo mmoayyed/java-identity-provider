@@ -20,9 +20,11 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.ldaptive.BindConnectionInitializer;
@@ -38,12 +40,10 @@ import org.ldaptive.provider.ProviderConfig;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -52,6 +52,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Collections2;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -60,12 +61,9 @@ import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToDurationConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -148,7 +146,6 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(attrs);
         assertNotNull(attrs.get("entryDN"));
     }
-
     
     @Test public void v2NoSec() throws Exception {
         final LDAPDataConnector dataConnector =
@@ -176,8 +173,6 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(dataConnector);
         doTest(dataConnector);
     }
-
-
 
     @Test public void v2MinimalConfig() throws Exception {
         final LDAPDataConnector dataConnector =
@@ -422,37 +417,24 @@ public class LDAPDataConnectorParserTest {
     }
 
     protected LDAPDataConnector getLdapDataConnector(final Resource properties, final String[] beanDefinitions) throws IOException {
-        final GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
-        setTestContext(context);
-        context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
-        
-        
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter(), new StringToDurationConverter())));
-        service.afterPropertiesSet();
 
-        context.getBeanFactory().setConversionService(service.getObject());
+        final ResourceLoader loader = new PreferFileSystemResourceLoader();
         
-        if (null != properties) {
-            final ConfigurableEnvironment env = context.getEnvironment();
-            env.getPropertySources().replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, new ResourcePropertySource(properties));
-            
-           env.setPlaceholderPrefix("%{");
-           env.setPlaceholderSuffix("}");
+        final ApplicationContextBuilder builder = new ApplicationContextBuilder();
+        builder.setName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
+
+        final Collection<String> defs = new ArrayList<>(Arrays.asList(beanDefinitions));
+        defs.add("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
+
+        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
+
+        if (properties != null) {
+            builder.setPropertySources(Collections.singletonList(new ResourcePropertySource(properties)));
         }
-
-        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
-
-        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.setValidating(true);
-
-        beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
-        context.refresh();
+        
+        final GenericApplicationContext context = builder.build();
+        
+        setTestContext(context);
 
         return (LDAPDataConnector) context.getBean("myLDAP");
     }

@@ -20,18 +20,16 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashSet;
 
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToDurationConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import com.google.common.collect.Collections2;
+
+import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
@@ -72,27 +70,17 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
     }
 
     protected PairwiseIdDataConnector getStoredDataConnector(final String... beanDefinitions) throws IOException {
-        final GenericApplicationContext context = new GenericApplicationContext();
+        
+        final ResourceLoader loader = new PreferFileSystemResourceLoader();
+        
+        final ApplicationContextBuilder builder = new ApplicationContextBuilder();
+        builder.setName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
+        builder.setServiceConfigurations(Collections2.transform(Arrays.asList(beanDefinitions), s -> loader.getResource(s)));
+        
+        final GenericApplicationContext context = builder.build();
+
         setTestContext(context);
-        context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
-
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(
-                new DurationToLongConverter(),
-                new StringToIPRangeConverter(),
-                new StringToResourceConverter(),
-                new StringToDurationConverter())));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());
-
-        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.setValidating(true);
-        beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
-        context.refresh();
-
+        
         return (PairwiseIdDataConnector) context.getBean(PairwiseIdDataConnector.class);
     }
 

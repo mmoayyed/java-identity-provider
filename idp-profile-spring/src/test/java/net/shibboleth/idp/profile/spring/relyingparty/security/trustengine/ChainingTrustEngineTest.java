@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 public class ChainingTrustEngineTest extends AbstractSecurityParserTest {
     
     private ChainingTrustEngine lookup(String file) throws IOException {
-        return getBean(ChainingTrustEngine.class, true, "trustengine/" + file);
+        return getBean(ChainingTrustEngine.class, "trustengine/" + file);
     }
 
     

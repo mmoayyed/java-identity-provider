@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 public class PKIXInlineParserTest extends AbstractSecurityParserTest {
 
     private BasicPKIXValidationInformation lookup(String file) throws IOException {
-        return (BasicPKIXValidationInformation) getBean(PKIXValidationInformation.class, true, "trustengine/" + file);
+        return (BasicPKIXValidationInformation) getBean(PKIXValidationInformation.class, "trustengine/" + file);
     }
 
     @Test public void simple() throws IOException {

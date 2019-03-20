@@ -7,8 +7,6 @@
       id="myLDAP"
       xsi:type="LDAPDirectory"
       noRetryDelay="%{noRetryDelay}"
-      factoryPostProcessorsRef="shibboleth.PropertySourcesPlaceholderConfigurer"
-      postProcessorsRef="emptyList"
       springResources="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-props-context.xml"/>
 
 </AttributeResolver>

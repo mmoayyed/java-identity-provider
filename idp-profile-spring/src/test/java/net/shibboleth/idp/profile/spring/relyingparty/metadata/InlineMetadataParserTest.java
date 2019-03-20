@@ -18,28 +18,25 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToDurationConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.ext.spring.service.ReloadableSpringService;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Collections2;
 
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
@@ -80,29 +77,21 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void multiple() throws ResolverException, IOException {
 
-        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final ResourceLoader loader = new PreferFileSystemResourceLoader();
+        
+        final ApplicationContextBuilder builder = new ApplicationContextBuilder();
+        builder.setName("ApplicationContext: " + InlineMetadataParserTest.class);
+
+        final Collection<String> defs = new ArrayList<>();
+        defs.add("net/shibboleth/idp/profile/spring/relyingparty/metadata/beans.xml");
+        defs.add("net/shibboleth/idp/profile/spring/relyingparty/metadata/multipleResolvers.xml");
+
+        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
+
+        final GenericApplicationContext context = builder.build();
+        
         registerContext(context);
         
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: ");
-        service.setConverters(new HashSet<>(Arrays.asList(
-                new DurationToLongConverter(),
-                new StringToIPRangeConverter(),
-                new StringToDurationConverter())));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());
-
-        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        configReader.setValidating(true);
-
-        configReader.loadBeanDefinitions(
-                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/beans.xml"),
-                new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/multipleResolvers.xml")
-                );
-        context.refresh();
-
         final ReloadableSpringService<MetadataResolver> ms =
                 context.getBean("shibboleth.MetadataResolverService", ReloadableSpringService.class);
 

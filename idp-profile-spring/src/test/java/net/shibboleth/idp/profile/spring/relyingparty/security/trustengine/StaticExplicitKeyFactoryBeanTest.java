@@ -40,7 +40,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
     static private String TESTPATH = "trustengine/staticExplicitNative.xml";
     
     @Test public void singleKey() throws IOException, ResolverException {
-        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticKeySingle", TrustEngine.class, true, TESTPATH);
+        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticKeySingle", TrustEngine.class, TESTPATH);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         Credential credential  = (Credential) resolver.resolveSingle(null);
@@ -49,7 +49,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
     }
     
     @Test public void singleCert() throws IOException, ResolverException {
-        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticX509Single", TrustEngine.class, true, TESTPATH);
+        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticX509Single", TrustEngine.class, TESTPATH);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         X509Credential credential  = (X509Credential) resolver.resolveSingle(null);
@@ -61,7 +61,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
     }
     
     @Test public void multipleCert() throws IOException, ResolverException {
-        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticX509Multiple", TrustEngine.class, true, TESTPATH);
+        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticX509Multiple", TrustEngine.class, TESTPATH);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         
@@ -77,7 +77,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
     }
 
     @Test public void mixed() throws IOException, ResolverException {
-        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticMixed", TrustEngine.class, true, TESTPATH);
+        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticMixed", TrustEngine.class, TESTPATH);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         

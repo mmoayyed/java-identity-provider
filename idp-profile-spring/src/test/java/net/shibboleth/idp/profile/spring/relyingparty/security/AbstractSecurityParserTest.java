@@ -19,19 +19,11 @@ package net.shibboleth.idp.profile.spring.relyingparty.security;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
@@ -70,55 +62,30 @@ public class AbstractSecurityParserTest {
         workspaceDirName = resource.getFile().getAbsolutePath();
     }
 
-    /**
-     * Set up a property placeholder called DIR which points to the test directory
-     * this makes the test location insensitive but able to look at the local
-     * filesystem.
-     * @param context the context
-     * @throws IOException 
-     */
-    protected void setDirectoryPlaceholder(final GenericApplicationContext context) throws IOException {
-        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
-        
-        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
-        final MockPropertySource mockEnvVars = new MockPropertySource();
-        mockEnvVars.setProperty("DIR", workspaceDirName);
-        
-        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
-        placeholderConfig.setPropertySources(propertySources);
-        
-        context.addBeanFactoryPostProcessor(placeholderConfig);
-    }
-    
-    protected <T> T getBean(final Class<T> claz,  final boolean validating, final String... files) throws IOException{
-        return getBean(null, claz, validating, files);
+    protected <T> T getBean(final Class<T> claz, final String... files) throws IOException{
+        return getBean(null, claz, files);
     }
 
-    protected <T> T getBean(final String name, final Class<T> claz,  final boolean validating, final String... files) throws IOException{
-        final Resource[] resources = new Resource[files.length];
-       
+    protected <T> T getBean(final String name, final Class<T> claz, final String... files) throws IOException{
+        final Resource[] resources = new Resource[files.length + 1];
+        
         for (int i = 0; i < files.length; i++) {
             resources[i] = new ClassPathResource(PATH + files[i]);
         }
         
-        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final ApplicationContextBuilder builder = new ApplicationContextBuilder();
+        
+        builder.setName("ApplicationContext: " + claz);
+        
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("DIR", workspaceDirName);
+        builder.setPropertySources(Collections.singletonList(mockEnvVars));
+        
+        builder.setServiceConfigurations(Arrays.asList(resources));
+
+        final GenericApplicationContext context = builder.build();
+        
         setTestContext(context);
-        setDirectoryPlaceholder(context);
-        
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " + claz);
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());
-
-        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-
-        configReader.setValidating(true);
-        
-        configReader.loadBeanDefinitions(resources);
-        context.refresh();
         
         if (name != null) {
             return context.getBean(name, claz);

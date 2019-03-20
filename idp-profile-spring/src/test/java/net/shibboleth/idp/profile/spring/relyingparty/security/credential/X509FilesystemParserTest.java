@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 public class X509FilesystemParserTest extends AbstractSecurityParserTest {
 
     private BasicX509Credential lookup(String file) throws IOException {
-        return (BasicX509Credential) getBean(Credential.class, true, "credential/" + file);
+        return (BasicX509Credential) getBean(Credential.class,  "credential/" + file);
     }
 
     @Test public void certOnly() throws IOException {

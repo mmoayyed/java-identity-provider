@@ -9,6 +9,10 @@
 
 	default-init-method="initialize" default-destroy-method="destroy" default-lazy-init="true">
 
+    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
+        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
 	<bean id="shibboleth.ParserPool"
 		class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
 		p:maxPoolSize="100"

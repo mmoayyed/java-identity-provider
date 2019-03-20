@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -98,7 +97,6 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         service.setConverters(new HashSet<>(Arrays.asList(
-                new DurationToLongConverter(),
                 new StringToIPRangeConverter(),
                 new StringToResourceConverter(),
                 new StringToDurationConverter())));
@@ -147,8 +145,10 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter())));
+        service.setConverters(new HashSet<>(Arrays.asList(
+                new StringToIPRangeConverter(),
+                new StringToResourceConverter(),
+                new StringToDurationConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

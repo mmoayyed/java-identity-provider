@@ -18,24 +18,24 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc.http;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToDurationConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import com.google.common.collect.Collections2;
+
+import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -341,36 +341,25 @@ public class HTTPDataConnectorParserTest {
     
     private HTTPDataConnector getDataConnector(final PropertySource propSource, final String... beanDefinitions)
             throws IOException {
-        final GenericApplicationContext context = new GenericApplicationContext();
-        setTestContext(context);
-        context.setDisplayName("ApplicationContext: " + HTTPDataConnectorParserTest.class);
 
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(
-                new DurationToLongConverter(),
-                new StringToDurationConverter(),
-                new StringToIPRangeConverter(),
-                new StringToResourceConverter(),
-                new StringToDurationConverter())));
-        service.afterPropertiesSet();
+        final ResourceLoader loader = new PreferFileSystemResourceLoader();
+        
+        final ApplicationContextBuilder builder = new ApplicationContextBuilder();
+        builder.setName("ApplicationContext: " + HTTPDataConnectorParserTest.class);
 
-        context.getBeanFactory().setConversionService(service.getObject());
+        final Collection<String> defs = new ArrayList<>(Arrays.asList(beanDefinitions));
+        defs.add("net/shibboleth/idp/attribute/resolver/spring/dc/http/spring-beans.xml");
+
+        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
 
         if (propSource != null) {
-            context.getEnvironment().getPropertySources().addFirst(propSource);
+            builder.setPropertySources(Collections.singletonList(propSource));
         }
         
-        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
+        final GenericApplicationContext context = builder.build();
 
-        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/dc/http/spring-beans.xml");
-        
-        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.setValidating(true);
-        beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
-        context.refresh();
-
+        setTestContext(context);
+                
         return (HTTPDataConnector) context.getBean("myHTTP");
     }
 

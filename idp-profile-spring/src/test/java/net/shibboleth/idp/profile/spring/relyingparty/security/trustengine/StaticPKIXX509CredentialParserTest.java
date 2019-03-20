@@ -42,7 +42,7 @@ public class StaticPKIXX509CredentialParserTest extends AbstractSecurityParserTe
 
     @Test public void certPath() throws IOException, ResolverException {
         final PKIXX509CredentialTrustEngine engine =
-                (PKIXX509CredentialTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXCredentials.xml");
+                (PKIXX509CredentialTrustEngine) getBean(TrustEngine.class, "trustengine/staticPKIXCredentials.xml");
         
         Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 
@@ -78,7 +78,7 @@ public class StaticPKIXX509CredentialParserTest extends AbstractSecurityParserTe
     
     @Test public void nameCheckDisabled() throws IOException, ResolverException {
         final PKIXX509CredentialTrustEngine engine =
-                (PKIXX509CredentialTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXCredentials-nameCheckDisabled.xml");
+                (PKIXX509CredentialTrustEngine) getBean(TrustEngine.class, "trustengine/staticPKIXCredentials-nameCheckDisabled.xml");
         
         Assert.assertNull(engine.getX509CredentialNameEvaluator());
 

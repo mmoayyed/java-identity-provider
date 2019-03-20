@@ -35,7 +35,7 @@ public class BasicInlineParserTest extends AbstractSecurityParserTest {
 
     @Test public void publicOnly() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, true, "credential/inlinePublicOnly.xml");
+                (BasicCredential) getBean(Credential.class, "credential/inlinePublicOnly.xml");
 
         Assert.assertNull(credential.getPrivateKey());
     }
@@ -46,14 +46,14 @@ public class BasicInlineParserTest extends AbstractSecurityParserTest {
   */  
     @Test public void publicPrivate() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, true, "credential/inlinePublicPrivate.xml");
+                (BasicCredential) getBean(Credential.class, "credential/inlinePublicPrivate.xml");
         Assert.assertNotNull(credential.getPrivateKey());
 
     }
     
     @Test public void secretBase64() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, true, "credential/secretKeyAESBase64.xml");
+                (BasicCredential) getBean(Credential.class, "credential/secretKeyAESBase64.xml");
         Assert.assertNotNull(credential.getSecretKey());
         SecretKey key = credential.getSecretKey();
         Assert.assertEquals(key.getAlgorithm(), "AES");
@@ -61,7 +61,7 @@ public class BasicInlineParserTest extends AbstractSecurityParserTest {
     
     @Test public void secretHex() throws IOException {
         final BasicCredential credential =
-                (BasicCredential) getBean(Credential.class, true, "credential/secretKeyAESHex.xml");
+                (BasicCredential) getBean(Credential.class, "credential/secretKeyAESHex.xml");
         Assert.assertNotNull(credential.getSecretKey());
         SecretKey key = credential.getSecretKey();
         Assert.assertEquals(key.getAlgorithm(), "AES");

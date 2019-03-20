@@ -35,7 +35,7 @@ public class X509InlineParserTest extends AbstractSecurityParserTest {
 
     @Test public void certOnly() throws IOException {
         final BasicX509Credential credential =
-                (BasicX509Credential) getBean(Credential.class, true, "credential/inlineCertOnly.xml");
+                (BasicX509Credential) getBean(Credential.class, "credential/inlineCertOnly.xml");
 
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 1);
         Assert.assertTrue(credential.getEntityCertificateChain().contains(credential.getEntityCertificate()));
@@ -44,12 +44,12 @@ public class X509InlineParserTest extends AbstractSecurityParserTest {
     }
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void wrongCert() throws IOException {
-        getBean(Credential.class, true, "credential/inlineWrongCert.xml");
+        getBean(Credential.class, "credential/inlineWrongCert.xml");
     }
     
     @Test public void certKeyCrl() throws IOException {
         final BasicX509Credential credential =
-                (BasicX509Credential) getBean(Credential.class, true, "credential/inlineKeyCertCrl.xml");
+                (BasicX509Credential) getBean(Credential.class, "credential/inlineKeyCertCrl.xml");
 
         Assert.assertEquals(credential.getEntityCertificate().getNotAfter().getTime(), Instant.parse("2024-04-08T13:39:18Z").toEpochMilli());
         Assert.assertEquals(credential.getEntityCertificateChain().size(), 3);

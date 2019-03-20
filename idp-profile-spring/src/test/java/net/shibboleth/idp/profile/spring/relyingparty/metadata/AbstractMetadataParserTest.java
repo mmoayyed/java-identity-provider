@@ -23,30 +23,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import net.shibboleth.ext.spring.config.StringToDurationConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -114,63 +106,34 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
             context.close();
         }
     }
-
-    /**
-     * Set up a property placeholder called DIR which points to the test directory this makes the test location
-     * insensitive but able to look at the local filesystem.
-     * 
-     * @param context the context
-     * @throws IOException
-     */
-    protected void setDirectoryPlaceholder(final GenericApplicationContext context) throws IOException {
-        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
-        placeholderConfig.setPlaceholderPrefix("%{");
-        placeholderConfig.setPlaceholderSuffix("}");
-
-        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
-        final MockPropertySource mockEnvVars = new MockPropertySource();
-        mockEnvVars.setProperty("DIR", workspaceDirName);
-        mockEnvVars.setProperty("TMPDIR", tempDirName);
-
-        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
-        placeholderConfig.setPropertySources(propertySources);
-
-        context.addBeanFactoryPostProcessor(placeholderConfig);
-
-    }
     
-    protected ApplicationContext getApplicationContext(final String contextName, final PropertySource propSource, final String... files) throws IOException {
+    protected ApplicationContext getApplicationContext(final String contextName, final PropertySource propSource, final String... files)
+            throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
             resources[i] = new ClassPathResource(PATH + files[i]);
         }
 
-        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        registerContext(context);
+        final ApplicationContextBuilder builder = new ApplicationContextBuilder();
         
+        builder.setName(contextName);
+        
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("DIR", workspaceDirName);
+        mockEnvVars.setProperty("TMPDIR", tempDirName);
+
         if (propSource != null) {
-            context.getEnvironment().getPropertySources().addFirst(propSource);
+            builder.setPropertySources(Arrays.asList(propSource, mockEnvVars));
+        } else {
+            builder.setPropertySources(Collections.singletonList(mockEnvVars));
         }
         
-        setDirectoryPlaceholder(context);
+        builder.setServiceConfigurations(Arrays.asList(resources));
 
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " + contextName);
-        service.setConverters(new HashSet<>(Arrays.asList(
-                new StringToDurationConverter(),
-                new StringToIPRangeConverter(),
-                new StringToResourceConverter())));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());
-
-        final SchemaTypeAwareXMLBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        configReader.setValidating(true);
-
-        configReader.loadBeanDefinitions(resources);
-        context.refresh();
+        final GenericApplicationContext context = builder.build();
+        
+        registerContext(context);
         
         return context;
     }

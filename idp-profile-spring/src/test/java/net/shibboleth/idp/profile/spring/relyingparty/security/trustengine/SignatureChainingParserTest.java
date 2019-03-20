@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 public class SignatureChainingParserTest extends AbstractSecurityParserTest {
  
     @Test public void simple() throws IOException, ResolverException {
-        final ChainingSignatureTrustEngine chain =  getBean(ChainingSignatureTrustEngine.class, true, "trustengine/chain.xml");
+        final ChainingSignatureTrustEngine chain =  getBean(ChainingSignatureTrustEngine.class, "trustengine/chain.xml");
         
         Assert.assertEquals(chain.getChain().size(),2);
         
