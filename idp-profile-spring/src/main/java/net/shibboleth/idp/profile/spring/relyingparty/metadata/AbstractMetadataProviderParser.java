@@ -34,8 +34,6 @@ import org.w3c.dom.Node;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -193,15 +191,6 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
                 chainBuilder.addPropertyValue("filters", SpringSupport.parseCustomElements(filters, parserContext));
                 builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
             }
-        }
-
-        final List<Element> trustEngines =
-                ElementSupport.getChildElements(element, TRUST_ENGINE_ELEMENT_NAME);
-        if (trustEngines != null && !trustEngines.isEmpty()) {
-            DeprecationSupport.warn(ObjectType.ELEMENT, "<TrustEngine> inside <MetadataProvider>", 
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    "Inside <Filter>");
-            SpringSupport.parseCustomElements(trustEngines, parserContext);
         }
     }
 

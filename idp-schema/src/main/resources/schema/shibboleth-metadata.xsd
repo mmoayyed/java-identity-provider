@@ -113,8 +113,6 @@
                         <annotation>
                             <documentation>
                                 TrustEngine used to evaluate HTTPS server TLS certificates.
-                            
-                                This element conflicts with and overriddes the tlsTrustEngineRef attribute.
                             </documentation>
                         </annotation>
                         <complexType>
@@ -221,13 +219,11 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="tlsTrustEngineRef" type="string">
+                <attribute name="tlsTrustEngineRefX" type="string">
                     <annotation>
                         <documentation>
                             A reference to an externally-defined Spring bean which specifies an
                             instance of TrustEngine used to evaluate HTTPS server TLS certificates.
-                            
-                            This attribute conflicts with and overrides the TLSTrustEngine child element.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -389,8 +385,6 @@
                         <annotation>
                             <documentation>
                                 TrustEngine used to evaluate HTTPS server TLS certificates.
-                            
-                                This element conflicts with and overrides the tlsTrustEngineRef attribute.
                             </documentation>
                         </annotation>
                         <complexType>
@@ -492,13 +486,11 @@
                         <documentation>Password for the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="tlsTrustEngineRef" type="string">
+                <attribute name="tlsTrustEngineRefX" type="string">
                     <annotation>
                         <documentation>
                             A reference to an externally-defined Spring bean which specifies an
                             instance of TrustEngine used to evaluate HTTPS server TLS certificates.
-                            
-                            This attribute conflicts with and overrides the TLSTrustEngine child element.
                         </documentation>
                     </annotation>
                 </attribute>

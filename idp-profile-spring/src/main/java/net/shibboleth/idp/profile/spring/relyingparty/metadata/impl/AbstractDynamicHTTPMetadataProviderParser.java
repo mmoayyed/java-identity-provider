@@ -65,7 +65,6 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
         final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element,
                 HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
         final String httpClientSecurityParametersRef =
@@ -73,13 +72,13 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         BeanDefinition httpClientSecurityParameters = null;
 
         if (httpClientSecurityParametersRef != null) {
-            if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
-                log.warn("httpClientSecurityParametersRef overrides tlsTrustEngineRef or <TrustEngine> subelement");
+            if (tlsTrustEngine != null) {
+                log.warn("httpClientSecurityParametersRef overrides <TrustEngine> subelement");
             }
             builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
-        } else if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
-            httpClientSecurityParameters = HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(
-                    tlsTrustEngineRef, tlsTrustEngine, parserContext);
+        } else if (tlsTrustEngine != null) {
+            httpClientSecurityParameters =
+                    HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngine, parserContext);
             builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParameters);
         }
 

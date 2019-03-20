@@ -35,8 +35,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactory
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.TLSSocketFactoryFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -102,21 +100,17 @@ public final class HTTPMetadataProvidersParserSupport {
      * 
      * <p>One of the first two parameters must be non-null.</p>
      * 
-     * @param tlsTrustEngineRef if present, the reference 
      * @param tlsTrustEngine if present, the TLSTrustEngine element
      * @param parserContext context
      * 
      * @return the bean definition
      */
-    @Nullable protected static BeanDefinition parseTLSTrustEngine(@Nullable final String tlsTrustEngineRef,
-            @Nullable final Element tlsTrustEngine, @Nonnull final ParserContext parserContext) {
+    @Nullable protected static BeanDefinition parseTLSTrustEngine(@Nullable final Element tlsTrustEngine,
+            @Nonnull final ParserContext parserContext) {
 
         final BeanDefinitionBuilder builder =
                 BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);
         if (tlsTrustEngine != null) {
-            if (tlsTrustEngineRef != null) {
-                LOG.warn("<TLSTrustEngine> subelement overrides setting of tlsTrustEngineRef ");
-            }
             final Element trustEngine = ElementSupport.getFirstChildElement(tlsTrustEngine,
                             AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
 
@@ -129,14 +123,6 @@ public final class HTTPMetadataProvidersParserSupport {
                 return null;
             }
             builder.addPropertyValue("tLSTrustEngine", SpringSupport.parseCustomElement(trustEngine, parserContext));
-        } else if (tlsTrustEngineRef == null) {
-            LOG.error("Internal error: tlsTrustEngineRef or TlsTrustEngine required");
-            return null;
-        } else {
-            DeprecationSupport.warn(ObjectType.ATTRIBUTE, "tlsTrustEngineRef",
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    "inline <TrustEngine> element or httpClientSecurityParametersRef attribute");
-            builder.addPropertyReference("tLSTrustEngine", tlsTrustEngineRef); 
         }
 
         return builder.getBeanDefinition();
