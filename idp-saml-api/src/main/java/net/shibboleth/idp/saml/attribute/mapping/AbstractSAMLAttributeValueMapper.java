@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
@@ -108,7 +109,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
 
             final Instant dt = ((XSDateTime) object).getValue();
             if (dt != null) {
-                retVal = ((XSDateTime) object).getDateTimeFormatter().format(dt);
+                retVal = DOMTypeSupport.instantToDateTime(dt);
             } else {
                 retVal = null;
             }
