@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute;
 
+import java.time.Instant;
+
 import javax.annotation.Nullable;
 
 /**
@@ -45,10 +47,10 @@ public class PairwiseId {
     @Nullable private String peerProvidedId;
 
     /** Time the identifier was created. */
-    @Nullable private Long creationTime;
+    @Nullable private Instant creationTime;
 
     /** Time the identifier was deactivated. */
-    @Nullable private Long deactivationTime;
+    @Nullable private Instant deactivationTime;
 
     /**
      * Get the ID of the entity that issued the identifier.
@@ -165,7 +167,7 @@ public class PairwiseId {
      * 
      * @return time the identifier was created
      */
-    @Nullable public Long getCreationTime() {
+    @Nullable public Instant getCreationTime() {
         return creationTime;
     }
 
@@ -174,7 +176,7 @@ public class PairwiseId {
      * 
      * @param time time the identifier was created
      */
-    public void setCreationTime(@Nullable final Long time) {
+    public void setCreationTime(@Nullable final Instant time) {
         creationTime = time;
     }
 
@@ -183,7 +185,7 @@ public class PairwiseId {
      * 
      * @return time the identifier was deactivated
      */
-    @Nullable public Long getDeactivationTime() {
+    @Nullable public Instant getDeactivationTime() {
         return deactivationTime;
     }
 
@@ -192,7 +194,7 @@ public class PairwiseId {
      * 
      * @param time the time the identifier was deactivated
      */
-    public void setDeactivationTime(@Nullable final Long time) {
+    public void setDeactivationTime(@Nullable final Instant time) {
         deactivationTime = time;
     }
 

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -125,7 +126,7 @@ public class JDBCPairwiseIdStoreTest {
         id.setSourceSystemId("localID");
         id.setPeerProvidedId("PeerprovidedId");
         id.setPairwiseId(persistentId);
-        id.setCreationTime(System.currentTimeMillis());
+        id.setCreationTime(Instant.now());
         
         try (final Connection conn = testSource.getConnection()) {
             store.store(id, conn);

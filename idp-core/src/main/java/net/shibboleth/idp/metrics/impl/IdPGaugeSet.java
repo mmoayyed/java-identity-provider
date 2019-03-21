@@ -26,6 +26,7 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,9 +77,10 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
         
         gauges.put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, "uptime"),
-                new Gauge<Long>() {
-                    public Long getValue() {
-                        return System.currentTimeMillis() - getApplicationContext().getStartupDate();
+                new Gauge<Duration>() {
+                    public Duration getValue() {
+                        return Duration.ofMillis(
+                                Instant.now().toEpochMilli() - getApplicationContext().getStartupDate());
                     }
                 });
     }

@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -570,7 +571,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
                 log.debug("Getting active and/or last inactive pairwise ID entry");
                 final List<PairwiseId> entries = buildIdentifierEntries(statement.executeQuery());
                 if (entries != null && entries.size() > 0 && (entries.get(0).getDeactivationTime() == null
-                        || entries.get(0).getDeactivationTime() > System.currentTimeMillis())) {
+                        || entries.get(0).getDeactivationTime().isAfter(Instant.now()))) {
                     dbConn.commit();
                     log.debug("Returning existing active pairwise ID: {}", entries.get(0).getPairwiseId());
                     return entries.get(0);
@@ -580,7 +581,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
                     return null;
                 }
 
-                pid.setCreationTime(System.currentTimeMillis());
+                pid.setCreationTime(Instant.now());
                 
                 // Circumvent final modifier on parameter.
                 PairwiseId retValue = pid;
@@ -674,7 +675,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         if (pid.getDeactivationTime() == null) {
             deactivationTime = new Timestamp(System.currentTimeMillis());
         } else {
-            deactivationTime = new Timestamp(pid.getDeactivationTime());
+            deactivationTime = new Timestamp(pid.getDeactivationTime().toEpochMilli());
         }
 
         log.debug("Deactivating pairwise ID {} as of {}", pid.getPairwiseId(), deactivationTime);
@@ -781,9 +782,9 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         } else {
             statement.setNull(6, Types.VARCHAR);
         }
-        statement.setTimestamp(7, new Timestamp(entry.getCreationTime()));
+        statement.setTimestamp(7, new Timestamp(entry.getCreationTime().toEpochMilli()));
         if (entry.getDeactivationTime() != null) {
-            statement.setTimestamp(8, new Timestamp(entry.getDeactivationTime()));
+            statement.setTimestamp(8, new Timestamp(entry.getDeactivationTime().toEpochMilli()));
         } else {
             statement.setNull(8, Types.TIMESTAMP);
         }
@@ -822,7 +823,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         newEntry.setRecipientEntityID("http://dummy.com/sp/" + uuid);
         newEntry.setSourceSystemId("dummy");
         newEntry.setPrincipalName("dummy");
-        newEntry.setCreationTime(System.currentTimeMillis());
+        newEntry.setCreationTime(Instant.now());
         newEntry.setPairwiseId(uuid);
         
         try (final Connection conn = getConnection(true)) {
@@ -876,11 +877,11 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
             entry.setPeerProvidedId(resultSet.getString(peerProvidedIdColumn));
             Timestamp ts = resultSet.getTimestamp(creationTimeColumn);
             if (ts != null) {
-                entry.setCreationTime(ts.getTime());
+                entry.setCreationTime(Instant.ofEpochMilli(ts.getTime()));
             }
             ts = resultSet.getTimestamp(deactivationTimeColumn);
             if (ts != null) {
-                entry.setDeactivationTime(ts.getTime());
+                entry.setDeactivationTime(Instant.ofEpochMilli(ts.getTime()));
             }
             entries.add(entry);
     
