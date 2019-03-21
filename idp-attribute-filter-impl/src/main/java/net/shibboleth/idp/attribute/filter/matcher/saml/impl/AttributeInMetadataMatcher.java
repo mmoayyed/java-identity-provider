@@ -356,7 +356,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
         } else if (xmlObj instanceof XSDateTime) {
             final Instant dt = ((XSDateTime) xmlObj).getValue();
             if (dt != null) {
-                toMatch = DOMTypeSupport.instantToDateTime(dt);
+                toMatch = DOMTypeSupport.instantToString(dt);
             }
         } else if (xmlObj instanceof XSBase64Binary) {
             toMatch = ((XSBase64Binary) xmlObj).getValue();

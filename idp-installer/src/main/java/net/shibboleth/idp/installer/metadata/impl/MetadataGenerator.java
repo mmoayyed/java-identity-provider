@@ -343,7 +343,7 @@ public class MetadataGenerator {
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
         writeNameSpace(SAMLConstants.SAML20PREQ_ATTRR_PREFIX, SAMLConstants.SAML20PREQ_ATTR_NS);
 
-        writer.write(" validUntil=\"" + DOMTypeSupport.instantToDateTime(Instant.now()) + "\"");
+        writer.write(" validUntil=\"" + DOMTypeSupport.instantToString(Instant.now()) + "\"");
         
         writer.write(" entityID=\"");
         writer.write(getEntityID());

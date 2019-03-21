@@ -109,7 +109,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
 
             final Instant dt = ((XSDateTime) object).getValue();
             if (dt != null) {
-                retVal = DOMTypeSupport.instantToDateTime(dt);
+                retVal = DOMTypeSupport.instantToString(dt);
             } else {
                 retVal = null;
             }

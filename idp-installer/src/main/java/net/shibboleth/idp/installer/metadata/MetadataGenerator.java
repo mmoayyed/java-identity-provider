@@ -344,7 +344,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
         writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
 
-        writer.write(" validUntil=\"" + DOMTypeSupport.instantToDateTime(Instant.now()) + "\"");
+        writer.write(" validUntil=\"" + DOMTypeSupport.instantToString(Instant.now()) + "\"");
         
         writer.write(" entityID=\"");
         writer.write(getEntityID());
