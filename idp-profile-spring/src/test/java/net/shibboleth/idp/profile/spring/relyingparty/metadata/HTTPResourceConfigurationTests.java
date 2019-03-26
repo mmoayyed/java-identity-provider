@@ -81,6 +81,7 @@ public class HTTPResourceConfigurationTests {
         theContext.refresh();
     }
     
+    @SuppressWarnings("deprecation")
     @AfterSuite public void tearDown() {
         if (null != theDir) {
             emptyDir(theDir);
