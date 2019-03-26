@@ -23,19 +23,19 @@ import javax.xml.namespace.QName;
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.AbstractWarningSecurityParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Base parser for all &lt;Credential&gt; elements.
  */
-public abstract class AbstractCredentialParser extends AbstractWarningSecurityParser {
+public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinitionParser {
 
     /** &lt;Credential&gt;. */
     public static final QName CREDENTIAL_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,

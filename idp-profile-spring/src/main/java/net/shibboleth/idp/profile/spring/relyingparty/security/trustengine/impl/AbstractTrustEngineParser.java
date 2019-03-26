@@ -19,16 +19,16 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.AbstractWarningSecurityParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Basis of all parsers for &lt;security:TrustEngine&gt;.
  */
-public abstract class AbstractTrustEngineParser extends AbstractWarningSecurityParser {
+public abstract class AbstractTrustEngineParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
     @Override protected String resolveId(final Element element, final AbstractBeanDefinition definition,
