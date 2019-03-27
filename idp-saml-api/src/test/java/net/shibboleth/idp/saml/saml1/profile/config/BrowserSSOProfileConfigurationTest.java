@@ -42,42 +42,38 @@ public class BrowserSSOProfileConfigurationTest {
         Assert.assertEquals(config.getId(), BrowserSSOProfileConfiguration.PROFILE_ID);
     }
     
-    @SuppressWarnings("deprecation")
     @Test
     public void testResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.resolveAttributes());
+        Assert.assertTrue(config.isResolveAttributes(null));
         
         config.setResolveAttributes(false);
-        Assert.assertFalse(config.resolveAttributes());
+        Assert.assertFalse(config.isResolveAttributes(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIndirectResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setResolveAttributesPredicate(Predicates.<ProfileRequestContext>alwaysFalse());
-        Assert.assertFalse(config.resolveAttributes());
+        config.setResolveAttributesPredicate(Predicates.alwaysFalse());
+        Assert.assertFalse(config.isResolveAttributes(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertFalse(config.includeAttributeStatement());
+        Assert.assertFalse(config.isIncludeAttributeStatement(null));
 
         config.setIncludeAttributeStatement(true);
-        Assert.assertTrue(config.includeAttributeStatement());
+        Assert.assertTrue(config.isIncludeAttributeStatement(null));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testIndirectIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setIncludeAttributeStatementPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
-        Assert.assertTrue(config.includeAttributeStatement());
+        config.setIncludeAttributeStatementPredicate(Predicates.alwaysTrue());
+        Assert.assertTrue(config.isIncludeAttributeStatement(null));
     }
 
     @Test
@@ -105,14 +101,14 @@ public class BrowserSSOProfileConfigurationTest {
     @Test
     public void testDefaultAuthenticationMethods() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getDefaultAuthenticationMethods().isEmpty());
+        Assert.assertTrue(config.getDefaultAuthenticationMethods(null).isEmpty());
 
         final List<AuthenticationMethodPrincipal> principals = new ArrayList<>();
         principals.add(new AuthenticationMethodPrincipal("foo"));
         principals.add(new AuthenticationMethodPrincipal("bar"));
 
         config.setDefaultAuthenticationMethods(principals);
-        Assert.assertEquals(config.getDefaultAuthenticationMethods(), principals);
+        Assert.assertEquals(config.getDefaultAuthenticationMethods(null), principals);
     }
 
     @Test
@@ -123,22 +119,21 @@ public class BrowserSSOProfileConfigurationTest {
         principals.add(new AuthenticationMethodPrincipal("foo"));
         principals.add(new AuthenticationMethodPrincipal("bar"));
 
-        config.setDefaultAuthenticationMethodsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<AuthenticationMethodPrincipal>>constant(principals));
-        Assert.assertEquals(config.getDefaultAuthenticationMethods(), principals);
+        config.setDefaultAuthenticationMethodsLookupStrategy(FunctionSupport.constant(principals));
+        Assert.assertEquals(config.getDefaultAuthenticationMethods(null), principals);
     }
 
     @Test
     public void testAuthenticationFlows() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getAuthenticationFlows().isEmpty());
+        Assert.assertTrue(config.getAuthenticationFlows(null).isEmpty());
 
         final Set<String> flows = new HashSet<>();
         flows.add("foo");
         flows.add("bar");
 
         config.setAuthenticationFlows(flows);
-        Assert.assertEquals(config.getAuthenticationFlows(), flows);
+        Assert.assertEquals(config.getAuthenticationFlows(null), flows);
     }
 
     @Test
@@ -149,22 +144,21 @@ public class BrowserSSOProfileConfigurationTest {
         flows.add("foo");
         flows.add("bar");
 
-        config.setAuthenticationFlowsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Set<String>>constant(flows));
-        Assert.assertEquals(config.getAuthenticationFlows(), flows);
+        config.setAuthenticationFlowsLookupStrategy(FunctionSupport.constant(flows));
+        Assert.assertEquals(config.getAuthenticationFlows(null), flows);
     }
 
     @Test
     public void testPostAuthenticationFlows() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getPostAuthenticationFlows().isEmpty());
+        Assert.assertTrue(config.getPostAuthenticationFlows(null).isEmpty());
 
         final List<String> flows = new ArrayList<>();
         flows.add("foo");
         flows.add("bar");
 
         config.setPostAuthenticationFlows(flows);
-        Assert.assertEquals(config.getPostAuthenticationFlows(), flows);
+        Assert.assertEquals(config.getPostAuthenticationFlows(null), flows);
     }
 
     @Test
@@ -175,22 +169,21 @@ public class BrowserSSOProfileConfigurationTest {
         flows.add("foo");
         flows.add("bar");
 
-        config.setPostAuthenticationFlowsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(flows));
-        Assert.assertEquals(config.getPostAuthenticationFlows(), flows);
+        config.setPostAuthenticationFlowsLookupStrategy(FunctionSupport.constant(flows));
+        Assert.assertEquals(config.getPostAuthenticationFlows(null), flows);
     }
 
     @Test
     public void testNameIDFormatPrecedence() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getNameIDFormatPrecedence().isEmpty());
+        Assert.assertTrue(config.getNameIDFormatPrecedence(null).isEmpty());
 
         final List<String> formats = new ArrayList<>();
         formats.add("foo");
         formats.add("bar");
 
         config.setNameIDFormatPrecedence(formats);
-        Assert.assertEquals(config.getNameIDFormatPrecedence(), formats);
+        Assert.assertEquals(config.getNameIDFormatPrecedence(null), formats);
     }
 
     @Test
@@ -201,9 +194,8 @@ public class BrowserSSOProfileConfigurationTest {
         formats.add("foo");
         formats.add("bar");
 
-        config.setNameIDFormatPrecedenceLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(formats));
-        Assert.assertEquals(config.getNameIDFormatPrecedence(), formats);
+        config.setNameIDFormatPrecedenceLookupStrategy(FunctionSupport.constant(formats));
+        Assert.assertEquals(config.getNameIDFormatPrecedence(null), formats);
     }
 
 }

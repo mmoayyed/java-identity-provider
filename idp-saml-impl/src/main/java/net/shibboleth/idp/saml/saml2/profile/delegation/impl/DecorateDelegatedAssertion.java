@@ -325,7 +325,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         
         // This is @Nonnull
-        responderId = relyingPartyContext.getConfiguration().getResponderId();
+        responderId = relyingPartyContext.getConfiguration().getResponderId(profileRequestContext);
         
         return true;
     }

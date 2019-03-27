@@ -39,7 +39,7 @@ public class ResponderIdLookupFunction extends AbstractRelyingPartyLookupFunctio
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null && rpc.getConfiguration() != null) {
-                return rpc.getConfiguration().getResponderId();
+                return rpc.getConfiguration().getResponderId(input);
             }
         }
 

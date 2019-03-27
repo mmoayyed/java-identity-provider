@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletRequest;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -38,6 +37,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -54,25 +54,16 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RelyingPartyConfiguration.class);
-
-    /** Access to servlet request. */
-    @Nullable private ServletRequest servletRequest;
     
     /** Lookup function to supply {@link #responderId} property. */
-    @Nullable private Function<ProfileRequestContext,String> responderIdLookupStrategy;
-
-    /** Self-referential ID to use when responding to messages. */
-    @Nullable @NotEmpty private String responderId;
+    @Nonnull private Function<ProfileRequestContext,String> responderIdLookupStrategy;
 
     /** Controls whether detailed information about errors should be exposed. */
     @Nonnull private Predicate<ProfileRequestContext> detailedErrorsPredicate;
 
     /** Lookup function to supply {@link #profileConfigurations} property. */
-    @Nullable
+    @Nonnull
     private Function<ProfileRequestContext,Map<String,ProfileConfiguration>> profileConfigurationsLookupStrategy;
-    
-    /** Registered and usable communication profile configurations for this relying party. */
-    @Nonnull @NonnullElements private Map<String,ProfileConfiguration> profileConfigurations;
 
     /** Predicate that must be true for this configuration to be active for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;
@@ -81,31 +72,18 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     public RelyingPartyConfiguration() {
         activationCondition = Predicates.alwaysTrue();
         detailedErrorsPredicate = Predicates.alwaysFalse();
-        profileConfigurations = Collections.emptyMap();
-    }
-    
-    /**
-     * Set the {@link ServletRequest} from which to obtain a reference to the current {@link ProfileRequestContext}.
-     * 
-     * <p>Generally this would be expected to be a proxy to the actual object.</p>
-     * 
-     * @param request servlet request
-     * 
-     * @since 3.3.0
-     */
-    public void setServletRequest(@Nullable final ServletRequest request) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        servletRequest = request;
+        profileConfigurationsLookupStrategy = FunctionSupport.constant(Collections.emptyMap());
     }
 
     /**
      * Get the self-referential ID to use when responding to requests.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return ID to use when responding
      */
-    @Nonnull @NotEmpty public String getResponderId() {
-        return Constraint.isNotNull(getIndirectProperty(responderIdLookupStrategy, responderId),
+    @Nonnull @NotEmpty public String getResponderId(@Nullable final ProfileRequestContext profileRequestContext) {
+        return Constraint.isNotNull(responderIdLookupStrategy.apply(profileRequestContext),
                 "ResponderId cannot be null");
     }
 
@@ -114,10 +92,12 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * 
      * @param responder ID to use when responding to messages
      */
-    public void setResponderId(@Nullable final String responder) {
+    public void setResponderId(@Nonnull @NotEmpty final String responder) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        responderId = StringSupport.trimOrNull(responder);
+        
+        final String id =
+                Constraint.isNotNull(StringSupport.trimOrNull(responder), "ResponseId cannot be null or empty");
+        responderIdLookupStrategy = FunctionSupport.constant(id);
     }
 
     /**
@@ -125,88 +105,76 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * 
      * @param strategy  lookup strategy
      * 
-     * @since 3.3.0
+     * @since 3.4.0
      */
-    public void setResponderIdLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setResponderIdLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        responderIdLookupStrategy = strategy;
+        responderIdLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
-        
+    
     /**
      * Get whether detailed information about errors should be exposed.
+     * 
+     * @param profileRequestContext current profile request context
      *
      * @return true iff it is acceptable to expose detailed error information
-     *
-     * @deprecated Use {@link #getDetailedErrorsPredicate()} instead.
      */
-    public boolean isDetailedErrors() {
-        return detailedErrorsPredicate.test(getProfileRequestContext());
+    public boolean isDetailedErrors(@Nullable final ProfileRequestContext profileRequestContext) {
+        return detailedErrorsPredicate.test(profileRequestContext);
     }
 
     /**
      * Set whether detailed information about errors should be exposed.
      * 
-     * @param flag flag to set
+     * @param flag  flag to set
      */
     public void setDetailedErrors(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        detailedErrorsPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
+        detailedErrorsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
-
-    /**
-     * Get a condition to determine whether detailed information about errors should be exposed.
-     *
-     * @return a condition to evaluate
-     * 
-     * @since 3.3.0
-     */
-    @Nonnull public Predicate<ProfileRequestContext> getDetailedErrorsPredicate() {
-        return detailedErrorsPredicate;
-    }
-
+    
     /**
      * Set a condition to determine whether detailed information about errors should be exposed.
      * 
      * @param condition  condition to set
-     * 
-     * @since 3.3.0
      */
     public void setDetailedErrorsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        detailedErrorsPredicate = Constraint.isNotNull(condition, "Detailed errors predicate cannot be null");
+        detailedErrorsPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
     
     /**
      * Get the unmodifiable set of profile configurations for this relying party.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return unmodifiable set of profile configurations for this relying party, never null
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive
-    public Map<String,ProfileConfiguration> getProfileConfigurations() {
-        return ImmutableMap.copyOf(getIndirectProperty(profileConfigurationsLookupStrategy, profileConfigurations));
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,ProfileConfiguration> getProfileConfigurations(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return ImmutableMap.copyOf(profileConfigurationsLookupStrategy.apply(profileRequestContext));
     }
 
     /**
      * Get the profile configuration, for the relying party, for the given profile. This is a convenience method and is
-     * equivalent to calling {@link Map#get(Object)} on the return of {@link #getProfileConfigurations()}. This map
-     * contains no null entries, keys, or values.
+     * equivalent to calling {@link Map#get(Object)} on the return of
+     * {@link #getProfileConfigurations(ProfileRequestContext)}. This map contains no null entries, keys, or values.
      * 
+     * @param profileRequestContext current profile request context
      * @param profileId the ID of the profile
      * 
      * @return the configuration for the profile or null if the profile ID was null or empty or there is no
      *         configuration for the given profile
      */
-    @Nullable public ProfileConfiguration getProfileConfiguration(@Nullable final String profileId) {
+    @Nullable public ProfileConfiguration getProfileConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext, @Nullable final String profileId) {
         final String trimmedId = StringSupport.trimOrNull(profileId);
         if (trimmedId == null) {
             return null;
         }
 
-        return getProfileConfigurations().get(trimmedId);
+        return getProfileConfigurations(profileRequestContext).get(trimmedId);
     }
 
     /**
@@ -218,15 +186,16 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (configs == null) {
-            profileConfigurations = Collections.emptyMap();
+            profileConfigurationsLookupStrategy = FunctionSupport.constant(Collections.emptyMap());
         } else {
-            profileConfigurations = new HashMap<>();
+            final HashMap<String,ProfileConfiguration> map = new HashMap<>();
             for (final ProfileConfiguration config : Collections2.filter(configs, Predicates.notNull())) {
                 final String trimmedId =
                         Constraint.isNotNull(StringSupport.trimOrNull(config.getId()),
                                 "ID of profile configuration class " + config.getClass().getName() + " cannot be null");
-                profileConfigurations.put(trimmedId, config);
+                map.put(trimmedId, config);
             }
+            profileConfigurationsLookupStrategy = FunctionSupport.constant(map);
         }
     }
 
@@ -235,13 +204,13 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * 
      * @param strategy lookup strategy
      * 
-     * @since 3.3.0
+     * @since 4.0.0
      */
     public void setProfileConfigurationsLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Map<String,ProfileConfiguration>> strategy) {
+            @Nonnull final Function<ProfileRequestContext,Map<String,ProfileConfiguration>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        profileConfigurationsLookupStrategy = strategy;
+        profileConfigurationsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /**
@@ -259,9 +228,9 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
-        if (responderId == null && responderIdLookupStrategy == null) {
-            throw new ComponentInitializationException("Responder ID and lookup strategy cannot both be null");
+    
+        if (responderIdLookupStrategy == null) {
+            throw new ComponentInitializationException("Responder ID lookup strategy cannot be null");
         }
         
     }
@@ -269,54 +238,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
-        return activationCondition.test(input);
-    }
-
-    /**
-     * Get the current {@link ProfileRequestContext}.
-     * 
-     * @return current profile request context
-     * 
-     * @since 3.3.0
-     */
-    @Nullable protected ProfileRequestContext getProfileRequestContext() {
-        if (servletRequest != null) {
-            final Object object = servletRequest.getAttribute(ProfileRequestContext.BINDING_KEY);
-            if (object instanceof ProfileRequestContext) {
-                return (ProfileRequestContext) object;
-            }
-            log.warn("RelyingPartyConfiguration {}: No ProfileRequestContext in request", getId());
-        } else {
-            log.warn("RelyingPartyConfiguration {}: ServletRequest was null", getId());
-        }
-        return null;
-    }
     
-    /**
-     * Get a property, possibly through indirection via a lookup function.
-     * 
-     * @param <T> type of property
-     * 
-     * @param lookupStrategy lookup strategy function for indirect access
-     * @param staticValue static value to return in the absence of a lookup function or if null is returned
-     * 
-     * @return a dynamic or static result, if any
-     * 
-     * @since 3.3.0
-     */
-    @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
-            @Nullable final T staticValue) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        if (lookupStrategy != null) {
-            final T prop = lookupStrategy.apply(getProfileRequestContext());
-            if (prop != null) {
-                return prop;
-            }
-        }
-
-        return staticValue;
+        return activationCondition.test(input);
     }
 
 }

@@ -15,13 +15,17 @@
     <!--
     This is ALOT of wiring to pre-configure support for virtually system-wide support for deriving relying-party
     settings and profile settings through examination of metadata tags.
+    
+    Anywhere that the underlying non-metadata-driven beans contain default properties, there may need to be a
+    re-injection of the same defaults here because both constant and runtime-derived settings are actually handled
+    with strategy functions.
     -->
 
     <!-- Parent beans for defining metadata-driven config lookup strategies. -->
 
     <bean id="RelyingParty.MDDriven" abstract="true" parent="RelyingParty">
         <property name="responderIdLookupStrategy">
-            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="responderId" />
+            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="responderId" p:defaultValue="#{getObject('entityID')}" />
         </property>
         <property name="profileConfigurationsLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="profileConfigurations"
@@ -91,7 +95,12 @@
                 p:propertyType="#{T(net.shibboleth.idp.profile.config.SecurityConfiguration)}" />
         </property>
         <property name="disallowedFeaturesLookupStrategy">
-            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="disallowedFeatures" />
+            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="disallowedFeatures">
+                <property name="defaultValue">
+                    <util:constant
+                        static-field="net.shibboleth.idp.profile.config.AbstractProfileConfiguration.DEFAULT_DISALLOWED_FEATURES" />
+                </property>
+            </bean>
         </property>
     </bean>
     
@@ -187,7 +196,7 @@
             </bean>
         </property>
         <property name="ticketValidityPeriodLookupStrategy">
-            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod" />
+            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod" p:defaultValue="PT15S" />
         </property>
     </bean>
 
@@ -368,7 +377,7 @@
         <property name="maximumSPSessionLifetimeLookupStrategy">
             <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="maximumSPSessionLifetime" />
         </property>
-        <property name="allowDelegation">
+        <property name="allowDelegationPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="allowDelegation" />
@@ -570,9 +579,17 @@
 
     <bean id="CAS.ValidateConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
             class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration">
+        <property name="ticketValidityPeriodLookupStrategy">
+            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod" p:defaultValue="PT12H" />
+        </property>
         <property name="serviceComparatorLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="serviceComparator"
-                p:propertyType="#{T(java.util.Comparator)}" />
+                p:propertyType="#{T(java.util.Comparator)}"
+                p:defaultValue="#{getObject('shibboleth.CASServiceComparator') ?: getObject('shibboleth.DefaultCASServiceComparator')}" />
+        </property>
+        <property name="pGTIOUGeneratorLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="pGTIOUGenerator"
+                p:propertyType="#{T(net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy)}" />
         </property>
         <property name="userAttributeLookupStrategy">
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="userAttribute" />

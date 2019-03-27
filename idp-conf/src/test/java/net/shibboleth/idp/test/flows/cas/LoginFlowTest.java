@@ -260,7 +260,7 @@ public class LoginFlowTest extends AbstractFlowTest {
             throw new IllegalStateException("Relying party configuration not found");
         }
         final LoginConfiguration loginConfiguration =
-                (LoginConfiguration) rpConfig.getProfileConfiguration(LoginConfiguration.PROFILE_ID);
+                (LoginConfiguration) rpConfig.getProfileConfiguration(prc, LoginConfiguration.PROFILE_ID);
         if (loginConfiguration == null) {
             throw new IllegalStateException("CAS login profile configuration not found");
         }

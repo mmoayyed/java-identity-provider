@@ -28,6 +28,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
 import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,11 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link MessageContext}.
      */
     @NonnullAfterInit private Function<MessageContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+
+    /**
+     * Strategy used to locate the {@link ProfileRequestContext} associated with a given {@link MessageContext}.
+     */
+    @Nonnull private Function<MessageContext,ProfileRequestContext> profileRequestContextLookupStrategy;
     
     /**
      * Strategy used to locate the effective profile ID associated with a given {@link MessageContext}.
@@ -66,6 +72,10 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
     
     /** Constructor. */
     public SelectProfileConfiguration() {
+        
+        profileRequestContextLookupStrategy =
+                new RecursiveTypedParentContextLookup<>(ProfileRequestContext.class);
+
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<>(RelyingPartyContext.class).compose(
                         new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
@@ -84,6 +94,28 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
         
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Get the strategy used to locate the {@link ProfileRequestContext} associated with a given
+     * {@link MessageContext}.
+     * 
+     * @return lookup strategy
+     */
+    @Nonnull public Function<MessageContext,ProfileRequestContext> getProfileRequestContextLookupStrategy() {
+        return profileRequestContextLookupStrategy;
+    }
+
+    /**
+     * Set the strategy used to locate the {@link ProfileRequestContext} associated with a given
+     * {@link MessageContext}.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setProfileRequestContextLookupStrategy(
+            @Nonnull final Function<MessageContext,ProfileRequestContext> strategy) {
+        profileRequestContextLookupStrategy =
+                Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
 
     /**
@@ -143,7 +175,8 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
             throw new MessageHandlerException("Profile ID is not available from message context");
         }
         
-        final ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileId);
+        final ProfileConfiguration profileConfiguration =
+                rpConfig.getProfileConfiguration(profileRequestContextLookupStrategy.apply(messageContext), profileId);
         if (profileConfiguration == null) {
             log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
                     new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});

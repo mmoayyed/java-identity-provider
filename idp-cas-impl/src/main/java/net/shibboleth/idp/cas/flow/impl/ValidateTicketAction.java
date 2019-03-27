@@ -111,7 +111,8 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             return ProtocolError.TicketExpired.event(this);
         }
 
-        if (config.getServiceComparator().compare(ticket.getService(), request.getService()) != 0) {
+        if (config.getServiceComparator(profileRequestContext).compare(
+                ticket.getService(), request.getService()) != 0) {
             log.debug("Service issued for {} does not match {}", ticket.getService(), request.getService());
             return ProtocolError.ServiceMismatch.event(this);
         }

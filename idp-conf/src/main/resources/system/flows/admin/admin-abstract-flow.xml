@@ -24,7 +24,7 @@
 
     <!-- Conditional check for user authentication. -->
     <decision-state id="CheckIfAuthenticationNeeded">
-        <if test="relyingPartyContext.getProfileConfig().isAuthenticated()"
+        <if test="relyingPartyContext.getProfileConfig().isAuthenticated(opensamlProfileRequestContext)"
             then="PopulateClientStorageLoadContext" else="DoProfileWork" />
     </decision-state>
 
@@ -58,7 +58,7 @@
     </subflow-state>
     
     <decision-state id="ResolveAttributes">
-        <if test="relyingPartyContext.getProfileConfig().resolveAttributes()"
+        <if test="relyingPartyContext.getProfileConfig().isResolveAttributes(opensamlProfileRequestContext)"
             then="AttributeResolution"
             else="PopulateClientStorageSaveContext" />
     </decision-state>

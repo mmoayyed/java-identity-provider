@@ -73,7 +73,7 @@
         class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
         c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getProfileConfig().getPolicyName()" />
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getProfileConfig().getPolicyName(#input)" />
 
     <!-- Default operation/resource suppliers for access checks. -->
     <bean id="DefaultOperationLookupStrategy" parent="shibboleth.Functions.Constant">

@@ -114,13 +114,14 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
             
             if (profileId != null) {
                 log.debug("Using overridden profile configuration ID: {}", profileId);
-                profileConfig = relyingPartyCtx.getConfiguration().getProfileConfiguration(profileId);
+                profileConfig = relyingPartyCtx.getConfiguration().getProfileConfiguration(input, profileId);
             } else {
                 profileConfig = relyingPartyCtx.getProfileConfig();
             }
             
             if (profileConfig != null && profileConfig instanceof AuthenticationProfileConfiguration) {
-                fromConfig.addAll(((AuthenticationProfileConfiguration) profileConfig).getNameIDFormatPrecedence());
+                fromConfig.addAll(
+                        ((AuthenticationProfileConfiguration) profileConfig).getNameIDFormatPrecedence(input));
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
             } else {
                 log.debug("No ProfileConfiguraton available (or not an AuthenticationProfileConfiguration)");

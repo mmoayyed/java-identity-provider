@@ -177,7 +177,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         if (rpContext != null && rpContext.getProfileConfig() != null
                 && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
             if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
-                    BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
+                    profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
                 log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
                 return;

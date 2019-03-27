@@ -130,8 +130,8 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfiguration resolvedConfig =
                 prc.getSubcontext(RelyingPartyContext.class).getConfiguration();
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
-        Assert.assertEquals(resolvedConfig.getResponderId(), config.getResponderId());
-        Assert.assertEquals(resolvedConfig.getProfileConfigurations(), config.getProfileConfigurations());
+        Assert.assertEquals(resolvedConfig.getResponderId(prc), config.getResponderId(prc));
+        Assert.assertEquals(resolvedConfig.getProfileConfigurations(prc), config.getProfileConfigurations(prc));
     }
 
     /** A resolver that returns a relying party configuration or throws an exception. */

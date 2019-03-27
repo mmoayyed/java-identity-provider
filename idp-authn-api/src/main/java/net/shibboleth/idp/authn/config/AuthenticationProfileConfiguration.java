@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -34,9 +37,12 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
     /**
      * Get the default authentication methods to use, expressed as custom principals.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  default authentication methods to use
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods(
+            @Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get the allowable authentication flows for this profile.
@@ -45,9 +51,12 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * {@link net.shibboleth.idp.authn.AuthenticationFlowDescriptor#FLOW_ID_PREFIX}
      * prefix common to all interceptor flows.</p>
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  a set of authentication flow IDs to allow 
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows(
+            @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get an ordered list of post-authentication interceptor flows to run for this profile.
@@ -56,15 +65,32 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
      * prefix common to all interceptor flows.</p>
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  a set of interceptor flow IDs to enable
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getPostAuthenticationFlows();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getPostAuthenticationFlows(
+            @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the name identifier formats to use with this relying party, in order of preference.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  name identifier formats to use
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getNameIDFormatPrecedence();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getNameIDFormatPrecedence(
+            @Nullable final ProfileRequestContext profileRequestContext);
 
+    /**
+     * Get whether the authentication process should include a proof of user presence.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return true iff authentication should require user presence
+     * 
+     * @since 4.0.0
+     */
+    boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext);
+    
 }

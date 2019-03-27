@@ -313,7 +313,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
                 buildDelegationRequestAttributeConsumingService(false));
         
-        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+        browserSSOProfileConfig.setAllowDelegation(true);
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -332,7 +332,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
                 buildDelegationRequestAttributeConsumingService(true));
         
-        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+        browserSSOProfileConfig.setAllowDelegation(true);
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -362,7 +362,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     public void testRequestedViaConditionsAllowed() throws Exception {
         authnRequest.setConditions(buildDelegationRequestConditions());
         
-        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+        browserSSOProfileConfig.setAllowDelegation(true);
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -383,7 +383,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         
         authnRequest.setConditions(buildDelegationRequestConditions());
         
-        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+        browserSSOProfileConfig.setAllowDelegation(true);
 
         
         action.initialize();
@@ -401,7 +401,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
                 buildDelegationRequestAttributeConsumingService(false));
         
-        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+        browserSSOProfileConfig.setAllowDelegation(true);
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -416,7 +416,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     
     private Conditions buildDelegationRequestConditions() {
         Audience audience = (Audience) XMLObjectSupport.buildXMLObject(Audience.DEFAULT_ELEMENT_NAME);
-        audience.setAudienceURI(prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId());
+        audience.setAudienceURI(prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId(prc));
         AudienceRestriction ar = (AudienceRestriction) XMLObjectSupport.buildXMLObject(AudienceRestriction.DEFAULT_ELEMENT_NAME);
         ar.getAudiences().add(audience);
         Conditions conditions = (Conditions) XMLObjectSupport.buildXMLObject(Conditions.DEFAULT_ELEMENT_NAME);

@@ -119,7 +119,7 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         
         Assert.assertNotNull(name);
         Assert.assertEquals(name.getFormat(), generator.getFormat());
-        Assert.assertEquals(name.getNameQualifier(), rpc.getConfiguration().getResponderId());
+        Assert.assertEquals(name.getNameQualifier(), rpc.getConfiguration().getResponderId(prc));
 
         final String val = name.getValue();
 

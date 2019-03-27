@@ -190,7 +190,7 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
             if (relyingPartyContext != null) {
                 if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
                     return ((BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig())
-                            .getMaximumTokenDelegationChainLength();
+                            .getMaximumTokenDelegationChainLength(profileRequestContext);
                 } else {
                     log.debug("Profile config was not BrowserSSOProfileConfiguration, can't evaluate: {}", 
                             relyingPartyContext.getProfileConfig() != null ? 

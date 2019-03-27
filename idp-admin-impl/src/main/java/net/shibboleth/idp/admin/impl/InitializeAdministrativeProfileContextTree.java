@@ -118,7 +118,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         profileRequestContext.setLoggingId(flowDescriptor.getLoggingId());
-        profileRequestContext.setBrowserProfile(!flowDescriptor.isNonBrowserSupported());
+        profileRequestContext.setBrowserProfile(!flowDescriptor.isNonBrowserSupported(profileRequestContext));
         
         final RelyingPartyContext rpCtx = new RelyingPartyContext();
         profileRequestContext.addSubcontext(rpCtx, true);

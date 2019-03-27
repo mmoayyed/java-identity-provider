@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.config.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -54,8 +55,11 @@ public class IdentifierGenerationStrategyLookupFunction
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
                 final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc.getSecurityConfiguration() != null) {
-                    return pc.getSecurityConfiguration().getIdGenerator();
+                if (pc != null) {
+                    final SecurityConfiguration sc = pc.getSecurityConfiguration(input);
+                    if (sc != null) {
+                        return sc.getIdGenerator();
+                    }
                 }
             }
         }

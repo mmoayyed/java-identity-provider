@@ -64,7 +64,7 @@
     </action-state>
 
     <decision-state id="CheckResolveAttributes">
-        <if test="ValidateConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+        <if test="ValidateConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes(opensamlProfileRequestContext)"
             then="ResolveAttributes"
             else="UpdateIdPSessionWithSPSession" />
     </decision-state>

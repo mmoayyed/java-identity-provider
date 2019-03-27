@@ -38,7 +38,7 @@ public class DetailedErrorsProfileConfigPredicate extends AbstractRelyingPartyPr
     public boolean test(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null && rpc.getConfiguration() != null) {
-            return rpc.getConfiguration().getDetailedErrorsPredicate().test(input);
+            return rpc.getConfiguration().isDetailedErrors(input);
         }
         
         return false;

@@ -98,7 +98,10 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     
     /** Alternative "full" property identifiers to support. */
     @NonnullAfterInit @NonnullElements private Collection<String> propertyAliases;
-        
+    
+    /** Optional default to return in the absence of a property. */
+    @Nullable private T defaultValue;
+    
     /** Strategy for obtaining metadata to check. */
     @Nullable private Function<BaseContext,EntityDescriptor> metadataLookupStrategy;
 
@@ -176,6 +179,17 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     }
     
     /**
+     * Set a default value to return as the function result in the absence of an explicit property.
+     * 
+     * @param value default value to return 
+     */
+    public void setDefaultValue(@Nullable final T value) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        defaultValue = value;
+    }
+    
+    /**
      * Set lookup strategy for metadata to examine.
      * 
      * @param strategy  lookup strategy
@@ -226,8 +240,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
             
         if (entity == null) {
-            log.debug("No metadata available for relying party, no setting returned for '{}'", propertyName);
-            return null;
+            log.debug("No metadata available for relying party, default returned for '{}'", propertyName);
+            return defaultValue;
         }
         
         if (profileIdLookupStrategy != null) {
@@ -263,11 +277,11 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             }
         }
         
-        log.debug("No applicable tag, no setting returned for '{}'", propertyName);
+        log.debug("No applicable tag, default returned for '{}'", propertyName);
         if (enableCaching) {
-            cacheContext.getPropertyMap().put(propertyName, null);
+            cacheContext.getPropertyMap().put(propertyName, defaultValue);
         }
-        return null;
+        return defaultValue;
     }
 // Checkstyle: CyclomaticComplexity ON
     

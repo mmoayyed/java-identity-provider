@@ -28,9 +28,9 @@ import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -48,13 +48,13 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
 
     /** Lookup function to supply {@link #ticketValidityPeriod} property. */
-    @Nullable private Function<ProfileRequestContext,Duration> ticketValidityPeriodLookupStrategy;
-
-    /** Validity time period of tickets. */
-    @Nonnull private Duration ticketValidityPeriod;
+    @Nonnull private Function<ProfileRequestContext,Duration> ticketValidityPeriodLookupStrategy;
 
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
+    
+    /** Holds default security config object to use. */
+    @Nonnull private final SecurityConfiguration defaultSecurityConfiguration;
 
     /**
      * Creates a new configuration instance.
@@ -65,26 +65,29 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
         super(profileId);
         
         resolveAttributesPredicate = Predicates.alwaysTrue();
-        ticketValidityPeriod = Duration.ofSeconds(15);
+        ticketValidityPeriodLookupStrategy = FunctionSupport.constant(Duration.ofSeconds(15));
         
-        setSecurityConfiguration(new SecurityConfiguration(Duration.ofMinutes(5),
-                new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength())));
+        defaultSecurityConfiguration = new SecurityConfiguration(Duration.ofMinutes(5),
+                new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength()));
     }
 
     /** {@inheritDoc} */
-    @Override public void doInitialize() throws ComponentInitializationException {
-        Constraint.isNotNull(getSecurityConfiguration(), "Security configuration cannot be null.");
-        Constraint.isNotNull(getSecurityConfiguration().getIdGenerator(),
-                "Security configuration ID generator cannot be null.");
+    @Override
+    @Nullable public SecurityConfiguration getSecurityConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        final SecurityConfiguration sc = super.getSecurityConfiguration(profileRequestContext);
+        return sc != null ? sc : defaultSecurityConfiguration;
     }
-
+    
     /**
      * Get ticket validity period.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return ticket validity period
      */
-    @Nonnull public Duration getTicketValidityPeriod() {
-        return getIndirectProperty(ticketValidityPeriodLookupStrategy, ticketValidityPeriod);
+    @Nonnull public Duration getTicketValidityPeriod(@Nullable final ProfileRequestContext profileRequestContext) {
+        return ticketValidityPeriodLookupStrategy.apply(profileRequestContext);
     }
 
     /**
@@ -96,7 +99,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
         Constraint.isNotNull(ticketTTL, "Ticket lifetime cannot be null");
         Constraint.isFalse(ticketTTL.isNegative() || ticketTTL.isZero(), "Ticket lifetime must be greater than 0");
 
-        ticketValidityPeriod = ticketTTL;
+        ticketValidityPeriodLookupStrategy = FunctionSupport.constant(ticketTTL);
     }
 
     /**
@@ -107,24 +110,19 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * @since 3.3.0
      */
     public void setTicketValidityPeriodLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Duration> strategy) {
-        ticketValidityPeriodLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,Duration> strategy) {
+        ticketValidityPeriodLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /**
-     * Get whether attributes should be resolved during the profile.
+     * Get whether attributes should be resolved during the profile (defaults to true).
      * 
-     * <p>
-     * Default is true
-     * </p>
+     * @param profileRequestContext current profile request context
      * 
      * @return true iff attributes should be resolved
-     * 
-     * @deprecated Use {@link #getResolveAttributesPredicate()} instead.
      */
-    @Deprecated
-    public boolean isResolveAttributes() {
-        return resolveAttributesPredicate.test(getProfileRequestContext());
+    public boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
+        return resolveAttributesPredicate.test(profileRequestContext);
     }
 
     /**
@@ -133,20 +131,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate =
-                flag ? Predicates.<ProfileRequestContext> alwaysTrue() : Predicates
-                        .<ProfileRequestContext> alwaysFalse();
-    }
-
-    /**
-     * Get a condition to determine whether attributes should be resolved during the profile.
-     * 
-     * @return condition
-     * 
-     * @since 3.3.0
-     */
-    @Nonnull public Predicate<ProfileRequestContext> getResolveAttributesPredicate() {
-        return resolveAttributesPredicate;
+        resolveAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
 
     /**

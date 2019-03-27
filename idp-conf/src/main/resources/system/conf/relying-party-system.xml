@@ -26,7 +26,6 @@
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"
-        p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:responderId="#{getObject('entityID')}"
         p:detailedErrorsPredicate="%{idp.errors.detailed:false}" />
 

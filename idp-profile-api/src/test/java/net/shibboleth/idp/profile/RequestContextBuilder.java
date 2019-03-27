@@ -403,7 +403,7 @@ public class RequestContextBuilder {
 
         final RelyingPartyConfiguration rpConfig = buildRelyingPartyConfiguration();
         rpCtx.setConfiguration(rpConfig);
-        rpCtx.setProfileConfig(selectProfileConfiguration(rpConfig.getProfileConfigurations()));
+        rpCtx.setProfileConfig(selectProfileConfiguration(rpConfig.getProfileConfigurations(profileRequestContext)));
 
         return rpCtx;
     }

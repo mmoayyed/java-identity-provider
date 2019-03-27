@@ -21,7 +21,6 @@ import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -54,11 +53,11 @@ public class AbstractProfileConfigurationTest {
     @Test
     public void testSecurityConfiguration() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertNotNull(config.getSecurityConfiguration());
+        Assert.assertNotNull(config.getSecurityConfiguration(null));
         
         SecurityConfiguration securityConfig = new SecurityConfiguration();
         config.setSecurityConfiguration(securityConfig);
-        Assert.assertSame(config.getSecurityConfiguration(), securityConfig);
+        Assert.assertSame(config.getSecurityConfiguration(null), securityConfig);
     }
 
     @Test
@@ -66,9 +65,8 @@ public class AbstractProfileConfigurationTest {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         config.setSecurityConfiguration(null);
         final SecurityConfiguration securityConfig = new SecurityConfiguration();
-        config.setSecurityConfigurationLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,SecurityConfiguration>constant(securityConfig));
-        Assert.assertSame(config.getSecurityConfiguration(), securityConfig);
+        config.setSecurityConfigurationLookupStrategy(FunctionSupport.constant(securityConfig));
+        Assert.assertSame(config.getSecurityConfiguration(null), securityConfig);
     }
 
     @Test
@@ -76,15 +74,15 @@ public class AbstractProfileConfigurationTest {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         final List<String> flows = Arrays.asList("foo", "bar");
         config.setInboundInterceptorFlows(flows);
-        Assert.assertEquals(config.getInboundInterceptorFlows(), flows);
+        Assert.assertEquals(config.getInboundInterceptorFlows(null), flows);
     }
 
     @Test
     public void testIndirectInboundFlows() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         final List<String> flows = Arrays.asList("foo", "bar");
-        config.setInboundFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,List<String>>constant(flows));
-        Assert.assertEquals(config.getInboundInterceptorFlows(), flows);
+        config.setInboundFlowsLookupStrategy(FunctionSupport.constant(flows));
+        Assert.assertEquals(config.getInboundInterceptorFlows(null), flows);
     }
 
     @Test
@@ -92,37 +90,37 @@ public class AbstractProfileConfigurationTest {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         final List<String> flows = Arrays.asList("foo", "bar");
         config.setOutboundInterceptorFlows(flows);
-        Assert.assertEquals(config.getOutboundInterceptorFlows(), flows);
+        Assert.assertEquals(config.getOutboundInterceptorFlows(null), flows);
     }
 
     @Test
     public void testIndirectOutboundFlows() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         final List<String> flows = Arrays.asList("foo", "bar");
-        config.setOutboundFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,List<String>>constant(flows));
-        Assert.assertEquals(config.getOutboundInterceptorFlows(), flows);
+        config.setOutboundFlowsLookupStrategy(FunctionSupport.constant(flows));
+        Assert.assertEquals(config.getOutboundInterceptorFlows(null), flows);
     }
 
     @Test
     public void testDisallowedFeatures() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertEquals(config.getDisallowedFeatures(), 0);
+        Assert.assertEquals(config.getDisallowedFeatures(null), 0);
 
         config.setDisallowedFeatures(0x1 | 0x4);
-        Assert.assertTrue(config.isFeatureDisallowed(0x1));
-        Assert.assertFalse(config.isFeatureDisallowed(0x2));
-        Assert.assertTrue(config.isFeatureDisallowed(0x4));
+        Assert.assertTrue(config.isFeatureDisallowed(null, 0x1));
+        Assert.assertFalse(config.isFeatureDisallowed(null, 0x2));
+        Assert.assertTrue(config.isFeatureDisallowed(null, 0x4));
     }
 
     @Test
     public void testIndirectDisallowedFeatures() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertEquals(config.getDisallowedFeatures(), 0);
+        Assert.assertEquals(config.getDisallowedFeatures(null), 0);
 
-        config.setDisallowedFeaturesLookupStrategy(FunctionSupport.<ProfileRequestContext,Integer>constant(0x1 | 0x4));
-        Assert.assertTrue(config.isFeatureDisallowed(0x1));
-        Assert.assertFalse(config.isFeatureDisallowed(0x2));
-        Assert.assertTrue(config.isFeatureDisallowed(0x4));
+        config.setDisallowedFeaturesLookupStrategy(FunctionSupport.constant(0x1 | 0x4));
+        Assert.assertTrue(config.isFeatureDisallowed(null, 0x1));
+        Assert.assertFalse(config.isFeatureDisallowed(null, 0x2));
+        Assert.assertTrue(config.isFeatureDisallowed(null, 0x4));
     }
 
 }

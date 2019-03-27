@@ -22,6 +22,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -38,9 +40,12 @@ public interface ProfileConfiguration extends IdentifiedComponent {
      * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
      * prefix common to all interceptor flows.</p>
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  a set of interceptor flow IDs to enable
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getInboundInterceptorFlows();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getInboundInterceptorFlows(
+            @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get an ordered list of interceptor flows to run for this profile before a final outbound
@@ -50,15 +55,21 @@ public interface ProfileConfiguration extends IdentifiedComponent {
      * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
      * prefix common to all interceptor flows.</p>
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  a set of interceptor flow IDs to enable
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getOutboundInterceptorFlows();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getOutboundInterceptorFlows(
+            @Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get the {@link SecurityConfiguration} to use with this profile.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return security configuration to use with this profile
      */
-    @Nullable SecurityConfiguration getSecurityConfiguration();
+    @Nullable SecurityConfiguration getSecurityConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext);
     
 }

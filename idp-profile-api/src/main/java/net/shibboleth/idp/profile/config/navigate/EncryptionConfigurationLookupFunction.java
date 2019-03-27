@@ -61,8 +61,11 @@ public class EncryptionConfigurationLookupFunction
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc.getSecurityConfiguration() != null) {
-                configs.add(pc.getSecurityConfiguration().getEncryptionConfiguration());
+            if (pc != null) {
+                final SecurityConfiguration sc = pc.getSecurityConfiguration(input);
+                if (sc != null) {
+                    configs.add(sc.getEncryptionConfiguration());
+                }
             }
         }
         

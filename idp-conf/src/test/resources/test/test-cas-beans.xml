@@ -28,6 +28,7 @@
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>classpath:/test/test-relying-party-cas.xml</value>
         <value>classpath:/system/conf/relying-party-system.xml</value>
+        <value>classpath:/system/conf/relying-party-mddriven.xml</value>
         <value>classpath:/conf/credentials.xml</value>
     </util:list>
 

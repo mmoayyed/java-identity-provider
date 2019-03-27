@@ -196,7 +196,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), prc.getSubcontext(RelyingPartyContext.class)
-                .getConfiguration().getResponderId());
+                .getConfiguration().getResponderId(prc));
     }
 
     @Test public void testScopeValued() throws Exception {
@@ -216,6 +216,6 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         Assert.assertEquals(outputNameId.getValue(), NAME_1 + '@' + QUALIFIER);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), prc.getSubcontext(RelyingPartyContext.class)
-                .getConfiguration().getResponderId());
+                .getConfiguration().getResponderId(prc));
     }
 }

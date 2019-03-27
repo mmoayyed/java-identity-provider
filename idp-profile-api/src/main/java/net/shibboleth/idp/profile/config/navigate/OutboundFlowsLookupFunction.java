@@ -31,8 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * A function that returns {@link ProfileConfiguration#getOutboundInterceptorFlows()} if such a profile is
  * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
@@ -50,7 +48,7 @@ public class OutboundFlowsLookupFunction extends AbstractRelyingPartyLookupFunct
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null) {
-                return ImmutableList.<String>copyOf(pc.getOutboundInterceptorFlows());
+                return pc.getOutboundInterceptorFlows(input);
             }
         }
         

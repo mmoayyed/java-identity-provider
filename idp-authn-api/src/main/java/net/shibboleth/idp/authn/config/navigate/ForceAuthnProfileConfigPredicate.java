@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.logic;
+package net.shibboleth.idp.authn.config.navigate;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 
@@ -39,16 +40,8 @@ public class ForceAuthnProfileConfigPredicate extends AbstractRelyingPartyPredic
     public boolean test(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null) {
-            if (rpc.getProfileConfig()
-                    instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
-                return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getForceAuthnPredicate().test(input);
-            } else if (rpc.getProfileConfig()
-                    instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
-                return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getForceAuthnPredicate().test(input);
-            }
+        if (rpc != null && rpc.getProfileConfig() instanceof AuthenticationProfileConfiguration) {
+            return ((AuthenticationProfileConfiguration) rpc.getProfileConfig()).isForceAuthn(input);
         }
         
         return false;

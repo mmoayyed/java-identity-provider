@@ -25,7 +25,6 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,10 +51,10 @@ public class BrowserSSOProfileConfigurationTest {
     @Test
     public void testResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getResolveAttributesPredicate().test(null));
+        Assert.assertTrue(config.isResolveAttributes(null));
         
         config.setResolveAttributes(false);
-        Assert.assertFalse(config.getResolveAttributesPredicate().test(null));
+        Assert.assertFalse(config.isResolveAttributes(null));
     }
 
     @Test
@@ -63,16 +62,16 @@ public class BrowserSSOProfileConfigurationTest {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
         config.setResolveAttributesPredicate(Predicates.alwaysFalse());
-        Assert.assertFalse(config.getResolveAttributesPredicate().test(null));
+        Assert.assertFalse(config.isResolveAttributes(null));
     }
 
     @Test
     public void testIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getIncludeAttributeStatementPredicate().test(null));
+        Assert.assertTrue(config.isIncludeAttributeStatement(null));
 
         config.setIncludeAttributeStatement(false);
-        Assert.assertFalse(config.getIncludeAttributeStatementPredicate().test(null));
+        Assert.assertFalse(config.isIncludeAttributeStatement(null));
     }
 
     @Test
@@ -80,16 +79,16 @@ public class BrowserSSOProfileConfigurationTest {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
         config.setIncludeAttributeStatementPredicate(Predicates.alwaysFalse());
-        Assert.assertFalse(config.getIncludeAttributeStatementPredicate().test(null));
+        Assert.assertFalse(config.isIncludeAttributeStatement(null));
     }
 
     @Test
     public void testSkipEndpointValidationWhenSigned() {
         BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertFalse(config.getSkipEndpointValidationWhenSignedPredicate().test(null));
+        Assert.assertFalse(config.isSkipEndpointValidationWhenSigned(null));
 
         config.setSkipEndpointValidationWhenSigned(true);
-        Assert.assertTrue(config.getSkipEndpointValidationWhenSignedPredicate().test(null));
+        Assert.assertTrue(config.isSkipEndpointValidationWhenSigned(null));
     }
 
     @Test
@@ -97,16 +96,16 @@ public class BrowserSSOProfileConfigurationTest {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
         config.setSkipEndpointValidationWhenSignedPredicate(Predicates.alwaysTrue());
-        Assert.assertTrue(config.getSkipEndpointValidationWhenSignedPredicate().test(null));
+        Assert.assertTrue(config.isSkipEndpointValidationWhenSigned(null));
     }
     
     @Test
     public void testMaximumSPSessionLifeTime() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertNull(config.getMaximumSPSessionLifetime());
+        Assert.assertNull(config.getMaximumSPSessionLifetime(null));
 
         config.setMaximumSPSessionLifetime(Duration.ofSeconds(1));
-        Assert.assertEquals(config.getMaximumSPSessionLifetime(), Duration.ofSeconds(1));
+        Assert.assertEquals(config.getMaximumSPSessionLifetime(null), Duration.ofSeconds(1));
     }
     
     @Test
@@ -114,21 +113,20 @@ public class BrowserSSOProfileConfigurationTest {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
         config.setMaximumSPSessionLifetimeLookupStrategy(FunctionSupport.constant(Duration.ofSeconds(1)));
-        Assert.assertEquals(config.getMaximumSPSessionLifetime(), Duration.ofSeconds(1));
+        Assert.assertEquals(config.getMaximumSPSessionLifetime(null), Duration.ofSeconds(1));
     }
     
     @Test
     public void testAllowDelegation() {
-        // Note: testing the newer predicate variant
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertNotNull(config.getAllowDelegation());
+        Assert.assertFalse(config.isAllowDelegation(null));
         
         final Predicate<ProfileRequestContext> predicate = Predicates.alwaysTrue();
-        config.setAllowDelegation(predicate);
-        Assert.assertSame(config.getAllowDelegation(), predicate);
+        config.setAllowDelegationPredicate(predicate);
+        Assert.assertTrue(config.isAllowDelegation(null));
         
         try {
-            config.setAllowDelegation(null);
+            config.setAllowDelegationPredicate(null);
             Assert.fail("Null predicate should not have been allowed");
         } catch (ConstraintViolationException e) {
             // expected, do nothing 
@@ -138,18 +136,18 @@ public class BrowserSSOProfileConfigurationTest {
     @Test
     public void testMaximumTokenDelegationChainLength(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 1);
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(null), 1);
         
         config.setMaximumTokenDelegationChainLength(10);
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(null), 10);
     }
     
     @Test
     public void testIndirectMaximumTokenDelegationChainLength(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         
-        config.setMaximumTokenDelegationChainLengthLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(10L));
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
+        config.setMaximumTokenDelegationChainLengthLookupStrategy(FunctionSupport.constant(10L));
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(null), 10);
     }
 
     @Test
@@ -177,14 +175,14 @@ public class BrowserSSOProfileConfigurationTest {
     @Test
     public void testDefaultAuthenticationMethods() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getDefaultAuthenticationMethods().isEmpty());
+        Assert.assertTrue(config.getDefaultAuthenticationMethods(null).isEmpty());
 
         final List<AuthnContextClassRefPrincipal> principals = new ArrayList<>();
         principals.add(new AuthnContextClassRefPrincipal("foo"));
         principals.add(new AuthnContextClassRefPrincipal("bar"));
 
         config.setDefaultAuthenticationMethods(principals);
-        Assert.assertEquals(config.getDefaultAuthenticationMethods(), principals);
+        Assert.assertEquals(config.getDefaultAuthenticationMethods(null), principals);
     }
 
     @Test
@@ -195,22 +193,21 @@ public class BrowserSSOProfileConfigurationTest {
         principals.add(new AuthnContextClassRefPrincipal("foo"));
         principals.add(new AuthnContextClassRefPrincipal("bar"));
 
-        config.setDefaultAuthenticationMethodsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>constant(principals));
-        Assert.assertEquals(config.getDefaultAuthenticationMethods(), principals);
+        config.setDefaultAuthenticationMethodsLookupStrategy(FunctionSupport.constant(principals));
+        Assert.assertEquals(config.getDefaultAuthenticationMethods(null), principals);
     }
 
     @Test
     public void testAuthenticationFlows() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getAuthenticationFlows().isEmpty());
+        Assert.assertTrue(config.getAuthenticationFlows(null).isEmpty());
 
         final Set<String> flows = new HashSet<>();
         flows.add("foo");
         flows.add("bar");
 
         config.setAuthenticationFlows(flows);
-        Assert.assertEquals(config.getAuthenticationFlows(), flows);
+        Assert.assertEquals(config.getAuthenticationFlows(null), flows);
     }
 
     @Test
@@ -221,22 +218,21 @@ public class BrowserSSOProfileConfigurationTest {
         flows.add("foo");
         flows.add("bar");
 
-        config.setAuthenticationFlowsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Set<String>>constant(flows));
-        Assert.assertEquals(config.getAuthenticationFlows(), flows);
+        config.setAuthenticationFlowsLookupStrategy(FunctionSupport.constant(flows));
+        Assert.assertEquals(config.getAuthenticationFlows(null), flows);
     }
 
     @Test
     public void testPostAuthenticationFlows() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getPostAuthenticationFlows().isEmpty());
+        Assert.assertTrue(config.getPostAuthenticationFlows(null).isEmpty());
 
         final List<String> flows = new ArrayList<>();
         flows.add("foo");
         flows.add("bar");
 
         config.setPostAuthenticationFlows(flows);
-        Assert.assertEquals(config.getPostAuthenticationFlows(), flows);
+        Assert.assertEquals(config.getPostAuthenticationFlows(null), flows);
     }
 
     @Test
@@ -247,22 +243,21 @@ public class BrowserSSOProfileConfigurationTest {
         flows.add("foo");
         flows.add("bar");
 
-        config.setPostAuthenticationFlowsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(flows));
-        Assert.assertEquals(config.getPostAuthenticationFlows(), flows);
+        config.setPostAuthenticationFlowsLookupStrategy(FunctionSupport.constant(flows));
+        Assert.assertEquals(config.getPostAuthenticationFlows(null), flows);
     }
 
     @Test
     public void testNameIDFormatPrecedence() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertTrue(config.getNameIDFormatPrecedence().isEmpty());
+        Assert.assertTrue(config.getNameIDFormatPrecedence(null).isEmpty());
 
         final List<String> formats = new ArrayList<>();
         formats.add("foo");
         formats.add("bar");
 
         config.setNameIDFormatPrecedence(formats);
-        Assert.assertEquals(config.getNameIDFormatPrecedence(), formats);
+        Assert.assertEquals(config.getNameIDFormatPrecedence(null), formats);
     }
 
     @Test
@@ -273,9 +268,8 @@ public class BrowserSSOProfileConfigurationTest {
         formats.add("foo");
         formats.add("bar");
 
-        config.setNameIDFormatPrecedenceLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(formats));
-        Assert.assertEquals(config.getNameIDFormatPrecedence(), formats);
+        config.setNameIDFormatPrecedenceLookupStrategy(FunctionSupport.constant(formats));
+        Assert.assertEquals(config.getNameIDFormatPrecedence(null), formats);
     }
     
     @Test
@@ -283,15 +277,15 @@ public class BrowserSSOProfileConfigurationTest {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         
         config.setSignArtifactRequests(Predicates.<MessageContext>alwaysTrue());
-        Assert.assertSame(config.getSignArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+        Assert.assertSame(config.getSignArtifactRequests(), Predicates.alwaysTrue());
     }
      
     @Test
     public void testClientTLSArtifactRequests() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         
-        config.setClientTLSArtifactRequests(Predicates.<MessageContext>alwaysTrue());
-        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+        config.setClientTLSArtifactRequests(Predicates.alwaysTrue());
+        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.alwaysTrue());
     }
      
 

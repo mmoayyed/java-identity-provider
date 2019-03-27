@@ -34,7 +34,6 @@ import org.testng.annotations.Test;
 /** Unit test for {@link RelyingPartyConfiguration}. */
 public class RelyingPartyConfigurationTest {
 
-    @SuppressWarnings("deprecation")
     @Test public void testConstruction() throws ComponentInitializationException {
         RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");
@@ -42,10 +41,9 @@ public class RelyingPartyConfigurationTest {
         config.setDetailedErrorsPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
         config.initialize();
         Assert.assertEquals(config.getId(), "foo");
-        Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
-        Assert.assertTrue(config.isDetailedErrors());
-        Assert.assertTrue(config.getDetailedErrorsPredicate().test(null));
-        Assert.assertTrue(config.getProfileConfigurations().isEmpty());
+        Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
+        Assert.assertTrue(config.isDetailedErrors(null));
+        Assert.assertTrue(config.getProfileConfigurations(null).isEmpty());
 
         config = new RelyingPartyConfiguration();
         config.setId("foo");
@@ -53,10 +51,9 @@ public class RelyingPartyConfigurationTest {
         config.setDetailedErrorsPredicate(Predicates.<ProfileRequestContext>alwaysFalse());
         config.initialize();
         Assert.assertEquals(config.getId(), "foo");
-        Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
-        Assert.assertFalse(config.isDetailedErrors());
-        Assert.assertFalse(config.getDetailedErrorsPredicate().test(null));
-        Assert.assertTrue(config.getProfileConfigurations().isEmpty());
+        Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
+        Assert.assertFalse(config.isDetailedErrors(null));
+        Assert.assertTrue(config.getProfileConfigurations(null).isEmpty());
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
         profileConfigs.add(new MockProfileConfiguration("foo"));
@@ -69,8 +66,8 @@ public class RelyingPartyConfigurationTest {
         config.setProfileConfigurations(profileConfigs);
         config.initialize();
         Assert.assertEquals(config.getId(), "foo");
-        Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
-        Assert.assertEquals(config.getProfileConfigurations().size(), 2);
+        Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
+        Assert.assertEquals(config.getProfileConfigurations(null).size(), 2);
 
         try {
             config = new RelyingPartyConfiguration();
@@ -101,9 +98,9 @@ public class RelyingPartyConfigurationTest {
         config.setProfileConfigurations(profileConfigs);
         config.initialize();
         
-        Assert.assertNotNull(config.getProfileConfiguration("foo"));
-        Assert.assertNotNull(config.getProfileConfiguration("bar"));
-        Assert.assertNull(config.getProfileConfiguration("baz"));
+        Assert.assertNotNull(config.getProfileConfiguration(null, "foo"));
+        Assert.assertNotNull(config.getProfileConfiguration(null, "bar"));
+        Assert.assertNull(config.getProfileConfiguration(null, "baz"));
     }
 
     @Test public void testIndirectProfileConfiguration() throws ComponentInitializationException {
@@ -114,40 +111,38 @@ public class RelyingPartyConfigurationTest {
         RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
-        config.setProfileConfigurationsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Map<String,ProfileConfiguration>>constant(profileConfigs));
+        config.setProfileConfigurationsLookupStrategy(FunctionSupport.constant(profileConfigs));
         config.initialize();
         
-        Assert.assertNotNull(config.getProfileConfiguration("foo"));
-        Assert.assertNotNull(config.getProfileConfiguration("bar"));
-        Assert.assertNull(config.getProfileConfiguration("baz"));
+        Assert.assertNotNull(config.getProfileConfiguration(null, "foo"));
+        Assert.assertNotNull(config.getProfileConfiguration(null, "bar"));
+        Assert.assertNull(config.getProfileConfiguration(null, "baz"));
         
         config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setProfileConfigurations(profileConfigs.values());
-        config.setProfileConfigurationsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Map<String,ProfileConfiguration>>constant(null));
+        config.setProfileConfigurationsLookupStrategy(FunctionSupport.constant(null));
         config.initialize();
         
-        Assert.assertNotNull(config.getProfileConfiguration("foo"));
-        Assert.assertNotNull(config.getProfileConfiguration("bar"));
-        Assert.assertNull(config.getProfileConfiguration("baz"));
+        Assert.assertNotNull(config.getProfileConfiguration(null, "foo"));
+        Assert.assertNotNull(config.getProfileConfiguration(null, "bar"));
+        Assert.assertNull(config.getProfileConfiguration(null, "baz"));
     }
 
     @Test public void testIndirectResponderId() throws ComponentInitializationException {
         RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");
-        config.setResponderIdLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("http://idp.example.org"));
+        config.setResponderIdLookupStrategy(FunctionSupport.constant("http://idp.example.org"));
         config.initialize();
-        Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
+        Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
 
         config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
-        config.setResponderIdLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant(null));
+        config.setResponderIdLookupStrategy(FunctionSupport.constant(null));
         config.initialize();
-        Assert.assertEquals(config.getResponderId(), "http://idp.example.org");
+        Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
     }
 
 }

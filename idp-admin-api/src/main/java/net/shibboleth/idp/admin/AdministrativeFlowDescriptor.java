@@ -19,6 +19,7 @@ package net.shibboleth.idp.admin;
 
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
@@ -47,16 +48,20 @@ public interface AdministrativeFlowDescriptor extends FlowDescriptor, Authentica
     /**
      * Get whether this flow supports non-browser clients (default is true).
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return whether this flow supports non-browser clients
      */
-    boolean isNonBrowserSupported();
+    boolean isNonBrowserSupported(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get whether user authentication is required (default is false).
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return whether user authentication is required
      */
-    boolean isAuthenticated();
+    boolean isAuthenticated(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get the user interface details for this profile.
@@ -68,15 +73,19 @@ public interface AdministrativeFlowDescriptor extends FlowDescriptor, Authentica
     /**
      * Get the access control policy for this flow.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return name of access control policy
      */
-    @Nullable String getPolicyName();
+    @Nullable String getPolicyName(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get whether to resolve attributes during the profile (default is false).
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return whether to resolve attributes during the profile
      */
-    boolean resolveAttributes();
+    boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext);
 
 }

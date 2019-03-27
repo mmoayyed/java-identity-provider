@@ -20,7 +20,7 @@
        | Always resolve attributes for /samlValidate protocol endpoint.
        -->
     <decision-state id="CheckResolveAttributes">
-        <if test="ValidateConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+        <if test="ValidateConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes(opensamlProfileRequestContext)"
             then="ResolveAttributes"
             else="ResolveAttributes" />
     </decision-state>

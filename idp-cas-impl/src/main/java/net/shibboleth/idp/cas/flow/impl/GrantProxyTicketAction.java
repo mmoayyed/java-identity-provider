@@ -31,10 +31,12 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -61,19 +63,16 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
 
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ProxyConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(ProxyConfiguration.class);
+    @Nonnull private final ConfigLookupFunction<ProxyConfiguration> configLookupFunction;
 
     /** Manages CAS tickets. */
-    @Nonnull
-    private final TicketServiceEx casTicketService;
+    @Nonnull private final TicketServiceEx casTicketService;
 
     /** Looks up IdP sessions. */
-    @Nonnull
-    private final SessionResolver sessionResolver;
+    @Nonnull private final SessionResolver sessionResolver;
 
     /** Whether to resolve and validate IdP session as part of granting a proxy ticket. */
-    private Predicate<ProfileRequestContext> validateIdPSessionPredicate = Predicates.alwaysFalse();
+    @Nonnull private Predicate<ProfileRequestContext> validateIdPSessionPredicate;
 
 
     /**
@@ -86,6 +85,9 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             @Nonnull final TicketServiceEx ticketService, @Nonnull final SessionResolver resolver) {
         casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
+        
+        validateIdPSessionPredicate = Predicates.alwaysFalse();
+        configLookupFunction = new ConfigLookupFunction<>(ProxyConfiguration.class);
     }
 
     /**
@@ -99,7 +101,9 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      * @param predicate Session validation predicate. Default is <code>Predicates.alwaysFalse()</code>.
      */
     public void setValidateIdPSessionPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        validateIdPSessionPredicate = predicate;
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        validateIdPSessionPredicate = Constraint.isNotNull(predicate, "Session validation condition cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -118,7 +122,9 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             log.warn("Proxy ticket configuration undefined");
             return ProtocolError.IllegalState.event(this);
         }
-        if (config.getSecurityConfiguration() == null || config.getSecurityConfiguration().getIdGenerator() == null) {
+        
+        final SecurityConfiguration securityConfiguration = config.getSecurityConfiguration(profileRequestContext);
+        if (securityConfiguration == null || securityConfiguration.getIdGenerator() == null) {
             log.warn("Invalid proxy ticket configuration: SecurityConfiguration#idGenerator undefined");
             return ProtocolError.IllegalState.event(this);
         }
@@ -150,8 +156,8 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         try {
             log.debug("Granting proxy ticket for {}", request.getTargetService());
             pt = casTicketService.createProxyTicket(
-                    config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(config.getTicketValidityPeriod()),
+                    securityConfiguration.getIdGenerator().generateIdentifier(),
+                    Instant.now().plus(config.getTicketValidityPeriod(profileRequestContext)),
                     pgt,
                     request.getTargetService());
         } catch (final RuntimeException e) {

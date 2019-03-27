@@ -53,7 +53,7 @@ public class BuildAuthenticationContextAction extends
         if (!ac.isForceAuthn()) {
             final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
             if (config != null) {
-                ac.setForceAuthn(config.getForceAuthnPredicate().test(profileRequestContext));
+                ac.setForceAuthn(config.isForceAuthn(profileRequestContext));
             }
         }
         

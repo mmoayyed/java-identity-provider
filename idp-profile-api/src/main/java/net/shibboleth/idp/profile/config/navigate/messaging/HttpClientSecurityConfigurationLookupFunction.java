@@ -62,8 +62,12 @@ public class HttpClientSecurityConfigurationLookupFunction
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc.getSecurityConfiguration() != null) {
-                configs.add(pc.getSecurityConfiguration().getHttpClientSecurityConfiguration());
+            if (pc != null) {
+                final SecurityConfiguration sc =
+                        pc.getSecurityConfiguration(this.getProfileRequestContextLookupStrategy().apply(input));
+                if (sc != null) {
+                    configs.add(sc.getHttpClientSecurityConfiguration());
+                }
             }
             
             // Check for a per-profile default (relying party independent) config.

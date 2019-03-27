@@ -42,7 +42,9 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 /**
  * Validates the proxy callback URL provided in the service ticket validation request and creates a PGT when
@@ -61,19 +63,16 @@ public class ValidateProxyCallbackAction
     extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateProxyCallbackAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateProxyCallbackAction.class);
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(ValidateConfiguration.class);
+    @Nonnull private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction;
 
     /** Validates the proxy callback endpoint. */
-    @Nonnull
-    private final ProxyValidator proxyValidator;
+    @Nonnull private final ProxyValidator proxyValidator;
 
     /** Manages CAS tickets. */
-    @Nonnull
-    private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketServiceEx ticketServiceEx;
 
 
     /**
@@ -87,10 +86,12 @@ public class ValidateProxyCallbackAction
             @Nonnull final TicketServiceEx ticketService) {
         proxyValidator = Constraint.isNotNull(validator, "ProxyValidator cannot be null");
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+        
+        configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
 
-    @Nonnull
     @Override
+    @Nonnull
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
@@ -102,16 +103,20 @@ public class ValidateProxyCallbackAction
         if (config == null) {
             throw new IllegalStateException("Proxy-granting ticket configuration undefined");
         }
-        if (config.getSecurityConfiguration() == null || config.getSecurityConfiguration().getIdGenerator() == null) {
+        
+        final SecurityConfiguration securityConfiguration = config.getSecurityConfiguration(profileRequestContext);
+        if (securityConfiguration == null || securityConfiguration.getIdGenerator() == null) {
             throw new IllegalStateException(
                     "Invalid proxy-granting ticket configuration: SecurityConfiguration#idGenerator undefined");
         }
-        if (config.getPGTIOUGenerator() == null) {
+        
+        final IdentifierGenerationStrategy pgtGenerator = config.getPGTIOUGenerator(profileRequestContext);
+        if (pgtGenerator == null) {
             throw new IllegalStateException("Invalid proxy-granting ticket configuration: PGTIOUGenerator undefined");
         }
         final ProxyIdentifiers proxyIds = new ProxyIdentifiers(
-                config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
-                config.getPGTIOUGenerator().generateIdentifier());
+                securityConfiguration.getIdGenerator().generateIdentifier(),
+                pgtGenerator.generateIdentifier());
         final URI proxyCallbackUri;
         try {
             proxyCallbackUri = new URIBuilder(request.getPgtUrl())
@@ -124,7 +129,7 @@ public class ValidateProxyCallbackAction
         try {
             log.debug("Attempting proxy authentication to {}", proxyCallbackUri);
             proxyValidator.validate(profileRequestContext, proxyCallbackUri);
-            final Instant expiration = Instant.now().plus(config.getTicketValidityPeriod());
+            final Instant expiration = Instant.now().plus(config.getTicketValidityPeriod(profileRequestContext));
             if (ticket instanceof ServiceTicket) {
                 ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
             } else {

@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -28,14 +27,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
 
-import com.google.common.collect.ImmutableList;
-
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -44,6 +44,9 @@ import org.slf4j.LoggerFactory;
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration extends AbstractIdentifiableInitializableComponent
         implements ProfileConfiguration {
+    
+    /** Default value for disallowedFeatures property. */
+    @Nonnull public static final Integer DEFAULT_DISALLOWED_FEATURES = 0; 
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileConfiguration.class);
@@ -52,28 +55,16 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     @Nullable private ServletRequest servletRequest;
 
     /** Lookup function to supply {@link #inboundFlows} property. */
-    @Nullable private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
-
-    /** Enables inbound interceptor flows. */
-    @Nonnull @NonnullElements private List<String> inboundFlows;
+    @Nonnull private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
 
     /** Lookup function to supply {@link #outboundFlows} property. */
-    @Nullable private Function<ProfileRequestContext,List<String>> outboundFlowsLookupStrategy;
-
-    /** Enables outbound interceptor flows. */
-    @Nonnull @NonnullElements private List<String> outboundFlows;
+    @Nonnull private Function<ProfileRequestContext,List<String>> outboundFlowsLookupStrategy;
 
     /** Lookup function to supply {@link #securityConfiguration} property. */
-    @Nullable private Function<ProfileRequestContext,SecurityConfiguration> securityConfigurationLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SecurityConfiguration> securityConfigurationLookupStrategy;
 
-    /** The security configuration for this profile. */
-    @Nullable private SecurityConfiguration securityConfiguration;
-    
     /** Lookup function to return a bitmask of request features to disallow. */
-    @Nullable private Function<ProfileRequestContext,Integer> disallowedFeaturesLookupStrategy;
-    
-    /** Bitmask of request features to disallow. */
-    private int disallowedFeatures;
+    @Nonnull private Function<ProfileRequestContext,Integer> disallowedFeaturesLookupStrategy;
 
     /**
      * Constructor.
@@ -82,8 +73,10 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      */
     public AbstractProfileConfiguration(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
         setId(id);
-        inboundFlows = Collections.emptyList();
-        outboundFlows = Collections.emptyList();
+        securityConfigurationLookupStrategy = FunctionSupport.constant(null);
+        inboundFlowsLookupStrategy = FunctionSupport.constant(null);
+        outboundFlowsLookupStrategy = FunctionSupport.constant(null);
+        disallowedFeaturesLookupStrategy = FunctionSupport.constant(DEFAULT_DISALLOWED_FEATURES);
     }
 
     /**
@@ -100,9 +93,9 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public SecurityConfiguration getSecurityConfiguration() {
-        return getIndirectProperty(securityConfigurationLookupStrategy, securityConfiguration);
+    @Nullable public SecurityConfiguration getSecurityConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return securityConfigurationLookupStrategy.apply(profileRequestContext);
     }
 
     /**
@@ -111,7 +104,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * @param configuration security configuration for this profile
      */
     public void setSecurityConfiguration(@Nullable final SecurityConfiguration configuration) {
-        securityConfiguration = configuration;
+        securityConfigurationLookupStrategy = FunctionSupport.constant(configuration);
     }
 
     /**
@@ -122,14 +115,14 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * @since 3.3.0
      */
     public void setSecurityConfigurationLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SecurityConfiguration> strategy) {
-        securityConfigurationLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,SecurityConfiguration> strategy) {
+        securityConfigurationLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows() {
-        return ImmutableList.copyOf(getIndirectProperty(inboundFlowsLookupStrategy, inboundFlows));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
+        @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableList(inboundFlowsLookupStrategy.apply(profileRequestContext));
     }
 
     /**
@@ -139,9 +132,10 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      */
     public void setInboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
-            inboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+            inboundFlowsLookupStrategy =
+                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
         } else {
-            inboundFlows = Collections.emptyList();
+            inboundFlowsLookupStrategy = FunctionSupport.constant(null);
         }
     }
 
@@ -152,14 +146,15 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * 
      * @since 3.3.0
      */
-    public void setInboundFlowsLookupStrategy(@Nullable final Function<ProfileRequestContext,List<String>> strategy) {
-        inboundFlowsLookupStrategy = strategy;
+    public void setInboundFlowsLookupStrategy(@Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
+        inboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
+
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows() {
-        return ImmutableList.copyOf(getIndirectProperty(outboundFlowsLookupStrategy, outboundFlows));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableList(outboundFlowsLookupStrategy.apply(profileRequestContext));
     }
 
     /**
@@ -169,9 +164,10 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      */
     public void setOutboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
-            outboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+            outboundFlowsLookupStrategy =
+                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
         } else {
-            outboundFlows = Collections.emptyList();
+            outboundFlowsLookupStrategy = FunctionSupport.constant(null);
         }
     }
 
@@ -182,21 +178,22 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * 
      * @since 3.3.0
      */
-    public void setOutboundFlowsLookupStrategy(@Nullable final Function<ProfileRequestContext,List<String>> strategy) {
-        outboundFlowsLookupStrategy = strategy;
+    public void setOutboundFlowsLookupStrategy(@Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
+        outboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /**
      * Return true iff the input feature constant is disallowed.
      * 
+     * @param profileRequestContext current profile request context
      * @param feature a bit constant
      * 
      * @return true iff the input feature constant is disallowed
      * 
      * @since 3.3.0
      */
-    public boolean isFeatureDisallowed(final int feature) {
-        return (getDisallowedFeatures() & feature) == feature;
+    public boolean isFeatureDisallowed(@Nullable final ProfileRequestContext profileRequestContext, final int feature) {
+        return (getDisallowedFeatures(profileRequestContext) & feature) == feature;
     }
     
     /**
@@ -204,12 +201,15 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * 
      * <p>Individual profiles define their own feature constants.</p>
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return bitmask of features to block
      * 
      * @since 3.3.0
      */
-    public int getDisallowedFeatures() {
-        return getIndirectProperty(disallowedFeaturesLookupStrategy, disallowedFeatures);
+    public int getDisallowedFeatures(@Nullable final ProfileRequestContext profileRequestContext) {
+        final Integer mask = disallowedFeaturesLookupStrategy.apply(profileRequestContext); 
+        return mask != null ? mask : DEFAULT_DISALLOWED_FEATURES;
     }
     
     /**
@@ -220,7 +220,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * @since 3.3.0
      */
     public void setDisallowedFeatures(final int mask) {
-        disallowedFeatures = mask;
+        disallowedFeaturesLookupStrategy = FunctionSupport.constant(mask);
     }
     
     /**
@@ -230,8 +230,8 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * 
      * @since 3.3.0
      */
-    public void setDisallowedFeaturesLookupStrategy(@Nullable final Function<ProfileRequestContext,Integer> strategy) {
-        disallowedFeaturesLookupStrategy = strategy;
+    public void setDisallowedFeaturesLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
+        disallowedFeaturesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -266,6 +266,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * 
      * @since 3.3.0
      */
+    @Deprecated
     @Nullable protected ProfileRequestContext getProfileRequestContext() {
         if (servletRequest != null) {
             final Object object = servletRequest.getAttribute(ProfileRequestContext.BINDING_KEY);
@@ -291,6 +292,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * 
      * @since 3.3.0
      */
+    @Deprecated
     @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
             @Nullable final T staticValue) {
 

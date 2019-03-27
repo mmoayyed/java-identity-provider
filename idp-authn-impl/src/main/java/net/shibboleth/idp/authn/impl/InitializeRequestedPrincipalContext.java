@@ -146,8 +146,9 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final List<Principal> principals = authenticationProfileConfig.getDefaultAuthenticationMethods();
-        if (authenticationProfileConfig.getDefaultAuthenticationMethods().isEmpty()) {
+        final List<Principal> principals =
+                authenticationProfileConfig.getDefaultAuthenticationMethods(profileRequestContext);
+        if (principals.isEmpty()) {
             log.debug("{} Profile configuration did not supply any default authentication methods", getLogPrefix());
             return;
         }

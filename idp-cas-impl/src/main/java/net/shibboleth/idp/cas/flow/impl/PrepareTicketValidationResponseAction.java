@@ -85,13 +85,14 @@ public class PrepareTicketValidationResponseAction extends
         }
 
         final String principal;
-        if (validateConfiguration.getUserAttribute() != null) {
-            log.debug("Using {} for CAS username", validateConfiguration.getUserAttribute());
-            final IdPAttribute attribute = ac.getIdPAttributes().get(validateConfiguration.getUserAttribute());
+        final String userAttributeName = validateConfiguration.getUserAttribute(profileRequestContext);
+        if (userAttributeName != null) {
+            log.debug("Using {} for CAS username", userAttributeName);
+            final IdPAttribute attribute = ac.getIdPAttributes().get(userAttributeName);
             if (attribute != null && !attribute.getValues().isEmpty()) {
                 principal = attribute.getValues().get(0).getValue().toString();
             } else {
-                log.debug("Filtered attribute {} has no value", validateConfiguration.getUserAttribute());
+                log.debug("Filtered attribute {} has no value", userAttributeName);
                 principal = null;
             }
         } else {

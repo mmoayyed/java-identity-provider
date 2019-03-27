@@ -34,6 +34,7 @@ import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -59,28 +60,19 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     @Nonnull private final Logger log = LoggerFactory.getLogger(GrantServiceTicketAction.class);
 
     /** Profile configuration lookup function. */
-    @Nonnull private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(LoginConfiguration.class);
+    @Nonnull private final ConfigLookupFunction<LoginConfiguration> configLookupFunction;
 
     /** Looks up an IdP session context from IdP profile request context. */
-    @Nonnull
-    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction =
-            new ChildContextLookup<>(SessionContext.class);
+    @Nonnull private final Function<ProfileRequestContext, SessionContext> sessionContextFunction;
 
     /** AuthenticationContext lookup function. */
-    @Nonnull
-    private final Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupFunction =
-            new ChildContextLookup<>(AuthenticationContext.class);
+    @Nonnull private final Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupFunction;
 
     /** Function to retrieve subject principal name. */
-    @Nonnull
-    private final Function<ProfileRequestContext, String> principalLookupFunction =
-            new SubjectContextPrincipalLookupFunction().compose(
-                    new ChildContextLookup<>(SubjectContext.class));
+    @Nonnull private final Function<ProfileRequestContext, String> principalLookupFunction;
 
     /** Manages CAS tickets. */
-    @Nonnull
-    private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketServiceEx ticketServiceEx;
 
 
     /**
@@ -90,6 +82,12 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      */
     public GrantServiceTicketAction(@Nonnull final TicketServiceEx ticketService) {
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+        
+        configLookupFunction = new ConfigLookupFunction<>(LoginConfiguration.class);
+        sessionContextFunction = new ChildContextLookup<>(SessionContext.class);
+        authnCtxLookupFunction = new ChildContextLookup<>(AuthenticationContext.class);
+        principalLookupFunction = new SubjectContextPrincipalLookupFunction().compose(
+                new ChildContextLookup<>(SubjectContext.class));
     }
 
     /** {@inheritDoc} */
@@ -105,7 +103,9 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         if (config == null) {
             throw new IllegalStateException("Service ticket configuration undefined");
         }
-        if (config.getSecurityConfiguration() == null || config.getSecurityConfiguration().getIdGenerator() == null) {
+        
+        final SecurityConfiguration securityConfiguration = config.getSecurityConfiguration(profileRequestContext);
+        if (securityConfiguration == null || securityConfiguration == null) {
             throw new IllegalStateException(
                     "Invalid service ticket configuration: SecurityConfiguration#idGenerator undefined");
         }
@@ -125,8 +125,8 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     authnResult.getAuthenticationInstant(),
                     authnResult.getAuthenticationFlowId());
             ticket = ticketServiceEx.createServiceTicket(
-                    config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(config.getTicketValidityPeriod()),
+                    securityConfiguration.getIdGenerator().generateIdentifier(),
+                    Instant.now().plus(config.getTicketValidityPeriod(profileRequestContext)),
                     request.getService(),
                     state,
                     request.isRenew());

@@ -341,7 +341,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
             final BrowserSSOProfileConfiguration config = 
                     (BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig();
-            delegationAllowed = config.getAllowDelegation().test(profileRequestContext);
+            delegationAllowed = config.isAllowDelegation(profileRequestContext);
         } else {
             log.debug("ProfileConfiguration does not support delegation: {}", 
                     relyingPartyContext.getProfileConfig().getClass().getName());
@@ -349,7 +349,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         }
         
         // This is @Nonnull
-        responderId = relyingPartyContext.getConfiguration().getResponderId();
+        responderId = relyingPartyContext.getConfiguration().getResponderId(profileRequestContext);
         
         return true;
     }

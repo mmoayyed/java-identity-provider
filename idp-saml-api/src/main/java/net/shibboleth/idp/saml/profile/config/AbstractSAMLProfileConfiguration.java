@@ -93,9 +93,10 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
+            @Nullable final ProfileRequestContext profileRequestContext) {
         
-        final List<String> flows = super.getInboundInterceptorFlows();
+        final List<String> flows = super.getInboundInterceptorFlows(profileRequestContext);
         if (flows.isEmpty()) {
             log.warn("Inbound interceptor collection is empty, this disables default inbound message security checks");
         }

@@ -52,7 +52,7 @@ public class AuthenticationFlowsLookupFunction extends AbstractRelyingPartyLooku
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof AuthenticationProfileConfiguration) {
                 return ImmutableList.<String>copyOf(
-                        ((AuthenticationProfileConfiguration) pc).getAuthenticationFlows());
+                        ((AuthenticationProfileConfiguration) pc).getAuthenticationFlows(input));
             }
         }
         

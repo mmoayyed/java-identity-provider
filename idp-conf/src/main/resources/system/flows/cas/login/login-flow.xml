@@ -83,7 +83,7 @@
     </subflow-state>
 
     <decision-state id="CheckResolveAttributes">
-        <if test="LoginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+        <if test="LoginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes(opensamlProfileRequestContext)"
             then="CheckForSubjectContext"
             else="GrantServiceTicket" />
     </decision-state>

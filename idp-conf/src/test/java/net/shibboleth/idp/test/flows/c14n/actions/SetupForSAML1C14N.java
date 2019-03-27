@@ -119,7 +119,7 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true);
         scc.setSubject(sub);
         scc.setRequesterId(rpc.getRelyingPartyId());
-        scc.setResponderId(rpc.getConfiguration().getResponderId());
+        scc.setResponderId(rpc.getConfiguration().getResponderId(profileRequestContext));
     }
     
 }

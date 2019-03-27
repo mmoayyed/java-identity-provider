@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.criterion.ProfileRequestContextCriterion;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
@@ -55,6 +56,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
  * <p>
  * One of the following input criteria is required for resolution based on relying party entityID:
  * <ul>
+ * <li>{@link ProfileRequestContextCriterion}</li>
  * <li>{@link EntityIdCriterion}</li>
  * <li>{@link RoleDescriptorCriterion}</li>
  * </ul>
@@ -64,7 +66,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         implements CriteriaRelyingPartyConfigurationResolver, IdentifiableComponent {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(DelegatingCriteriaRelyingPartyConfigurationResolver.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(DelegatingCriteriaRelyingPartyConfigurationResolver.class);
     
     /** The RelyingPartyConfigurationResolver to which to delegate. */
     @NonnullAfterInit private RelyingPartyConfigurationResolver delegate;
@@ -152,6 +154,10 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     @Nullable private ProfileRequestContext buildContext(@Nullable final CriteriaSet criteria) {
         if (criteria == null) {
             return null;
+        }
+        
+        if (criteria.contains(ProfileRequestContextCriterion.class)) {
+            return criteria.get(ProfileRequestContextCriterion.class).getProfileRequestContext();
         }
 
         final String entityID = resolveEntityID(criteria);

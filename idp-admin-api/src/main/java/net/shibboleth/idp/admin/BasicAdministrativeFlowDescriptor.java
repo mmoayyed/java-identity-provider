@@ -38,6 +38,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.LangBearingString;
@@ -56,8 +57,6 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * A descriptor for an administrative flow.
@@ -92,15 +91,18 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
     
     /** Selects, and limits, the authentication flows to use for requests by supported principals. */
-    @Nullable private Function<ProfileRequestContext,Collection<Principal>>
+    @Nonnull private Function<ProfileRequestContext,Collection<Principal>>
             defaultAuthenticationMethodsLookupStrategy;
 
     /** Filters the usable authentication flows. */
-    @Nullable private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
 
     /** Enables post-authentication interceptor flows. */
-    @Nullable private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
     
+    /** Whether to mandate forced authentication for the request. */
+    @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
+
     /** Builder factory for XMLObjects needed in UIInfo emulation. */
     @Nonnull private final XMLObjectBuilderFactory builderFactory;
     
@@ -116,10 +118,15 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         authenticatedPredicate = Predicates.alwaysFalse();
         policyNameLookupStrategy = FunctionSupport.constant(null);
         resolveAttributesPredicate = Predicates.alwaysFalse();
+        forceAuthnPredicate = Predicates.alwaysFalse();
         
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         uiInfo = ((SAMLObjectBuilder<UIInfo>) builderFactory.<UIInfo>getBuilderOrThrow(
                 UIInfo.DEFAULT_ELEMENT_NAME)).buildObject();
+        
+        defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
+        authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
+        postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
     }
     
     /** {@inheritDoc} */
@@ -137,20 +144,19 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     }
     
     /** {@inheritDoc} */
-    public boolean isNonBrowserSupported() {
-        return supportsNonBrowserPredicate.test(getProfileRequestContext());
+    public boolean isNonBrowserSupported(@Nullable final ProfileRequestContext profileRequestContext) {
+        return supportsNonBrowserPredicate.test(profileRequestContext);
     }
 
     /**
-     * Set whether this flow supports non-browser clients (default is true).
+     * Set whether this flow supports non-browser clients.
      * 
-     * @param isSupported whether this flow supports non-browser clients
+     * @param flag flag to set
      */
-    public void setNonBrowserSupported(final boolean isSupported) {
-        supportsNonBrowserPredicate = isSupported ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
+    public void setNonBrowserSupported(final boolean flag) {
+        supportsNonBrowserPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
-
+    
     /**
      * Set condition to determine whether this flow supports non-browser clients.
      * 
@@ -161,18 +167,17 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     }
     
     /** {@inheritDoc} */
-    public boolean isAuthenticated() {
-        return authenticatedPredicate.test(getProfileRequestContext());
+    public boolean isAuthenticated(@Nullable final ProfileRequestContext profileRequestContext) {
+        return authenticatedPredicate.test(profileRequestContext);
     }
-    
+
     /**
      * Set whether user authentication is required (default is false).
      * 
      * @param flag flag to set
      */
     public void setAuthenticated(final boolean flag) {
-        authenticatedPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
+        authenticatedPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
     
     /**
@@ -279,10 +284,19 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     }
 
     /** {@inheritDoc} */
-    @Nullable public String getPolicyName() {
-        return getIndirectProperty(policyNameLookupStrategy, null);
+    @Nullable public String getPolicyName(@Nullable final ProfileRequestContext profileRequestContext) {
+        return policyNameLookupStrategy.apply(profileRequestContext);
     }  
     
+    /**
+     * Set an explicit access control policy name to apply.
+     * 
+     * @param name  policy name
+     */
+    public void setPolicyName(@Nullable final String name) {
+        policyNameLookupStrategy = FunctionSupport.constant(StringSupport.trimOrNull(name));
+    }
+
     /**
      * Set a lookup strategy to use to obtain the access control policy for this flow.
      * 
@@ -291,32 +305,21 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     public void setPolicyNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         policyNameLookupStrategy = Constraint.isNotNull(strategy, "Policy lookup strategy cannot be null");
     }
-
-    /**
-     * Set an explicit access control policy name to apply.
-     * 
-     * @param name  policy name
-     */
-    public void setPolicyName(@Nonnull @NotEmpty final String name) {
-        policyNameLookupStrategy = FunctionSupport.constant(
-                Constraint.isNotNull(StringSupport.trimOrNull(name), "Policy name cannot be null or empty"));
-    }
-
+    
     /** {@inheritDoc} */
-    public boolean resolveAttributes() {
-        return resolveAttributesPredicate.test(getProfileRequestContext());
+    public boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
+        return resolveAttributesPredicate.test(profileRequestContext);
     }
 
     /**
      * Set whether attributes should be resolved during the profile.
      *
-     * @param flag  flag to set
+     * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
+        resolveAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
-
+    
     /**
      * Set a condition to determine whether attributes should be resolved during the profile.
      *
@@ -327,24 +330,28 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
+            @Nullable final ProfileRequestContext profileRequestContext) {
         return Collections.emptyList();
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
+            @Nullable final ProfileRequestContext profileRequestContext) {
         return Collections.emptyList();
     }
 
     /** {@inheritDoc} */
-    @Nullable public SecurityConfiguration getSecurityConfiguration() {
+    @Nullable public SecurityConfiguration getSecurityConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext) {
         return null;
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods() {
-        return ImmutableList.<Principal>copyOf(getIndirectProperty(defaultAuthenticationMethodsLookupStrategy,
-                Collections.<Principal>emptyList()));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableList(
+                defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext));
     }
     
     /**
@@ -352,14 +359,13 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * 
      * @param methods   default authentication methods to use
      */
-    public void setDefaultAuthenticationMethods(
-            @Nullable @NonnullElements final Collection<Principal> methods) {
+    public void setDefaultAuthenticationMethods(@Nullable @NonnullElements final Collection<Principal> methods) {
 
         if (methods != null) {
-            defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(
-                    (Collection<Principal>) new ArrayList<>(Collections2.filter(methods, Predicates.notNull())));
+            defaultAuthenticationMethodsLookupStrategy =
+                    FunctionSupport.constant(new ArrayList<>(Collections2.filter(methods, Predicates.notNull())));
         } else {
-            defaultAuthenticationMethodsLookupStrategy = null;
+            defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
         }
     }
 
@@ -369,14 +375,14 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param strategy  lookup strategy
      */
     public void setDefaultAuthenticationMethodsLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Collection<Principal>> strategy) {
-        defaultAuthenticationMethodsLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,Collection<Principal>> strategy) {
+        defaultAuthenticationMethodsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
-    
+
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows() {
-        return ImmutableSet.<String>copyOf(getIndirectProperty(authenticationFlowsLookupStrategy,
-                Collections.<String>emptySet()));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableSet(authenticationFlowsLookupStrategy.apply(profileRequestContext));
     }
 
     /**
@@ -387,10 +393,10 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
 
         if (flows != null) {
-            authenticationFlowsLookupStrategy = FunctionSupport.<ProfileRequestContext,Set<String>>constant(
-                    new HashSet<>(StringSupport.normalizeStringCollection(flows)));
+            authenticationFlowsLookupStrategy =
+                    FunctionSupport.constant(new HashSet<>(StringSupport.normalizeStringCollection(flows)));
         } else {
-            authenticationFlowsLookupStrategy = null;
+            authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
     }
 
@@ -400,14 +406,14 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param strategy  lookup strategy
      */
     public void setAuthenticationFlowsLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Set<String>> strategy) {
-        authenticationFlowsLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,Set<String>> strategy) {
+        authenticationFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
-    
+
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows() {
-        return ImmutableList.<String>copyOf(getIndirectProperty(postAuthenticationFlowsLookupStrategy,
-                Collections.<String>emptyList()));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableList(postAuthenticationFlowsLookupStrategy.apply(profileRequestContext));
     }
     
     /**
@@ -418,10 +424,10 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
 
         if (flows != null) {
-            postAuthenticationFlowsLookupStrategy = FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                    new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
+            postAuthenticationFlowsLookupStrategy =
+                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
         } else {
-            postAuthenticationFlowsLookupStrategy = null;
+            postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
     }
 
@@ -431,13 +437,37 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param strategy  lookup strategy
      */
     public void setPostAuthenticationFlowsLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
-        postAuthenticationFlowsLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        postAuthenticationFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
+            @Nullable final ProfileRequestContext profileRequestContext) {
         return Collections.emptyList();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext) {
+        return forceAuthnPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Set whether a fresh user presence proof should be required for this request.
+     *
+     * @param flag flag to set
+     */
+    public void setForceAuthn(final boolean flag) {
+        forceAuthnPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
+    /**
+     * Set a condition to determine whether a fresh user presence proof should be required for this request.
+     * 
+     * @param condition condition to set
+     */
+    public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
 
     /** {@inheritDoc} */

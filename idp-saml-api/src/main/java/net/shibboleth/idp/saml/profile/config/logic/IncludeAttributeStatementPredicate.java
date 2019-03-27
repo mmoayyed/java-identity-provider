@@ -76,11 +76,11 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
             if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getIncludeAttributeStatementPredicate().test(input);
+                        rpc.getProfileConfig()).isIncludeAttributeStatement(input);
             } else if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).getIncludeAttributeStatementPredicate().test(input);
+                        rpc.getProfileConfig()).isIncludeAttributeStatement(input);
             } else if (rpc.getProfileConfig()
                     instanceof net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
                 return true;
