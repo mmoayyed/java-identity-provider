@@ -18,7 +18,6 @@
 package net.shibboleth.idp.relyingparty;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,6 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
 
 /** The configuration that applies to a given relying party. */
 public class RelyingPartyConfiguration extends AbstractIdentifiableInitializableComponent implements
@@ -72,7 +71,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     public RelyingPartyConfiguration() {
         activationCondition = Predicates.alwaysTrue();
         detailedErrorsPredicate = Predicates.alwaysFalse();
-        profileConfigurationsLookupStrategy = FunctionSupport.constant(Collections.emptyMap());
+        profileConfigurationsLookupStrategy = FunctionSupport.constant(null);
     }
 
     /**
@@ -153,7 +152,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,ProfileConfiguration> getProfileConfigurations(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return ImmutableMap.copyOf(profileConfigurationsLookupStrategy.apply(profileRequestContext));
+        return CollectionSupport.buildImmutableMap(profileConfigurationsLookupStrategy.apply(profileRequestContext));
     }
 
     /**
@@ -186,7 +185,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (configs == null) {
-            profileConfigurationsLookupStrategy = FunctionSupport.constant(Collections.emptyMap());
+            profileConfigurationsLookupStrategy = FunctionSupport.constant(null);
         } else {
             final HashMap<String,ProfileConfiguration> map = new HashMap<>();
             for (final ProfileConfiguration config : Collections2.filter(configs, Predicates.notNull())) {

@@ -125,8 +125,8 @@ public class RelyingPartyConfigurationTest {
         config.setProfileConfigurationsLookupStrategy(FunctionSupport.constant(null));
         config.initialize();
         
-        Assert.assertNotNull(config.getProfileConfiguration(null, "foo"));
-        Assert.assertNotNull(config.getProfileConfiguration(null, "bar"));
+        Assert.assertNull(config.getProfileConfiguration(null, "foo"));
+        Assert.assertNull(config.getProfileConfiguration(null, "bar"));
         Assert.assertNull(config.getProfileConfiguration(null, "baz"));
     }
 
@@ -142,7 +142,13 @@ public class RelyingPartyConfigurationTest {
         config.setResponderId("http://idp.example.org");
         config.setResponderIdLookupStrategy(FunctionSupport.constant(null));
         config.initialize();
-        Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
+        
+        try {
+            config.getResponderId(null);
+            Assert.fail("Expected a constraint violation");
+        } catch (final ConstraintViolationException e) {
+            
+        }
     }
 
 }
