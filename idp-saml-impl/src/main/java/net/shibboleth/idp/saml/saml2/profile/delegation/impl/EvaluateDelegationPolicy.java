@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +27,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -76,9 +76,6 @@ import org.slf4j.LoggerFactory;
  */
 public class EvaluateDelegationPolicy extends AbstractProfileAction {
     
-    /** Default policy max chain length, when can't otherwise be derived. */
-    @Nonnull public static final Long DEFAULT_POLICY_MAX_CHAIN_LENGTH = 1L;
-    
     /** Logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(EvaluateDelegationPolicy.class);
     
@@ -104,8 +101,8 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
     /** The actual token delegation chain length. */
     private Long tokenChainLength;
     
-    /** The predicate used to determine whether the request is allowed to proceed. */
-    private Predicate<ProfileRequestContext> delegationPredicate;
+    /** Whether the request is allowed to proceed. */
+    private boolean delegationAllowed;
     
     /** Constructor. */
     public EvaluateDelegationPolicy() {
@@ -204,8 +201,8 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
         }
         
         if (relyingPartyContext.getProfileConfig() instanceof SSOSProfileConfiguration) {
-            delegationPredicate = ((SSOSProfileConfiguration)relyingPartyContext.getProfileConfig())
-                    .getDelegationPredicate();
+            delegationAllowed = ((SSOSProfileConfiguration)relyingPartyContext.getProfileConfig()).isDelegation(
+                    profileRequestContext);
         } else {
             log.warn("Relying party profile configuration was not SSOSProfileConfiguration");
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -224,14 +221,14 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
     }
     
     /**
-     * Apply policy control {@link SSOSProfileConfiguration#getDelegationPredicate()}.
+     * Apply policy control.
      * 
      * @param profileRequestContext the current request context
      * 
      * @return true if check passes, false if not
      */
     protected boolean checkAllowedDelegate(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (!delegationPredicate.test(profileRequestContext)) {
+        if (!delegationAllowed) {
             log.warn("Delegation predicate eval indicates delegated token use NOT allowed");
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
             return false;
@@ -333,8 +330,8 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
             return value;
         } else {
             log.debug("Returning default policy max token delegation chain length: {}", 
-                    DEFAULT_POLICY_MAX_CHAIN_LENGTH);
-            return DEFAULT_POLICY_MAX_CHAIN_LENGTH;
+                    BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH);
+            return BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH;
         }
         
     }
@@ -348,7 +345,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
      * of the presented {@link Assertion} token.
      * </p>
      */
-    public class PolicyMaxChainLengthStrategy implements Function<ProfileRequestContext, Long> {
+    public class PolicyMaxChainLengthStrategy implements Function<ProfileRequestContext,Long> {
 
         /** {@inheritDoc} */
         @Nullable

@@ -18,9 +18,9 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -37,16 +37,21 @@ public interface SAML2ProfileConfiguration {
     /**
      * Get the maximum number of times an assertion may be proxied.
      * 
+     * @param profileRequestContext profileRequestContext
+     * 
      * @return maximum number of times an assertion may be proxied
      */
-    @NonNegative long getProxyCount();
+    @NonNegative long getProxyCount(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the unmodifiable collection of audiences for a proxied assertion.
      * 
+     * @param profileRequestContext profileRequestContext
+     * 
      * @return audiences for a proxied assertion
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Collection<String> getProxyAudiences();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable Collection<String> getProxyAudiences(
+            @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get whether to ignore an inability to encrypt due to external factors.
@@ -56,30 +61,38 @@ public interface SAML2ProfileConfiguration {
      *  algorithm, etc.</p>
      *  
      *  <p>Defaults to false.</p>
+     *  
+     * @param profileRequestContext profileRequestContext
      * 
      * @return true iff encryption should be treated as optional
      */
-    boolean isEncryptionOptional();
+    boolean isEncryptionOptional(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get the predicate used to determine if assertions should be encrypted.
      * 
+     * @param profileRequestContext profileRequestContext
+     * 
      * @return predicate used to determine if assertions should be encrypted
      */
-    @Nonnull Predicate<ProfileRequestContext> getEncryptAssertions();
+    boolean isEncryptAssertions(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the predicate used to determine if name identifiers should be encrypted.
      * 
+     * @param profileRequestContext profileRequestContext
+     * 
      * @return predicate used to determine if name identifiers should be encrypted
      */
-    @Nonnull Predicate<ProfileRequestContext> getEncryptNameIDs();
+    boolean isEncryptNameIDs(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the predicate used to determine if attributes should be encrypted.
      * 
+     * @param profileRequestContext profileRequestContext
+     * 
      * @return predicate used to determine if attributes should be encrypted
      */
-    @Nonnull Predicate<ProfileRequestContext> getEncryptAttributes();
+    boolean isEncryptAttributes(@Nullable final ProfileRequestContext profileRequestContext);
     
 }

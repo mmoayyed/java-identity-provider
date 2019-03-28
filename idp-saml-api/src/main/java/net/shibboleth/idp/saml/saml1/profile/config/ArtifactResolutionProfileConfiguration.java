@@ -29,7 +29,7 @@ public class ArtifactResolutionProfileConfiguration
         extends AbstractSAMLProfileConfiguration implements SAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/artifact";
+    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/artifact";
 
     /** Constructor. */
     public ArtifactResolutionProfileConfiguration() {
@@ -43,7 +43,7 @@ public class ArtifactResolutionProfileConfiguration
      */
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponses(new NoIntegrityMessageChannelPredicate());
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
     }
     
 }

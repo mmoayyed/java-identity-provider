@@ -105,7 +105,7 @@
     </bean>
     
     <bean id="AbstractMDDrivenSAMLProfile" parent="AbstractMDDrivenProfile" abstract="true">
-        <property name="signRequests">
+        <property name="signRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signRequests" />
@@ -113,7 +113,7 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -121,7 +121,7 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
-        <property name="signAssertions">
+        <property name="signAssertionsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signAssertions" />
@@ -138,9 +138,14 @@
             </bean>
         </property>
         <property name="assertionLifetimeLookupStrategy">
-            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="assertionLifetime" />
+            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="assertionLifetime">
+                <property name="defaultValue">
+                    <util:constant
+                        static-field="net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration.DEFAULT_ASSERTION_LIFETIME" />
+                </property>
+            </bean>
         </property>
-        <property name="assertionAudiencesLookupStrategy">
+        <property name="additionalAudiencesForAssertionLookupStrategy">
             <bean parent="shibboleth.MDDrivenSetProperty" p:propertyName="assertionAudiences" />
         </property>
     </bean>
@@ -154,7 +159,7 @@
                 <constructor-arg value="%{idp.encryption.optional:false}" />
             </bean>
         </property>
-        <property name="encryptAssertions">
+        <property name="encryptAssertionsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
@@ -162,7 +167,7 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
-        <property name="encryptNameIDs">
+        <property name="encryptNameIDsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptNameIDs" />
@@ -170,7 +175,7 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
-        <property name="encryptAttributes">
+        <property name="encryptAttributesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAttributes" />
@@ -179,7 +184,12 @@
             </bean>
         </property>
         <property name="proxyCountLookupStrategy">
-            <bean parent="shibboleth.MDDrivenLongProperty" p:propertyName="proxyCount" />
+            <bean parent="shibboleth.MDDrivenLongProperty" p:propertyName="proxyCount">
+                <property name="defaultValue">
+                    <util:constant
+                        static-field="net.shibboleth.idp.saml.saml2.profile.config.AbstractSAML2ProfileConfiguration.DEFAULT_PROXY_COUNT" />
+                </property>
+            </bean>
         </property>
         <property name="proxyAudiencesLookupStrategy">
             <bean parent="shibboleth.MDDrivenSetProperty" p:propertyName="proxyAudiences" />
@@ -196,7 +206,12 @@
             </bean>
         </property>
         <property name="ticketValidityPeriodLookupStrategy">
-            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod" p:defaultValue="PT15S" />
+            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod">
+                <property name="defaultValue">
+                    <util:constant
+                        static-field="net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration.DEFAULT_TICKET_VALIDITY_PERIOD" />
+                </property>
+            </bean>
         </property>
     </bean>
 
@@ -210,7 +225,7 @@
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -257,7 +272,7 @@
     <bean id="SAML1.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
             p:inboundInterceptorFlows="security-policy/saml-soap">
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -272,7 +287,7 @@
     <bean id="SAML1.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration"
             p:inboundInterceptorFlows="security-policy/saml-soap">
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -316,7 +331,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -324,7 +339,7 @@
                 <constructor-arg value="true" />
             </bean>
         </property>
-        <property name="encryptAssertions">
+        <property name="encryptAssertionsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
@@ -386,7 +401,12 @@
             </bean>
         </property>
         <property name="maximumTokenDelegationChainLengthLookupStrategy">
-            <bean parent="shibboleth.MDDrivenLongProperty" p:propertyName="maximumTokenDelegationChainLength" />
+            <bean parent="shibboleth.MDDrivenLongProperty" p:propertyName="maximumTokenDelegationChainLength">
+                <property name="defaultValue">
+                    <util:constant
+                        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH"/>
+                </property>
+            </bean>
         </property>
     </bean>
 
@@ -454,7 +474,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="signRequests">
+        <property name="signRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signRequests" />
@@ -464,7 +484,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -474,7 +494,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="encryptNameIDs">
+        <property name="encryptNameIDsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptNameIDs" />
@@ -492,7 +512,7 @@
     <bean id="SAML2.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
             p:inboundInterceptorFlows="security-policy/saml-soap">
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -502,7 +522,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="encryptAssertions">
+        <property name="encryptAssertionsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
@@ -517,7 +537,7 @@
     <bean id="SAML2.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
             p:inboundInterceptorFlows="security-policy/saml-soap">
-        <property name="signResponses">
+        <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
@@ -527,7 +547,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="encryptAssertions">
+        <property name="encryptAssertionsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
@@ -580,7 +600,12 @@
     <bean id="CAS.ValidateConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
             class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration">
         <property name="ticketValidityPeriodLookupStrategy">
-            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod" p:defaultValue="PT12H" />
+            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod">
+                <property name="defaultValue">
+                    <util:constant
+                        static-field="net.shibboleth.idp.cas.config.impl.ValidateConfiguration.DEFAULT_TICKET_VALIDITY_PERIOD" />
+                </property>
+            </bean>
         </property>
         <property name="serviceComparatorLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="serviceComparator"

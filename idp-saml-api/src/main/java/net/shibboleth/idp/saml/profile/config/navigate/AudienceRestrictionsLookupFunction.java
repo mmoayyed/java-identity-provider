@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.profile.config.navigate;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -53,16 +54,21 @@ public class AudienceRestrictionsLookupFunction extends AbstractRelyingPartyLook
         if (rpc != null) {
             final String id = rpc.getRelyingPartyId();
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof SAMLProfileConfiguration
-                    && !((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion().isEmpty()) {
-                final Builder<String> builder = ImmutableList.builder();
-                if (id != null) {
-                    builder.add(rpc.getRelyingPartyId());
+            if (pc != null && pc instanceof SAMLProfileConfiguration) {
+                final Set<String> additional =
+                        ((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion(input);
+                if (!additional.isEmpty()) {
+                    final Builder<String> builder = ImmutableList.builder();
+                    if (id != null) {
+                        builder.add(rpc.getRelyingPartyId());
+                    }
+                    builder.addAll(additional);
+                    return builder.build();
                 }
-                builder.addAll(((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion());
-                return builder.build();
-            } else if (id != null) {
-                return ImmutableList.<String>of(rpc.getRelyingPartyId());
+            }
+            
+            if (id != null) {
+                return ImmutableList.of(rpc.getRelyingPartyId());
             }
         }
         

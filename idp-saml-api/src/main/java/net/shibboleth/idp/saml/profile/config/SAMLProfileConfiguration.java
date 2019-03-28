@@ -19,9 +19,9 @@ package net.shibboleth.idp.saml.profile.config;
 
 import java.time.Duration;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -36,44 +36,57 @@ public interface SAMLProfileConfiguration extends ProfileConfiguration {
     /**
      * Get the predicate used to determine if generated assertions should be signed.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return predicate used to determine if generated assertions should be signed
      */
-    @Nonnull Predicate<ProfileRequestContext> getSignAssertions();
+    boolean isSignAssertions(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the predicate used to determine if generated requests should be signed.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return predicate used to determine if generated requests should be signed
      */
-    @Nonnull Predicate<ProfileRequestContext> getSignRequests();
+    boolean isSignRequests(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the predicate used to determine if generated responses should be signed.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return predicate used to determine if generated responses should be signed
      */
-    @Nonnull Predicate<ProfileRequestContext> getSignResponses();
+    boolean isSignResponses(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the lifetime of generated assertions.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return lifetime of generated assertions
      */
-    @Nonnull Duration getAssertionLifetime();
+    @Nonnull Duration getAssertionLifetime(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get an unmodifiable set of audiences, in addition to the relying party(ies) to which the IdP is issuing the
      * assertion, with which an assertion may be shared.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return additional audiences to which an assertion may be shared
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAdditionalAudiencesForAssertion();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAdditionalAudiencesForAssertion(
+            @Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get whether to include a NotBefore attribute in the Conditions of generated assertions.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  whether to include a NotBefore attribute in the Conditions of generated assertions
      */
-    boolean includeConditionsNotBefore();
+    boolean isIncludeConditionsNotBefore(@Nullable final ProfileRequestContext profileRequestContext);
     
 }

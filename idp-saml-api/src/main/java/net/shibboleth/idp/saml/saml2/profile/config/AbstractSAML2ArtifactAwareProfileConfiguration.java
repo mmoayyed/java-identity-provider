@@ -32,21 +32,18 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /**
  * Configuration support for artifact-aware profiles.
  * 
  * @since 3.4.0
  */
-public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
-        extends AbstractSAML2ProfileConfiguration
+public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends AbstractSAML2ProfileConfiguration
         implements SAMLArtifactAwareProfileConfiguration, SAMLArtifactConsumerProfileConfiguration {
-
-    /** Explicitly set artifact configuration. */
-    @Nullable private SAMLArtifactConfiguration artifactConfiguration; 
     
     /** Lookup function to supply <code>artifactConfiguration</code> property. */
-    @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
     
     /** Predicate used to determine if artifact resolution requests should be signed. */
     @Nonnull private Predicate<MessageContext> signArtifactRequestsPredicate;
@@ -61,13 +58,15 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
      */
     protected AbstractSAML2ArtifactAwareProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        artifactConfigurationLookupStrategy = FunctionSupport.constant(null);
         signArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate();
         clientTLSArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate().negate();
     }
     
     /** {@inheritDoc} */
-    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return getIndirectProperty(artifactConfigurationLookupStrategy, artifactConfiguration);
+    @Nullable public SAMLArtifactConfiguration getArtifactConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return artifactConfigurationLookupStrategy.apply(profileRequestContext);
     }
 
     /**
@@ -76,7 +75,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
      * @param config configuration to set
      */
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
-        artifactConfiguration = config;
+        artifactConfigurationLookupStrategy = FunctionSupport.constant(config);
     }
 
     /**
@@ -87,8 +86,8 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration
      * @since 3.3.0
      */
     public void setArtifactConfigurationLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
-        artifactConfigurationLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
+        artifactConfigurationLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */

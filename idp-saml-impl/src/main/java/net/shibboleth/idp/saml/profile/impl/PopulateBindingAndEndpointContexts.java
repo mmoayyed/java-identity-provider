@@ -343,7 +343,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                         (SAMLProfileConfiguration) rpContext.getProfileConfig();
                 if (profileConfiguration instanceof SAMLArtifactAwareProfileConfiguration) {
                     artifactConfiguration =
-                            ((SAMLArtifactAwareProfileConfiguration) profileConfiguration).getArtifactConfiguration();
+                            ((SAMLArtifactAwareProfileConfiguration) profileConfiguration).getArtifactConfiguration(
+                                    profileRequestContext);
                 }
                 if (profileConfiguration instanceof BrowserSSOProfileConfiguration) {
                     skipValidationSinceSigned =

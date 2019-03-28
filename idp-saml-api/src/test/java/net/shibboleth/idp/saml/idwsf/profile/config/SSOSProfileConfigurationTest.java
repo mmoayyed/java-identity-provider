@@ -19,11 +19,8 @@ package net.shibboleth.idp.saml.idwsf.profile.config;
 
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicates;
 
 /** Unit test for {@link SSOSProfileConfiguration}. */
 public class SSOSProfileConfigurationTest {
@@ -38,15 +35,11 @@ public class SSOSProfileConfigurationTest {
     
     @Test
     public void testDelegationPredicate() {
-        ProfileRequestContext prc = new ProfileRequestContext<>();
-        
         SSOSProfileConfiguration config = new SSOSProfileConfiguration();
-        Assert.assertNotNull(config.getDelegationPredicate());
-        Assert.assertFalse(config.getDelegationPredicate().test(prc));
+        Assert.assertFalse(config.isDelegation(null));
         
-        config.setDelegationPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
-        Assert.assertNotNull(config.getDelegationPredicate());
-        Assert.assertTrue(config.getDelegationPredicate().test(prc));
+        config.setDelegation(true);
+        Assert.assertTrue(config.isDelegation(null));
         
     }
     

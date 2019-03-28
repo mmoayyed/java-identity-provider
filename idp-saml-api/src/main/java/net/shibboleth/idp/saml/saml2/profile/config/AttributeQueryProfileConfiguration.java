@@ -28,7 +28,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public class AttributeQueryProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/attribute";
+    @Nonnull @NotEmpty public static final String PROFILE_ID =
+            "http://shibboleth.net/ns/profiles/saml2/query/attribute";
     
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
@@ -42,8 +43,8 @@ public class AttributeQueryProfileConfiguration extends AbstractSAML2ArtifactAwa
      */
     protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponses(new NoIntegrityMessageChannelPredicate());
-        setEncryptAssertions(new NoConfidentialityMessageChannelPredicate());
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+        setEncryptAssertionsPredicate(new NoConfidentialityMessageChannelPredicate());
     }
     
 }

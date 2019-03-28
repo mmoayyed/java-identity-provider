@@ -53,6 +53,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     
     /** ID for this profile configuration. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
+    
+    /** Default maximum delegation chain length. */
+    @Nonnull public static final Long DEFAULT_DELEGATION_CHAIN_LENGTH = 1L;
         
     /** Bit constant for RequestedAuthnContext feature. */
     public static final int FEATURE_AUTHNCONTEXT = 0x1;
@@ -69,7 +72,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Whether the response endpoint should be validated if the request is signed. */
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
-    /** Lookup function to supply {@link #maximumSPSessionLifetime} property. */
+    /** Lookup function to supply maximum session lifetime. */
     @Nonnull private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
 
     /** 
@@ -77,20 +80,20 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     @Nonnull private Predicate<ProfileRequestContext> allowDelegationPredicate;
     
-    /** Lookup function to supply {@link #maximumTokenDelegationChainLength} property. */
+    /** Lookup function to supply maximum delegation chain length. */
     @Nonnull private Function<ProfileRequestContext,Long> maximumTokenDelegationChainLengthLookupStrategy;
 
-    /** Lookup function to supply {@link #defaultAuthenticationContexts} property. */
+    /** Lookup function to supply default authentication methods. */
     @Nonnull private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
             defaultAuthenticationContextsLookupStrategy;
     
-    /** Lookup function to supply {@link #authenticationFlows} property. */
+    /** Lookup function to supply authentication flows. */
     @Nonnull private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
     
-    /** Lookup function to supply {@link #postAuthenticationFlows} property. */
+    /** Lookup function to supply post authentication flows. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
     
-    /** Lookup function to supply {@link #nameIDFormatPrecedence} property. */
+    /** Lookup function to supply NameID formats. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
     
     /** Constructor. */
@@ -105,14 +108,14 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponses(Predicates.alwaysTrue());
-        setEncryptAssertions(Predicates.alwaysTrue());
+        setSignResponses(true);
+        setEncryptAssertions(true);
         resolveAttributesPredicate = Predicates.alwaysTrue();
         includeAttributeStatementPredicate = Predicates.alwaysTrue();
         forceAuthnPredicate = Predicates.alwaysFalse();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
-        maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(1L);
+        maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
         allowDelegationPredicate = Predicates.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
@@ -252,7 +255,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @return max lifetime of service provider should maintain a session
      */
     @Nullable public Duration getMaximumSPSessionLifetime(@Nullable final ProfileRequestContext profileRequestContext) {
-        return maximumSPSessionLifetimeLookupStrategy.apply(profileRequestContext);
+        final Duration lifetime = maximumSPSessionLifetimeLookupStrategy.apply(profileRequestContext);
+        Constraint.isFalse(lifetime != null && lifetime.isNegative(),
+                "Maximum SP session lifetime must be greater than or equal to 0");
+        return lifetime;
     }
 
     /**
@@ -321,8 +327,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         final Long len = maximumTokenDelegationChainLengthLookupStrategy.apply(profileRequestContext);
-        return Constraint.isGreaterThanOrEqual(0, len != null ? len : 1L,
-                "Delegation chain length must be greater than or equal to 0");
+        Constraint.isNotNull(len, "Delegation chain length cannot be null");
+        Constraint.isGreaterThanOrEqual(0, len, "Delegation chain length must be greater than or equal to 0");
+        
+        return len;
     }
 
     /**
@@ -337,7 +345,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
     
     /**
-     * Set a lookup strategy for the {@link #maximumTokenDelegationChainLength} property.
+     * Set a lookup strategy for the limits on the total number of delegates that
+     * may be derived from the initial SAML token.
      * 
      * @param strategy  lookup strategy
      * 
@@ -372,7 +381,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #defaultAuthenticationContexts} property.
+     * Set a lookup strategy for the authentication contexts to use, expressed as custom principals.
      *
      * @param strategy  lookup strategy
      * 
@@ -404,7 +413,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #authenticationFlows} property.
+     * Set a lookup strategy for the authentication flows to use.
      *
      * @param strategy  lookup strategy
      * 
@@ -436,7 +445,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
+     * Set a lookup strategy for the post-authentication interceptor flows to enable.
      *
      * @param strategy  lookup strategy
      * 
@@ -466,7 +475,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
+     * Set a lookup strategy for the name identifier formats to use.
      *
      * @param strategy  lookup strategy
      * 

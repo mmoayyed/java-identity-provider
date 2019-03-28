@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,12 +41,12 @@ public class AttributeQueryProfileConfigurationTest {
     @Test
     public void testArtifactConfiguration() {
         final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
-        Assert.assertNull(config.getArtifactConfiguration());
+        Assert.assertNull(config.getArtifactConfiguration(null));
 
         final SAMLArtifactConfiguration artifactConfiguration = new BasicSAMLArtifactConfiguration();
         config.setArtifactConfiguration(artifactConfiguration);
 
-        Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+        Assert.assertSame(config.getArtifactConfiguration(null), artifactConfiguration);
     }
 
     @Test
@@ -56,26 +54,25 @@ public class AttributeQueryProfileConfigurationTest {
         final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
 
         final SAMLArtifactConfiguration artifactConfiguration = new BasicSAMLArtifactConfiguration();
-        config.setArtifactConfigurationLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(artifactConfiguration));
+        config.setArtifactConfigurationLookupStrategy(FunctionSupport.constant(artifactConfiguration));
 
-        Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+        Assert.assertSame(config.getArtifactConfiguration(null), artifactConfiguration);
     }
     
     @Test
     public void testSignArtifactRequests() {
         final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
         
-        config.setSignArtifactRequests(Predicates.<MessageContext>alwaysTrue());
-        Assert.assertSame(config.getSignArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+        config.setSignArtifactRequests(Predicates.alwaysTrue());
+        Assert.assertSame(config.getSignArtifactRequests(), Predicates.alwaysTrue());
     }
      
     @Test
     public void testClientTLSArtifactRequests() {
         final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
         
-        config.setClientTLSArtifactRequests(Predicates.<MessageContext>alwaysTrue());
-        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.<MessageContext>alwaysTrue());
+        config.setClientTLSArtifactRequests(Predicates.alwaysTrue());
+        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.alwaysTrue());
     }
 
 }

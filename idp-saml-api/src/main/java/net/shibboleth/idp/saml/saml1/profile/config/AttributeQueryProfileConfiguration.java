@@ -24,11 +24,11 @@ import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 attribute query requests. */
-public class AttributeQueryProfileConfiguration
-        extends AbstractSAML1ArtifactAwareProfileConfiguration {
+public class AttributeQueryProfileConfiguration extends AbstractSAML1ArtifactAwareProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/attribute";
+    @Nonnull @NotEmpty public static final String PROFILE_ID =
+            "http://shibboleth.net/ns/profiles/saml1/query/attribute";
     
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
@@ -42,7 +42,7 @@ public class AttributeQueryProfileConfiguration
      */
     protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponses(new NoIntegrityMessageChannelPredicate());
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
     }
 
 }

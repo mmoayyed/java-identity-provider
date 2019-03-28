@@ -19,14 +19,19 @@ package net.shibboleth.idp.saml.profile.config;
 
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 /** Common interface for SAML profile configurations involving artifact production. */
 public interface SAMLArtifactAwareProfileConfiguration extends SAMLProfileConfiguration {
     
     /**
      * Get the associated {@link SAMLArtifactConfiguration} for the profile, if any.
      * 
+     * @param profileRequestContext current profile request context
+     * 
      * @return  an associated artifact configuration, or null
      */
-    @Nullable SAMLArtifactConfiguration getArtifactConfiguration(); 
+    @Nullable SAMLArtifactConfiguration getArtifactConfiguration(
+            @Nullable final ProfileRequestContext profileRequestContext); 
     
 }

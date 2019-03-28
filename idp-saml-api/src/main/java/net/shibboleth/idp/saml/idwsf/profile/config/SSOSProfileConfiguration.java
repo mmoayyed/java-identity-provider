@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.idwsf.profile.config;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -48,23 +49,34 @@ public class SSOSProfileConfiguration extends BrowserSSOProfileConfiguration {
      * 
      * @param profileId unique ID for this profile
      */
-    protected SSOSProfileConfiguration(final String profileId) {
+    protected SSOSProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         
         delegationPredicate = Predicates.alwaysFalse();
     }
 
     /**
-     * Gets the predicate used to determine whether a delegated token presented
-     * to the IdP by another non-user entity may be used to complete SAML 2 SSO
-     * to this relying party.
+     * Get whether a delegated token presented to the IdP by another non-user entity
+     * may be used to complete SAML 2 SSO to this relying party.
      * 
-     * @return predicate the delegation predicate
+     * @param profileRequestContext current profile request context
+     * 
+     * @return suitability of token for delegated authentication  
      */
-    @Nonnull public Predicate<ProfileRequestContext> getDelegationPredicate() {
-        return delegationPredicate;
+    public boolean isDelegation(@Nullable final ProfileRequestContext profileRequestContext) {
+        return delegationPredicate.test(profileRequestContext);
     }
 
+    /**
+     * Set whether a delegated token presented to the IdP by another non-user entity
+     * may be used to complete SAML 2 SSO to this relying party.
+     * 
+     * @param flag flag to set
+     */
+    public void setDelegation(final boolean flag) {
+        delegationPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
     /**
      * Sets the predicate used to determine whether a delegated token presented
      * to the IdP by another non-user entity may be used to complete SAML 2 SSO
@@ -72,8 +84,7 @@ public class SSOSProfileConfiguration extends BrowserSSOProfileConfiguration {
      * 
      * @param predicate the new delegation predicate
      */
-    public void setDelegationPredicate(
-            @Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public void setDelegationPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         delegationPredicate = Constraint.isNotNull(predicate, "Delegation predicate cannot be null");
     }
     

@@ -61,17 +61,17 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     /** Whether to mandate forced authentication for the request. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
 
-    /** Lookup function to supply {@link #defaultAuthenticationMethods} property. */
+    /** Lookup function to supply default authentication methods. */
     @Nonnull private Function<ProfileRequestContext,Collection<AuthenticationMethodPrincipal>>
             defaultAuthenticationMethodsLookupStrategy;
 
-    /** Lookup function to supply {@link #authenticationFlows} property. */
+    /** Lookup function to supply authentication flows. */
     @Nonnull private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
 
-    /** Lookup function to supply {@link #postAuthenticationFlows} property. */
+    /** Lookup function to supply post authentication flows. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
 
-    /** Lookup function to supply {@link #nameIDFormatPrecedence} property. */
+    /** Lookup function to supply NameIdentifier formats. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
     
     /** Constructor. */
@@ -86,7 +86,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
      */
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponses(Predicates.alwaysTrue());
+        setSignResponses(true);
         resolveAttributesPredicate = Predicates.alwaysTrue();
         includeAttributeStatementPredicate = Predicates.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
@@ -239,7 +239,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #authenticationFlows} property.
+     * Set a lookup strategy for the authentication flows to use.
      *
      * @param strategy  lookup strategy
      * 
@@ -271,7 +271,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
+     * Set a lookup strategy for the post-authentication interceptor flows to enable.
      *
      * @param strategy  lookup strategy
      * 
@@ -301,7 +301,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
+     * Set a lookup strategy for the name identifier formats to use.
      *
      * @param strategy  lookup strategy
      * 

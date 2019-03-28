@@ -85,7 +85,7 @@ public class SOAPErrorPredicate extends AbstractRelyingPartyPredicate {
         }
         
         final String event = eventCtx.getEvent().toString();
-        if (((ECPProfileConfiguration) rpCtx.getProfileConfig()).getLocalEvents().contains(event)) {
+        if (((ECPProfileConfiguration) rpCtx.getProfileConfig()).getLocalEvents(input).contains(event)) {
             log.debug("Error event {} will be handled locally", event);
             return false;
         } else {

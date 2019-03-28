@@ -41,7 +41,7 @@ public class NotBeforeProfileConfigPredicate extends AbstractRelyingPartyPredica
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLProfileConfiguration) {
-                return ((SAMLProfileConfiguration) pc).includeConditionsNotBefore();
+                return ((SAMLProfileConfiguration) pc).isIncludeConditionsNotBefore(input);
             }
         }
         

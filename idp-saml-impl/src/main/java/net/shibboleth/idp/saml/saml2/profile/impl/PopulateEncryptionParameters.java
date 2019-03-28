@@ -274,13 +274,13 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         final SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
         
         if (!encryptIdentifiers) {
-            encryptIdentifiers = profileConfiguration.getEncryptNameIDs().test(profileRequestContext);
+            encryptIdentifiers = profileConfiguration.isEncryptNameIDs(profileRequestContext);
             // Encryption can only be optional if the request didn't specify it above.
-            encryptionOptional = profileConfiguration.isEncryptionOptional();
+            encryptionOptional = profileConfiguration.isEncryptionOptional(profileRequestContext);
         }
         
-        encryptAssertions = profileConfiguration.getEncryptAssertions().test(profileRequestContext);
-        encryptAttributes = profileConfiguration.getEncryptAttributes().test(profileRequestContext);
+        encryptAssertions = profileConfiguration.isEncryptAssertions(profileRequestContext);
+        encryptAttributes = profileConfiguration.isEncryptAttributes(profileRequestContext);
         
         if (!encryptAssertions && !encryptIdentifiers && !encryptAttributes) {
             log.debug("{} No encryption requested, nothing to do", getLogPrefix());

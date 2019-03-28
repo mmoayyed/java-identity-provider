@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -30,19 +29,19 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import com.google.common.collect.ImmutableList;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Configuration support for SAML 2 Single Logout. */
 public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
+    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
 
     /** Predicate used to determine if SOAP-based requests should be signed. */
     @Nonnull private Predicate<MessageContext> signSOAPRequestsPredicate;
@@ -51,10 +50,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
     @Nonnull private Predicate<MessageContext> clientTLSSOAPRequestsPredicate;
     
     /** Lookup function to supply {@link #qualifiedNameIDFormats} property. */
-    @Nullable private Function<ProfileRequestContext,Collection<String>> qualifiedNameIDFormatsLookupStrategy;
-    
-    /** NameID formats whose matching rules accommodate defaulted qualifiers. */
-    @Nonnull @NonnullElements private Collection<String> qualifiedNameIDFormats;
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> qualifiedNameIDFormatsLookupStrategy;
     
     /** Constructor. */
     public SingleLogoutProfileConfiguration() {
@@ -68,14 +64,14 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      */
     protected SingleLogoutProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignRequests(new NoIntegrityMessageChannelPredicate());
-        setSignResponses(new NoIntegrityMessageChannelPredicate());
-        setEncryptNameIDs(new NoConfidentialityMessageChannelPredicate());
+        setSignRequestsPredicate(new NoIntegrityMessageChannelPredicate());
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+        setEncryptNameIDsPredicate(new NoConfidentialityMessageChannelPredicate());
 
         signSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate();
         clientTLSSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate().negate();
         
-        qualifiedNameIDFormats = Collections.emptyList();
+        qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(null);
     }
 
     /**
@@ -131,14 +127,17 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * 
      * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType.PERSISTENT} and
      * {@link org.opensaml.saml.saml2.core.NameIDType.TRANSIENT} Formats are defined in this manner. This
-     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>  
+     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>
+     * 
+     * @param profileRequestContext current profile request context
      * 
      * @return additional Formats for which defaulting of qualifiers is permissable
      * 
      * @since 3.4.0
      */
-    @Nonnull @NonnullElements @NotLive public Collection<String> getQualifiedNameIDFormats() {
-        return ImmutableList.copyOf(getIndirectProperty(qualifiedNameIDFormatsLookupStrategy, qualifiedNameIDFormats));
+    @Nonnull @NonnullElements @NotLive public Collection<String> getQualifiedNameIDFormats(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableList(qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext));
     }
 
     /**
@@ -148,29 +147,32 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * 
      * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType.PERSISTENT} and
      * {@link org.opensaml.saml.saml2.core.NameIDType.TRANSIENT} Formats are defined in this manner. This
-     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>  
+     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>
      * 
      * @param formats additional Formats for which defaulting of qualifiers is permissable
      * 
      * @since 3.4.0
      */
     public void setQualifiedNameIDFormats(@Nullable @NonnullElements final Collection<String> formats) {
-        if (formats == null) {
-            qualifiedNameIDFormats = Collections.emptyList();
+        if (formats == null || formats.isEmpty()) {
+            qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(null);
         } else {
-            qualifiedNameIDFormats = StringSupport.normalizeStringCollection(formats);
+            qualifiedNameIDFormatsLookupStrategy =
+                    FunctionSupport.constant(StringSupport.normalizeStringCollection(formats));
         }
     }
 
     /**
-     * Set a lookup strategy for the {@link #qualifiedNameIDFormats} property.
+     * Set a lookup strategy for the Format values for which the use of the NameQualifier and SPNameQualifier
+     * attributes is defined to allow default/implicit values derived from the asserting and relying parties.
      *
      * @param strategy  lookup strategy
      * 
      * @since 3.4.0
      */
     public void setQualifiedNameIDFormatsLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
-        qualifiedNameIDFormatsLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        qualifiedNameIDFormatsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
+    
 }

@@ -41,12 +41,12 @@ public class AttributeQueryProfileConfigurationTest {
     @Test
     public void testArtifactConfiguration() {
         final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
-        Assert.assertNull(config.getArtifactConfiguration());
+        Assert.assertNull(config.getArtifactConfiguration(null));
 
         final SAMLArtifactConfiguration artifactConfiguration = new BasicSAMLArtifactConfiguration();
         config.setArtifactConfiguration(artifactConfiguration);
 
-        Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+        Assert.assertSame(config.getArtifactConfiguration(null), artifactConfiguration);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class AttributeQueryProfileConfigurationTest {
         config.setArtifactConfigurationLookupStrategy(
                 FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(artifactConfiguration));
 
-        Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+        Assert.assertSame(config.getArtifactConfiguration(null), artifactConfiguration);
     }
 
 }

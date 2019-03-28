@@ -45,7 +45,10 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
         InitializableComponent {
 
     /** CAS base protocol URI. */
-    public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
+    @Nonnull @NotEmpty public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
+    
+    /** Default ticket validity. */
+    @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofSeconds(15);
 
     /** Lookup function to supply {@link #ticketValidityPeriod} property. */
     @Nonnull private Function<ProfileRequestContext,Duration> ticketValidityPeriodLookupStrategy;
@@ -65,7 +68,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
         super(profileId);
         
         resolveAttributesPredicate = Predicates.alwaysTrue();
-        ticketValidityPeriodLookupStrategy = FunctionSupport.constant(Duration.ofSeconds(15));
+        ticketValidityPeriodLookupStrategy = FunctionSupport.constant(DEFAULT_TICKET_VALIDITY_PERIOD);
         
         defaultSecurityConfiguration = new SecurityConfiguration(Duration.ofMinutes(5),
                 new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength()));
@@ -87,7 +90,11 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * @return ticket validity period
      */
     @Nonnull public Duration getTicketValidityPeriod(@Nullable final ProfileRequestContext profileRequestContext) {
-        return ticketValidityPeriodLookupStrategy.apply(profileRequestContext);
+        
+        final Duration ticketTTL = ticketValidityPeriodLookupStrategy.apply(profileRequestContext);
+        Constraint.isNotNull(ticketTTL, "Ticket lifetime cannot be null");
+        Constraint.isFalse(ticketTTL.isNegative() || ticketTTL.isZero(), "Ticket lifetime must be greater than 0");
+        return ticketTTL;
     }
 
     /**

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -29,17 +28,23 @@ import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
 
 /** Base class for SAML 2 profile configurations. */
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration implements
         SAML2ProfileConfiguration {
+    
+    /** Default proxy count. */
+    @Nonnull public static final Long DEFAULT_PROXY_COUNT = 0L;
 
     /** Whether encryption is optional in the face of no key, etc. */
     @Nonnull private Predicate<ProfileRequestContext> encryptionOptionalPredicate;
@@ -54,16 +59,10 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
 
     /** Lookup function to supply {@link #proxyCount} property. */
-    @Nullable private Function<ProfileRequestContext,Long> proxyCountLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Long> proxyCountLookupStrategy;
 
-    /** Maximum proxy count for an assertion. Default value: 0 */
-    private long proxyCount;
-
-    /** Lookup function to supply {@link #proxyAudiences} property. */
-    @Nullable private Function<ProfileRequestContext,Collection<String>> proxyAudiencesLookupStrategy;
-
-    /** Audiences for the proxy. */
-    @Nonnull @NonnullElements private Collection<String> proxyAudiences;
+    /** Lookup function to supply proxy audiences. */
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> proxyAudiencesLookupStrategy;
 
     /**
      * Constructor.
@@ -77,14 +76,16 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         encryptAssertionsPredicate = Predicates.alwaysFalse();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
         encryptAttributesPredicate = Predicates.alwaysFalse();
-        proxyCount = 0;
-        proxyAudiences = Collections.emptyList();
+        proxyCountLookupStrategy = FunctionSupport.constant(DEFAULT_PROXY_COUNT);
+        proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
     }
 
     /** {@inheritDoc} */
-    @Override public long getProxyCount() {
-        return Constraint.isGreaterThanOrEqual(0, getIndirectProperty(proxyCountLookupStrategy, proxyCount),
-                "Proxy count must be greater than or equal to 0");
+    public long getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
+        final Long count = proxyCountLookupStrategy.apply(profileRequestContext);
+        Constraint.isNotNull(count, "Proxy count cannot be null");
+        Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        return count;
     }
 
     /**
@@ -93,23 +94,25 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param count maximum number of times an assertion may be proxied
      */
     public void setProxyCount(@NonNegative final long count) {
-        proxyCount = Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        proxyCountLookupStrategy = FunctionSupport.constant(
+                Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0"));
     }
 
     /**
-     * Set a lookup strategy for the {@link #proxyCount} property.
+     * Set a lookup strategy for the maximum number of times an assertion may be proxied.
      *
      * @param strategy  lookup strategy
      * 
      * @since 3.3.0
      */
-    public void setProxyCountLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
-        proxyCountLookupStrategy = strategy;
+    public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Long> strategy) {
+        proxyCountLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override public Collection<String> getProxyAudiences() {
-        return ImmutableList.copyOf(getIndirectProperty(proxyAudiencesLookupStrategy, proxyAudiences));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getProxyAudiences(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return CollectionSupport.buildImmutableList(proxyAudiencesLookupStrategy.apply(profileRequestContext));
     }
 
     /**
@@ -118,28 +121,28 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param audiences proxy audiences to be added to responses
      */
     public void setProxyAudiences(@Nullable @NonnullElements final Collection<String> audiences) {
-        if (audiences == null) {
-            proxyAudiences = Collections.emptyList();
+        if (audiences == null || audiences.isEmpty()) {
+            proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
         } else {
-            proxyAudiences = StringSupport.normalizeStringCollection(audiences);
+            proxyAudiencesLookupStrategy = FunctionSupport.constant(StringSupport.normalizeStringCollection(audiences));
         }
     }
 
     /**
-     * Set a lookup strategy for the {@link #proxyAudiences} property.
+     * Set a lookup strategy for the proxy audiences to be added to responses.
      *
      * @param strategy  lookup strategy
      * 
      * @since 3.3.0
      */
     public void setProxyAudiencesLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
-        proxyAudiencesLookupStrategy = strategy;
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        proxyAudiencesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override public boolean isEncryptionOptional() {
-        return encryptionOptionalPredicate.test(getProfileRequestContext());
+    public boolean isEncryptionOptional(@Nullable final ProfileRequestContext profileRequestContext) {
+        return encryptionOptionalPredicate.test(profileRequestContext);
     }
     
     /**
@@ -148,19 +151,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param flag  flag to set
      */
     public void setEncryptionOptional(final boolean flag) {
-        encryptionOptionalPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
-    }
-    
-    /**
-     * Get condition to determine whether encryption is optional in the face of a missing key, etc.
-     *
-     * @return condition
-     * 
-     * @since 3.3.0
-     */
-    @Nonnull public Predicate<ProfileRequestContext> getEncryptionOptionalPredicate() {
-        return encryptionOptionalPredicate;
+        encryptionOptionalPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
 
     /**
@@ -175,51 +166,78 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     }
     
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptAssertions() {
-        return encryptAssertionsPredicate;
+    public boolean isEncryptAssertions(@Nullable final ProfileRequestContext profileRequestContext) {
+        return encryptAssertionsPredicate.test(profileRequestContext);
     }
 
+    /**
+     * Set whether assertions should be encrypted.
+     * 
+     * @param flag  flag to set
+     */
+    public void setEncryptAssertions(final boolean flag) {
+        encryptAssertionsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
     /**
      * Set the predicate used to determine if assertions should be encrypted.
      * 
      * @param predicate predicate used to determine if assertions should be encrypted
+     * 
+     * @since 4.0.0
      */
-    public void setEncryptAssertions(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptAssertionsPredicate =
-                Constraint.isNotNull(predicate,
-                        "Predicate to determine if assertions should be enecrypted cannot be null");
+    public void setEncryptAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        encryptAssertionsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptNameIDs() {
-        return encryptNameIDsPredicate;
+    public boolean isEncryptNameIDs(@Nullable final ProfileRequestContext profileRequestContext) {
+        return encryptNameIDsPredicate.test(profileRequestContext);
+    }
+
+    /**
+     * Set whether name identifiers should be encrypted.
+     * 
+     * @param flag  flag to set
+     */
+    public void setEncryptNameIDs(final boolean flag) {
+        encryptNameIDsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
 
     /**
      * Set the predicate used to determine if name identifiers should be encrypted.
      * 
      * @param predicate predicate used to determine if name identifiers should be encrypted
+     * 
+     * @since 4.0.0
      */
-    public void setEncryptNameIDs(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptNameIDsPredicate =
-                Constraint.isNotNull(predicate,
-                        "Predicate to determine if name identifiers should be encrypted cannot be null");
+    public void setEncryptNameIDsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        encryptNameIDsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptAttributes() {
-        return encryptAttributesPredicate;
+    public boolean isEncryptAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
+        return encryptAttributesPredicate.test(profileRequestContext);
     }
 
+    /**
+     * Set whether attributes should be encrypted.
+     * 
+     * @param flag  flag to set
+     */
+    public void setEncryptAttributes(final boolean flag) {
+        encryptAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
     /**
      * Set the predicate used to determine if attributes should be encrypted.
      * 
      * @param predicate predicate used to determine if attributes should be encrypted
+     * 
+     * @since 4.0.0
      */
-    public void setEncryptAttributes(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptAttributesPredicate =
-                Constraint.isNotNull(predicate,
-                        "Predicate to determine if attributes should be encrypted cannot be null");
+    public void setEncryptAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        encryptAttributesPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
 
 }

@@ -28,7 +28,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public class ArtifactResolutionProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/artifact";
+    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/artifact";
 
     /** Constructor. */
     public ArtifactResolutionProfileConfiguration() {
@@ -42,8 +42,8 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
      */
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponses(new NoIntegrityMessageChannelPredicate());
-        setEncryptAssertions(new NoConfidentialityMessageChannelPredicate());
+        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+        setEncryptAssertionsPredicate(new NoConfidentialityMessageChannelPredicate());
     }
     
 }

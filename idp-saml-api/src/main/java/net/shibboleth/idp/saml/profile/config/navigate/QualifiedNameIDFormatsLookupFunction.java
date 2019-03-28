@@ -32,8 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * A function that returns the {@link org.opensaml.saml.saml2.core.NameID} Formats
  * whose NameQualifier attributes should allow for defaulting based on the result of
@@ -54,7 +52,7 @@ public class QualifiedNameIDFormatsLookupFunction extends AbstractRelyingPartyLo
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SingleLogoutProfileConfiguration) {
-                return ImmutableList.copyOf(((SingleLogoutProfileConfiguration) pc).getQualifiedNameIDFormats());
+                return ((SingleLogoutProfileConfiguration) pc).getQualifiedNameIDFormats(input);
             }
         }
         

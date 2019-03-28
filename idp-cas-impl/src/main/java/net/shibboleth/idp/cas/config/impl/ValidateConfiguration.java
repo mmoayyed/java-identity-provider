@@ -48,6 +48,9 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     /** Ticket validation profile ID. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = PROTOCOL_URI + "/serviceValidate";
 
+    /** Default ticket validity. */
+    @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofSeconds(15);
+    
     /** Default ticket prefix. */
     @Nonnull @NotEmpty public static final String DEFAULT_TICKET_PREFIX = "PGT";
 
@@ -72,7 +75,7 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
         
         // Ticket validity period for this configuration container applies to proxy-granting tickets
         // Default to 12H
-        setTicketValidityPeriod(Duration.ofHours(12));
+        setTicketValidityPeriod(DEFAULT_TICKET_VALIDITY_PERIOD);
         
         userAttributeLookupStrategy = FunctionSupport.constant(null);
         serviceComparatorLookupStrategy = FunctionSupport.constant(new DefaultServiceComparator());
