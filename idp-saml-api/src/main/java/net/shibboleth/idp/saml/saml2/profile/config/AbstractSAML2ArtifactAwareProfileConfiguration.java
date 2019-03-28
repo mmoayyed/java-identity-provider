@@ -27,6 +27,8 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
@@ -91,31 +93,53 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends Abs
     }
 
     /** {@inheritDoc} */
-    public Predicate<MessageContext> getSignArtifactRequests() {
-        return signArtifactRequestsPredicate;
+    public boolean isSignArtifactRequests(@Nullable final MessageContext messageContext) {
+        return signArtifactRequestsPredicate.test(messageContext);
+    }
+
+    /**
+     * Set whether artifact resolution requests should be signed.
+     * 
+     * @param flag flag to set
+     */
+    public void setSignArtifactRequests(final boolean flag) {
+        signArtifactRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
     
     /**
      * Set the predicate used to determine if artifact resolution requests should be signed.
      * 
      * @param predicate the predicate
+     * 
+     * @since 4.0.0
      */
-    public void setSignArtifactRequests(@Nonnull final Predicate<MessageContext> predicate) {
+    public void setSignArtifactRequestsPredicate(@Nonnull final Predicate<MessageContext> predicate) {
         signArtifactRequestsPredicate = Constraint.isNotNull(predicate, 
                 "Predicate used to determine artifact request signing may not be null");
     }
 
     /** {@inheritDoc} */
-    public Predicate<MessageContext> getClientTLSArtifactRequests() {
-        return clientTLSArtifactRequestsPredicate;
+    public boolean isClientTLSArtifactRequests(@Nullable final MessageContext messageContext) {
+        return clientTLSArtifactRequestsPredicate.test(messageContext);
     }
 
+    /**
+     * Set whether artifact resolution requests should use client TLS.
+     * 
+     * @param flag flag to set
+     */
+    public void setClientTLSArtifactRequests(final boolean flag) {
+        clientTLSArtifactRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
     /**
      * Set the predicate used to determine if artifact resolution requests should use client TLS.
      * 
      * @param predicate the predicate
+     * 
+     * @since 4.0.0
      */
-    public void setClientTLSArtifactRequests(@Nonnull final Predicate<MessageContext> predicate) {
+    public void setClientTLSArtifactRequestsPredicate(@Nonnull final Predicate<MessageContext> predicate) {
         clientTLSArtifactRequestsPredicate = Constraint.isNotNull(predicate, 
                 "Predicate used to determine artifact client TLS use may not be null");
     }

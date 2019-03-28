@@ -36,7 +36,7 @@ public class ClientTLSArtifactRequestsPredicate extends AbstractRelyingPartyPred
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLArtifactConsumerProfileConfiguration) {
-                return ((SAMLArtifactConsumerProfileConfiguration) pc).getClientTLSArtifactRequests().test(input);
+                return ((SAMLArtifactConsumerProfileConfiguration) pc).isClientTLSArtifactRequests(input);
             }
         }
         

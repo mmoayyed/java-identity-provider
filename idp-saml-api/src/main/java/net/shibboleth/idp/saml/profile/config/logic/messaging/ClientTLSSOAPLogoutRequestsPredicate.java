@@ -36,7 +36,7 @@ public class ClientTLSSOAPLogoutRequestsPredicate extends AbstractRelyingPartyPr
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SingleLogoutProfileConfiguration) {
-                return ((SingleLogoutProfileConfiguration) pc).getClientTLSSOAPRequests().test(input);
+                return ((SingleLogoutProfileConfiguration) pc).isClientTLSSOAPRequests(input);
             }
         }
         

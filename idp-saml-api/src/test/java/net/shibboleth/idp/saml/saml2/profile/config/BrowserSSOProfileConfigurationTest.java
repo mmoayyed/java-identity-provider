@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -275,16 +274,16 @@ public class BrowserSSOProfileConfigurationTest {
     public void testSignArtifactRequests() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         
-        config.setSignArtifactRequests(Predicates.<MessageContext>alwaysTrue());
-        Assert.assertSame(config.getSignArtifactRequests(), Predicates.alwaysTrue());
+        config.setSignArtifactRequests(true);
+        Assert.assertTrue(config.isSignArtifactRequests(null));
     }
      
     @Test
     public void testClientTLSArtifactRequests() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         
-        config.setClientTLSArtifactRequests(Predicates.alwaysTrue());
-        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.alwaysTrue());
+        config.setClientTLSArtifactRequests(true);
+        Assert.assertTrue(config.isClientTLSArtifactRequests(null));
     }
      
 

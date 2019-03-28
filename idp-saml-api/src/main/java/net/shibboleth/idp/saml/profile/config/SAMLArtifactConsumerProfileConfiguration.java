@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
-import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.MessageContext;
 
@@ -30,17 +28,21 @@ import org.opensaml.messaging.context.MessageContext;
 public interface SAMLArtifactConsumerProfileConfiguration extends SAMLProfileConfiguration {
     
     /**
-     * Get the predicate used to determine if artifact resolution requests should be signed.
+     * Get whether artifact resolution requests should be signed.
      * 
-     * @return predicate used to determine if artifact resolution requests should be signed
+     * @param messageContext current message context
+     * 
+     * @return whether artifact resolution requests should be signed
      */
-    @Nonnull Predicate<MessageContext> getSignArtifactRequests(); 
+    boolean isSignArtifactRequests(@Nullable final MessageContext messageContext); 
 
     /**
-     * Get the predicate used to determine if artifact resolution requests should use client TLS.
+     * Get whether artifact resolution requests should use client TLS.
      * 
-     * @return predicate used to determine if artifact resolution requests should use client TLS
+     * @param messageContext current message context
+     * 
+     * @return whether artifact resolution requests should use client TLS
      */
-    @Nonnull Predicate<MessageContext> getClientTLSArtifactRequests(); 
+    boolean isClientTLSArtifactRequests(@Nullable final MessageContext messageContext); 
 
 }

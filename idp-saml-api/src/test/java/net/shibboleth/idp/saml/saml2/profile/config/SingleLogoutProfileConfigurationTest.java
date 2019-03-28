@@ -20,8 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
@@ -63,16 +61,16 @@ public class SingleLogoutProfileConfigurationTest {
     public void testSignArtifactRequests() {
         final SingleLogoutProfileConfiguration config = new SingleLogoutProfileConfiguration();
         
-        config.setSignArtifactRequests(Predicates.alwaysTrue());
-        Assert.assertSame(config.getSignArtifactRequests(), Predicates.alwaysTrue());
+        config.setSignArtifactRequests(true);
+        Assert.assertTrue(config.isSignArtifactRequests(null));
     }
      
     @Test
     public void testClientTLSArtifactRequests() {
         final SingleLogoutProfileConfiguration config = new SingleLogoutProfileConfiguration();
         
-        config.setClientTLSArtifactRequests(Predicates.alwaysTrue());
-        Assert.assertSame(config.getClientTLSArtifactRequests(), Predicates.alwaysTrue());
+        config.setClientTLSArtifactRequests(true);
+        Assert.assertTrue(config.isClientTLSArtifactRequests(null));
     }
 
 }

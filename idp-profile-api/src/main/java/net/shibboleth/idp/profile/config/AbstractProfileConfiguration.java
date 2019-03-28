@@ -258,52 +258,5 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
         final AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
         return Objects.equals(getId(), other.getId());
     }
-
-    /**
-     * Get the current {@link ProfileRequestContext}.
-     *
-     * @return current profile request context
-     * 
-     * @since 3.3.0
-     */
-    @Deprecated
-    @Nullable protected ProfileRequestContext getProfileRequestContext() {
-        if (servletRequest != null) {
-            final Object object = servletRequest.getAttribute(ProfileRequestContext.BINDING_KEY);
-            if (object instanceof ProfileRequestContext) {
-                return (ProfileRequestContext) object;
-            }
-            log.warn("ProfileConfiguration {}: No ProfileRequestContext in request", getId());
-        } else {
-            log.warn("ProfileConfiguration {}: ServletRequest was null", getId());
-        }
-        return null;
-    }
-
-    /**
-     * Get a property, possibly through indirection via a lookup function.
-     *
-     * @param <T> type of property
-     *
-     * @param lookupStrategy lookup strategy function for indirect access
-     * @param staticValue static value to return in the absence of a lookup function or if null is returned
-     *
-     * @return a dynamic or static result, if any
-     * 
-     * @since 3.3.0
-     */
-    @Deprecated
-    @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
-            @Nullable final T staticValue) {
-
-        if (lookupStrategy != null) {
-            final T prop = lookupStrategy.apply(getProfileRequestContext());
-            if (prop != null) {
-                return prop;
-            }
-        }
-
-        return staticValue;
-    }
     
 }

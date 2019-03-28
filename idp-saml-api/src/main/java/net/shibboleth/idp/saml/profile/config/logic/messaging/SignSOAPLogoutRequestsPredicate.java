@@ -36,7 +36,7 @@ public class SignSOAPLogoutRequestsPredicate extends AbstractRelyingPartyPredica
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SingleLogoutProfileConfiguration) {
-                return ((SingleLogoutProfileConfiguration) pc).getSignSOAPRequests().test(input);
+                return ((SingleLogoutProfileConfiguration) pc).isSignSOAPRequests(input);
             }
         }
         

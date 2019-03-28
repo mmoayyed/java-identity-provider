@@ -36,7 +36,7 @@ public class SignArtifactRequestsPredicate extends AbstractRelyingPartyPredicate
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLArtifactConsumerProfileConfiguration) {
-                return ((SAMLArtifactConsumerProfileConfiguration) pc).getSignArtifactRequests().test(input);
+                return ((SAMLArtifactConsumerProfileConfiguration) pc).isSignArtifactRequests(input);
             }
         }
         

@@ -29,6 +29,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
+import com.google.common.base.Predicates;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -75,14 +77,27 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
     }
 
     /**
-     * Get the predicate used to determine if SOAP-based requests should be signed.
+     * Get whether SOAP-based requests should be signed.
      * 
-     * @return predicate used to determine if SOAP-based requests should be signed
+     * @param messageContext current message context
+     * 
+     * @return whether SOAP-based requests should be signed
      * 
      * @since 4.0.0
      */
-    @Nonnull public Predicate<MessageContext> getSignSOAPRequests() {
-        return signSOAPRequestsPredicate;
+    public boolean isSignSOAPRequests(@Nullable final MessageContext messageContext) {
+        return signSOAPRequestsPredicate.test(messageContext);
+    }
+
+    /**
+     * Set whether SOAP-based requests should be signed.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setSignSOAPRequests(final boolean flag) {
+        signSOAPRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
     
     /**
@@ -92,20 +107,33 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * 
      * @since 4.0.0
      */
-    public void setSignSOAPRequests(@Nonnull final Predicate<MessageContext> predicate) {
+    public void setSignSOAPRequestsPredicate(@Nonnull final Predicate<MessageContext> predicate) {
         signSOAPRequestsPredicate = Constraint.isNotNull(predicate, 
                 "Predicate used to determine SOAP-based signing cannot be null");
     }
 
     /**
-     * Get the predicate used to determine if SOAP-based requests should use client TLS.
+     * Get whether SOAP-based requests should use client TLS.
      * 
-     * @return predicate used to determine if SOAP-based requests should use client TLS
+     * @param messageContext current message context
+     * 
+     * @return whether SOAP-based requests should use client TLS
      * 
      * @since 4.0.0
      */
-    @Nonnull public Predicate<MessageContext> getClientTLSSOAPRequests() {
-        return clientTLSSOAPRequestsPredicate;
+    public boolean isClientTLSSOAPRequests(@Nullable final MessageContext messageContext) {
+        return clientTLSSOAPRequestsPredicate.test(messageContext);
+    }
+    
+    /**
+     * Set whether SOAP-based requests should use client TLS.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setClientTLSSOAPRequests(final boolean flag) {
+        clientTLSSOAPRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
     
     /**
@@ -115,7 +143,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * 
      * @since 4.0.0
      */
-    public void setClientTLSSOAPRequests(@Nonnull final Predicate<MessageContext> predicate) {
+    public void setClientTLSSOAPRequestsPredicate(@Nonnull final Predicate<MessageContext> predicate) {
         clientTLSSOAPRequestsPredicate = Constraint.isNotNull(predicate, 
                 "Predicate used to determine SOAP-based client TLS use cannot be null");
     }

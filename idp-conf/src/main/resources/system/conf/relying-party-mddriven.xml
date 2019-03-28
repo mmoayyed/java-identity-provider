@@ -307,7 +307,7 @@
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
-        <property name="signArtifactRequests">
+        <property name="signArtifactRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signArtifactRequests" />
@@ -317,7 +317,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="clientTLSArtifactRequests">
+        <property name="clientTLSArtifactRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSArtifactRequests" />
@@ -426,7 +426,7 @@
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
-        <property name="signArtifactRequests">
+        <property name="signArtifactRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signArtifactRequests" />
@@ -436,7 +436,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="clientTLSArtifactRequests">
+        <property name="clientTLSArtifactRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSArtifactRequests" />
@@ -450,7 +450,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="signSOAPRequests">
+        <property name="signSOAPRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signSOAPRequests" />
@@ -460,7 +460,7 @@
                 </constructor-arg>
             </bean>
         </property>
-        <property name="clientTLSSOAPRequests">
+        <property name="clientTLSSOAPRequestsPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSSOAPRequests" />
