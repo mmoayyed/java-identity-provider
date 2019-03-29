@@ -19,18 +19,16 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 
 import java.io.IOException;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 
 /**
@@ -38,10 +36,6 @@ import org.testng.annotations.Test;
  */
 public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
-    @BeforeMethod public void clearDeprecateWarn() {
-        DeprecationSupport.clearWarningState();
-    }
-    
     @Test public void correctSig() throws IOException, ResolverException {
         MetadataResolver resolver =
                 getBean(MetadataResolver.class, "filter/switch-metadata.xml", "filter/switch.xml", "beans.xml");
