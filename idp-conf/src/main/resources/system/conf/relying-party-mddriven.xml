@@ -89,7 +89,7 @@
 
     <!-- Wiring lookup strategies into the actual profile configurations of various types. -->
 
-    <bean id="AbstractMDDrivenProfile" parent="AbstractProfileConfig" abstract="true">
+    <bean id="AbstractMDDrivenProfile" abstract="true">
         <property name="securityConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="securityConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.profile.config.SecurityConfiguration)}" />

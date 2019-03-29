@@ -46,9 +46,6 @@
     <bean id="TagCandidate" abstract="true"
         class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate" />
         
-    <bean id="AbstractProfileConfig" abstract="true"
-        p:servletRequest-ref="shibboleth.HttpServletRequest" />
-        
     <!-- Import parent beans for metadata-driven configuration approach. -->
     <import resource="relying-party-mddriven.xml" />
         
@@ -59,20 +56,20 @@
     a suite of metadata-driven lookup strategies pre-injected.
     -->
     
-    <bean id="Shibboleth.SSO" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="Shibboleth.SSO" lazy-init="true"
         class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/shibboleth-sso" />
         
-    <bean id="SAML1.AttributeQuery" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML1.AttributeQuery" lazy-init="true"
         class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml-soap" />
 
-    <bean id="SAML1.ArtifactResolution" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML1.ArtifactResolution" lazy-init="true"
         class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml-soap" />
 
-    <bean id="SAML2.SSO" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML2.SSO" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-sso"
@@ -81,40 +78,40 @@
     <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
         static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 
-    <bean id="SAML2.ECP" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML2.ECP" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-ecp"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
-    <bean id="SAML2.Logout" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML2.Logout" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-slo"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
-    <bean id="SAML2.AttributeQuery" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML2.AttributeQuery" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
-    <bean id="SAML2.ArtifactResolution" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="SAML2.ArtifactResolution" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
-    <bean id="Liberty.SSOS" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="Liberty.SSOS" lazy-init="true"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
-    <bean id="CAS.LoginConfiguration" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="CAS.LoginConfiguration" lazy-init="true"
         class="net.shibboleth.idp.cas.config.impl.LoginConfiguration" />
 
-    <bean id="CAS.ProxyConfiguration" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="CAS.ProxyConfiguration" lazy-init="true"
         class="net.shibboleth.idp.cas.config.impl.ProxyConfiguration" />
 
     <!-- Ticket validity period applies to proxy-granting tickets created upon successful proxy callback validation -->
-    <bean id="CAS.ValidateConfiguration" parent="AbstractProfileConfig" lazy-init="true"
+    <bean id="CAS.ValidateConfiguration" lazy-init="true"
         class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration"
         p:serviceComparator="#{getObject('shibboleth.CASServiceComparator') ?: getObject('shibboleth.DefaultCASServiceComparator')}" />
 

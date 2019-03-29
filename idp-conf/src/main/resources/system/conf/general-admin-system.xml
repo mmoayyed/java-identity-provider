@@ -20,12 +20,10 @@
 
     <bean id="shibboleth.AdminFlow" abstract="true"
             class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
-            p:servletRequest-ref="shibboleth.HttpServletRequest"
             p:nonBrowserSupported="false" />
 
     <bean id="shibboleth.OneTimeAdminFlow" abstract="true"
             class="net.shibboleth.idp.admin.OneTimeAdministrativeFlowDescriptor"
-            p:servletRequest-ref="shibboleth.HttpServletRequest"
             p:nonBrowserSupported="false" />
 
     <!-- Function for returning custom access control policies for access to metrics. -->

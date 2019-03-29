@@ -25,7 +25,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletRequest;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -51,9 +50,6 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileConfiguration.class);
 
-    /** Access to servlet request. */
-    @Nullable private ServletRequest servletRequest;
-
     /** Lookup function to supply {@link #inboundFlows} property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
 
@@ -77,19 +73,6 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
         inboundFlowsLookupStrategy = FunctionSupport.constant(null);
         outboundFlowsLookupStrategy = FunctionSupport.constant(null);
         disallowedFeaturesLookupStrategy = FunctionSupport.constant(DEFAULT_DISALLOWED_FEATURES);
-    }
-
-    /**
-     * Set the {@link ServletRequest} from which to obtain a reference to the current {@link ProfileRequestContext}.
-     *
-     * <p>Generally this would be expected to be a proxy to the actual object.</p>
-     *
-     * @param request servlet request
-     * 
-     * @since 3.3.0
-     */
-    public void setServletRequest(@Nullable final ServletRequest request) {
-        servletRequest = request;
     }
 
     /** {@inheritDoc} */
