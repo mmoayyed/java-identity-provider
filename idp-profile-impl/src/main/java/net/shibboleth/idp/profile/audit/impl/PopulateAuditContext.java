@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.audit.impl;
 
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
@@ -215,6 +216,8 @@ public class PopulateAuditContext extends AbstractProfileAction {
         
         if (useDefaultTimeZone) {
             dateTimeFormatter = dateTimeFormatter.withZone(ZoneId.systemDefault());
+        } else {
+            dateTimeFormatter = dateTimeFormatter.withZone(ZoneOffset.UTC);
         }
     }
 
