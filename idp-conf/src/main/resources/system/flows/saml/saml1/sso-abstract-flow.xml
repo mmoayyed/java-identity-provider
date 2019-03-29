@@ -9,6 +9,7 @@
     
     <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="DecodeMessage" />

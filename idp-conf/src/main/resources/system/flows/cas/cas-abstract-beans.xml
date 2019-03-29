@@ -21,6 +21,9 @@
 
     <!-- These are beans that are common to all CAS protocol flows. -->
 
+    <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
+
     <bean id="PopulateMetricContext"
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />

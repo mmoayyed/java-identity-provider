@@ -4,6 +4,7 @@
 
     <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="PopulateMetricContext" />
         <evaluate expression="PopulateUserAgentContext" />
         <evaluate expression="'proceed'" />

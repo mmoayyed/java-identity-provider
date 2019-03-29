@@ -26,6 +26,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  */
 public final class IdPAuditFields {
 
+    /** Event starting timestamp field. @since 4.0.0 */
+    @Nonnull @NotEmpty public static final String START_TIME = "ST";
+
     /** Event timestamp field. */
     @Nonnull @NotEmpty public static final String EVENT_TIME = "T";
 

@@ -61,6 +61,20 @@
     -->
     <import resource="../../conf/audit.xml"/>
 
+    <bean id="shibboleth.DefaultFlowStartAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.START_TIME"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Expression" c:_0="T(java.time.Instant).now()" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
     <bean id="shibboleth.DefaultPostDecodeAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
@@ -194,7 +208,7 @@
         </property>
     </bean>
         
-    <bean id="shibboleth.DefaultPostLookupAuditExtractors"
+    <bean id="shibboleth.DefaultPostLookupAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -214,7 +228,7 @@
         </property>
     </bean>
     
-    <bean id="shibboleth.DefaultPostAssertionAuditExtractors"
+    <bean id="shibboleth.DefaultPostAssertionAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -331,7 +345,7 @@
         </property>
     </bean>
         
-    <bean id="shibboleth.DefaultPostResponseAuditExtractors"
+    <bean id="shibboleth.DefaultPostResponseAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -497,7 +511,7 @@
         </property>
     </bean>
     
-    <bean id="shibboleth.DefaultLogoutRequestAuditExtractors"
+    <bean id="shibboleth.DefaultLogoutRequestAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -554,7 +568,7 @@
         </property>
     </bean>
     
-    <bean id="shibboleth.DefaultLogoutAuditExtractors"
+    <bean id="shibboleth.DefaultLogoutAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -601,7 +615,7 @@
         </property>
     </bean>
         
-    <bean id="shibboleth.DefaultErrorViewAuditExtractors"
+    <bean id="shibboleth.DefaultErrorViewAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -655,7 +669,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.DefaultCASLoginAuditExtractors"
+    <bean id="shibboleth.DefaultCASLoginAuditExtractors" lazy-init="true"
           class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -741,7 +755,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.DefaultCASValidationAuditExtractors"
+    <bean id="shibboleth.DefaultCASValidationAuditExtractors" lazy-init="true"
           class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
@@ -814,7 +828,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.DefaultCASProxyAuditExtractors"
+    <bean id="shibboleth.DefaultCASProxyAuditExtractors" lazy-init="true"
           class="org.springframework.beans.factory.config.MapFactoryBean"
           parent="shibboleth.DefaultCASValidationAuditExtractors">
         <property name="sourceMap">
@@ -829,7 +843,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.DefaultAdminAuditExtractors"
+    <bean id="shibboleth.DefaultAdminAuditExtractors" lazy-init="true"
           class="org.springframework.beans.factory.config.MapFactoryBean"
           parent="shibboleth.DefaultErrorViewAuditExtractors" />
     

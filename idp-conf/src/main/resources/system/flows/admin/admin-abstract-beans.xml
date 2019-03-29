@@ -22,6 +22,9 @@
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId-ref="shibboleth.AdminProfileId" />
 
+    <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
+
     <bean id="PopulateMetricContext"
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
