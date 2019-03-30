@@ -21,6 +21,7 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
@@ -41,7 +42,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
 
 /**
  * This class exists primarily to allow the parsing of relying-party.xml to create a serviceable implementation of
@@ -236,12 +236,12 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
         }
         final RelyingPartyMetadataProvider otherRp = (RelyingPartyMetadataProvider) other;
         
-        return Objects.equal(otherRp.sortKey, sortKey) && Objects.equal(getId(), otherRp.getId());
+        return Objects.equals(otherRp.sortKey, sortKey) && Objects.equals(getId(), otherRp.getId());
     }
 
     /** {@inheritDoc} */
     @Override public int hashCode() {
-        return Objects.hashCode(sortKey, getId());
+        return com.google.common.base.Objects.hashCode(sortKey, getId());
     }
 
 }
