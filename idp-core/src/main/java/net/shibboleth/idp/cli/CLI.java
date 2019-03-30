@@ -21,14 +21,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-
 import com.beust.jcommander.JCommander;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 
 /**
@@ -48,8 +49,12 @@ public final class CLI {
      * Command line entry point.
      * 
      * @param args  command line arguments
+     * @throws SecurityException from the object construction
+     * @throws ReflectiveOperationException from the object construction
+     * @throws IllegalArgumentException from the object construction
      */
-    public static void main(@Nonnull final String[] args) {
+    public static void main(@Nonnull final String[] args) throws ReflectiveOperationException,
+        SecurityException, IllegalArgumentException {
 
         // Get name of parameter class to load using system property.
         final String argType = System.getProperty(ARGS_PROPERTY);
@@ -60,7 +65,8 @@ public final class CLI {
         CommandLineArguments argObject = null;
         
         try {
-            final Object obj = Class.forName(argType).newInstance();
+            final Constructor construct = Class.forName(argType).getConstructor();
+            final Object obj = construct.newInstance();
             if (!(obj instanceof CommandLineArguments)) {
                 errorAndExit("Argument class was not of the correct type");
             }
