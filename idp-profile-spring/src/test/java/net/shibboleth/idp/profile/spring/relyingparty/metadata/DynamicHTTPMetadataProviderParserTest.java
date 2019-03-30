@@ -105,14 +105,6 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getIndexes().size(), 3);
     }
 
-    @Test(enabled=false)
-    public void testDeprecated() throws Exception {
-        getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamicDeprecated.xml", "beans.xml", "httpClient.xml");
-        
-        // We can't really test the actual values, this is just to test that parser, factory bean, etc are ok.
-    }
-
     @Test
     public void testClientSecurityParamsParams() throws Exception {
         getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
