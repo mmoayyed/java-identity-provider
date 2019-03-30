@@ -273,22 +273,20 @@ public class MetadataGeneratorTask extends Task {
     public class Initializer extends IdPPropertiesApplicationContextInitializer {
 
         /** {@inheritDoc} */
-        @Override @Nonnull public String[] selectSearchLocations(
+        @Override @Nonnull public String selectSearchLocation(
                 @Nonnull final ConfigurableApplicationContext applicationContext) {
             if (null == idpHome) {
-                return super.selectSearchLocations(applicationContext);
+                return super.selectSearchLocation(applicationContext);
             }
-            final String[] result = {idpHome};
-            return result;
+            return idpHome;
         }
 
         /** {@inheritDoc} */
-        @Override @Nonnull public String[] getSearchLocations() {
+        @Override @Nonnull public String getSearchLocation() {
             if (null == idpHome) {
-                return super.getSearchLocations();
+                return super.getSearchLocation();
             }
-            final String[] result = {idpHome};
-            return result;
+            return idpHome;
         }
 
     }

@@ -27,11 +27,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
@@ -40,7 +35,11 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.util.StringUtils;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An {@link ApplicationContextInitializer} which appends properties to the application context's environment.
@@ -48,11 +47,10 @@ import org.springframework.util.StringUtils;
  * Properties are loaded from {@link #IDP_PROPERTIES} as well as additional property files specified by
  * {@link #IDP_ADDITIONAL_PROPERTY}.
  * 
- * The {@link #IDP_PROPERTIES} file is searched for in the well known locations returned by
- * {@link #getSearchLocations()}.
+ * The {@link #IDP_PROPERTIES} file is searched for in the well location returned by {@link #getSearchLocation()}.
  * 
- * The {@link #IDP_HOME_PROPERTY} will be set to the first search location in which the {@link #IDP_PROPERTIES} file is
- * found if not already set.
+ * If not already set, the {@link #IDP_HOME_PROPERTY} will be set to the first search location in which the
+ * {@link #IDP_PROPERTIES} file is found.
  * 
  * A {@link ConstraintViolationException} will be thrown if the property files can not be found or loaded and
  * {@link #isFailFast(ConfigurableApplicationContext)} returns true.
@@ -72,76 +70,64 @@ public class IdPPropertiesApplicationContextInitializer
     /** Well known search location. */
     @Nonnull public static final String SEARCH_LOCATION = "/opt/shibboleth-idp";
 
-    /** Well known search locations. */
-    @Nonnull @Deprecated public static final String[] SEARCH_LOCATIONS = {SEARCH_LOCATION,};
-    
     /** Property controlling whether to fail fast. */
     @Nonnull public static final String FAILFAST_PROPERTY = "idp.initializer.failFast";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
-//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
 
-        final String[] searchLocations = selectSearchLocations(applicationContext);
-        log.debug("Attempting to find '{}' at search locations '{}'", getSearchTarget(), searchLocations);
+        final String searchLocation = selectSearchLocation(applicationContext);
+        log.debug("Attempting to find '{}' at search location '{}'", getSearchTarget(), searchLocation);
 
-        for (final String searchLocation : searchLocations) {
+        final String searchPath = searchLocation + getSearchTarget();
 
-            final String searchPath = searchLocation + getSearchTarget();
+        log.debug("Attempting to find resource '{}'", searchPath);
+        final Resource resource = applicationContext.getResource(searchPath);
 
-            log.debug("Attempting to find resource '{}'", searchPath);
-            final Resource resource = applicationContext.getResource(searchPath);
+        if (resource.exists()) {
+            log.debug("Found resource '{}' at search path '{}'", resource, searchPath);
 
-            if (resource.exists()) {
-                log.debug("Found resource '{}' at search path '{}'", resource, searchPath);
-
-                final Properties properties = loadProperties(null, resource);
-                if (properties == null) {
-                    if (isFailFast(applicationContext)) {
-                        log.error("Unable to load properties from resource '{}'", resource);
-                        throw new ConstraintViolationException("Unable to load properties from resource");
-                    } else {
-                        log.warn("Unable to load properties from resource '{}'", resource);
-                        return;
-                    }
-                }
-
-                if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
-                    setIdPHomeProperty(searchLocation, properties);
+            final Properties properties = loadProperties(null, resource);
+            if (properties == null) {
+                if (isFailFast(applicationContext)) {
+                    log.error("Unable to load properties from resource '{}'", resource);
+                    throw new ConstraintViolationException("Unable to load properties from resource");
                 } else {
-                    String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
-                    // Minimal normalization required on Windows to allow SWF's flow machinery to work.
-                    // Just replace backslashes with forward slashes.
-                    if (File.separatorChar == '\\') {
-                        searchLocationAbsolutePath = searchLocationAbsolutePath.replace('\\', '/');
-                    }
-                    setIdPHomeProperty(searchLocationAbsolutePath, properties);
+                    log.warn("Unable to load properties from resource '{}'", resource);
+                    return;
                 }
-
-                loadAdditionalPropertySources(applicationContext, searchLocation, properties);
-
-                logProperties(properties);
-
-                appendPropertySource(applicationContext, resource.toString(), properties);
-
-                // Search target was found and initialization was successful, we're done.
-                return;
             }
-        }
 
-        if (isFailFast(applicationContext)) {
-            log.error("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
+            if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
+                setIdPHomeProperty(searchLocation, properties);
+            } else {
+                String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
+                // Minimal normalization required on Windows to allow SWF's flow machinery to work.
+                // Just replace backslashes with forward slashes.
+                if (File.separatorChar == '\\') {
+                    searchLocationAbsolutePath = searchLocationAbsolutePath.replace('\\', '/');
+                }
+                setIdPHomeProperty(searchLocationAbsolutePath, properties);
+            }
+
+            loadAdditionalPropertySources(applicationContext, searchLocation, properties);
+
+            logProperties(properties);
+
+            appendPropertySource(applicationContext, resource.toString(), properties);
+
+        } else if (isFailFast(applicationContext)) {
+            log.error("Unable to find '{}' at well known location '{}'", getSearchTarget(), getSearchLocation());
             throw new ConstraintViolationException(
-                    "Unable to find '" + getSearchTarget() + "' at well known locations");
+                    "Unable to find '" + getSearchTarget() + "' at well known location");
         } else {
-            log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
+            log.warn("Unable to find '{}' at well known location '{}'", getSearchTarget(), getSearchLocation());
         }
     }
-//CheckStyle: ReturnCount ON
 
     /**
      * Get the target resource to be searched for. Defaults to {@link #IDP_PROPERTIES}.
@@ -153,29 +139,25 @@ public class IdPPropertiesApplicationContextInitializer
     }
 
     /**
-     * Get the well known search locations. Defaults to {@link #SEARCH_LOCATIONS}.
+     * Get the well known search location. Defaults to {@link #SEARCH_LOCATION}.
      * 
-     * @deprecated In a future version a similar method will return one value
      * @return the well known search locations
      */
-    @Nonnull @Deprecated public String[] getSearchLocations() {
-        return SEARCH_LOCATIONS;
+    @Nonnull public String getSearchLocation() {
+        return SEARCH_LOCATION;
     }
 
     /**
-     * Select the locations used to search for the target. Prefers the user-defined search location defined by
-     * {@link #IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search locations returned from
-     * {@link #getSearchLocations()}.
+     * Select the location used to search for the target. Prefers the user-defined search location defined by
+     * {@link #IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search location returned from
+     * {@link #getSearchLocation()}.
      * 
-     * @deprecated in future versions there will only be one location returned.  This method is not available yet since
-     * the code cannot coexist with the legacy.  See IDP-999 and IDP-991
      * @param applicationContext the application context
-     * @return the search locations used to search for the target
+     * @return the search location used to search for the target
      * @throws ConstraintViolationException if the user-defined search location is empty or ends with '/' and
      *             {@link #isFailFast(ConfigurableApplicationContext)} is true
      */
-    @Deprecated
-    @Nonnull public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
+    @Nonnull public String selectSearchLocation(@Nonnull final ConfigurableApplicationContext applicationContext) {
 
         Constraint.isNotNull(applicationContext, "Application context cannot be null");
         final String homeProperty = applicationContext.getEnvironment().getProperty(IDP_HOME_PROPERTY);
@@ -183,7 +165,7 @@ public class IdPPropertiesApplicationContextInitializer
             Constraint.isNotEmpty(homeProperty, "idp.home cannot be empty");
             Constraint.isFalse(homeProperty.endsWith("/"), "idp.home cannot end with '/'");
         }
-        return (homeProperty != null) ? new String[] {homeProperty} : getSearchLocations();
+        return (homeProperty != null) ? homeProperty : getSearchLocation();
     }
 
     /**
@@ -279,21 +261,6 @@ public class IdPPropertiesApplicationContextInitializer
             @Nonnull final String name, @Nonnull final Properties properties) {
         applicationContext.getEnvironment().getPropertySources()
                 .addLast(new PropertiesPropertySource(name, properties));
-    }
-
-    /**
-     * Normalize the path by calling {@link StringUtils#cleanPath(String)}.
-     * 
-     * @deprecated
-     * 
-     * @param path the input path
-     * @return the normalized path.
-     */
-    @Deprecated @Nonnull public String normalizePath(@Nonnull final String path) {
-        Constraint.isNotNull(path, "Path cannot be null");
-        final String normalized = StringUtils.cleanPath(path);
-        log.debug("Normalized path '{}' to '{}'", path, normalized);
-        return normalized;
     }
 
     /**
