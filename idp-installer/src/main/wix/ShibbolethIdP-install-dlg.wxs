@@ -54,7 +54,6 @@
 
                 <!-- Jetty? -->
                 <Control Id="InstallJetty" Type="CheckBox" X="25" Y="128" Height="20" Width="60" Property="INSTALL_JETTY" CheckBoxValue="TRUE" Text="Install &amp;Jetty"/>
-                <Control Id="InstallJWarn" Type="Text" X="85" Y="132" Height="20" Width="80" Text="{\JettyWarning_Font}Requires Java 1.8" />
                 <!-- AD?=" -->
 
                 <Control Id="ConfigureAD" Type="CheckBox" X="185" Y="128" Height="20" Width="150" Property="CONFIGURE_AD" CheckBoxValue="TRUE" Text="Configure for &amp;Active Directory" />

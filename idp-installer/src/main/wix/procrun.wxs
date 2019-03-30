@@ -50,7 +50,7 @@
             <Component Id="procrun_32_service" Directory="PROCRUNROOT" Guid="{544A5D33-CF99-4384-A74D-79FB29DE904D}">
                 <File Id="file_procrun_32_service" KeyPath="yes" Source="$(var.ProcrunSrc)\prunsrv.exe" Name="$(var.ServiceName).exe" />
                 <?if $(var.msitype) = "x86" ?>
-                <ServiceInstall Id="Service32" Name="$(var.ServiceName)" DisplayName="Shibboleth 3 IdP Daemon" Description="Runs the Jetty Container" Arguments="service $(var.ServiceName)" Type="ownProcess" Start="$(var.ServiceStart)" ErrorControl="normal" />
+                <ServiceInstall Id="Service32" Name="$(var.ServiceName)" DisplayName="Shibboleth V4 IdP Daemon" Description="Runs the Jetty Container" Arguments="service $(var.ServiceName)" Type="ownProcess" Start="$(var.ServiceStart)" ErrorControl="normal" />
                 <?endif ?>
             </Component>
             <Component Id="procrun_32_Firewall" Directory="PROCRUNROOT" Guid="{F93B8D9F-7BBA-4D79-995D-4AC20FF158E4}" KeyPath="yes">
