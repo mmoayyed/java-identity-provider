@@ -1307,7 +1307,6 @@
                 <choice  maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
-                    <element ref="resolver:FailoverDataConnector"/>
                     <element name="Attribute">
                         <annotation>
                             <documentation>

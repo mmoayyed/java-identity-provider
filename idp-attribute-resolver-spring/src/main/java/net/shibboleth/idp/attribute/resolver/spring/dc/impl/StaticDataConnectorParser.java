@@ -35,8 +35,6 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -62,11 +60,6 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     /** {@inheritDoc} */
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        
-        if (!ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME).isEmpty()) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, 
-                    FAILOVER_DATA_CONNECTOR_ELEMENT_NAME.getLocalPart(), TYPE_NAME_RESOLVER.toString(), null);
-        }
         
         final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_RESOLVER);
         final List<BeanDefinition> attributes = new ManagedList<>(children.size());

@@ -34,20 +34,6 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorP
  */
 public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
-    @Test public void multiFallback() {
-        final StaticDataConnector connector = getDataConnector("resolver/staticMultiFallback.xml", StaticDataConnector.class);
-        Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
-        final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
-        List<IdPAttributeValue<?>> values = epe.getValues();
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
-        
-        values = connector.getAttributes().get("staticEpA").getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("member")));
-    }
-
     @Test public void simple() {
         final StaticDataConnector connector = getDataConnector("resolver/staticAttributes.xml", StaticDataConnector.class);
         
