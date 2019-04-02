@@ -70,9 +70,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
 
         final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_RESOLVER);
         if (null == templateElements || templateElements.isEmpty()) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, "Missing " + TEMPLATE_ELEMENT_NAME_RESOLVER.getLocalPart(),
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    "by providing an explicit template");
+            log.error( "Missing " + TEMPLATE_ELEMENT_NAME_RESOLVER.getLocalPart() + " Element");
         } else {
             if (templateElements.size() > 1) {
                 log.warn("{} Too many <Template> elements, taking the first");

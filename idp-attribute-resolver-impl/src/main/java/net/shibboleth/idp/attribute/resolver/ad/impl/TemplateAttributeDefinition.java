@@ -19,12 +19,10 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,8 +43,6 @@ import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -96,7 +92,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
     /**
      * Get the source attribute IDs.
-     * 
+     * @deprecated This should be inferred from the environment, but we keep this for V4
      * @return the source attribute IDs
      */
     @Deprecated @Nonnull @Unmodifiable @NonnullElements public List<String> getSourceAttributes() {
@@ -106,6 +102,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     /**
      * Set the source attribute IDs.
      * 
+     * @deprecated This should be inferred from the environment, but we keep this for V4
      * @param newSourceAttributes the source attribute IDs
      */
     @Deprecated public void setSourceAttributes(@Nonnull @NullableElements final List<String> newSourceAttributes) {
@@ -180,55 +177,11 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + " no velocity engine was configured");
         }
     
-        checkSourceAttributes();
-    
         if (null == templateText) {
-            // V2 compatibility - define our own template
-            final StringBuffer defaultTemplate = new StringBuffer();
-            for (final String id : sourceAttributes) {
-                defaultTemplate.append("${").append(id).append("} ");
-            }
-            if (defaultTemplate.length() > 0) {
-                templateText = defaultTemplate.toString();
-            } else {
-                throw new ComponentInitializationException(getLogPrefix()
-                        + " no template and no source attributes were configured");
-            }
-            log.info("{} No template supplied. Default generated was '{}'", getLogPrefix(), templateText);
+            throw new ComponentInitializationException(getLogPrefix() + " no template provided");
         }
     
         template = Template.fromTemplate(engine, templateText);
-    }
-
-    /**
-     * Check the provided source attributes against the provided dependencies.
-     */
-    private void checkSourceAttributes() {
-        if (sourceAttributes.isEmpty()) {
-            return;
-        }
-
-        final Set<String> dependencyAttributeNames = new HashSet<>(getAttributeDependencies().size() +
-                getDataConnectorDependencies().size());
-
-        for (final ResolverAttributeDefinitionDependency attrDep: getAttributeDependencies()) {
-            dependencyAttributeNames.add(attrDep.getDependencyPluginId());
-        }
-        
-        for (final ResolverDataConnectorDependency dcDep: getDataConnectorDependencies()) {
-            if (dcDep.isAllAttributes()) {
-                // No sensible check can be made if wild carding
-                return;
-            }
-            dependencyAttributeNames.addAll(dcDep.getAttributeNames());
-        }
-
-        
-        for (final String s: sourceAttributes) {
-            if (!dependencyAttributeNames.contains(s)) {
-                log.warn("{} Source Attribute {} is not provided as a dependency", getLogPrefix(),s);
-            }
-        }
     }
 
     /** {@inheritDoc} */

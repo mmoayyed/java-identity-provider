@@ -178,8 +178,9 @@ public class TemplateAttributeTest {
             // OK
         }
         attr.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        attr.setTemplateText( "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
         attr.initialize();
-        Assert.assertEquals(attr.getTemplateText(), "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "} ");
+        Assert.assertEquals(attr.getTemplateText(), "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
         Assert.assertEquals(attr.getSourceAttributes().get(0), TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         Assert.assertEquals(attr.getSourceAttributes().size(), 1);
 
