@@ -66,6 +66,7 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (isNative(config)) {
+            // V4 Deprecation
             DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, ATTR_SPRING_RESOURCE, null,null);
         }
         super.doParse(config, parserContext, builder);

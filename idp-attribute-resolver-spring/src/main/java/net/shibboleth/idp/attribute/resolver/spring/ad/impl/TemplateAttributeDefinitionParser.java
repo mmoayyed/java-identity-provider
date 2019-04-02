@@ -87,6 +87,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
         final List<Element> sourceAttributeElements =
             ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER);
         if (null != sourceAttributeElements && !sourceAttributeElements.isEmpty()) {
+            // V4 deprecation
             DeprecationSupport.warnOnce(ObjectType.ELEMENT, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER.getLocalPart(),
                     parserContext.getReaderContext().getResource().getDescription(),
                     "by using <InputAttributeDefinition> and <InputDataConnector>");

@@ -75,6 +75,7 @@ public class V2SAMLProfileRequestContext {
      * @return attribute ID
      */
     @Nullable protected String getId() {
+        // Deprecation is NEW in V4.0
         DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getId()", null, null);
         return id;
     }
@@ -85,6 +86,7 @@ public class V2SAMLProfileRequestContext {
      * @return the Principal.
      */
     public String getPrincipalName() {
+        // Deprecation is NEW in V4.0
         DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPrincipalName()", null, null);
         return resolutionContext.getPrincipal();
     }
@@ -95,6 +97,7 @@ public class V2SAMLProfileRequestContext {
      * @return the entityId.
      */
     public String getPeerEntityId() {
+        // Deprecation is NEW in V4.0
         DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPeerEntityId()", null, null);
         return resolutionContext.getAttributeRecipientID();
     }
@@ -105,6 +108,7 @@ public class V2SAMLProfileRequestContext {
      * @return the entityId.
      */
     public String getLocalEntityId() {
+        // Deprecation is NEW in V4.0
         DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getLocalEntityId()", null, null);
         return resolutionContext.getAttributeIssuerID();
     }
