@@ -30,8 +30,6 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /** Engine to mine values from {@link IdPAttributePrincipal}s. */
 public class IdPAttributePrincipalValuesFunction extends AbstractInitializableComponent implements
@@ -39,18 +37,6 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
 
     /** The Attribute Name to look for. */
     @Nonnull private String attributeName;
-
-    /**
-     * Constructor.
-     * 
-     * @param attrName the name to filter on.
-     * @deprecated use the property setter instead
-     */
-    @Deprecated public IdPAttributePrincipalValuesFunction(@Nonnull final String attrName) {
-        attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
-        DeprecationSupport.warn(ObjectType.METHOD, 
-                "IdPAttributePrincipalValuesFunction(String)", null, null);
-    }
 
     /**  Constructor.  */
     public IdPAttributePrincipalValuesFunction() {
