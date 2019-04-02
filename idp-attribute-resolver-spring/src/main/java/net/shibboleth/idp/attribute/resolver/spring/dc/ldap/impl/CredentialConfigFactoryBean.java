@@ -23,10 +23,6 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.CredentialConfigFactory;
 import org.opensaml.security.credential.Credential;
@@ -34,6 +30,8 @@ import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
+
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 
 /**
  * A Factory bean to summon up {@link CredentialConfig} from supplied &lt;Credential&gt; statements.
