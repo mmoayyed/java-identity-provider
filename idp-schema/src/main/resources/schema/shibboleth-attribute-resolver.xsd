@@ -1652,16 +1652,6 @@
     </element>
 
     <complexType name="ContainerManagedConnectionType">
-        <sequence>
-            <element name="JNDIConnectionProperty" type="resolver:PropertyType" minOccurs="0" maxOccurs="unbounded">
-                <annotation>
-                    <documentation>
-                        A property used when constructing a JNDI initial context which in turn is used to lookup the
-                        database DataSource.
-                    </documentation>
-                </annotation>
-            </element>
-        </sequence>
         <attribute name="resourceName" type="string" use="required">
             <annotation>
                 <documentation>The resource name the DataSource is bound to in the JNDI tree.</documentation>

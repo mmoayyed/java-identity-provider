@@ -57,9 +57,7 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
 
         final PairwiseIdDataConnector connector = getDataConnector("resolver/containerManagedConnection.xml", PairwiseIdDataConnector.class);
         MyDataSource source = (MyDataSource) ((JDBCPairwiseIdStore) connector.getPairwiseIdStore()).getDataSource();
-        assertEquals(source.getEnvironment().size(), 2);
-        assertEquals(source.getEnvironment().get("foo"), "Bar");
-        assertEquals(source.getEnvironment().get("yellow"), "green");
+        assertEquals(source.getEnvironment().size(), 0);
     }
 
     /** Hard wiring for JNDI.  This is an {@link InitialContextFactoryBuilder} Its only job is to return a {@link MyContextFactory} */

@@ -10,10 +10,7 @@
 	salt="abcdefghijklmnopqrst"
 	
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-    <ContainerManagedConnection resourceName="myConnnector">
-	    <JNDIConnectionProperty name="foo" value="Bar"/>
-    	<JNDIConnectionProperty name="yellow" value="green"/>
-    </ContainerManagedConnection>
+    <ContainerManagedConnection resourceName="myConnnector"/>
                
 	<InputAttributeDefinition ref="TheAttributeRemainsTheSame"/>
 </DataConnector>

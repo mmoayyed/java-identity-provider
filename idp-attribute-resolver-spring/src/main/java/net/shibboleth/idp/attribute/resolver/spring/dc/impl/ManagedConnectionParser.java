@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,13 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedMap;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -117,19 +112,8 @@ public class ManagedConnectionParser {
         final String resourceName =
                 AttributeSupport.getAttributeValue(containerManagedElement, new QName("resourceName"));
 
-        final ManagedMap<String, String> props = new ManagedMap<>();
-        final List<Element> elements = ElementSupport.getChildElementsByTagNameNS(containerManagedElement,
-                AttributeResolverNamespaceHandler.NAMESPACE, "JNDIConnectionProperty");
-        if (!elements.isEmpty()) {
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, "<JNDIConnectionProperty>", null, null);
-            for (final Element e : elements) {
-                props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
-                        AttributeSupport.getAttributeValue(e, new QName("value")));
-            }
-        }
         final BeanDefinitionBuilder dataSource =
                 BeanDefinitionBuilder.rootBeanDefinition(ManagedConnectionParser.class, "buildDataSource");
-        dataSource.addConstructorArgValue(props);
         dataSource.addConstructorArgValue(resourceName);
         return dataSource.getBeanDefinition();
     }
@@ -185,14 +169,13 @@ public class ManagedConnectionParser {
     /**
      * Factory builder a container managed datasource.
      *
-     * @param props to create an {@link InitialContext} with
      * @param resourceName of the data source
      *
      * @return data source or null if the data source cannot be looked up
      */
-    @Nullable public static DataSource buildDataSource(final Map<String, String> props, final String resourceName) {
+    @Nullable public static DataSource buildDataSource(final String resourceName) {
         try {
-            final InitialContext initCtx = new InitialContext(new Hashtable<>(props));
+            final InitialContext initCtx = new InitialContext();
             final DataSource dataSource = (DataSource) initCtx.lookup(resourceName);
             return dataSource;
         } catch (final NamingException e) {
