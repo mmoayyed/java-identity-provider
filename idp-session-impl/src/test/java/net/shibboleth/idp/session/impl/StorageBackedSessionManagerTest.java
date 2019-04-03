@@ -52,6 +52,8 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.storage.StorageSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -63,6 +65,8 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
 
     private static final Duration sessionSlop = Duration.ofMinutes(5);
     
+    private static final Logger log = LoggerFactory.getLogger(StorageBackedSessionManagerTest.class);
+
     private Collection<AuthenticationFlowDescriptor> flowDescriptors;
     
     private SPSessionSerializerRegistry serializerRegistry;
@@ -147,10 +151,22 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertEquals(mockResponse.getCookie(StorageBackedSessionManager.DEFAULT_COOKIE_NAME).getValue(),
                 session.getId());
         
+        log.trace("testSimpleSession({}): \n\tTime before sleep: {} \n\tCreation Instant: {}\n\t Last Activity : {} ",
+                Thread.currentThread().toString(),
+                Instant.now().toString(), session.getCreationInstant().toString(),
+                session.getLastActivityInstant().toString());
         Thread.sleep(1000);
+        log.trace("testSimpleSession({}): \n\tTime after sleep: {} \n\tCreation Instant: {}\n\t Last Activity : {} ",
+                Thread.currentThread().toString(),
+                Instant.now().toString(), session.getCreationInstant().toString(),
+                session.getLastActivityInstant().toString());
         
         // checkTimeout should update the last activity time.
         session.checkTimeout();
+        log.trace("testSimpleSession({}): \n\tTime after checkTimeOut : {} \n\tCreation Instant: {}\n\t Last Activity : {} ",
+                Thread.currentThread().toString(),
+                Instant.now().toString(), session.getCreationInstant().toString(),
+                session.getLastActivityInstant().toString());
         Assert.assertNotEquals(session.getCreationInstant(), session.getLastActivityInstant());
 
         // Do a lookup and compare the results.
