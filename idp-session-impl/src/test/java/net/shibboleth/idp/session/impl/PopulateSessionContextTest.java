@@ -110,7 +110,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
-        Thread.sleep(10000);
+        Thread.sleep(16000);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

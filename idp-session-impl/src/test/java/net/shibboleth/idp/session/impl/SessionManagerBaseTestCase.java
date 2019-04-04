@@ -62,7 +62,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         cookieManager.initialize();
         
         sessionManager = new StorageBackedSessionManager();
-        sessionManager.setSessionTimeout(Duration.ofSeconds(5));
+        sessionManager.setSessionTimeout(Duration.ofSeconds(15));
         sessionManager.setStorageService(storageService);
         sessionManager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
         sessionManager.setHttpServletRequest(requestProxy);
