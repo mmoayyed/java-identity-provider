@@ -75,7 +75,7 @@ public class V2SAMLProfileRequestContext {
      * @return attribute ID
      */
     @Nullable protected String getId() {
-        // Deprecation is NEW in V4.0
+        // Deprecation is NEW in V3.4.4
         DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getId()", null, null);
         return id;
     }
@@ -86,8 +86,9 @@ public class V2SAMLProfileRequestContext {
      * @return the Principal.
      */
     public String getPrincipalName() {
-        // Deprecation is NEW in V4.0
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPrincipalName()", null, null);
+        // Deprecation is NEW in V3.4.4
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPrincipalName()", null,
+                "resolutionContext.getPrincipal()");
         return resolutionContext.getPrincipal();
     }
 
@@ -97,8 +98,10 @@ public class V2SAMLProfileRequestContext {
      * @return the entityId.
      */
     public String getPeerEntityId() {
-        // Deprecation is NEW in V4.0
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPeerEntityId()", null, null);
+        // Deprecation is NEW in V3.4.4
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getPeerEntityId()",
+                null,
+                "resolutionContext.getAttributeRecipientID()");
         return resolutionContext.getAttributeRecipientID();
     }
 
@@ -109,7 +112,9 @@ public class V2SAMLProfileRequestContext {
      */
     public String getLocalEntityId() {
         // Deprecation is NEW in V4.0
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "requestContext.getLocalEntityId()", null, null);
+        DeprecationSupport.warnOnce(ObjectType.METHOD,
+                "requestContext.getLocalEntityId()", null,
+                "resolutionContext.getAttributeIssuerID()");
         return resolutionContext.getAttributeIssuerID();
     }
 
@@ -915,10 +920,10 @@ public class V2SAMLProfileRequestContext {
      * @param method the method
      */
     protected void unsupportedMethod(@Nonnull final String method) {
-        if (null == getId()) {
+        if (null == id) {
             log.error("Template definition referenced unsupported method {}", method);
         } else {
-            log.error("AttributeDefinition: '{}' called unsupported method {}", getId(), method);
+            log.error("AttributeDefinition: '{}' called unsupported method {}", id, method);
         }
     }
 
