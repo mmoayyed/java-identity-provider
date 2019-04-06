@@ -2,3 +2,6 @@ child = profileContext.getSubcontext("net.shibboleth.idp.attribute.resolver.cont
 
 Scripted.addValue(child.getClass().getSimpleName());
 Scripted.addValue(profileContext.getClass().getSimpleName());
+Scripted.addValue(resolutionContext.getPrincipal());
+Scripted.addValue(resolutionContext.getAttributeIssuerID());
+Scripted.addValue(resolutionContext.getAttributeRecipientID());

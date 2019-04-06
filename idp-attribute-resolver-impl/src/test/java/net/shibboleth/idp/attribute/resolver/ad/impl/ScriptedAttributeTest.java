@@ -498,9 +498,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection<IdPAttributeValue<?>> values = attribute.getValues();
 
-        Assert.assertEquals(values.size(), 2, "looking for context");
+        Assert.assertEquals(values.size(), 5, "looking for context");
         Assert.assertTrue(values.contains(new StringAttributeValue("AttributeResolutionContext")));
         Assert.assertTrue(values.contains(new StringAttributeValue("ProfileRequestContext")));
+        Assert.assertTrue(values.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
+        Assert.assertTrue(values.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));
+        Assert.assertTrue(values.contains(new StringAttributeValue(TestSources.SP_ENTITY_ID)));
     }
 
     protected IdPAttribute runExample(final String exampleScript, final String exampleData, final String attributeName)
