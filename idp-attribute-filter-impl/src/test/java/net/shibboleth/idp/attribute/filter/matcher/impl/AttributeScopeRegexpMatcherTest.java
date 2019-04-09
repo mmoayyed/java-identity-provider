@@ -17,11 +17,12 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
-import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeRegexpMatcher;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Test For {@link AttributeScopeRegexpMatcher}.
@@ -34,10 +35,10 @@ public class AttributeScopeRegexpMatcherTest {
         matcher.setId("TestId");
         matcher.initialize();
         
-        Assert.assertFalse(matcher.compareAttributeValue(DataSources.STRING_VALUE));
-        Assert.assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
-        Assert.assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
-        Assert.assertFalse(matcher.compareAttributeValue(null));
+        assertFalse(matcher.compareAttributeValue(DataSources.STRING_VALUE));
+        assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
+        assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
+        assertFalse(matcher.compareAttributeValue(null));
         
     }
 

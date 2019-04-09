@@ -17,12 +17,18 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -31,10 +37,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** unit tests for {@link AbstractComposedPolicyRule}. */
 public class AbstractComposedPolicyRuleTest {
@@ -57,7 +59,7 @@ public class AbstractComposedPolicyRuleTest {
             thrown = true;
         }
         
-        Assert.assertTrue(thrown, "Initialize after destroy");
+        assertTrue(thrown, "Initialize after destroy");
 
         for (int i = 0; i < 2;i++) {
             firstList.add(new TestMatcher());
@@ -65,7 +67,7 @@ public class AbstractComposedPolicyRuleTest {
         firstList.add(null);
         rule = new ComposedPolicyRule(firstList);
         
-        Assert.assertEquals(firstList.size()-1, rule.getComposedRules().size());
+        assertEquals(firstList.size()-1, rule.getComposedRules().size());
         
         thrown = false;
         try {
@@ -73,7 +75,7 @@ public class AbstractComposedPolicyRuleTest {
         } catch (final UnsupportedOperationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "Set into the returned list");
+        assertTrue(thrown, "Set into the returned list");
         rule.setId("Test");
         
         rule.initialize();
@@ -85,8 +87,8 @@ public class AbstractComposedPolicyRuleTest {
     public void testParams() throws ComponentInitializationException {
         ComposedPolicyRule rule = new ComposedPolicyRule(null);
 
-        Assert.assertTrue(rule.getComposedRules().isEmpty(), "Initial state - no matchers");
-        Assert.assertTrue(rule.getComposedRules().isEmpty(), "Add null - no matchers");
+        assertTrue(rule.getComposedRules().isEmpty(), "Initial state - no matchers");
+        assertTrue(rule.getComposedRules().isEmpty(), "Add null - no matchers");
         
         final List<PolicyRequirementRule> list = new ArrayList<>();
         
@@ -95,7 +97,7 @@ public class AbstractComposedPolicyRuleTest {
         }
         
         rule = new ComposedPolicyRule(list);
-        Assert.assertTrue(rule.getComposedRules().isEmpty(), "Add List<null> - no matchers");
+        assertTrue(rule.getComposedRules().isEmpty(), "Add List<null> - no matchers");
         
         list.set(2, new TestMatcher());
         list.set(3, new TestMatcher());
@@ -106,16 +108,16 @@ public class AbstractComposedPolicyRuleTest {
         list.set(19, new TestMatcher());
         list.set(23, new TestMatcher());
         list.set(29, new TestMatcher());
-        Assert.assertTrue(rule.getComposedRules().isEmpty(), "Change to input list - no matchers");
+        assertTrue(rule.getComposedRules().isEmpty(), "Change to input list - no matchers");
 
         rule = new ComposedPolicyRule(list);
-        Assert.assertEquals(rule.getComposedRules().size(), 9, "Add a List with nulls");
+        assertEquals(rule.getComposedRules().size(), 9, "Add a List with nulls");
         
         list.clear();
-        Assert.assertEquals(rule.getComposedRules().size(), 9, "Change to input list");
+        assertEquals(rule.getComposedRules().size(), 9, "Change to input list");
 
         rule = new ComposedPolicyRule(list);
-        Assert.assertTrue(rule.getComposedRules().isEmpty(), "Empty list");
+        assertTrue(rule.getComposedRules().isEmpty(), "Empty list");
 
         LoggerFactory.getLogger(AbstractComposedPolicyRuleTest.class).debug(rule.toString());
     }

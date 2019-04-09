@@ -19,11 +19,19 @@ package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -33,10 +41,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /** {@link AndMatcher} unit test. */
 public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
@@ -53,21 +57,21 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             matcher.getMatchingValues(null, filterContext);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -82,9 +86,9 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertEquals(result.size(), 2);
-        Assert.assertTrue(result.contains(value2));
-        Assert.assertTrue(result.contains(value1));
+        assertEquals(result.size(), 2);
+        assertTrue(result.contains(value2));
+        assertTrue(result.contains(value1));
 
     }
 
@@ -96,7 +100,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
+            fail();
         } catch (final UninitializedComponentException e) {
             // expect this
         }
@@ -105,14 +109,14 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.contains(value2));
+        assertNotNull(result);
+        assertEquals(result.size(), 1);
+        assertTrue(result.contains(value2));
 
         matcher.destroy();
         try {
             matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
+            fail();
         } catch (final DestroyedComponentException e) {
             // expect this
         }
@@ -124,14 +128,14 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNull(result);
+        assertNull(result);
 
         matcher = newAndMatcher(Arrays.<Matcher> asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
         matcher.setId("test");
         matcher.initialize();
 
         result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNull(result);
+        assertNull(result);
     }
 
     @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
@@ -149,7 +153,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
+        assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
     
     static public AndMatcher newAndMatcher(final Collection<Matcher> what) {

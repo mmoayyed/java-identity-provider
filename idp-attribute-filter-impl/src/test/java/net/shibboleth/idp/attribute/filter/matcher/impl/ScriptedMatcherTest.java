@@ -17,12 +17,24 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -39,11 +51,6 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /** {@link ScriptedMatcher} unit test. */
 @ThreadSafe
@@ -128,7 +135,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Assert.assertNotNull(matcher.getScript());
+        assertNotNull(matcher.getScript());
     }
 
     @Test public void testNullArguments() throws Exception {
@@ -139,21 +146,21 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             matcher.getMatchingValues(null, filterContext);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -167,7 +174,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             newScriptedMatcher(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -179,9 +186,9 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+        assertNotNull(result);
+        assertEquals(result.size(), 1);
+        assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
     
     @Test public void custom() throws Exception {
@@ -193,9 +200,9 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+        assertNotNull(result);
+        assertEquals(result.size(), 1);
+        assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
 
 
@@ -205,7 +212,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Assert.assertNull(matcher.getMatchingValues(attribute, filterContext));
+        assertNull(matcher.getMatchingValues(attribute, filterContext));
     }
     
     @Test public void testInvalidReturnObjectValue() throws Exception {
@@ -214,7 +221,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Assert.assertNull(matcher.getMatchingValues(attribute, filterContext));
+        assertNull(matcher.getMatchingValues(attribute, filterContext));
     }
 
     @Test public void testAddedValuesScript() throws Exception {
@@ -224,9 +231,9 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+        assertNotNull(result);
+        assertEquals(result.size(), 1);
+        assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
@@ -239,7 +246,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         } catch (final UninitializedComponentException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "getMatchingValues before init");
+        assertTrue(thrown, "getMatchingValues before init");
 
         matcher.setId("Test");
         matcher.initialize();
@@ -260,7 +267,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         } catch (final DestroyedComponentException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "getMatchingValues after destroy");
+        assertTrue(thrown, "getMatchingValues after destroy");
 
         thrown = false;
         try {
@@ -268,7 +275,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         } catch (final DestroyedComponentException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "getMatchingValues after destroy");
+        assertTrue(thrown, "getMatchingValues after destroy");
     }
 
     @SuppressWarnings("unlikely-arg-type")
@@ -278,19 +285,19 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         matcher.toString();
 
-        Assert.assertFalse(matcher.equals(null));
-        Assert.assertTrue(matcher.equals(matcher));
-        Assert.assertFalse(matcher.equals(this));
+        assertFalse(matcher.equals(null));
+        assertTrue(matcher.equals(matcher));
+        assertFalse(matcher.equals(this));
 
         ScriptedMatcher other = newScriptedMatcher(addedValuesScript);
 
-        Assert.assertTrue(matcher.equals(other));
-        Assert.assertEquals(matcher.hashCode(), other.hashCode());
+        assertTrue(matcher.equals(other));
+        assertEquals(matcher.hashCode(), other.hashCode());
 
         other = newScriptedMatcher(nullReturnScript);
 
-        Assert.assertFalse(matcher.equals(other));
-        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+        assertFalse(matcher.equals(other));
+        assertNotSame(matcher.hashCode(), other.hashCode());
 
     }
 
@@ -308,7 +315,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         sc.getAuthenticationResults().put("one", new AuthenticationResult("1", subject));        
         
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertEquals(result.size(), 0);
+        assertEquals(result.size(), 0);
 
         final IdPAttribute newAttr = attribute.clone();
 
@@ -318,9 +325,9 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         s.add(new StringAttributeValue("FOO"));
         newAttr.setValues(s);
         result = matcher.getMatchingValues(newAttr, filterContext);
-        Assert.assertEquals(result.size(), 2);
-        Assert.assertTrue(result.contains(new StringAttributeValue(ProfileRequestContext.class.getName())));
-        Assert.assertTrue(result.contains(new StringAttributeValue("FOO")));
+        assertEquals(result.size(), 2);
+        assertTrue(result.contains(new StringAttributeValue(ProfileRequestContext.class.getName())));
+        assertTrue(result.contains(new StringAttributeValue("FOO")));
     }
 
     static public  ScriptedMatcher newScriptedMatcher(final EvaluableScript script) {

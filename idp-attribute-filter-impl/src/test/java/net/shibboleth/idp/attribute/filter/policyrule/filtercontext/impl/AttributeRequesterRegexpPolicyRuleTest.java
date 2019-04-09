@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeRequesterRegexpPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Tests for {@link AttributeRequesterRegexpPolicyRule}.
@@ -43,25 +44,25 @@ public class AttributeRequesterRegexpPolicyRuleTest {
 
         try {
             new AttributeRequesterRegexpPolicyRule().matches(null);
-            Assert.fail();
+            fail();
         } catch (UninitializedComponentException ex) {
             // OK
         }
         AttributeRequesterRegexpPolicyRule matcher = getMatcher();
         
-        Assert.assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "wibble")), Tristate.FALSE);
-        Assert.assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "REQUESTER")), Tristate.FALSE);
-        Assert.assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "requester")), Tristate.TRUE);        
+        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "wibble")), Tristate.FALSE);
+        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "REQUESTER")), Tristate.FALSE);
+        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, "requester")), Tristate.TRUE);        
     }
 
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
 
     @Test public void testNoRequester()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
+        assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
     }
 
 }

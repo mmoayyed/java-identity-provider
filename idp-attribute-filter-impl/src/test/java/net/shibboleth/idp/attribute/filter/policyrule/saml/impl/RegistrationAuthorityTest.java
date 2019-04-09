@@ -17,17 +17,18 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
-import java.util.Arrays;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
+import java.util.Arrays;
 
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 
 /** {@link RegistrationAuthorityPolicyRule} unit test. */
 public class RegistrationAuthorityTest extends BaseMetadataTests {
@@ -54,7 +55,7 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
                 return entity;
             }
         }
-        Assert.fail("Could not find " + entityID);
+        fail("Could not find " + entityID);
         return null;
     }
 
@@ -65,10 +66,10 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
         String[] array = {REQUESTED_REG_INFO, "foo",};
         filter.setIssuers(Arrays.asList(array));
 
-        Assert.assertEquals(filter.matches(context), Tristate.TRUE);
+        assertEquals(filter.matches(context), Tristate.TRUE);
         array[0] = INCOMMON_REG_INFO;
         filter.setIssuers(Arrays.asList(array));
-        Assert.assertEquals(filter.matches(context), Tristate.FALSE);
+        assertEquals(filter.matches(context), Tristate.FALSE);
     }
 
     @Test public void ligo() {
@@ -77,10 +78,10 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
         String[] array = {REQUESTED_REG_INFO, "foo",};
         filter.setIssuers(Arrays.asList(array));
 
-        Assert.assertEquals(filter.matches(context), Tristate.FALSE);
+        assertEquals(filter.matches(context), Tristate.FALSE);
         array[0] = INCOMMON_REG_INFO;
         filter.setIssuers(Arrays.asList(array));
-        Assert.assertEquals(filter.matches(context), Tristate.TRUE);
+        assertEquals(filter.matches(context), Tristate.TRUE);
     }
 
     @Test public void none()  {
@@ -90,8 +91,8 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
         filter.setIssuers(Arrays.asList(array));
 
         filter.setMatchIfMetadataSilent(true);
-        Assert.assertEquals(filter.matches(context), Tristate.TRUE);
+        assertEquals(filter.matches(context), Tristate.TRUE);
         filter.setMatchIfMetadataSilent(false);
-        Assert.assertEquals(filter.matches(context), Tristate.FALSE);
+        assertEquals(filter.matches(context), Tristate.FALSE);
     }
 }

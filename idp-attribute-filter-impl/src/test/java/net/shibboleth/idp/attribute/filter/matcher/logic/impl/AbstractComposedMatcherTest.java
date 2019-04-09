@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +27,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -34,9 +39,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** unit tests for {@link AbstractComposedMatcher}. */
 public class AbstractComposedMatcherTest {
@@ -58,7 +60,7 @@ public class AbstractComposedMatcherTest {
             thrown = true;
         }
 
-        Assert.assertTrue(thrown, "Initialize after destroy");
+        assertTrue(thrown, "Initialize after destroy");
 
         for (int i = 0; i < 2; i++) {
             firstList.add(new TestMatcher());
@@ -66,7 +68,7 @@ public class AbstractComposedMatcherTest {
         firstList.add(null);
         matcher = new ComposedMatcher(firstList);
 
-        Assert.assertEquals(firstList.size() - 1, matcher.getComposedMatchers().size());
+        assertEquals(firstList.size() - 1, matcher.getComposedMatchers().size());
 
         thrown = false;
         try {
@@ -74,7 +76,7 @@ public class AbstractComposedMatcherTest {
         } catch (final UnsupportedOperationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "Set into the returned list");
+        assertTrue(thrown, "Set into the returned list");
         matcher.setId("Test");
 
         matcher.initialize();
@@ -83,8 +85,8 @@ public class AbstractComposedMatcherTest {
     @Test public void testParams() throws ComponentInitializationException {
         ComposedMatcher matcher = new ComposedMatcher(null);
 
-        Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
-        Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
+        assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
+        assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
 
         final List<Matcher> list = new ArrayList<>();
 
@@ -93,7 +95,7 @@ public class AbstractComposedMatcherTest {
         }
 
         matcher = new ComposedMatcher(list);
-        Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add List<null> - no matchers");
+        assertTrue(matcher.getComposedMatchers().isEmpty(), "Add List<null> - no matchers");
 
         list.set(2, new TestMatcher());
         list.set(3, new TestMatcher());
@@ -104,16 +106,16 @@ public class AbstractComposedMatcherTest {
         list.set(19, new TestMatcher());
         list.set(23, new TestMatcher());
         list.set(29, new TestMatcher());
-        Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Change to input list - no matchers");
+        assertTrue(matcher.getComposedMatchers().isEmpty(), "Change to input list - no matchers");
 
         matcher = new ComposedMatcher(list);
-        Assert.assertEquals(matcher.getComposedMatchers().size(), 9, "Add a List with nulls");
+        assertEquals(matcher.getComposedMatchers().size(), 9, "Add a List with nulls");
 
         list.clear();
-        Assert.assertEquals(matcher.getComposedMatchers().size(), 9, "Change to input list");
+        assertEquals(matcher.getComposedMatchers().size(), 9, "Change to input list");
 
         matcher = new ComposedMatcher(list);
-        Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Empty list");
+        assertTrue(matcher.getComposedMatchers().isEmpty(), "Empty list");
 
     }
 

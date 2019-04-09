@@ -17,19 +17,21 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link PredicatePolicyRule}.
@@ -42,7 +44,7 @@ public class PredicatePolicyRuleTest {
         rule.setProfileContextStrategy(new Func());
         rule.setRulePredicate(new TestPred(true));
         rule.initialize();
-        Assert.assertEquals(rule.matches(null), Tristate.TRUE);
+        assertEquals(rule.matches(null), Tristate.TRUE);
     }
 
     @Test public void falseTest() throws ComponentInitializationException {
@@ -52,7 +54,7 @@ public class PredicatePolicyRuleTest {
         rule.initialize();
         ProfileRequestContext pc = new ProfileRequestContext<>();
         RelyingPartyContext rpc = pc.getSubcontext(RelyingPartyContext.class, true);
-        Assert.assertEquals(rule.matches(rpc.getSubcontext(AttributeFilterContext.class, true)), Tristate.FALSE);
+        assertEquals(rule.matches(rpc.getSubcontext(AttributeFilterContext.class, true)), Tristate.FALSE);
     }
 
     @Test public void navigateFail() throws ComponentInitializationException {
@@ -60,7 +62,7 @@ public class PredicatePolicyRuleTest {
         rule.setId("id");
         rule.setRulePredicate(new TestPred(true));
         rule.initialize();
-        Assert.assertEquals(rule.matches(null), Tristate.FAIL);
+        assertEquals(rule.matches(null), Tristate.FAIL);
     }
     
     @Test public void throwFail() throws ComponentInitializationException {
@@ -69,7 +71,7 @@ public class PredicatePolicyRuleTest {
         rule.setProfileContextStrategy(new Func());
         rule.setRulePredicate(new ThrowPred());
         rule.initialize();
-        Assert.assertEquals(rule.matches(null), Tristate.FAIL);
+        assertEquals(rule.matches(null), Tristate.FAIL);
     }
 
 

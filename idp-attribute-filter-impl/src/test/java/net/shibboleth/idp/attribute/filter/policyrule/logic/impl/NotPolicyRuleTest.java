@@ -17,6 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.fail;
+
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
@@ -25,11 +33,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /** Test the {@link NotPolicyRule} matcher. */
 public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
@@ -43,19 +46,19 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("NullArgs");
         rule.initialize();
         
-        Assert.assertEquals(rule.getNegatedRule(), PolicyRequirementRule.MATCHES_ALL);
+        assertEquals(rule.getNegatedRule(), PolicyRequirementRule.MATCHES_ALL);
         LoggerFactory.getLogger(AbstractComposedPolicyRuleTest.class).debug(rule.toString());
 
         try {
             rule.matches(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             newNotPolicyRule(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -67,12 +70,12 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             rule.matches(filterContext);
-            Assert.fail();
+            fail();
         } catch (final UninitializedComponentException e) {
             // expect this
         }
-        Assert.assertFalse(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.isDestroyed());
+        assertFalse(inMatcher.isInitialized());
+        assertFalse(inMatcher.isDestroyed());
 
         rule.setId("test");
         rule.initialize();
@@ -91,17 +94,17 @@ public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         NotPolicyRule rule = newNotPolicyRule(PolicyRequirementRule.MATCHES_ALL);
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
         rule = newNotPolicyRule(PolicyRequirementRule.MATCHES_NONE);
         rule.setId("test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
 
         rule = newNotPolicyRule(PolicyRequirementRule.REQUIREMENT_RULE_FAILS);
         rule.setId("test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
     
     public static NotPolicyRule newNotPolicyRule(final PolicyRequirementRule composedRule) {

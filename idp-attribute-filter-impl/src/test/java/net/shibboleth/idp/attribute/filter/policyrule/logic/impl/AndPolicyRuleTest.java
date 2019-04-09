@@ -17,11 +17,17 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import javax.annotation.Nullable;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -30,10 +36,6 @@ import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 
 /** {@link AndPolicyRule} unit test. */
@@ -50,7 +52,7 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             rule.matches(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -67,39 +69,39 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         AndPolicyRule rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_NONE, PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
         rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
         rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_ALL));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
 
         rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
     
     @Test public void testSingletons() throws ComponentInitializationException {
         AndPolicyRule rule = newAndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
         rule = newAndPolicyRule(Collections.singletonList(PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
 
         rule = newAndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_ALL));
         rule.setId("Test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
+        assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
     }
     
     public static AndPolicyRule newAndPolicyRule(@Nullable @NullableElements 

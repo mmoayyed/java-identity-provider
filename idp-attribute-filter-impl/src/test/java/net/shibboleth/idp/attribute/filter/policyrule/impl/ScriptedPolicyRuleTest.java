@@ -17,8 +17,18 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -33,11 +43,6 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /** {@link ScriptedPolicyRule} unit test. */
 @ThreadSafe
@@ -91,14 +96,14 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             rule.matches(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             newScriptedPolicyRule(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -109,7 +114,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("Test");
         rule.initialize();
 
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FAIL);
+        assertEquals(rule.matches(filterContext), Tristate.FAIL);
     }
 
     @Test public void testInvalidReturnObjectValue() throws Exception {
@@ -117,7 +122,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("Test");
         rule.initialize();
 
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FAIL);
+        assertEquals(rule.matches(filterContext), Tristate.FAIL);
     }
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
@@ -129,7 +134,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         } catch (final UninitializedComponentException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "matches before init");
+        assertTrue(thrown, "matches before init");
 
         rule.setId("Test");
         rule.initialize();
@@ -150,7 +155,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         } catch (final DestroyedComponentException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "init after destroy");
+        assertTrue(thrown, "init after destroy");
 
         thrown = false;
         try {
@@ -158,7 +163,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         } catch (final DestroyedComponentException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "matches after destroy");
+        assertTrue(thrown, "matches after destroy");
 
     }
 
@@ -168,19 +173,19 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
         rule.toString();
 
-        Assert.assertFalse(rule.equals(null));
-        Assert.assertTrue(rule.equals(rule));
-        Assert.assertFalse(rule.equals(this));
+        assertFalse(rule.equals(null));
+        assertTrue(rule.equals(rule));
+        assertFalse(rule.equals(this));
 
         ScriptedPolicyRule other = newScriptedPolicyRule(trueReturnScript);
 
-        Assert.assertTrue(rule.equals(other));
-        Assert.assertEquals(rule.hashCode(), other.hashCode());
+        assertTrue(rule.equals(other));
+        assertEquals(rule.hashCode(), other.hashCode());
 
         other = newScriptedPolicyRule(nullReturnScript);
 
-        Assert.assertFalse(rule.equals(other));
-        Assert.assertNotSame(rule.hashCode(), other.hashCode());
+        assertFalse(rule.equals(other));
+        assertNotSame(rule.hashCode(), other.hashCode());
 
     }
     
@@ -192,24 +197,24 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule = newScriptedPolicyRule(trueReturnScript);
         rule.setId("test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         rule = newScriptedPolicyRule(customReturnScript);
         rule.setCustomObject(Boolean.valueOf(true));
         rule.setId("test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         rule = newScriptedPolicyRule(falseReturnScript);
         rule.setId("test");
         rule.initialize();
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
 
         rule = newScriptedPolicyRule(prcReturnScript);
         rule.setId("test");
         rule.initialize();
         
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FAIL);
+        assertEquals(rule.matches(filterContext), Tristate.FAIL);
         
         final ProfileRequestContext<Object, Object> prc = new ProfileRequestContext<>(); 
         prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
@@ -218,17 +223,17 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         final Subject subject = new Subject();
         sc.getAuthenticationResults().put("one", new AuthenticationResult("1", subject));
         
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         final ScriptedPolicyRule scRule = newScriptedPolicyRule(scReturnScript);
         scRule.setId("ScTest");
         scRule.initialize();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("BAR"));
-        Assert.assertEquals(scRule.matches(filterContext), Tristate.FALSE);
+        assertEquals(scRule.matches(filterContext), Tristate.FALSE);
 
         subject.getPrincipals().clear();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("FOO"));
-        Assert.assertEquals(scRule.matches(filterContext), Tristate.TRUE);
+        assertEquals(scRule.matches(filterContext), Tristate.TRUE);
     }
 
     static public  ScriptedPolicyRule newScriptedPolicyRule(final EvaluableScript script) {

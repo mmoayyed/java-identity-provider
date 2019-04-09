@@ -17,19 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
 import java.util.Collections;
 import java.util.HashSet;
+
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.NumOfAttributeValuesPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link NumOfAttributeValuesPolicyRule}.
@@ -43,7 +44,7 @@ public class NumOfAttributeValuesPolicyRuleTest {
     
     @Test public void setterGetterInit() throws ComponentInitializationException {
         NumOfAttributeValuesPolicyRule rule = new NumOfAttributeValuesPolicyRule();
-        Assert.assertNull(rule.getAttributeId());
+        assertNull(rule.getAttributeId());
         
         rule.setId("id");
         rule.setAttributeId(attrId);
@@ -52,9 +53,9 @@ public class NumOfAttributeValuesPolicyRuleTest {
 
         rule.initialize();
         
-        Assert.assertEquals(rule.getAttributeId(), attrId);
-        Assert.assertEquals(rule.getMaximum(), testMax);
-        Assert.assertEquals(rule.getMinimum(), testMin);
+        assertEquals(rule.getAttributeId(), attrId);
+        assertEquals(rule.getMaximum(), testMax);
+        assertEquals(rule.getMinimum(), testMin);
     }
     
     @Test(expectedExceptions={ComponentInitializationException.class,}) 
@@ -128,11 +129,11 @@ public class NumOfAttributeValuesPolicyRuleTest {
 
         rule.initialize();
                 
-        Assert.assertEquals(rule.matches(manufactureWith(testMin-1)), Tristate.FALSE);
-        Assert.assertEquals(rule.matches(manufactureWith(testMin)), Tristate.TRUE);
-        Assert.assertEquals(rule.matches(manufactureWith(testMax)), Tristate.TRUE);
-        Assert.assertEquals(rule.matches(manufactureWith(testMax+1)), Tristate.FALSE);
+        assertEquals(rule.matches(manufactureWith(testMin-1)), Tristate.FALSE);
+        assertEquals(rule.matches(manufactureWith(testMin)), Tristate.TRUE);
+        assertEquals(rule.matches(manufactureWith(testMax)), Tristate.TRUE);
+        assertEquals(rule.matches(manufactureWith(testMax+1)), Tristate.FALSE);
         
-        Assert.assertEquals(rule.matches(manufactureWith("foo", testMin)), Tristate.FALSE);
+        assertEquals(rule.matches(manufactureWith("foo", testMin)), Tristate.FALSE);
     }
 }

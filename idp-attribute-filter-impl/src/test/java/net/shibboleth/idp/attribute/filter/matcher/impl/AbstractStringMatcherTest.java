@@ -17,10 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 
 /**
  * Tests for {@link AbstractStringMatcher}
@@ -35,16 +39,16 @@ public class AbstractStringMatcherTest {
                 return false;
             }};
 
-        Assert.assertNull(matcher.getMatchString());
-        Assert.assertFalse(!matcher.isIgnoreCase());
+        assertNull(matcher.getMatchString());
+        assertFalse(!matcher.isIgnoreCase());
 
         matcher.setIgnoreCase(false);
-        Assert.assertFalse(matcher.isIgnoreCase());
+        assertFalse(matcher.isIgnoreCase());
         matcher.setIgnoreCase(true);
-        Assert.assertTrue(matcher.isIgnoreCase());
+        assertTrue(matcher.isIgnoreCase());
 
         matcher.setMatchString(DataSources.TEST_STRING);
-        Assert.assertEquals(matcher.getMatchString(), DataSources.TEST_STRING);
+        assertEquals(matcher.getMatchString(), DataSources.TEST_STRING);
     }
 
     @Test public void testApply() {
@@ -57,13 +61,13 @@ public class AbstractStringMatcherTest {
         matcher.setIgnoreCase(false);
         matcher.setMatchString(DataSources.TEST_STRING);
 
-        Assert.assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
-        Assert.assertFalse(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
+        assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
+        assertFalse(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
         matcher.setIgnoreCase(true);
-        Assert.assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
-        Assert.assertTrue(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
+        assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
+        assertTrue(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
         
-        Assert.assertFalse(matcher.stringCompare(null));
+        assertFalse(matcher.stringCompare(null));
     }
     
 

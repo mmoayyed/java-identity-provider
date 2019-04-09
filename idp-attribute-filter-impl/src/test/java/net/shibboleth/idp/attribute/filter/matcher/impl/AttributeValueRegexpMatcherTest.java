@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
-import net.shibboleth.idp.attribute.EmptyAttributeValue;
-import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueRegexpMatcher;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Test For {@link AttributeValueRegexpMatcher}
@@ -35,14 +36,14 @@ public class AttributeValueRegexpMatcherTest {
         matcher.setId("Test");
         matcher.initialize();
         
-        Assert.assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE));
-        Assert.assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
-        Assert.assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
-        Assert.assertFalse(matcher.compareAttributeValue(DataSources.BYTE_ATTRIBUTE_VALUE));
-        Assert.assertFalse(matcher.compareAttributeValue(EmptyAttributeValue.NULL));
-        Assert.assertFalse(matcher.compareAttributeValue(EmptyAttributeValue.ZERO_LENGTH));
-        Assert.assertFalse(matcher.compareAttributeValue(null));
-        Assert.assertTrue(matcher.compareAttributeValue(DataSources.OTHER_VALUE));
+        assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE));
+        assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
+        assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
+        assertFalse(matcher.compareAttributeValue(DataSources.BYTE_ATTRIBUTE_VALUE));
+        assertFalse(matcher.compareAttributeValue(EmptyAttributeValue.NULL));
+        assertFalse(matcher.compareAttributeValue(EmptyAttributeValue.ZERO_LENGTH));
+        assertFalse(matcher.compareAttributeValue(null));
+        assertTrue(matcher.compareAttributeValue(DataSources.OTHER_VALUE));
         
     }
 

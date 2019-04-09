@@ -17,18 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProxiedRequesterContext;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 /**
  * Tests for {@link ProxiedRequesterPolicyRule}.
@@ -53,7 +55,7 @@ public class ProxiedRequesterPolicyRuleTest {
 
         try {
             new ProxiedRequesterPolicyRule().matches(null);
-            Assert.fail();
+            fail();
         } catch (UninitializedComponentException ex) {
             // OK
         }
@@ -61,12 +63,12 @@ public class ProxiedRequesterPolicyRuleTest {
 
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+        assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
     }
 
     @Test public void testNoProxies()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, "foo")), Tristate.FALSE);
+        assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, "foo")), Tristate.FALSE);
     }
 
     @Test public void testCaseSensitive() throws ComponentInitializationException {
@@ -78,10 +80,10 @@ public class ProxiedRequesterPolicyRuleTest {
                 new ChildContextLookup<AttributeFilterContext,ProxiedRequesterContext>(ProxiedRequesterContext.class));
         ctx.getSubcontext(ProxiedRequesterContext.class, true).getRequesters().addAll(Arrays.asList("foo", "bar"));
 
-        Assert.assertEquals(matcher.matches(ctx), Tristate.FALSE);
+        assertEquals(matcher.matches(ctx), Tristate.FALSE);
         
         ctx.getSubcontext(ProxiedRequesterContext.class).getRequesters().add("requester");
-        Assert.assertEquals(matcher.matches(ctx), Tristate.TRUE);
+        assertEquals(matcher.matches(ctx), Tristate.TRUE);
     }
 
     @Test public void testCaseInsensitive() throws ComponentInitializationException {
@@ -93,10 +95,10 @@ public class ProxiedRequesterPolicyRuleTest {
                 new ChildContextLookup<AttributeFilterContext,ProxiedRequesterContext>(ProxiedRequesterContext.class));
         ctx.getSubcontext(ProxiedRequesterContext.class, true).getRequesters().addAll(Arrays.asList("foo", "bar"));
 
-        Assert.assertEquals(matcher.matches(ctx), Tristate.FALSE);
+        assertEquals(matcher.matches(ctx), Tristate.FALSE);
         
         ctx.getSubcontext(ProxiedRequesterContext.class).getRequesters().add("REQUESTER");
-        Assert.assertEquals(matcher.matches(ctx), Tristate.TRUE);
+        assertEquals(matcher.matches(ctx), Tristate.TRUE);
     }
     
 }

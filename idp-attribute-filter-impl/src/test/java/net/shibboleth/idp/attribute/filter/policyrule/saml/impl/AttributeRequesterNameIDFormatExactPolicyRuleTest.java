@@ -17,11 +17,12 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeRequesterNameIDFormatExactPolicyRule}.
@@ -40,15 +41,15 @@ public class AttributeRequesterNameIDFormatExactPolicyRuleTest extends BaseMetad
     @Test public void simple() throws ComponentInitializationException {
         AttributeRequesterNameIDFormatExactPolicyRule matcher = getMatcher("https://example.org/foo");
 
-        Assert.assertEquals(matcher.getNameIdFormat(), "https://example.org/foo");
+        assertEquals(matcher.getNameIdFormat(), "https://example.org/foo");
 
-        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
-        Assert.assertEquals(matcher.matches(metadataContext(null, "Principal")), Tristate.FALSE);
-        Assert.assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(metadataContext(null, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.FALSE);
 
         matcher = getMatcher("urn:otherstuff");
-        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
-        Assert.assertEquals(matcher.matches(metadataContext(wikiEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(wikiEntity, "Principal")), Tristate.FALSE);
     }
 
 

@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
+package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
+import java.util.Arrays;
+
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProxiedRequesterContext;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
-
-import java.util.Arrays;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProxiedRequesterContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Tests for {@link ProxiedRequesterRegexpPolicyRule}.
@@ -47,7 +47,7 @@ public class ProxiedRequesterRegexpPolicyRuleTest {
 
         try {
             new ProxiedRequesterRegexpPolicyRule().matches(null);
-            Assert.fail();
+            fail();
         } catch (UninitializedComponentException ex) {
             // OK
         }
@@ -55,12 +55,12 @@ public class ProxiedRequesterRegexpPolicyRuleTest {
 
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+        assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
     }
 
     @Test public void testNoRequester()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, "foo")), Tristate.FALSE);
+        assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, "foo")), Tristate.FALSE);
     }
 
     @Test public void testAll() throws ComponentInitializationException {
@@ -72,10 +72,10 @@ public class ProxiedRequesterRegexpPolicyRuleTest {
                 new ChildContextLookup<AttributeFilterContext,ProxiedRequesterContext>(ProxiedRequesterContext.class));
         ctx.getSubcontext(ProxiedRequesterContext.class, true).getRequesters().addAll(Arrays.asList("foo", "bar"));
 
-        Assert.assertEquals(matcher.matches(ctx), Tristate.FALSE);
+        assertEquals(matcher.matches(ctx), Tristate.FALSE);
         
         ctx.getSubcontext(ProxiedRequesterContext.class).getRequesters().add("requester");
-        Assert.assertEquals(matcher.matches(ctx), Tristate.TRUE);
+        assertEquals(matcher.matches(ctx), Tristate.TRUE);
     }
 
 }

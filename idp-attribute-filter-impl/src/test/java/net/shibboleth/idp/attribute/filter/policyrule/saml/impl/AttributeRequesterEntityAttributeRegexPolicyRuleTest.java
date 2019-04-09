@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.regex.Pattern;
 
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeRegexPolicyRule;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * test for {@link AttributeRequesterEntityAttributeRegexPolicyRule}.
@@ -50,13 +50,13 @@ public class AttributeRequesterEntityAttributeRegexPolicyRuleTest  extends BaseM
     @Test public void simple() throws ComponentInitializationException {
 
         AttributeRequesterEntityAttributeRegexPolicyRule matcher = getMatcher();
-        Assert.assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.TRUE);
 
-        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
 
     }
 
     @Test public void getter() throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().getValueRegex().pattern(), "urn\\:example.org\\:policy\\:56.*");
+        assertEquals(getMatcher().getValueRegex().pattern(), "urn\\:example.org\\:policy\\:56.*");
     }
 }

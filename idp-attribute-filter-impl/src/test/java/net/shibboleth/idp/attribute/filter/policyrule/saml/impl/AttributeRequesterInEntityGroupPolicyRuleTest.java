@@ -17,11 +17,12 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeRequesterInEntityGroupPolicyRule}.
@@ -40,21 +41,21 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
     @Test public void parent() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
 
-        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
-        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
 
         matcher = getMatcher("urn:otherstuff");
-        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
     }
 
     @Test public void getter() throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher("http://shibboleth.net").getEntityGroup(), "http://shibboleth.net");
+        assertEquals(getMatcher("http://shibboleth.net").getEntityGroup(), "http://shibboleth.net");
     }
 
     @Test public void noGroup() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
         matcher.initialize();
-        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
+        assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
     }
 }

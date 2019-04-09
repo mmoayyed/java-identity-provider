@@ -19,9 +19,18 @@ package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Set;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -31,10 +40,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /** Test the {@link NotMatcher} matcher. */
 public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
@@ -52,28 +57,28 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             matcher.getMatchingValues(null, filterContext);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             newNotMatcher(null);
-            Assert.fail();
+            fail();
         } catch (final ConstraintViolationException e) {
             // expected this
         }
@@ -85,12 +90,12 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
+            fail();
         } catch (final UninitializedComponentException e) {
             // expect this
         }
-        Assert.assertFalse(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.isDestroyed());
+        assertFalse(inMatcher.isInitialized());
+        assertFalse(inMatcher.isDestroyed());
 
         matcher.setId("test");
         matcher.initialize();
@@ -111,13 +116,13 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.contains(value3));
+        assertNotNull(result);
+        assertEquals(result.size(), 1);
+        assertTrue(result.contains(value3));
         matcher.destroy();
         try {
             matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
+            fail();
         } catch (final DestroyedComponentException e) {
             // expect this
         }
@@ -134,8 +139,8 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         orMatcher.initialize();
 
         result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 0);
+        assertNotNull(result);
+        assertEquals(result.size(), 0);
     }
 
     @Test public void testFails() throws Exception {
@@ -144,7 +149,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
-        Assert.assertNull(result);
+        assertNull(result);
     }
     
     public static NotMatcher newNotMatcher(final Matcher m) {

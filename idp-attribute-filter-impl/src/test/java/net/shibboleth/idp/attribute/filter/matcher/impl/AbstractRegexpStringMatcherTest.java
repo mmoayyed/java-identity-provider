@@ -17,12 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractRegexpStringMatcher;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Tests for {@link AbstractRegexpStringMatcher}
@@ -39,10 +41,10 @@ public class AbstractRegexpStringMatcherTest {
         predicate.setId("od");
         predicate.initialize();
 
-        Assert.assertTrue(predicate.regexpCompare(DataSources.TEST_STRING));
-        Assert.assertFalse(predicate.regexpCompare("o" + DataSources.TEST_STRING));
-        Assert.assertFalse(predicate.regexpCompare(null));
-        Assert.assertEquals(predicate.getRegularExpression(), DataSources.TEST_REGEX);
+        assertTrue(predicate.regexpCompare(DataSources.TEST_STRING));
+        assertFalse(predicate.regexpCompare("o" + DataSources.TEST_STRING));
+        assertFalse(predicate.regexpCompare(null));
+        assertEquals(predicate.getRegularExpression(), DataSources.TEST_REGEX);
 
         predicate = new AbstractRegexpStringMatcher() {
 
@@ -52,7 +54,7 @@ public class AbstractRegexpStringMatcherTest {
         predicate.setRegularExpression("^p.*");
         predicate.setId("od");
         predicate.initialize();
-        Assert.assertFalse(predicate.regexpCompare(DataSources.TEST_STRING));
+        assertFalse(predicate.regexpCompare(DataSources.TEST_STRING));
 
     }
 
