@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
@@ -34,7 +35,7 @@ public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAt
         AttributeRequesterEntityAttributeExactPolicyRule rule =
                 (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml");
 
-        Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+        assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
+        assertEquals(rule.getAttributeName(), "urn:example.org:policy");
     }
 }

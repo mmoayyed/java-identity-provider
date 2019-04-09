@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
@@ -33,7 +34,7 @@ public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttribut
     @Test public void basic() throws ComponentInitializationException {
         final AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml");
      
-        Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
+        assertEquals(rule.getEntityGroup(), "urn:example.org");
 
     }
 }

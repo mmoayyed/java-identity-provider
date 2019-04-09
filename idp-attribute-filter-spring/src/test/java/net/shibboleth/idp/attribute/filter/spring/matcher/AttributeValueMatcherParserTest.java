@@ -17,8 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.Set;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -30,10 +36,6 @@ import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueStringMatc
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 /**
  * This tests not just the parsing of the rule, but also the construction of the complex tests.<br/>
@@ -75,15 +77,15 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
 
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
 
     @Test public void unTargetedPolicy() throws ComponentInitializationException {
@@ -91,15 +93,15 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
 
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
     }
 
     @Test public void unTargetedMatcher() throws ComponentInitializationException {
@@ -108,21 +110,21 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
         result = matcher.getMatchingValues(epaUidJS.get("uid"), filterContext);
-        Assert.assertEquals(result.size(), 1);
+        assertEquals(result.size(), 1);
         
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
         result = matcher.getMatchingValues(uidEpaJS.get("uid"), filterContext);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
         
         AttributeValueStringMatcher avm = (AttributeValueStringMatcher) matcher;
-        Assert.assertTrue(avm.isIgnoreCase());
-        Assert.assertEquals(avm.getMatchString(), "jsmith");
+        assertTrue(avm.isIgnoreCase());
+        assertEquals(avm.getMatchString(), "jsmith");
     }
 
     @Test public void targetedMatcher() throws ComponentInitializationException {
@@ -132,16 +134,16 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
 
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUidJS.values());
         result = matcher.getMatchingValues(epaUidJS.get("uid"), filterContext);
-        Assert.assertEquals(result.size(), 2);
+        assertEquals(result.size(), 2);
         
         filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(uidEpaJS.values());
         result = matcher.getMatchingValues(uidEpaJS.get("uid"), filterContext);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 }

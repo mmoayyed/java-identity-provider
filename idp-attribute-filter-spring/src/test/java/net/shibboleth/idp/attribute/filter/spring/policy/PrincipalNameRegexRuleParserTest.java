@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PrincipalNameRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class PrincipalNameRegexRuleParserTest extends BaseAttributeFilterParserTest {
 
@@ -30,6 +31,6 @@ public class PrincipalNameRegexRuleParserTest extends BaseAttributeFilterParserT
     @Test public void policy() throws ComponentInitializationException {
 
         PrincipalNameRegexpPolicyRule rule = (PrincipalNameRegexpPolicyRule) getPolicyRule("principalNameRegex.xml");
-        Assert.assertEquals(rule.getRegularExpression(), "^jsmit.*$");
+        assertEquals(rule.getRegularExpression(), "^jsmit.*$");
     }
 }

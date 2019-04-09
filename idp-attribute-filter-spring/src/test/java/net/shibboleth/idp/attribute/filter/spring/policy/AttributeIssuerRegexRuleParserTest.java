@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class AttributeIssuerRegexRuleParserTest extends BaseAttributeFilterParserTest {
 
@@ -30,7 +31,7 @@ public class AttributeIssuerRegexRuleParserTest extends BaseAttributeFilterParse
     @Test public void policy() throws ComponentInitializationException {
 
         AttributeIssuerRegexpPolicyRule arRule = (AttributeIssuerRegexpPolicyRule) getPolicyRule("issuerRegex.xml");
-        Assert.assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");    
+        assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");    
     }
  
 }

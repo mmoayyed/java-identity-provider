@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeRegexPolicyRule;
@@ -32,7 +33,7 @@ public class AttributeRequesterEntityAttributeRegexRuleParserTest extends  BaseA
 
     @Test public void basic() throws ComponentInitializationException {
         final AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml");
-        Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+        assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
+        assertEquals(rule.getAttributeName(), "urn:example.org:policy");
     }
 }

@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for ANY matcher or policy Rule.
@@ -33,12 +34,12 @@ public class AnyTest extends BaseAttributeFilterParserTest {
     @Test public void testMatcher() throws ComponentInitializationException {
         Matcher matcher = getMatcher("any.xml");
         
-        Assert.assertEquals(Matcher.MATCHES_ALL.getClass(), matcher.getClass());
+        assertEquals(Matcher.MATCHES_ALL.getClass(), matcher.getClass());
     }
     
     @Test public void testPolicy() throws ComponentInitializationException {
         PolicyRequirementRule policy = getPolicyRule("any.xml");
-        Assert.assertEquals(PolicyRequirementRule.MATCHES_ALL.getClass(), policy.getClass());
+        assertEquals(PolicyRequirementRule.MATCHES_ALL.getClass(), policy.getClass());
     }
 
 }

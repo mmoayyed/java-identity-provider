@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import static org.testng.Assert.assertSame;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for an implicit rule.
@@ -32,7 +33,7 @@ public class Implicit extends BaseAttributeFilterParserTest {
     @Test public void implicit() throws ComponentInitializationException {
         Matcher what = getMatcher("implicit.xml");
 
-        Assert.assertSame(what.getClass(), Matcher.MATCHES_ALL.getClass());
+        assertSame(what.getClass(), Matcher.MATCHES_ALL.getClass());
     }
 
 }

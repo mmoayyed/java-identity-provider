@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.impl.AttributeScopeRegexMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeScopeRegexMatcherParser}.
@@ -34,7 +35,7 @@ public class AttributeScopeRegexMatcherParserTest extends BaseAttributeFilterPar
 
         AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml");
         
-        Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
+        assertEquals(what.getRegularExpression(), "^example^..*$");
 
     }
 }

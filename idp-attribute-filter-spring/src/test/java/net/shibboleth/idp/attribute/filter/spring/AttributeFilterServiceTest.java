@@ -17,10 +17,21 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
@@ -32,14 +43,6 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.spring.impl.AttributeFilterServiceStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceException;
-
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 /** Test the attribute resolver service. */
 public class AttributeFilterServiceTest {
@@ -129,20 +132,20 @@ public class AttributeFilterServiceTest {
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
-        Assert.assertEquals(1, filteredAttributes.size());
+        assertEquals(1, filteredAttributes.size());
 
-        Assert.assertNull(filteredAttributes.get("firstName"));
+        assertNull(filteredAttributes.get("firstName"));
 
-        Assert.assertNull(filteredAttributes.get("lastName"));
+        assertNull(filteredAttributes.get("lastName"));
 
-        Assert.assertNull(filteredAttributes.get("email"));
+        assertNull(filteredAttributes.get("email"));
 
-        Assert.assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 2);
+        assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 2);
 
-        Assert.assertTrue(filteredAttributes.get("affiliation").getValues()
+        assertTrue(filteredAttributes.get("affiliation").getValues()
                 .contains(new StringAttributeValue("employee")));
 
-        Assert.assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
+        assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
 
     }
 
@@ -162,21 +165,21 @@ public class AttributeFilterServiceTest {
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
-        Assert.assertEquals(filteredAttributes.size(), 1);
+        assertEquals(filteredAttributes.size(), 1);
 
-        Assert.assertNull(filteredAttributes.get("firstName"));
+        assertNull(filteredAttributes.get("firstName"));
 
-        Assert.assertNull(filteredAttributes.get("lastName"));
+        assertNull(filteredAttributes.get("lastName"));
 
-        Assert.assertEquals(filteredAttributes.get("email").getValues().size(), 2);
+        assertEquals(filteredAttributes.get("email").getValues().size(), 2);
 
-        Assert.assertTrue(filteredAttributes.get("email").getValues()
+        assertTrue(filteredAttributes.get("email").getValues()
                 .contains(new StringAttributeValue("jsmith@example.edu")));
 
-        Assert.assertTrue(filteredAttributes.get("email").getValues()
+        assertTrue(filteredAttributes.get("email").getValues()
                 .contains(new StringAttributeValue("john.smith@example.edu")));
 
-        Assert.assertNull(filteredAttributes.get("affiliation"));
+        assertNull(filteredAttributes.get("affiliation"));
     }
 
     @Test public void testPolicy4() throws ServiceException, AttributeFilterException, ComponentInitializationException {
@@ -200,21 +203,21 @@ public class AttributeFilterServiceTest {
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
-        Assert.assertEquals(filteredAttributes.size(), 1);
+        assertEquals(filteredAttributes.size(), 1);
 
-        Assert.assertNull(filteredAttributes.get("firstName"));
+        assertNull(filteredAttributes.get("firstName"));
 
-        Assert.assertNull(filteredAttributes.get("lastName"));
+        assertNull(filteredAttributes.get("lastName"));
 
-        Assert.assertEquals(filteredAttributes.get("email").getValues().size(), 2);
+        assertEquals(filteredAttributes.get("email").getValues().size(), 2);
 
-        Assert.assertTrue(filteredAttributes.get("email").getValues()
+        assertTrue(filteredAttributes.get("email").getValues()
                 .contains(new StringAttributeValue("jsmith@example.edu")));
 
-        Assert.assertTrue(filteredAttributes.get("email").getValues()
+        assertTrue(filteredAttributes.get("email").getValues()
                 .contains(new StringAttributeValue("john.smith@example.edu")));
 
-        Assert.assertNull(filteredAttributes.get("affiliation"));
+        assertNull(filteredAttributes.get("affiliation"));
     }
 
     private void common45(String file, boolean nativeSpring) throws ServiceException, AttributeFilterException,
@@ -229,20 +232,20 @@ public class AttributeFilterServiceTest {
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
-        Assert.assertEquals(1, filteredAttributes.size());
+        assertEquals(1, filteredAttributes.size());
 
-        Assert.assertNull(filteredAttributes.get("firstName"));
+        assertNull(filteredAttributes.get("firstName"));
 
-        Assert.assertNull(filteredAttributes.get("lastName"));
+        assertNull(filteredAttributes.get("lastName"));
 
-        Assert.assertNull(filteredAttributes.get("email"));
+        assertNull(filteredAttributes.get("email"));
 
-        Assert.assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 2);
+        assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 2);
 
-        Assert.assertTrue(filteredAttributes.get("affiliation").getValues()
+        assertTrue(filteredAttributes.get("affiliation").getValues()
                 .contains(new StringAttributeValue("employee")));
 
-        Assert.assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
+        assertTrue(filteredAttributes.get("affiliation").getValues().contains(new StringAttributeValue("staff")));
 
     }
 
@@ -267,17 +270,17 @@ public class AttributeFilterServiceTest {
 
         Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
 
-        Assert.assertEquals(1, filteredAttributes.size());
+        assertEquals(1, filteredAttributes.size());
 
-        Assert.assertNull(filteredAttributes.get("firstName"));
+        assertNull(filteredAttributes.get("firstName"));
 
-        Assert.assertNull(filteredAttributes.get("lastName"));
+        assertNull(filteredAttributes.get("lastName"));
 
-        Assert.assertNull(filteredAttributes.get("email"));
+        assertNull(filteredAttributes.get("email"));
 
-        Assert.assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 1);
+        assertEquals(2, filteredAttributes.get("affiliation").getValues().size(), 1);
 
-        Assert.assertTrue(filteredAttributes.get("affiliation").getValues()
+        assertTrue(filteredAttributes.get("affiliation").getValues()
                 .contains(new StringAttributeValue("employee")));
 
     }

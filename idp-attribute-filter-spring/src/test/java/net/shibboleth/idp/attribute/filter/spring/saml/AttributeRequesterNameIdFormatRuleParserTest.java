@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterNameIDFormatExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIdFormatRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeRequesterNameIdFormatRuleParser}.
@@ -34,6 +35,6 @@ public class AttributeRequesterNameIdFormatRuleParserTest extends BaseAttributeF
         final AttributeRequesterNameIDFormatExactPolicyRule rule =
                 (AttributeRequesterNameIDFormatExactPolicyRule) getPolicyRule("requesterNameId2.xml");
 
-        Assert.assertEquals(rule.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+        assertEquals(rule.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
     }
 }

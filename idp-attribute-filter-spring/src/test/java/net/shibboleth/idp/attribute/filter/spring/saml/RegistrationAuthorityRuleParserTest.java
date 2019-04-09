@@ -17,15 +17,17 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Set;
+
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.RegistrationAuthorityRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link RegistrationAuthorityRuleParser}.
@@ -36,23 +38,23 @@ public class RegistrationAuthorityRuleParserTest extends BaseAttributeFilterPars
     @Test public void silentTrue() throws ComponentInitializationException {
         final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule("registrationAuthorityOne.xml");
 
-        Assert.assertTrue(rule.isMatchIfMetadataSilent());
+        assertTrue(rule.isMatchIfMetadataSilent());
         final Set<String> issuers = rule.getIssuers();
 
-        Assert.assertEquals(issuers.size(), 2);
-        Assert.assertTrue(issuers.contains("https://example.org/SilentTrue/One"));
-        Assert.assertTrue(issuers.contains("https://example.org/SilentTrue/Two"));
+        assertEquals(issuers.size(), 2);
+        assertTrue(issuers.contains("https://example.org/SilentTrue/One"));
+        assertTrue(issuers.contains("https://example.org/SilentTrue/Two"));
     }
 
     @Test public void silentFalse() throws ComponentInitializationException {
         final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule("registrationAuthorityTwo.xml");
 
-        Assert.assertTrue(rule.isMatchIfMetadataSilent());
+        assertTrue(rule.isMatchIfMetadataSilent());
         final Set<String> issuers = rule.getIssuers();
 
-        Assert.assertEquals(issuers.size(), 3);
-        Assert.assertTrue(issuers.contains("https://example.org/SilentFalse/One"));
-        Assert.assertTrue(issuers.contains("https://example.org/SilentFalse/Two"));
-        Assert.assertTrue(issuers.contains("https://example.org/SilentFalse/Three"));
+        assertEquals(issuers.size(), 3);
+        assertTrue(issuers.contains("https://example.org/SilentFalse/One"));
+        assertTrue(issuers.contains("https://example.org/SilentFalse/Two"));
+        assertTrue(issuers.contains("https://example.org/SilentFalse/Three"));
     }
 }

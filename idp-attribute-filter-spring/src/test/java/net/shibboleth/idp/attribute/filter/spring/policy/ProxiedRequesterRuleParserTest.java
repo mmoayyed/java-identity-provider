@@ -17,9 +17,18 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProxiedRequesterContext;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -32,12 +41,6 @@ import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.Proxied
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProxiedRequesterContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTest {
 
@@ -57,13 +60,13 @@ public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTes
         filterContext.getSubcontext(ProxiedRequesterContext.class, true).getRequesters().addAll(Arrays.asList("foo", "bar"));
         
         
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
         filterContext.getSubcontext(ProxiedRequesterContext.class).getRequesters().add("https://service.example.edu/shibboleth-sp");
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         final ProxiedRequesterPolicyRule arRule = (ProxiedRequesterPolicyRule) rule;
-        Assert.assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
-        Assert.assertFalse(arRule.isIgnoreCase());
+        assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
+        assertFalse(arRule.isIgnoreCase());
     }
  
     @Test public void matcher() throws ComponentInitializationException {
@@ -76,12 +79,12 @@ public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTes
 
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
 
         filterContext.getSubcontext(ProxiedRequesterContext.class).getRequesters().add("https://service.example.edu/shibboleth-sp");
         result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertEquals(result.iterator().next().getValue(), "daffyDuck");
+        assertEquals(result.size(), 1);
+        assertEquals(result.iterator().next().getValue(), "daffyDuck");
     }
     
 }

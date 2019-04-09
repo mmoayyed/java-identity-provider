@@ -17,20 +17,21 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.NumOfAttributeValuesPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class NumOfAttributeValuesRuleParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void policy() throws ComponentInitializationException {
 
         NumOfAttributeValuesPolicyRule rule = (NumOfAttributeValuesPolicyRule) getPolicyRule("numberAttrValues.xml");
-        Assert.assertEquals(rule.getAttributeId(), "uid");
-        Assert.assertEquals(rule.getMinimum(), 1);
-        Assert.assertEquals(rule.getMaximum(), 3);
+        assertEquals(rule.getAttributeId(), "uid");
+        assertEquals(rule.getMinimum(), 1);
+        assertEquals(rule.getMaximum(), 3);
     }
 }

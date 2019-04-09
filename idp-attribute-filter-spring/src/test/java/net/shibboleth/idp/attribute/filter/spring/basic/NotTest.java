@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
@@ -24,9 +28,6 @@ import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.NotMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link NotMatcherParser}.
@@ -38,7 +39,7 @@ public class NotTest extends BaseAttributeFilterParserTest {
 
         NotMatcher child = (NotMatcher) what.getNegatedMatcher();
 
-        Assert.assertEquals(child.getNegatedMatcher().getClass(), Matcher.MATCHES_ALL.getClass());
+        assertEquals(child.getNegatedMatcher().getClass(), Matcher.MATCHES_ALL.getClass());
     }
 
     @Test public void policy() throws ComponentInitializationException {
@@ -46,6 +47,6 @@ public class NotTest extends BaseAttributeFilterParserTest {
 
         NotPolicyRule child = (NotPolicyRule) what.getNegatedRule();
 
-        Assert.assertEquals(child.getNegatedRule().getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
+        assertEquals(child.getNegatedRule().getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
     }
 }

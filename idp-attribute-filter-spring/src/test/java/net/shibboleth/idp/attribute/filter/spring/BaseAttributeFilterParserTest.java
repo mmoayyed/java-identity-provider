@@ -17,8 +17,15 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Collection;
 import java.util.Map;
+
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.annotations.AfterMethod;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -33,12 +40,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.idp.attribute.resolver.dc.impl.SAMLAttributeDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
-import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
-import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 
 /**
  * Basis of all the matcher and rule parser tests.
@@ -92,7 +93,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     
     protected <Type> Type getBean(Class<Type> claz, GenericApplicationContext context) {
         Collection<Type> beans = context.getBeansOfType(claz).values();
-        Assert.assertEquals(beans.size(), 1);
+        assertEquals(beans.size(), 1);
 
         return beans.iterator().next();
     }

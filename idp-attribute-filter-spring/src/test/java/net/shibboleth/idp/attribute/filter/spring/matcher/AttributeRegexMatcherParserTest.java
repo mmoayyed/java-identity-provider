@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.impl.AttributeValueRegexMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link AttributeValueRegexMatcherParser}.
@@ -33,7 +34,7 @@ public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTe
     @Test public void matcher() throws ComponentInitializationException {
         AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("attributeRegex.xml");
         
-        Assert.assertEquals(what.getRegularExpression(), "^jsmit.*$");
+        assertEquals(what.getRegularExpression(), "^jsmit.*$");
 
     }
 }

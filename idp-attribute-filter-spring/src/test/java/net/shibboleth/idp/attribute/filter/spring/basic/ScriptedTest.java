@@ -17,8 +17,16 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.beans.factory.BeanCreationException;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -30,11 +38,6 @@ import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
-
-import org.springframework.beans.factory.BeanCreationException;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 /** test for parsing scripted matchers and scripted parsers.
  *
@@ -60,7 +63,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void policyNotFound() throws ComponentInitializationException {
@@ -74,9 +77,9 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<IdPAttributeValue<?>> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertEquals(x.size(), 1);
+        assertEquals(x.size(), 1);
         String val = (String) x.iterator().next().getValue();
-        Assert.assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));
+        assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));
         
     }
     
@@ -84,7 +87,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         
         final ScriptedMatcher what = (ScriptedMatcher) getMatcher(getScript());
         
-        Assert.assertNull(what.getCustomObject());
+        assertNull(what.getCustomObject());
         
     }
 
@@ -94,8 +97,8 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         
         final Map custom = (Map) what.getCustomObject();
      
-        Assert.assertEquals(custom.size(), 1);
-        Assert.assertEquals(custom.get("bar"), "foo");
+        assertEquals(custom.size(), 1);
+        assertEquals(custom.get("bar"), "foo");
         
     }
 

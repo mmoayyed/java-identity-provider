@@ -17,10 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -29,12 +39,6 @@ import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.Predica
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
@@ -51,10 +55,10 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
 
-        Assert.assertEquals(rule.getRulePredicate().getClass(), Foo.class);
-        Assert.assertNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
+        assertEquals(rule.getRulePredicate().getClass(), Foo.class);
+        assertNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
         ProfileRequestContext pc = new ProfileRequestContext<>();
-        Assert.assertSame(
+        assertSame(
                 rule.getProfileContextStrategy().apply(
                         pc.getSubcontext(RelyingPartyContext.class, true).getSubcontext(AttributeFilterContext.class,
                                 true)), pc);
@@ -73,9 +77,9 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
 
-        Assert.assertEquals(rule.getRulePredicate().getClass(), Foo.class);
-        Assert.assertNotNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
-        Assert.assertEquals(rule.getProfileContextStrategy().getClass(), Func.class);
+        assertEquals(rule.getRulePredicate().getClass(), Foo.class);
+        assertNotNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
+        assertEquals(rule.getProfileContextStrategy().getClass(), Func.class);
     }
 
     private AttributeFilterContext prcFor(String sp) {
@@ -98,9 +102,9 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
         ctx.refresh();
 
         final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
-        Assert.assertEquals(rule.matches(prcFor("https://example.org")), Tristate.FALSE);
-        Assert.assertEquals(rule.matches(prcFor("https://sp.example.org")), Tristate.TRUE);
-        Assert.assertEquals(rule.matches(prcFor("https://sp2.example.org")), Tristate.TRUE);
+        assertEquals(rule.matches(prcFor("https://example.org")), Tristate.FALSE);
+        assertEquals(rule.matches(prcFor("https://sp.example.org")), Tristate.TRUE);
+        assertEquals(rule.matches(prcFor("https://sp2.example.org")), Tristate.TRUE);
 
     }
 

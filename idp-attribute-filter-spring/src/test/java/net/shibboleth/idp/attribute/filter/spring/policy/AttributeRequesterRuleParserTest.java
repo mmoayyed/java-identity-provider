@@ -17,8 +17,15 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.Set;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -31,10 +38,6 @@ import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.Attribu
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 /**
  * This tests not just the parsing of the rule, but also the construction of the complex tests.<br/>
@@ -59,13 +62,13 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
         final PolicyRequirementRule rule = getPolicyRule("attributeRequester.xml");
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
-        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
         filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");
-        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
         final AttributeRequesterPolicyRule arRule = (AttributeRequesterPolicyRule) rule;
-        Assert.assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
-        Assert.assertFalse(arRule.isIgnoreCase());
+        assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
+        assertFalse(arRule.isIgnoreCase());
     }
  
     @Test public void matcher() throws ComponentInitializationException {
@@ -74,12 +77,12 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
 
         filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertEquals(result.iterator().next().getValue(), "daffyDuck");
+        assertEquals(result.size(), 1);
+        assertEquals(result.iterator().next().getValue(), "daffyDuck");
     }
 }
