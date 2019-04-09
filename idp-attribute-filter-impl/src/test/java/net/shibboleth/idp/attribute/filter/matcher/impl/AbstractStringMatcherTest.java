@@ -22,6 +22,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -40,7 +41,48 @@ public class AbstractStringMatcherTest {
             }};
 
         assertNull(matcher.getMatchString());
-        assertFalse(!matcher.isIgnoreCase());
+        assertFalse(matcher.isCaseSensitive());
+
+        matcher.setCaseSensitive(true);
+        assertTrue(matcher.isCaseSensitive());
+        matcher.setCaseSensitive(false);
+        assertFalse(matcher.isCaseSensitive());
+
+        matcher.setMatchString(DataSources.TEST_STRING);
+        assertEquals(matcher.getMatchString(), DataSources.TEST_STRING);
+    }
+
+    @Test public void testApply() {
+        AbstractStringMatcher matcher = new AbstractStringMatcher() {
+
+            @Override
+            protected boolean compareAttributeValue(IdPAttributeValue value) {
+                return false;
+            }};
+        matcher.setCaseSensitive(true);
+        matcher.setMatchString(DataSources.TEST_STRING);
+
+        assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
+        assertFalse(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
+        matcher.setCaseSensitive(false);
+        assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
+        assertTrue(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
+        
+        assertFalse(matcher.stringCompare(null));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test public void testDeprecatedSettersGetters() {
+        AbstractStringMatcher matcher = new AbstractStringMatcher(){
+
+            @Override
+            protected boolean compareAttributeValue(IdPAttributeValue value) {
+                return false;
+            }};
+
+        Assert.assertNull(matcher.getMatchString());
+        Assert.assertFalse(!matcher.isIgnoreCase());
+        Assert.assertFalse(matcher.isCaseSensitive());
 
         matcher.setIgnoreCase(false);
         assertFalse(matcher.isIgnoreCase());
@@ -51,7 +93,8 @@ public class AbstractStringMatcherTest {
         assertEquals(matcher.getMatchString(), DataSources.TEST_STRING);
     }
 
-    @Test public void testApply() {
+    @SuppressWarnings("deprecation")
+    @Test public void testDeprecatedApply() {
         AbstractStringMatcher matcher = new AbstractStringMatcher() {
 
             @Override
@@ -69,6 +112,6 @@ public class AbstractStringMatcherTest {
         
         assertFalse(matcher.stringCompare(null));
     }
-    
+
 
 }

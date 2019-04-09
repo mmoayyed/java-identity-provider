@@ -32,7 +32,7 @@ public class AttributeValueStringMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {
         AttributeValueStringMatcher matcher = new AttributeValueStringMatcher();
-        matcher.setIgnoreCase(true);
+        matcher.setCaseSensitive(false);
         matcher.setMatchString(DataSources.TEST_STRING);
         matcher.setId("Test");
         matcher.initialize();

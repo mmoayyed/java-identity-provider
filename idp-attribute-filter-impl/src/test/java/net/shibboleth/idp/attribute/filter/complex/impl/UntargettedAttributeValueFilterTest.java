@@ -51,7 +51,7 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     private Matcher valueMatcher() {
         AttributeValueStringMatcher retVal = new AttributeValueStringMatcher();
 
-        retVal.setIgnoreCase(false);
+        retVal.setCaseSensitive(true);
         retVal.setMatchString("jsmith");
         
         retVal.setId("valueMatcher");

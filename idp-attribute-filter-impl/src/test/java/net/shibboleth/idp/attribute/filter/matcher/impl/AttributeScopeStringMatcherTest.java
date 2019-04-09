@@ -31,7 +31,7 @@ public class AttributeScopeStringMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {
         AttributeScopeStringMatcher matcher = new AttributeScopeStringMatcher();
-        matcher.setIgnoreCase(true);
+        matcher.setCaseSensitive(false);
         matcher.setMatchString(DataSources.TEST_STRING);
         matcher.setId("Test");
         matcher.initialize();

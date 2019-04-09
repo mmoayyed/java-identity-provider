@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * General {@link Matcher} for {@link String} comparison of strings in Attribute Filters.   
@@ -30,7 +32,7 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
     private String matchString;
 
     /** Whether the match evaluation is case sensitive. */
-    private boolean ignoreCase = true;
+    private boolean caseSensitive;
 
     /**
      * Gets the string to match for a positive evaluation.
@@ -54,19 +56,42 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
      * Gets whether the match evaluation is case insensitive.
      * 
      * @return whether the match evaluation is case insensitive
+     * @deprecated in V4: Use isCaseSensitive
      */
     public boolean isIgnoreCase() {
-        return ignoreCase;
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "isIgnoreCase", null, "isCaseSensitive");
+        return !isCaseSensitive();
     }
 
     /**
      * Sets whether the match evaluation is case insensitive.
      * 
-     * @param isCaseInsensitive whether the match evaluation is case sensitive
+     * @param isCaseInsensitive whether the match evaluation is case insensitive
+     * @deprecated in V4: Use setCaseSensitive
      */
     public void setIgnoreCase(final boolean isCaseInsensitive) {
-        ignoreCase = isCaseInsensitive;
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setIgnoreCase", null, "setCaseSensitive");
+        setCaseSensitive(!isCaseInsensitive);
     }
+    
+    /**
+     * Gets whether the match evaluation is case sensitive.
+     * 
+     * @return whether the match evaluation is case sensitive
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    /**
+     * Sets whether the match evaluation is case sensitive.
+     * 
+     * @param isCaseSensitive whether the match evaluation is case sensitive
+     */
+    public void setCaseSensitive(final boolean isCaseSensitive) {
+        caseSensitive = isCaseSensitive;
+    }
+
     
     /**
      * Matches the given value against the provided match string. 
@@ -80,10 +105,10 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
             return matchString == null;
         }
 
-        if (ignoreCase) {
-            return value.equalsIgnoreCase(matchString);
-        } else {
+        if (isCaseSensitive()) {
             return value.equals(matchString);
+        } else {
+            return value.equalsIgnoreCase(matchString);
         }
     }
 }
