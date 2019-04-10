@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
@@ -36,8 +37,31 @@ public class AttributeScopeMatcherParserTest extends BaseAttributeFilterParserTe
         AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScope.xml");
         
         assertEquals(what.getMatchString(), "jSmItH");
+        assertTrue(what.isCaseSensitive());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test public void deprecated() throws ComponentInitializationException {
+        AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScopeDeprecated.xml");
+        
+        assertEquals(what.getMatchString(), "jSmItH");
         assertFalse(what.isIgnoreCase());
+        assertTrue(what.isCaseSensitive());
+    }
+    
+    
+    @Test public void both() throws ComponentInitializationException {
+        AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScopeBoth.xml");
+        
+        assertEquals(what.getMatchString(), "jSmItH");
+        assertFalse(what.isCaseSensitive());
+    }
 
-}
-
+    
+    @Test public void testDefault() throws ComponentInitializationException {
+        AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScopeDefault.xml");
+        
+        assertEquals(what.getMatchString(), "jSmItH");
+        assertFalse(what.isCaseSensitive());
+    }
 }

@@ -390,6 +390,15 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether case should be ignored when evaluating the match.
+
+                            Deprecated in V4, use caseSenstive.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="caseSensitive" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether the match evaluation should be case sensitive.
                         </documentation>
                     </annotation>
                 </attribute>

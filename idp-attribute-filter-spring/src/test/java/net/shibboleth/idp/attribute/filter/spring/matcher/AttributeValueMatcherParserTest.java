@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
@@ -123,7 +124,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         assertTrue(result.isEmpty());
         
         AttributeValueStringMatcher avm = (AttributeValueStringMatcher) matcher;
-        assertTrue(avm.isIgnoreCase());
+        assertFalse(avm.isCaseSensitive());
         assertEquals(avm.getMatchString(), "jsmith");
     }
 
