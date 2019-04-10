@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +28,9 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 import javax.security.auth.Subject;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -39,10 +45,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Tests for {@link ScriptedDataConnector}
@@ -101,28 +103,28 @@ public class ScriptedDataConnectorTest {
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final Map<String, IdPAttribute> result = connector.resolve(context);
 
-        Assert.assertEquals(result.size(), 4);
+        assertEquals(result.size(), 4);
         
         List<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(new StringAttributeValue("Value 1")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("Value 2")));
+        assertEquals(values.size(), 2);
+        assertTrue(values.contains(new StringAttributeValue("Value 1")));
+        assertTrue(values.contains(new StringAttributeValue("Value 2")));
 
         values = result.get("TwoScripted").getValues();
-        Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(new StringAttributeValue("1Value")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("2Value")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("3Value")));
+        assertEquals(values.size(), 3);
+        assertTrue(values.contains(new StringAttributeValue("1Value")));
+        assertTrue(values.contains(new StringAttributeValue("2Value")));
+        assertTrue(values.contains(new StringAttributeValue("3Value")));
 
         values = result.get("ThreeScripted").getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue(AttributeResolutionContext.class.getSimpleName())));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue(AttributeResolutionContext.class.getSimpleName())));
         
         values = result.get("Subjects").getValues();
-        Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(new StringAttributeValue("Foo")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("Bar")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("Toto")));
+        assertEquals(values.size(), 3);
+        assertTrue(values.contains(new StringAttributeValue("Foo")));
+        assertTrue(values.contains(new StringAttributeValue("Bar")));
+        assertTrue(values.contains(new StringAttributeValue("Toto")));
 
     }
     
@@ -144,8 +146,8 @@ public class ScriptedDataConnectorTest {
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final Map<String, IdPAttribute> result = connector.resolve(context);
 
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertEquals(result.get(attribute.getId()),attribute);
+        assertEquals(result.size(), 1);
+        assertEquals(result.get(attribute.getId()),attribute);
     }
 
 

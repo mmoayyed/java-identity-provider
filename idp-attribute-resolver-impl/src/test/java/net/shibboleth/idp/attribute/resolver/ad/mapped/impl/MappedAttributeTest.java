@@ -17,10 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.Collections;
 import java.util.Set;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -45,11 +50,11 @@ public class MappedAttributeTest {
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
 
-        Assert.assertFalse(definition.isPassThru());
+        assertFalse(definition.isPassThru());
 
         try {
             definition.initialize();
-            Assert.fail("Initialized without dependencies and value mappings");
+            fail("Initialized without dependencies and value mappings");
         } catch (final ComponentInitializationException e) {
             // expected this
         }
@@ -61,7 +66,7 @@ public class MappedAttributeTest {
 
         try {
             definition.initialize();
-            Assert.fail("Initialized without value mappings");
+            fail("Initialized without value mappings");
         } catch (final ComponentInitializationException e) {
             // expected this
         }
@@ -73,14 +78,14 @@ public class MappedAttributeTest {
         definition.destroy();
         try {
             definition.initialize();
-            Assert.fail("init a torn down mapper?");
+            fail("init a torn down mapper?");
         } catch (final DestroyedComponentException e) {
             // expected this
         }
 
         try {
             definition.resolve(new AttributeResolutionContext());
-            Assert.fail("resolve a torn down mapper?");
+            fail("resolve a torn down mapper?");
         } catch (final DestroyedComponentException e) {
             // expected this
         }
@@ -102,8 +107,8 @@ public class MappedAttributeTest {
         definition.initialize();
 
         final IdPAttribute result = definition.resolve(resolutionContext);
-        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
-        Assert.assertTrue(result.getValues().isEmpty());
+        assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        assertTrue(result.getValues().isEmpty());
     }
 
     @Test public void noAttributeValuesDefault() throws Exception {
@@ -119,16 +124,16 @@ public class MappedAttributeTest {
                 "NoSuchAttribute")));
         definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.setDefaultValue("");
-        Assert.assertNull(definition.getDefaultAttributeValue());
-        Assert.assertNull(definition.getDefaultValue());
+        assertNull(definition.getDefaultAttributeValue());
+        assertNull(definition.getDefaultValue());
         definition.setDefaultValue("default");
-        Assert.assertEquals(definition.getDefaultValue(), "default");
+        assertEquals(definition.getDefaultValue(), "default");
         definition.initialize();
 
         final IdPAttribute result = definition.resolve(resolutionContext);
-        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
-        Assert.assertFalse(result.getValues().isEmpty());
-        Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
+        assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        assertFalse(result.getValues().isEmpty());
+        assertTrue(result.getValues().contains(new StringAttributeValue("default")));
     }
 
     @Test public void invalidValueType() throws ComponentInitializationException {
@@ -147,7 +152,7 @@ public class MappedAttributeTest {
 
         try {
             definition.resolve(resolutionContext);
-            Assert.fail("invalid types");
+            fail("invalid types");
         } catch (final ResolutionException e) {
             //
         }
@@ -165,15 +170,15 @@ public class MappedAttributeTest {
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
-        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
-        Assert.assertEquals(definition.getValueMaps().size(), 1);
+        assertEquals(definition.getValueMaps().size(), 1);
         definition.initialize();
 
         final IdPAttribute result = definition.resolve(resolutionContext);
-        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         // mapped attribute definition should return no values for empty and null
-        Assert.assertTrue(result.getValues().isEmpty());
+        assertTrue(result.getValues().isEmpty());
     }
 
     @Test public void validValueType() throws Exception {
@@ -187,17 +192,17 @@ public class MappedAttributeTest {
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
-        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
-        Assert.assertEquals(definition.getValueMaps().size(), 1);
+        assertEquals(definition.getValueMaps().size(), 1);
         definition.initialize();
 
         final IdPAttribute result = definition.resolve(resolutionContext);
-        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
-        Assert.assertFalse(result.getValues().isEmpty());
-        Assert.assertEquals(result.getValues().size(), 2);
-        Assert.assertTrue(result.getValues().get(0).equals(new StringAttributeValue("student")));
-        Assert.assertTrue(result.getValues().get(1).equals(new StringAttributeValue("student")));
+        assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        assertFalse(result.getValues().isEmpty());
+        assertEquals(result.getValues().size(), 2);
+        assertTrue(result.getValues().get(0).equals(new StringAttributeValue("student")));
+        assertTrue(result.getValues().get(1).equals(new StringAttributeValue("student")));
     }
 
     @Test public void defaultCase() throws Exception {
@@ -211,20 +216,20 @@ public class MappedAttributeTest {
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
-        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
         definition.setDefaultValue("default");
-        Assert.assertEquals(definition.getDefaultAttributeValue().getValue(), "default");
-        Assert.assertFalse(definition.isPassThru());
+        assertEquals(definition.getDefaultAttributeValue().getValue(), "default");
+        assertFalse(definition.isPassThru());
         definition.initialize();
 
         final IdPAttribute result = definition.resolve(resolutionContext);
-        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
-        Assert.assertFalse(result.getValues().isEmpty());
-        Assert.assertEquals(result.getValues().size(), 3);
-        Assert.assertTrue(result.getValues().get(0).equals(new StringAttributeValue("default")));
-        Assert.assertTrue(result.getValues().get(1).equals(new StringAttributeValue("default")));
-        Assert.assertTrue(result.getValues().get(2).equals(new StringAttributeValue("default")));
+        assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        assertFalse(result.getValues().isEmpty());
+        assertEquals(result.getValues().size(), 3);
+        assertTrue(result.getValues().get(0).equals(new StringAttributeValue("default")));
+        assertTrue(result.getValues().get(1).equals(new StringAttributeValue("default")));
+        assertTrue(result.getValues().get(2).equals(new StringAttributeValue("default")));
     }
 
     @Test public void passThrough() throws Exception {
@@ -238,19 +243,19 @@ public class MappedAttributeTest {
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
-        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
         definition.setDefaultValue("default");
-        Assert.assertEquals(definition.getDefaultAttributeValue().getValue(), "default");
+        assertEquals(definition.getDefaultAttributeValue().getValue(), "default");
         definition.setPassThru(true);
         definition.initialize();
 
         final IdPAttribute result = definition.resolve(resolutionContext);
-        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
-        Assert.assertFalse(result.getValues().isEmpty());
-        Assert.assertEquals(result.getValues().size(), ResolverTestSupport.EPA3_VALUES.length);
+        assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        assertFalse(result.getValues().isEmpty());
+        assertEquals(result.getValues().size(), ResolverTestSupport.EPA3_VALUES.length);
         for (final String val : ResolverTestSupport.EPA3_VALUES) {
-            Assert.assertTrue(result.getValues().contains(new StringAttributeValue(val)));
+            assertTrue(result.getValues().contains(new StringAttributeValue(val)));
         }
     }
 

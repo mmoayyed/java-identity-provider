@@ -17,12 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * test for {@link SourceValue}.
@@ -34,17 +37,17 @@ public class SourceValueTest {
     @Test public void sourceValue() throws ComponentInitializationException {
         SourceValue value = newSourceValue("value", false, true);
 
-        Assert.assertEquals(value.getValue(), "value");
-        Assert.assertTrue(value.isPartialMatch());
-        Assert.assertFalse(value.isIgnoreCase());
+        assertEquals(value.getValue(), "value");
+        assertTrue(value.isPartialMatch());
+        assertFalse(value.isIgnoreCase());
 
         log.info("Value = 'value', ignore = true, partial = false", value.toString());
 
         value = newSourceValue("eulaV", true, false);
 
-        Assert.assertEquals(value.getPattern().pattern(), "eulaV");
-        Assert.assertFalse(value.isPartialMatch());
-        Assert.assertTrue(value.isIgnoreCase());
+        assertEquals(value.getPattern().pattern(), "eulaV");
+        assertFalse(value.isPartialMatch());
+        assertTrue(value.isIgnoreCase());
         log.info("Value = 'eulaV', ignore = false, partial = true", value.toString());
 
     }

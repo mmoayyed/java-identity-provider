@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +31,6 @@ import java.util.Set;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -73,7 +77,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final IdPAttribute result =
                 defn.resolve(TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null));
 
-        Assert.assertTrue(result.getValues().isEmpty());
+        assertTrue(result.getValues().isEmpty());
     }
 
     @Test public void simple() throws ResolutionException, ComponentInitializationException {
@@ -97,20 +101,20 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         try {
             resolver.resolveAttributes(context);
         } catch (final ResolutionException e) {
-            Assert.fail("resolution failed", e);
+            fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(values.size(), 2);
+        assertEquals(values.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
         for (final IdPAttributeValue val : values) {
             final NameIdentifier id = (NameIdentifier) val.getValue();
-            Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
-            Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
+            assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+            assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
             nameValues.add(id.getValue());
         }
-        Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
-        Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+        assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
+        assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
     }
     
     @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
@@ -141,20 +145,20 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         try {
             resolver.resolveAttributes(context);
         } catch (final ResolutionException e) {
-            Assert.fail("resolution failed", e);
+            fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(outValues.size(), 2);
+        assertEquals(outValues.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
         for (final IdPAttributeValue val : outValues) {
             final NameIdentifier id = (NameIdentifier) val.getValue();
-            Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
-            Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
+            assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+            assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
             nameValues.add(id.getValue());
         }
-        Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
-        Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+        assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
+        assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
     }
 
     @Test public void nullIssuerID() throws ComponentInitializationException {
@@ -176,7 +180,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            Assert.fail("resolution Should have failed");
+            fail("resolution Should have failed");
         } catch (final ResolutionException e) {
             // OK
         }
@@ -210,7 +214,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
-        Assert.assertNull(context.getResolvedIdPAttributes().get(SECOND_ATTRIBUTE_NAME));
+        assertNull(context.getResolvedIdPAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
     @Test public void singleValueWithOptions() throws ResolutionException, ComponentInitializationException {
@@ -238,17 +242,17 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         try {
             resolver.resolveAttributes(context);
         } catch (final ResolutionException e) {
-            Assert.fail("resolution failed", e);
+            fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(values.size(), 1);
+        assertEquals(values.size(), 1);
         final NameIdentifier id = (NameIdentifier) values.iterator().next().getValue();
-        Assert.assertEquals(id.getFormat(), ALTERNATIVE_FORMAT);
-        Assert.assertEquals(defn.getNameIdFormat(), id.getFormat());
-        Assert.assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
-        Assert.assertEquals(defn.getNameIdQualifier(), id.getNameQualifier());
-        Assert.assertEquals(id.getValue(), TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        assertEquals(id.getFormat(), ALTERNATIVE_FORMAT);
+        assertEquals(defn.getNameIdFormat(), id.getFormat());
+        assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
+        assertEquals(defn.getNameIdQualifier(), id.getNameQualifier());
+        assertEquals(id.getValue(), TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
 
     }
 }

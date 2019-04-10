@@ -17,13 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -89,9 +93,9 @@ public class PrescopedAtributeTest {
         resolver.resolveAttributes(context);
         final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Data")));
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Connector")));
+        assertEquals(f.size(), 2);
+        assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Data")));
+        assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Connector")));
     }
 
     /**
@@ -126,7 +130,7 @@ public class PrescopedAtributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            Assert.fail();
+            fail();
         } catch (final ResolutionException e) {
             // OK
         }
@@ -149,7 +153,7 @@ public class PrescopedAtributeTest {
 
         try {
             attrDef.resolve(resolutionContext);
-            Assert.fail("Invalid type");
+            fail("Invalid type");
         } catch (final ResolutionException e) {
             //
         }
@@ -180,9 +184,9 @@ public class PrescopedAtributeTest {
         
         final Collection f = result.getValues();
 
-        Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("one", "two")));
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("three", "four")));
+        assertEquals(f.size(), 2);
+        assertTrue(f.contains(new ScopedStringAttributeValue("one", "two")));
+        assertTrue(f.contains(new ScopedStringAttributeValue("three", "four")));
 
     }
 
@@ -216,8 +220,8 @@ public class PrescopedAtributeTest {
         final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         // 2 empty attribute values are produced, but they get de-duped into a single value
-        Assert.assertEquals(f.size(), 1);
-        Assert.assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);
+        assertEquals(f.size(), 1);
+        assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);
     }
 
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
@@ -231,18 +235,18 @@ public class PrescopedAtributeTest {
 
         try {
             attrDef.setScopeDelimiter(null);
-            Assert.fail("set null delimiter");
+            fail("set null delimiter");
         } catch (final ConstraintViolationException e) {
             // OK
         }
 
         attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
-        Assert.assertNotNull(attrDef.getScopeDelimiter());
+        assertNotNull(attrDef.getScopeDelimiter());
         attrDef.setScopeDelimiter(DELIMITER);
         try {
             attrDef.initialize();
-            Assert.fail("no Dependency - should fail");
+            fail("no Dependency - should fail");
         } catch (final ComponentInitializationException e) {
             // OK
         }
@@ -250,17 +254,17 @@ public class PrescopedAtributeTest {
 
         try {
             attrDef.resolve(new AttributeResolutionContext());
-            Assert.fail("resolve not initialized");
+            fail("resolve not initialized");
         } catch (final UninitializedComponentException e) {
             // OK
         }
         attrDef.initialize();
 
-        Assert.assertEquals(attrDef.getScopeDelimiter(), DELIMITER);
+        assertEquals(attrDef.getScopeDelimiter(), DELIMITER);
 
         try {
             attrDef.resolve(null);
-            Assert.fail("Null context not allowed");
+            fail("Null context not allowed");
         } catch (final ConstraintViolationException e) {
             // OK
         }
@@ -268,19 +272,19 @@ public class PrescopedAtributeTest {
         attrDef.destroy();
         try {
             attrDef.initialize();
-            Assert.fail("Init after destroy");
+            fail("Init after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.resolve(new AttributeResolutionContext());
-            Assert.fail("Resolve after destroy");
+            fail("Resolve after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.setScopeDelimiter(DELIMITER);
-            Assert.fail("Set Delimiter after destroy");
+            fail("Set Delimiter after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }

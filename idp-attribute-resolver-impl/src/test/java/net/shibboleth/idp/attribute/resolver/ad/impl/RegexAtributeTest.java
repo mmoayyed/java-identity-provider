@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -90,8 +94,8 @@ public class RegexAtributeTest {
         resolver.resolveAttributes(context);
         final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(f.size(), 1);
-        Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
+        assertEquals(f.size(), 1);
+        assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
     }
     
     @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
@@ -119,8 +123,8 @@ public class RegexAtributeTest {
         
         final Collection f = result.getValues();
 
-        Assert.assertEquals(f.size(), 1);
-        Assert.assertTrue(f.contains(new StringAttributeValue("Connect")));
+        assertEquals(f.size(), 1);
+        assertTrue(f.contains(new StringAttributeValue("Connect")));
     }
 
 
@@ -140,7 +144,7 @@ public class RegexAtributeTest {
 
         try {
             attrDef.resolve(resolutionContext);
-            Assert.fail("Invalid type");
+            fail("Invalid type");
         } catch (final ResolutionException e) {
             //
         }
@@ -173,8 +177,8 @@ public class RegexAtributeTest {
         resolver.resolveAttributes(context);
         final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(f.size(), 1);
-        Assert.assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);
+        assertEquals(f.size(), 1);
+        assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);
     }
 
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
@@ -187,24 +191,24 @@ public class RegexAtributeTest {
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         try {
             attrDef.initialize();
-            Assert.fail("no regexp - should fail");
+            fail("no regexp - should fail");
         } catch (final ComponentInitializationException e) {
             // OK
         }
         try {
             attrDef.setRegularExpression(null);
-            Assert.fail("set null regexp");
+            fail("set null regexp");
         } catch (final ConstraintViolationException e) {
             // OK
         }
 
         attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
-        Assert.assertNull(attrDef.getRegularExpression());
+        assertNull(attrDef.getRegularExpression());
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
         try {
             attrDef.initialize();
-            Assert.fail("no Dependency - should fail");
+            fail("no Dependency - should fail");
         } catch (final ComponentInitializationException e) {
             // OK
         }
@@ -212,17 +216,17 @@ public class RegexAtributeTest {
 
         try {
             attrDef.resolve(new AttributeResolutionContext());
-            Assert.fail("resolve not initialized");
+            fail("resolve not initialized");
         } catch (final UninitializedComponentException e) {
             // OK
         }
         attrDef.initialize();
 
-        Assert.assertEquals(attrDef.getRegularExpression(), TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
+        assertEquals(attrDef.getRegularExpression(), TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
 
         try {
             attrDef.resolve(null);
-            Assert.fail("Null context not allowed");
+            fail("Null context not allowed");
         } catch (final ConstraintViolationException e) {
             // OK
         }
@@ -230,19 +234,19 @@ public class RegexAtributeTest {
         attrDef.destroy();
         try {
             attrDef.initialize();
-            Assert.fail("Init after destroy");
+            fail("Init after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-            Assert.fail("setRegExp after destroy");
+            fail("setRegExp after destroy");
         } catch (final UnmodifiableComponentException e) {
             // OK
         }
         try {
             attrDef.resolve(new AttributeResolutionContext());
-            Assert.fail("Resolve after destroy");
+            fail("Resolve after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }

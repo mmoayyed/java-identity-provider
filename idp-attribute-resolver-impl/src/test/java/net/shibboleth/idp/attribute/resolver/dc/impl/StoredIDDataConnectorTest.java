@@ -17,11 +17,20 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
+
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.DurablePairwiseIdStore;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -35,12 +44,6 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link PairwiseIdDataConnector} with JDBC store.
@@ -100,8 +103,8 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // Now test that we got exactly what we expected
         final List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
-        Assert.assertEquals(resultValues.size(), 1);
-        Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
+        assertEquals(resultValues.size(), 1);
+        assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
                 ComputedIDDataConnectorTest.RESULT);
 
     }
@@ -128,7 +131,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // Now test that we got exactly what we expected
         final List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
-        Assert.assertEquals(resultValues.size(), 1);
+        assertEquals(resultValues.size(), 1);
         assertIsUUID(((StringAttributeValue) resultValues.iterator().next()).getValue());
 
     }
@@ -140,10 +143,10 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param value what to check.
      */
     private void assertIsUUID(final String value) {
-        Assert.assertEquals(value.charAt(8), '-');
-        Assert.assertEquals(value.charAt(13), '-');
-        Assert.assertEquals(value.charAt(18), '-');
-        Assert.assertEquals(value.charAt(23), '-');
+        assertEquals(value.charAt(8), '-');
+        assertEquals(value.charAt(13), '-');
+        assertEquals(value.charAt(18), '-');
+        assertEquals(value.charAt(23), '-');
 
     }
 
@@ -171,8 +174,8 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // Now test that we got exactly what we expected
         List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
-        Assert.assertEquals(resultValues.size(), 1);
-        Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
+        assertEquals(resultValues.size(), 1);
+        assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
                 ComputedIDDataConnectorTest.RESULT);
 
         // Now void it and try again
@@ -200,9 +203,9 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // Now test that we got exactly what we expected
         resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
-        Assert.assertEquals(resultValues.size(), 1);
+        assertEquals(resultValues.size(), 1);
         final String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();
-        Assert.assertNotEquals(val, ComputedIDDataConnectorTest.RESULT);
+        assertNotEquals(val, ComputedIDDataConnectorTest.RESULT);
         assertIsUUID(val);
     }
 
@@ -232,7 +235,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - nothing
-        Assert.assertNull(context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME));
+        assertNull(context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME));
     }
 
 }

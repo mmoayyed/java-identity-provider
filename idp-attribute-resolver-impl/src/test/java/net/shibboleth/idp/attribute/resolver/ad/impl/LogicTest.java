@@ -17,17 +17,19 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Collections;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.testng.annotations.Test;
+import org.testng.collections.Lists;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.logic.AttributeIssuerIdPredicate;
 import net.shibboleth.idp.attribute.resolver.logic.AttributePrincipalPredicate;
 import net.shibboleth.idp.attribute.resolver.logic.AttributeRecipientIdPredicate;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-import org.testng.collections.Lists;
 
 /**
  * Test for {@link AttributeIssuerIdPredicate}, {@link AttributePrincipalPredicate} and {@link AttributeRecipientIdPredicate}.
@@ -42,14 +44,14 @@ public class LogicTest {
     @Test public void empty() {
         final ProfileRequestContext pfc = new ProfileRequestContext<>();
         
-        Assert.assertFalse(aiip.test(pfc));
-        Assert.assertFalse(app.test(pfc));
-        Assert.assertFalse(arip.test(pfc));
+        assertFalse(aiip.test(pfc));
+        assertFalse(app.test(pfc));
+        assertFalse(arip.test(pfc));
 
         pfc.getSubcontext(AttributeResolutionContext.class, true);
-        Assert.assertFalse(aiip.test(pfc));
-        Assert.assertFalse(app.test(pfc));
-        Assert.assertFalse(arip.test(pfc));
+        assertFalse(aiip.test(pfc));
+        assertFalse(app.test(pfc));
+        assertFalse(arip.test(pfc));
     }
     
     @Test public void wrong() {
@@ -60,9 +62,9 @@ public class LogicTest {
         arc.setPrincipal("badValue");
         arc.setAttributeRecipientID("badValue");
         
-        Assert.assertFalse(aiip.test(pfc));
-        Assert.assertFalse(app.test(pfc));
-        Assert.assertFalse(arip.test(pfc));
+        assertFalse(aiip.test(pfc));
+        assertFalse(app.test(pfc));
+        assertFalse(arip.test(pfc));
     }
 
     @Test public void correct() {
@@ -73,8 +75,8 @@ public class LogicTest {
         arc.setPrincipal("Principal");
         arc.setAttributeRecipientID("ARI");
         
-        Assert.assertTrue(aiip.test(pfc));
-        Assert.assertTrue(app.test(pfc));
-        Assert.assertTrue(arip.test(pfc));
+        assertTrue(aiip.test(pfc));
+        assertTrue(app.test(pfc));
+        assertTrue(arip.test(pfc));
     }
 }

@@ -17,17 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link PrincipalNameAttributeDefinition}
@@ -74,10 +74,10 @@ public class PrincipalNameAttributeDefinitionTest {
         
         IdPAttribute result = defn.resolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
         
-        Assert.assertEquals(result.getValues().size(), 1);
+        assertEquals(result.getValues().size(), 1);
         
         StringAttributeValue value = (StringAttributeValue) result.getValues().iterator().next();
-        Assert.assertEquals(value.getValue(), "principal");
+        assertEquals(value.getValue(), "principal");
 
         
     }

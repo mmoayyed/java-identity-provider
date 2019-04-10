@@ -17,13 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -61,7 +64,7 @@ public class SimpleAttributeTest {
         simple.setId(TEST_ATTRIBUTE_NAME);
         try {
             simple.initialize();
-            Assert.fail("no dependencies");
+            fail("no dependencies");
         } catch (final ComponentInitializationException e) {
             //OK
         }
@@ -72,7 +75,7 @@ public class SimpleAttributeTest {
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final IdPAttribute result = simple.resolve(context);
 
-        Assert.assertTrue(result.getValues().isEmpty());
+        assertTrue(result.getValues().isEmpty());
     }
 
     /**
@@ -106,13 +109,13 @@ public class SimpleAttributeTest {
         try {
             resolver.resolveAttributes(context);
         } catch (final ResolutionException e) {
-            Assert.fail("resolution failed", e);
+            fail("resolution failed", e);
         }
 
         final Collection values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT), "looking for " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
-        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
+        assertEquals(values.size(), 2);
+        assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT), "looking for " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
                 "looking for " + TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING);
     }
 
@@ -144,14 +147,14 @@ public class SimpleAttributeTest {
         try {
             resolver.resolveAttributes(context);
         } catch (final ResolutionException e) {
-            Assert.fail("resolution failed", e);
+            fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
+        assertEquals(values.size(), 2);
+        assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
-        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
+        assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
     }
     
@@ -181,9 +184,9 @@ public class SimpleAttributeTest {
         final IdPAttribute result = simple.resolve(resolutionContext);
 
        final List<IdPAttributeValue<?>> outValues = result.getValues();
-        Assert.assertEquals(outValues.size(), 2);
-        Assert.assertTrue(outValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
-        Assert.assertTrue(outValues.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
+        assertEquals(outValues.size(), 2);
+        assertTrue(outValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
+        assertTrue(outValues.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
 
     }
 
@@ -221,17 +224,17 @@ public class SimpleAttributeTest {
         try {
             resolver.resolveAttributes(context);
         } catch (final ResolutionException e) {
-            Assert.fail("resolution failed", e);
+            fail("resolution failed", e);
         }
 
         final Collection values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
+        assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
-        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
+        assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
-        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
+        assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING);
-        Assert.assertEquals(values.size(), 3);
+        assertEquals(values.size(), 3);
     }
     
 }

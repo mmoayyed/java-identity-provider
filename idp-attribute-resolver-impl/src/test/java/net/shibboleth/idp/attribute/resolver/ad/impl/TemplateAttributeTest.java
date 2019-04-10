@@ -17,6 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +33,6 @@ import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.velocity.app.VelocityEngine;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -91,7 +96,7 @@ public class TemplateAttributeTest {
                 engineSingleton.addProperty("resource.loader", "classpath, string");
                 engineSingleton.init();
             } catch (final Exception e) {
-                Assert.fail("couldn't create engine", e);
+                fail("couldn't create engine", e);
             }
         }
         return engineSingleton;
@@ -108,23 +113,23 @@ public class TemplateAttributeTest {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "1";
         TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
         attr.setId(name);
-        Assert.assertNull(attr.getTemplate());
+        assertNull(attr.getTemplate());
         attr.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         try {
             attr.initialize();
-            Assert.fail("No template");
+            fail("No template");
         } catch (final ComponentInitializationException ex) {
             // OK
         }
         attr = new TemplateAttributeDefinition();
         attr.setId(name);
-        Assert.assertNull(attr.getTemplateText());
+        assertNull(attr.getTemplateText());
         attr.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_ATTR);
-        Assert.assertNull(attr.getVelocityEngine());
+        assertNull(attr.getVelocityEngine());
         attr.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         try {
             attr.initialize();
-            Assert.fail("engine");
+            fail("engine");
         } catch (final ComponentInitializationException ex) {
             // OK
         }
@@ -135,22 +140,22 @@ public class TemplateAttributeTest {
         attr.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_ATTR);
         try {
             attr.initialize();
-            Assert.fail("No dependencies");
+            fail("No dependencies");
         } catch (final ComponentInitializationException ex) {
             // OK
         }
-        Assert.assertNotNull(attr.getTemplateText());
+        assertNotNull(attr.getTemplateText());
 
         attr.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         
         attr.initialize();
-        Assert.assertNotNull(attr.getTemplate());
+        assertNotNull(attr.getTemplate());
         final AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final IdPAttribute val = attr.resolve(context);
         final Collection<?> results = val.getValues();
 
-        Assert.assertEquals(results.size(), 0, "Templated value count");
+        assertEquals(results.size(), 0, "Templated value count");
 
         attr = new TemplateAttributeDefinition();
         attr.setId(name);
@@ -160,7 +165,7 @@ public class TemplateAttributeTest {
         
         attr.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         attr.initialize();
-        Assert.assertNotNull(attr.getTemplate());
+        assertNotNull(attr.getTemplate());
         try {
             attr.resolve(context);
         } catch (final ResolutionException e) {
@@ -173,16 +178,16 @@ public class TemplateAttributeTest {
         attr.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
         try {
             attr.initialize();
-            Assert.fail("No Text or attributes");
+            fail("No Text or attributes");
         } catch (final ComponentInitializationException ex) {
             // OK
         }
         attr.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         attr.setTemplateText( "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
         attr.initialize();
-        Assert.assertEquals(attr.getTemplateText(), "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
-        Assert.assertEquals(attr.getSourceAttributes().get(0), TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        Assert.assertEquals(attr.getSourceAttributes().size(), 1);
+        assertEquals(attr.getTemplateText(), "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
+        assertEquals(attr.getSourceAttributes().get(0), TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        assertEquals(attr.getSourceAttributes().size(), 1);
 
     }
 
@@ -220,8 +225,8 @@ public class TemplateAttributeTest {
 
         final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
         final Collection results = a.getValues();
-        Assert.assertEquals(results.size(), 1, "Templated value count");
-        Assert.assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
+        assertEquals(results.size(), 1, "Templated value count");
+        assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
 
     }
 
@@ -294,13 +299,13 @@ public class TemplateAttributeTest {
 
         final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
         final Collection results = a.getValues();
-        Assert.assertEquals(results.size(), 2, "Templated value count");
+        assertEquals(results.size(), 2, "Templated value count");
         String s =
                 "Att " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + "-"
                         + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[0];
-        Assert.assertTrue(results.contains(new StringAttributeValue(s)), "First Match");
+        assertTrue(results.contains(new StringAttributeValue(s)), "First Match");
         s = "Att " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
-        Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
+        assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
     }
 
     @Test public void emptyValues() throws ResolutionException, ComponentInitializationException {
@@ -338,9 +343,9 @@ public class TemplateAttributeTest {
 
         final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
         final Collection results = a.getValues();
-        Assert.assertEquals(results.size(), 2, "Templated value count");
-        Assert.assertTrue(results.contains(new StringAttributeValue("Att ")), "First Match");
-        Assert.assertTrue(results.contains(new StringAttributeValue("Att ${at1}")), "Second Match");
+        assertEquals(results.size(), 2, "Templated value count");
+        assertTrue(results.contains(new StringAttributeValue("Att ")), "First Match");
+        assertTrue(results.contains(new StringAttributeValue("Att ${at1}")), "Second Match");
     }
 
     @Test public void failMisMatchCount() throws ResolutionException, ComponentInitializationException {
@@ -369,7 +374,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            Assert.fail();
+            fail();
         } catch (final ResolutionException ex) {
             // OK
         }
@@ -432,7 +437,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            Assert.fail();
+            fail();
         } catch (final ResolutionException ex) {
             // OK
         }

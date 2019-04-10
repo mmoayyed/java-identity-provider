@@ -17,6 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +37,6 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -70,34 +75,34 @@ public class AttributeResolverImplTest {
                 newAttributeResolverImpl("toto", Collections.singleton((AttributeDefinition) attrDef),
                         Collections.singleton((DataConnector) dataCon));
 
-        Assert.assertFalse(attrDef.isInitialized());
-        Assert.assertFalse(attrDef.isDestroyed());
-        Assert.assertFalse(dataCon.isDestroyed());
+        assertFalse(attrDef.isInitialized());
+        assertFalse(attrDef.isDestroyed());
+        assertFalse(dataCon.isDestroyed());
 
         attrDef.initialize();
         resolver.initialize();
-        Assert.assertTrue(attrDef.isInitialized());
-        Assert.assertFalse(attrDef.isDestroyed());
-        Assert.assertTrue(dataCon.isInitialized());
-        Assert.assertFalse(dataCon.isDestroyed());
+        assertTrue(attrDef.isInitialized());
+        assertFalse(attrDef.isDestroyed());
+        assertTrue(dataCon.isInitialized());
+        assertFalse(dataCon.isDestroyed());
 
-        Assert.assertEquals(resolver.getId(), "toto");
-        Assert.assertEquals(resolver.getAttributeDefinitions().size(), 1);
-        Assert.assertTrue(resolver.getAttributeDefinitions().containsKey("foo"));
-        Assert.assertEquals(resolver.getDataConnectors().size(), 1);
-        Assert.assertTrue(resolver.getDataConnectors().containsKey("bar"));
+        assertEquals(resolver.getId(), "toto");
+        assertEquals(resolver.getAttributeDefinitions().size(), 1);
+        assertTrue(resolver.getAttributeDefinitions().containsKey("foo"));
+        assertEquals(resolver.getDataConnectors().size(), 1);
+        assertTrue(resolver.getDataConnectors().containsKey("bar"));
 
         attrDef.destroy();
         resolver.destroy();
         dataCon.destroy();
-        Assert.assertTrue(attrDef.isInitialized());
-        Assert.assertTrue(attrDef.isDestroyed());
-        Assert.assertTrue(dataCon.isInitialized());
-        Assert.assertTrue(dataCon.isDestroyed());
+        assertTrue(attrDef.isInitialized());
+        assertTrue(attrDef.isDestroyed());
+        assertTrue(dataCon.isInitialized());
+        assertTrue(dataCon.isDestroyed());
 
         try {
             resolver.initialize();
-            Assert.fail();
+            fail();
         } catch (final DestroyedComponentException e) {
             // OK
         }
@@ -113,13 +118,13 @@ public class AttributeResolverImplTest {
 
         final AttributeResolverImpl resolver = newAttributeResolverImpl(" foo ", definitions, null);
         resolver.initialize();
-        Assert.assertNotNull(resolver.getAttributeDefinitions());
-        Assert.assertEquals(resolver.getAttributeDefinitions().size(), 2);
+        assertNotNull(resolver.getAttributeDefinitions());
+        assertEquals(resolver.getAttributeDefinitions().size(), 2);
 
         definitions.add(new MockAttributeDefinition("foo", new IdPAttribute("test")));
         try {
             newAttributeResolverImpl(" foo ", definitions, null);
-            Assert.fail();
+            fail();
         } catch (final IllegalArgumentException e) {
             // OK
         }
@@ -133,13 +138,13 @@ public class AttributeResolverImplTest {
         connectors.add(new MockDataConnector("bar", (Map) null));
 
         final AttributeResolver resolver = newAttributeResolverImpl("foo", null, connectors);
-        Assert.assertNotNull(resolver.getDataConnectors());
-        Assert.assertEquals(resolver.getDataConnectors().size(), 2);
+        assertNotNull(resolver.getDataConnectors());
+        assertEquals(resolver.getDataConnectors().size(), 2);
 
         connectors.add(new MockDataConnector("foo", (Map) null));
         try {
             newAttributeResolverImpl(" foo ", null, connectors);
-            Assert.fail();
+            fail();
         } catch (final IllegalArgumentException e) {
             // OK
         }
@@ -160,8 +165,8 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
+        assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
     }
 
     /** Test that a simple resolve returns the expected results. */
@@ -180,14 +185,14 @@ public class AttributeResolverImplTest {
         context.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
         resolver.resolveAttributes(context);
 
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
+        assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
 
         context = new AttributeResolutionContext();
         context.setRequestedIdPAttributeNames(Collections.singleton("1da"));
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /** Test that a simple resolve returns the expected results. */
@@ -208,7 +213,7 @@ public class AttributeResolverImplTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            Assert.fail();
+            fail();
         } catch (final ResolutionException e) {
             // OK
         }
@@ -225,7 +230,7 @@ public class AttributeResolverImplTest {
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
         log.debug("Logged Resolve fails");
     }
 
@@ -239,7 +244,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /** Test that resolve w/ dependencies returns the expected results. */
@@ -280,8 +285,8 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("test").getValues().size(), 2);
+        assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().get("test").getValues().size(), 2);
     }
 
     /**
@@ -354,25 +359,25 @@ public class AttributeResolverImplTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         
         resolver.resolveAttributes(context);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
         
         dc1.setFailure(true);
         
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
         
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
+        assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
 
         dc1.setFailure(false);
 
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
+        assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
         
         Thread.sleep(6200);
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
     }
 
     /**
@@ -404,7 +409,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            Assert.fail();
+            fail();
         } catch (final ResolutionException e) {
             //
             // OK
@@ -441,7 +446,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 2);
+        assertEquals(context.getResolvedIdPAttributes().size(), 2);
 
         final MockDataConnector dcfail1 = new MockDataConnector("failer1", new HashMap<String, IdPAttribute>());
         dcfail1.setFailure(true);
@@ -507,7 +512,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().size(), 1);
     }
     
     @Test public void dataConnectorWithDataDependency() throws ComponentInitializationException, ResolutionException {
@@ -538,7 +543,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
+        assertEquals(context.getResolvedIdPAttributes().size(), 1);
     }
 
     /**
@@ -556,7 +561,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /**
@@ -580,7 +585,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /** Test that after resolution that the values for a resolved attribute are deduped. */
@@ -600,8 +605,8 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(), 1);
+        assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
+        assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(), 1);
     }
     
     /** Test that after resolution that the values for a resolved attribute are deduped. */
@@ -621,8 +626,8 @@ public class AttributeResolverImplTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(),2);
+        assertTrue(context.getResolvedIdPAttributes().containsKey("ad1"));
+        assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(),2);
         
         resolver = newAttributeResolverImpl("foo", definitions, null);
         resolver.setStripNulls(true);
@@ -631,7 +636,7 @@ public class AttributeResolverImplTest {
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
 
@@ -655,7 +660,7 @@ public class AttributeResolverImplTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
     /** Test that validation fails when a plugin depends on a non-existent plugin. */
@@ -677,7 +682,7 @@ public class AttributeResolverImplTest {
         AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");
+            fail("invalid resolver configuration didn't fail initialization");
         } catch (final ComponentInitializationException e) {
             // OK
         }
@@ -693,7 +698,7 @@ public class AttributeResolverImplTest {
 
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");
+            fail("invalid resolver configuration didn't fail initialization");
         } catch (final ComponentInitializationException e) {
             // expected this
         }
@@ -718,7 +723,7 @@ public class AttributeResolverImplTest {
         AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");
+            fail("invalid resolver configuration didn't fail initialization");
         } catch (final ComponentInitializationException e) {
             // OK
         }
@@ -734,7 +739,7 @@ public class AttributeResolverImplTest {
 
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");
+            fail("invalid resolver configuration didn't fail initialization");
         } catch (final ComponentInitializationException e) {
             // expected this
         }
@@ -752,7 +757,7 @@ public class AttributeResolverImplTest {
 
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization.");
+            fail("invalid resolver configuration didn't fail initialization.");
         } catch (final ComponentInitializationException e) {
             // OK
         }
@@ -782,7 +787,7 @@ public class AttributeResolverImplTest {
         resolver = newAttributeResolverImpl("foo", definitions, connectors);
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");
+            fail("invalid resolver configuration didn't fail initialization");
         } catch (final ComponentInitializationException e) {
             // expected this
         }
@@ -801,7 +806,7 @@ public class AttributeResolverImplTest {
 
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization.");
+            fail("invalid resolver configuration didn't fail initialization.");
         } catch (final ComponentInitializationException e) {
             // OK
         }
@@ -832,7 +837,7 @@ public class AttributeResolverImplTest {
         resolver = newAttributeResolverImpl("foo", definitions, connectors);
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");
+            fail("invalid resolver configuration didn't fail initialization");
         } catch (final ComponentInitializationException e) {
             // expected this
         }

@@ -17,11 +17,19 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
+
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -31,12 +39,6 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
-import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for the {@link SAMLAttributeDataConnector}
@@ -57,16 +59,16 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final Map<String, IdPAttribute> attributes = connector.resolve(context);
-        Assert.assertEquals(attributes.size(), 2);
+        assertEquals(attributes.size(), 2);
         
         List<IdPAttributeValue<?>> attributeValues = attributes.get("SamlName").getValues();
-        Assert.assertEquals(attributeValues.size(), 1);
-        Assert.assertTrue(attributeValues.iterator().next() instanceof XMLObjectAttributeValue);
+        assertEquals(attributeValues.size(), 1);
+        assertTrue(attributeValues.iterator().next() instanceof XMLObjectAttributeValue);
         
         attributeValues = attributes.get("MultiName").getValues();
-        Assert.assertEquals(attributeValues.size(), 3);
+        assertEquals(attributeValues.size(), 3);
         for (IdPAttributeValue val: attributeValues) {
-            Assert.assertTrue(val instanceof StringAttributeValue);    
+            assertTrue(val instanceof StringAttributeValue);    
         }
     }
 

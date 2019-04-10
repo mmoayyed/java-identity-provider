@@ -17,25 +17,29 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** Tests for {@link StaticDataConnector}
  *
@@ -49,24 +53,24 @@ public class StaticDataConnectorTest {
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");
 
-        Assert.assertNull(connector.getAttributes());
+        assertNull(connector.getAttributes());
         connector.setValues(null);
-        Assert.assertNull(connector.getAttributes());
+        assertNull(connector.getAttributes());
 
         try {
             connector.initialize();
-            Assert.fail();
+            fail();
         } catch (ComponentInitializationException e) {
             //OK
         }
         
         List<IdPAttribute> input = new ArrayList<>();
         connector.setValues(input);
-        Assert.assertNotNull(connector.getAttributes());
+        assertNotNull(connector.getAttributes());
 
         input.add(null);
         connector.setValues(input);
-        Assert.assertNotNull(connector.getAttributes());        
+        assertNotNull(connector.getAttributes());        
 
         input.add(attribute);
         input.add(null);
@@ -75,15 +79,15 @@ public class StaticDataConnectorTest {
         connector.setValues(input);
         connector.initialize();
 
-        Assert.assertEquals(connector.getAttributes().size(), 2);
+        assertEquals(connector.getAttributes().size(), 2);
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         Map<String, IdPAttribute> result = connector.resolve(context);
 
-        Assert.assertEquals(result.size(), 2);
-        Assert.assertTrue(result.containsKey("attribute"));
-        Assert.assertTrue(result.containsKey("thingy"));
+        assertEquals(result.size(), 2);
+        assertTrue(result.containsKey("attribute"));
+        assertTrue(result.containsKey("thingy"));
 
     }
     
@@ -98,7 +102,7 @@ public class StaticDataConnectorTest {
         
         try {
             connector.resolve(new AttributeResolutionContext());
-            Assert.fail();
+            fail();
         } catch (UninitializedComponentException e) {
             //OK
         }
@@ -110,7 +114,7 @@ public class StaticDataConnectorTest {
 
         try {
             connector.setValues(Collections.singletonList(new IdPAttribute("whatever")));
-            Assert.fail();
+            fail();
         } catch (UnmodifiableComponentException ex) {
             // OK
         }
@@ -119,7 +123,7 @@ public class StaticDataConnectorTest {
 
         try {
             connector.resolve(new AttributeResolutionContext());
-            Assert.fail();
+            fail();
         } catch (DestroyedComponentException e) {
             //OK
         }

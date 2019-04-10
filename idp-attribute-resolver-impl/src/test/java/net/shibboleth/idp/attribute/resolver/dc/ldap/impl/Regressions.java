@@ -17,8 +17,23 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Map;
+
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.SearchExecutor;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
+import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.sdk.LDAPException;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
@@ -30,19 +45,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.SearchExecutor;
-import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
-import com.unboundid.ldap.listener.InMemoryListenerConfig;
-import com.unboundid.ldap.sdk.LDAPException;
 
 /**
  *
@@ -125,8 +127,8 @@ public class Regressions {
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> attrs = connector.resolve(context);
         final List<IdPAttributeValue<?>> values = attrs.get("mail").getValues();
-        Assert.assertEquals(values.size(), 4);
-        Assert.assertTrue(values.contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
+        assertEquals(values.size(), 4);
+        assertTrue(values.contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
     }
 
 }

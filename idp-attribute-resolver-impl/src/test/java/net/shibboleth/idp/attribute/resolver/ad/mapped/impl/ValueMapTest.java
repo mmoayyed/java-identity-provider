@@ -17,15 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Tests for {@link ValueMap}.
@@ -42,9 +44,9 @@ public class ValueMapTest {
         map.setReturnValue("return");
         
         
-        Assert.assertEquals(map.getReturnValue(), "return");
-        Assert.assertEquals(map.getSourceValues().size(), 1);
-        Assert.assertTrue(map.getSourceValues().contains(value));
+        assertEquals(map.getReturnValue(), "return");
+        assertEquals(map.getSourceValues().size(), 1);
+        assertTrue(map.getSourceValues().contains(value));
     }
     
     @Test public void subString() throws ComponentInitializationException {
@@ -57,11 +59,11 @@ public class ValueMapTest {
         
         Set<StringAttributeValue> result = map.apply("elephant");
         
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
 
         result = map.apply("elephantvaluegiraffe");
-        Assert.assertEquals(result.size(), 1);
-        Assert.assertTrue(result.contains(new StringAttributeValue("return")));
+        assertEquals(result.size(), 1);
+        assertTrue(result.contains(new StringAttributeValue("return")));
     }
 
     @Test public void regexp() throws ComponentInitializationException {
@@ -74,12 +76,12 @@ public class ValueMapTest {
         map.setReturnValue("foo$1");
         
         Set<StringAttributeValue> result = map.apply("elephant");
-        Assert.assertTrue(result.isEmpty());
+        assertTrue(result.isEmpty());
 
         result = map.apply("Recursion");
-        Assert.assertEquals(result.size(), 2);
-        Assert.assertTrue(result.contains(new StringAttributeValue("fooecursion")));
-        Assert.assertTrue(result.contains(new StringAttributeValue("foocursion")));
+        assertEquals(result.size(), 2);
+        assertTrue(result.contains(new StringAttributeValue("fooecursion")));
+        assertTrue(result.contains(new StringAttributeValue("foocursion")));
         
     }
 

@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -96,11 +100,11 @@ public class ScopedAttributeTest {
         // Now test that we got exactly what we expected - two scoped attributes
         final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(
+        assertEquals(f.size(), 2);
+        assertTrue(
                 f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(
+        assertTrue(
                 f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for CONNECTOR_ATTRIBUTE_VALUE");
 
@@ -122,7 +126,7 @@ public class ScopedAttributeTest {
 
         try {
             attrDef.resolve(resolutionContext);
-            Assert.fail("Invalid type");
+            fail("Invalid type");
         } catch (final ResolutionException e) {
             //
         }
@@ -152,9 +156,9 @@ public class ScopedAttributeTest {
         
         final Collection f = result.getValues();
 
-        Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("one", TEST_SCOPE)));
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("three", TEST_SCOPE)));
+        assertEquals(f.size(), 2);
+        assertTrue(f.contains(new ScopedStringAttributeValue("one", TEST_SCOPE)));
+        assertTrue(f.contains(new ScopedStringAttributeValue("three", TEST_SCOPE)));
 
     }
 
@@ -170,35 +174,35 @@ public class ScopedAttributeTest {
 
         try {
             attrDef.setScope(null);
-            Assert.fail("set null delimiter");
+            fail("set null delimiter");
         } catch (final ConstraintViolationException e) {
             // OK
         }
 
         attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
-        Assert.assertNull(attrDef.getScope());
+        assertNull(attrDef.getScope());
         attrDef.setScope(TEST_SCOPE);
         try {
             attrDef.initialize();
-            Assert.fail("no Dependency - should fail");
+            fail("no Dependency - should fail");
         } catch (final ComponentInitializationException e) {
             // OK
         }
         attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
-        Assert.assertNull(attrDef.getScope());
+        assertNull(attrDef.getScope());
         attrDef.setDataConnectorDependencies(pluginDependencies);
         try {
             attrDef.initialize();
-            Assert.fail("no Scope - should fail");
+            fail("no Scope - should fail");
         } catch (final ComponentInitializationException e) {
             // OK
         }
 
         try {
             attrDef.resolve(new AttributeResolutionContext());
-            Assert.fail("resolve not initialized");
+            fail("resolve not initialized");
         } catch (final UninitializedComponentException e) {
             // OK
         }
@@ -206,11 +210,11 @@ public class ScopedAttributeTest {
         attrDef.setScope(TEST_SCOPE);
         attrDef.initialize();
 
-        Assert.assertEquals(attrDef.getScope(), TEST_SCOPE);
+        assertEquals(attrDef.getScope(), TEST_SCOPE);
 
         try {
             attrDef.resolve(null);
-            Assert.fail("Null context not allowed");
+            fail("Null context not allowed");
         } catch (final ConstraintViolationException e) {
             // OK
         }
@@ -218,19 +222,19 @@ public class ScopedAttributeTest {
         attrDef.destroy();
         try {
             attrDef.initialize();
-            Assert.fail("Init after destroy");
+            fail("Init after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.resolve(new AttributeResolutionContext());
-            Assert.fail("Resolve after destroy");
+            fail("Resolve after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.setScope(TEST_SCOPE);
-            Assert.fail("Set Delimiter after destroy");
+            fail("Set Delimiter after destroy");
         } catch (final DestroyedComponentException e) {
             // OK
         }

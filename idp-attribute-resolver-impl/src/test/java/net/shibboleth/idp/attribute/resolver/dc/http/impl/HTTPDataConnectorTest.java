@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.http.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -28,7 +31,6 @@ import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolverTest;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
 import org.springframework.core.io.ClassPathResource;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -96,14 +98,14 @@ public class HTTPDataConnectorTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
@@ -213,7 +215,7 @@ public class HTTPDataConnectorTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertTrue(attrs == null || attrs.isEmpty());
+        assertTrue(attrs == null || attrs.isEmpty());
     }
     
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
@@ -240,10 +242,10 @@ public class HTTPDataConnectorTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         
-        Assert.assertTrue(cache.size() == 0);
+        assertTrue(cache.size() == 0);
         final Map<String,IdPAttribute> optional = connector.resolve(context);
-        Assert.assertTrue(cache.size() == 1);
-        Assert.assertEquals(cache.iterator().next(), optional);
+        assertTrue(cache.size() == 1);
+        assertEquals(cache.iterator().next(), optional);
     }
     
     @Test(enabled=false) public void testPOST() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
@@ -270,14 +272,14 @@ public class HTTPDataConnectorTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
     }
 
     @Test(enabled=false) public void testCacheable() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
@@ -307,10 +309,10 @@ public class HTTPDataConnectorTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         
-        Assert.assertTrue(cache.size() == 0);
+        assertTrue(cache.size() == 0);
         final Map<String,IdPAttribute> optional = connector.resolve(context);
-        Assert.assertTrue(cache.size() == 1);
-        Assert.assertEquals(cache.iterator().next(), optional);
+        assertTrue(cache.size() == 1);
+        assertEquals(cache.iterator().next(), optional);
     }
     
     @Test(enabled=false) public void testUncacheable() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
@@ -339,9 +341,9 @@ public class HTTPDataConnectorTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         
-        Assert.assertTrue(cache.size() == 0);
+        assertTrue(cache.size() == 0);
         connector.resolve(context);
-        Assert.assertTrue(cache.size() == 0);
+        assertTrue(cache.size() == 0);
     }
     
 }

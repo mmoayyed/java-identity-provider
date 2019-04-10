@@ -17,12 +17,18 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.Subject;
+
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -35,9 +41,6 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /** Test for {@link SubjectDerivedAttributeValuesFunction}. */
 public class ContextDerivedAttributeDefinitionTest {
@@ -79,9 +82,9 @@ public class ContextDerivedAttributeDefinitionTest {
         
       final List<IdPAttributeValue<?>> foo = defn.resolve(ctx).getValues();
         
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
     
     @Test public void empty() throws ComponentInitializationException, ResolutionException {
@@ -113,7 +116,7 @@ public class ContextDerivedAttributeDefinitionTest {
         authnResults.put("one", new AuthenticationResult("1", subject));
         
         final IdPAttribute result = defn.resolve(ctx);
-        Assert.assertNull(result);
+        assertNull(result);
     }
 
 }
