@@ -17,15 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Collection;
+
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-
-import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  *
@@ -41,7 +42,7 @@ public class Regressions extends BaseAttributeDefinitionParserTest {
         Collection<AttributeEncoder> encoders = context.getBeansOfType(AttributeEncoder.class).values();
         Collection<AttributeDefinition> definitions = context.getBeansOfType(AttributeDefinition.class).values();
         
-        Assert.assertEquals(encoders.size(), 1);
-        Assert.assertEquals(definitions.size(), 1);
+        assertEquals(encoders.size(), 1);
+        assertEquals(definitions.size(), 1);
     }
 }

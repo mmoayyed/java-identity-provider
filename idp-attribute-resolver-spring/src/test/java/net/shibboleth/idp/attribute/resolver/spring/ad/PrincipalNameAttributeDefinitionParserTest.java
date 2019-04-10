@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
@@ -33,7 +34,7 @@ public class PrincipalNameAttributeDefinitionParserTest extends BaseAttributeDef
         PrincipalNameAttributeDefinition attrDef =
                 getAttributeDefn("resolver/principalName.xml", PrincipalNameAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "PrincipalName");
+        assertEquals(attrDef.getId(), "PrincipalName");
     }
 
 }

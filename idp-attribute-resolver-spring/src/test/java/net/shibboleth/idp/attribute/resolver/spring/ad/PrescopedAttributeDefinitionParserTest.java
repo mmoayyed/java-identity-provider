@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrescopedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link PrescopedAttributeDefinitionParser}.
@@ -33,15 +34,15 @@ public class PrescopedAttributeDefinitionParserTest extends BaseAttributeDefinit
         PrescopedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/prescopedWith.xml", PrescopedAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "prescopedWith");
-        Assert.assertEquals(attrDef.getScopeDelimiter(), "#");
+        assertEquals(attrDef.getId(), "prescopedWith");
+        assertEquals(attrDef.getScopeDelimiter(), "#");
     }
 
     @Test public void withoutScope() {
         PrescopedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/prescopedWithout.xml", PrescopedAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "prescopedWith");
-        Assert.assertEquals(attrDef.getScopeDelimiter(), "@");
+        assertEquals(attrDef.getId(), "prescopedWith");
+        assertEquals(attrDef.getScopeDelimiter(), "@");
     }
 }

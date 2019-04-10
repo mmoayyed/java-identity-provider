@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
@@ -32,7 +33,7 @@ public class ScopedAttributeDefinitionParserTest extends BaseAttributeDefinition
     @Test public void defaultCase() {
         ScopedAttributeDefinition attrDef = getAttributeDefn("resolver/scoped.xml", ScopedAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "scoped");
-        Assert.assertEquals(attrDef.getScope(), "mYsCoPe");
+        assertEquals(attrDef.getId(), "scoped");
+        assertEquals(attrDef.getScope(), "mYsCoPe");
     }
 }

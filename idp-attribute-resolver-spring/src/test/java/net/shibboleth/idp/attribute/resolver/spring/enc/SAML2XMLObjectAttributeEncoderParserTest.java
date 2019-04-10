@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2XMLObjectAttributeEncoder;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2XMLObjectAttributeEncoder;
 
 /**
  * Test for {@link SAML2XMLObjectAttributeEncoderParser}.
@@ -35,18 +37,18 @@ public class SAML2XMLObjectAttributeEncoderParserTest extends BaseAttributeDefin
         final SAML2XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml2XmlObject.xml", SAML2XMLObjectAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "Saml2XmlObject_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getFriendlyName(),"Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNameFormat(),"Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
+        assertEquals(encoder.getName(), "Saml2XmlObject_ATTRIBUTE_NAME");
+        assertEquals(encoder.getFriendlyName(),"Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME"); 
+        assertEquals(encoder.getNameFormat(),"Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
     }
 
     @Test public void defaultCase() {
         final SAML2XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml2XmlObjectDefault.xml", SAML2XMLObjectAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "XmlObjectName");
-        Assert.assertNull(encoder.getFriendlyName()); 
-        Assert.assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
+        assertEquals(encoder.getName(), "XmlObjectName");
+        assertNull(encoder.getFriendlyName()); 
+        assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

@@ -17,12 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.mock.env.MockPropertySource;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
@@ -43,36 +45,36 @@ public class ComputedIdDataConnectorParserTest extends BaseAttributeDefinitionPa
         final PairwiseIdDataConnector connector = getDataConnector("resolver/computed.xml", PairwiseIdDataConnector.class);
         final ComputedPairwiseIdStore store = (ComputedPairwiseIdStore) connector.getPairwiseIdStore();
         
-        Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());
-        Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
-        Assert.assertEquals(store.getAlgorithm(), "SHA256");
-        Assert.assertEquals(store.getEncoding(), Encoding.BASE32);
+        assertEquals(connector.getId(), "computed");
+        assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());
+        assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
+        assertEquals(store.getAlgorithm(), "SHA256");
+        assertEquals(store.getEncoding(), Encoding.BASE32);
 
-        Assert.assertTrue(connector.isInitialized());
+        assertTrue(connector.isInitialized());
     }
 
     @Test public void resolverDataConnector() throws ComponentInitializationException {
         final PairwiseIdDataConnector connector = getDataConnector("resolver/computedDataConnector.xml", PairwiseIdDataConnector.class);
         final ComputedPairwiseIdStore store = (ComputedPairwiseIdStore) connector.getPairwiseIdStore();
 
-        Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());
-        Assert.assertEquals(connector.getSourceAttributeInformation(), "DC/theSourceRemainsTheSame");
+        assertEquals(connector.getId(), "computed");
+        assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());
+        assertEquals(connector.getSourceAttributeInformation(), "DC/theSourceRemainsTheSame");
 
-        Assert.assertTrue(connector.isInitialized());
+        assertTrue(connector.isInitialized());
 }
 
     @Test public void resolverNoSourceDependency() {
         final PairwiseIdDataConnector connector = getDataConnector("resolver/computedNoSource1.xml", PairwiseIdDataConnector.class);
         final ComputedPairwiseIdStore store = (ComputedPairwiseIdStore) connector.getPairwiseIdStore();
         
-        Assert.assertEquals(connector.getId(), "computed");
-        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());
-        Assert.assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
+        assertEquals(connector.getId(), "computed");
+        assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());
+        assertEquals(connector.getSourceAttributeInformation(), "theSourceRemainsTheSame");
 
     }
 
@@ -109,9 +111,9 @@ public class ComputedIdDataConnectorParserTest extends BaseAttributeDefinitionPa
         final PairwiseIdDataConnector connector =  context.getBean(PairwiseIdDataConnector.class);
         final ComputedPairwiseIdStore store = (ComputedPairwiseIdStore) connector.getPairwiseIdStore();
         
-        Assert.assertEquals(store.getSalt(), salt.getBytes());
-        Assert.assertTrue(store.isInitialized());
-        Assert.assertTrue(connector.isInitialized());
+        assertEquals(store.getSalt(), salt.getBytes());
+        assertTrue(store.isInitialized());
+        assertTrue(connector.isInitialized());
     }
 
 }

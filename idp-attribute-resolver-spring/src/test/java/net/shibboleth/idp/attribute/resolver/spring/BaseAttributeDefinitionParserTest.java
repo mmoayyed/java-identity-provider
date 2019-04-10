@@ -17,9 +17,18 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.annotations.AfterMethod;
 
 import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
@@ -35,14 +44,6 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionPa
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ConversionServiceFactoryBean;
-import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 
 /**
  * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
@@ -109,7 +110,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         context.refresh();
 
         final Collection<Type> beans = context.getBeansOfType(claz).values();
-        Assert.assertEquals(beans.size(), 1);
+        assertEquals(beans.size(), 1);
 
         return beans.iterator().next();
     }

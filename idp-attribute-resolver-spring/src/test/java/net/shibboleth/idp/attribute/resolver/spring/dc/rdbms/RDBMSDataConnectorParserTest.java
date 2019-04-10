@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -34,7 +39,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
-import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
@@ -94,22 +98,22 @@ public class RDBMSDataConnectorParserTest {
     @Test public void simpleConnector() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-simple.xml");
-        Assert.assertNotNull(dataConnector);
+        assertNotNull(dataConnector);
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
+        assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
 
     
     @Test public void v2Config() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2.xml");
-        Assert.assertNotNull(dataConnector);
+        assertNotNull(dataConnector);
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
+        assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
 
 
@@ -118,11 +122,11 @@ public class RDBMSDataConnectorParserTest {
                 getRdbmsDataConnector(
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
-        Assert.assertNotNull(dataConnector);
+        assertNotNull(dataConnector);
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
-        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
+        assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
 
     @Test public void v2PropsConfig() throws Exception {
@@ -130,14 +134,14 @@ public class RDBMSDataConnectorParserTest {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(props,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-props.xml");
-        Assert.assertNotNull(dataConnector);
+        assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
     @Test public void springConfig() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-spring.xml");
-        Assert.assertNotNull(dataConnector);
+        assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
@@ -146,7 +150,7 @@ public class RDBMSDataConnectorParserTest {
 
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(props, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-spring-props.xml");
-        Assert.assertNotNull(dataConnector);
+        assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
@@ -180,25 +184,25 @@ public class RDBMSDataConnectorParserTest {
     protected void doTest(final RDBMSDataConnector dataConnector) throws ResolutionException {
 
         final String id = dataConnector.getId();
-        Assert.assertEquals("myDatabase", id);
-        Assert.assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
+        assertEquals("myDatabase", id);
+        assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
 
         final BasicDataSource dataSource = (BasicDataSource) dataConnector.getDataSource();
-        Assert.assertNotNull(dataSource);
-        Assert.assertEquals(dataSource.getUrl(), "jdbc:hsqldb:mem:RDBMSDataConnectorStore");
-        Assert.assertEquals(dataSource.getUsername(), "SA");
-        Assert.assertEquals(dataSource.getMaxTotal(), 20);
-        Assert.assertEquals(dataSource.getMaxIdle(), 5);
-        Assert.assertEquals(dataSource.getMaxWaitMillis(), 5000);
+        assertNotNull(dataSource);
+        assertEquals(dataSource.getUrl(), "jdbc:hsqldb:mem:RDBMSDataConnectorStore");
+        assertEquals(dataSource.getUsername(), "SA");
+        assertEquals(dataSource.getMaxTotal(), 20);
+        assertEquals(dataSource.getMaxIdle(), 5);
+        assertEquals(dataSource.getMaxWaitMillis(), 5000);
 
-        Assert.assertFalse(dataConnector.isConnectionReadOnly());
+        assertFalse(dataConnector.isConnectionReadOnly());
         final DataSourceValidator validator = (DataSourceValidator) dataConnector.getValidator();
-        Assert.assertNotNull(validator);
-        Assert.assertTrue(validator.isThrowValidateError());
-        Assert.assertNotNull(validator.getDataSource());
+        assertNotNull(validator);
+        assertTrue(validator.isThrowValidateError());
+        assertNotNull(validator.getDataSource());
 
         final ExecutableSearchBuilder<ExecutableStatement> searchBuilder = dataConnector.getExecutableSearchBuilder();
-        Assert.assertNotNull(searchBuilder);
+        assertNotNull(searchBuilder);
 
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
@@ -206,6 +210,6 @@ public class RDBMSDataConnectorParserTest {
         AssertJUnit.assertTrue(mappingStrategy.isMultipleResultsAnError());
 
         final Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
-        Assert.assertNotNull(resultCache);
+        assertNotNull(resultCache);
     }
 }

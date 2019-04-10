@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.http;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +32,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.env.MockPropertySource;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
@@ -81,7 +84,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -89,16 +92,16 @@ public class HTTPDataConnectorParserTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
         
-        Assert.assertTrue(connector.getResultsCache().size() == 1);
+        assertTrue(connector.getResultsCache().size() == 1);
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void v2BadProtocol() throws Exception {
@@ -110,7 +113,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-badprotocol.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -130,7 +133,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -150,7 +153,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -168,7 +171,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-missingok.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -176,7 +179,7 @@ public class HTTPDataConnectorParserTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertTrue(attrs == null || attrs.isEmpty());
+        assertTrue(attrs == null || attrs.isEmpty());
     }
 
     @Test public void v2Certificate() throws Exception {
@@ -189,7 +192,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-certificate.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -199,14 +202,14 @@ public class HTTPDataConnectorParserTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
         
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void v2BadCertificate() throws Exception {
@@ -219,7 +222,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-certificate.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -238,7 +241,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-ca.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -262,7 +265,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-clientcert.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -270,14 +273,14 @@ public class HTTPDataConnectorParserTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
         
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
     }
     
     @Test public void hybridConfig() throws Exception {
@@ -290,7 +293,7 @@ public class HTTPDataConnectorParserTest {
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-spring-context.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -298,16 +301,16 @@ public class HTTPDataConnectorParserTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
         
-        Assert.assertTrue(connector.getResultsCache().size() == 1);    
+        assertTrue(connector.getResultsCache().size() == 1);    
     }
 
     @Test(enabled=false) public void v2ConfigPOST() throws Exception {
@@ -321,7 +324,7 @@ public class HTTPDataConnectorParserTest {
         final HTTPDataConnector connector =
                 getDataConnector(propSource,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-body.xml");
-        Assert.assertNotNull(connector);
+        assertNotNull(connector);
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -329,14 +332,14 @@ public class HTTPDataConnectorParserTest {
         
         final Map<String,IdPAttribute> attrs = connector.resolve(context);
 
-        Assert.assertEquals(attrs.size(), 2);
+        assertEquals(attrs.size(), 2);
         
-        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
-        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(attrs.get("foo").getValues().size(), 1);
+        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
         
-        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
-        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(attrs.get("bar").getValues().size(), 2);
+        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
     }
     
     private HTTPDataConnector getDataConnector(final PropertySource propSource, final String... beanDefinitions)

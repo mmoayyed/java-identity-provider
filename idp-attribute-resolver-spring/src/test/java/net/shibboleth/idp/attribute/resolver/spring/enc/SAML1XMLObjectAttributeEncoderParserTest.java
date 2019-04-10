@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import static org.testng.Assert.assertEquals;
+
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1XMLObjectAttributeEncoderParser;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1XMLObjectAttributeEncoder;
 import net.shibboleth.idp.saml.xml.SAMLConstants;
-
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link SAML1XMLObjectAttributeEncoderParser}.
@@ -35,16 +36,16 @@ public class SAML1XMLObjectAttributeEncoderParserTest extends BaseAttributeDefin
         final SAML1XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1XmlObject.xml", SAML1XMLObjectAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "SAML1_XMLObject_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
+        assertEquals(encoder.getName(), "SAML1_XMLObject_ATTRIBUTE_NAME");
+        assertEquals(encoder.getNamespace(),"SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
     }
     
     @Test public void defaultCase() {
         final SAML1XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1XmlObjectDefault.xml", SAML1XMLObjectAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "XMLObject_ATTRIBUTE");
-        Assert.assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
+        assertEquals(encoder.getName(), "XMLObject_ATTRIBUTE");
+        assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

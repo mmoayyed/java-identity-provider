@@ -17,8 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -31,10 +37,6 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorP
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
-
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link ScriptDataConnectorParser}
@@ -57,26 +59,26 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         final Map custom = (Map) dataConnector.getCustomObject();
         
-        Assert.assertEquals(custom.size(), 1);
-        Assert.assertEquals(custom.get("bar"), "foo");
+        assertEquals(custom.size(), 1);
+        assertEquals(custom.get("bar"), "foo");
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> result = dataConnector.resolve(context);
         
-        Assert.assertEquals(result.size(), 2);
+        assertEquals(result.size(), 2);
         
         List<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(new StringAttributeValue("Value 1")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("Value 2")));
+        assertEquals(values.size(), 2);
+        assertTrue(values.contains(new StringAttributeValue("Value 1")));
+        assertTrue(values.contains(new StringAttributeValue("Value 2")));
 
         values = result.get("TwoScripted").getValues();
-        Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(new StringAttributeValue("1Value")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("2Value")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("3Value")));
+        assertEquals(values.size(), 3);
+        assertTrue(values.contains(new StringAttributeValue("1Value")));
+        assertTrue(values.contains(new StringAttributeValue("2Value")));
+        assertTrue(values.contains(new StringAttributeValue("3Value")));
         
     }
     

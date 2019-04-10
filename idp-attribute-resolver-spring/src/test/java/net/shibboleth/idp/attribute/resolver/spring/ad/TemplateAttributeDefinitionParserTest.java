@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
@@ -35,9 +38,9 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
         final TemplateAttributeDefinition defn =
                 getAttributeDefn("resolver/templateNoAttributes.xml", "externalBeans.xml", TemplateAttributeDefinition.class);
 
-        Assert.assertEquals(defn.getId(), "templateId");
-        Assert.assertNull(defn.getTemplateText());
-        Assert.assertTrue(defn.getSourceAttributes().isEmpty());
+        assertEquals(defn.getId(), "templateId");
+        assertNull(defn.getTemplateText());
+        assertTrue(defn.getSourceAttributes().isEmpty());
     }
 
     @Test public void withAttr() throws ComponentInitializationException {
@@ -45,11 +48,11 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
         final TemplateAttributeDefinition defn =
                 getAttributeDefn("resolver/templateAttributes.xml", "velocity2.xml", TemplateAttributeDefinition.class);
 
-        Assert.assertEquals(defn.getId(), "templateIdAttr");
-        Assert.assertEquals(defn.getTemplateText(), "TheTemplate");
-        Assert.assertEquals(defn.getSourceAttributes().size(), 2);
-        Assert.assertTrue(defn.getSourceAttributes().contains("att1"));
-        Assert.assertTrue(defn.getSourceAttributes().contains("att2"));
+        assertEquals(defn.getId(), "templateIdAttr");
+        assertEquals(defn.getTemplateText(), "TheTemplate");
+        assertEquals(defn.getSourceAttributes().size(), 2);
+        assertTrue(defn.getSourceAttributes().contains("att1"));
+        assertTrue(defn.getSourceAttributes().contains("att2"));
     }
     
     @Test public void dupl() throws ComponentInitializationException {
@@ -57,11 +60,11 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
         final TemplateAttributeDefinition defn =
                 getAttributeDefn("resolver/templateTwoTemplate.xml", "velocity2.xml", TemplateAttributeDefinition.class);
 
-        Assert.assertEquals(defn.getId(), "templateIdAttr");
-        Assert.assertEquals(defn.getTemplateText(), "TheTemplate");
-        Assert.assertEquals(defn.getSourceAttributes().size(), 2);
-        Assert.assertTrue(defn.getSourceAttributes().contains("att1"));
-        Assert.assertTrue(defn.getSourceAttributes().contains("att2"));
+        assertEquals(defn.getId(), "templateIdAttr");
+        assertEquals(defn.getTemplateText(), "TheTemplate");
+        assertEquals(defn.getSourceAttributes().size(), 2);
+        assertTrue(defn.getSourceAttributes().contains("att1"));
+        assertTrue(defn.getSourceAttributes().contains("att2"));
     }
 
 }

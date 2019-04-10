@@ -17,13 +17,18 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
-
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link MappedAttributeDefinitionParser}.
@@ -37,32 +42,32 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
     @Test public void multiDefault() {
         final MappedAttributeDefinition defn = getDefinition("resolver/multiDefault.xml");
 
-        Assert.assertTrue(defn.isPassThru());
-        Assert.assertEquals(defn.getValueMaps().size(), 2);
-        Assert.assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
+        assertTrue(defn.isPassThru());
+        assertEquals(defn.getValueMaps().size(), 2);
+        assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
     }
 
     @Test public void defaultCase() {
         final MappedAttributeDefinition defn = getDefinition("resolver/mapped.xml");
 
-        Assert.assertTrue(defn.isPassThru());
-        Assert.assertEquals(defn.getValueMaps().size(), 2);
-        Assert.assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
+        assertTrue(defn.isPassThru());
+        assertEquals(defn.getValueMaps().size(), 2);
+        assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
     }
 
     @Test public void noDefault() {
         final MappedAttributeDefinition defn = getDefinition("resolver/mappedNoDefault.xml");
 
-        Assert.assertFalse(defn.isPassThru());
-        Assert.assertEquals(defn.getValueMaps().size(), 1);
-        Assert.assertNull(defn.getDefaultAttributeValue());
+        assertFalse(defn.isPassThru());
+        assertEquals(defn.getValueMaps().size(), 1);
+        assertNull(defn.getDefaultAttributeValue());
     }
 
     @Test public void noValues() {
 
         try {
             getDefinition("resolver/mappedNoValueMap.xml");
-            Assert.fail();
+            fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK
         }

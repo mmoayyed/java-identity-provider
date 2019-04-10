@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -186,7 +189,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            Assert.assertEquals(resolver.getId(), "Shibboleth.Resolver");
+            assertEquals(resolver.getId(), "Shibboleth.Resolver");
             resolver.resolveAttributes(resolutionContext);
         } finally {
             if (null != serviceableComponent) {
@@ -197,92 +200,92 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         final Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
-        Assert.assertEquals(resolvedAttributes.size(), 14);
+        assertEquals(resolvedAttributes.size(), 14);
 
         // Static
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         List<IdPAttributeValue<?>> values = attribute.getValues();
         
-        Assert.assertEquals(values.size(), expectedEPAValues);
-        Assert.assertTrue(values.contains(new StringAttributeValue("member")));
+        assertEquals(values.size(), expectedEPAValues);
+        assertTrue(values.contains(new StringAttributeValue("member")));
         
         // Broken (case 665)
         attribute =  resolvedAttributes.get("broken");
-        Assert.assertEquals(attribute.getValues().size(), 2+expectedEPAValues);
+        assertEquals(attribute.getValues().size(), 2+expectedEPAValues);
         attribute =  resolvedAttributes.get("broken2");
-        Assert.assertEquals(attribute.getValues().size(), 2+expectedEPAValues);
+        assertEquals(attribute.getValues().size(), 2+expectedEPAValues);
         
 
         // LDAP
         attribute = resolvedAttributes.get("uid");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("PETER_THE_PRINCIPAL")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("PETER_THE_PRINCIPAL")));
 
         attribute = resolvedAttributes.get("email");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("peter.principal@shibboleth.net")));
+        assertEquals(values.size(), 2);
+        assertTrue(values.contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
+        assertTrue(values.contains(new StringAttributeValue("peter.principal@shibboleth.net")));
 
         attribute = resolvedAttributes.get("surname");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("Principal")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("Principal")));
 
         attribute = resolvedAttributes.get("commonName");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(new StringAttributeValue("Peter Principal")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("Peter J Principal")));
-        Assert.assertTrue(values.contains(new StringAttributeValue("pete principal")));
+        assertEquals(values.size(), 3);
+        assertTrue(values.contains(new StringAttributeValue("Peter Principal")));
+        assertTrue(values.contains(new StringAttributeValue("Peter J Principal")));
+        assertTrue(values.contains(new StringAttributeValue("pete principal")));
 
         attribute = resolvedAttributes.get("homePhone");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("555-111-2222")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("555-111-2222")));
 
         // Computed
         attribute = resolvedAttributes.get("eduPersonTargetedID");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
+        assertEquals(values.size(), 1);
 
         attribute = resolvedAttributes.get("pagerNumber");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("555-123-4567")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("555-123-4567")));
 
         attribute = resolvedAttributes.get("mobileNumber");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("444-123-4567")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("444-123-4567")));
 
         attribute = resolvedAttributes.get("street");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("TheStreet")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("TheStreet")));
 
         attribute = resolvedAttributes.get("title");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("Monsieur")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("Monsieur")));
 
         attribute = resolvedAttributes.get("departmentNumber");
-        Assert.assertNotNull(attribute);
+        assertNotNull(attribute);
         values = attribute.getValues();
-        Assert.assertEquals(values.size(), 1);
-        Assert.assertTrue(values.contains(new StringAttributeValue("#4321")));
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("#4321")));
 
         final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setFormat("urn:mace:shibboleth:1.0:nameIdentifier");
@@ -310,7 +313,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            Assert.assertEquals(resolver.getId(), "Shibboleth.Resolver");
+            assertEquals(resolver.getId(), "Shibboleth.Resolver");
             resolver.resolveAttributes(resolutionContext);
         } finally {
             if (null != serviceableComponent) {
@@ -320,7 +323,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         final Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("output {}", resolvedAttributes);
-        Assert.assertEquals(resolvedAttributes.get("testing").getValues().size(), 2);
+        assertEquals(resolvedAttributes.get("testing").getValues().size(), 2);
     }
 
     @Test public void id() throws ComponentInitializationException, ServiceException, ResolutionException {
@@ -335,7 +338,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            Assert.assertEquals(resolver.getId(), "TestID");
+            assertEquals(resolver.getId(), "TestID");
         } finally {
             if (null != serviceableComponent) {
                 serviceableComponent.unpinComponent();
@@ -374,17 +377,17 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
         resolver.resolveAttributes(resolutionContext);
 
-        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
-        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPA1"));
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPA1"));
 
         resolutionContext = TestSources.createResolutionContext("PRINCIPAL", "ISSUER", "recipient");
         resolver.resolveAttributes(resolutionContext);
-        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
-        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPE"));
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPE"));
 
         resolutionContext = TestSources.createResolutionContext("OTHER", "issuer", "recipient");
         resolver.resolveAttributes(resolutionContext);
-        Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
+        assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
     }
     
     @Test public void selectiveNavigate() throws ResolutionException {
@@ -405,25 +408,25 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext("PETER", "issuer", "recipient");
         resolver.resolveAttributes(resolutionContext);
         // this should fail since navigation failed.
-        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 0);
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 0);
 
         resolutionContext =
                 TestSources.createResolutionContext("PETER", "issuer", "recipient");
         // add a child so we can navigate via that
         resolutionContext.getSubcontext(ProfileRequestContext.class, true);
         resolver.resolveAttributes(resolutionContext);
-        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
-        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPA1"));
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPA1"));
 
         resolutionContext = TestSources.createResolutionContext("PRINCIPAL", "ISSUER", "recipient");
         resolutionContext.getSubcontext(ProfileRequestContext.class, true);
         resolver.resolveAttributes(resolutionContext);
-        Assert.assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
-        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPE"));
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        assertNotNull(resolutionContext.getResolvedIdPAttributes().get("EPE"));
 
         resolutionContext = TestSources.createResolutionContext("OTHER", "issuer", "recipient");
         resolver.resolveAttributes(resolutionContext);
-        Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
+        assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
     }
     
     @Test public void multiFile() throws ResolutionException {
@@ -437,7 +440,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             serviceableComponent = attributeResolverService.getServiceableComponent();
 
             final AttributeResolver resolver = serviceableComponent.getComponent();
-            Assert.assertEquals(resolver.getId(), "MultiFileResolver");
+            assertEquals(resolver.getId(), "MultiFileResolver");
             resolver.resolveAttributes(resolutionContext);
         } finally {
             if (null != serviceableComponent) {
@@ -445,7 +448,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
             }
         }
         
-        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("eduPersonAffiliation2"));
+        assertNotNull(resolutionContext.getResolvedIdPAttributes().get("eduPersonAffiliation2"));
 
     }
     

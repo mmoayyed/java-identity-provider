@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +27,6 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -76,9 +78,9 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
 
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
 
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
 
     }
 
@@ -88,9 +90,9 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
 
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
 
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
 
     @Test public void context() throws ResolutionException {
@@ -99,9 +101,9 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
 
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
 
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
 
     @Test public void warn() throws ResolutionException {
@@ -109,9 +111,9 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
                 getAttributeDefn("resolver/subjectDerivedWarn.xml", ContextDerivedAttributeDefinition.class);
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
 
-        Assert.assertEquals(2, foo.size());
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
-        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void fail() throws ResolutionException {

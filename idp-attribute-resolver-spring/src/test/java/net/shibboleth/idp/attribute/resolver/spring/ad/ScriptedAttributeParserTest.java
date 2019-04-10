@@ -17,15 +17,18 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
+
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link ScriptedAttributeDefinitionParser}.
@@ -36,20 +39,20 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         final ScriptedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/scriptedAttributeInline.xml", ScriptedAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "scriptedInline");
-        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
-        Assert.assertEquals(attrDef.getScript().getScript(), "foo=\"bar\";");
+        assertEquals(attrDef.getId(), "scriptedInline");
+        assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
+        assertEquals(attrDef.getScript().getScript(), "foo=\"bar\";");
     }
 
     @Test public void file() {
         final ScriptedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/scriptedAttributeFile.xml", ScriptedAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "scriptedFile");
-        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
-        Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
+        assertEquals(attrDef.getId(), "scriptedFile");
+        assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
+        assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
 
-        Assert.assertNull(attrDef.getCustomObject());
+        assertNull(attrDef.getCustomObject());
 
     }
 
@@ -57,21 +60,21 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         ScriptedAttributeDefinition attrDef =
                 getAttributeDefn("resolver/scriptedAttributeDupl.xml", ScriptedAttributeDefinition.class, true);
 
-        Assert.assertEquals(attrDef.getId(), "scriptedDupl");
-        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
-        Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "stuff=\"stuff\";");
+        assertEquals(attrDef.getId(), "scriptedDupl");
+        assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
+        assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "stuff=\"stuff\";");
 
         attrDef = getAttributeDefn("resolver/scriptedAttributeDuplFile.xml", ScriptedAttributeDefinition.class, true);
 
-        Assert.assertEquals(attrDef.getId(), "scriptedDuplFile");
-        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
-        Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
+        assertEquals(attrDef.getId(), "scriptedDuplFile");
+        assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
+        assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
     }
 
     @Test public void bad() {
         try {
             getAttributeDefn("resolver/scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);
-            Assert.fail("Bad script worked?");
+            fail("Bad script worked?");
         } catch (BeanDefinitionStoreException | BeanCreationException e) {
             // OK
         }
@@ -80,7 +83,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
     @Test public void absent() {
         try {
             getAttributeDefn("resolverscriptedAttributeAbsent.xml", ScriptedAttributeDefinition.class);
-            Assert.fail("Missing script worked?");
+            fail("Missing script worked?");
         } catch (final BeanDefinitionStoreException e) {
             // OK
         }

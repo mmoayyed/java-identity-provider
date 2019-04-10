@@ -17,14 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
-import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 
 /**
  *
@@ -34,20 +37,20 @@ public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {
     @Test public void xmlList() {
         final ResolverDataConnectorDependency re = getBean(BEAN_FILE_PATH + "inputDataConnector1.xml", ResolverDataConnectorDependency.class, new GenericApplicationContext());
         
-        Assert.assertEquals(re.getDependencyPluginId(), "DC1");
-        Assert.assertFalse(re.isAllAttributes());
-        Assert.assertEquals(re.getAttributeNames().size(), 3);
-        Assert.assertTrue(re.getAttributeNames().contains("1"));
-        Assert.assertTrue(re.getAttributeNames().contains("2"));
-        Assert.assertTrue(re.getAttributeNames().contains("3"));
+        assertEquals(re.getDependencyPluginId(), "DC1");
+        assertFalse(re.isAllAttributes());
+        assertEquals(re.getAttributeNames().size(), 3);
+        assertTrue(re.getAttributeNames().contains("1"));
+        assertTrue(re.getAttributeNames().contains("2"));
+        assertTrue(re.getAttributeNames().contains("3"));
     }
 
     @Test public void allAttributeDataConnector() {
         final ResolverDataConnectorDependency re = getBean(BEAN_FILE_PATH + "inputDataConnector2.xml", ResolverDataConnectorDependency.class, new GenericApplicationContext());
         
-        Assert.assertEquals(re.getDependencyPluginId(), "DC2");
-        Assert.assertTrue(re.isAllAttributes());
-        Assert.assertTrue(re.getAttributeNames().isEmpty());
+        assertEquals(re.getDependencyPluginId(), "DC2");
+        assertTrue(re.isAllAttributes());
+        assertTrue(re.getAttributeNames().isEmpty());
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void bothAttributeDataConnector() {
@@ -61,14 +64,14 @@ public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {
     @Test public void attributeInput() {
         final ResolverAttributeDefinitionDependency re = getBean(BEAN_FILE_PATH + "inputAttributeDefinition1.xml", ResolverAttributeDefinitionDependency.class, new GenericApplicationContext());
         
-        Assert.assertEquals(re.getDependencyPluginId(), "AD1");
+        assertEquals(re.getDependencyPluginId(), "AD1");
     }
     
     @Test(dependsOnMethods={"attributeInput", "allAttributeDataConnector"}) public void simple() {
         final AttributeDefinition attr =  getBean(BEAN_FILE_PATH + "simpleDependencies.xml", AttributeDefinition.class, new GenericApplicationContext());
         
-        Assert.assertEquals(attr.getDataConnectorDependencies().size(), 1);
-        Assert.assertEquals(attr.getAttributeDependencies().size(), 1);
+        assertEquals(attr.getDataConnectorDependencies().size(), 1);
+        assertEquals(attr.getAttributeDependencies().size(), 1);
     }
 
 }

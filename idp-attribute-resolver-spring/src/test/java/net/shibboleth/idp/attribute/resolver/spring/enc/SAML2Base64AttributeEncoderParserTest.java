@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2Base64AttributeEncoderParser;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2ByteAttributeEncoder;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2Base64AttributeEncoderParser;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2ByteAttributeEncoder;
 
 /**
  * Test for {@link SAML2Base64AttributeEncoderParser}.
@@ -35,18 +37,18 @@ public class SAML2Base64AttributeEncoderParserTest extends BaseAttributeDefiniti
         final SAML2ByteAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml2Base64.xml", SAML2ByteAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "Saml2Base64_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getFriendlyName(),"Saml2Base64_ATTRIBUTE_FRIENDLY_NAME"); 
-        Assert.assertEquals(encoder.getNameFormat(),"Saml2Base64_ATTRIBUTE_NAME_FORMAT");
+        assertEquals(encoder.getName(), "Saml2Base64_ATTRIBUTE_NAME");
+        assertEquals(encoder.getFriendlyName(),"Saml2Base64_ATTRIBUTE_FRIENDLY_NAME"); 
+        assertEquals(encoder.getNameFormat(),"Saml2Base64_ATTRIBUTE_NAME_FORMAT");
     }
     
     @Test public void defaultCase() {
         final SAML2ByteAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml2Base64Default.xml", SAML2ByteAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "Base64Name");
-        Assert.assertNull(encoder.getFriendlyName()); 
-        Assert.assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
+        assertEquals(encoder.getName(), "Base64Name");
+        assertNull(encoder.getFriendlyName()); 
+        assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

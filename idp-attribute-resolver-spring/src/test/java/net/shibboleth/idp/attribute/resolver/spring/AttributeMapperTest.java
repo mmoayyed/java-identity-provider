@@ -17,9 +17,21 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -36,15 +48,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.metadata.RequestedAttribute;
-import org.springframework.context.support.ConversionServiceFactoryBean;
-import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 
 /** test the Auto generation of the attribute mapper */
 
@@ -100,45 +103,45 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
         }
 
         Collection<AttributeMapper<RequestedAttribute, IdPRequestedAttribute>> mappers = attributesMapper.getMappers();
-        Assert.assertEquals(mappers.size(), 5);
+        assertEquals(mappers.size(), 5);
 
         for (AttributeMapper<RequestedAttribute, IdPRequestedAttribute> mapper : mappers) {
             AbstractSAMLAttributeMapper sMappers = (AbstractSAMLAttributeMapper) mapper;
             if (mapper.getId().equals("MapperForfeduPersonScopedAffiliation")) {
-                Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
-                Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
-                Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
-                Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonScopedAffiliation");
+                assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
+                assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
+                assertEquals(sMappers.getAttributeIds().size(), 1);
+                assertEquals(sMappers.getAttributeIds().get(0), "eduPersonScopedAffiliation");
                 ScopedStringAttributeValueMapper valueMapper =
                         (ScopedStringAttributeValueMapper) sMappers.getValueMapper();
-                Assert.assertEquals(valueMapper.getDelimiter(), "#");
+                assertEquals(valueMapper.getDelimiter(), "#");
             } else if (mapper.getId().equals("MapperForfeduPersonAssurance")) {
-                Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.11");
-                Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
-                Assert.assertEquals(sMappers.getAttributeIds().size(), 2);
-                Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonAssurance");
-                Assert.assertEquals(sMappers.getAttributeIds().get(1), "otherPersonAssurance");
-                Assert.assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
+                assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.11");
+                assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
+                assertEquals(sMappers.getAttributeIds().size(), 2);
+                assertEquals(sMappers.getAttributeIds().get(0), "eduPersonAssurance");
+                assertEquals(sMappers.getAttributeIds().get(1), "otherPersonAssurance");
+                assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
             } else if (mapper.getId().equals("MapperForfOeduPersonAssurance")) {
-                Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.11");
-                Assert.assertEquals(sMappers.getAttributeFormat(), "http://example.org/Format");
-                Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
-                Assert.assertEquals(sMappers.getAttributeIds().get(0), "otherFormatPersonAssurance");
-                Assert.assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
+                assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.11");
+                assertEquals(sMappers.getAttributeFormat(), "http://example.org/Format");
+                assertEquals(sMappers.getAttributeIds().size(), 1);
+                assertEquals(sMappers.getAttributeIds().get(0), "otherFormatPersonAssurance");
+                assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
             } else if (mapper.getId().equals("MapperForfotherSAMLName")) {
-                Assert.assertEquals(sMappers.getSAMLName(), "http://example.org/name/for/Attribute");
-                Assert.assertEquals(sMappers.getAttributeFormat(), "http://example.org/Format");
-                Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
-                Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonAssurance");
-                Assert.assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
+                assertEquals(sMappers.getSAMLName(), "http://example.org/name/for/Attribute");
+                assertEquals(sMappers.getAttributeFormat(), "http://example.org/Format");
+                assertEquals(sMappers.getAttributeIds().size(), 1);
+                assertEquals(sMappers.getAttributeIds().get(0), "eduPersonAssurance");
+                assertTrue(sMappers.getValueMapper() instanceof StringAttributeValueMapper);
             } else if (mapper.getId().equals("MapperForfeduPersonTargetedID")) {
-                Assert.assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.10");
-                Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
-                Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
-                Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonTID");
-                Assert.assertTrue(sMappers.getValueMapper() instanceof XMLObjectAttributeValueMapper);
+                assertEquals(sMappers.getSAMLName(), "urn:oid:1.3.6.1.4.1.5923.1.1.1.10");
+                assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
+                assertEquals(sMappers.getAttributeIds().size(), 1);
+                assertEquals(sMappers.getAttributeIds().get(0), "eduPersonTID");
+                assertTrue(sMappers.getValueMapper() instanceof XMLObjectAttributeValueMapper);
             } else {
-                Assert.fail();
+                fail();
             }
         }
     }

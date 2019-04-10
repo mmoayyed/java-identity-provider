@@ -17,8 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
@@ -43,11 +48,11 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void simple() {
         SourceValue value = getSourceValue("resolver/sourceValue.xml");
 
-        Assert.assertFalse(value.isIgnoreCase());
-        Assert.assertFalse(value.isPartialMatch());
+        assertFalse(value.isIgnoreCase());
+        assertFalse(value.isPartialMatch());
         try {
-            Assert.assertNull(value.getValue());
-            Assert.fail();
+            assertNull(value.getValue());
+            fail();
         } catch (ConstraintViolationException e) {
 
         }
@@ -56,19 +61,19 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void values1() {
         SourceValue value = getSourceValue("resolver/sourceValueAttributes1.xml");
 
-        Assert.assertTrue(value.isIgnoreCase());
-        Assert.assertTrue(value.isPartialMatch());
-        Assert.assertEquals(value.getValue(), "sourceValueAttributes1");
+        assertTrue(value.isIgnoreCase());
+        assertTrue(value.isPartialMatch());
+        assertEquals(value.getValue(), "sourceValueAttributes1");
     }
 
     @Test public void values2() {
         SourceValue value = getSourceValue("resolver/sourceValueAttributes2.xml");
 
-        Assert.assertFalse(value.isIgnoreCase());
-        Assert.assertFalse(value.isPartialMatch());
+        assertFalse(value.isIgnoreCase());
+        assertFalse(value.isPartialMatch());
         try {
-            Assert.assertEquals(value.getValue(), "sourceValueAttributes2");
-            Assert.fail();
+            assertEquals(value.getValue(), "sourceValueAttributes2");
+            fail();
         } catch (ConstraintViolationException e) {
 
         }

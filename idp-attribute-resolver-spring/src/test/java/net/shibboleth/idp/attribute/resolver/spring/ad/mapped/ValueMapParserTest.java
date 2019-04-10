@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
-import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
 
 /**
  * Test for {@link ValueMapParser}.
@@ -43,9 +45,9 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void valueMap() {
 
         final ValueMap value = getValueMap("valueMap.xml");
-        Assert.assertEquals(value.getReturnValue(), "return");
-        Assert.assertEquals(value.getSourceValues().size(), 1);
-        Assert.assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
+        assertEquals(value.getReturnValue(), "return");
+        assertEquals(value.getSourceValues().size(), 1);
+        assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
     }
 
 
@@ -53,7 +55,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
 
         try {
             getValueMap("valueMapNoSourceValue.xml");
-            Assert.fail();
+            fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK
         }
@@ -63,7 +65,7 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
 
         try {
             getValueMap("valueMapNoValues.xml");
-            Assert.fail();
+            fail();
         } catch (final BeanDefinitionStoreException e) {
             // OK
         }

@@ -17,13 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Collections2;
@@ -48,12 +50,12 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         
         final JDBCPairwiseIdStore store = (JDBCPairwiseIdStore) connector.getPairwiseIdStore();
         
-        Assert.assertEquals(connector.getId(), "stored");
-        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(store.getTransactionRetries(), 5);
-        Assert.assertEquals(store.getQueryTimeout(), Duration.ofSeconds(5));
-        Assert.assertEquals(store.getVerifyDatabase(), false);
-        Assert.assertTrue(Arrays.equals(store.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
+        assertEquals(connector.getId(), "stored");
+        assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        assertEquals(store.getTransactionRetries(), 5);
+        assertEquals(store.getQueryTimeout(), Duration.ofSeconds(5));
+        assertEquals(store.getVerifyDatabase(), false);
+        assertTrue(Arrays.equals(store.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
         
         connector.initialize();
     }
@@ -64,8 +66,8 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         final ComputedPairwiseIdStore store2 = (ComputedPairwiseIdStore) store.getInitialValueStore();
 
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
-        Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
-        Assert.assertEquals(store2.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
+        assertEquals(store2.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
 
@@ -91,8 +93,8 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         final ComputedPairwiseIdStore store2 = (ComputedPairwiseIdStore) store.getInitialValueStore();
         
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
-        Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
-        Assert.assertEquals(store2.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
+        assertEquals(store2.getSalt(), "abcdefghijklmnopqrst".getBytes());
         testIt(connector);
     }
 
@@ -101,7 +103,7 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
     @Test public void withOutSalt() throws ComponentInitializationException {
         final PairwiseIdDataConnector connector = getDataConnector("resolver/storedNoSalt.xml", PairwiseIdDataConnector.class);
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
-        Assert.assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
+        assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         testIt(connector);
     }
 }

@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import static org.testng.Assert.assertEquals;
+
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringAttributeEncoder;
 import net.shibboleth.idp.saml.xml.SAMLConstants;
-
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link SAML1StringAttributeEncoderParser}.
@@ -35,8 +36,8 @@ public class SAML1StringAttributeEncoderParserTest extends BaseAttributeDefiniti
         final SAML1StringAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1String.xml", SAML1StringAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "SAML1_STRING_ATTRIBUTE_NAME");
-        Assert.assertEquals(encoder.getNamespace(),"SAML1_STRING_ATTRIBUTE_NAME_SPACE");
+        assertEquals(encoder.getName(), "SAML1_STRING_ATTRIBUTE_NAME");
+        assertEquals(encoder.getNamespace(),"SAML1_STRING_ATTRIBUTE_NAME_SPACE");
     }
 
     
@@ -44,8 +45,8 @@ public class SAML1StringAttributeEncoderParserTest extends BaseAttributeDefiniti
         final SAML1StringAttributeEncoder encoder =
                 getAttributeEncoder("resolver/saml1StringDefault.xml", SAML1StringAttributeEncoder.class);
 
-        Assert.assertEquals(encoder.getName(), "ATTRIBUTE");
-        Assert.assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
+        assertEquals(encoder.getName(), "ATTRIBUTE");
+        assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

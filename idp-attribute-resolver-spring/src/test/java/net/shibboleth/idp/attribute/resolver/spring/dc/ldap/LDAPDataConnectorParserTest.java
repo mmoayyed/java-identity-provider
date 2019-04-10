@@ -17,6 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
@@ -73,8 +79,6 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
 import net.shibboleth.idp.saml.impl.TestSources;
-
-import static org.testng.Assert.*;
 
 
 /** Test for {@link LDAPDataConnectorParser}. */

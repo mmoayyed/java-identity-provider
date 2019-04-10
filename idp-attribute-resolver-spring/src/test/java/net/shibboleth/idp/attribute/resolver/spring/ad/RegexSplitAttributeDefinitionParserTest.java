@@ -17,10 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
@@ -36,42 +40,42 @@ public class RegexSplitAttributeDefinitionParserTest extends BaseAttributeDefini
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("resolver/regexDefault.xml", RegexSplitAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "regexSplitDefault");
+        assertEquals(attrDef.getId(), "regexSplitDefault");
 
         Pattern pat = attrDef.getRegularExpression();
 
-        Assert.assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
-        Assert.assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
+        assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
+        assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
     }
 
     @Test public void sensitive() {
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("resolver/regexSensitive.xml", RegexSplitAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "regexSplitSensitive");
+        assertEquals(attrDef.getId(), "regexSplitSensitive");
 
         Pattern pat = attrDef.getRegularExpression();
 
-        Assert.assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
-        Assert.assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
+        assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
+        assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
     }
 
     @Test public void insensitive() {
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("resolver/regexInsensitive.xml", RegexSplitAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "regexSplitInsensitive");
+        assertEquals(attrDef.getId(), "regexSplitInsensitive");
 
         Pattern pat = attrDef.getRegularExpression();
 
-        Assert.assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
-        Assert.assertTrue(pat.matcher("AT1-foobleconneECTOR").matches());
+        assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
+        assertTrue(pat.matcher("AT1-foobleconneECTOR").matches());
     }
 
     @Test public void none() {
         try {
             getAttributeDefn("regexNone.xml", RegexSplitAttributeDefinition.class);
-            Assert.fail();
+            fail();
         } catch (BeanDefinitionStoreException e) {
             // OK
         }
