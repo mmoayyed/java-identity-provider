@@ -37,10 +37,10 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
  */
 public class ProxiedRequesterPolicyRuleTest {
 
-    private ProxiedRequesterPolicyRule getMatcher(boolean caseSensitive) throws ComponentInitializationException {
+    private ProxiedRequesterPolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {
         final ProxiedRequesterPolicyRule matcher = new ProxiedRequesterPolicyRule();
         matcher.setMatchString("requester");
-        matcher.setIgnoreCase(!caseSensitive);
+        matcher.setCaseSensitive(caseSensitive);
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

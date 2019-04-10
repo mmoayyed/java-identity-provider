@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * General {@link PolicyRequirementRule} for {@link String} comparison of strings in Attribute Filters.   
@@ -31,7 +33,7 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
     private String matchString;
 
     /** Whether the match evaluation is case sensitive. */
-    private boolean ignoreCase;
+    private boolean caseSensitive = true;
 
     /**
      * Gets the string to match for a positive evaluation.
@@ -52,21 +54,43 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
     }
 
     /**
-     * Gets whether the match evaluation is case insensitive.
+     * Gets whether the policy evaluation is case insensitive.
      * 
-     * @return whether the match evaluation is case insensitive
+     * @return whether the policy evaluation is case insensitive
+     * @deprecated in V4: Use isCaseSensitive
      */
     public boolean isIgnoreCase() {
-        return ignoreCase;
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "isIgnoreCase", null, "isCaseSensitive");
+        return !isCaseSensitive();
     }
 
     /**
-     * Sets whether the match evaluation is case sensitive.
+     * Sets whether the policy evaluation is case insensitive.
      * 
-     * @param isIgnoreCase whether the match evaluation is case sensitive
+     * @param isCaseInsensitive whether the policy evaluation is case insensitive
+     * @deprecated in V4: Use setCaseSensitive
      */
-    public void setIgnoreCase(final boolean isIgnoreCase) {
-        ignoreCase = isIgnoreCase;
+    public void setIgnoreCase(final boolean isCaseInsensitive) {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setIgnoreCase", null, "setCaseSensitive");
+        setCaseSensitive(!isCaseInsensitive);
+    }
+    
+    /**
+     * Gets whether the policy evaluation is case sensitive.
+     * 
+     * @return whether the policy evaluation is case sensitive
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    /**
+     * Sets whether the policy evaluation is case sensitive.
+     * 
+     * @param isCaseSensitive whether the policy evaluation is case sensitive
+     */
+    public void setCaseSensitive(final boolean isCaseSensitive) {
+        caseSensitive = isCaseSensitive;
     }
 
     /**
@@ -82,10 +106,10 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
         final boolean result;
         if (value == null) {
             result = matchString == null;
-        } else if (ignoreCase) {
-            result = value.equalsIgnoreCase(matchString);
+        } else if (isCaseSensitive()) {
+            result = value.equals(matchString);            
         } else {
-            result = value.equals(matchString);
+            result = value.equalsIgnoreCase(matchString);
         }
         if (result) {
             return Tristate.TRUE;

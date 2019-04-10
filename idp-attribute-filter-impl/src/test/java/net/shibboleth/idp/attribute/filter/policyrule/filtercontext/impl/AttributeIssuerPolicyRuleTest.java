@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
@@ -36,10 +38,10 @@ public class AttributeIssuerPolicyRuleTest {
         return getMatcher(true);
     }
 
-    private AttributeIssuerPolicyRule getMatcher(boolean caseSensitive) throws ComponentInitializationException {
+    private AttributeIssuerPolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {
         final AttributeIssuerPolicyRule matcher = new AttributeIssuerPolicyRule();
         matcher.setMatchString("issuer");
-        matcher.setIgnoreCase(!caseSensitive);
+        matcher.setCaseSensitive(caseSensitive);
         matcher.setId("Test");
         matcher.initialize();
         return matcher;
@@ -59,6 +61,13 @@ public class AttributeIssuerPolicyRuleTest {
             throws ComponentInitializationException {
         assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test public void testDefault() {
+        final AttributeIssuerPolicyRule matcher = new AttributeIssuerPolicyRule();
+        assertFalse(matcher.isIgnoreCase());
+        assertTrue(matcher.isCaseSensitive());
+    }
 
     @Test public void testNoIssuer()
             throws ComponentInitializationException {
@@ -68,6 +77,7 @@ public class AttributeIssuerPolicyRuleTest {
     @Test public void testCaseSensitive() throws ComponentInitializationException {
 
         final AttributeIssuerPolicyRule matcher = getMatcher();
+        assertTrue(matcher.isCaseSensitive());
 
         assertEquals(matcher.matches(DataSources.populatedFilterContext(null, "wibble", null)), Tristate.FALSE);
         assertEquals(matcher.matches(DataSources.populatedFilterContext(null, "ISSUER", null)), Tristate.FALSE);

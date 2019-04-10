@@ -32,10 +32,10 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
  */
 public class AttributeRequesterPolicyRuleTest {
 
-    private AttributeRequesterPolicyRule getMatcher(boolean caseSensitive) throws ComponentInitializationException {
+    private AttributeRequesterPolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {
         AttributeRequesterPolicyRule matcher = new AttributeRequesterPolicyRule();
         matcher.setMatchString("requester");
-        matcher.setIgnoreCase(!caseSensitive);
+        matcher.setCaseSensitive(caseSensitive);
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

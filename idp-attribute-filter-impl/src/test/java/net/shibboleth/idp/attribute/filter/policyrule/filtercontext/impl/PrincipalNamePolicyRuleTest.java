@@ -33,10 +33,10 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
  */
 public class PrincipalNamePolicyRuleTest {
     
-    private PrincipalNamePolicyRule getMatcher(boolean b) throws ComponentInitializationException {
+    private PrincipalNamePolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {
         PrincipalNamePolicyRule matcher = new PrincipalNamePolicyRule();
         matcher.setMatchString("principal");
-        matcher.setIgnoreCase(!b);
+        matcher.setCaseSensitive(caseSensitive);
         matcher.setId("Test");
         matcher.initialize();
         return matcher;
