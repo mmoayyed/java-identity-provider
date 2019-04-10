@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 import org.testng.annotations.Test;
 
@@ -43,7 +43,6 @@ public class AttributeIssuerRuleParserTest extends BaseAttributeFilterParserTest
 
         final AttributeIssuerPolicyRule arRule = (AttributeIssuerPolicyRule) rule;
         assertEquals(arRule.getMatchString(), "urn:example:org:idp:foo");
-        assertTrue(arRule.isIgnoreCase());
+        assertFalse(arRule.isCaseSensitive());
     }
-
 }

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -66,7 +65,7 @@ public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTes
 
         final ProxiedRequesterPolicyRule arRule = (ProxiedRequesterPolicyRule) rule;
         assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
-        assertFalse(arRule.isIgnoreCase());
+        assertTrue(arRule.isCaseSensitive());
     }
  
     @Test public void matcher() throws ComponentInitializationException {

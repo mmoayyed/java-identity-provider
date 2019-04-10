@@ -19,17 +19,24 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Base class for string matching functors of natural type PolicyRule.
  */
 public abstract class AbstractStringPolicyRuleParser extends BasePolicyRuleParser {
+
+    /** Logger. */
+    private final Logger log = LoggerFactory.getLogger(AbstractStringPolicyRuleParser.class);
 
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
@@ -38,8 +45,23 @@ public abstract class AbstractStringPolicyRuleParser extends BasePolicyRuleParse
 
         builder.addPropertyValue("matchString", StringSupport.trimOrNull(element.getAttributeNS(null, "value")));
 
-        if (element.hasAttributeNS(null, "ignoreCase")) {
-            builder.addPropertyValue("ignoreCase", element.getAttributeNS(null, "ignoreCase"));
+        if (element.hasAttributeNS(null, "caseSensitive")) {
+            if (element.hasAttributeNS(null, "ignoreCase")) {
+                log.warn("{} \"caseSensitive\" and \"ignoreCase\" specified, \"caseSensitive\" used ",
+                        parserContext.getReaderContext().getResource().getDescription());
+            }
+
+            builder.addPropertyValue("caseSensitive", 
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "caseSensitive")));
+        
+        } else if (element.hasAttributeNS(null, "ignoreCase")) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT,
+                    "ignoreCase",
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    "caseSensitive");
+                    
+            builder.addPropertyValue("ignoreCase", 
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "ignoreCase")));
         }
     }
 }

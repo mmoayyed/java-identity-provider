@@ -68,8 +68,49 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
 
         final AttributeRequesterPolicyRule arRule = (AttributeRequesterPolicyRule) rule;
         assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
+        assertTrue(arRule.isCaseSensitive());
+    }
+    
+    @Test public void both() throws ComponentInitializationException {
+        final PolicyRequirementRule rule = getPolicyRule("attributeRequesterBoth.xml");
+
+        AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
+
+        final AttributeRequesterPolicyRule arRule = (AttributeRequesterPolicyRule) rule;
+        assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
+        assertFalse(arRule.isCaseSensitive());
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test public void deprecated() throws ComponentInitializationException {
+        final PolicyRequirementRule rule = getPolicyRule("attributeRequesterDeprecated.xml");
+
+        AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
+
+        final AttributeRequesterPolicyRule arRule = (AttributeRequesterPolicyRule) rule;
+        assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
         assertFalse(arRule.isIgnoreCase());
     }
+
+    @Test public void testDefault() throws ComponentInitializationException {
+        final PolicyRequirementRule rule = getPolicyRule("attributeRequesterDefault.xml");
+
+        AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
+        filterContext = DataSources.populatedFilterContext("principal", "issuer", "https://service.example.edu/shibboleth-sp");
+        assertEquals(rule.matches(filterContext), Tristate.TRUE);
+
+        final AttributeRequesterPolicyRule arRule = (AttributeRequesterPolicyRule) rule;
+        assertEquals(arRule.getMatchString(), "https://service.example.edu/shibboleth-sp");
+        assertTrue(arRule.isCaseSensitive());
+    }
+
  
     @Test public void matcher() throws ComponentInitializationException {
         final Matcher matcher = getMatcher("attributeRequester.xml");
