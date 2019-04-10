@@ -26,6 +26,8 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
@@ -41,9 +43,9 @@ public class SourceValue extends AbstractInitializableComponent {
     private @Nullable String value;
 
     /**
-     * Whether case should be ignored when matching.
+     * Whether case should be taken into account when matching.
      */
-    private boolean ignoreCase;
+    private boolean caseSensitive = true;
 
     /** In the regexp case this contains the compiled pattern. */
     private @Nullable Pattern pattern;
@@ -58,7 +60,7 @@ public class SourceValue extends AbstractInitializableComponent {
         super.doInitialize();
         if (!partialMatch && value != null) {
             int flags = 0;
-            if (ignoreCase) {
+            if (!isCaseSensitive()) {
                 flags = Pattern.CASE_INSENSITIVE;
             }
             pattern = Pattern.compile(value, flags);
@@ -68,27 +70,55 @@ public class SourceValue extends AbstractInitializableComponent {
     }
     
     /**
+     * Set whether case is sensitive.
+     *
+     * @param theCaseSensitive whether case should be ignored when matching.  Null defaults to false;
+     */
+    public void setCaseSensitive( @Nullable final Boolean theCaseSensitive) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (null != theCaseSensitive) {
+            caseSensitive = theCaseSensitive;
+        } else {
+            caseSensitive = true;
+        }
+    }
+
+
+    /**
+     * Gets whether matching should be case sensitive.
+     *
+     * @return whether case should be ignored when matching
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    /**
      * Set whether to ignore the case.
      *
      * @param theIgnoreCase whether case should be ignored when matching.  Null defaults to false;
+     * @deprecated in V4 - use setCaseSensitive
      */
     public void setIgnoreCase( @Nullable final Boolean theIgnoreCase) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setIgnoreCase", null, "setCaseSensitive");
         if (null != theIgnoreCase) {
-            ignoreCase = theIgnoreCase;
+            setCaseSensitive(!theIgnoreCase);
         } else {
-            ignoreCase = false;
+            setCaseSensitive(true);
         }
     }
 
 
     /**
      * Gets whether case should be ignored when matching.
-     * 
+     *
      * @return whether case should be ignored when matching
+     * @deprecated in V4 - use isCaseSensitive
      */
     public boolean isIgnoreCase() {
-        return ignoreCase;
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "isIgnoreCase", null, "isCaseSensitive");
+        return !isCaseSensitive();
     }
 
     /**

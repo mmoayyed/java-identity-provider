@@ -39,7 +39,7 @@ public class SourceValueTest {
 
         assertEquals(value.getValue(), "value");
         assertTrue(value.isPartialMatch());
-        assertFalse(value.isIgnoreCase());
+        assertTrue(value.isCaseSensitive());
 
         log.info("Value = 'value', ignore = true, partial = false", value.toString());
 
@@ -47,9 +47,29 @@ public class SourceValueTest {
 
         assertEquals(value.getPattern().pattern(), "eulaV");
         assertFalse(value.isPartialMatch());
-        assertTrue(value.isIgnoreCase());
+        assertFalse(value.isCaseSensitive());
         log.info("Value = 'eulaV', ignore = false, partial = true", value.toString());
 
+    }
+
+    @Test public void testDefault() throws ComponentInitializationException {
+        assertTrue(new SourceValue().isCaseSensitive());
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test public void deprecated() throws ComponentInitializationException {
+        final SourceValue value = new SourceValue();
+        assertTrue(value.isCaseSensitive());
+        value.setIgnoreCase(true);
+        assertFalse(value.isCaseSensitive());
+        value.setIgnoreCase(null);
+        assertTrue(value.isCaseSensitive());
+        value.setCaseSensitive(false);
+        assertFalse(value.isCaseSensitive());
+        assertTrue(value.isIgnoreCase());
+        value.setCaseSensitive(null);
+        assertTrue(value.isCaseSensitive());
+        assertFalse(value.isIgnoreCase());
     }
 
     public static SourceValue newSourceValue(final String value, final boolean ignoreCase, final boolean partialMatch)
@@ -57,7 +77,7 @@ public class SourceValueTest {
 
         final SourceValue sourceValue = new SourceValue();
         sourceValue.setValue(value);
-        sourceValue.setIgnoreCase(ignoreCase);
+        sourceValue.setCaseSensitive(!ignoreCase);
         sourceValue.setPartialMatch(partialMatch);
         sourceValue.initialize();
         return sourceValue;
