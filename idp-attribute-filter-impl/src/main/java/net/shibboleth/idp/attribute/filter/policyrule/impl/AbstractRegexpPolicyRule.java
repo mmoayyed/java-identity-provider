@@ -19,11 +19,13 @@ package net.shibboleth.idp.attribute.filter.policyrule.impl;
 
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * General {@link net.shibboleth.idp.attribute.filter.Matcher} for regexp comparison of strings in Attribute Filters.
@@ -46,11 +48,24 @@ public abstract class AbstractRegexpPolicyRule extends AbstractPolicyRule {
      * Sets the regular expression to match.
      * 
      * @param expression regular expression to match
+     * @deprecated
      */
     public void setRegularExpression(final String expression) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         regex = Pattern.compile(expression);
     }
+    
+    /**
+     * Sets the {@link Pattern} for matching to match.
+     * 
+     * @param pattern the pattern to match
+     */
+    public void setPattern(@Nonnull final Pattern pattern) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        regex = Constraint.isNotNull(pattern, "Pattern supplied to setPattern but not be null");
+    }
+
+
 
     /**
      * Matches the given value against the provided regular expression.

@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;import
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProxiedRequesterContext;
@@ -37,7 +38,7 @@ public class ProxiedRequesterRegexpPolicyRuleTest {
     
     private ProxiedRequesterRegexpPolicyRule getMatcher() throws ComponentInitializationException {
         final ProxiedRequesterRegexpPolicyRule matcher = new ProxiedRequesterRegexpPolicyRule();
-        matcher.setRegularExpression("^requ.*");
+        matcher.setPattern(Pattern.compile("^requ.*"));
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

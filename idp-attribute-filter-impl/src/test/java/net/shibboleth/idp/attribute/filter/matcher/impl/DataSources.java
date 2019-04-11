@@ -43,6 +43,8 @@ public abstract class DataSources {
     public final static String TEST_REGEX = "^n.*g";
 
     public final static StringAttributeValue STRING_VALUE = new StringAttributeValue(TEST_STRING);
+    
+    public final static StringAttributeValue STRING_VALUE_UPPER = new StringAttributeValue(TEST_STRING.toUpperCase());
 
     public final static StringAttributeValue NON_MATCH_STRING_VALUE = new StringAttributeValue(NON_MATCH_STRING);
 

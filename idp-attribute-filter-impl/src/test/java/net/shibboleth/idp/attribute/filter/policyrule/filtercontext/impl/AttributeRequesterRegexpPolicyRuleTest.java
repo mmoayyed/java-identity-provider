@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.regex.Pattern;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -34,7 +36,7 @@ public class AttributeRequesterRegexpPolicyRuleTest {
     
     private AttributeRequesterRegexpPolicyRule getMatcher() throws ComponentInitializationException {
         AttributeRequesterRegexpPolicyRule matcher = new AttributeRequesterRegexpPolicyRule();
-        matcher.setRegularExpression("^requ.*");
+        matcher.setPattern(Pattern.compile("^requ.*"));
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

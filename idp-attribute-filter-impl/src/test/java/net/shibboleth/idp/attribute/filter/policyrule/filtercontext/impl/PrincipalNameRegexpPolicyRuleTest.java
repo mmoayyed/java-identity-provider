@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.regex.Pattern;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -34,7 +36,7 @@ public class PrincipalNameRegexpPolicyRuleTest {
     
     private PrincipalNameRegexpPolicyRule getMatcher() throws ComponentInitializationException {
         final PrincipalNameRegexpPolicyRule matcher = new PrincipalNameRegexpPolicyRule();
-        matcher.setRegularExpression("^p.*");
+        matcher.setPattern(Pattern.compile("^p.*"));
         matcher.setId("Test");
         matcher.initialize();
         return matcher;

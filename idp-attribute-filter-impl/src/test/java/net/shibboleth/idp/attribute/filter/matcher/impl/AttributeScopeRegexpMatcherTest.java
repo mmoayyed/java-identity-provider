@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.regex.Pattern;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -31,7 +33,7 @@ public class AttributeScopeRegexpMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {
         AttributeScopeRegexpMatcher matcher = new AttributeScopeRegexpMatcher();
-        matcher.setRegularExpression(DataSources.TEST_REGEX);
+        matcher.setPattern(Pattern.compile(DataSources.TEST_REGEX));
         matcher.setId("TestId");
         matcher.initialize();
         

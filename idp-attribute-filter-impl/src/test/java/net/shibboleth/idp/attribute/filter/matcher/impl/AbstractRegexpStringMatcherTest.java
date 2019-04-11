@@ -21,6 +21,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.regex.Pattern;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -37,7 +39,7 @@ public class AbstractRegexpStringMatcherTest {
             protected boolean compareAttributeValue(IdPAttributeValue value) {
                 return false;
             }};
-        predicate.setRegularExpression(DataSources.TEST_REGEX);
+        predicate.setPattern(Pattern.compile(DataSources.TEST_REGEX));
         predicate.setId("od");
         predicate.initialize();
 
@@ -51,7 +53,7 @@ public class AbstractRegexpStringMatcherTest {
             protected boolean compareAttributeValue(IdPAttributeValue value) {
                 return false;
             }};
-        predicate.setRegularExpression("^p.*");
+        predicate.setPattern(Pattern.compile("^p.*"));
         predicate.setId("od");
         predicate.initialize();
         assertFalse(predicate.regexpCompare(DataSources.TEST_STRING));

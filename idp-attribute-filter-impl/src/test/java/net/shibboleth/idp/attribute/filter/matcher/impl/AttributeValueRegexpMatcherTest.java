@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.regex.Pattern;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -32,11 +34,12 @@ public class AttributeValueRegexpMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {
         AttributeValueRegexpMatcher matcher = new AttributeValueRegexpMatcher();
-        matcher.setRegularExpression(DataSources.TEST_REGEX);
+        matcher.setPattern(Pattern.compile(DataSources.TEST_REGEX));
         matcher.setId("Test");
         matcher.initialize();
         
         assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE));
+        assertFalse(matcher.compareAttributeValue(DataSources.STRING_VALUE_UPPER));
         assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
         assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
         assertFalse(matcher.compareAttributeValue(DataSources.BYTE_ATTRIBUTE_VALUE));
@@ -45,6 +48,12 @@ public class AttributeValueRegexpMatcherTest {
         assertFalse(matcher.compareAttributeValue(null));
         assertTrue(matcher.compareAttributeValue(DataSources.OTHER_VALUE));
         
+        matcher = new AttributeValueRegexpMatcher();
+        matcher.setPattern(Pattern.compile(DataSources.TEST_REGEX, Pattern.CASE_INSENSITIVE));
+        matcher.setId("Test");
+        matcher.initialize();
+        assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE));
+        assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE_UPPER));
     }
 
 }
