@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
 
     /** Regular expression to match. */
-    @NonnullAfterInit private Pattern regex;
+    @NonnullAfterInit private Pattern pattern;
 
     /**
      * Gets the regular expression to match.
@@ -42,28 +42,17 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
      * @return the regular expression
      */
     @NonnullAfterInit public String getRegularExpression() {
-        return regex.pattern();
+        return pattern.pattern();
     }
-
-    /**
-     * Sets the regular expression to match.
-     * 
-     * @param expression regular expression to match
-     * @deprecated
-     */
-    public void setRegularExpression(final String expression) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        regex = Pattern.compile(expression);
-    }
-    
+   
     /**
      * Sets the {@link Pattern} for matching to match.
      * 
-     * @param pattern the pattern to match
+     * @param thePattern the pattern to match
      */
-    public void setPattern(@Nonnull final Pattern pattern) {
+    public void setPattern(@Nonnull final Pattern thePattern) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        regex = Constraint.isNotNull(pattern, "Pattern supplied to setPattern but not be null");
+        pattern = Constraint.isNotNull(thePattern, "Pattern supplied to setPattern but not be null");
     }
 
     /**
@@ -75,11 +64,11 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
      */
     protected boolean regexpCompare(@Nullable final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        if (regex == null || value == null) {
+        if (pattern == null || value == null) {
             return false;
         }
 
-        if (regex.matcher(value).matches()) {
+        if (pattern.matcher(value).matches()) {
             return true;
         }
 
@@ -90,7 +79,7 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (null == regex) {
+        if (null == pattern) {
             throw new ComponentInitializationException(getLogPrefix() + " No regular expression provided"); 
         }
     }

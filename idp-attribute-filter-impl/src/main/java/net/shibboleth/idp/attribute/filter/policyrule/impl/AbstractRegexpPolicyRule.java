@@ -33,39 +33,26 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public abstract class AbstractRegexpPolicyRule extends AbstractPolicyRule {
 
     /** Regular expression to match. */
-    private Pattern regex;
+    private Pattern pattern;
 
     /**
      * Gets the regular expression to match.
      * 
-     * @return rsegular expression to match
+     * @return regular expression to match
      */
     @NonnullAfterInit public String getRegularExpression() {
-        return regex.pattern();
+        return pattern.pattern();
     }
 
-    /**
-     * Sets the regular expression to match.
-     * 
-     * @param expression regular expression to match
-     * @deprecated
-     */
-    public void setRegularExpression(final String expression) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        regex = Pattern.compile(expression);
-    }
-    
     /**
      * Sets the {@link Pattern} for matching to match.
      * 
-     * @param pattern the pattern to match
+     * @param thePattern the pattern to match
      */
-    public void setPattern(@Nonnull final Pattern pattern) {
+    public void setPattern(@Nonnull final Pattern thePattern) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        regex = Constraint.isNotNull(pattern, "Pattern supplied to setPattern but not be null");
+        pattern = Constraint.isNotNull(thePattern, "Pattern supplied to setPattern but not be null");
     }
-
-
 
     /**
      * Matches the given value against the provided regular expression.
@@ -78,9 +65,9 @@ public abstract class AbstractRegexpPolicyRule extends AbstractPolicyRule {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final boolean result;
-        if (regex == null || value == null) {
+        if (pattern == null || value == null) {
             result = false;
-        } else if (regex.matcher(value).matches()) {
+        } else if (pattern.matcher(value).matches()) {
             result = true;
         } else {
             result = false;
@@ -95,7 +82,7 @@ public abstract class AbstractRegexpPolicyRule extends AbstractPolicyRule {
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (null == regex) {
+        if (null == pattern) {
             throw new ComponentInitializationException(getLogPrefix() + " No regular expression provided");
         }
     }
