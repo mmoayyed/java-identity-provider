@@ -284,7 +284,16 @@
                         <extension base="string">
                             <attribute name="ignoreCase" type="string">
                                 <annotation>
-                                    <documentation>If true, value matching will be case-insensitive.</documentation>
+                                    <documentation>
+                                    If true, value matching will be case-insensitive.
+
+                                    Deprecated in V4.  Use caseSensitive
+                                    </documentation>
+                                </annotation>
+                            </attribute>
+                            <attribute name="caseSensitive" type="string">
+                                <annotation>
+                                    <documentation>If true, value matching will be case-sensitive.</documentation>
                                 </annotation>
                             </attribute>
                             <attribute name="partialMatch" type="string">

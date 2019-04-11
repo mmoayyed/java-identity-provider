@@ -48,7 +48,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void simple() {
         SourceValue value = getSourceValue("resolver/sourceValue.xml");
 
-        assertFalse(value.isIgnoreCase());
+        assertTrue(value.isCaseSensitive());
         assertFalse(value.isPartialMatch());
         try {
             assertNull(value.getValue());
@@ -61,7 +61,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void values1() {
         SourceValue value = getSourceValue("resolver/sourceValueAttributes1.xml");
 
-        assertTrue(value.isIgnoreCase());
+        assertFalse(value.isCaseSensitive());
         assertTrue(value.isPartialMatch());
         assertEquals(value.getValue(), "sourceValueAttributes1");
     }
@@ -69,7 +69,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
     @Test public void values2() {
         SourceValue value = getSourceValue("resolver/sourceValueAttributes2.xml");
 
-        assertFalse(value.isIgnoreCase());
+        assertTrue(value.isCaseSensitive());
         assertFalse(value.isPartialMatch());
         try {
             assertEquals(value.getValue(), "sourceValueAttributes2");
@@ -78,4 +78,23 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
 
         }
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test public void deprecated() {
+        SourceValue value = getSourceValue("resolver/sourceValueDeprecated.xml");
+
+        assertFalse(value.isCaseSensitive());
+        assertTrue(value.isIgnoreCase());
+        assertTrue(value.isPartialMatch());
+        assertEquals(value.getValue(), "sourceValueAttributes1");
+    }
+
+    @Test public void both() {
+        SourceValue value = getSourceValue("resolver/sourceValueBoth.xml");
+
+        assertTrue(value.isCaseSensitive());
+        assertFalse(value.isPartialMatch());
+    }
+
+
 }

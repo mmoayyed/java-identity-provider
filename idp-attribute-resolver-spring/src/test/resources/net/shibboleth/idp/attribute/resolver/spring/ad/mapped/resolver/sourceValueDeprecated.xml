@@ -5,6 +5,6 @@
     <InputAttributeDefinition ref="TheOrphan" />                    
 	<ValueMap>
 		<ReturnValue>return</ReturnValue>
-		<SourceValue caseSensitive="false" partialMatch="true">sourceValueAttributes1</SourceValue>
+		<SourceValue ignoreCase="true" partialMatch="true">sourceValueAttributes1</SourceValue>
 	</ValueMap>
 </AttributeDefinition>

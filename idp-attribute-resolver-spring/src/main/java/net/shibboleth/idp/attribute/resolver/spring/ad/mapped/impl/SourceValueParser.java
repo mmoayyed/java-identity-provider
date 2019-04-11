@@ -30,6 +30,8 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Bean definition parser for a {@link SourceValue}. */
@@ -61,6 +63,23 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
         String ignoreCase = null;
         if (config.hasAttributeNS(null, "ignoreCase")) {
             ignoreCase = StringSupport.trimOrNull(config.getAttributeNS(null, "ignoreCase"));
+        }
+        String caseSensitive = null;
+        if (config.hasAttributeNS(null, "caseSensitive")) {
+            caseSensitive = StringSupport.trimOrNull(config.getAttributeNS(null, "caseSensitive"));
+        }
+        
+        if (caseSensitive != null) {
+            builder.addPropertyValue("caseSensitive", caseSensitive);
+            if (ignoreCase!=null) {
+                log.warn("{}: Both \"caseSensitive\" and \"ignoreCase\" specified, only the former will be used",
+                        parserContext.getReaderContext().getResource().getDescription());
+            }
+        } else if (ignoreCase!=null) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT,
+                    "ignoreCase",
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    "caseSensitive");
             builder.addPropertyValue("ignoreCase", ignoreCase);
         }
 
