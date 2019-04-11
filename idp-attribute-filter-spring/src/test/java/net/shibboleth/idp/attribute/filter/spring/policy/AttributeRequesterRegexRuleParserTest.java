@@ -21,17 +21,44 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeRequesterRegexpPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 public class AttributeRequesterRegexRuleParserTest extends BaseAttributeFilterParserTest {
+    
+    private void testPolicy(final AttributeRequesterRegexpPolicyRule what, boolean caseSensitive) {
+        final AttributeFilterContext context = new AttributeFilterContext();
+        context.setAttributeRecipientID("urn:example:test:thing");
+        assertEquals(what.matches(context), Tristate.TRUE);
+        context.setAttributeRecipientID("NONONONO");
+        assertEquals(what.matches(context), Tristate.FALSE);
+
+        context.setAttributeRecipientID("URN:EXAMPLE:TEST:example:test:thing");
+        if (caseSensitive) {
+            assertEquals(what.matches(context), Tristate.FALSE);
+        } else {
+            assertEquals(what.matches(context), Tristate.TRUE);
+        }
+    }
 
 
     @Test public void policy() throws ComponentInitializationException {
 
         AttributeRequesterRegexpPolicyRule arRule = (AttributeRequesterRegexpPolicyRule) getPolicyRule("attributeRegexRequester.xml");
         assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");
+        testPolicy(arRule, true);
     }
+    
+    
+    @Test public void testCase() throws ComponentInitializationException {
+
+        AttributeRequesterRegexpPolicyRule arRule = (AttributeRequesterRegexpPolicyRule) getPolicyRule("attributeRegexRequesterCaseInsensitive.xml");
+        assertEquals(arRule.getRegularExpression(), "^urn:example:.*$");
+        testPolicy(arRule, false);
+    }
+
  
 }

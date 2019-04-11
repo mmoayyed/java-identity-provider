@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.matcher.impl;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.ext.spring.factory.PatternFactoryBean;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -42,7 +43,16 @@ public abstract class AbstractRegexMatcherParser extends BaseAttributeValueMatch
         if (null == regexp) {
             throw new BeanCreationException("Regexp Attribute filter: No text provided to 'regex' attribute.");
         }
+        
+        final BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);
 
-        builder.addPropertyValue("regularExpression", regexp);
+        pattern.addPropertyValue("regexp", regexp);
+
+        if (config.hasAttributeNS(null, "caseSensitive")) {
+            pattern.addPropertyValue("caseSensitive",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "caseSensitive")));
+        }
+
+        builder.addPropertyValue("pattern", pattern.getBeanDefinition());
     }
 }

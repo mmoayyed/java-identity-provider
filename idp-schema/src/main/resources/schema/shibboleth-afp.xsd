@@ -497,6 +497,11 @@
                         <documentation>The regular expression values are matched against.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="caseSensitive" type="string">
+                    <annotation>
+                        <documentation>Whether the comparison is case sensitive, default TRUE</documentation>
+                    </annotation>
+                </attribute>     
             </extension>
         </complexContent>
     </complexType>

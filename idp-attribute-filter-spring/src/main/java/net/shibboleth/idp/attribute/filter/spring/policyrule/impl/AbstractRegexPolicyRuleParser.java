@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule.impl;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.ext.spring.factory.PatternFactoryBean;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -43,6 +44,15 @@ public abstract class AbstractRegexPolicyRuleParser extends BasePolicyRuleParser
             throw new BeanCreationException("Regexp Attribute filter: No text provided to 'regex' attribute.");
         }
 
-        builder.addPropertyValue("regularExpression", regexp);
+        final BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);
+
+        pattern.addPropertyValue("regexp", regexp);
+
+        if (config.hasAttributeNS(null, "caseSensitive")) {
+            pattern.addPropertyValue("caseSensitive",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "caseSensitive")));
+        }
+
+        builder.addPropertyValue("pattern", pattern.getBeanDefinition());
     }
 }

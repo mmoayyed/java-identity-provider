@@ -18,9 +18,13 @@
 package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.impl.AttributeValueRegexMatcherParser;
@@ -30,11 +34,29 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * test for {@link AttributeValueRegexMatcherParser}.
  */
 public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
+    
+    private void testMatcher(final AttributeValueRegexpMatcher what, boolean caseSensitive) {
+        IdPAttributeValue<String> upper = new StringAttributeValue("JSMITH");
+        IdPAttributeValue<String> lower = new StringAttributeValue("jsmith");
+        IdPAttributeValue<String> nonmatch = new StringAttributeValue("NONONONO");
+        
+        assertTrue(what.compareAttributeValue(lower));
+        assertFalse(what.compareAttributeValue(nonmatch));
+        assertEquals(what.compareAttributeValue(upper), !caseSensitive);
+    }
 
     @Test public void matcher() throws ComponentInitializationException {
         AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("attributeRegex.xml");
         
         assertEquals(what.getRegularExpression(), "^jsmit.*$");
-
+        testMatcher(what, true);
     }
+    
+    @Test public void testCase() throws ComponentInitializationException {
+        AttributeValueRegexpMatcher what = (AttributeValueRegexpMatcher) getMatcher("attributeRegexCaseInsensitive.xml");
+        
+        assertEquals(what.getRegularExpression(), "^jsmit.*$");
+        testMatcher(what, false);
+    }
+
 }
