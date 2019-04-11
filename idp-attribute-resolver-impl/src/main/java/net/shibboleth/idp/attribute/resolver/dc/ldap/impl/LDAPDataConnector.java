@@ -22,6 +22,18 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapException;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchResult;
+import org.ldaptive.ssl.SSLContextInitializer;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.X509SSLContextInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
@@ -30,20 +42,6 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.AbstractSearchDataConnector
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionConfig;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapException;
-import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchResult;
-import org.ldaptive.ssl.X509SSLContextInitializer;
-import org.ldaptive.ssl.SslConfig;
-import org.ldaptive.ssl.SSLContextInitializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that queries an LDAP in order to retrieve attribute
@@ -167,9 +165,8 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                         sslConfig.getCredentialConfig().createSSLContextInitializer() : null;
                     if (cxtInit instanceof X509SSLContextInitializer) {
                         if (((X509SSLContextInitializer) cxtInit).getTrustCertificates() == null) {
-                            DeprecationSupport.warn(
-                                ObjectType.CONFIGURATION, "Use of default JVM trust store",
-                                    getLogPrefix(), "trustFile attribute");
+                            throw new ComponentInitializationException("Cannot use the default JVM trust store for "+
+                                    getLogPrefix());
                         }
                     }
                 }
