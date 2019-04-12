@@ -50,6 +50,8 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
     
     private File sourceDirectory;
     
+    private final int TIME_GRANULARITY_MS = 25; // Dither for Windows clocks
+    
     @BeforeMethod
     public void setUp() {
         sourceDirectory = new File(System.getProperty("java.io.tmpdir"), "localDynamicMD");
@@ -127,7 +129,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNull(resolver.resolveSingle(criteria));
         
         // Sleep past the negative lookup cache expiration
-        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis(), TimeUnit.MILLISECONDS);
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis()+TIME_GRANULARITY_MS, TimeUnit.MILLISECONDS);
         
         // In this case, will be the same instance since using in-memory map-based store.
         Assert.assertSame(resolver.resolveSingle(criteria), entity);
@@ -167,7 +169,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNull(resolver.resolveSingle(criteria));
         
         // Sleep past the negative lookup cache expiration
-        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis(), TimeUnit.MILLISECONDS);
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis()+TIME_GRANULARITY_MS, TimeUnit.MILLISECONDS);
         
         EntityDescriptor resolved = resolver.resolveSingle(criteria);
         Assert.assertNotNull(resolved);
