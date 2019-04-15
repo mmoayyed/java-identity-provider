@@ -9,19 +9,12 @@
             <outputDirectory></outputDirectory>
             <excludes>
                 <exclude>**/*.bat</exclude>
-                <exclude>**/*.bat.dist</exclude>
                 <exclude>**/*.config</exclude>
-                <exclude>**/*.config.dist</exclude>
                 <exclude>**/*.ini</exclude>
-                <exclude>**/*.ini.dist</exclude>
                 <exclude>**/*.properties</exclude>
-                <exclude>**/*.properties.dist</exclude>
                 <exclude>**/*.txt</exclude>
-                <exclude>**/*.txt.dist</exclude>
                 <exclude>**/*.vm</exclude>
-                <exclude>**/*.vm.dist</exclude>
                 <exclude>**/*.xml</exclude>
-                <exclude>**/*.xml.dist</exclude>
             </excludes>
         </fileSet>
         <fileSet>
@@ -29,19 +22,12 @@
             <outputDirectory></outputDirectory>
             <includes>
                 <include>**/*.bat</include>
-                <include>**/*.bat.dist</include>
                 <include>**/*.config</include>
-                <include>**/*.config.dist</include>
                 <include>**/*.ini</include>
-                <include>**/*.ini.dist</include>
                 <include>**/*.properties</include>
-                <include>**/*.properties.dist</include>
                 <include>**/*.txt</include>
-                <include>**/*.txt.dist</include>
                 <include>**/*.vm</include>
-                <include>**/*.vm.dist</include>
                 <include>**/*.xml</include>
-                <include>**/*.xml.dist</include>
             </includes>
             <lineEnding>windows</lineEnding>
         </fileSet>
