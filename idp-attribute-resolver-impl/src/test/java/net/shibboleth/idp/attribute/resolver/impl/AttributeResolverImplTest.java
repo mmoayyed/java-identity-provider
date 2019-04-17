@@ -46,7 +46,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockDataConnector;
@@ -137,7 +136,7 @@ public class AttributeResolverImplTest {
         connectors.add(null);
         connectors.add(new MockDataConnector("bar", (Map) null));
 
-        final AttributeResolver resolver = newAttributeResolverImpl("foo", null, connectors);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", null, connectors);
         assertNotNull(resolver.getDataConnectors());
         assertEquals(resolver.getDataConnectors().size(), 2);
 

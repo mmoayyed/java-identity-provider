@@ -37,9 +37,9 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -65,11 +65,11 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
 
-    private AttributeResolver constructResolver(final int values) throws ComponentInitializationException {
+    private AttributeResolverImpl constructResolver(final int values) throws ComponentInitializationException {
         return constructResolver(values, false);
     }
     
-    private AttributeResolver constructResolver(final int values, final boolean noSalt) throws ComponentInitializationException {
+    private AttributeResolverImpl constructResolver(final int values, final boolean noSalt) throws ComponentInitializationException {
         
         final JDBCPairwiseIdStore store = new JDBCPairwiseIdStore();
         store.setDataSource(testSource);
@@ -89,7 +89,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws ResolutionException if badness happens
      */
     @Test(dependsOnMethods={"noSalt",}) public void storeEntry() throws ComponentInitializationException, SQLException, ResolutionException {
-        final AttributeResolver resolver = constructResolver(1);
+        final AttributeResolverImpl resolver = constructResolver(1);
 
         ComponentSupport.initialize(resolver);
         
@@ -118,7 +118,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws ResolutionException if badness happens
      */
     @Test public void noSalt() throws ComponentInitializationException, SQLException, ResolutionException {
-        final AttributeResolver resolver = constructResolver(1, true);
+        final AttributeResolverImpl resolver = constructResolver(1, true);
 
         ComponentSupport.initialize(resolver);
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
@@ -160,7 +160,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      */
     @Test(dependsOnMethods = {"storeEntry"}) void retrieveEntry() throws ComponentInitializationException,
             IOException, ResolutionException {
-        AttributeResolver resolver = constructResolver(1);
+        AttributeResolverImpl resolver = constructResolver(1);
 
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
@@ -218,7 +218,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();
         connector.setPairwiseIdStore(store);
 
-        final AttributeResolver resolver = ComputedIDDataConnectorTest.constructResolverWithNonString(connector, "nonString");
+        final AttributeResolverImpl resolver = ComputedIDDataConnectorTest.constructResolverWithNonString(connector, "nonString");
 
         ComponentSupport.initialize(resolver);
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();

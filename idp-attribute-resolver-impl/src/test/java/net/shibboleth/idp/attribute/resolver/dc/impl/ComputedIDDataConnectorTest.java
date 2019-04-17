@@ -40,7 +40,6 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
@@ -127,12 +126,12 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
     }
 
-    private AttributeResolver constructResolver(final int values) throws ComponentInitializationException {
+    private AttributeResolverImpl constructResolver(final int values) throws ComponentInitializationException {
         final PairwiseIdDataConnector connector = new PairwiseIdDataConnector();        
         return constructResolver(connector, values, false);
     }
 
-    protected static AttributeResolver constructResolver(final PairwiseIdDataConnector connector, final int values, final boolean noSalt)
+    protected static AttributeResolverImpl constructResolver(final PairwiseIdDataConnector connector, final int values, final boolean noSalt)
             throws ComponentInitializationException {
         
         if (!noSalt) {
@@ -170,12 +169,12 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
-    private AttributeResolver constructResolverWithNonString(final String dependantOn)
+    private AttributeResolverImpl constructResolverWithNonString(final String dependantOn)
             throws ComponentInitializationException {
         return constructResolverWithNonString(new PairwiseIdDataConnector(), dependantOn);
     }
 
-    protected static AttributeResolver constructResolverWithNonString(final PairwiseIdDataConnector connector,
+    protected static AttributeResolverImpl constructResolverWithNonString(final PairwiseIdDataConnector connector,
             final String dependantOn) throws ComponentInitializationException {
         
         final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
@@ -206,7 +205,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector));
     }
 
-    protected static PairwiseIdDataConnector connectorFromResolver(final AttributeResolver resolver) {
+    protected static PairwiseIdDataConnector connectorFromResolver(final AttributeResolverImpl resolver) {
         return (PairwiseIdDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
     
@@ -215,7 +214,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void altDataConnector() throws ComponentInitializationException, ResolutionException {
-        AttributeResolver resolver = constructResolver(1);
+        AttributeResolverImpl resolver = constructResolver(1);
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
 
@@ -266,7 +265,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void attributeFails() throws ComponentInitializationException, ResolutionException {
-        AttributeResolver resolver = constructResolver(3);
+        AttributeResolverImpl resolver = constructResolver(3);
 
         connectorFromResolver(resolver).initialize();
         ComponentSupport.initialize(resolver);
@@ -324,7 +323,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 "wibble")));
         simple.initialize();
 
-        final AttributeResolver resolver =
+        final AttributeResolverImpl resolver =
                 AttributeResolverImplTest.newAttributeResolverImpl("atresolver", Collections.singleton((AttributeDefinition) simple), set);
         ComponentSupport.initialize(resolver);
 
