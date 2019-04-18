@@ -117,14 +117,17 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
         if (null != component) {
             try {
                 AttributeResolver resolver = component.getComponent();
-                for (final DataConnector connector: resolver.getDataConnectors().values()) {
-                    final Instant lastFail = connector.getLastFail();
-                    if (null != lastFail) {
-                        out.println("\tDataConnector " +  connector.getId() + ": last failed at " + dateTimeFormatter.format(lastFail));
-                    } else {
-                        out.println("\tDataConnector " +  connector.getId() + ": has never failed");
+                if (resolver instanceof AttributeResolverImpl) {
+                    final Collection<DataConnector> connectors = ((AttributeResolverImpl) resolver).getDataConnectors().values();
+                    for (final DataConnector connector:  connectors) {
+                        final Instant lastFail = connector.getLastFail();
+                        if (null != lastFail) {
+                            out.println("\tDataConnector " +  connector.getId() + ": last failed at " + dateTimeFormatter.format(lastFail));
+                        } else {
+                            out.println("\tDataConnector " +  connector.getId() + ": has never failed");
+                        }
+                        out.println();
                     }
-                    out.println();
                 }
             } finally {
                 component.unpinComponent();
