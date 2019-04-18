@@ -27,18 +27,6 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.attribute.encoding.AttributeDesignatorMapperProcessor;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +35,18 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+
+import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.saml.attribute.encoding.AttributeDesignatorMapperProcessor;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * The class contains the mechanics to go from a list of {@link AttributeDesignator}s to a {@link Multimap} of
@@ -96,19 +96,18 @@ public abstract class AbstractSAMLAttributeDesignatorsMapper<OutType extends IdP
         
         final Multimap<AbstractSAMLAttributeDesignatorMapper<OutType>,String> theMappers = HashMultimap.create();
 
-        for (final AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
-            for (final AttributeEncoder encoder : attributeDef.getAttributeEncoders()) {
-                if (encoder instanceof AttributeDesignatorMapperProcessor) {
-                    // There is an appropriate reverse mapper.
-                    final AttributeDesignatorMapperProcessor factory = (AttributeDesignatorMapperProcessor) encoder;
-                    final AbstractSAMLAttributeDesignatorMapper<OutType> mapper = mapperFactory.get();
-                    factory.populateAttributeMapper(mapper);
+        for (final Pair<String, AttributeEncoder<?>> pair : resolver.getAllEncoders()) {
+            if (pair.getSecond() instanceof AttributeDesignatorMapperProcessor) {
+                // There is an appropriate reverse mapper.
+                final AttributeDesignatorMapperProcessor factory =
+                        (AttributeDesignatorMapperProcessor) pair.getSecond();
+                final AbstractSAMLAttributeDesignatorMapper<OutType> mapper = mapperFactory.get();
+                factory.populateAttributeMapper(mapper);
 
-                    theMappers.put(mapper, attributeDef.getId());
-                }
+                theMappers.put(mapper, pair.getFirst());
             }
         }
-
+        
         mappers = new ArrayList<>(theMappers.values().size());
 
         for (final Entry<AbstractSAMLAttributeDesignatorMapper<OutType>,Collection<String>> entry

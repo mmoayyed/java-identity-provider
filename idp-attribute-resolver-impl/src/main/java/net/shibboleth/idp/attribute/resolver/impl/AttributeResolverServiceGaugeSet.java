@@ -62,11 +62,13 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
                         if (component != null) {
                             try {                                
                                 final AttributeResolver resolver = component.getComponent();
-                                final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
-                                
-                                for (final DataConnector connector: connectors) {
-                                    if (connector.getLastFail() != null) {
-                                        mapBuilder.put(connector.getId(), connector.getLastFail());
+                                if (resolver instanceof AttributeResolverImpl) {
+                                    final Collection<DataConnector> connectors =
+                                            ((AttributeResolverImpl) resolver).getDataConnectors().values();
+                                    for (final DataConnector connector: connectors) {
+                                        if (connector.getLastFail() != null) {
+                                            mapBuilder.put(connector.getId(), connector.getLastFail());
+                                        }
                                     }
                                 }
                             } finally {

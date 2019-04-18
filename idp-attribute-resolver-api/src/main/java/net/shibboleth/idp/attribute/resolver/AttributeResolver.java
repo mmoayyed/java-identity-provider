@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Map;
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
@@ -40,18 +40,12 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 public interface AttributeResolver extends IdentifiedComponent {
 
     /**
-     * Gets the collection of attribute definitions for this resolver.
+     * Gets all the {@link AttributeEncoder}s for this resolver. Each encoder is linked
+     * (via being in an {@link Pair} to the name of the attribute it is associated with.
      * 
-     * @return attribute definitions loaded in to this resolver
+     * @return The Attribute Encoders loaded in to this resolver
      */
-    @Nonnull @NonnullElements @Unmodifiable Map<String, AttributeDefinition> getAttributeDefinitions();
-
-    /**
-     * Gets the unmodifiable collection of data connectors for this resolver.
-     * 
-     * @return data connectors loaded in to this resolver
-     */
-    @Nonnull @NonnullElements @Unmodifiable Map<String, DataConnector> getDataConnectors();
+    @Nonnull Collection<Pair<String, AttributeEncoder<?>>> getAllEncoders();
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
