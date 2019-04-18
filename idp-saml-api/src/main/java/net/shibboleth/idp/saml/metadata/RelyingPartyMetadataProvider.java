@@ -211,6 +211,24 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     }
     
     /** {@inheritDoc} */
+    public Instant getLastSuccessfulRefresh() {
+        if (resolver instanceof RefreshableMetadataResolver) {
+            return ((RefreshableMetadataResolver) resolver).getLastSuccessfulRefresh();
+        } else {
+            return null;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public Boolean wasLastRefreshSuccess() {
+        if (resolver instanceof RefreshableMetadataResolver) {
+            return ((RefreshableMetadataResolver) resolver).wasLastRefreshSuccess();
+        } else {
+            return null;
+        }
+    }
+    
+    /** {@inheritDoc} */
     @Override public int compareTo(final RelyingPartyMetadataProvider other) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final int result = sortKey.compareTo(other.sortKey);

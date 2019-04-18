@@ -22,9 +22,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.saml.metadata.resolver.BatchMetadataResolver;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
-import org.opensaml.saml.metadata.resolver.ExtendedBatchMetadataResolver;
-import org.opensaml.saml.metadata.resolver.ExtendedRefreshableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 
@@ -115,12 +114,11 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof ExtendedRefreshableMetadataResolver 
-                                            && ((ExtendedRefreshableMetadataResolver) resolver)
+                                    if (resolver instanceof RefreshableMetadataResolver 
+                                            && ((RefreshableMetadataResolver) resolver)
                                                 .getLastSuccessfulRefresh()  != null) {
                                         mapBuilder.put(resolver.getId(),
-                                                ((ExtendedRefreshableMetadataResolver) resolver)
-                                                    .getLastSuccessfulRefresh());
+                                                ((RefreshableMetadataResolver) resolver).getLastSuccessfulRefresh());
                                     }
                                 }
                             } finally {
@@ -142,10 +140,10 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof ExtendedBatchMetadataResolver 
-                                            && ((ExtendedBatchMetadataResolver) resolver).getRootValidUntil() != null) {
+                                    if (resolver instanceof BatchMetadataResolver 
+                                            && ((BatchMetadataResolver) resolver).getRootValidUntil() != null) {
                                         mapBuilder.put(resolver.getId(),
-                                                ((ExtendedBatchMetadataResolver) resolver).getRootValidUntil());
+                                                ((BatchMetadataResolver) resolver).getRootValidUntil());
                                     }
                                 }
                             } finally {

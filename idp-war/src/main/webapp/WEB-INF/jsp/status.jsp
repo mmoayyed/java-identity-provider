@@ -9,8 +9,8 @@
 <%@ page import="org.opensaml.saml.metadata.resolver.ChainingMetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.MetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
-<%@ page import="org.opensaml.saml.metadata.resolver.ExtendedBatchMetadataResolver" %>
-<%@ page import="org.opensaml.saml.metadata.resolver.ExtendedRefreshableMetadataResolver" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.BatchMetadataResolver" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
 <%@ page import="net.shibboleth.idp.Version" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
@@ -85,12 +85,12 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
                     final Instant lastUpdate = resolver.getLastUpdate();
 
                     Instant lastSuccessfulRefresh = null;
-                    if (resolver instanceof ExtendedRefreshableMetadataResolver) {
-                        lastSuccessfulRefresh = ((ExtendedRefreshableMetadataResolver)resolver).getLastSuccessfulRefresh();
+                    if (resolver instanceof RefreshableMetadataResolver) {
+                        lastSuccessfulRefresh = ((RefreshableMetadataResolver)resolver).getLastSuccessfulRefresh();
                     }
                     Instant rootValidUntil = null;
-                    if (resolver instanceof ExtendedBatchMetadataResolver) {
-                        rootValidUntil = ((ExtendedBatchMetadataResolver)resolver).getRootValidUntil();
+                    if (resolver instanceof BatchMetadataResolver) {
+                        rootValidUntil = ((BatchMetadataResolver)resolver).getRootValidUntil();
                     }
     
                     out.println("\tmetadata source: " + resolver.getId());
