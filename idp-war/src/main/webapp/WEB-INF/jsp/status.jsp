@@ -8,7 +8,6 @@
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.ChainingMetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.MetadataResolver" %>
-<%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.BatchMetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
 <%@ page import="net.shibboleth.idp.Version" %>
@@ -83,11 +82,8 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
                 for (final RefreshableMetadataResolver resolver : resolvers) {
                     final Instant lastRefresh = resolver.getLastRefresh();
                     final Instant lastUpdate = resolver.getLastUpdate();
+                    final Instant lastSuccessfulRefresh = resolver.getLastSuccessfulRefresh();
 
-                    Instant lastSuccessfulRefresh = null;
-                    if (resolver instanceof RefreshableMetadataResolver) {
-                        lastSuccessfulRefresh = ((RefreshableMetadataResolver)resolver).getLastSuccessfulRefresh();
-                    }
                     Instant rootValidUntil = null;
                     if (resolver instanceof BatchMetadataResolver) {
                         rootValidUntil = ((BatchMetadataResolver)resolver).getRootValidUntil();
