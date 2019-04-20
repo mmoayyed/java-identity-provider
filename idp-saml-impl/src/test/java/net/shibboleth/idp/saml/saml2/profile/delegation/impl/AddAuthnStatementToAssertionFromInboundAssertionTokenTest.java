@@ -17,17 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
-import javax.annotation.Nullable;
-
-import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
-import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
-
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -43,6 +32,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
+import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
 
 /**
  *
