@@ -6,7 +6,6 @@
     <DataConnector id="myDatabase" xsi:type="RelationalDatabase"
         noResultIsError="%{noResultIsError}"
         multipleResultsIsError="%{multipleResultsIsError}"
-        readOnlyConnection="%{readOnlyConnection}"
         noRetryDelay="%{noRetryDelay}">
 
       <SimpleManagedConnection jdbcDriver="%{datasource.driverClass}" jdbcURL="%{datasource.jdbcUrl}"

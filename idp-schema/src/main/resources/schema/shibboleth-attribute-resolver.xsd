@@ -1026,8 +1026,7 @@
                 <attribute name="readOnlyConnection" type="string">
                     <annotation>
                         <documentation>
-                            A boolean flag that determines whether the connection to the database is read-only, if the
-                            value is true, or read-write if the value is false.
+                            DEPRECATED and has no function.  Read Only connections are set in the JDBC RUL
                         </documentation>
                     </annotation>
                 </attribute>

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -182,7 +181,6 @@ public class RDBMSDataConnectorParserTest {
     }
 
     protected void doTest(final RDBMSDataConnector dataConnector) throws ResolutionException {
-
         final String id = dataConnector.getId();
         assertEquals("myDatabase", id);
         assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
@@ -195,7 +193,6 @@ public class RDBMSDataConnectorParserTest {
         assertEquals(dataSource.getMaxIdle(), 5);
         assertEquals(dataSource.getMaxWaitMillis(), 5000);
 
-        assertFalse(dataConnector.isConnectionReadOnly());
         final DataSourceValidator validator = (DataSourceValidator) dataConnector.getValidator();
         assertNotNull(validator);
         assertTrue(validator.isThrowValidateError());

@@ -41,6 +41,8 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionPar
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -88,9 +90,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             }
         }
 
-        final String connectionReadOnly = v2Parser.getConnectionReadOnly();
-        if (connectionReadOnly != null) {
-            builder.addPropertyValue("connectionReadOnly", connectionReadOnly);
+        if (v2Parser.getConnectionReadOnly() != null) {
+            // V4 deprecation
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "readOnlyConnection",
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    "to modify the JDBC URI (default is false)");
         }
 
         final String mappingStrategyID = v2Parser.getBeanMappingStrategyID();

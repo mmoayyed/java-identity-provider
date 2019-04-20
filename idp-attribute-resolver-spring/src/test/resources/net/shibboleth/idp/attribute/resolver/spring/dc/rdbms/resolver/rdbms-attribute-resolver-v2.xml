@@ -6,7 +6,6 @@
     <DataConnector id="myDatabase" xsi:type="RelationalDatabase"
         noResultIsError="true"
         multipleResultsIsError="true"
-        readOnlyConnection="false"
         noRetryDelay="PT5M">
 
       <SimpleManagedConnection

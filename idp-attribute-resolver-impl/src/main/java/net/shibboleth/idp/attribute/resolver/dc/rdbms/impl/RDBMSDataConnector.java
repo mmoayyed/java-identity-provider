@@ -50,9 +50,6 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
     /** JDBC data source for retrieving {@link Connection}s. */
     private DataSource dataSource;
 
-    /** Whether the JDBC connection is read-only. */
-    private boolean readOnlyConnection = true;
-
     /** Whether the default validator is being used. */
     private boolean defaultValidator = true;
 
@@ -84,24 +81,6 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         dataSource = Constraint.isNotNull(source, "JDBC data source can not be null");
-    }
-
-    /**
-     * Gets whether this data connector uses read-only connections.
-     * 
-     * @return whether this data connector uses read-only connections
-     */
-    public boolean isConnectionReadOnly() {
-        return readOnlyConnection;
-    }
-
-    /**
-     * Sets whether this data connector uses read-only connections.
-     * 
-     * @param isReadOnly whether this data connector uses read-only connections
-     */
-    public void setConnectionReadOnly(final boolean isReadOnly) {
-        readOnlyConnection = isReadOnly;
     }
 
     /** {@inheritDoc} */
@@ -162,9 +141,6 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
         ResultSet queryResult = null;
         try {
             connection = dataSource.getConnection();
-            if (readOnlyConnection) {
-                connection.setReadOnly(true);
-            }
             queryResult = statement.execute(connection);
             log.trace("Data connector '{}': search returned {}", getId(), queryResult);
             return getMappingStrategy().map(queryResult);
