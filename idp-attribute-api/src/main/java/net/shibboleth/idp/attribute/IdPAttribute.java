@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +33,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -58,20 +56,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 @NotThreadSafe
 public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     
-    /** helper {@link Function} to convert null to {@link EmptyAttributeValue}. */
-    private static Function<IdPAttributeValue<?>, IdPAttributeValue<?>> convertNullValues 
-        = new Function<IdPAttributeValue<?>, IdPAttributeValue<?>>() {
-
-            @Override
-            public IdPAttributeValue<?> apply(final IdPAttributeValue<?> input) {
-                if (null == input) {
-                    return new EmptyAttributeValue(EmptyType.NULL_VALUE);
-                } else {
-                    return input;
-                }
-            }
-    };
-
     /** ID of this attribute. */
     @Nonnull private final String id;
 
@@ -190,9 +174,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
         if (newValues != null) {
-            values = ImmutableList.copyOf(Collections2.transform(newValues, convertNullValues::apply));
+            values = List.of(newValues.stream().
+                     map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).
+                     toArray(IdPAttributeValue<?>[]::new));
         } else {
-            values = ImmutableList.of();
+            values = List.of();
         }
     }
 
