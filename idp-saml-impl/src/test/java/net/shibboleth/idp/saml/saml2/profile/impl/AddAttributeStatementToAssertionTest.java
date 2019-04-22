@@ -268,7 +268,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         attribute1.setEncoders(collection1);
 
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
-        attribute2.setValues(Collections.singleton(new StringAttributeValue(MY_VALUE_2)));
+        attribute2.setValues(Collections.singletonList(new StringAttributeValue(MY_VALUE_2)));
 
         final SAML2StringAttributeEncoder attributeEncoder2 = new SAML2StringAttributeEncoder();
         attributeEncoder2.setName(MY_NAME_2);

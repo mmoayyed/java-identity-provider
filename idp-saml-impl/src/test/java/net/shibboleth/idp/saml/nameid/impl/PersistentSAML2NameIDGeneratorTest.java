@@ -150,7 +150,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
@@ -203,7 +203,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
@@ -251,7 +251,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);

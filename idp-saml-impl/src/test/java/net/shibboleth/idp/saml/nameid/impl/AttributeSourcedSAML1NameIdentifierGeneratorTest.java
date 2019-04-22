@@ -18,18 +18,8 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import java.util.List;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -41,6 +31,16 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** Unit test for {@link AttributeSourcedSAML1NameIdentifierGenerator}. */
 public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
@@ -110,7 +110,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
 
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends IdPAttributeValue<?>> values = Arrays.asList(new IdPAttributeValue<Object>() {
+        final List<? extends IdPAttributeValue<?>> values = Arrays.asList(new IdPAttributeValue<Object>() {
             public Object getValue() {
                 return intArray;
             }
@@ -131,7 +131,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     }
 
     @Test public void testWrongFormat() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values = Collections.singletonList(saml1NameIdFor(NAME_1));
+        final List<? extends IdPAttributeValue<?>> values = Collections.singletonList(saml1NameIdFor(NAME_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
@@ -144,7 +144,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     }
 
     @Test public void testNameIdentifierValued() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values = Collections.singletonList(saml1NameIdFor(NAME_1));
+        final List<? extends IdPAttributeValue<?>> values = Collections.singletonList(saml1NameIdFor(NAME_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
@@ -161,7 +161,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     }
 
     @Test public void testMultiNameIdentifierValued() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -180,7 +180,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     }
 
     @Test public void testStringValued() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Collections.singletonList(new StringAttributeValue(NAME_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -200,7 +200,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     }
 
     @Test public void testScopeValued() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Collections.singletonList(new ScopedStringAttributeValue(NAME_1, QUALIFIER));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

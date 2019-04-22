@@ -131,7 +131,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         final List<String> attributeOrder = Arrays.asList("attribute3", "attribute2");
 
         final IdPAttribute attribute4 = new IdPAttribute("attribute4");
-        attribute4.setValues(Collections.singleton(new StringAttributeValue("value4")));
+        attribute4.setValues(Collections.singletonList(new StringAttributeValue("value4")));
 
         final Map<String, IdPAttribute> orderedAttributes = new LinkedHashMap<>();
         orderedAttributes.put("attribute3", ConsentTestingSupport.newAttributeMap().get("attribute3"));

@@ -67,7 +67,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
@@ -101,7 +101,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
@@ -160,7 +160,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
@@ -185,7 +185,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));

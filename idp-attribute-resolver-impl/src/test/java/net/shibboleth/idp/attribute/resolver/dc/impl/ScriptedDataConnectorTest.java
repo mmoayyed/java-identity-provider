@@ -21,7 +21,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +133,7 @@ public class ScriptedDataConnectorTest {
         connector.setId("Scripted");
         
         final IdPAttribute attribute = new IdPAttribute("attr");
-        attribute.setValues((Collection)Collections.singleton((IdPAttributeValue)new StringAttributeValue("bar")));
+        attribute.setValues(Collections.singletonList((IdPAttributeValue<?>)new StringAttributeValue("bar")));
         connector.setCustomObject(attribute);
         
         final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("custom.js"));

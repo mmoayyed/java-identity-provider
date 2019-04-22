@@ -56,13 +56,13 @@ public class ConsentTestingSupport {
         final IdPAttributeValue<?> value3 = new StringAttributeValue("value3");
 
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Collections.singleton(value1));
+        attribute1.setValues(Collections.singletonList(value1));
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(Arrays.asList(value1, value2));
 
         final IdPAttribute attribute3 = new IdPAttribute("attribute3");
-        attribute3.setValues(Collections.singleton(value3));
+        attribute3.setValues(Collections.singletonList(value3));
 
         final Map<String, IdPAttribute> map = new HashMap<>();
         map.put(attribute1.getId(), attribute1);

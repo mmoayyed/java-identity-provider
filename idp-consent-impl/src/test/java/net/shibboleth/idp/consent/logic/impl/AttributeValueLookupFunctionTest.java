@@ -56,7 +56,7 @@ public class AttributeValueLookupFunctionTest {
         
         final Map<String, IdPAttribute> unfilteredAttributes = ConsentTestingSupport.newAttributeMap();
         final IdPAttribute attribute4 = new IdPAttribute("attribute4");
-        attribute4.setValues(Collections.singleton(new StringAttributeValue("value4")));
+        attribute4.setValues(Collections.singletonList(new StringAttributeValue("value4")));
         unfilteredAttributes.put(attribute4.getId(), attribute4);
         attributeCtx.setUnfilteredIdPAttributes(unfilteredAttributes.values());
         
@@ -101,7 +101,7 @@ public class AttributeValueLookupFunctionTest {
         byte[] data = {1, 2, 3, 0xF};
 
         final IdPAttribute byteAttribute = new IdPAttribute("ByteAttribute");
-        byteAttribute.setValues(Collections.singleton(new ByteAttributeValue(data)));
+        byteAttribute.setValues(Collections.singletonList(new ByteAttributeValue(data)));
 
         final AttributeContext attributeCtx =
                 prc.getSubcontext(RelyingPartyContext.class, true).getSubcontext(AttributeContext.class);

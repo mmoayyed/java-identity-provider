@@ -18,17 +18,7 @@
 package net.shibboleth.idp.saml.attribute.encoding.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-
-import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.ByteAttributeValue;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.utilities.java.support.codec.Base64Support;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
@@ -38,6 +28,15 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * {@link SAML2ByteAttributeEncoder} Unit test.
@@ -74,7 +73,7 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new StringAttributeValue("foo"), new ScopedStringAttributeValue("foo", "bar"),
                         new IdPAttributeValue<Object>() {
                             public Object getValue() {
@@ -91,7 +90,7 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void single() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -117,7 +116,7 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void multi() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

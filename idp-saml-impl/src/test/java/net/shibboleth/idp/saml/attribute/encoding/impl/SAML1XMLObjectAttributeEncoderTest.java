@@ -18,18 +18,8 @@
 package net.shibboleth.idp.saml.attribute.encoding.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.ByteAttributeValue;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
@@ -39,6 +29,15 @@ import org.opensaml.saml.saml1.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * {@link SAML1XMLObjectAttributeEncoder} Unit test.
@@ -81,7 +80,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
      */
     private XMLObjectAttributeValue ObjectFor(final String value) {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
-        inputAttribute.setValues(Collections.singleton(new StringAttributeValue(value)));
+        inputAttribute.setValues(Collections.singletonList(new StringAttributeValue(value)));
         try {
             return new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
         } catch (AttributeEncodingException e) {
@@ -121,7 +120,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue("foo", "bar"), new IdPAttributeValue<Object>() {
                             @Override
@@ -140,7 +139,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void single() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values =
+        final List<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -161,7 +160,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testMulti() throws Exception {
-        final Collection<? extends IdPAttributeValue<?>> values = Arrays.asList(ObjectFor(STRING_1), ObjectFor(STRING_2));
+        final List<? extends IdPAttributeValue<?>> values = Arrays.asList(ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

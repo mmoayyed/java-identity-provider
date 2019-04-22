@@ -86,7 +86,7 @@ public class FilterFlowsByAttributeTest extends BaseAuthenticationContextTest {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final IdPAttribute attr = new IdPAttribute("foo");
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
-        attr.setValues(Collections.singleton(new StringAttributeValue("bar")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("bar")));
         
         action.setFilterActiveResults(false);
         action.initialize();
@@ -100,7 +100,7 @@ public class FilterFlowsByAttributeTest extends BaseAuthenticationContextTest {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final IdPAttribute attr = new IdPAttribute("foo");
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
-        attr.setValues(Collections.singleton(new StringAttributeValue("bar")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("bar")));
         
         authCtx.getPotentialFlows().get("test1").getSupportedPrincipals().add(new TestPrincipal("baz"));
         authCtx.getPotentialFlows().get("test2").getSupportedPrincipals().add(new TestPrincipal("bar"));
@@ -119,7 +119,7 @@ public class FilterFlowsByAttributeTest extends BaseAuthenticationContextTest {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final IdPAttribute attr = new IdPAttribute("foo");
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
-        attr.setValues(Collections.singleton(new StringAttributeValue("test3")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("test3")));
         
         action.initialize();
         final Event event = action.execute(src);
@@ -132,7 +132,7 @@ public class FilterFlowsByAttributeTest extends BaseAuthenticationContextTest {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final IdPAttribute attr = new IdPAttribute("foo");
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
-        attr.setValues(Collections.singleton(new StringAttributeValue("test2")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("test2")));
         
         action.initialize();
         final Event event = action.execute(src);

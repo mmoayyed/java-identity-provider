@@ -23,14 +23,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** Unit test for {@link IdPAttribute} class. */
 public class AttributeTest {
@@ -234,10 +235,10 @@ public class AttributeTest {
         attrib.setValues(null);
         Assert.assertTrue(attrib.getValues().isEmpty());
 
-        attrib.setValues(Collections.EMPTY_SET);
+        attrib.setValues(Collections.EMPTY_LIST);
         Assert.assertTrue(attrib.getValues().isEmpty());
         
-        Collection attribValues = new HashSet();
+        List attribValues = new ArrayList();
         attrib.setValues(attribValues);
         Assert.assertTrue(attrib.getValues().isEmpty());
         
@@ -306,7 +307,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test replacing all entries
-        Collection<IdPAttributeValue<?>> values = new ArrayList<>();
+        List<IdPAttributeValue<?>> values = new ArrayList<>();
         values.add(value2);
         attrib.setValues(values);
         Assert.assertFalse(attrib.getValues().isEmpty());
@@ -388,7 +389,7 @@ public class AttributeTest {
         Assert.assertTrue(attrib.compareTo(diff) > 0);
         Assert.assertEquals(attrib.compareTo(dupl) , 0);
         
-        attrib.setValues(Collections.singleton(new LocalizedStringAttributeValue("value1", null)));
+        attrib.setValues(Collections.singletonList(new LocalizedStringAttributeValue("value1", null)));
         attrib.setDisplayDescriptions(Collections.singletonMap(new Locale("en"), "Descrption"));
         attrib.setDisplayNames(Collections.singletonMap(new Locale("en"), "Name"));
         attrib.toString();

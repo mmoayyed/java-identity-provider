@@ -18,24 +18,22 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
 
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link AttributeSourcedSubjectCanonicalization} unit test. */
 public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticationContextTest {
@@ -74,11 +72,8 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
     }
 
     @Test public void testSuccess() {
-        final Collection<? extends IdPAttributeValue<?>> values =
-                Collections.singletonList(new StringAttributeValue("foo"));
-
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
-        inputAttribute.setValues(values);
+        inputAttribute.setValues(Collections.singletonList(new StringAttributeValue("foo")));
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         sc.setSubject(new Subject());
         sc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));

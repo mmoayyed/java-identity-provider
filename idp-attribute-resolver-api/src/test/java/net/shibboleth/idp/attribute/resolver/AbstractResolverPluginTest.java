@@ -193,7 +193,7 @@ public class AbstractResolverPluginTest {
         public MockBaseAttributeResolver(String id, String value) {
             resolverValue = new IdPAttribute(id);
             setId(id);
-            resolverValue.setValues(Collections.singleton(new StringAttributeValue(value)));
+            resolverValue.setValues(Collections.singletonList(new StringAttributeValue(value)));
         }
 
         /** {@inheritDoc} */

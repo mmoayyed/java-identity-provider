@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -328,7 +329,7 @@ public class AttributeResolverImplTest {
     @Test(enabled=true) public void resolveWithTimeout() throws Exception {
         
         final IdPAttribute i1Val = new IdPAttribute("Atr");
-        i1Val.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        i1Val.setValues(Collections.singletonList(new StringAttributeValue("value1")));
         
         final MockDataConnector dc1 = new MockDataConnector("dc1", Collections.singletonMap("Atr", i1Val));
         final SimpleAttributeDefinition ad = new SimpleAttributeDefinition();
@@ -338,7 +339,7 @@ public class AttributeResolverImplTest {
         ad.initialize();
         
         final IdPAttribute i2Val = new IdPAttribute("Atr");
-        final HashSet<IdPAttributeValue<?>>vals = new HashSet<>();
+        final List<IdPAttributeValue<?>>vals = new ArrayList<>();
         vals.add(new StringAttributeValue("value1"));
         vals.add(new StringAttributeValue("value2"));
         i2Val.setValues(vals);
