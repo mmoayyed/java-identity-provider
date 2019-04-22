@@ -23,17 +23,12 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-session-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-profile-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-profile-api</artifactId>
+            <artifactId>opensaml-saml-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

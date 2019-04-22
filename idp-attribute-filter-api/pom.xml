@@ -35,6 +35,10 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-profile-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
         </dependency>
 

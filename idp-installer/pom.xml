@@ -41,12 +41,17 @@
             <version>${java-support.version}</version>
         </dependency>
         
-       <dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core</artifactId>
+        </dependency>
+ 
+        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
         </dependency>
- 
-       <dependency>
+
+        <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
             <version>1.9.4</version>
@@ -54,14 +59,14 @@
         
         <dependency>
             <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>net.shibboleth.ext</groupId>
             <artifactId>spring-extensions</artifactId>

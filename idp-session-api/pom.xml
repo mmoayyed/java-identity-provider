@@ -41,10 +41,6 @@
             <groupId>javax.json</groupId>
             <artifactId>javax.json-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
 
         <!-- Provided Dependencies -->
 
