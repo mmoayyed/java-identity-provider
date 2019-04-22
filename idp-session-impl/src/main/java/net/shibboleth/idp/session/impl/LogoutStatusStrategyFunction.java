@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.StatusCode;
