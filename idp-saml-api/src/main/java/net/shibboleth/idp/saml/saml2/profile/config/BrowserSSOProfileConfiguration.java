@@ -275,7 +275,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
     
     /**
-     * Set a lookup strategy for the {@link #maximumSPSessionLifetime} property.
+     * Set a lookup strategy for the maximum amount of time the service provider should maintain a session for the user.
      * 
      * @param strategy  lookup strategy
      * 

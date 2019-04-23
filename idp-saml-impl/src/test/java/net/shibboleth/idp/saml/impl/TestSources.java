@@ -93,7 +93,7 @@ public final class TestSources {
     public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
 
-    /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map & regexp testing). */
+    /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map and regexp testing). */
 
     public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
 

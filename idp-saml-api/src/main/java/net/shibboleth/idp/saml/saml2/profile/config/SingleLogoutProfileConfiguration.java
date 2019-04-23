@@ -51,7 +51,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
     /** Predicate used to determine if SOAP-based requests should use client TLS. */
     @Nonnull private Predicate<MessageContext> clientTLSSOAPRequestsPredicate;
     
-    /** Lookup function to supply {@link #qualifiedNameIDFormats} property. */
+    /** Lookup function to supply qualifiedNameIDFormats property. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> qualifiedNameIDFormatsLookupStrategy;
     
     /** Constructor. */

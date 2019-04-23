@@ -44,7 +44,7 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends AbstractSAML2ProfileConfiguration
         implements SAMLArtifactAwareProfileConfiguration, SAMLArtifactConsumerProfileConfiguration {
     
-    /** Lookup function to supply <code>artifactConfiguration</code> property. */
+    /** Lookup function to supply artifactConfiguration property. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
     
     /** Predicate used to determine if artifact resolution requests should be signed. */
@@ -81,7 +81,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends Abs
     }
 
     /**
-     * Set a lookup strategy for the <code>artifactConfiguration</code> property.
+     * Set a lookup strategy for the SAML artifact configuration.
      *
      * @param strategy  lookup strategy
      * 

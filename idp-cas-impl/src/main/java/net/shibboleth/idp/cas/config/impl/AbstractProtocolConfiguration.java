@@ -50,7 +50,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     /** Default ticket validity. */
     @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofSeconds(15);
 
-    /** Lookup function to supply {@link #ticketValidityPeriod} property. */
+    /** Lookup function to supply ticketValidityPeriod property. */
     @Nonnull private Function<ProfileRequestContext,Duration> ticketValidityPeriodLookupStrategy;
 
     /** Whether attributes should be resolved in the course of the profile. */
@@ -110,7 +110,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     }
 
     /**
-     * Set a lookup strategy for the {@link #ticketValidityPeriod} property.
+     * Set a lookup strategy for the ticket validity period.
      * 
      * @param strategy lookup strategy
      * 

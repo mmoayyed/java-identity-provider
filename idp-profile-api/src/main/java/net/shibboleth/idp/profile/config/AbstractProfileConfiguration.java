@@ -50,13 +50,13 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileConfiguration.class);
 
-    /** Lookup function to supply {@link #inboundFlows} property. */
+    /** Lookup function to supply inboundFlows property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
 
-    /** Lookup function to supply {@link #outboundFlows} property. */
+    /** Lookup function to supply #outboundFlows property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> outboundFlowsLookupStrategy;
 
-    /** Lookup function to supply {@link #securityConfiguration} property. */
+    /** Lookup function to supply securityConfiguration property. */
     @Nonnull private Function<ProfileRequestContext,SecurityConfiguration> securityConfigurationLookupStrategy;
 
     /** Lookup function to return a bitmask of request features to disallow. */
@@ -91,7 +91,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     }
 
     /**
-     * Set a lookup strategy for the {@link #securityConfiguration} property.
+     * Set a lookup strategy for the security configuration.
      *
      * @param strategy  lookup strategy
      * 
@@ -123,7 +123,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     }
 
     /**
-     * Set a lookup strategy for the {@link #inboundFlows} property.
+     * Set a lookup strategy for the inbound interceptor flows to enable.
      *
      * @param strategy  lookup strategy
      * 
@@ -155,7 +155,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     }
 
     /**
-     * Set a lookup strategy for the {@link #outboundFlows} property.
+     * Set a lookup strategy for the outbound interceptor flows to enable.
      *
      * @param strategy  lookup strategy
      * 

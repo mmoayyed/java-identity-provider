@@ -63,17 +63,17 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** Default ticket length (random part). */
     public static final int DEFAULT_TICKET_LENGTH = 25;
 
-    /** Lookup function to supply {@link #authenticationFlows} property. */
+    /** Lookup function to supply authenticationFlows property. */
     @Nonnull private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
 
-    /** Lookup function to supply {@link #postAuthenticationFlows} property. */
+    /** Lookup function to supply postAuthenticationFlows property. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
 
-    /** Lookup function to supply {@link #defaultAuthenticationContexts} property. */
+    /** Lookup function to supply defaultAuthenticationContexts property. */
     @Nonnull private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
             defaultAuthenticationContextsLookupStrategy;
 
-    /** Lookup function to supply {@link #nameIDFormatPrecedence} property. */
+    /** Lookup function to supply nameIDFormatPrecedence property. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
     
     /** Whether to mandate forced authentication for the request. */
@@ -113,7 +113,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
 
     /**
-     * Set a lookup strategy for the {@link #defaultAuthenticationContexts} property.
+     * Set a lookup strategy for the default authentication contexts to use.
      *
      * @param strategy  lookup strategy
      */
@@ -143,7 +143,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
 
     /**
-     * Set a lookup strategy for the {@link #authenticationFlows} property.
+     * Set a lookup strategy for the authentication flows to use.
      *
      * @param strategy  lookup strategy
      */
@@ -173,7 +173,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
 
     /**
-     * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
+     * Set a lookup strategy for the post-authentication interceptor flows to enable.
      *
      * @param strategy  lookup strategy
      */
@@ -201,7 +201,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
 
     /**
-     * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
+     * Set a lookup strategy for the name identifier formats to use.
      *
      * @param strategy  lookup strategy
      */

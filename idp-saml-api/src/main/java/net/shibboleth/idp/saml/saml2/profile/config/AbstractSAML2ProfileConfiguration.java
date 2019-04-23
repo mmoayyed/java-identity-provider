@@ -58,7 +58,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     /** Predicate used to determine if attributes should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
 
-    /** Lookup function to supply {@link #proxyCount} property. */
+    /** Lookup function to supply proxyCount property. */
     @Nonnull private Function<ProfileRequestContext,Long> proxyCountLookupStrategy;
 
     /** Lookup function to supply proxy audiences. */

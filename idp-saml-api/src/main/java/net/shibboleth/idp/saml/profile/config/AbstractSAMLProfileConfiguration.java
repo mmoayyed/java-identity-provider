@@ -66,10 +66,10 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     /** Controls whether to include a NotBefore attribute in the Conditions of generated assertions. */
     @Nonnull private Predicate<ProfileRequestContext> includeNotBeforePredicate;
 
-    /** Lookup function to supply {@link #assertionLifetime} property. */
+    /** Lookup function to supply assertionLifetime property. */
     @Nonnull private Function<ProfileRequestContext,Duration> assertionLifetimeLookupStrategy;
 
-    /** Lookup function to supply {@link #assertionAudiences} property. */
+    /** Lookup function to supply assertionAudiences property. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> assertionAudiencesLookupStrategy;
 
     /**
