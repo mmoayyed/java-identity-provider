@@ -151,6 +151,14 @@
     </bean>
     
     <bean id="AbstractMDDrivenSAML2Profile" parent="AbstractMDDrivenSAMLProfile" abstract="true">
+        <property name="ignoreRequestSignaturesPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="ignoreRequestSignatures" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
+        </property>
         <property name="encryptionOptionalPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>

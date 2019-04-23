@@ -115,9 +115,16 @@
         </property>
     </bean>
 
+    <bean id="NotIgnoreRequestSignaturesPredicate" parent="shibboleth.Conditions.NOT">
+        <constructor-arg>
+            <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreRequestSignaturesPredicate" />
+        </constructor-arg>
+    </bean>
+
     <bean id="SAMLProtocolMessageXMLSignatureSecurityHandler"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-            c:executionDirection="INBOUND">
+            c:executionDirection="INBOUND"
+            p:activationCondition-ref="NotIgnoreRequestSignaturesPredicate">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype" />
         </constructor-arg>
@@ -128,7 +135,8 @@
 
     <bean id="SAML2HTTPRedirectDeflateSignatureSecurityHandler"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-            c:executionDirection="INBOUND">
+            c:executionDirection="INBOUND"
+            p:activationCondition-ref="NotIgnoreRequestSignaturesPredicate">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype"
                 p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
@@ -140,7 +148,8 @@
 
     <bean id="SAML2HTTPPostSimpleSignSecurityHandler"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
-            c:executionDirection="INBOUND">
+            c:executionDirection="INBOUND"
+            p:activationCondition-ref="NotIgnoreRequestSignaturesPredicate">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype"
                 p:httpServletRequest-ref="shibboleth.HttpServletRequest"

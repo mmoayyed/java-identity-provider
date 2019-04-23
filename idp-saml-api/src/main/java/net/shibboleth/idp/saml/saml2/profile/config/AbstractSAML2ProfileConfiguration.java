@@ -46,6 +46,9 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     /** Default proxy count. */
     @Nonnull public static final Long DEFAULT_PROXY_COUNT = 0L;
 
+    /** Whether to ignore signatures in requests. */
+    @Nonnull private Predicate<ProfileRequestContext> ignoreRequestSignaturesPredicate;
+    
     /** Whether encryption is optional in the face of no key, etc. */
     @Nonnull private Predicate<ProfileRequestContext> encryptionOptionalPredicate;
     
@@ -72,6 +75,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     public AbstractSAML2ProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
+        ignoreRequestSignaturesPredicate = Predicates.alwaysFalse();
         encryptionOptionalPredicate = Predicates.alwaysFalse();
         encryptAssertionsPredicate = Predicates.alwaysFalse();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
@@ -138,6 +142,33 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     public void setProxyAudiencesLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
         proxyAudiencesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    public boolean isIgnoreRequestSignatures(@Nonnull final ProfileRequestContext profileRequestContext) {
+        return ignoreRequestSignaturesPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Sets whether to bypass verification of request signatures.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setIgnoreRequestSignatures(final boolean flag) {
+        ignoreRequestSignaturesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
+    /**
+     * Sets a condition to determine whether to bypass verification of request signatures.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setIgnoreRequestSignaturesPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ignoreRequestSignaturesPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
 
     /** {@inheritDoc} */
