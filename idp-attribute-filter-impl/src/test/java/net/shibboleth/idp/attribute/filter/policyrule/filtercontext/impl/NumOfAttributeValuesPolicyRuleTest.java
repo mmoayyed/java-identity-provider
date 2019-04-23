@@ -26,6 +26,7 @@ import java.util.HashSet;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -109,7 +110,7 @@ public class NumOfAttributeValuesPolicyRuleTest {
 
     private AttributeFilterContext manufactureWith(String name, int howMany) {
         final IdPAttribute attr = new IdPAttribute(name);
-        final HashSet<StringAttributeValue> hs = new HashSet<>(howMany);
+        final HashSet<IdPAttributeValue<?>> hs = new HashSet<>(howMany);
         
         for (int i = 0; i < howMany; i++) {
             hs.add(new StringAttributeValue(Integer.toString(i)));

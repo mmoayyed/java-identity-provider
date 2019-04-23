@@ -128,7 +128,7 @@ public class SAML1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeAttributeName(ATTRIBUTE_NAME);
         encoder.setScopeDelimiter(DELIMITER);
 
-        final List<? extends IdPAttributeValue<?>> values =
+        final List<IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1);
 
         final IdPAttribute inputAttribute;
@@ -161,7 +161,7 @@ public class SAML1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
     @Test public void multi() throws ComponentInitializationException, AttributeEncodingException {
         final SAML1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
-        final List<? extends IdPAttributeValue<?>> values =
+        final List<IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2);
 
         final IdPAttribute inputAttribute;
@@ -217,7 +217,7 @@ public class SAML1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.initialize();
 
-        final List<? extends IdPAttributeValue<?>> values =
+        final List<IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1);
 
         final IdPAttribute inputAttribute;
@@ -250,7 +250,7 @@ public class SAML1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.setScopeAttributeName(null);
         encoder.initialize();
-        final List<? extends IdPAttributeValue<?>> values =
+        final List<IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2);
 
         final IdPAttribute inputAttribute;

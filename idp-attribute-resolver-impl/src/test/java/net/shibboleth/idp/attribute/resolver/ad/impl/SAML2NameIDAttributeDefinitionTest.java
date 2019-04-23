@@ -77,7 +77,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.initialize();
 
         final IdPAttribute attr = new IdPAttribute("bar");
-        final List<? extends IdPAttributeValue<?>> values = Collections.emptyList();
+        final List<IdPAttributeValue<?>> values = Collections.emptyList();
         attr.setValues(values);
 
         final StaticAttributeDefinition sa = new StaticAttributeDefinition();

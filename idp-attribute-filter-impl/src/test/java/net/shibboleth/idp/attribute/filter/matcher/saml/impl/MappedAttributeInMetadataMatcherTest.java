@@ -60,7 +60,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
                         AttributeConsumingService.DEFAULT_ELEMENT_NAME);
     }
     
-    private IdPAttribute makeAttribute(String id, List<? extends IdPAttributeValue<?>> values) {
+    private IdPAttribute makeAttribute(String id, List<IdPAttributeValue<?>> values) {
         IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         return attr;

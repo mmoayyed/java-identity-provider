@@ -185,7 +185,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         final List<? extends IdPAttributeValue<?>> inputValues;
-        List<? extends IdPAttributeValue<?>> outputValues = null;
+        List<IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
         inputValues = PluginDependencySupport.getMergedAttributeValues(workContext,
@@ -202,7 +202,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
             } else {
                 // TODO(rdw) Fix typing
                 // Intermediate to solve typing issues.
-                final List<XMLObjectAttributeValue> xmlVals = new ArrayList<>(inputValues.size());
+                final List<IdPAttributeValue<?>> xmlVals = new ArrayList<>(inputValues.size());
                 for (final IdPAttributeValue<?> theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {

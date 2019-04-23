@@ -216,7 +216,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             }
         } else {
 
-            final List<StringAttributeValue> valueList = new ArrayList<>();
+            final List<IdPAttributeValue<?>> valueList = new ArrayList<>();
             for (final IdPAttributeValue<?> unmappedValue : unmappedResults) {
                 if (unmappedValue instanceof EmptyAttributeValue) {
                     valueList.addAll(mapValue(null));                    

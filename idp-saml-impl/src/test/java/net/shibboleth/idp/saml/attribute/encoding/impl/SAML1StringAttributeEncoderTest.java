@@ -91,8 +91,7 @@ public class SAML1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void single() throws Exception {
-        final List<? extends IdPAttributeValue<?>> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
+        final List<IdPAttributeValue<?>> values = List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
 
         final IdPAttribute inputAttribute;
         inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -119,8 +118,7 @@ public class SAML1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void multi() throws Exception {
-        final List<? extends IdPAttributeValue<?>> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+        final List<IdPAttributeValue<?>> values = List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1),
                         new StringAttributeValue(STRING_2),
                         new ScopedStringAttributeValue(STRING_2, STRING_1));

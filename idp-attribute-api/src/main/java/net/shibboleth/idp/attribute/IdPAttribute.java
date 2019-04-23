@@ -172,7 +172,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newValues the new values for this attribute
      */
-    public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
+    public void setValues(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> newValues) {
         if (newValues != null) {
             values = List.of(newValues.stream().
                      map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).

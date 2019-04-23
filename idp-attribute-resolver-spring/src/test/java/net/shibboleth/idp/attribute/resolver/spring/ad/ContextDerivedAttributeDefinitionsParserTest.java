@@ -53,7 +53,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     private static final String SIMPLE_VALUE = "simple";
 
     private AttributeResolutionContext getCtx(final String attributeName) {
-        final List<IdPAttributeValue<String>> list = new ArrayList<>(2);
+        final List<IdPAttributeValue<?>> list = new ArrayList<>(2);
         list.add(new StringAttributeValue(SIMPLE_VALUE));
         list.add(new StringAttributeValue(SIMPLE_VALUE + "2"));
 

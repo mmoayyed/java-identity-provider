@@ -94,7 +94,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
                         getDataConnectorDependencies(), 
                         getId());
 
-        final List<StringAttributeValue> valueList = new ArrayList<>(dependencyValues.size());
+        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(dependencyValues.size());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (dependencyValue instanceof EmptyAttributeValue) {

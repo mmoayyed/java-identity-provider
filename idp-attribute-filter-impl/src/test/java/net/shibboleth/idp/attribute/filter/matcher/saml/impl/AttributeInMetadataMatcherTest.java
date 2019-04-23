@@ -70,7 +70,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         valueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
     }
 
-    private IdPAttribute makeAttribute(String id, List<? extends IdPAttributeValue<?>> values) {
+    private IdPAttribute makeAttribute(String id, List<IdPAttributeValue<?>> values) {
         final IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         

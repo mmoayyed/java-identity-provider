@@ -120,7 +120,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final List<? extends IdPAttributeValue<?>> values =
+        final List<IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue("foo", "bar"), new IdPAttributeValue<Object>() {
                             @Override
@@ -139,8 +139,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void single() throws Exception {
-        final List<? extends IdPAttributeValue<?>> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
+        final List<IdPAttributeValue<?>> values = List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -160,7 +159,7 @@ public class SAML1XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testMulti() throws Exception {
-        final List<? extends IdPAttributeValue<?>> values = Arrays.asList(ObjectFor(STRING_1), ObjectFor(STRING_2));
+        final List<IdPAttributeValue<?>> values = List.of(ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
