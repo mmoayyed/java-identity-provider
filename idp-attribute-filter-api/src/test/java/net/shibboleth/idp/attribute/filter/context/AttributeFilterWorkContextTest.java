@@ -55,7 +55,7 @@ public class AttributeFilterWorkContextTest {
         context.addPermittedIdPAttributeValues("one", null);
         Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
-        context.addPermittedIdPAttributeValues("one", new ArrayList<IdPAttributeValue>());
+        context.addPermittedIdPAttributeValues("one", new ArrayList<IdPAttributeValue<?>>());
         Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
         context.addPermittedIdPAttributeValues("one", Collections.singletonList(bStringAttributeValue));
@@ -105,7 +105,7 @@ public class AttributeFilterWorkContextTest {
         context.addDeniedIdPAttributeValues("one", null);
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedIdPAttributeValues("one", new ArrayList<IdPAttributeValue>());
+        context.addDeniedIdPAttributeValues("one", new ArrayList<IdPAttributeValue<?>>());
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
         context.addDeniedIdPAttributeValues("one", Collections.singletonList(bStringAttributeValue));

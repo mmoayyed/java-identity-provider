@@ -220,7 +220,7 @@ public class MappedAttributeInMetadataMatcher extends AbstractIdentifiableInitia
      * @return the result of the filter
      */
     @Nonnull private Set<IdPAttributeValue<?>> filterValues(@Nullable final IdPAttribute attribute,
-            @Nonnull @NonnullElements final List<? extends IdPAttributeValue> requestedValues) {
+            @Nonnull @NonnullElements final List<IdPAttributeValue<?>> requestedValues) {
 
         if (null == requestedValues || requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
