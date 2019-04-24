@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -174,9 +175,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     public void setValues(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> newValues) {
         if (newValues != null) {
-            values = List.of(newValues.stream().
+            values = newValues.stream().
                      map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).
-                     toArray(IdPAttributeValue<?>[]::new));
+                     collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
         } else {
             values = List.of();
         }
