@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<saml2p:AttributeQuery xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns="urn:oasis:names:tc:SAML:2.0:assertion" 
+   Version="2.0"  ID="AQ" IssueInstant="2018-03-14T17:31:00Z">
+   <Attribute  Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" FriendlyName="eduPersonAssurance">
+    <AttributeValue  xsi:type="xs:string">turquoise</AttributeValue>
+   </Attribute>
+   <Attribute  Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" FriendlyName="eduPersonScopedAffiliation">
+    <AttributeValue  xsi:type="xs:string">blue#yellow</AttributeValue>
+   </Attribute>
+   <Attribute  Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" FriendlyName="eduPersonTargetedID"/>
+</saml2p:AttributeQuery>

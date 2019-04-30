@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--  This is what we are trying to reverse map (note bi-directional aliasing, just to confuse things.  And me.
+    
+            <AttributeDefinition xsi:type="ad:Simple" id="eduPersonAssurance" >
+                <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" friendlyName="eduPersonAssurance" />
+                <AttributeEncoder xsi:type="SAML2String" nameFormat="http://example.org/Format" name="http://example.org/name/for/Attribute" friendlyName="otherSAMLName" />
+            </AttributeDefinition>
+
+            <AttributeDefinition xsi:type="ad:Simple" id="otherPersonAssurance" >
+                <AttributeEncoder xsi:type="SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" friendlyName="eduPersonAssurance" />
+            </AttributeDefinition>
+                
+            <AttributeDefinition xsi:type="ad:Scoped" id="eduPersonScopedAffiliation" scope="example.org" >
+                <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" friendlyName="eduPersonScopedAffiliation" 
+                       scopeDelimiter='#'/>
+            </AttributeDefinition>
+            
+            <AttributeDefinition xsi:type="ad:SAML2NameID" id="eduPersonTargetedID" 
+                                          nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">
+                <AttributeEncoder xsi:type="SAML2XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" friendlyName="eduPersonTargetedID" />
+            </AttributeDefinition> 
+    
+    
+    
+     -->
+     
+	<bean id="abstractStringMapper" init-method="initialize" abstract="true" 
+		class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributeMapper">
+		<property name="valueMapper">
+			<bean
+				class="net.shibboleth.idp.saml.attribute.mapping.impl.StringAttributeValueMapper" />
+		</property>
+	</bean>
+
+	<bean id="AttributesMapper"
+		class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapper"
+		init-method="initialize" p:id="SAML2AttributesMapper">
+		<property name="mappers">
+			<list>
+				<bean parent="abstractStringMapper">
+					<property name="id" value="eduPersonAssurance" />
+					<property name="SAMLName" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonAssurance</value>
+							<value>otherPersonAssurance</value>
+						</list>
+					</property>
+				</bean>
+				<bean parent="abstractStringMapper">
+					<property name="SAMLName" value="http://example.org/name/for/Attribute" />
+					<property name="id" value="otherSAMLName" />
+					<property name="attributeFormat" value="http://example.org/Format " />
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonAssurance</value>
+						</list>
+					</property>
+				</bean>
+				<bean parent="abstractStringMapper">
+					<property name="sAMLName" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
+					<property name="id" value="eduPersonScopedAffiliation" />
+					<property name="attributeFormat" value=" format " />
+					<property name="valueMapper">
+						<bean
+							class="net.shibboleth.idp.saml.attribute.mapping.impl.ScopedStringAttributeValueMapper"
+							p:delimiter="#" />
+					</property>
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonScopedAffiliation</value>
+						</list>
+					</property>
+				</bean>
+				<bean parent="abstractStringMapper">
+				    <property name="attributeFormat" value="format"/>
+					<property name="sAMLName" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.10"/>
+					<property name="id" value="eduPersonTargetedID"/>
+					<property name="valueMapper">
+						<bean
+							class="net.shibboleth.idp.saml.attribute.mapping.impl.XMLObjectAttributeValueMapper" />
+					</property>
+					<property name="attributeIds">
+						<list>
+							<value>eduPersonTargetedID</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>
