@@ -24,25 +24,26 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapperService;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.attribute.mapping.AttributesMapper;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that filters a set of attributes against the {@link org.opensaml.saml.saml2.core.Attribute} objects in
@@ -56,7 +57,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterByQueriedAttributes.class);
 
     /** Service used to get the engine used to filter attributes. */
-    @Nonnull private final SAML2AttributesMapperService mapperService;
+    @Nonnull private final AttributesMapper<Attribute, IdPAttribute> mapper;
 
     /** Strategy used to locate the {@link AttributeQuery} to filter against. */
     @Nonnull private Function<ProfileRequestContext,AttributeQuery> queryLookupStrategy;
@@ -73,10 +74,10 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     /**
      * Constructor.
      * 
-     * @param mapper mapper used to consume designators
+     * @param theMapper mapper used to consume designators
      */
-    public FilterByQueriedAttributes(@Nonnull final SAML2AttributesMapperService mapper) {
-        mapperService = Constraint.isNotNull(mapper, "MapperService cannot be null");
+    public FilterByQueriedAttributes(@Nonnull final AttributesMapper<Attribute, IdPAttribute> theMapper) {
+        mapper = Constraint.isNotNull(theMapper, "Mapper cannot be null");
         
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
@@ -144,7 +145,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
         
         final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributes().size());
         
-        final Multimap<String,IdPAttribute> mapped = mapperService.mapAttributes(query.getAttributes());
+        final Multimap<String,IdPAttribute> mapped = mapper.mapAttributes(query.getAttributes());
         log.debug("{} Query content mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
         
         for (final IdPAttribute attribute : attributeContext.getIdPAttributes().values()) {
