@@ -12,10 +12,6 @@ uniqueValue = uidNumber.getValues().get(0) + "some#salt#value#12345679";
 // Create md5 value
 localpart = DigestUtils.md5Hex(uniqueValue);
  
-// Get attribute to add DO NOT DO THIS FOR NASHORN. 
-if (null == swissEduPersonUniqueID ) {
-    swissEduPersonUniqueID = new BasicAttribute("swissEduPersonUniqueID");
-}
  
 // Prepend unique and pseudo-random localpart to domain name
 swissEduPersonUniqueID.getValues().add(localpart + "@switch.ch");
