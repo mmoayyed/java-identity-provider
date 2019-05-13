@@ -36,7 +36,6 @@ import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
@@ -63,7 +62,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     public static final String PRINCIPALCONNECTOR_FILE_PATH = BEAN_FILE_PATH + "pc/";
     
-    private GenericApplicationContext pendingTeardownContext = null;
+    protected GenericApplicationContext pendingTeardownContext = null;
     
     @AfterMethod public void tearDownTestContext() {
         if (null == pendingTeardownContext ) {
@@ -178,8 +177,6 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getDataConnector(fileName, claz, false);
     }
     
-    
-
     private <Type extends DataConnector> Type
             getDataConnector(final String fileName, final Class<Type> claz, final boolean supressValid) {
 
@@ -189,23 +186,6 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context, supressValid);
-    }
-
-    protected <Type extends AttributeEncoder> Type getAttributeEncoder(final String fileName, final Class<Type> claz) {
-
-        final GenericApplicationContext context = new GenericApplicationContext();
-        setTestContext(context);
-        context.setDisplayName("ApplicationContext: " + claz);
-
-        return getAttributeEncoder(fileName, claz, context);
-
-    }
-
-    protected <Type extends AttributeEncoder> Type getAttributeEncoder(final String fileName, final Class<Type> claz,
-            final GenericApplicationContext context) {
-
-        return getBean(ENCODER_FILE_PATH + fileName, claz, context);
-
     }
 
     static public AttributeResolverImpl getResolver(final ApplicationContext appCtx) {

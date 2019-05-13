@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -30,8 +32,10 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -47,77 +51,77 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     /** Log4j logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeEncoderParser.class);
 
-    /** Whether the name property is required or not. */
-    private boolean nameRequired;
-
-    /** Constructor. */
-    public BaseAttributeEncoderParser() {
-        nameRequired = false;
+    /** {@inheritDoc} */
+    @Override
+    protected Class<TranscodingRule> getBeanClass(final Element element) {
+        return TranscodingRule.class;
     }
-
-    /**
-     * Set whether the name property is required or not.
-     * 
-     * @param flag flag to set
-     */
-    public void setNameRequired(final boolean flag) {
-        nameRequired = flag;
+    
+    /** {@inheritDoc} */
+    @Override
+    protected boolean shouldGenerateId() {
+        return true;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element config, final ParserContext parserContext,
-            final BeanDefinitionBuilder builder) {
+    @Override
+    protected boolean shouldParseNameAsAliases() {
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doParse(final Element config, final ParserContext context, final BeanDefinitionBuilder builder) {
 
-        super.doParse(config, parserContext, builder);
+        final ManagedMap rule = new ManagedMap();
+
+        builder.addConstructorArgValue(rule);
         
-        final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_ATTRIBUTE_NAME));
-        if (nameRequired && attributeName == null) {
-            throw new BeanCreationException("Attribute encoder must contain a name property");
+        if (config.getParentNode() instanceof Element && ((Element)config.getParentNode()).hasAttributeNS(null, "id")) {
+            rule.put(AttributeTranscoderRegistry.PROP_ID,
+                    StringSupport.trimOrNull(((Element) config.getParentNode()).getAttributeNS(null, "id")));
+        } else {
+            log.warn("Parsing AttributeEncoder with no parent element, resulting rule will be ignored");
         }
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
             if (config.hasAttributeNS(null, "relyingParties")) {
                 log.warn("relyingParties ignored, using activationConditionRef");
             }
-            builder.addPropertyReference("activationCondition",
-                    StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
+            rule.put(AttributeTranscoderRegistry.PROP_CONDITION, new RuntimeBeanReference(
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef"))));
         } else if (config.hasAttributeNS(null, "relyingParties")) {
-            final BeanDefinitionBuilder rpBuilder =
-                    BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
-            rpBuilder.setFactoryMethod("fromCandidates");
-            rpBuilder .addConstructorArgValue(
-                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
-            builder.addPropertyValue("activationCondition", rpBuilder.getBeanDefinition());
+            rule.put(AttributeTranscoderRegistry.PROP_RELYINGPARTIES, config.getAttributeNS(null, "relyingParties"));
         } else {
             final Element child = ElementSupport.getFirstChildElement(config);
             if (child != null && ElementSupport.isElementNamed(child,
                     AttributeResolverNamespaceHandler.NAMESPACE, "ActivationConditionScript")) {
-                builder.addPropertyValue("activationCondition",
+                rule.put(AttributeTranscoderRegistry.PROP_CONDITION,
                         ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition());
             }
         }
 
-        if (config.hasAttributeNS(null, "encodeType")) {
-            builder.addPropertyValue("encodeType", StringSupport.trimOrNull(config.getAttributeNS(null, "encodeType")));
-        }
-
-        builder.setInitMethodName("initialize");
-        builder.setDestroyMethodName("destroy");
-        builder.addPropertyValue("name", attributeName);
-
+        rule.put(AttributeTranscoderRegistry.PROP_TRANSCODER, buildTranscoder());
+        
+        doParse(config, context, rule);
     }
+    
+    /**
+     * Inject any necessary elements into the mapping rule based on the specific encoder type.
+     * 
+     * @param config the encoder element being parsed
+     * @param parserContext the parser context
+     * @param rule the mapping rule
+     */
+    protected abstract void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final Map<String,Object> rule);
 
-    /** {@inheritDoc} */
-    @Override public boolean shouldGenerateId() {
-        return true;
-    }
 
     /**
-     * {@inheritDoc}. <br/>
-     * We parse the attribute "name" and we do not want Spring to. see #IDP-571.
+     * Return a bean definition for the transcoder to include in the mapping.
+     * 
+     * @return bean definition for an AttributeTranscoder
      */
-    @Override protected boolean shouldParseNameAsAliases() {
-        return false;
-    }
-
+    @Nonnull protected abstract BeanReference buildTranscoder();
+    
 }

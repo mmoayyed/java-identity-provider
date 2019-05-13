@@ -18,15 +18,11 @@
 package net.shibboleth.idp.attribute;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -47,9 +43,6 @@ public class AttributeTest {
 
         Assert.assertNotNull(attrib.getDisplayNames());
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
-
-        Assert.assertNotNull(attrib.getEncoders());
-        Assert.assertTrue(attrib.getEncoders().isEmpty());
 
         Assert.assertNotNull(attrib.getValues());
         Assert.assertTrue(attrib.getValues().isEmpty());
@@ -316,62 +309,6 @@ public class AttributeTest {
         Assert.assertTrue(attrib.getValues().contains(value2));
     }
 
-    /** Tests that values are properly added and modified. */
-    @Test public void encoders() {
-        AttributeEncoder<String> enc1 = new MockEncoder<>();
-        AttributeEncoder<String> enc2 = new MockEncoder<>();
-
-        IdPAttribute attrib = new IdPAttribute("foo");
-        Assert.assertTrue(attrib.getEncoders().isEmpty());
-        attrib.setEncoders(null);
-        Assert.assertTrue(attrib.getEncoders().isEmpty());
-        Collection collection = Arrays.asList((AttributeEncoder)null); 
-        attrib.setEncoders(collection);
-        Assert.assertTrue(attrib.getEncoders().isEmpty());
-
-        Set<AttributeEncoder<?>> attribEncoders = new HashSet<>();
-
-        // test adding one entry
-        Assert.assertTrue(attribEncoders.add(enc1));
-        attrib.setEncoders(attribEncoders);
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 1);
-        Assert.assertTrue(attrib.getEncoders().contains(enc1));
-
-        // test adding another entry
-        Assert.assertTrue(attribEncoders.add(enc2));
-        attrib.setEncoders(attribEncoders);
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 2);
-        Assert.assertTrue(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
-
-        // test adding null
-        
-        attribEncoders.add(null);
-        attrib.setEncoders(attribEncoders);
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 2);
-        Assert.assertTrue(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
-
-        // test adding an existing Encoder
-        Assert.assertFalse(attribEncoders.add(enc2));
-        attrib.setEncoders(attribEncoders);
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 2);
-        Assert.assertTrue(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
-
-        try {
-            attrib.getEncoders().add(null);
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-        
-    }
-    
     @SuppressWarnings("unlikely-arg-type")
     @Test public void cloneToString() {
         IdPAttribute attrib = new IdPAttribute("foo");

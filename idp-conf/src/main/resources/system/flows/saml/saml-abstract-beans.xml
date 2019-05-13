@@ -87,7 +87,7 @@
 
     <bean id="MapRequestedAttributesInAttributeConsumingService" scope="prototype"
             class="net.shibboleth.idp.saml.saml2.profile.impl.MapRequestedAttributesInAttributeConsumingService"
-            p:resolverService-ref="shibboleth.AttributeResolverService" />
+            p:transcoderRegistry-ref="shibboleth.AttributeRegistryService" />
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
         class="net.shibboleth.idp.saml.profile.impl.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />
@@ -238,14 +238,6 @@
         c:filterService-ref="shibboleth.AttributeFilterService"
         p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
         p:metadataResolver-ref="shibboleth.MetadataResolver" />
-
-    <bean id="FilterByQueriedAttributeDesignators"
-        class="net.shibboleth.idp.saml.saml1.profile.impl.FilterByQueriedAttributeDesignators" scope="prototype"
-        c:mapper-ref="shibboleth.SAML1AttributeDesignatorsMapperService" />
-
-    <bean id="FilterByQueriedAttributes"
-        class="net.shibboleth.idp.saml.saml2.profile.impl.FilterByQueriedAttributes" scope="prototype"
-        c:mapper-ref="shibboleth.SAML2AttributesMapperService" />
 
     <bean id="PopulatePostAuthnInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"

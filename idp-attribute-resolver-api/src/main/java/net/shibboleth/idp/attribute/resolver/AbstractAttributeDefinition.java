@@ -19,18 +19,15 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -38,7 +35,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -46,9 +42,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -60,9 +54,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
-
-    /** Attribute encoders associated with this definition. */
-    @Nonnull private Set<AttributeEncoder<?>> encoders = Collections.emptySet();
 
     /** Localized human intelligible attribute name. */
     @Nonnull private Map<Locale, String> displayNames = Collections.emptyMap();
@@ -159,31 +150,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         displayNames = ImmutableMap.copyOf(checkedNames);
     }
 
-    /**
-     * Gets the unmodifiable encoders used to encode the values of this attribute in to protocol specific formats. The
-     * returned collection is never null nor contains any null.
-     * 
-     * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
-     */
-    @Override
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getAttributeEncoders() {
-        return encoders;
-    }
-
-    /**
-     * Sets the encoders used to encode the values of this attribute in to protocol specific formats.
-     * 
-     * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
-     */
-    public void setAttributeEncoders(@Nullable @NullableElements final Set<AttributeEncoder<?>> attributeEncoders) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final Set<AttributeEncoder<?>> checkedEncoders = new HashSet<>();
-        CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
-        encoders = ImmutableSet.copyOf(checkedEncoders);
-    }
-
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -234,10 +200,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         log.trace("{} associating the following display names with the resolved attribute: {}", getLogPrefix(),
                 getDisplayNames());
         resolvedAttribute.setDisplayNames(getDisplayNames());
-
-        log.trace("{} associating the following encoders with the resolved attribute: {}", getLogPrefix(),
-                getAttributeEncoders());
-        resolvedAttribute.setEncoders(getAttributeEncoders());
 
         return resolvedAttribute;
     }

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -32,10 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
@@ -69,9 +65,6 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     /** Values for this attribute. */
     @Nonnull private List<IdPAttributeValue<?>> values;
 
-    /** Encoders that may be used to encode this attribute. */
-    @Nonnull private Set<AttributeEncoder<?>> encoders;
-
     /**
      * Constructor.
      * 
@@ -86,7 +79,6 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         displayDescriptions = Collections.emptyMap();
 
         values = Collections.emptyList();
-        encoders = Collections.emptySet();
     }
 
     /**
@@ -183,28 +175,6 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         }
     }
 
-    /**
-     * Gets the list of attribute encoders usable with this attribute.
-     * 
-     * @return attribute encoders usable with this attribute
-     */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<AttributeEncoder<?>> getEncoders() {
-        return encoders;
-    }
-
-    /**
-     * Replaces the existing encoders for this attribute with the given encoders.
-     * 
-     * @param newEncoders the new encoders for this attribute
-     */
-    public void setEncoders(@Nullable @NullableElements final Collection<AttributeEncoder<?>> newEncoders) {
-        if (newEncoders != null) {
-            encoders = ImmutableSet.copyOf(Collections2.filter(newEncoders, Predicates.notNull()));
-        } else {
-            encoders = ImmutableSet.of();
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public int compareTo(final IdPAttribute other) {
@@ -222,7 +192,6 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         final IdPAttribute clone = (IdPAttribute) super.clone();
         clone.setDisplayDescriptions(getDisplayDescriptions());
         clone.setDisplayNames(getDisplayNames());
-        clone.setEncoders(getEncoders());
         clone.setValues(getValues());
         return clone;
     }
@@ -256,7 +225,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     @Override
     @Nonnull public String toString() {
         return MoreObjects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
-                .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values)
+                .add("displayDescriptions", displayDescriptions).add("values", values)
                 .toString();
     }
     

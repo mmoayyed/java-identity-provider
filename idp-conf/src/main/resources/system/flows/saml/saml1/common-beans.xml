@@ -48,7 +48,8 @@
     </bean>
 
     <bean id="AddAttributeStatementToAssertion"
-            class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
+            class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype"
+            p:transcoderRegistry-ref="shibboleth.AttributeRegistryService">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
         </property>

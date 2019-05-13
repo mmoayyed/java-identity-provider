@@ -76,7 +76,6 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-beans</artifactId>

@@ -17,12 +17,19 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
+import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -31,12 +38,17 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObject;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
@@ -49,11 +61,13 @@ import org.slf4j.LoggerFactory;
  * an {@link AttributeContext} returned from a
  * lookup strategy, by default located on the {@link RelyingPartyContext} beneath the profile request context.</p>
  * 
+ * @param <T> type of objects being encoded
+ * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  */
-public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfileAction {
+public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject> extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAddAttributeStatementToAssertion.class);
@@ -79,6 +93,9 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
      */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
+    /** Transcoder registry service object. */
+    @NonnullAfterInit private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
+    
     /** AttributeContext to use. */
     @Nullable private AttributeContext attributeCtx;
 
@@ -187,6 +204,26 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
 
         issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
     }
+
+    /**
+     * Gets the registry of transcoding rules to apply to encode attributes.
+     * 
+     * @return registry
+     */
+    @NonnullAfterInit public ReloadableService<AttributeTranscoderRegistry> getTranscoderRegistry() {
+        return transcoderRegistry;
+    }
+    
+    /**
+     * Sets the registry of transcoding rules to apply to encode attributes.
+     * 
+     * @param registry registry service interface
+     */
+    public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
+    }
     
     /**
      * Get the {@link AttributeContext} to encode.
@@ -220,6 +257,16 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
 
     /** {@inheritDoc} */
     @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (transcoderRegistry == null) {
+            throw new ComponentInitializationException("AttributeTranscoderRegistry cannot be null");
+        }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -250,4 +297,52 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
         return true;
     }
 
+
+    /**
+     * Access the registry of transcoding rules to transform the input attribute into a target type.
+     * 
+     * @param registry  registry of transcoding rules
+     * @param profileRequestContext current profile request context
+     * @param attribute input attribute
+     * @param to target type
+     * @param results collection to add results to
+     * 
+     * @return number of results added
+     * 
+     * @throws AttributeEncodingException if a non-ignorable error occurs
+     */
+    protected int encodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
+            @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final IdPAttribute attribute,
+            @Nonnull final Class<T> to, @Nonnull @NonnullElements @Live final Collection<T> results)
+                    throws AttributeEncodingException {
+        
+        final Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(attribute, to);
+        if (transcodingRules.isEmpty()) {
+            log.debug("{} Attribute {} does not have any transcoding rules, nothing to do", getLogPrefix(),
+                    attribute.getId());
+            return 0;
+        }
+        
+        int count = 0;
+        
+        for (final TranscodingRule rules : transcodingRules) {
+            try {
+                final AttributeTranscoder<T> transcoder = TranscoderSupport.<T>getTranscoder(rules);
+                final T encodedAttribute = transcoder.encode(profileRequestContext, attribute, to, rules);
+                if (encodedAttribute != null) {
+                    results.add(encodedAttribute);
+                    count++;
+                }
+            } catch (final AttributeEncodingException e) {
+                if (isIgnoringUnencodableAttributes()) {
+                    log.debug("{} Unable to encode attribute {}", getLogPrefix(), attribute.getId(), e);
+                } else {
+                    throw e;
+                }
+            }
+        }
+        
+        return count;
+    }
+    
 }

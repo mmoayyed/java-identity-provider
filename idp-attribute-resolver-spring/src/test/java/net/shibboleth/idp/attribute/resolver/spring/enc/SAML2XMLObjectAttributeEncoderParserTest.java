@@ -18,40 +18,54 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
-import org.opensaml.saml.saml2.core.Attribute;
+import java.util.Map;
+import java.util.function.Predicate;
+
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.BaseEncoderDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2XMLObjectAttributeEncoder;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder;
 
 /**
  * Test for {@link SAML2XMLObjectAttributeEncoderParser}.
  */
-public class SAML2XMLObjectAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML2XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinitionParserTest {
 
-    @Test public void resolver() {
-        final SAML2XMLObjectAttributeEncoder encoder =
-                getAttributeEncoder("resolver/saml2XmlObject.xml", SAML2XMLObjectAttributeEncoder.class);
+    protected void testWithProperties(final boolean activation, final Boolean encodeType) {
+        
+        final Map<String,Object> rule =
+                getAttributeTranscoderRule("resolver/saml2XmlObject.xml", activation, encodeType).getMap();
 
-        assertEquals(encoder.getName(), "Saml2XmlObject_ATTRIBUTE_NAME");
-        assertEquals(encoder.getFriendlyName(),"Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME"); 
-        assertEquals(encoder.getNameFormat(),"Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
+        assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2XMLObjectAttributeTranscoder);
+        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "Saml2XmlObject_ATTRIBUTE_NAME");
+        assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT), "Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
+        assertEquals(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME), "Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME");
+        assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        checkEncodeType(rule, encodeType!=null ? encodeType : true);
     }
 
     @Test public void defaultCase() {
-        final SAML2XMLObjectAttributeEncoder encoder =
-                getAttributeEncoder("resolver/saml2XmlObjectDefault.xml", SAML2XMLObjectAttributeEncoder.class);
+        final Map<String,Object> rule = getAttributeTranscoderRule("resolver/saml2XmlObjectDefault.xml").getMap();
 
-        assertEquals(encoder.getName(), "XmlObjectName");
-        assertNull(encoder.getFriendlyName()); 
-        assertEquals(encoder.getNameFormat(), Attribute.URI_REFERENCE);
+        assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2XMLObjectAttributeTranscoder);
+        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "XmlObjectName");
+        assertNull(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT));
+        assertNull(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME));
+        assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        checkEncodeType(rule, true);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("resolver/saml2XmlObjectNoName.xml", SAML2XMLObjectAttributeEncoder.class);
+        getAttributeTranscoderRule("resolver/saml2XmlObjectNoName.xml");
     }
+
 }

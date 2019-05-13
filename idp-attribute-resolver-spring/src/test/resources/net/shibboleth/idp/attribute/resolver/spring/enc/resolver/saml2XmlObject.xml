@@ -4,5 +4,12 @@
 	xmlns="urn:mace:shibboleth:2.0:resolver"
 	name="Saml2XmlObject_ATTRIBUTE_NAME" 
 	nameFormat="Saml2XmlObject_ATTRIBUTE_NAME_FORMAT"
-	friendlyName="Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME" 
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/> 
+	friendlyName="Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME"
+	encodeType="%{the.encodeType.property:true}"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <ActivationConditionScript>
+        <Script>%{the.activation.property}</Script>
+    </ActivationConditionScript>
+	
+</AttributeEncoder>

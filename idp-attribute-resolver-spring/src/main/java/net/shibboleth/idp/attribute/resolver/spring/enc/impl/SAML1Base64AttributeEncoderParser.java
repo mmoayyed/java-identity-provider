@@ -18,49 +18,28 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 
-import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.BaseSAML1AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1ByteAttributeEncoder;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ByteAttributeTranscoder;
 
 /**
- * Spring Bean Definition Parser for {@link SAML1ByteAttributeEncoder}.
+ * Spring Bean Definition Parser for {@link SAML1ByteAttributeTranscoder}.
  */
-public class SAML1Base64AttributeEncoderParser extends BaseAttributeEncoderParser {
+public class SAML1Base64AttributeEncoderParser extends BaseSAML1AttributeEncoderParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "SAML1Base64");
 
-    /** Local name of namespace attribute. */
-    @Nonnull @NotEmpty public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
-
-    /** Constructor. */
-    public SAML1Base64AttributeEncoderParser() {
-        setNameRequired(true);
-    }
-
     /** {@inheritDoc} */
-    @Override protected Class<SAML1ByteAttributeEncoder> getBeanClass(@Nullable final Element element) {
-        return SAML1ByteAttributeEncoder.class;
+    @Override
+    protected BeanReference buildTranscoder() {
+        return new RuntimeBeanReference("SAML1ByteTranscoder");
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
-
-        if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {
-            final String namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
-            builder.addPropertyValue("namespace", namespace);
-        }
-    }
 }

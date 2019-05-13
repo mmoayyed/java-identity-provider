@@ -41,6 +41,10 @@
         class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
         c:_0-ref="shibboleth.OutgoingSOAPBindings" />
 
+    <bean id="FilterByQueriedAttributes"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.FilterByQueriedAttributes" scope="prototype"
+        p:transcoderRegistry-ref="shibboleth.AttributeRegistryService" />
+
     <bean id="CopyNameIDFromRequest"
             class="org.opensaml.saml.saml2.profile.impl.CopyNameIDFromRequest" scope="prototype" />
 

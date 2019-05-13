@@ -33,7 +33,7 @@ import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFil
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
@@ -52,8 +52,8 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
  */
 public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcessor {
 
-    /** The attribute resolver we use to map attributes. */
-    @Nullable private final ReloadableService<AttributeResolver> atributeResolverService;
+    /** The registry of decoding rules. */
+    @Nullable private final ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
 
     /**
      * Constructor.
@@ -61,8 +61,8 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
      * @param service the attribute resolver we use to map attributes
      */
     public NodeProcessingAttachingBeanPostProcessor(
-            @Nullable @ParameterName(name="service") final ReloadableService<AttributeResolver> service) {
-        atributeResolverService = service;
+            @Nullable @ParameterName(name="service") final ReloadableService<AttributeTranscoderRegistry> service) {
+        transcoderRegistry = service;
     }
 
     // Checkstyle: CyclomaticComplexity OFF
@@ -96,8 +96,8 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
             final NodeProcessingMetadataFilter filterToAttach = new NodeProcessingMetadataFilter();
             final List<MetadataNodeProcessor> processors = new ArrayList<>(
                     Arrays.asList(new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor()));
-            if (null != atributeResolverService) {
-                processors.add(new AttributeMappingNodeProcessor(atributeResolverService));
+            if (null != transcoderRegistry) {
+                processors.add(new AttributeMappingNodeProcessor(transcoderRegistry));
             }
             filterToAttach.setNodeProcessors(processors);
             try {

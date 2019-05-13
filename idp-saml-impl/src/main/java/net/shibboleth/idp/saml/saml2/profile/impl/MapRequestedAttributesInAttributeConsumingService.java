@@ -22,9 +22,9 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -55,8 +55,8 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
     @Nonnull private Function<ProfileRequestContext, AttributeConsumingServiceContext>
         attributeConsumingServiceContextLookupStrategy;
 
-    /** The attribute resolver we use to map attributes. */
-    @Nullable private ReloadableService<AttributeResolver> attributeResolverService;
+    /** The registry of decoding rules. */
+    @Nullable private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
 
     /** The context we use to get and put the {@link AttributeConsumingService}.*/
     private AttributeConsumingServiceContext acsContext;
@@ -65,7 +65,6 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
      * Constructor.
      */
     public MapRequestedAttributesInAttributeConsumingService() {
-        super();
         // At this point, by default  the SAMLMetadataContext hangs off the SAMLPeerContext
         attributeConsumingServiceContextLookupStrategy =
                 new ChildContextLookup(AttributeConsumingServiceContext.class).compose(
@@ -86,12 +85,12 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
     }
 
     /**
-     * Sets the service which does the attribute mapping.
+     * Sets the service which provides attribute decoding rules.
      *
-     * @param resolverService the service for the attribute resolver we are to derive unmapping info from
+     * @param registry the registry service
      */
-    public void setResolverService(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
-        attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
+    public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
+        transcoderRegistry = Constraint.isNotNull(registry, "AttributeResolver cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -112,23 +111,23 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
 
         final AttributeConsumingService acs = acsContext.getAttributeConsumingService();
         if (acs == null) {
-            log.trace("{} no AttributeConsumingService to map", getLogPrefix());
+            log.trace("{} No AttributeConsumingService to map", getLogPrefix());
             return;
         }
         
-        if (acs.getRequestAttributes().isEmpty() ||
-            acs.getObjectMetadata().containsKey(AttributesMapContainer.class) ||
-            acs.getParent() != null) {
-            log.trace("{} skipping mapping for AttributeConsumingService", getLogPrefix());
+        if (acs.getRequestAttributes().isEmpty() || acs.getObjectMetadata().containsKey(AttributesMapContainer.class) ||
+                acs.getParent() != null) {
+            log.trace("{} Skipping decode of AttributeConsumingService", getLogPrefix());
             // Nothing to map, already mapped, or attached to metadata (and hence already scanned)
             return;
         }
+        
         try {
-            final AttributeMappingNodeProcessor processor = new AttributeMappingNodeProcessor(attributeResolverService);
-            log.debug("{} mapping requested Attributes for generated AttributeConsumingService", getLogPrefix());
+            final AttributeMappingNodeProcessor processor = new AttributeMappingNodeProcessor(transcoderRegistry);
+            log.debug("{} Decoding RequestedAttributes for generated AttributeConsumingService", getLogPrefix());
             processor.process(acs);
         } catch (final FilterException e) {
-            log.error("{} Error mapping Attributesresponding to request", getLogPrefix(), e);
+            log.error("{} Error decoding RequestedAttributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.RUNTIME_EXCEPTION);
         }
     }

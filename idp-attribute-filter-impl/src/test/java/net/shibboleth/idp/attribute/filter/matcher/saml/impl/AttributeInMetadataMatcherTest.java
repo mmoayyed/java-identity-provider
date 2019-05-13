@@ -17,10 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,12 +40,10 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -73,12 +68,6 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     private IdPAttribute makeAttribute(String id, List<IdPAttributeValue<?>> values) {
         final IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
-        
-        final SAML2StringAttributeEncoder encoder = new SAML2StringAttributeEncoder();
-        encoder.setName(id);
-        encoder.setNameFormat(Attribute.BASIC);
-        
-        attr.setEncoders(Collections.<AttributeEncoder<?>>singleton(encoder));
         return attr;
     }
 
@@ -155,7 +144,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         final IdPAttribute attr =
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        final AttributeInMetadataMatcher matcher = makeMatcher("test", true, false, null, null);
+        final AttributeInMetadataMatcher matcher = makeMatcher("test", true, false, "wrongAttr", Attribute.URI_REFERENCE);
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
 
         assertEquals(result.size(), 2);
@@ -197,13 +186,14 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         req.setNameFormat(Attribute.BASIC);
         final AttributeFilterContext context = makeContext(req);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, false, null, null).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result =
+                makeMatcher("test", false, false, "attr", Attribute.BASIC).getMatchingValues(attr, context);
 
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
         assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
 
-        result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, context);
+        result = makeMatcher("test", false, true, "attr", Attribute.BASIC).getMatchingValues(attr, context);
         assertTrue(result.isEmpty());
     }
 
@@ -222,7 +212,8 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
         final AttributeFilterContext context = makeContext(req);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, context);
+        final Set<IdPAttributeValue<?>> result =
+                makeMatcher("test", false, true, "attr", Attribute.BASIC).getMatchingValues(attr, context);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(DataSources.STRING_VALUE));
     }
@@ -249,7 +240,8 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
         setRequestedAttributesInContext(context, Collections.singletonList(req));
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, context);
+        final Set<IdPAttributeValue<?>> result =
+                makeMatcher("test", false, true, "attr", Attribute.BASIC).getMatchingValues(attr, context);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
         assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));

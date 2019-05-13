@@ -19,11 +19,9 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -54,13 +52,5 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      * @return human readable names of the attribute
      */
     @NonnullAfterInit @NonnullElements @Unmodifiable Map<Locale, String> getDisplayNames();
-
-    /**
-     * Gets the unmodifiable encoders used to encode the values of this attribute in to protocol specific formats. The
-     * returned collection is never null nor contains any null.
-     * 
-     * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
-     */
-    @NonnullAfterInit @NonnullElements @Unmodifiable Set<AttributeEncoder<?>> getAttributeEncoders();
 
 }

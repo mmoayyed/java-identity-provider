@@ -39,13 +39,13 @@ public class TestAfterFilter extends AbstractProfileAction {
         
         AttributeContext ac = rpc.getSubcontext(AttributeContext.class);
         
-        Assert.assertNotNull(ac.getIdPAttributes().get("IdPRA1"));
-        Assert.assertFalse(ac.getIdPAttributes().get("IdPRA1").getValues().isEmpty());
+        Assert.assertNull(ac.getIdPAttributes().get("IdPNotOK"));
         Assert.assertNull(ac.getIdPAttributes().get("IdPEA1"));
         
         Assert.assertNotNull(ac.getIdPAttributes().get("IdPOK"));
         Assert.assertFalse(ac.getIdPAttributes().get("IdPOK").getValues().isEmpty());
-        Assert.assertNull(ac.getIdPAttributes().get("IdPNotOK"));
-                
+
+        Assert.assertNotNull(ac.getIdPAttributes().get("IdPRA1"));
+        Assert.assertFalse(ac.getIdPAttributes().get("IdPRA1").getValues().isEmpty());
     }
 }

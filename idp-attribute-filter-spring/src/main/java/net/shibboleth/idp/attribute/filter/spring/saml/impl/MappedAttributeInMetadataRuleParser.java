@@ -20,9 +20,11 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.matcher.saml.impl.MappedAttributeInMetadataMatcher;
+import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -39,13 +41,19 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
             "MappedAttributeInMetadata");
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Class<MappedAttributeInMetadataMatcher> getNativeBeanClass() {
-        return MappedAttributeInMetadataMatcher.class;
+    @Override @Nonnull protected Class<AttributeInMetadataMatcher> getNativeBeanClass() {
+        return AttributeInMetadataMatcher.class;
     }
 
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        
+        // V4 deprecation
+        DeprecationSupport.warn(ObjectType.XSITYPE, SCHEMA_TYPE.toString(),
+                parserContext.getReaderContext().getResource().getDescription(),
+                AttributeInMetadataRuleParser.SCHEMA_TYPE.toString());
+        
         super.doParse(config, builder);
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {

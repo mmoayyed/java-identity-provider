@@ -24,6 +24,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->

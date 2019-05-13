@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -75,11 +74,6 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     /** {@inheritDoc} */
     @Override public boolean equals(final Object obj) {
         return resolvedDefinition.equals(obj);
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements public Set<AttributeEncoder<?>> getAttributeEncoders() {
-        return resolvedDefinition.getAttributeEncoders();
     }
 
     /** {@inheritDoc} */

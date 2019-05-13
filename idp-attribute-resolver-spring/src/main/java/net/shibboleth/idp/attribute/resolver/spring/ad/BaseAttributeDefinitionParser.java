@@ -31,7 +31,6 @@ import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -86,16 +85,6 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             final String dependencyOnly = StringSupport.trimOrNull(config.getAttributeNS(null, "dependencyOnly"));
             log.debug("{} Setting dependencyOnly {}", getLogPrefix(), dependencyOnly);
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
-        }
-
-        final List<Element> attributeEncoders =
-                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-                        "AttributeEncoder"));
-
-        if (attributeEncoders != null && !attributeEncoders.isEmpty()) {
-            log.debug("{} Adding {} encoders", getLogPrefix(), attributeEncoders.size());
-            builder.addPropertyValue("attributeEncoders",
-                    SpringSupport.parseCustomElements(attributeEncoders, parserContext));
         }
     }
     // CheckStyle: CyclomaticComplexity ON

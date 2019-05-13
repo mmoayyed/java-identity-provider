@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -33,17 +35,27 @@ import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
+import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapper;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Action that filters a set of attributes against the {@link org.opensaml.saml.saml2.core.Attribute} objects in
@@ -56,8 +68,8 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterByQueriedAttributes.class);
 
-    /** Service used to get the engine used to filter attributes. */
-    @Nonnull private final AttributesMapper<Attribute, IdPAttribute> mapper;
+    /** Transcoder registry service object. */
+    @NonnullAfterInit private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
 
     /** Strategy used to locate the {@link AttributeQuery} to filter against. */
     @Nonnull private Function<ProfileRequestContext,AttributeQuery> queryLookupStrategy;
@@ -71,20 +83,25 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     /** AttributeContext to filter. */
     @Nullable private AttributeContext attributeContext;
 
-    /**
-     * Constructor.
-     * 
-     * @param theMapper mapper used to consume designators
-     */
-    public FilterByQueriedAttributes(@Nonnull final AttributesMapper<Attribute, IdPAttribute> theMapper) {
-        mapper = Constraint.isNotNull(theMapper, "Mapper cannot be null");
-        
+    /** Constructor. */
+    public FilterByQueriedAttributes() {
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
         
         queryLookupStrategy = new MessageLookup(AttributeQuery.class).compose(new InboundMessageContextLookup());
     }
 
+    /**
+     * Sets the registry of transcoding rules to apply to encode attributes.
+     * 
+     * @param registry registry service interface
+     */
+    public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
+    }
+    
     /**
      * Set the strategy used to locate the {@link AttributeQuery} associated with a given {@link ProfileRequestContext}.
      * 
@@ -110,6 +127,16 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (transcoderRegistry == null) {
+            throw new ComponentInitializationException("AttributeTranscoderRegistry cannot be null");
+        }
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -142,11 +169,34 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributes().size());
-        
-        final Multimap<String,IdPAttribute> mapped = mapper.mapAttributes(query.getAttributes());
+                
+        final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
+
+        ServiceableComponent<AttributeTranscoderRegistry> component = null;
+        try {
+            component = transcoderRegistry.getServiceableComponent();
+            if (component == null) {
+                log.error("Attribute transcoder service unavailable");
+                ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
+                return;
+            }
+
+            for (final Attribute designator : query.getAttributes()) {
+                try {
+                    decodeAttribute(component.getComponent(), profileRequestContext, designator, mapped);
+                } catch (final AttributeDecodingException e) {
+                    log.error("{} Error decoding queried Attribute", getLogPrefix(), e);
+                }
+            }
+        } finally {
+            if (component != null) {
+                component.unpinComponent();
+            }
+        }
+                
         log.debug("{} Query content mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
+
+        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributes().size());
         
         for (final IdPAttribute attribute : attributeContext.getIdPAttributes().values()) {
             
@@ -171,6 +221,35 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
         }
         
         attributeContext.setIdPAttributes(keepers);
+    }
+    
+    /**
+     * Access the registry of transcoding rules to decode the input {@link Attribute}.
+     * 
+     * @param registry  registry of transcoding rules
+     * @param profileRequestContext current profile request context
+     * @param input input object
+     * @param results collection to add results to
+     * 
+     * @throws AttributeDecodingException if an error occurs or no results were obtained
+     */
+    protected void decodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
+            @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final Attribute input,
+            @Nonnull @NonnullElements @Live final Multimap<String,IdPAttribute> results)
+                    throws AttributeDecodingException {
+        
+        final Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(input);
+        if (transcodingRules.isEmpty()) {
+            throw new AttributeDecodingException("No transcoding rule for Attribute '" + input.getName() + "'");
+        }
+        
+        for (final TranscodingRule rules : transcodingRules) {
+            final AttributeTranscoder<Attribute> transcoder = TranscoderSupport.getTranscoder(rules);
+            final IdPAttribute decodedAttribute = transcoder.decode(profileRequestContext, input, rules);
+            if (decodedAttribute != null) {
+                results.put(decodedAttribute.getId(), decodedAttribute);
+            }
+        }
     }
     
     /**

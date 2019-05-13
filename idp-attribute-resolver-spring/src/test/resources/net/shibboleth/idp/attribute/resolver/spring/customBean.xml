@@ -10,16 +10,40 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
+       
     <util:map id="shibboleth.CustomScriptObject">
         <entry key="foo" value="bar"/>
-    </util:map>    
+    </util:map>
+        
     <util:map id="other.CustomScriptObject">
         <entry key="bar" value="foo"/>
-    </util:map>    
+    </util:map>
+    
+    <bean id="shibboleth.Predicate" class="com.google.common.base.Predicates" factory-method="alwaysFalse"/>
     
     <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
         class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <!-- Necessary for encoder parsing to function, normally part of registry wiring. -->
+    
+    <bean id="SAML2StringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder" />
+    <bean id="SAML2ScopedStringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ScopedStringAttributeTranscoder" />
+    <bean id="SAML2ByteTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ByteAttributeTranscoder" />
+    <bean id="SAML2XMLObjectTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder" />
+        
+    <bean id="SAML1StringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder" />
+    <bean id="SAML1ScopedStringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ScopedStringAttributeTranscoder" />
+    <bean id="SAML1ByteTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ByteAttributeTranscoder" />
+    <bean id="SAML1XMLObjectTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttributeTranscoder" />
 
 </beans>
 

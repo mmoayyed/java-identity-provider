@@ -5,5 +5,11 @@
 	name="Saml2Base64_ATTRIBUTE_NAME" 
 	nameFormat="Saml2Base64_ATTRIBUTE_NAME_FORMAT"
 	friendlyName="Saml2Base64_ATTRIBUTE_FRIENDLY_NAME"
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"
-/> 
+	encodeType="%{the.empty.property}"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <ActivationConditionScript>
+        <Script>%{the.activation.property}</Script>
+    </ActivationConditionScript>
+	
+</AttributeEncoder>

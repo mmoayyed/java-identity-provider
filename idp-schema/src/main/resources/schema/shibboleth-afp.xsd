@@ -751,11 +751,16 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeInMetadataType" abstract="true">
+    <complexType name="AttributeInMetadata">
         <annotation>
             <documentation>
-                Functions that evaluate to true if an attribute (or specific values) is specified by
-                supplied metadata.
+                A match function that evaluates to true if an attribute (or specific values) is specified by
+                the requesting entity's AttributeConsumingService SP metadata.
+                
+                It supports both explicit checking for a named SAML RequestedAttribute in metadata, or
+                comparison via the transcoding registry to compare the internal attribute form against
+                decoded objects produced from the metadata. This is the old "mapped" functionality
+                in V3 and is now collapsed into one matcher type.
             </documentation>
         </annotation>
         <complexContent>
@@ -783,27 +788,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="AttributeInMetadata">
-        <annotation>
-            <documentation>
-                A match function that evaluates to true if an attribute (or specific values) is specified by
-                the requesting entity's AttributeConsumingService SP metadata.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:AttributeInMetadataType">
-                <attribute name="attributeName" type="string" use="optional">
+                <attribute name="attributeName" type="string">
                     <annotation>
                         <documentation>The name of a requested attribute to look for.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeNameFormat" type="string" use="optional">
+                <attribute name="attributeNameFormat" type="string">
                     <annotation>
                         <documentation>The name format of a requested attribute to look for.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="objectStrategyRef" type="string">
+                    <annotation>
+                        <documentation>Reference to locate XMLObject source of mapped attributes.</documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -813,18 +810,11 @@
     <complexType name="MappedAttributeInMetadata">
         <annotation>
             <documentation>
-                A match function that evaluates to true if a mapped attribute (or specific values) is specified by
-                the requesting entity's AttributeConsumingService SP metadata.
+                Deprecated alias for afp:AttributeInMetadata type.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="afp:AttributeInMetadataType">
-                <attribute name="objectStrategyRef" type="string" use="optional">
-                    <annotation>
-                        <documentation>Reference to locate XMLObject source of mapped attributes.</documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="afp:AttributeInMetadata" />
         </complexContent>
     </complexType>
 

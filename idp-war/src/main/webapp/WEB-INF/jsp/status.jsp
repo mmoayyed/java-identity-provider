@@ -13,6 +13,7 @@
 <%@ page import="net.shibboleth.idp.Version" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
+<%@ page import="net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.DataConnector" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>

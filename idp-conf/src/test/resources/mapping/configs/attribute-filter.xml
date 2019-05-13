@@ -28,7 +28,7 @@
     </AttributeFilterPolicy>
 	
 
-    <!--  Release is EA map -->
+    <!--  Release if EA map -->
 	<AttributeFilterPolicy id="EAOKFILTER">
 		<PolicyRequirementRule id="prrEA1" xsi:type="EntityAttributeExactMatch"
             attributeName="http://macedir.org/entity-category"

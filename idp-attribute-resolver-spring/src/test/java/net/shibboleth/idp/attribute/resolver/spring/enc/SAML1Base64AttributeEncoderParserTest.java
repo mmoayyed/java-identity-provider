@@ -18,38 +18,52 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Map;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.BaseEncoderDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1ByteAttributeEncoder;
-import net.shibboleth.idp.saml.xml.SAMLConstants;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ByteAttributeTranscoder;
 
 /**
  * Test for {@link SAML1Base64AttributeEncoderParser}.
  */
-public class SAML1Base64AttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
+public class SAML1Base64AttributeEncoderParserTest extends BaseEncoderDefinitionParserTest {
   
-    @Test public void resolver() {
-        final SAML1ByteAttributeEncoder encoder =
-                getAttributeEncoder("resolver/saml1Base64.xml", SAML1ByteAttributeEncoder.class);
+    protected void testWithProperties(final boolean activation, final Boolean encodeType) {
+        
+        final Map<String,Object> rule =
+                getAttributeTranscoderRule("resolver/saml1Base64.xml", activation, encodeType).getMap();
 
-        assertEquals(encoder.getName(), "SAML1_BASE64_ATTRIBUTE_NAME");
-        assertEquals(encoder.getNamespace(),"SAML1_BASE64_ATTRIBUTE_NAME_SPACE");
+        assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML1ByteAttributeTranscoder);
+        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "SAML1_BASE64_ATTRIBUTE_NAME");
+        assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAMESPACE), "SAML1_BASE64_ATTRIBUTE_NAME_SPACE");
+        assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        checkEncodeType(rule, encodeType==null ? false: encodeType);
     }
 
     
     @Test public void defaultCase() {
-        final SAML1ByteAttributeEncoder encoder =
-                getAttributeEncoder("resolver/saml1Base64Default.xml", SAML1ByteAttributeEncoder.class);
+        final Map<String,Object> rule = getAttributeTranscoderRule("resolver/saml1Base64Default.xml").getMap();
 
-        assertEquals(encoder.getName(), "Base64_ATTRIBUTE");
-        assertEquals(encoder.getNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
+        assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML1ByteAttributeTranscoder);
+        assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAME), "Base64_ATTRIBUTE");
+        assertNull(rule.get(SAML1AttributeTranscoder.PROP_NAMESPACE));
+        assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        checkEncodeType(rule, true);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("resolver/saml1Base64NoName.xml", SAML1ByteAttributeEncoder.class);
+        getAttributeTranscoderRule("resolver/saml1Base64NoName.xml");
     }
 }

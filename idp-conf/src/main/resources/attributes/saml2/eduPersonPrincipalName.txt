@@ -1,0 +1,4 @@
+id = eduPersonPrincipalName
+transcoder_bean = SAML2ScopedStringTranscoder
+name = urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+encodeType = false

@@ -5,37 +5,47 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-init-method="initialize" default-destroy-method="destroy">
-	<bean id="shibboleth.VelocityEngine"
-		class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
-		<property name="velocityProperties">
-			<props>
-				<prop key="resource.loader">classpath, string</prop>
-				<prop key="classpath.resource.loader.class">
-					org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-				</prop>
-				<prop key="string.resource.loader.class">
-					org.apache.velocity.runtime.resource.loader.StringResourceLoader
-				</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="shibboleth.AttributeResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+
+	<bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
 		depends-on="shibboleth.VelocityEngine" p:failFast="true"
 		p:reloadCheckDelay="0">
 
 		<constructor-arg name="claz"
-			value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
+			value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
 		<constructor-arg name="strategy">
-			<bean
-				class="net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy"
-				p:id="ShibbolethAttributeResolver" />
+			<bean class="net.shibboleth.idp.attribute.transcoding.spring.impl.AttributeRegistryServiceStrategy"
+				p:id="shibboleth.AttributeRegistryService"
+				p:namingRegistry="DefaultNamingRegistry" />
 		</constructor-arg>
 		<property name="serviceConfigurations">
 			<util:list>
-				<value>/net/shibboleth/idp/attribute/resolver/filter/resolver.xml
-				</value>
+				<value>/net/shibboleth/idp/attribute/resolver/filter/resolver.xml</value>
 			</util:list>
 		</property>
 	</bean>
+
+    <util:map id="DefaultNamingRegistry">
+        <entry key="#{T(org.opensaml.saml.saml2.core.Attribute)}">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
+        </entry>
+        <entry key="#{T(org.opensaml.saml.saml1.core.AttributeDesignator)}">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder.NamingFunction" />
+        </entry>
+    </util:map>
+
+    <bean id="shibboleth.VelocityEngine"
+        class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">classpath, string</prop>
+                <prop key="classpath.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="string.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
+            </props>
+        </property>
+    </bean>
 
 </beans>

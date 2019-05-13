@@ -22,10 +22,11 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
@@ -41,13 +42,16 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapper;
-import net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /** Tests for {@link FilterByQueriedAttributes} */
@@ -57,7 +61,7 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
     
     private AttributeQuery query;
     
-    private AttributesMapper<Attribute, IdPAttribute> mapper;
+    private ReloadableService<AttributeTranscoderRegistry> registry;
     
     private FilterByQueriedAttributes action;
     
@@ -86,16 +90,18 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
         }
     }
         
-    @BeforeClass public void setup() throws XMLParserException, UnmarshallingException {
-        query = unmarshallElement(PATH + "AttributeQuery.xml", true);        
-        mapper = getBean(PATH + "saml2Mapper.xml", SAML2AttributesMapper.class);
+    @BeforeClass public void setup() {
+        registry = new RegistryService(getBean(PATH + "saml2Mapper.xml", AttributeTranscoderRegistryImpl.class));
     }
     
-    @BeforeMethod public void setUpMethod() throws ComponentInitializationException {
-        action = new FilterByQueriedAttributes(mapper);
+    @BeforeMethod public void setUpMethod() throws ComponentInitializationException, XMLParserException, UnmarshallingException {
+        query = unmarshallElement(PATH + "AttributeQuery.xml", true);        
+        action = new FilterByQueriedAttributes();
+        action.setTranscoderRegistry(registry);
+        action.initialize();
+
         rc = new RequestContextBuilder().setInboundMessage(query).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
-        action.initialize();
     }
 
     @Test public void noAttributes() {
@@ -107,7 +113,11 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
     @Test public void noValues() {
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class,true);
         final AttributeContext ac = rpc.getSubcontext(AttributeContext.class,true);
-        final List<IdPAttribute> attributes = List.of(new IdPAttribute("eduPersonAssurance"), new IdPAttribute("flooby"), new IdPAttribute("eduPersonScopedAffiliation"),  new IdPAttribute("eduPersonTargetedID"));
+        final List<IdPAttribute> attributes = List.of(
+                new IdPAttribute("eduPersonAssurance"),
+                new IdPAttribute("flooby"),
+                new IdPAttribute("eduPersonScopedAffiliation"),
+                new IdPAttribute("eduPersonTargetedID"));
         ac.setIdPAttributes(attributes);
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -129,6 +139,31 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         assertEquals(ac.getIdPAttributes().size(), 2);
+    }
+
+    private static class RegistryService extends AbstractReloadableService<AttributeTranscoderRegistry> {
+
+        private ServiceableComponent<AttributeTranscoderRegistry> component;
+
+        protected RegistryService(ServiceableComponent<AttributeTranscoderRegistry> what) {
+            component = what;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
+            if (null == component) {
+                return null;
+            }
+            component.pinComponent();
+            return component;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected boolean shouldReload() {
+            return false;
+        }
     }
 
 }

@@ -17,14 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Collection;
-
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
@@ -38,14 +34,6 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
  * */
 @ThreadSafe
 public interface AttributeResolver extends IdentifiedComponent {
-
-    /**
-     * Gets all the {@link AttributeEncoder}s for this resolver. Each encoder is linked
-     * (via being in an {@link Pair} to the name of the attribute it is associated with.
-     * 
-     * @return The Attribute Encoders loaded in to this resolver
-     */
-    @Nonnull Collection<Pair<String, AttributeEncoder<?>>> getAllEncoders();
 
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,

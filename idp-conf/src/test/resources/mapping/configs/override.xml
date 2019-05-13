@@ -18,4 +18,9 @@
         <value>classpath:/mapping/configs/attribute-filter2.xml</value>
 	</util:list>
 
+	<util:list id ="shibboleth.AttributeRegistryResources">
+        <value>classpath:/system/conf/attribute-registry-system.xml</value>
+        <value>classpath:/mapping/configs/attribute-resolver.xml</value>
+        <value>classpath:/mapping/configs/attribute-resolver2.xml</value>
+    </util:list>
 </beans>

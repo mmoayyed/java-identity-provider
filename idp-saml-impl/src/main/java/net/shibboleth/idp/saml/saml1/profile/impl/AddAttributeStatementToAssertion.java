@@ -19,29 +19,27 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.saml.attribute.encoding.SAML1AttributeEncoder;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
@@ -68,7 +66,7 @@ import com.google.common.collect.Collections2;
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE}
  */
-public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementToAssertion {
+public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementToAssertion<Attribute> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
@@ -137,8 +135,20 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         }
 
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(attributes.size());
-        for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
-            encodeAttribute(profileRequestContext, attribute, encodedAttributes);
+        
+        ServiceableComponent<AttributeTranscoderRegistry> component = null;
+        try {
+            component = getTranscoderRegistry().getServiceableComponent();
+            if (component == null) {
+                throw new AttributeEncodingException("Attribute transoding service unavailable");
+            }
+            for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
+                encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
+            }
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
         }
 
         if (encodedAttributes.isEmpty()) {
@@ -156,50 +166,25 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
     }
 
     /**
-     * Encodes a {@link IdPAttribute} into zero or more {@link Attribute} objects if a proper encoder is available.
+     * Encodes {@link IdPAttribute} into zero or more {@link Attribute} objects if a proper encoder is available.
      * 
+     * @param registry transcoding registry
      * @param profileRequestContext current profile request context
      * @param attribute the attribute to be encoded
      * @param results collection to add the encoded SAML attributes to
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
-    private void encodeAttribute(@Nonnull final ProfileRequestContext profileRequestContext,
+    private void encodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
+            @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final IdPAttribute attribute, @Nonnull @NonnullElements final Collection<Attribute> results)
                     throws AttributeEncodingException {
 
         log.debug("{} Attempting to encode attribute {} as a SAML 1 Attribute", getLogPrefix(), attribute.getId());
-        
-        final Set<AttributeEncoder<?>> encoders = attribute.getEncoders();
-        if (encoders.isEmpty()) {
-            log.debug("{} Attribute {} does not have any encoders, nothing to do", getLogPrefix(), attribute.getId());
-            return;
-        }
-        
-        boolean added = false; 
-        
-        for (final AttributeEncoder<?> encoder : encoders) {
-            if (SAMLConstants.SAML11P_NS.equals(encoder.getProtocol())
-                    && encoder instanceof SAML1AttributeEncoder
-                    && encoder.getActivationCondition().test(profileRequestContext)) {
-                log.debug("{} Encoding attribute {} as a SAML 1 Attribute", getLogPrefix(), attribute.getId());
-                try {
-                    added = true;
-                    results.add((Attribute) encoder.encode(attribute));
-                } catch (final AttributeEncodingException e) {
-                    if (isIgnoringUnencodableAttributes()) {
-                        log.debug("{} Unable to encode attribute {} as SAML 1 attribute", getLogPrefix(),
-                                attribute.getId(), e);
-                    } else {
-                        throw e;
-                    }
-                }
-            }
-        }
 
-        if (!added) {
-            log.debug(
-                    "{} Attribute {} did not have a usable SAML 1 Attribute encoder associated with it, nothing to do",
+        // Uses the new registry.
+        if (super.encodeAttribute(registry, profileRequestContext, attribute, Attribute.class, results) == 0) {
+            log.debug("{} Attribute {} did not have SAML 1 Attribute transcoder instructions associated, nothing to do",
                     getLogPrefix(), attribute.getId());
         }
     }

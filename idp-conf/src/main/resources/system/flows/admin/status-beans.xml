@@ -32,6 +32,7 @@
         <ref bean="shibboleth.MetadataResolverService" />
         <ref bean="shibboleth.RelyingPartyResolverService" />
         <ref bean="shibboleth.NameIdentifierGenerationService" />
+        <ref bean="shibboleth.AttributeRegistryService" />
         <ref bean="shibboleth.AttributeResolverService" />
         <ref bean="shibboleth.AttributeFilterService" />
         <ref bean="shibboleth.ReloadableCASServiceRegistry" />

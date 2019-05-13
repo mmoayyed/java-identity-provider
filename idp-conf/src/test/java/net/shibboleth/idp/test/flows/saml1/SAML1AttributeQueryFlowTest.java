@@ -161,7 +161,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
             designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
             designator.setAttributeName("urn:mace:dir:attribute-def:mail");
             attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
-    
+
             designator = designatorBuilder.buildObject();
             designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
             designator.setAttributeName("urn:mace:dir:attribute-def:foo");

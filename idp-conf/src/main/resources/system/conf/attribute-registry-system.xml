@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="SAML2StringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder" />
+    <bean id="SAML2ScopedStringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ScopedStringAttributeTranscoder" />
+    <bean id="SAML2ByteTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ByteAttributeTranscoder" />
+    <bean id="SAML2XMLObjectTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder" />
+        
+    <bean id="SAML1StringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder" />
+    <bean id="SAML1ScopedStringTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ScopedStringAttributeTranscoder" />
+    <bean id="SAML1ByteTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ByteAttributeTranscoder" />
+    <bean id="SAML1XMLObjectTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttributeTranscoder" />
+    
+    <util:map id="DefaultNamingRegistry">
+        <entry key="#{T(org.opensaml.saml.saml2.core.Attribute)}">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
+        </entry>
+        <entry key="#{T(org.opensaml.saml.saml1.core.AttributeDesignator)}">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder.NamingFunction" />
+        </entry>
+    </util:map>
+    
+    <bean id="shibboleth.TranscodingRule"
+        class="net.shibboleth.idp.attribute.transcoding.TranscodingRule" abstract="true" />
+        
+    <bean id="shibboleth.TranscodingRuleLoader"
+        class="net.shibboleth.idp.attribute.transcoding.impl.TranscodingRuleLoader" abstract="true" />
+    
+</beans>

@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.utilities.java.support.logic.Predicate;
 
 /**

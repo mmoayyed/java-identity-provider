@@ -4,11 +4,16 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xmlns="urn:oasis:names:tc:SAML:2.0:assertion" 
    Version="2.0"  ID="AQ" IssueInstant="2018-03-14T17:31:00Z">
-   <Attribute  Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" FriendlyName="eduPersonAssurance">
+   <Issuer>me</Issuer>
+   <Subject>
+    <NameID>you</NameID>
+   </Subject>
+   <Attribute Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" FriendlyName="eduPersonAssurance">
     <AttributeValue  xsi:type="xs:string">turquoise</AttributeValue>
    </Attribute>
-   <Attribute  Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" FriendlyName="eduPersonScopedAffiliation">
+   <Attribute Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" FriendlyName="eduPersonScopedAffiliation">
     <AttributeValue  xsi:type="xs:string">blue#yellow</AttributeValue>
    </Attribute>
-   <Attribute  Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" FriendlyName="eduPersonTargetedID"/>
+   <Attribute Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" FriendlyName="eduPersonTargetedID"/>
+   <Attribute Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" FriendlyName="eduPersonTargetedIDWithWrongNameFormat"/>   
 </saml2p:AttributeQuery>

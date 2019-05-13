@@ -18,53 +18,26 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 
-import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.BaseSAML2AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2XMLObjectAttributeEncoder;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder;
 
-/** Spring Bean Definition Parser for SAML2 XMLObject attribute encoder. */
-public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
+/** Spring Bean Definition Parser for {@link SAML2XMLObjectAttributeTranscoder}. */
+public class SAML2XMLObjectAttributeEncoderParser extends BaseSAML2AttributeEncoderParser {
 
     /** Schema type name.. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "SAML2XMLObject");
 
-    /** Local name of name format attribute. */
-    @Nonnull @NotEmpty public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
-
-    /** Local name of friendly name attribute. */
-    @Nonnull @NotEmpty public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
-
-    /** Constructor. */
-    public SAML2XMLObjectAttributeEncoderParser() {
-        setNameRequired(true);
-    }
-
     /** {@inheritDoc} */
-    @Override protected Class<SAML2XMLObjectAttributeEncoder> getBeanClass(@Nullable final Element element) {
-        return SAML2XMLObjectAttributeEncoder.class;
+    @Override
+    protected BeanReference buildTranscoder() {
+        return new RuntimeBeanReference("SAML2XMLObjectTranscoder");
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
-
-        if (config.hasAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME)) {
-            final String nameFormat = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME));
-            builder.addPropertyValue("nameFormat", nameFormat);
-        }
-
-        builder.addPropertyValue("friendlyName",
-                StringSupport.trimOrNull(config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME)));
-    }
 }

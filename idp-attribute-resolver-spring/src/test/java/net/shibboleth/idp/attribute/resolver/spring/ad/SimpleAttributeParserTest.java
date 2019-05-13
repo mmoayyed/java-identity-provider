@@ -17,12 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +41,6 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParse
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringAttributeEncoder;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -63,7 +58,8 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         assertTrue(attrDef.getDisplayDescriptions().isEmpty(), "getDisplayDescriptions().isEmpty()");
         assertTrue(attrDef.getDisplayNames().isEmpty(), "getDisplayNames().isEmpty()");
         assertEquals(attrDef.getAttributeDependencies().size(), 1);
-        assertTrue(attrDef.getAttributeEncoders().isEmpty(), "getgetAttributeEncoders().isEmpty()");
+        
+        assertTrue(pendingTeardownContext.getBeansOfType(Collection.class).isEmpty());
     }
 
     @Test public void simplePopulated() throws ComponentInitializationException {
@@ -96,13 +92,6 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         final ResolverDataConnectorDependency dcDep = dcDeps.iterator().next();
         assertEquals(dcDep.getDependencyPluginId(), "con1");
         assertTrue(dcDep.getAttributeNames().contains("dep1"));
-
-        assertEquals(attrDef.getAttributeEncoders().size(), 1);
-        final SAML2StringAttributeEncoder e1 =
-                (SAML2StringAttributeEncoder) attrDef.getAttributeEncoders().iterator().next();
-        assertEquals(e1.getName(), "urn:oid:0.9.2342.19200300.100.1.3");
-        assertEquals(e1.getFriendlyName(), "mail");
-
     }
 
     @Test public void populated2() throws ComponentInitializationException {
@@ -126,24 +115,6 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         final Set<ResolverDataConnectorDependency> dcDeps = attrDef.getDataConnectorDependencies();
         assertEquals(dcDeps.size(), 0, "getDataConnectorDependencies");
-
-        
-        assertEquals(attrDef.getAttributeEncoders().size(), 2);
-        final List a = new ArrayList(attrDef.getAttributeEncoders());
-
-        final SAML2StringAttributeEncoder saml2;
-        final SAML1StringAttributeEncoder saml1;
-        if (a.get(0) instanceof SAML2StringAttributeEncoder) {
-            saml2 = (SAML2StringAttributeEncoder) a.get(0);
-            saml1 = (SAML1StringAttributeEncoder) a.get(1);
-        } else {
-            saml2 = (SAML2StringAttributeEncoder) a.get(1);
-            saml1 = (SAML1StringAttributeEncoder) a.get(0);
-        }
-        assertEquals(saml2.getName(), "urn:oid:0.9.2342.19200300.100.1.3");
-        assertEquals(saml2.getFriendlyName(), "mail");
-
-        assertEquals(saml1.getName(), "urn:mace:dir:attribute-def:mail");
     }
 
     @Test public void bad() throws ComponentInitializationException {

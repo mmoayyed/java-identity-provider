@@ -18,8 +18,9 @@
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,14 +29,22 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
+import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringAttributeEncoder;
+import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.idp.saml.saml1.profile.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
@@ -44,6 +53,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
@@ -79,12 +89,49 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     
     private AddAttributeStatementToAssertion action;
     
+    private AttributeTranscoderRegistryImpl registry;
+    
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().setOutboundMessage(
                 SAML1ActionTestingSupport.buildResponse()).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         
+        registry = new AttributeTranscoderRegistryImpl();
+        registry.setId("test");
+        
+        registry.setNamingRegistry(Collections.singletonMap(AttributeDesignator.class,
+                new AbstractSAML1AttributeTranscoder.NamingFunction()));
+
+        final SAML1StringAttributeTranscoder transcoder = new SAML1StringAttributeTranscoder();
+        transcoder.initialize();
+        
+        final Map<String,Object> rule1_1 = new HashMap<>();
+        rule1_1.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
+        rule1_1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule1_1.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_1);
+        rule1_1.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
+
+        final Map<String,Object> rule1_2 = new HashMap<>();
+        rule1_2.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
+        rule1_2.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule1_2.put(SAMLAttributeTranscoder.PROP_NAME, MY_ALTNAME_1);
+        rule1_2.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
+
+        final Map<String,Object> rule2_1 = new HashMap<>();
+        rule2_1.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_2);
+        rule2_1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule2_1.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_2);
+        rule2_1.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
+
+        registry.setTranscoderRegistry(Arrays.asList(
+                new TranscodingRule(rule1_1),
+                new TranscodingRule(rule1_2),
+                new TranscodingRule(rule2_1)));
+        
+        registry.initialize();
+        
         action = new AddAttributeStatementToAssertion();
+        action.setTranscoderRegistry(new RegistryService(registry));
     }
 
     /** Test that the action errors out properly if there is no relying party context. */
@@ -127,13 +174,29 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
     /** Test that the action ignores attribute encoding errors. */
     @Test public void testIgnoreAttributeEncodingErrors() throws Exception {
-        final MockSAML1StringAttributeEncoder attributeEncoder = new MockSAML1StringAttributeEncoder();
+
+        final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
+        localregistry.setId("test");
+        
+        localregistry.setNamingRegistry(Collections.singletonMap(AttributeDesignator.class,
+                new AbstractSAML1AttributeTranscoder.NamingFunction()));
+        
+        final MockSAML1StringAttributeTranscoder transcoder = new MockSAML1StringAttributeTranscoder();
+        transcoder.initialize();
+        
+        final Map<String,Object> rule = new HashMap<>();
+        rule.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
+        rule.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_1);
+        rule.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
+        
+        localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.initialize();
+        
+        action.setTranscoderRegistry(new RegistryService(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
-
-        final Collection collection = Arrays.asList(attributeEncoder);
-        attribute.setEncoders(collection);
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
@@ -147,13 +210,29 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
     /** Test that the action returns the correct transition when an attribute encoding error occurs. */
     @Test public void failOnAttributeEncodingErrors() throws Exception {
-        final MockSAML1StringAttributeEncoder attributeEncoder = new MockSAML1StringAttributeEncoder();
+        
+        final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
+        localregistry.setId("test");
+        
+        localregistry.setNamingRegistry(Collections.singletonMap(AttributeDesignator.class,
+                new AbstractSAML1AttributeTranscoder.NamingFunction()));
+
+        final MockSAML1StringAttributeTranscoder transcoder = new MockSAML1StringAttributeTranscoder();
+        transcoder.initialize();
+
+        final Map<String,Object> rule = new HashMap<>();
+        rule.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
+        rule.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_1);
+        rule.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
+        
+        localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.initialize();
+        
+        action.setTranscoderRegistry(new RegistryService(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
-
-        final Collection collection = Arrays.asList(attributeEncoder);
-        attribute.setEncoders(collection);
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
@@ -254,29 +333,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
-        final SAML1StringAttributeEncoder attributeEncoder1 = new SAML1StringAttributeEncoder();
-        attributeEncoder1.setName(MY_NAME_1);
-        attributeEncoder1.setNamespace(MY_NAMESPACE);
-        attributeEncoder1.initialize();
-
-        final SAML1StringAttributeEncoder attributeEncoder1_2 = new SAML1StringAttributeEncoder();
-        attributeEncoder1_2.setName(MY_ALTNAME_1);
-        attributeEncoder1_2.setNamespace(MY_NAMESPACE);
-        attributeEncoder1_2.initialize();
-
-        final Collection collection1 = Arrays.asList(attributeEncoder1, attributeEncoder1_2);
-        attribute1.setEncoders(collection1);
-
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
         attribute2.setValues(Collections.singletonList(new StringAttributeValue(MY_VALUE_2)));
-
-        final SAML1StringAttributeEncoder attributeEncoder2 = new SAML1StringAttributeEncoder();
-        attributeEncoder2.setName(MY_NAME_2);
-        attributeEncoder2.setNamespace(MY_NAMESPACE);
-        attributeEncoder2.initialize();
-
-        final Collection collection2 = Arrays.asList(attributeEncoder2);
-        attribute2.setEncoders(collection2);
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2));
@@ -321,11 +379,39 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     }
 
     /** A mock SAML1 string attribute encoder which always throws an {@link AttributeEncodingException}. */
-    private class MockSAML1StringAttributeEncoder extends SAML1StringAttributeEncoder {
+    private class MockSAML1StringAttributeTranscoder extends SAML1StringAttributeTranscoder {
 
         /** {@inheritDoc} */
-        @Nullable public Attribute encode(@Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
+        @Override
+        @Nullable public Attribute encode(@Nullable final ProfileRequestContext profileRequestContext,
+                @Nonnull final IdPAttribute attribute, @Nonnull final Class<? extends AttributeDesignator> to,
+                @Nonnull final TranscodingRule rule) throws AttributeEncodingException {
             throw new AttributeEncodingException("Always thrown.");
+        }
+    }
+
+    private static class RegistryService extends AbstractReloadableService<AttributeTranscoderRegistry> {
+
+        private ServiceableComponent<AttributeTranscoderRegistry> component;
+
+        protected RegistryService(ServiceableComponent<AttributeTranscoderRegistry> what) {
+            component = what;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
+            if (null == component) {
+                return null;
+            }
+            component.pinComponent();
+            return component;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected boolean shouldReload() {
+            return false;
         }
     }
 

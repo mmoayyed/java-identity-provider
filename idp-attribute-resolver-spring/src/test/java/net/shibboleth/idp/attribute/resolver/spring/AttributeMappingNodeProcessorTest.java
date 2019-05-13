@@ -32,7 +32,7 @@ import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -43,8 +43,8 @@ import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
@@ -55,13 +55,13 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
 
     private EntityDescriptor entityDescriptor;
 
-    private ReloadableService<AttributeResolver> service;
+    private ReloadableService<AttributeTranscoderRegistry> service;
 
     private AttributeMappingNodeProcessor processor;
 
     private GenericApplicationContext pendingTeardownContext = null;
     
-    @AfterMethod public void tearDownTestContext() {
+    @AfterClass public void tearDownTestContext() {
         if (null == pendingTeardownContext ) {
             return;
         }
@@ -82,7 +82,7 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         processor = new AttributeMappingNodeProcessor(service);
     }
 
-    private ReloadableService<AttributeResolver> getService() {
+    private ReloadableService<AttributeTranscoderRegistry> getService() {
         GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: ");
@@ -97,11 +97,12 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions("/net/shibboleth/idp/attribute/resolver/filter/service.xml");
+        beanDefinitionReader.loadBeanDefinitions(
+                "/net/shibboleth/idp/attribute/resolver/spring/customBean.xml",
+                "/net/shibboleth/idp/attribute/resolver/filter/service.xml");
         context.refresh();
 
-        final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
-        return attributeResolverService;
+        return context.getBean(ReloadableService.class);
     }
 
     @Test public void entityAttributes() throws FilterException {
@@ -138,7 +139,7 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
 
         final AttributesMapContainer container = acs.getObjectMetadata().get(AttributesMapContainer.class).get(0);
 
-        final Multimap<String, IdPRequestedAttribute> map = container.get();
+        final Multimap<String,IdPRequestedAttribute> map = container.get();
 
         assertEquals(map.size(), 3);
 

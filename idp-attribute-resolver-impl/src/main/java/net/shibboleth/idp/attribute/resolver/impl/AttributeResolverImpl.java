@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -61,7 +60,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
-import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -632,15 +630,4 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
     }
 
-    /** {@inheritDoc} */
-    public Collection<Pair<String, AttributeEncoder<?>>> getAllEncoders() {
-        final Collection<Pair<String, AttributeEncoder<?>>> result = new HashSet<>();
-
-        for (final AttributeDefinition attributeDef : getAttributeDefinitions().values()) {
-            for (final AttributeEncoder encoder : attributeDef.getAttributeEncoders()) {
-                result.add(new Pair<>(attributeDef.getId(), encoder));
-            }
-        }
-        return result;
-    }
 }

@@ -17,19 +17,22 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder;
 
 /**
- *
+ * Test for regressions identified and patched.
  */
 public class Regressions extends BaseAttributeDefinitionParserTest {
 
@@ -39,10 +42,15 @@ public class Regressions extends BaseAttributeDefinitionParserTest {
         loadFile(ENCODER_FILE_PATH + "resolver/idp-571.xml", context);
         context.refresh();
      
-        Collection<AttributeEncoder> encoders = context.getBeansOfType(AttributeEncoder.class).values();
         Collection<AttributeDefinition> definitions = context.getBeansOfType(AttributeDefinition.class).values();
+        Collection<TranscodingRule> transcoderRules = context.getBeansOfType(TranscodingRule.class).values();
         
-        assertEquals(encoders.size(), 1);
         assertEquals(definitions.size(), 1);
+        assertEquals(transcoderRules.size(), 1);
+        
+        final Map<String,Object> rule = transcoderRules.iterator().next().getMap();
+        assertEquals(rule.get(AttributeTranscoderRegistry.PROP_ID), "skillsoftdept");
+        assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2StringAttributeTranscoder);
     }
+
 }

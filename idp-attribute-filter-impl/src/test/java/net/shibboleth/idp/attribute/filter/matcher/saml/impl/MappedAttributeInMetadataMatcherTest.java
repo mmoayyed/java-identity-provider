@@ -44,11 +44,11 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * Tests for {@link MappedAttributeInMetadataMatcher}.
+ * Tests for {@link AttributeInMetadataMatcher} using decoded attributes.
  */
 public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     
@@ -66,9 +66,9 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
         return attr;
     }
 
-    private MappedAttributeInMetadataMatcher makeMatcher(String id, boolean matchIfMetadataSilent, boolean onlyIfRequired)
+    private AttributeInMetadataMatcher makeMatcher(String id, boolean matchIfMetadataSilent, boolean onlyIfRequired)
             throws ComponentInitializationException {
-        MappedAttributeInMetadataMatcher matcher = new MappedAttributeInMetadataMatcher();
+        AttributeInMetadataMatcher matcher = new AttributeInMetadataMatcher();
         matcher.setMatchIfMetadataSilent(matchIfMetadataSilent);
         matcher.setOnlyIfRequired(onlyIfRequired);
         matcher.setId(id);
@@ -109,7 +109,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
     }
 
     @Test public void getters() throws ComponentInitializationException {
-        MappedAttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
+        AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
         assertTrue(matcher.getMatchIfMetadataSilent());
         assertTrue(matcher.getOnlyIfRequired());
 
@@ -139,7 +139,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
         final IdPAttribute attr =
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        final MappedAttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
+        final AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
 
         assertEquals(result.size(), 2);

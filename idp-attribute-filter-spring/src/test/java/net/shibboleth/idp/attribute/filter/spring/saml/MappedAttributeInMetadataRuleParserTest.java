@@ -26,7 +26,7 @@ import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
-import net.shibboleth.idp.attribute.filter.matcher.saml.impl.MappedAttributeInMetadataMatcher;
+import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -43,14 +43,14 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
         
         final AttributeRule rule = getBean(MATCHER_PATH + "mappedInMetadata.xml", AttributeRule.class, context);
         rule.initialize();
-        MappedAttributeInMetadataMatcher matcher = (MappedAttributeInMetadataMatcher) rule.getMatcher();
+        AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) rule.getMatcher();
      
         assertTrue(matcher.getMatchIfMetadataSilent());
         assertTrue(matcher.getOnlyIfRequired());
         assertTrue(matcher.getId().endsWith(":PermitRule"));
     
         final PolicyFromMatcher policyRule = (PolicyFromMatcher) getBean(PolicyRequirementRule.class, context);
-        matcher = (MappedAttributeInMetadataMatcher) policyRule.getMatcher();
+        matcher = (AttributeInMetadataMatcher) policyRule.getMatcher();
         assertTrue(matcher.getMatchIfMetadataSilent());
         assertTrue(matcher.getOnlyIfRequired());
         assertTrue(matcher.getId().endsWith(":PRR"));

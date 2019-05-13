@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  */
 @ContextConfiguration({"classpath:/mapping/configs/override.xml", })
 public class MappingTest extends AbstractFlowTest {
-    @Test public void testResolveAndFilter() {
+    @Test(enabled=true) public void testResolveAndFilter() {
 
         final FlowExecutionResult result = flowExecutor.launchExecution("resolveAndFilter", null, externalContext);
 

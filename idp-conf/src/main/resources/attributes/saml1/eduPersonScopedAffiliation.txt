@@ -1,0 +1,4 @@
+id = eduPersonScopedAffiliation
+transcoder_bean = SAML1ScopedStringTranscoder
+name = urn:mace:dir:attribute-def:eduPersonScopedAffiliation
+encodeType = false

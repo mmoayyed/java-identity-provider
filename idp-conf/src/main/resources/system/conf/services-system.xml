@@ -54,6 +54,26 @@
         </constructor-arg>
     </bean>
 
+    <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
+            p:serviceConfigurations-ref="#{
+ 	            getObject('%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()) != null
+                    ? '%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()
+                        : 'shibboleth.DefaultAttributeRegistryResources' }"
+	        p:failFast="%{idp.service.attribute.registry.failFast:%{idp.service.failFast:false}}"
+	        p:reloadCheckDelay="%{idp.service.attribute.registry.checkInterval:PT0S}"
+	        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
+	        p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
+	    <constructor-arg name="claz" value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
+	    <constructor-arg name="strategy">
+	       <bean class="net.shibboleth.idp.attribute.transcoding.spring.impl.AttributeRegistryServiceStrategy"
+	           p:namingRegistry="#{'%{idp.service.attribute.registry.namingRegistry:DefaultNamingRegistry}'.trim()}" />
+	    </constructor-arg>
+    </bean>
+    <util:list id ="shibboleth.DefaultAttributeRegistryResources">
+        <value>%{idp.home}/conf/attribute-registry.xml</value>
+        <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
+    </util:list>
+
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
         p:serviceConfigurations-ref="#{'%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}'.trim()}"
@@ -76,7 +96,7 @@
     </bean>
 
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
-            depends-on="shibboleth.AttributeResolverService" 
+            depends-on="shibboleth.AttributeRegistryService" 
             p:serviceConfigurations-ref="#{'%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}'.trim()}"
             p:failFast="%{idp.service.metadata.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.metadata.checkInterval:PT0S}"
@@ -89,7 +109,7 @@
             <list>
                 <ref bean="shibboleth.IdentifiableBeanPostProcessor" />
                 <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
-                    c:service-ref="shibboleth.AttributeResolverService" />
+                    c:service-ref="shibboleth.AttributeRegistryService" />
             </list>
         </property>
     </bean>
@@ -158,14 +178,6 @@
     <bean id="shibboleth.AccessControlService"
         class="net.shibboleth.utilities.java.support.security.DelegatingAccessControlService"
         c:acService-ref="shibboleth.ReloadableAccessControlService" />
-
-    <bean id="shibboleth.SAML1AttributeDesignatorsMapperService"
-        class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML1AttributeDesignatorsMapperService"
-        c:resolverService-ref="shibboleth.AttributeResolverService" />
-
-    <bean id="shibboleth.SAML2AttributesMapperService"
-        class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapperService"
-        c:resolverService-ref="shibboleth.AttributeResolverService" />
 
     <bean id="shibboleth.CASServiceRegistry"
           class="net.shibboleth.idp.cas.service.impl.ReloadingServiceRegistry"

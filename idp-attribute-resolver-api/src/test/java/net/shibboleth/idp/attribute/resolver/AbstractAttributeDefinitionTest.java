@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +26,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -49,8 +47,6 @@ public class AbstractAttributeDefinitionTest {
 
         Assert.assertEquals(definition.getId(), "foo");
         Assert.assertFalse(definition.isDependencyOnly());
-        Assert.assertNotNull(definition.getAttributeEncoders());
-        Assert.assertTrue(definition.getAttributeEncoders().isEmpty());
         Assert.assertNotNull(definition.getDisplayDescriptions());
         Assert.assertTrue(definition.getDisplayDescriptions().isEmpty());
         Assert.assertNotNull(definition.getDisplayNames());
@@ -74,50 +70,6 @@ public class AbstractAttributeDefinitionTest {
 
         definition.setDependencyOnly(false);
         Assert.assertFalse(definition.isDependencyOnly());
-    }
-
-    /** Tests setting and retrieving encoders. */
-    @Test
-    public void encoders() {
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
-
-        MockAttributeEncoder enc1 = new MockAttributeEncoder(null, null);
-        MockAttributeEncoder enc2 = new MockAttributeEncoder(null, null);
-
-        Set<AttributeEncoder<?>> encoders = new HashSet<>(2);
-
-        definition.setAttributeEncoders(null);
-        Assert.assertNotNull(definition.getAttributeEncoders());
-        Assert.assertTrue(definition.getAttributeEncoders().isEmpty());
-
-        definition.setAttributeEncoders(encoders);
-        Assert.assertNotNull(definition.getAttributeEncoders());
-        Assert.assertTrue(definition.getAttributeEncoders().isEmpty());
-
-        encoders.add(enc1);
-        encoders.add(null);
-        encoders.add(enc2);
-        Assert.assertNotNull(definition.getAttributeEncoders());
-        Assert.assertTrue(definition.getAttributeEncoders().isEmpty());
-
-        definition.setAttributeEncoders(encoders);
-        Assert.assertEquals(definition.getAttributeEncoders().size(), 2);
-        Assert.assertTrue(definition.getAttributeEncoders().contains(enc1));
-        Assert.assertTrue(definition.getAttributeEncoders().contains(enc2));
-
-        encoders.clear();
-        encoders.add(enc2);
-        definition.setAttributeEncoders(encoders);
-        Assert.assertEquals(definition.getAttributeEncoders().size(), 1);
-        Assert.assertFalse(definition.getAttributeEncoders().contains(enc1));
-        Assert.assertTrue(definition.getAttributeEncoders().contains(enc2));
-
-        try {
-            definition.getAttributeEncoders().add(enc2);
-            Assert.fail("able to add entry to supposedly unmodifiable collection");
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
     }
 
     /** Tests that display descriptions are properly added and modified. */
@@ -228,30 +180,6 @@ public class AbstractAttributeDefinitionTest {
         testInvalidName(new MockAttributeDefinition("Name\rWith\tnonprinters", (IdPAttribute) null));
     }
     
-    @Test public void initDestroyValidate() throws ComponentInitializationException {
-        MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
-        
-        Set<AttributeEncoder<?>> encoders = new HashSet<>(1);
-        encoders.add(encoder);
-        definition.setAttributeEncoders(encoders);
-        
-        Assert.assertFalse(encoder.isInitialized());
-        Assert.assertFalse(encoder.isDestroyed());
-
-        encoder.initialize();
-        definition.initialize();
-        Assert.assertTrue(encoder.isInitialized());
-        Assert.assertFalse(encoder.isDestroyed());
-
-        definition.destroy();
-        encoder.destroy();
-        Assert.assertTrue(encoder.isInitialized());
-        Assert.assertTrue(encoder.isDestroyed());
-        
-        
-    }
-
     /**
      * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
      * {@link AttributeDefinition}.
