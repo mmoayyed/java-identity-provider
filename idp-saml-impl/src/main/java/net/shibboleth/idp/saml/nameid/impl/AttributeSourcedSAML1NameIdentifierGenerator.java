@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLException;
@@ -166,13 +167,17 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
 
             final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
-                if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameIdentifier) {
-                    if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(getFormat(),
-                            ((NameIdentifier) value.getValue()).getFormat())) {
-                        log.info("Returning NameIdentifier from XMLObject-valued attribute {}", sourceId);
-                        return (NameIdentifier) value.getValue();
-                    } else {
-                        log.debug("Attribute {} value was NameIdentifier, but Format did not match", sourceId);
+                if (value instanceof XMLObjectAttributeValue) {
+                    final XMLObject xmlObject = ((XMLObjectAttributeValue)value).getValue();
+                    if (xmlObject  instanceof NameIdentifier) {
+                        final NameIdentifier nameIdentifier = (NameIdentifier) xmlObject; 
+                        if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(getFormat(),
+                                nameIdentifier.getFormat())) {
+                            log.info("Returning NameIdentifier from XMLObject-valued attribute {}", sourceId);
+                            return nameIdentifier;
+                        } else {
+                            log.debug("Attribute {} value was NameIdentifier, but Format did not match", sourceId);
+                        }
                     }
                 }
             }
@@ -207,7 +212,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                     return ((ScopedStringAttributeValue) value).getValue() + delimiter
                             + ((ScopedStringAttributeValue) value).getScope();
                 } else if (value instanceof StringAttributeValue) {
-                    final String strVal = StringSupport.trimOrNull((String) value.getValue());
+                    final String strVal = StringSupport.trimOrNull(((StringAttributeValue) value).getValue());
                     if (strVal == null) {
                         log.debug("Skipping all-whitespace string value");
                         continue;

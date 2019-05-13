@@ -158,7 +158,7 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
         } else {
             for (final IdPAttributeValue value : attribute.getValues()) {
                 if (value instanceof StringAttributeValue) {
-                    if (toMatch.equals(value.getValue())) {
+                    if (toMatch.equals(((StringAttributeValue)value).getValue())) {
                         log.debug("Found matching value ({}) in attribute {}", toMatch, attribute.getId());
                         return true;
                     }

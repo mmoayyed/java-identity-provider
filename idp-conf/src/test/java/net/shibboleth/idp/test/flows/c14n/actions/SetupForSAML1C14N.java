@@ -33,6 +33,7 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -71,11 +72,11 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
         final NameIdentifier nameId = identifierBuilder.buildObject();
         nameId.setFormat(NameIdentifier.UNSPECIFIED);
         for (final IdPAttributeValue attrValue : attributeValues) {
-            if (attrValue == null || attrValue.getValue() == null) {
+            if (attrValue == null) {
                 continue;
             }
-            final Object value = attrValue.getValue();
-            if (value instanceof String) {
+            if (attrValue instanceof StringAttributeValue) {
+                final String value = ((StringAttributeValue)attrValue).getValue();
                 // Check for empty or all-whitespace, but don't trim.
                 if (StringSupport.trimOrNull((String) value) == null) {
                     continue;

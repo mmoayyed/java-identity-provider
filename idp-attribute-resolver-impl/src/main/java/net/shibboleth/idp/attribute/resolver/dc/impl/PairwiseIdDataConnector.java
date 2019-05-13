@@ -215,12 +215,12 @@ public class PairwiseIdDataConnector extends AbstractDataConnector {
         final String val;
 
         if (attributeValue instanceof StringAttributeValue) {
-            if (StringSupport.trimOrNull((String) attributeValue.getValue()) == null) {
+            if (StringSupport.trimOrNull(((StringAttributeValue) attributeValue).getValue()) == null) {
                 log.warn("{} Source attribute {} for connector {} was all-whitespace", getLogPrefix(),
                         getSourceAttributeInformation(), getId());
                 return null;
             }
-            val = (String) attributeValue.getValue();
+            val = ((StringAttributeValue) attributeValue).getValue();
         } else if (attributeValue instanceof EmptyAttributeValue) {
             final EmptyAttributeValue emptyVal = (EmptyAttributeValue) attributeValue;
             log.warn("{} Source attribute {} value for connector {} was an empty value of type {}", getLogPrefix(),

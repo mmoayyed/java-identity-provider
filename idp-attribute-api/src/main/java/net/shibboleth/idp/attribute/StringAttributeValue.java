@@ -44,7 +44,7 @@ public class StringAttributeValue implements IdPAttributeValue {
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public final String getValue() {
+    @Nonnull @NotEmpty public final String getValue() {
         return value;
     }
 

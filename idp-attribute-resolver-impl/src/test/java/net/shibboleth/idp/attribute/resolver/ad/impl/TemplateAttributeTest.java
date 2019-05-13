@@ -153,7 +153,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final IdPAttribute val = attr.resolve(context);
-        final Collection<?> results = val.getValues();
+        final Collection results = val.getValues();
 
         assertEquals(results.size(), 0, "Templated value count");
 

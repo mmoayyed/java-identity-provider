@@ -214,10 +214,10 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                             break;
                         default:
                             throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
-                                    + "Unknown empty attribute value type " + value.getValue()));
+                                    + "Unknown empty attribute value type " + value.getClass()));
                     }
                 } else if (value instanceof StringAttributeValue) {
-                    velocityValue = (String) value.getValue();
+                    velocityValue = ((StringAttributeValue) value).getValue();
                 } else {
                     throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                             + "This attribute definition only supports attribute value types of "

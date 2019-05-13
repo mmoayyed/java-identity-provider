@@ -349,6 +349,10 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
             for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());
                 for (final IdPAttributeValue value : entry.getValue()) {
+                    if (value instanceof String) {
+                        String new_name = (String) value;
+                        
+                    }
                     values.add(value.getValue());
                 }
                 log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());

@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
@@ -78,7 +79,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         Set<IdPAttributeValue> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         assertEquals(x.size(), 1);
-        String val = (String) x.iterator().next().getValue();
+        String val = ((StringAttributeValue) x.iterator().next()).getValue();
         assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));
         
     }

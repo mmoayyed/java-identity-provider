@@ -163,13 +163,14 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
             }
             for (final IdPAttributeValue val : attr.getValues()) {
                 if (val instanceof StringAttributeValue) {
-                    if (val.getValue() == null || ((StringAttributeValue) val).getValue().isEmpty()) {
+                    final StringAttributeValue stringVal = (StringAttributeValue) val;
+                    if (stringVal.getValue() == null || stringVal.getValue().isEmpty()) {
                         log.debug("{} Ignoring null/empty string value", getLogPrefix());
                         continue;
                     }
                     log.debug("{} Using attribute {} string value {} as input to transforms", getLogPrefix(), id,
-                            val.getValue());
-                    c14nContext.setPrincipalName(applyTransforms(((StringAttributeValue) val).getValue()));
+                            stringVal.getValue());
+                    c14nContext.setPrincipalName(applyTransforms(stringVal.getValue()));
                     return;
                 } else if (val instanceof ScopedStringAttributeValue) {
                     final ScopedStringAttributeValue scoped = (ScopedStringAttributeValue) val;

@@ -26,6 +26,9 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
@@ -125,6 +128,7 @@ public class PrepareTicketValidationResponseAction extends
     }
     
     /** {@inheritDoc} */
+ // CheckStyle: CyclomaticComplexity OFF
     @Override
     protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
@@ -144,7 +148,19 @@ public class PrepareTicketValidationResponseAction extends
             log.debug("Using {} for CAS username", userAttributeName);
             final IdPAttribute attribute = ac.getIdPAttributes().get(userAttributeName);
             if (attribute != null && !attribute.getValues().isEmpty()) {
-                principal = attribute.getValues().get(0).getValue().toString();
+                final IdPAttributeValue value = attribute.getValues().get(0);
+                if (value instanceof ScopedStringAttributeValue) {
+                    final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) value;
+                    log.warn("Lossy use of attribute value {} from attribute {}",
+                            scopedValue.getValue(), attribute.getId());
+                    principal = scopedValue.getValue();
+                } else if (value instanceof StringAttributeValue) {
+                    principal = ((StringAttributeValue) value).getValue();
+                } else {
+                    log.warn("Use of attribute value type {} from attribute {}",
+                            value.getClass(), attribute.getId());
+                    principal = value.getValue().toString();
+                }
             } else {
                 log.debug("Filtered attribute {} has no value", userAttributeName);
                 principal = null;
@@ -182,6 +198,7 @@ public class PrepareTicketValidationResponseAction extends
         
         encodedAttributes.forEach(a -> response.addAttribute(a));
     }
+    // CheckStyle: CyclomaticComplexity ON
 
     /**
      * Access the registry of transcoding rules to transform the input attribute into a target type.

@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.TestCache;
@@ -101,11 +102,11 @@ public class HTTPDataConnectorTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue) attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
@@ -275,11 +276,11 @@ public class HTTPDataConnectorTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue)attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
     }
 
     @Test(enabled=false) public void testCacheable() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {

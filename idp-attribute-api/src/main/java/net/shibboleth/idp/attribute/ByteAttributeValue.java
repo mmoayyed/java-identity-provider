@@ -47,7 +47,7 @@ public class ByteAttributeValue implements IdPAttributeValue {
     }
 
     /** {@inheritDoc} */
-    @Override public final byte[] getValue() {
+    public final byte[] getValue() {
         return value;
     }
 

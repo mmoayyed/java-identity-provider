@@ -112,7 +112,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
                         + StringAttributeValue.class.getName() + "; was given " + 
                         dependencyValue.getClass().getName()));
             } else {
-                inputValue = (String) dependencyValue.getValue();
+                inputValue = ((StringAttributeValue) dependencyValue).getValue();
             }
 
             log.debug("{} Applying regexp '{}' to input value '{}'", getLogPrefix(), regexp.pattern(), inputValue);

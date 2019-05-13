@@ -472,7 +472,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                         log.debug("{} Stripping null value", logPrefix);
                         continue;
                     } else if (value instanceof EmptyAttributeValue) {
-                        log.debug("{} Stripping {} value", logPrefix, value.getValue());
+                        log.debug("{} Stripping {} value", logPrefix, ((EmptyAttributeValue)value).getValue());
                         continue;
                     } 
                     // ByteAttributeValue, StringAttributeValue and XMLObjectValue are Constrained to not be empty

@@ -109,7 +109,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
                         + dependencyValue.getClass().getName()));
             }
 
-            valueList.add(new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
+            valueList.add(new ScopedStringAttributeValue(((StringAttributeValue) dependencyValue).getValue(), scope));
         }
         resultantAttribute.setValues(valueList);
         return resultantAttribute;

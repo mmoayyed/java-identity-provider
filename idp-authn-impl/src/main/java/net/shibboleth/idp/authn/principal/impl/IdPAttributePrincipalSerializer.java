@@ -182,7 +182,8 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
         final JsonObjectBuilder builder = getJsonObjectBuilder();
         
         if (value instanceof EmptyAttributeValue) {
-            if (value.getValue().equals(EmptyType.NULL_VALUE)) {
+            final EmptyAttributeValue eVal = (EmptyAttributeValue) value;
+            if (eVal.getValue().equals(EmptyType.NULL_VALUE)) {
                 // Null
                 builder.add(EMPTY_VALUE_FIELD, 0);
             } else {

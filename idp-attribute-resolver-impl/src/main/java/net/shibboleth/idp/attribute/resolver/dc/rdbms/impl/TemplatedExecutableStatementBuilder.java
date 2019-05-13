@@ -241,9 +241,9 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
                     encodedValues.add(encode(o));
                 }
                 return encodedValues.toArray();
-            } else if (value instanceof Collection<?>) {
+            } else if (value instanceof Collection) {
                 final List<Object> encodedValues = new ArrayList<>();
-                for (final Object o : (Collection<?>) value) {
+                for (final Object o : (Collection) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues;

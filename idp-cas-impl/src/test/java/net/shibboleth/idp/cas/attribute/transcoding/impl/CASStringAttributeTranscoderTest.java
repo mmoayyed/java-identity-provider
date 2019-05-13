@@ -172,7 +172,7 @@ public class CASStringAttributeTranscoderTest {
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertEquals(attr.getValues().size(), 1);
-        Assert.assertEquals(attr.getValues().get(0).getValue().toString(), STRING_1);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(0)).getValue().toString(), STRING_1);
     }
         
     @Test public void multi() throws Exception {
@@ -218,8 +218,8 @@ public class CASStringAttributeTranscoderTest {
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertEquals(attr.getValues().size(), 2);
-        Assert.assertEquals(attr.getValues().get(0).getValue().toString(), STRING_1);
-        Assert.assertEquals(attr.getValues().get(1).getValue().toString(), STRING_2);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(0)).getValue().toString(), STRING_1);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(1)).getValue().toString(), STRING_2);
     }
 
 }

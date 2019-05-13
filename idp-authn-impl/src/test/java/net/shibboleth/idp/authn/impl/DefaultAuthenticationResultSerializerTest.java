@@ -263,8 +263,8 @@ public class DefaultAuthenticationResultSerializerTest {
         final IdPAttribute attribute =
                 ((IdPAttributePrincipal) result2.getSubject().getPrincipals().iterator().next()).getAttribute();
         Assert.assertEquals(attribute.getValues().size(), 3);
-        Assert.assertEquals(attribute.getValues().get(0).getValue(), "bar");
-        Assert.assertEquals(attribute.getValues().get(1).getValue(), "bar2");
+        Assert.assertEquals(((StringAttributeValue) attribute.getValues().get(0)).getValue(), "bar");
+        Assert.assertEquals(((StringAttributeValue)attribute.getValues().get(1)).getValue(), "bar2");
         Assert.assertEquals(((ScopedStringAttributeValue) attribute.getValues().get(1)).getScope(), "scope");
         Assert.assertEquals(attribute.getValues().get(2), EmptyAttributeValue.ZERO_LENGTH);
     }

@@ -38,6 +38,7 @@ import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -125,7 +126,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         assertEquals(values.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
         for (final IdPAttributeValue val : values) {
-            final NameID id = (NameID) val.getValue();
+            final NameID id = (NameID) ((XMLObjectAttributeValue)val).getValue();
             assertEquals(id.getFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
             assertNull(id.getSPProvidedID());
             assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
@@ -172,7 +173,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         assertEquals(outValues.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
         for (final IdPAttributeValue val : outValues) {
-            final NameID id = (NameID) val.getValue();
+            final NameID id = (NameID)((XMLObjectAttributeValue)val).getValue();
             assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
             assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
             nameValues.add(id.getValue());
@@ -269,7 +270,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final Collection<IdPAttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(values.size(), 1);
-        final NameID id = (NameID) values.iterator().next().getValue();
+        final NameID id = (NameID) ((XMLObjectAttributeValue)values.iterator().next()).getValue();
         assertEquals(id.getFormat(), ALTERNATIVE_FORMAT);
         assertEquals(defn.getNameIdFormat(), id.getFormat());
         assertNull(id.getSPProvidedID());

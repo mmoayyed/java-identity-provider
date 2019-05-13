@@ -24,6 +24,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.schema.XSBase64Binary;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -41,21 +56,6 @@ import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.XMLObjectBuilder;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.core.xml.schema.XSBase64Binary;
-import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeValue;
-import org.opensaml.saml.saml2.metadata.RequestedAttribute;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 /** {@link SAML2ByteAttributeTranscoder} unit test. */
 public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
@@ -281,7 +281,7 @@ public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertEquals(attr.getValues().size(), 1);
-        Assert.assertEquals(attr.getValues().get(0).getValue(), BYTE_ARRAY_1);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(0)).getValue(), BYTE_ARRAY_1);
     }
     
     @Test(expectedExceptions = {AttributeDecodingException.class,}) public void badDecode() throws Exception {
@@ -322,7 +322,7 @@ public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertTrue(((IdPRequestedAttribute) attr).getIsRequired());
         Assert.assertEquals(attr.getValues().size(), 1);
-        Assert.assertEquals(attr.getValues().get(0).getValue(), BYTE_ARRAY_1);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(0)).getValue(), BYTE_ARRAY_1);
     }
     
     @Test public void multi() throws Exception {
@@ -398,8 +398,8 @@ public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertEquals(attr.getValues().size(), 2);
-        Assert.assertEquals(attr.getValues().get(0).getValue(), BYTE_ARRAY_1);
-        Assert.assertEquals(attr.getValues().get(1).getValue(), BYTE_ARRAY_2);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(0)).getValue(), BYTE_ARRAY_1);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(1)).getValue(), BYTE_ARRAY_2);
     }
 
 }

@@ -244,7 +244,7 @@ public class AttributeTranscoderRegistryImplTest {
         assertEquals(attributes.size(), 1);
         
         assertEquals(attributes.get(0).getId(), "foo");
-        assertEquals(attributes.get(0).getValues().get(0).getValue(), "value");
+        assertEquals(((StringAttributeValue)attributes.get(0).getValues().get(0)).getValue(), "value");
     }
     
     @Test public void testDecodeTwoStringValues() throws AttributeDecodingException {
@@ -261,10 +261,10 @@ public class AttributeTranscoderRegistryImplTest {
         assertEquals(attributes.size(), 2);
         
         assertEquals(attributes.get(0).getId(), "foo");
-        assertEquals(attributes.get(0).getValues().get(0).getValue(), "value");
+        assertEquals(((StringAttributeValue)attributes.get(0).getValues().get(0)).getValue(), "value");
 
         assertEquals(attributes.get(1).getId(), "foo2");
-        assertEquals(attributes.get(1).getValues().get(0).getValue(), "value");
+        assertEquals(((StringAttributeValue)attributes.get(1).getValues().get(0)).getValue(), "value");
     }
 
     @Test public void testEncodeUnsupportedValues() throws AttributeEncodingException {

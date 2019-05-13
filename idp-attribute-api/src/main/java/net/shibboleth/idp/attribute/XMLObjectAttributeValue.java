@@ -45,7 +45,6 @@ public class XMLObjectAttributeValue implements IdPAttributeValue {
     }
 
     /** {@inheritDoc} */
-    @Override
     public final XMLObject getValue() {
         return value;
     }

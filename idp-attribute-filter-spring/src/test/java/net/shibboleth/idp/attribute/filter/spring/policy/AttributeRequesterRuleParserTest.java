@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -124,6 +125,6 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         assertEquals(result.size(), 1);
-        assertEquals(result.iterator().next().getValue(), "daffyDuck");
+        assertEquals(((StringAttributeValue) result.iterator().next()).getValue(), "daffyDuck");
     }
 }

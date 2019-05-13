@@ -268,7 +268,7 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertEquals(attr.getValues().size(), 1);
-        Assert.assertEquals(attr.getValues().get(0).getValue(), BYTE_ARRAY_1);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(0)).getValue(), BYTE_ARRAY_1);
     }
 
     @Test(expectedExceptions = {AttributeDecodingException.class,}) public void badDecode() throws Exception {
@@ -361,8 +361,8 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertEquals(attr.getValues().size(), 2);
-        Assert.assertEquals(attr.getValues().get(0).getValue(), BYTE_ARRAY_1);
-        Assert.assertEquals(attr.getValues().get(1).getValue(), BYTE_ARRAY_2);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(0)).getValue(), BYTE_ARRAY_1);
+        Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(1)).getValue(), BYTE_ARRAY_2);
     }
 
 }

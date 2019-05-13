@@ -256,12 +256,12 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                         return pid.getPairwiseId();
                     } else if (value instanceof StringAttributeValue) {
                         // Check for all whitespace, but don't trim the value used.
-                        if (StringSupport.trimOrNull((String) value.getValue()) == null) {
+                        if (StringSupport.trimOrNull(((StringAttributeValue) value).getValue()) == null) {
                             log.debug("Skipping all-whitespace string value");
                             continue;
                         }
                         log.debug("Generating persistent NameID from String-valued attribute {}", sourceId);
-                        pid.setSourceSystemId((String) value.getValue());
+                        pid.setSourceSystemId(((StringAttributeValue) value).getValue());
                         pid = pidStore.getBySourceValue(pid, true);
                         return pid.getPairwiseId();
                     } else {

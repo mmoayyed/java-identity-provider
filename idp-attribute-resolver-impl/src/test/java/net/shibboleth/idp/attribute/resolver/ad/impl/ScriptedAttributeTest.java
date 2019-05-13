@@ -128,7 +128,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         assertTrue(test.equals(val), "Scripted result is the same as bases");
         assertEquals(results.size(), 1, "Scripted result value count");
-        assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+        assertEquals(((StringAttributeValue)results.iterator().next()).getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
     
     /**
@@ -188,7 +188,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         assertTrue(test.equals(val), "Scripted result is the same as bases");
         assertEquals(results.size(), 1, "Scripted result value count");
-        assertEquals(results.get(0).getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+        assertEquals(((StringAttributeValue)results.get(0)).getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
     /**
@@ -218,7 +218,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         assertTrue(test.equals(val), "Scripted result is the same as bases");
         assertEquals(results.size(), 1, "Scripted result value count");
-        assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+        assertEquals(((StringAttributeValue)results.iterator().next()).getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
     @Test public void nullValue() throws ResolutionException, ComponentInitializationException, ScriptException,
@@ -550,7 +550,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         IdPAttribute attribute = runExample("example1.script", "example1.attribute.xml", "swissEduPersonUniqueID");
 
-        assertEquals(attribute.getValues().iterator().next().getValue(),
+        assertEquals(((StringAttributeValue)attribute.getValues().iterator().next()).getValue(),
                 DigestUtils.md5Hex("12345678some#salt#value#12345679") + "@switch.ch");
 
         attribute = runExample("example2.script", "example2.attribute.xml", "eduPersonAffiliation");

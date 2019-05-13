@@ -28,12 +28,14 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.cryptacular.util.CodecUtil;
 import org.cryptacular.util.HashUtil;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameIDType;
@@ -78,17 +80,21 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                     objectOutputStream.writeObject(((ScopedStringAttributeValue) value).getValue() + '@'
                             + ((ScopedStringAttributeValue) value).getScope());
                 } else if (value instanceof XMLObjectAttributeValue) {
-                    if (value.getValue() instanceof NameIDType) {
-                        objectOutputStream.writeObject(((NameIDType) value.getValue()).getValue());
+                    final XMLObject xmlObject = ((XMLObjectAttributeValue) value).getValue();
+                    if (xmlObject instanceof NameIDType) {
+                        objectOutputStream.writeObject(((NameIDType) xmlObject).getValue());
                     } else {
                         try {
                             objectOutputStream.writeObject(SerializeSupport.nodeToString(
-                                    XMLObjectSupport.marshall(((XMLObjectAttributeValue) value).getValue())));
+                                    XMLObjectSupport.marshall(xmlObject)));
                         } catch (final MarshallingException e) {
                             log.error("Error while marshalling XMLObject value", e);
                             return null;
                         }
                     }
+                } else if (value instanceof StringAttributeValue) {
+                    objectOutputStream.writeObject(((StringAttributeValue)value).getValue());
+                
                 } else if (value.getValue() != null) {
                     objectOutputStream.writeObject(value.getValue());
                 }

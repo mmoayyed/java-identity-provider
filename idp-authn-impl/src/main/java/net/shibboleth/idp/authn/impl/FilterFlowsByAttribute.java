@@ -216,8 +216,11 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
             log.debug("{} Comparing principal {} against attribute values {}", getLogPrefix(), p.getName(),
                     attribute.getValues());
             for (final IdPAttributeValue val : attribute.getValues()) {
-                if (val instanceof StringAttributeValue && Objects.equals(val.getValue(), p.getName())) {
-                    return p.getName();
+                if (val instanceof StringAttributeValue) {
+                    final StringAttributeValue stringVal = (StringAttributeValue) val;
+                    if (Objects.equals(stringVal.getValue(), p.getName())) {
+                        return p.getName();
+                    }
                 }
             }
         }
@@ -240,8 +243,11 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
             log.debug("{} Comparing principal {} against attribute values {}", getLogPrefix(), p.getName(),
                     attribute.getValues());
             for (final IdPAttributeValue val : attribute.getValues()) {
-                if (val instanceof StringAttributeValue && Objects.equals(val.getValue(), p.getName())) {
-                    return p.getName();
+                if (val instanceof StringAttributeValue) {
+                    final StringAttributeValue stringVal = (StringAttributeValue) val;
+                    if (val instanceof StringAttributeValue && Objects.equals(stringVal.getValue(), p.getName())) {
+                        return p.getName();
+                    }
                 }
             }
         }

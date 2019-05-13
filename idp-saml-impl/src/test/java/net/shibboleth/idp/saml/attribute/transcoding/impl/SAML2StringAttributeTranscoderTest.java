@@ -277,7 +277,7 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertEquals(attr.getValues().size(), 1);
-        Assert.assertEquals(attr.getValues().get(0).getValue().toString(), STRING_1);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(0)).getValue().toString(), STRING_1);
     }
     
     
@@ -302,7 +302,7 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertTrue(((IdPRequestedAttribute) attr).getIsRequired());
         Assert.assertEquals(attr.getValues().size(), 1);
-        Assert.assertEquals(attr.getValues().get(0).getValue().toString(), STRING_1);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(0)).getValue().toString(), STRING_1);
     }
     
     @Test public void multi() throws Exception {
@@ -357,8 +357,8 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
         Assert.assertNotNull(attr);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
         Assert.assertEquals(attr.getValues().size(), 2);
-        Assert.assertEquals(attr.getValues().get(0).getValue().toString(), STRING_1);
-        Assert.assertEquals(attr.getValues().get(1).getValue().toString(), STRING_2);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(0)).getValue().toString(), STRING_1);
+        Assert.assertEquals(((StringAttributeValue)attr.getValues().get(1)).getValue().toString(), STRING_2);
     }
 
 }

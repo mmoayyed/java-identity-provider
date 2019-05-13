@@ -40,6 +40,7 @@ import com.google.common.collect.Collections2;
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.http.impl.HTTPDataConnector;
@@ -95,11 +96,11 @@ public class HTTPDataConnectorParserTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue)attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
         
         assertTrue(connector.getResultsCache().size() == 1);
     }
@@ -205,11 +206,11 @@ public class HTTPDataConnectorParserTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue)attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void v2BadCertificate() throws Exception {
@@ -276,11 +277,11 @@ public class HTTPDataConnectorParserTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue)attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
     }
     
     @Test public void hybridConfig() throws Exception {
@@ -304,11 +305,11 @@ public class HTTPDataConnectorParserTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue)attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
         
         assertTrue(connector.getResultsCache().size() == 1);    
     }
@@ -335,11 +336,11 @@ public class HTTPDataConnectorParserTest {
         assertEquals(attrs.size(), 2);
         
         assertEquals(attrs.get("foo").getValues().size(), 1);
-        assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        assertEquals(((StringAttributeValue)attrs.get("foo").getValues().get(0)).getValue(), "foo1");
         
         assertEquals(attrs.get("bar").getValues().size(), 2);
-        assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
-        assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(0)).getValue(), "bar1");
+        assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
     }
     
     private HTTPDataConnector getDataConnector(final PropertySource propSource, final String... beanDefinitions)

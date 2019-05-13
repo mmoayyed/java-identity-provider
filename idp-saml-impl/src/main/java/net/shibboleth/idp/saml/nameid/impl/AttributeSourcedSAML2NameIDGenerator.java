@@ -166,11 +166,12 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
 
             final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
-                if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameID) {
+                if (value instanceof XMLObjectAttributeValue &&
+                        ((XMLObjectAttributeValue) value).getValue() instanceof NameID) {
                     if (SAML2ObjectSupport.areNameIDFormatsEquivalent(getFormat(),
-                            ((NameID) value.getValue()).getFormat())) {
+                            ((NameID) ((XMLObjectAttributeValue) value).getValue()).getFormat())) {
                         log.info("Returning NameID from XMLObject-valued attribute {}", sourceId);
-                        return (NameID) value.getValue();
+                        return (NameID) ((XMLObjectAttributeValue) value).getValue();
                     } else {
                         log.debug("Attribute {} value was NameID, but Format did not match", sourceId);
                     }
@@ -207,7 +208,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
                     return ((ScopedStringAttributeValue) value).getValue() + delimiter
                             + ((ScopedStringAttributeValue) value).getScope();
                 } else if (value instanceof StringAttributeValue) {
-                    final String strVal = StringSupport.trimOrNull((String) value.getValue());
+                    final String strVal = StringSupport.trimOrNull(((StringAttributeValue) value).getValue());
                     if (strVal == null) {
                         log.debug("Skipping all-whitespace string value");
                         continue;
