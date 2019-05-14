@@ -30,12 +30,20 @@
     <bean id="SAML1XMLObjectTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttributeTranscoder" />
     
+    <bean id="CASStringTranscoder"
+        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASStringAttributeTranscoder" />
+    <bean id="CASScopedStringTranscoder"
+        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASScopedStringAttributeTranscoder" />
+    
     <util:map id="DefaultNamingRegistry">
         <entry key="#{T(org.opensaml.saml.saml2.core.Attribute)}">
             <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
         </entry>
         <entry key="#{T(org.opensaml.saml.saml1.core.AttributeDesignator)}">
             <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder.NamingFunction" />
+        </entry>
+        <entry key="#{T(net.shibboleth.idp.cas.attribute.Attribute)}">
+            <bean class="net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder.NamingFunction" />
         </entry>
     </util:map>
     
