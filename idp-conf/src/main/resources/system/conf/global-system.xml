@@ -58,7 +58,7 @@
         <property name="arguments">
             <props>
                 <prop key="org.apache.xml.security.ignoreLineBreaks">%{idp.apache.xml.security.ignoreLineBreaks:true}</prop>
-		<prop key="org.ldaptive.provider">%{idp.ldaptive.provider:%{org.ldaptive.provider:org.ldaptive.provider.unboundid.UnboundIDProvider}}</prop>
+                <prop key="org.ldaptive.provider">%{idp.ldaptive.provider:%{org.ldaptive.provider:org.ldaptive.provider.unboundid.UnboundIDProvider}}</prop>
             </props>
         </property>
     </bean>
