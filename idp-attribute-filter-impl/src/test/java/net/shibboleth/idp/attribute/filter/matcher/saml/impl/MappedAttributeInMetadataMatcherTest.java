@@ -39,12 +39,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

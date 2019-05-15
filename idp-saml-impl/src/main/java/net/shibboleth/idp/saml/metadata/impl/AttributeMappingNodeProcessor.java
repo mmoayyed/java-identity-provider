@@ -24,13 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.AttributeDecodingException;
+import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
-import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;

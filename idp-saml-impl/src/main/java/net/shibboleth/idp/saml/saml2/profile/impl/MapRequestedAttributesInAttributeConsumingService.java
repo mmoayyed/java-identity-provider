@@ -22,9 +22,9 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;

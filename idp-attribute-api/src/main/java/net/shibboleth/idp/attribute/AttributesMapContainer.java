@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute.transcoding;
-
-import net.shibboleth.idp.attribute.IdPAttribute;
+package net.shibboleth.idp.attribute;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;

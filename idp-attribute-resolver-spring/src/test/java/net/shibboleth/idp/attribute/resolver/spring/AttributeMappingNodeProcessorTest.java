@@ -17,10 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,11 +37,11 @@ import com.google.common.collect.Multimap;
 
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
-import net.shibboleth.idp.saml.attribute.transcoding.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
