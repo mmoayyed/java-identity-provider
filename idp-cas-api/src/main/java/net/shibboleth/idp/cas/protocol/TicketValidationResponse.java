@@ -17,14 +17,18 @@
 
 package net.shibboleth.idp.cas.protocol;
 
+import net.shibboleth.idp.cas.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,21 +44,26 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
     @Nullable private String userName;
 
     /** User attributes. */
-    @Nonnull private Map<String, List<String>> attributes = new HashMap<>();
+    @Nonnull @NonnullElements private final List<Attribute> attributes;
 
     /** Proxy granting ticket IOU. */
     @Nullable private String pgtIou;
 
     /** Proxies traversed. */
-    @Nonnull private List<String> proxies = new ArrayList<>();
+    @Nonnull @NonnullElements private final List<String> proxies;
 
+    /** Constructor. */
+    public TicketValidationResponse() {
+        attributes = new ArrayList<>();
+        proxies = new ArrayList<>();
+    }
 
     /**
      * Get the non-null subject principal on ticket validation success.
      * 
      * @return non-null subject principal on ticket validation success
      */
-    @Nullable public String getUserName() {
+    @Nullable @NotEmpty public String getUserName() {
         return userName;
     }
 
@@ -63,32 +72,26 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      * 
      * @param user non-null subject principal on ticket validation success
      */
-    public void setUserName(@Nonnull final String user) {
+    public void setUserName(@Nonnull @NotEmpty final String user) {
         userName = Constraint.isNotNull(user, "Username cannot be null");
     }
 
     /**
-     * Get the Immutable map of user attributes.
+     * Get the immutable collection of user attributes.
      * 
-     * @return immutable map of user attributes
+     * @return immutable collection of user attributes
      */
-    @Nonnull public Map<String, List<String>> getAttributes() {
-        return Collections.unmodifiableMap(attributes);
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<Attribute> getAttributes() {
+        return Collections.unmodifiableList(attributes);
     }
 
     /**
-     * Add an attribute to the attribute mapping.
+     * Add an attribute to the attribute collection.
      * 
-     * @param name attribute name
-     * @param value attribute value
+     * @param attribute the attribute
      */
-    public void addAttribute(@Nonnull final String name, @Nonnull final String value) {
-        List<String> values = attributes.get(name);
-        if (values == null) {
-            values = new ArrayList<>();
-            attributes.put(name, values);
-        }
-        values.add(value);
+    public void addAttribute(@Nonnull final Attribute attribute) {
+        attributes.add(attribute);
     }
 
     /**
@@ -114,7 +117,7 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      * 
      * @return immutable list of proxies traversed in order of most recent to last recent
      */
-    @Nonnull public List<String> getProxies() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getProxies() {
         return Collections.unmodifiableList(proxies);
     }
 

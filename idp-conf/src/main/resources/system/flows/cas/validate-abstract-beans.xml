@@ -38,7 +38,8 @@
           c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="PrepareTicketValidationResponse"
-          class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction" />
+          class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction"
+          p:transcoderRegistry-ref="shibboleth.AttributeRegistryService" />
 
     <bean id="UpdateIdPSessionWithSPSession"
           class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction"

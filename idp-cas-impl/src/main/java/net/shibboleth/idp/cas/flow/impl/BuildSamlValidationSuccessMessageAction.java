@@ -144,11 +144,11 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         final AttributeStatement attrStatement = newSAMLObject(
                 AttributeStatement.class, AttributeStatement.DEFAULT_ELEMENT_NAME);
         attrStatement.setSubject(newSubject(state.getPrincipalName()));
-        for (final String attrName : ticketResponse.getAttributes().keySet()) {
+        for (final net.shibboleth.idp.cas.attribute.Attribute casAttr : ticketResponse.getAttributes()) {
             final Attribute attribute = newSAMLObject(Attribute.class, Attribute.DEFAULT_ELEMENT_NAME);
-            attribute.setAttributeName(attrName);
+            attribute.setAttributeName(casAttr.getName());
             attribute.setAttributeNamespace(NAMESPACE);
-            for (final String value : ticketResponse.getAttributes().get(attrName)) {
+            for (final String value : casAttr.getValues()) {
                 attribute.getAttributeValues().add(newAttributeValue(value));
             }
             attrStatement.getAttributes().add(attribute);
