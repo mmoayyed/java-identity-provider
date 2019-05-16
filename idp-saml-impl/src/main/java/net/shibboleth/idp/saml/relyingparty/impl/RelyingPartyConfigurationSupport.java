@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
-import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -33,6 +32,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.idp.saml.profile.logic.EntityAttributesPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;

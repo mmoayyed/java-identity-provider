@@ -26,12 +26,12 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.idp.saml.profile.logic.EntityAttributesPredicate;
 import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.common.profile.logic.EntityIdPredicate;
