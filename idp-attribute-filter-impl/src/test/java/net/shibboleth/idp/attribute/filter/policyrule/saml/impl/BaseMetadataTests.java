@@ -32,6 +32,7 @@ import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterContext;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -75,7 +76,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         filter.setNodeProcessors(Arrays.asList(new EntitiesDescriptorNameProcessor(),
                 new AttributeMappingNodeProcessor(new MockReloadableService<>(registry))));
         filter.initialize();
-        filter.filter(metadata);
+        filter.filter(metadata, new MetadataFilterContext());
 
         for (EntityDescriptor entity : metadata.getEntityDescriptors()) {
             if (IDP_ENTITY_ID.equals(entity.getEntityID())) {
