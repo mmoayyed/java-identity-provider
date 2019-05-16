@@ -43,8 +43,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.idp.saml.saml1.profile.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
+import net.shibboleth.utilities.java.support.service.MockReloadableService;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
@@ -131,7 +130,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         registry.initialize();
         
         action = new AddAttributeStatementToAssertion();
-        action.setTranscoderRegistry(new RegistryService(registry));
+        action.setTranscoderRegistry(new MockReloadableService(registry));
     }
 
     /** Test that the action errors out properly if there is no relying party context. */
@@ -193,7 +192,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
         localregistry.initialize();
         
-        action.setTranscoderRegistry(new RegistryService(localregistry));
+        action.setTranscoderRegistry(new MockReloadableService(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
@@ -229,7 +228,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
         localregistry.initialize();
         
-        action.setTranscoderRegistry(new RegistryService(localregistry));
+        action.setTranscoderRegistry(new MockReloadableService(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
@@ -387,31 +386,6 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 @Nonnull final IdPAttribute attribute, @Nonnull final Class<? extends AttributeDesignator> to,
                 @Nonnull final TranscodingRule rule) throws AttributeEncodingException {
             throw new AttributeEncodingException("Always thrown.");
-        }
-    }
-
-    private static class RegistryService extends AbstractReloadableService<AttributeTranscoderRegistry> {
-
-        private ServiceableComponent<AttributeTranscoderRegistry> component;
-
-        protected RegistryService(ServiceableComponent<AttributeTranscoderRegistry> what) {
-            component = what;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @Nullable public ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
-            if (null == component) {
-                return null;
-            }
-            component.pinComponent();
-            return component;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected boolean shouldReload() {
-            return false;
         }
     }
 

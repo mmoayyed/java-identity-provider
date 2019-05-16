@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -49,9 +47,8 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.MockReloadableService;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /** Tests for {@link FilterByQueriedAttributes} */
@@ -91,7 +88,7 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
     }
         
     @BeforeClass public void setup() {
-        registry = new RegistryService(getBean(PATH + "saml2Mapper.xml", AttributeTranscoderRegistryImpl.class));
+        registry = new MockReloadableService(getBean(PATH + "saml2Mapper.xml", AttributeTranscoderRegistryImpl.class));
     }
     
     @BeforeMethod public void setUpMethod() throws ComponentInitializationException, XMLParserException, UnmarshallingException {
@@ -139,31 +136,6 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         assertEquals(ac.getIdPAttributes().size(), 2);
-    }
-
-    private static class RegistryService extends AbstractReloadableService<AttributeTranscoderRegistry> {
-
-        private ServiceableComponent<AttributeTranscoderRegistry> component;
-
-        protected RegistryService(ServiceableComponent<AttributeTranscoderRegistry> what) {
-            component = what;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @Nullable public ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
-            if (null == component) {
-                return null;
-            }
-            component.pinComponent();
-            return component;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected boolean shouldReload() {
-            return false;
-        }
     }
 
 }

@@ -22,13 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.MockMatcher;
@@ -42,8 +39,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
+import net.shibboleth.utilities.java.support.service.MockReloadableService;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
@@ -71,7 +67,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
 
-        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -87,7 +83,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
         
-        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -130,7 +126,7 @@ public class FilterAttributesTest {
         attributeCtx.setIdPAttributes(attributes);
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
-        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -192,7 +188,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -251,7 +247,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(new FilterService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -274,7 +270,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(new FilterService(null));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService(null));
         action.setMaskFailures(false);
         action.initialize();
 
@@ -302,30 +298,4 @@ public class FilterAttributesTest {
         }
     }
     
-
-    private static class FilterService extends AbstractReloadableService<AttributeFilter> {
-
-        private ServiceableComponent<AttributeFilter> component;
-
-        protected FilterService(ServiceableComponent<AttributeFilter> what) {
-            component = what;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @Nullable public ServiceableComponent<AttributeFilter> getServiceableComponent() {
-            if (null == component) {
-                return null;
-            }
-            component.pinComponent();
-            return component;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected boolean shouldReload() {
-            return false;
-        }
-    }
-
 }

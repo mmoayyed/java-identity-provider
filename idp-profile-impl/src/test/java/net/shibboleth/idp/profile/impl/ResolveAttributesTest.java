@@ -20,13 +20,10 @@ package net.shibboleth.idp.profile.impl;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -40,8 +37,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
+import net.shibboleth.utilities.java.support.service.MockReloadableService;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
@@ -77,7 +73,7 @@ public class ResolveAttributesTest {
         ad1.initialize();
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(resolver));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -115,7 +111,7 @@ public class ResolveAttributesTest {
         attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
         prc.addSubcontext(attributeResolutionCtx);
 
-        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(resolver));
         action.initialize();
 
         Event event = action.execute(src);
@@ -170,7 +166,7 @@ public class ResolveAttributesTest {
         ad1.initialize();
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(new AttributeService(resolver));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(resolver));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -190,39 +186,12 @@ public class ResolveAttributesTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
-        final ResolveAttributes action = new ResolveAttributes(new AttributeService(null));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(null));
         action.setMaskFailures(false);
         action.initialize();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
-    }
-
-    
-    private static class AttributeService extends AbstractReloadableService<AttributeResolver> {
-        
-        private ServiceableComponent<AttributeResolver> component;
-        
-        protected AttributeService(final ServiceableComponent<AttributeResolver> what) {
-            component = what;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @Nullable public ServiceableComponent<AttributeResolver> getServiceableComponent() {
-            if (null == component) {
-                return null;
-            }
-            component.pinComponent();
-            return component;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected boolean shouldReload() {
-            return false;
-        }
-        
     }
     
 }
