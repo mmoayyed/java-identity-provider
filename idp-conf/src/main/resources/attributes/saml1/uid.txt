@@ -1,4 +1,4 @@
 id = uid
-transcoder_bean = SAML1StringTranscoder
+transcoderBean = SAML1StringTranscoder
 name = urn:mace:dir:attribute-def:uid
 encodeType = false

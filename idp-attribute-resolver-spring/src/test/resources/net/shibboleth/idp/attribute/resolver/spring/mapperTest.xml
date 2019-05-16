@@ -32,7 +32,7 @@
         <constructor-arg name="claz"
             value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.idp.attribute.transcoding.spring.impl.AttributeRegistryServiceStrategy"
+            <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy"
                 p:id="shibboleth.AttributeRegistryService"
                 p:namingRegistry="DefaultNamingRegistry" />
         </constructor-arg>

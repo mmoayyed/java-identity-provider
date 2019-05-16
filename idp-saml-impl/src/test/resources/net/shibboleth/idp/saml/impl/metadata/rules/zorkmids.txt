@@ -1,0 +1,4 @@
+id = zorkmids
+transcoderBean = SAML2StringTranscoder
+name = zorkmids
+nameFormat = urn:oasis:names:tc:SAML:2.0:attrname-format:basic

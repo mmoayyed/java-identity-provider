@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntitiesDescriptor Name="example.org"
+    xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+   
+   <EntityDescriptor entityID="http://foo.example.org/shibboleth">
+      
+      <Extensions>
+        <mdattr:EntityAttributes>
+            <saml:Attribute Name="http://macedir.org/entity-category"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute Name="urn:oasis:names:tc:SAML:profiles:subject-id:req"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue>none</saml:AttributeValue>
+            </saml:Attribute>
+        </mdattr:EntityAttributes>
+      </Extensions>
+      
+      <IDPSSODescriptor protocolSupportEnumeration="foo">
+         <SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest" Location="https://foo.example.org/shibboleth/SSO_BAR"/>
+      </IDPSSODescriptor>
+      
+   </EntityDescriptor>
+   
+
+   <EntityDescriptor entityID="http://bar.example.org/shibboleth">
+
+      <Extensions>
+        <mdattr:EntityAttributes>
+            <saml:Attribute Name="zorkmids"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+                <saml:AttributeValue>10</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute Name="babelfish"
+                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">
+                <saml:AttributeValue>10</saml:AttributeValue>
+            </saml:Attribute>
+        </mdattr:EntityAttributes>
+      </Extensions>
+      
+      <SPSSODescriptor protocolSupportEnumeration="foo">
+         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://bar.example.org/Shibboleth.sso/POST" index="0"/>
+      </SPSSODescriptor>
+      
+   </EntityDescriptor>
+
+   <EntityDescriptor entityID="http://baz.example.org/shibboleth">
+
+      <SPSSODescriptor protocolSupportEnumeration="foo">
+         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post" Location="https://baz.example.org/Shibboleth.sso/POST" index="0"/>
+      </SPSSODescriptor>
+      
+   </EntityDescriptor>
+
+</EntitiesDescriptor>

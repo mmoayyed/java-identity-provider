@@ -85,7 +85,6 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         context.setDisplayName("ApplicationContext: ");
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: ");
         service.setConverters(new HashSet<>(Arrays.asList(new StringToDurationConverter())));
         service.afterPropertiesSet();
 

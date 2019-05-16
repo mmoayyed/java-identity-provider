@@ -1,0 +1,3 @@
+id = rands
+transcoderBean = SAML2StringTranscoder
+name = http://macedir.org/entity-category

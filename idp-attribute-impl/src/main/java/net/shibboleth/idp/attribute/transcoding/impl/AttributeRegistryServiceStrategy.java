@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.transcoding.spring.impl;
+package net.shibboleth.idp.attribute.transcoding.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +31,6 @@ import org.springframework.context.ApplicationContext;
 
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
-import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
-import net.shibboleth.idp.attribute.transcoding.impl.TranscodingRuleLoader;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

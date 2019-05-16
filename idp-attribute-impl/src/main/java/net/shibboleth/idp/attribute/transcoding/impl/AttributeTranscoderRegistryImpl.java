@@ -59,7 +59,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         implements AttributeTranscoderRegistry {
 
     /** Bean name for identifying an {@link AttributeTranscoder} object to install. */
-    @Nonnull @NotEmpty static final String PROP_TRANSCODER_BEAN = "transcoder_bean";
+    @Nonnull @NotEmpty static final String PROP_TRANSCODER_BEAN = "transcoderBean";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeTranscoderRegistryImpl.class);

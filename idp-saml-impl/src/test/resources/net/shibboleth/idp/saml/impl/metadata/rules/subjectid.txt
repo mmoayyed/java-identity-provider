@@ -1,0 +1,3 @@
+id = subject-id-req
+transcoderBean = SAML2StringTranscoder
+name = urn:oasis:names:tc:SAML:profiles:subject-id:req
