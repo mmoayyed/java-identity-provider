@@ -111,7 +111,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     private void handleAttributeConsumingService(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final AttributeConsumingService acs) {
         
-        final List<RequestedAttribute> requestedAttributes = acs.getRequestAttributes();
+        final List<RequestedAttribute> requestedAttributes = acs.getRequestedAttributes();
         if (null == requestedAttributes || requestedAttributes.isEmpty()) {
             return;
         }

@@ -516,7 +516,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
             return DelegationRequest.NOT_REQUESTED;
         }
         
-        for (final RequestedAttribute requestedAttribute : attributeConsumingService.getRequestAttributes()) {
+        for (final RequestedAttribute requestedAttribute : attributeConsumingService.getRequestedAttributes()) {
             if (Objects.equals(LibertyConstants.SERVICE_TYPE_SSOS, 
                     StringSupport.trimOrNull(requestedAttribute.getName()))) {
                 log.debug("Saw requested attribute '{}' in metadata AttributeConsumingService for SP: {}",

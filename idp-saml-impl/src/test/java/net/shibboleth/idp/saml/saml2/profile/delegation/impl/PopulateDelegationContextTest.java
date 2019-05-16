@@ -429,7 +429,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         ra.setName(LibertyConstants.SERVICE_TYPE_SSOS);
         ra.setIsRequired(required);
         AttributeConsumingService acs = (AttributeConsumingService) XMLObjectSupport.buildXMLObject(AttributeConsumingService.DEFAULT_ELEMENT_NAME);
-        acs.getRequestAttributes().add(ra);
+        acs.getRequestedAttributes().add(ra);
         return acs;
     }
     

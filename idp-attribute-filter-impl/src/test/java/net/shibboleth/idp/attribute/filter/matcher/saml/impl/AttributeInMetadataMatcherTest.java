@@ -90,7 +90,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         final AttributeConsumingServiceContext acsCtx =
                 samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true);
         acsCtx.setAttributeConsumingService(acsBuilder.buildObject());
-        acsCtx.getAttributeConsumingService().getRequestAttributes().addAll(attributes);
+        acsCtx.getAttributeConsumingService().getRequestedAttributes().addAll(attributes);
         context.setRequesterMetadataContextLookupStrategy(
                 new ChildContextLookup<AttributeFilterContext,SAMLMetadataContext>(SAMLMetadataContext.class));
     }

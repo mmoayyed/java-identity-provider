@@ -297,7 +297,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     @Nullable private RequestedAttribute findInMetadata(@Nonnull final AttributeConsumingService service,
             @Nonnull final String name, @Nullable final String nameFormat) {
         
-        final List<RequestedAttribute> requested = service.getRequestAttributes();
+        final List<RequestedAttribute> requested = service.getRequestedAttributes();
         for (final RequestedAttribute attr : requested) {
             if (attr.getName().equals(name)) {
                 final String format = attr.getNameFormat();
