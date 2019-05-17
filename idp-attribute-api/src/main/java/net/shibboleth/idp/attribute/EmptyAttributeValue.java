@@ -32,7 +32,7 @@ import com.google.common.base.MoreObjects;
  * An {@link IdPAttributeValue} that is empty. This class defines an enum to represent the various types of empty values
  * that can occur.
  */
-public class EmptyAttributeValue implements IdPAttributeValue<EmptyAttributeValue.EmptyType> {
+public class EmptyAttributeValue implements IdPAttributeValue {
 
     /** Instance of null empty attribute value. */
     public static final EmptyAttributeValue NULL = new EmptyAttributeValue(EmptyType.NULL_VALUE);

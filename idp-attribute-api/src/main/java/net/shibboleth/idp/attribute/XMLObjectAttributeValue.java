@@ -30,7 +30,7 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import com.google.common.base.MoreObjects;
 
 /** A {@link XMLObjectAttributeValue} value for an {@link net.shibboleth.idp.attribute.IdPAttribute}. */
-public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
+public class XMLObjectAttributeValue implements IdPAttributeValue {
 
     /** Value of the attribute. */
     private final XMLObject value;

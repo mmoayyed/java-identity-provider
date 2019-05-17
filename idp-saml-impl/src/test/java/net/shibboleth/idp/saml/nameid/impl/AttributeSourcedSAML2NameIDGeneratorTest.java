@@ -108,7 +108,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
 
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final var values = List.of(new IdPAttributeValue<Object>() {
+        final var values = List.of(new IdPAttributeValue() {
                             public Object getValue() {
                                 return intArray;
                             }

@@ -29,17 +29,15 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  * {@link Object#hashCode()} method. They should also implement {@link Object#toString()} such that useful
  * representations may be written out in log messages.
  * </p>
- * 
- * @param <ValueType> the type of value
  */
-public interface IdPAttributeValue<ValueType> {
+public interface IdPAttributeValue {
 
     /**
      * Get the value of this attribute.
      * 
      * @return the attribute value
      */
-    @Nonnull ValueType getValue();
+    @Nonnull Object getValue();
     
     /**
      * Get a displayable form of the value for user interfaces and similar purposes.

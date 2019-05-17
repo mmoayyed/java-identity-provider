@@ -23,7 +23,6 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
@@ -36,9 +35,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
     
     private void testMatcher(final AttributeValueRegexpMatcher what, boolean caseSensitive) {
-        IdPAttributeValue<String> upper = new StringAttributeValue("JSMITH");
-        IdPAttributeValue<String> lower = new StringAttributeValue("jsmith");
-        IdPAttributeValue<String> nonmatch = new StringAttributeValue("NONONONO");
+        StringAttributeValue upper = new StringAttributeValue("JSMITH");
+        StringAttributeValue lower = new StringAttributeValue("jsmith");
+        StringAttributeValue nonmatch = new StringAttributeValue("NONONONO");
         
         assertTrue(what.compareAttributeValue(lower));
         assertFalse(what.compareAttributeValue(nonmatch));

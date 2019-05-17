@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.MoreObjects;
 
 /** Base class for {@link IdPAttribute} values that are strings. */
-public class StringAttributeValue implements IdPAttributeValue<String> {
+public class StringAttributeValue implements IdPAttributeValue {
 
     /** The attribute value. */
     @Nonnull @NotEmpty private final String value;
