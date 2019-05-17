@@ -1125,6 +1125,19 @@
                             <attribute name="nameFormat" type="string"/>
                         </complexType>
                     </element>
+                    <element name="MappedTag">
+                        <annotation>
+                            <documentation>
+                                A rule to use in a predicate that matches on mapped EntityAttributes extensions.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element name="Value" type="string" maxOccurs="unbounded"/>
+                            </sequence>
+                            <attribute name="name" type="string" use="required" />
+                        </complexType>
+                    </element>
                     <element name="ConditionScript" type="shibmd:ScriptType">
                         <annotation>
                             <documentation>

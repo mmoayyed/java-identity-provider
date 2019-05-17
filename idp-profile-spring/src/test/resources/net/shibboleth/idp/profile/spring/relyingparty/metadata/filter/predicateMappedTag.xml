@@ -6,17 +6,13 @@
 
 	xsi:type="metadata:Predicate" direction="exclude" removeEmptyEntitiesDescriptors="false" trim="true">
     
-    <metadata:Entity>urn:foo</metadata:Entity>
-    
-    <metadata:Group>urn:bar</metadata:Group>
-    
     <metadata:MappedTag name="urn:foo">
         <metadata:Value>bar</metadata:Value>
         <metadata:Value>baz</metadata:Value>
     </metadata:MappedTag>
     
-    <metadata:Tag name="urn:fob" nameFormat="foo">
+    <metadata:MappedTag name="urn:fob">
         <metadata:Value>bat</metadata:Value>
         <metadata:Value>baf</metadata:Value>
-    </metadata:Tag>
+    </metadata:MappedTag>
 </metadata:MetadataFilter>

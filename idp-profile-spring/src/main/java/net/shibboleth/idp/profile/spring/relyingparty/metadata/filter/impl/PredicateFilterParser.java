@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
 import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -99,6 +100,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         final BeanDefinitionBuilder entityIdPredicateBuilder = parseEntityPredicate(element);
         final BeanDefinitionBuilder groupPredicateBuilder = parseGroupPredicate(element);
         final BeanDefinitionBuilder tagPredicateBuilder = parseTagPredicate(element);
+        final BeanDefinitionBuilder mappedTagPredicateBuilder = parseMappedTagPredicate(element);
         final BeanDefinitionBuilder scriptPredicateBuilder = parseScripts(element);
 
         int count = 0;
@@ -109,6 +111,9 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             count++;
         }
         if (tagPredicateBuilder != null) {
+            count++;
+        }
+        if (mappedTagPredicateBuilder != null) {
             count++;
         }
         if (scriptPredicateBuilder != null) {
@@ -124,6 +129,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
                 return groupPredicateBuilder.getBeanDefinition();
             } else if (tagPredicateBuilder != null) {
                 return tagPredicateBuilder.getBeanDefinition();
+            } else if (mappedTagPredicateBuilder != null) {
+                return mappedTagPredicateBuilder.getBeanDefinition();
             } else {
                 return scriptPredicateBuilder.getBeanDefinition();
             }
@@ -139,6 +146,9 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             }
             if (tagPredicateBuilder != null) {
                 managedList.add(tagPredicateBuilder.getBeanDefinition());
+            }
+            if (mappedTagPredicateBuilder != null) {
+                managedList.add(mappedTagPredicateBuilder.getBeanDefinition());
             }
             if (scriptPredicateBuilder != null) {
                 managedList.add(scriptPredicateBuilder.getBeanDefinition());
@@ -230,7 +240,42 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
         return null;
     }
-    
+
+    /**
+     * Parse MappedTag elements into a builder for an {@link MappedEntityAttributesPredicate}.
+     * 
+     * @param element root element to parse under
+     * 
+     * @return builder for the predicate, or null if none needed
+     */
+    @Nullable public BeanDefinitionBuilder parseMappedTagPredicate(@Nonnull final Element element) {
+        final List<Element> tagList =
+                ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                        "MappedTag");
+        if (!tagList.isEmpty()) {
+            final ManagedList<BeanDefinition> managedTagList = new ManagedList<>(tagList.size());
+            for (final Element tag : tagList) {
+                final BeanDefinitionBuilder tagBuilder = BeanDefinitionBuilder.genericBeanDefinition(Candidate.class);
+                tagBuilder.addConstructorArgValue(StringSupport.trimOrNull(tag.getAttributeNS(null, "name")));
+                final List<Element> valueList =
+                        ElementSupport.getChildElementsByTagNameNS(tag,
+                                AbstractMetadataProviderParser.METADATA_NAMESPACE, "Value");
+                if (!valueList.isEmpty()) {
+                    final ManagedList<String> managedValueList =
+                            SpringSupport.getElementTextContentAsManagedList(valueList);
+                    tagBuilder.addPropertyValue("values", managedValueList);
+                }
+                managedTagList.add(tagBuilder.getBeanDefinition());
+            }
+            final BeanDefinitionBuilder builder =
+                    BeanDefinitionBuilder.genericBeanDefinition(MappedEntityAttributesPredicate.class);
+            builder.addConstructorArgValue(managedTagList);
+            builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "trim")));
+            return builder;
+        }
+
+        return null;
+    }    
 
     /**
      * Parse ConditionScript elements into a builder, wrapped in an OR as necessary.

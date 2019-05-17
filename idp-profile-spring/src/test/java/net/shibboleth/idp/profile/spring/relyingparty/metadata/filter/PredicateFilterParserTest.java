@@ -34,6 +34,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
+import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
 import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -96,6 +97,22 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
             Assert.assertNull(c2.getNameFormat());
             Assert.assertEquals(c1.getNameFormat(), "foo");
         }
+    }
+
+    @Test
+    public void mapped() throws IOException {
+        final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateMappedTag.xml");
+        Assert.assertNotNull(filter);
+        Assert.assertEquals(filter.getDirection(), Direction.EXCLUDE);
+        
+        final MappedEntityAttributesPredicate condition = (MappedEntityAttributesPredicate) filter.getCondition();
+        Assert.assertTrue(condition.getTrimTags());
+        Assert.assertEquals(condition.getCandidates().size(), 2);
+        
+        final Candidate c1 = (Candidate) condition.getCandidates().toArray()[0];
+        final Candidate c2 = (Candidate) condition.getCandidates().toArray()[1];
+        Assert.assertEquals(c1.getValues().size(), 2);
+        Assert.assertEquals(c2.getValues().size(), 2);
     }
 
     @Test
