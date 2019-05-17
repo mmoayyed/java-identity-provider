@@ -47,7 +47,7 @@ public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
             return regexpCompare(((StringAttributeValue) value).getValue());
 
         } else {
-            final String valueAsString = value.getValue().toString();
+            final String valueAsString = value.getNativeValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"
                     + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
                     getLogPrefix(), value.getClass().getName(), valueAsString,});

@@ -28,16 +28,20 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  * Implementations of this interface <strong>MUST</strong> implement an appropriate {@link Object#equals(Object)} and
  * {@link Object#hashCode()} method. They should also implement {@link Object#toString()} such that useful
  * representations may be written out in log messages.
+ * <p>
+ * Implementations are expected to implement a natively typed getValue() method.  This will usually be like the
+ * {@link #getNativeValue()} the outlier being the {@link ScopedStringAttributeValue} which for legacy reasons returns
+ * only the head part of the value for getValue().
  * </p>
  */
 public interface IdPAttributeValue {
 
     /**
-     * Get the value of this attribute.
+     * Get the native representation of the value of this attribute.
      * 
-     * @return the attribute value
+     * @return the attribute value in native format.
      */
-    @Nonnull Object getValue();
+    @Nonnull Object getNativeValue();
     
     /**
      * Get a displayable form of the value for user interfaces and similar purposes.

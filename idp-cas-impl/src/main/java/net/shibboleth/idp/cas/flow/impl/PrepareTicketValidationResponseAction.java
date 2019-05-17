@@ -159,7 +159,7 @@ public class PrepareTicketValidationResponseAction extends
                 } else {
                     log.warn("Use of attribute value type {} from attribute {}",
                             value.getClass(), attribute.getId());
-                    principal = value.getValue().toString();
+                    principal = value.getNativeValue().toString();
                 }
             } else {
                 log.debug("Filtered attribute {} has no value", userAttributeName);

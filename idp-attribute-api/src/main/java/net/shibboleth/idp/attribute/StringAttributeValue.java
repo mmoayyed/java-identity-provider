@@ -44,6 +44,14 @@ public class StringAttributeValue implements IdPAttributeValue {
     }
 
     /** {@inheritDoc} */
+    @Override
+    public Object getNativeValue() {
+        return value;
+    }
+
+    /** Return the value.
+     * @return the value
+     */
     @Nonnull @NotEmpty public final String getValue() {
         return value;
     }

@@ -62,7 +62,15 @@ public class EmptyAttributeValue implements IdPAttributeValue {
     }
 
     /** {@inheritDoc} */
-    @Nonnull public EmptyType getValue() {
+    @Override
+    public Object getNativeValue() {
+        return value;
+    }
+
+    /** Return the value.
+     * @return the value
+     */
+    public EmptyType getValue() {
         return value;
     }
 

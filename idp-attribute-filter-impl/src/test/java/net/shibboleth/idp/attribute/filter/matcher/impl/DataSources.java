@@ -58,7 +58,7 @@ public abstract class DataSources {
 
     public final static IdPAttributeValue OTHER_VALUE = new IdPAttributeValue() {
 
-        @Override @Nonnull public Object getValue() {
+        @Override @Nonnull public Object getNativeValue() {
             return TEST_STRING;
         }
         public String getDisplayValue() {

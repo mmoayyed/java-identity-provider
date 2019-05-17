@@ -67,7 +67,7 @@ public class PairTranscoder extends AbstractAttributeTranscoder<Pair> {
             if (attribute.getValues().isEmpty() || !canEncodeValue(attribute, attribute.getValues().get(0))) {
                 return to.getDeclaredConstructor(Object.class, Object.class).newInstance(name, null);
             } else {
-                return to.getDeclaredConstructor(Object.class, Object.class).newInstance(name, attribute.getValues().get(0).getValue());
+                return to.getDeclaredConstructor(Object.class, Object.class).newInstance(name, attribute.getValues().get(0).getNativeValue());
             }
         } catch (final InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException e) {

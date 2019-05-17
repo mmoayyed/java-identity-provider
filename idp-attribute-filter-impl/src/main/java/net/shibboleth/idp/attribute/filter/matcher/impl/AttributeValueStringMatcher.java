@@ -49,13 +49,13 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
                 case ZERO_LENGTH_VALUE:
                     return super.stringCompare("");
                 default:
-                    throw new IllegalArgumentException("Unknown empty attribute value type " + value.getValue());
+                    throw new IllegalArgumentException("Unknown empty attribute value type " + value.getNativeValue());
             }
             
         } else if (value instanceof StringAttributeValue) {
             return super.stringCompare(((StringAttributeValue) value).getValue());
         } else {
-            final String valueAsString = value.getValue().toString();
+            final String valueAsString = value.getNativeValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"
                     + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {getLogPrefix(),
                     value.getClass().getName(), valueAsString,});

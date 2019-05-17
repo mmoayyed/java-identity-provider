@@ -76,9 +76,9 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
                 int i = 0;
                 for (final IdPAttributeValue value : entry.getValue()) {
                     if (i == 0) {
-                        sf.setParameter(String.format("%s", entry.getKey(), i), value.getValue());
+                        sf.setParameter(String.format("%s", entry.getKey(), i), value.getNativeValue());
                     }
-                    sf.setParameter(String.format("%s[%s]", entry.getKey(), i++), value.getValue());
+                    sf.setParameter(String.format("%s[%s]", entry.getKey(), i++), value.getNativeValue());
                 }
             }
         }

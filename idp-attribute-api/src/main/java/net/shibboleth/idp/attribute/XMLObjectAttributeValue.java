@@ -45,6 +45,14 @@ public class XMLObjectAttributeValue implements IdPAttributeValue {
     }
 
     /** {@inheritDoc} */
+    @Override
+    public Object getNativeValue() {
+        return value;
+    }
+
+    /** Return the value.
+     * @return the value
+     */
     public final XMLObject getValue() {
         return value;
     }

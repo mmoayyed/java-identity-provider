@@ -110,7 +110,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final List<IdPAttributeValue> values = List.of(new IdPAttributeValue() {
-            public Object getValue() {
+            public Object getNativeValue() {
                 return intArray;
             }
             public String getDisplayValue() {

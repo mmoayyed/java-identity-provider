@@ -26,13 +26,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-
 import org.cryptacular.util.CodecUtil;
 import org.cryptacular.util.HashUtil;
 import org.opensaml.core.xml.XMLObject;
@@ -44,6 +37,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
  * Function to calculate the hash of the values of an IdP attribute.
@@ -58,6 +58,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValuesHashFunction.class);
 
+    // CheckStyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue> input) {
 
@@ -95,8 +96,8 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                 } else if (value instanceof StringAttributeValue) {
                     objectOutputStream.writeObject(((StringAttributeValue)value).getValue());
                 
-                } else if (value.getValue() != null) {
-                    objectOutputStream.writeObject(value.getValue());
+                } else if (value.getNativeValue() != null) {
+                    objectOutputStream.writeObject(value.getNativeValue());
                 }
             }
 
@@ -111,5 +112,5 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             return null;
         }
     }
-    
+    // CheckStyle: CyclomaticComplexity ON
 }

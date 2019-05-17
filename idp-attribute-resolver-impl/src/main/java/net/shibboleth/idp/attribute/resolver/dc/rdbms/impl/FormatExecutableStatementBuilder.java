@@ -64,10 +64,10 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 for (final IdPAttributeValue value : entry.getValue()) {
-                    if (value.getValue() instanceof String){ 
-                        args.add(((String) value.getValue()).replace("'", "''"));
+                    if (value.getNativeValue() instanceof String){ 
+                        args.add(((String) value.getNativeValue()).replace("'", "''"));
                     } else {
-                        args.add(value.getValue());
+                        args.add(value.getNativeValue());
                     }
                 }
             }

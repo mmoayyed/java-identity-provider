@@ -174,7 +174,7 @@ public class SAML1StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
         final Collection<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
-                    public Object getValue() {
+                    public Object getNativeValue() {
                         return intArray;
                     }
                     @Override

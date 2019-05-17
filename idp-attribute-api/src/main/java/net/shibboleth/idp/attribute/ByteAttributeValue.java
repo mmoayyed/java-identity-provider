@@ -46,8 +46,16 @@ public class ByteAttributeValue implements IdPAttributeValue {
         value = Constraint.isNotEmpty(attributeValue, "Attribute value cannot be null or empty");
     }
 
+    /** Return the value.
+     * @return the value
+     */
+    public byte[] getValue() {
+        return value;
+    }
+
     /** {@inheritDoc} */
-    public final byte[] getValue() {
+    @Override
+    public Object getNativeValue() {
         return value;
     }
 
