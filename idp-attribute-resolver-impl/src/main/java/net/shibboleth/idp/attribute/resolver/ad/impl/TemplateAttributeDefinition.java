@@ -203,7 +203,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             // Build velocity context.
             for (final String attributeId : sourceValues.keySet()) {
                 final IdPAttributeValue value = sourceValues.get(attributeId).next();
-                final String velocityValue;
+                final Object velocityValue;
                 if (value instanceof EmptyAttributeValue) {
                     switch (((EmptyAttributeValue) value).getValue()) {
                         case NULL_VALUE:
@@ -219,10 +219,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 } else if (value instanceof StringAttributeValue) {
                     velocityValue = ((StringAttributeValue) value).getValue();
                 } else {
-                    throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
-                            + "This attribute definition only supports attribute value types of "
-                            + StringAttributeValue.class.getName() + " not values of type "
-                            + value.getClass().getName()));
+                    log.debug("{} Adding non string Attribute value : {}", getLogPrefix(), value.getNativeValue());
+                    velocityValue =value.getNativeValue(); 
                 }
                 log.debug("{} Adding value '{}' for attribute '{}' to the template context", new Object[] {
                         getLogPrefix(), velocityValue, attributeId,});

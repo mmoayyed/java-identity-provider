@@ -35,7 +35,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.apache.velocity.app.VelocityEngine;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -407,13 +406,14 @@ public class TemplateAttributeTest {
         resolver.resolveAttributes(context);
     }
 
-    @Test public void wrongType() throws ResolutionException, ComponentInitializationException {
+    @Test public void complexType() throws ResolutionException, ComponentInitializationException {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
         templateDef.setId(name);
         templateDef.setVelocityEngine(getEngine());
-        templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_ATTR);
+        // call the getValue() method on the object
+        templateDef.setTemplateText("Result: ${at1.getValue()}");
 
         final Set<ResolverAttributeDefinitionDependency> ds = new LazySet<>();
         ds.add(TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
@@ -422,7 +422,19 @@ public class TemplateAttributeTest {
         templateDef.initialize();
 
         final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
+        attr.setValues(Collections.singletonList(
+                // An attribute value whose native value is a string attribute value
+                // (to show that a non string object gets injected)
+                new IdPAttributeValue() {
+                    
+                    public Object getNativeValue() {
+                        return new StringAttributeValue("NativeValue");
+                    }
+                    
+                    public String getDisplayValue() {
+                        return null;
+                    }
+                }));
         final StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         simple.setValue(attr);
@@ -435,12 +447,11 @@ public class TemplateAttributeTest {
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
-        try {
-            resolver.resolveAttributes(context);
-            fail();
-        } catch (final ResolutionException ex) {
-            // OK
-        }
+        resolver.resolveAttributes(context);
+        
+        final String result = ((StringAttributeValue)context.getResolvedIdPAttributes().get(name).getValues().get(0)).getValue();
+        assertEquals(result, "Result: NativeValue");
+        
     }
 
 }
