@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
@@ -43,13 +44,13 @@ import junit.framework.Assert;
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
-import net.shibboleth.idp.saml.profile.logic.EntityAttributesPredicate;
+import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
- * Unit test for {@link EntityAttributesPredicate}.
+ * Unit test for {@link EntityAttributesPredicate} and {@link MappedEntityAttributesPredicate}.
  */
 public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
     
@@ -120,7 +121,7 @@ public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
     }
 
     @Test
-    public void testSimpleMatchSAML() throws ResolverException {
+    public void testSimpleMatch() throws ResolverException {
         
         final Candidate tag = new Candidate("zorkmids", Attribute.BASIC);
         tag.setValues(Collections.singletonList("10"));
@@ -128,7 +129,7 @@ public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
         final EntityAttributesPredicate predicate = new EntityAttributesPredicate(Collections.singletonList(tag));
         Assert.assertFalse(predicate.test(getEntity(fooEntityID)));
         Assert.assertTrue(predicate.test(getEntity(barEntityID)));
-    }
+    }    
     
     @Test
     public void testSimpleMatchMapped() throws ResolverException {
@@ -136,7 +137,7 @@ public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
         final Candidate tag = new Candidate("zorkmids");
         tag.setValues(Collections.singletonList("10"));
         
-        final EntityAttributesPredicate predicate = new EntityAttributesPredicate(Collections.singletonList(tag));
+        final MappedEntityAttributesPredicate predicate = new MappedEntityAttributesPredicate(Collections.singletonList(tag));
         Assert.assertFalse(predicate.test(getEntity(fooEntityID)));
         Assert.assertTrue(predicate.test(getEntity(barEntityID)));
     }

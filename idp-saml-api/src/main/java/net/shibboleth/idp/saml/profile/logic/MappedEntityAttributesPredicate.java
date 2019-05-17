@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +47,13 @@ import net.shibboleth.utilities.java.support.logic.Predicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * Extended version of EntityAttributes-driven predicate that adds an optimization to check
- * for mapped attributes in an {@link AttributesMapContainer} structure before backing off
- * to brute force examination of the metadata by the superclass.
+ * Extended version of EntityAttributes-driven predicate that uses an optimization to check
+ * for mapped attributes in an {@link AttributesMapContainer} structure.
  */
-public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.logic.EntityAttributesPredicate {
+public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
 
-    /** Determines whether we can check the mapped container. */
-    private final boolean nonOptimized;
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MappedEntityAttributesPredicate.class);
     
     /** Delimiter to build string form of scoped values. */
     @Nonnull @NotEmpty private String scopeDelimiter = "@";
@@ -63,12 +63,12 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
      * 
      * @param candidates the {@link Candidate} criteria to check for
      */
-    public EntityAttributesPredicate(
+    public MappedEntityAttributesPredicate(
             @Nonnull @NonnullElements @ParameterName(name="candidates") final Collection<Candidate> candidates) {
         super(candidates);
 
-        // matchAll is false, so a single Candidate with no NameFormat might work.
-        nonOptimized = Iterables.all(candidates, c -> c.getNameFormat() != null);
+        Constraint.isTrue(Iterables.all(candidates, c -> c.getNameFormat() == null),
+                "Use of nameFormat property is impermissible for MappedEntityAttributesPredicate");
     }
 
     /**
@@ -77,13 +77,13 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
      * @param candidates the {@link Candidate} criteria to check for
      * @param trim true iff the values found in the metadata should be trimmed before comparison
      */
-    public EntityAttributesPredicate(
+    public MappedEntityAttributesPredicate(
             @Nonnull @NonnullElements @ParameterName(name="candidates") final Collection<Candidate> candidates,
             @ParameterName(name="trim") final boolean trim) {
         super(candidates, trim);
         
-        // matchAll is false, so a single Candidate with no NameFormat might work.
-        nonOptimized = Iterables.all(candidates, c -> c.getNameFormat() != null);
+        Constraint.isTrue(Iterables.all(candidates, c -> c.getNameFormat() == null),
+                "Use of nameFormat property is impermissible for MappedEntityAttributesPredicate");
     }
     
     /**
@@ -93,14 +93,14 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
      * @param trim true iff the values found in the metadata should be trimmed before comparison
      * @param all true iff all the criteria must match to be a successful test
      */
-    public EntityAttributesPredicate(
+    public MappedEntityAttributesPredicate(
             @Nonnull @NonnullElements @ParameterName(name="candidates") final Collection<Candidate> candidates,
             @ParameterName(name="trim") final boolean trim,
             @ParameterName(name="all") final boolean all) {
         super(candidates, trim, all);
         
-        // matchAll is true, so a single Candidate with a NameFormat prevents optimization
-        nonOptimized = Iterables.any(candidates, c -> c.getNameFormat() != null);
+        Constraint.isTrue(Iterables.all(candidates, c -> c.getNameFormat() == null),
+                "Use of nameFormat property is impermissible for MappedEntityAttributesPredicate");
     }
     
     /**
@@ -121,30 +121,36 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
         
         if (input == null) {
             return false;
-        } else if (nonOptimized) {
-            return super.test(input);
         }
 
         final List<AttributesMapContainer> containerList =
                 input.getObjectMetadata().get(AttributesMapContainer.class);
-        if (null != containerList && !containerList.isEmpty() && containerList.get(0).get() != null &&
-                !containerList.get(0).get().isEmpty()) {
-            
-            // If we find a matching tag, we win. Each tag is treated in OR fashion.
-            final EntityAttributesMatcher matcher = new EntityAttributesMatcher(containerList.get(0).get());
-            
-            if (getMatchAll()) {
-                if (Iterables.all(getCandidates(), matcher::test)) {
-                    return true;
-                }
-            } else {
-                if (Iterables.tryFind(getCandidates(), matcher::test).isPresent()) {
-                    return true;
-                }
+        if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
+                containerList.get(0).get().isEmpty()) {
+            log.trace("No mapped Entity Attributes for {}", input.getEntityID());
+            return false;
+        }
+        
+        final Multimap<String,? extends IdPAttribute> entityAttributes = containerList.get(0).get();
+        
+        log.trace("Checking for match against {} Entity Attributes for {}", entityAttributes.size(),
+                input.getEntityID());
+        
+        // If we find a matching tag, we win. Each tag is treated in OR fashion.
+        final EntityAttributesMatcher matcher = new EntityAttributesMatcher(entityAttributes);
+        
+        // Then we determine whether the overall set of tag containers is AND or OR.
+        if (getMatchAll()) {
+            if (Iterables.all(getCandidates(), matcher::test)) {
+                return true;
+            }
+        } else {
+            if (Iterables.tryFind(getCandidates(), matcher::test).isPresent()) {
+                return true;
             }
         }
         
-        return super.test(input);
+        return false;
     }
 
     /**
@@ -152,9 +158,6 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
      * attributes in an entity's metadata.
      */
     private class EntityAttributesMatcher implements Predicate<Candidate> {
-        
-        /** Class logger. */
-        @Nonnull private final Logger log = LoggerFactory.getLogger(EntityAttributesPredicate.class);
         
         /** Population to evaluate for a match. */
         @Nonnull private final Multimap<String,? extends IdPAttribute> attributes;
@@ -194,10 +197,12 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
                         final String cvalstr = attributeValueToString(cval);
                         if (tagvalstr != null && cvalstr != null) {
                             if (tagvalstr.equals(cvalstr)) {
+                                log.trace("Matched mapped Entity Attribute ({}) value {}", a.getId(), tagvalstr);
                                 valflags[tagindex] = true;
                                 break;
                             } else if (getTrimTags()) {
                                 if (tagvalstr.equals(cvalstr.trim())) {
+                                    log.trace("Matched mapped Entity Attribute ({}) value {}", a.getId(), tagvalstr);
                                     valflags[tagindex] = true;
                                     break;
                                 }
@@ -213,6 +218,7 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
                         final String cvalstr = attributeValueToString(cval);
                         if (tagexps.get(tagindex) != null && cvalstr != null) {
                             if (tagexps.get(tagindex).matcher(cvalstr).matches()) {
+                                log.trace("Matched mapped Entity Attribute ({}) value {}", a.getId(), cvalstr);
                                 expflags[tagindex] = true;
                                 break;
                             }
