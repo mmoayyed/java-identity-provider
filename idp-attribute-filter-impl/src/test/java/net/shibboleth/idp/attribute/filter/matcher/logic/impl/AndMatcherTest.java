@@ -85,7 +85,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(value2));
         assertTrue(result.contains(value1));
@@ -108,7 +108,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(value2));
@@ -127,7 +127,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNull(result);
 
         matcher = newAndMatcher(Arrays.<Matcher> asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));

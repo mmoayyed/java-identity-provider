@@ -41,7 +41,7 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         assertEquals(connector.getAttributes().keySet().size(), 2);
         final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
-        List<IdPAttributeValue<?>> values = epe.getValues();
+        List<IdPAttributeValue> values = epe.getValues();
         assertEquals(values.size(), 2);
         assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
         assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
@@ -56,7 +56,7 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         assertEquals(connector.getAttributes().keySet().size(), 2);
         final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
-        List<IdPAttributeValue<?>> values = epe.getValues();
+        List<IdPAttributeValue> values = epe.getValues();
         assertEquals(values.size(), 2);
         assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
         assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
@@ -72,7 +72,7 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         assertEquals(connector.getAttributes().keySet().size(), 2);
         final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
-        List<IdPAttributeValue<?>> values = epe.getValues();
+        List<IdPAttributeValue> values = epe.getValues();
         assertEquals(values.size(), 2);
         assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
         assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));

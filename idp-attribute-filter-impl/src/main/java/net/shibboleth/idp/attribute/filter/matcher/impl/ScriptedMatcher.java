@@ -190,7 +190,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      * </p>
      * {@inheritDoc}
      */
-    @Override @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
+    @Override @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered cannot be null");
         Constraint.isNotNull(filterContext, "AttributeFilterContext cannot be null");
@@ -256,7 +256,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
          * 
          * @return script result
          */
-        @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> execute(
+        @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue> execute(
                 @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
             final Object result = evaluate(attribute, filterContext);
             if (null == result) {
@@ -264,7 +264,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
                 return null;
             }
 
-            final HashSet<IdPAttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
+            final HashSet<IdPAttributeValue> returnValues = new HashSet<>(attribute.getValues());
             returnValues.retainAll((Set) result);
             return Collections.unmodifiableSet(returnValues);
         }

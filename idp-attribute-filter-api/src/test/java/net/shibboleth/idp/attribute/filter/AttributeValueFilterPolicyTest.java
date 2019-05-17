@@ -235,7 +235,7 @@ public class AttributeValueFilterPolicyTest {
 
         policy.apply(attribute1, context);
 
-        Collection<IdPAttributeValue<?>> result = workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME);
+        Collection<IdPAttributeValue> result = workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
         Assert.assertTrue(result.contains(cStringAttributeValue));

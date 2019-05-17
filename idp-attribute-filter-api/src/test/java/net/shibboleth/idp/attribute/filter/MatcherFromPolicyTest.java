@@ -36,7 +36,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         
         AttributeFilterContext context = setUpCtx();
         
-        Set<IdPAttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
+        Set<IdPAttributeValue> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
         
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(VALUE1));
@@ -48,7 +48,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         
         AttributeFilterContext context = setUpCtx();
         
-        Set<IdPAttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
+        Set<IdPAttributeValue> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
         
         Assert.assertTrue(values.isEmpty());
     }
@@ -58,7 +58,7 @@ public class MatcherFromPolicyTest extends BaseBridgingClassTester {
         
         AttributeFilterContext context = setUpCtx();
         
-        Set<IdPAttributeValue<?>> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
+        Set<IdPAttributeValue> values = matcher.getMatchingValues(context.getPrefilteredIdPAttributes().get(NAME1), context);
         
         Assert.assertNull(values);
     }

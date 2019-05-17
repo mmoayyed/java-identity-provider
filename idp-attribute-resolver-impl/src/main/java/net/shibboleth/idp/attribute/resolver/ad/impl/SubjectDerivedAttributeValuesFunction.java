@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * associated with the request.  The precise values are determined by an injected {@link Function}.
  */
 public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableInitializableComponent implements
-        Function<ProfileRequestContext,List<IdPAttributeValue<?>>> {
+        Function<ProfileRequestContext,List<IdPAttributeValue>> {
 
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
@@ -56,7 +56,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * 
      * The {@link Function} returns null or an empty list if the {@link Principal} isn't relevant.
      */
-    @Nonnull private Function<Principal,List<IdPAttributeValue<?>>> attributesValueFunction;
+    @Nonnull private Function<Principal,List<IdPAttributeValue>> attributesValueFunction;
 
     /** Constructor. */
     public SubjectDerivedAttributeValuesFunction() {
@@ -82,19 +82,19 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * 
      * @param engine what to set.
      */
-    public void setAttributeValuesFunction(@Nonnull final Function<Principal,List<IdPAttributeValue<?>>> engine) {
+    public void setAttributeValuesFunction(@Nonnull final Function<Principal,List<IdPAttributeValue>> engine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributesValueFunction = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final ProfileRequestContext prc) {
+    @Nullable public List<IdPAttributeValue> apply(@Nullable final ProfileRequestContext prc) {
         final SubjectContext cs = scLookupStrategy.apply(prc);
-        final List<IdPAttributeValue<?>> results = new ArrayList<>(1);
+        final List<IdPAttributeValue> results = new ArrayList<>(1);
 
         for (final Subject subject : cs.getSubjects()) {
             for (final Principal principal : subject.getPrincipals()) {
-                final List<IdPAttributeValue<?>> values = attributesValueFunction.apply(principal);
+                final List<IdPAttributeValue> values = attributesValueFunction.apply(principal);
                 if ((null != values) && !values.isEmpty()) {
                     results.addAll(values);
                 }

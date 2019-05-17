@@ -185,7 +185,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -199,7 +199,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setCustomObject(custom);
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -230,7 +230,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -314,12 +314,12 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("FOO"));
         sc.getAuthenticationResults().put("one", new AuthenticationResult("1", subject));        
         
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertEquals(result.size(), 0);
 
         final IdPAttribute newAttr = attribute.clone();
 
-        final Set<IdPAttributeValue<?>> s = new HashSet(2);
+        final Set<IdPAttributeValue> s = new HashSet(2);
         s.add(new StringAttributeValue(ProfileRequestContext.class.getName()));
         s.add(new StringAttributeValue("BAR"));
         s.add(new StringAttributeValue("FOO"));

@@ -77,7 +77,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.initialize();
 
         final IdPAttribute attr = new IdPAttribute("bar");
-        final List<IdPAttributeValue<?>> values = Collections.emptyList();
+        final List<IdPAttributeValue> values = Collections.emptyList();
         attr.setValues(values);
 
         final StaticAttributeDefinition sa = new StaticAttributeDefinition();
@@ -120,7 +120,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
-        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(values.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
@@ -137,7 +137,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
     }
     
     @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        final List<IdPAttributeValue> values = new ArrayList<>(3);
         values.add(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
@@ -167,7 +167,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         } catch (final ResolutionException e) {
             fail("resolution failed", e);
         }
-        final Collection<IdPAttributeValue<?>> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(outValues.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
@@ -266,7 +266,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         } catch (final ResolutionException e) {
             fail("resolution failed", e);
         }
-        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(values.size(), 1);
         final NameID id = (NameID) values.iterator().next().getValue();

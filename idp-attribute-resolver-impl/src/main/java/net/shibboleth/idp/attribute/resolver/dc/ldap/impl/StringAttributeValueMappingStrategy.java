@@ -87,7 +87,7 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
                     attributes.put(effectiveId, attribute);
                 }
 
-                final List<IdPAttributeValue<?>> values = new ArrayList<>(
+                final List<IdPAttributeValue> values = new ArrayList<>(
                         attr.getStringValues().size() + attribute.getValues().size());
 
                 values.addAll(attribute.getValues());

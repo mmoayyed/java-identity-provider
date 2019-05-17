@@ -81,7 +81,7 @@ public class ResolverTestSupport {
     public static IdPAttribute buildAttribute(String attributeId, String... values) {
         final IdPAttribute attribute = new IdPAttribute(attributeId);
         
-        List<IdPAttributeValue<?>> valueList = new ArrayList<>();
+        List<IdPAttributeValue> valueList = new ArrayList<>();
         for (String value : values) {
             valueList.add(StringAttributeValue.valueOf(value));
         }

@@ -90,15 +90,15 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final List<IdPAttributeValue<?>> dependencyValues =
+        final List<IdPAttributeValue> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, 
                         getAttributeDependencies(), 
                         getDataConnectorDependencies(), 
                         getId());
         log.debug("{} Dependencies provided unmapped values of {}", getLogPrefix(), dependencyValues);
 
-        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(dependencyValues.size());
-        for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
+        final List<IdPAttributeValue> valueList = new ArrayList<>(dependencyValues.size());
+        for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (dependencyValue instanceof EmptyAttributeValue) {
                 final EmptyAttributeValue emptyVal = (EmptyAttributeValue) dependencyValue;
                 log.debug("{} ignored empty value of type {}", getLogPrefix(), emptyVal.getDisplayValue());
@@ -127,7 +127,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @throws ResolutionException thrown if the given attribute value does not contain a delimited value
      */
-    @Nonnull private IdPAttributeValue<?> buildScopedStringAttributeValue(
+    @Nonnull private IdPAttributeValue buildScopedStringAttributeValue(
             @Nonnull final StringAttributeValue value) throws ResolutionException {
         Constraint.isNotNull(value, getLogPrefix() + " Attribute value can not be null");
 

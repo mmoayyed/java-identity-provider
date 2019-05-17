@@ -99,7 +99,7 @@ public class RegexAtributeTest {
     }
     
     @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(4);
+        final List<IdPAttributeValue> values = new ArrayList<>(4);
         values.add(new StringAttributeValue(TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue("three"));

@@ -65,7 +65,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         valueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
     }
 
-    private IdPAttribute makeAttribute(String id, List<IdPAttributeValue<?>> values) {
+    private IdPAttribute makeAttribute(String id, List<IdPAttributeValue> values) {
         final IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         return attr;
@@ -128,7 +128,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         final IdPAttribute attr =
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        Set<IdPAttributeValue<?>> result =
+        Set<IdPAttributeValue> result =
                 makeMatcher("test", true, true, null, null).getMatchingValues(attr, new AttributeFilterContext());
 
         assertEquals(result.size(), 2);
@@ -145,7 +145,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final AttributeInMetadataMatcher matcher = makeMatcher("test", true, false, "wrongAttr", Attribute.URI_REFERENCE);
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
+        Set<IdPAttributeValue> result = matcher.getMatchingValues(attr, makeContext(null));
 
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
@@ -169,7 +169,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         wrongAttr.setName("attr2");
         wrongAttr.setNameFormat(Attribute.BASIC);
         
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(wrongAttr));
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attr, makeContext(wrongAttr));
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
         assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
@@ -186,7 +186,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         req.setNameFormat(Attribute.BASIC);
         final AttributeFilterContext context = makeContext(req);
 
-        Set<IdPAttributeValue<?>> result =
+        Set<IdPAttributeValue> result =
                 makeMatcher("test", false, false, "attr", Attribute.BASIC).getMatchingValues(attr, context);
 
         assertEquals(result.size(), 2);
@@ -212,7 +212,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
         final AttributeFilterContext context = makeContext(req);
 
-        final Set<IdPAttributeValue<?>> result =
+        final Set<IdPAttributeValue> result =
                 makeMatcher("test", false, true, "attr", Attribute.BASIC).getMatchingValues(attr, context);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(DataSources.STRING_VALUE));
@@ -240,7 +240,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
         setRequestedAttributesInContext(context, Collections.singletonList(req));
 
-        final Set<IdPAttributeValue<?>> result =
+        final Set<IdPAttributeValue> result =
                 makeMatcher("test", false, true, "attr", Attribute.BASIC).getMatchingValues(attr, context);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));

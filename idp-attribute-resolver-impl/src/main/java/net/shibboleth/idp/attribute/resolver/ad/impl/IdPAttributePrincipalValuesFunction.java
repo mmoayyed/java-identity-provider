@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** Engine to mine values from {@link IdPAttributePrincipal}s. */
 public class IdPAttributePrincipalValuesFunction extends AbstractInitializableComponent implements
-        Function<Principal, List<IdPAttributeValue<?>>> {
+        Function<Principal, List<IdPAttributeValue>> {
 
     /** The Attribute Name to look for. */
     @Nonnull private String attributeName;
@@ -58,7 +58,7 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
     }
 
     /** {@inheritDoc} */
-    @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final Principal principal) {
+    @Nullable public List<IdPAttributeValue> apply(@Nullable final Principal principal) {
 
         if (null != principal && principal instanceof IdPAttributePrincipal) {
             final IdPAttributePrincipal attributePrincipal = (IdPAttributePrincipal) principal;

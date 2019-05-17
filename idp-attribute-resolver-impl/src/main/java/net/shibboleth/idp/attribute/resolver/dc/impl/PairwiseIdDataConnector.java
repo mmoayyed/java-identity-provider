@@ -194,7 +194,7 @@ public class PairwiseIdDataConnector extends AbstractDataConnector {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final List<IdPAttributeValue<?>> attributeValues =
+        final List<IdPAttributeValue> attributeValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         getAttributeDependencies(),
                         getDataConnectorDependencies(),

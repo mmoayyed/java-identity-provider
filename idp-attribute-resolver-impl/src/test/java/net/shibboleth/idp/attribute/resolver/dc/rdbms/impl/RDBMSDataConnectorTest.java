@@ -201,8 +201,8 @@ public class RDBMSDataConnectorTest {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         final String query = builder.getSQLQuery(context, dependsAttributes);
@@ -217,8 +217,8 @@ public class RDBMSDataConnectorTest {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement2"));
         dependsAttributes.put("entitlement", attributeValues);
@@ -273,7 +273,7 @@ public class RDBMSDataConnectorTest {
 
             @Override
             @Nonnull public ExecutableStatement build(@Nonnull final AttributeResolutionContext resolutionContext,
-                    @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+                    @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
                 return null;
             }
         }, null);

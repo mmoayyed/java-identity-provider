@@ -61,7 +61,7 @@ public class PluginDependencySupportTest {
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
                         Collections.<ResolverDataConnectorDependency>emptyList(),
@@ -80,7 +80,7 @@ public class PluginDependencySupportTest {
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
                         Collections.<ResolverDataConnectorDependency>emptyList(),
@@ -103,7 +103,7 @@ public class PluginDependencySupportTest {
 
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAttributeNames(Collections.singletonList(ResolverTestSupport.EPE_ATTRIB_ID));
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.<ResolverAttributeDefinitionDependency>emptyList(),
                         Collections.singletonList(depend),
@@ -127,7 +127,7 @@ public class PluginDependencySupportTest {
 
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAttributeNames(Collections.singleton(ResolverTestSupport.EPE_ATTRIB_ID));
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.<ResolverAttributeDefinitionDependency>emptyList(),
                         Collections.singletonList(depend),
@@ -152,7 +152,7 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAttributeNames(Lists.newArrayList(ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPA_ATTRIB_ID));
 
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.<ResolverAttributeDefinitionDependency>emptyList(),
                         Collections.singletonList(depend),
@@ -178,7 +178,7 @@ public class PluginDependencySupportTest {
 
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAllAttributes(true);
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.<ResolverAttributeDefinitionDependency>emptyList(),
                         Collections.singletonList(depend),
@@ -211,7 +211,7 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency dependConnector = new ResolverDataConnectorDependency("connector1");
         
         dependConnector.setAttributeNames(Collections.singleton(ResolverTestSupport.EPA_ATTRIB_ID));
-        final List<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
                         Collections.singletonList(dependConnector),
@@ -243,7 +243,7 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
         depend.setAllAttributes(true);
 
-        final Map<String, List<IdPAttributeValue<?>>> result =
+        final Map<String, List<IdPAttributeValue>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
                         Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
                         Collections.singletonList(depend));
@@ -251,7 +251,7 @@ public class PluginDependencySupportTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
 
-        List<IdPAttributeValue<?>> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
+        List<IdPAttributeValue> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
         Assert.assertNotNull(values);
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPE1_VALUES[0])));
@@ -283,7 +283,7 @@ public class PluginDependencySupportTest {
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
 
         depend.setAttributeNames(Collections.singleton(ResolverTestSupport.EPA_ATTRIB_ID));
-        final Map<String, List<IdPAttributeValue<?>>> result =
+        final Map<String, List<IdPAttributeValue>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
                         Collections.singletonList(new ResolverAttributeDefinitionDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
                         Collections.singletonList(depend));
@@ -291,7 +291,7 @@ public class PluginDependencySupportTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
 
-        final List<IdPAttributeValue<?>> values = result.get(ResolverTestSupport.EPA_ATTRIB_ID);
+        final List<IdPAttributeValue> values = result.get(ResolverTestSupport.EPA_ATTRIB_ID);
         Assert.assertNotNull(values);
         Assert.assertEquals(values.size(), 4);
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[0])));

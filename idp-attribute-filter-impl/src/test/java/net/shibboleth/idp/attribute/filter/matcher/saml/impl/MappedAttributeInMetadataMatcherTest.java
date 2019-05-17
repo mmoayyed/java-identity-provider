@@ -60,7 +60,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
                         AttributeConsumingService.DEFAULT_ELEMENT_NAME);
     }
     
-    private IdPAttribute makeAttribute(String id, List<IdPAttributeValue<?>> values) {
+    private IdPAttribute makeAttribute(String id, List<IdPAttributeValue> values) {
         IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
         return attr;
@@ -123,7 +123,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
         final IdPAttribute attr =
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        Set<IdPAttributeValue<?>> result =
+        Set<IdPAttributeValue> result =
                 makeMatcher("test", true, true).getMatchingValues(attr, new AttributeFilterContext());
 
         assertEquals(result.size(), 2);
@@ -140,7 +140,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
+        Set<IdPAttributeValue> result = matcher.getMatchingValues(attr, makeContext(null));
 
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
@@ -160,7 +160,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         AttributeFilterContext context = makeContext(required);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
+        Set<IdPAttributeValue> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
 
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
@@ -181,7 +181,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         AttributeFilterContext context = makeContext(required);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         assertEquals(result.size(), 1);
         assertTrue(result.contains(DataSources.STRING_VALUE));
     }
@@ -193,7 +193,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         AttributeFilterContext context = makeContext("attr", null);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         assertTrue(result.isEmpty());
     }
 
@@ -217,7 +217,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
         multimap.put(req2.getId(), req2);
         setRequestedAttributesInContext(context, multimap);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(DataSources.STRING_VALUE));
         assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));

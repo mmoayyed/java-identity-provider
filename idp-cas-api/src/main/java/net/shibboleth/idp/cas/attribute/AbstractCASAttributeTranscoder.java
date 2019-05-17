@@ -121,7 +121,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
         
         log.debug("Beginning to decode attribute {}", attributeName);
 
-        final List<IdPAttributeValue<?>> idpAttributeValues = new ArrayList<>();
+        final List<IdPAttributeValue> idpAttributeValues = new ArrayList<>();
 
         for (final String o : input.getValues()) {
             if (o == null) {
@@ -130,7 +130,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
                 continue;
             }
 
-            final IdPAttributeValue<?> idpAttributeValue = decodeValue(profileRequestContext, input, rule, o);
+            final IdPAttributeValue idpAttributeValue = decodeValue(profileRequestContext, input, rule, o);
             if (idpAttributeValue == null) {
                 log.debug("Unable to decode value of attribute {}", attributeName);
             } else {
@@ -188,7 +188,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
     @Nonnull protected IdPAttribute buildIdPAttribute(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule,
-            @Nonnull @NonnullElements final List<IdPAttributeValue<?>> attributeValues)
+            @Nonnull @NonnullElements final List<IdPAttributeValue> attributeValues)
                     throws AttributeDecodingException {
         
         final String id = rule.get(AttributeTranscoderRegistry.PROP_ID, String.class);
@@ -215,7 +215,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
      * 
      * @return the returned final {@link IdPAttributeValue} or null if decoding failed
      */
-    @Nullable protected abstract IdPAttributeValue<?> decodeValue(
+    @Nullable protected abstract IdPAttributeValue decodeValue(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule, @Nullable final String value);
 

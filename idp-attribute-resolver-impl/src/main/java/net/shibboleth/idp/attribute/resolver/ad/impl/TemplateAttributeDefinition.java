@@ -191,10 +191,10 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
+        final Map<String,Iterator<IdPAttributeValue>> sourceValues = new LazyMap<>();
         final int valueCount = setupSourceValues(workContext, sourceValues);
 
-        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(valueCount);
+        final List<IdPAttributeValue> valueList = new ArrayList<>(valueCount);
 
         for (int i = 0; i < valueCount; i++) {
             log.debug("{} Determining value {}", getLogPrefix(), i + 1);
@@ -202,7 +202,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
             // Build velocity context.
             for (final String attributeId : sourceValues.keySet()) {
-                final IdPAttributeValue<?> value = sourceValues.get(attributeId).next();
+                final IdPAttributeValue value = sourceValues.get(attributeId).next();
                 final String velocityValue;
                 if (value instanceof EmptyAttributeValue) {
                     switch (((EmptyAttributeValue) value).getValue()) {
@@ -256,8 +256,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int addAttributeValues(@Nonnull final String attributeName,
-            @Nullable final List<IdPAttributeValue<?>> attributeValues,  
-            @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues,
+            @Nullable final List<IdPAttributeValue> attributeValues,  
+            @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue>> sourceValues,
             final int curValueCount) throws ResolutionException {
         
         int valueCount = curValueCount;
@@ -290,10 +290,10 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int setupSourceValues(@Nonnull final AttributeResolverWorkContext workContext,
-            @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues)
+            @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue>> sourceValues)
                     throws ResolutionException {
 
-        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes = 
+        final Map<String, List<IdPAttributeValue>> dependencyAttributes = 
                 PluginDependencySupport.getAllAttributeValues(workContext,
                                                               getAttributeDependencies(), 
                                                               getDataConnectorDependencies());
@@ -301,7 +301,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         int valueCount = 0;
 
         if (getSourceAttributes().isEmpty()) {
-            for (final Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet() ) {
+            for (final Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet() ) {
                 valueCount = addAttributeValues(entry.getKey(), entry.getValue(), sourceValues, valueCount);
             }
         } else {

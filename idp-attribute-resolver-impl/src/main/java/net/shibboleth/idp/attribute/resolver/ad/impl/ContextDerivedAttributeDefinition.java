@@ -55,7 +55,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      * 
      * The function returns null or an empty list if the context isn't relevant.
      */
-    @Nonnull private Function<ProfileRequestContext,List<IdPAttributeValue<?>>> attributeValuesFunction;
+    @Nonnull private Function<ProfileRequestContext,List<IdPAttributeValue>> attributeValuesFunction;
 
     /** Constructor. */
     public ContextDerivedAttributeDefinition() {
@@ -82,7 +82,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      * @param function what to set.
      */
     public void setAttributeValuesFunction(
-            @Nonnull final Function<ProfileRequestContext,List<IdPAttributeValue<?>>> function) {
+            @Nonnull final Function<ProfileRequestContext,List<IdPAttributeValue>> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributeValuesFunction = Constraint.isNotNull(function, "Attribute Function cannot be null");
     }
@@ -92,7 +92,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
-        final List<IdPAttributeValue<?>> results = attributeValuesFunction.apply(prc);
+        final List<IdPAttributeValue> results = attributeValuesFunction.apply(prc);
 
         if (null == results) {
             log.debug("{} Generated no values.", getLogPrefix());

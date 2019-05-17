@@ -130,7 +130,7 @@ public abstract class AbstractSAML2AttributeTranscoder<EncodedType extends IdPAt
     @Nonnull protected IdPAttribute buildIdPAttribute(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule,
-            @Nonnull @NonnullElements final List<IdPAttributeValue<?>> attributeValues)
+            @Nonnull @NonnullElements final List<IdPAttributeValue> attributeValues)
                     throws AttributeDecodingException {
         
         if (!attribute.getAttributeValues().isEmpty() && attributeValues.isEmpty()) {

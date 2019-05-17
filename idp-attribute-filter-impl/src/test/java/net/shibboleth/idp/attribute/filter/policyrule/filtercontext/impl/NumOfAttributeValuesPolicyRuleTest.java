@@ -110,7 +110,7 @@ public class NumOfAttributeValuesPolicyRuleTest {
 
     private AttributeFilterContext manufactureWith(String name, int howMany) {
         final IdPAttribute attr = new IdPAttribute(name);
-        final HashSet<IdPAttributeValue<?>> hs = new HashSet<>(howMany);
+        final HashSet<IdPAttributeValue> hs = new HashSet<>(howMany);
         
         for (int i = 0; i < howMany; i++) {
             hs.add(new StringAttributeValue(Integer.toString(i)));

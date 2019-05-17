@@ -67,14 +67,14 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
 
     /** {@inheritDoc} */
     @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final SearchFilter sf = new SearchFilter(searchFilter);
         sf.setParameter("principalName", resolutionContext.getPrincipal());
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 int i = 0;
-                for (final IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue value : entry.getValue()) {
                     if (i == 0) {
                         sf.setParameter(String.format("%s", entry.getKey(), i), value.getValue());
                     }

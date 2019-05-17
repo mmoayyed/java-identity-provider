@@ -126,7 +126,7 @@ public class Regressions {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> attrs = connector.resolve(context);
-        final List<IdPAttributeValue<?>> values = attrs.get("mail").getValues();
+        final List<IdPAttributeValue> values = attrs.get("mail").getValues();
         assertEquals(values.size(), 4);
         assertTrue(values.contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
     }

@@ -50,7 +50,7 @@ public class ContextDerivedAttributeDefinitionTest {
     
 
     @Test public void simpleValue() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> list = new ArrayList<>(2);
+        final List<IdPAttributeValue> list = new ArrayList<>(2);
         list.add(new StringAttributeValue(SIMPLE_VALUE));
         list.add(new StringAttributeValue(SIMPLE_VALUE + "2"));
         
@@ -80,7 +80,7 @@ public class ContextDerivedAttributeDefinitionTest {
         authnResults.put("one", new AuthenticationResult("1", subject));
         
         
-      final List<IdPAttributeValue<?>> foo = defn.resolve(ctx).getValues();
+      final List<IdPAttributeValue> foo = defn.resolve(ctx).getValues();
         
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -88,7 +88,7 @@ public class ContextDerivedAttributeDefinitionTest {
     }
     
     @Test public void empty() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> list = Collections.EMPTY_LIST;
+        final List<IdPAttributeValue> list = Collections.EMPTY_LIST;
         
         final IdPAttribute attr = new IdPAttribute("wibble");
         attr.setValues(list);

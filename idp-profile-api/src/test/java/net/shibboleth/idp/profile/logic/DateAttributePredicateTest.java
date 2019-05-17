@@ -155,7 +155,7 @@ public class DateAttributePredicateTest {
         final ProfileRequestContext prc = new ProfileRequestContext();
         final RelyingPartyContext rpc = new RelyingPartyContext();
         final IdPAttribute attribute = new IdPAttribute(name);
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         for (String value : values) {
             attributeValues.add(new StringAttributeValue(value));
         }

@@ -191,7 +191,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         final Instant now = Instant.now();
         
         String dateString;
-        for (final IdPAttributeValue<?> value : attribute.getValues()) {
+        for (final IdPAttributeValue value : attribute.getValues()) {
             if (value instanceof StringAttributeValue) {
                 dateString = ((StringAttributeValue) value).getValue();
                 try {

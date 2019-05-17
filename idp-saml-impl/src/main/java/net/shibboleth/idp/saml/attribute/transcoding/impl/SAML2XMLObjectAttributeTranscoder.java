@@ -66,7 +66,7 @@ public class SAML2XMLObjectAttributeTranscoder extends AbstractSAML2AttributeTra
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected IdPAttributeValue<?> decodeValue(
+    @Override @Nullable protected IdPAttributeValue decodeValue(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule, @Nullable final XMLObject value) {
 

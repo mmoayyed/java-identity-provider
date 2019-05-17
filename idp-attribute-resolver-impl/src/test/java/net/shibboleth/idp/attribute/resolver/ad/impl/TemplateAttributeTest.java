@@ -321,7 +321,7 @@ public class TemplateAttributeTest {
         templateDef.setAttributeDependencies(ds);
         templateDef.initialize();
 
-        final List<IdPAttributeValue<?>> values = new ArrayList<>();
+        final List<IdPAttributeValue> values = new ArrayList<>();
         values.add(EmptyAttributeValue.ZERO_LENGTH);
         values.add(EmptyAttributeValue.NULL);
         final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);

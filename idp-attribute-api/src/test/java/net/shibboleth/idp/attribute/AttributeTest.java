@@ -300,7 +300,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test replacing all entries
-        List<IdPAttributeValue<?>> values = new ArrayList<>();
+        List<IdPAttributeValue> values = new ArrayList<>();
         values.add(value2);
         attrib.setValues(values);
         Assert.assertFalse(attrib.getValues().isEmpty());

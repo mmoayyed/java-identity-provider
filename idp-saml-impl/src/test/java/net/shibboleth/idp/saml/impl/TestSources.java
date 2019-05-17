@@ -165,7 +165,7 @@ public final class TestSources {
     public static AttributeDefinition populatedStaticAttribute(String attributeName,
             int attributeValuesCount) throws ComponentInitializationException {
         IdPAttribute attr;
-        List<IdPAttributeValue<?>> valuesList = new ArrayList<>();
+        List<IdPAttributeValue> valuesList = new ArrayList<>();
 
         if (attributeValuesCount > 0) {
             valuesList.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));

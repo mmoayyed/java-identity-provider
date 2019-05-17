@@ -46,7 +46,7 @@ public class AttributeValuesHashFunctionTest {
     }
     
     @Test public void testNullValue() {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>();
+        final List<IdPAttributeValue> values = new ArrayList<>();
         values.add(null);
         Assert.assertNull(function.apply(values));
     }

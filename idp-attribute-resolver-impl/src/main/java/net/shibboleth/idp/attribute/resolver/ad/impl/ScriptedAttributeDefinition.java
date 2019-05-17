@@ -232,7 +232,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         @Override
         protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
 
-            final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
+            final Map<String, List<IdPAttributeValue>> dependencyAttributes =
                     PluginDependencySupport.getAllAttributeValues(
                             (AttributeResolverWorkContext) input[1], 
                             getAttributeDependencies(), 
@@ -274,7 +274,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
                     new V2SAMLProfileRequestContext((AttributeResolutionContext) input[0], getId()),
                     ScriptContext.ENGINE_SCOPE);
 
-            for (final Entry<String,List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+            for (final Entry<String,List<IdPAttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
                 log.trace("{} Adding dependent attribute '{}' with the following values to the script context: {}",
                         new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
                 final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());

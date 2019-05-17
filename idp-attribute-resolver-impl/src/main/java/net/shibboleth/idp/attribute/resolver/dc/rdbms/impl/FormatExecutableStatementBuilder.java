@@ -59,11 +59,11 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
 
     /** {@inheritDoc} */
     @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) {
         final List<Object> args = new ArrayList<>();
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
-                for (final IdPAttributeValue<?> value : entry.getValue()) {
+            for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
+                for (final IdPAttributeValue value : entry.getValue()) {
                     if (value.getValue() instanceof String){ 
                         args.add(((String) value.getValue()).replace("'", "''"));
                     } else {

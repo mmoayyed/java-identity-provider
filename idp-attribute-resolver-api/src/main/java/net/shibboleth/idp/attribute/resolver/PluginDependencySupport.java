@@ -65,7 +65,7 @@ public final class PluginDependencySupport {
      *         attribute name
      */
     // Checkstyle: MethodLength|CyclomaticComplexity OFF
-    @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
+    @Nonnull @NonnullElements public static List<IdPAttributeValue> getMergedAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull @NonnullElements final Collection<ResolverAttributeDefinitionDependency> attributeDependencies,
             @Nonnull @NonnullElements final Collection<ResolverDataConnectorDependency> dataConnectorDependencies,
@@ -73,7 +73,7 @@ public final class PluginDependencySupport {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
         Constraint.isNotNull(attributeDependencies, "Resolver dependency collection cannot be null");
 
-        final List<IdPAttributeValue<?>> values = new ArrayList<>();
+        final List<IdPAttributeValue> values = new ArrayList<>();
         if (LOG.isTraceEnabled()) {
             LOG.trace("GetMergedAttribute Values for {}", attributeDefinitionId);
         }
@@ -135,12 +135,12 @@ public final class PluginDependencySupport {
      * @return the merged value set
      */
     // Checkstyle: MethodLength|CyclomaticComplexity OFF
-    public static Map<String, List<IdPAttributeValue<?>>> getAllAttributeValues(
+    public static Map<String, List<IdPAttributeValue>> getAllAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull final Collection<ResolverAttributeDefinitionDependency> attributeDependencies,
             @Nonnull @NonnullElements final Collection<ResolverDataConnectorDependency> dataConnectorDependencies) {
 
-        final HashMap<String, List<IdPAttributeValue<?>>> result = new HashMap<>();
+        final HashMap<String, List<IdPAttributeValue>> result = new HashMap<>();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Getting all Attribute Values");
         }
@@ -193,7 +193,7 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void mergeAttributes(@Nonnull final Map<String, IdPAttribute> sources,
-            @Nullable final Map<String, List<IdPAttributeValue<?>>> target) {
+            @Nullable final Map<String, List<IdPAttributeValue>> target) {
         for (final IdPAttribute source : sources.values()) {
             if (source == null) {
                 continue;
@@ -210,11 +210,11 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttribute(@Nullable final IdPAttribute source,
-            @Nullable final Map<String, List<IdPAttributeValue<?>>> target) {
+            @Nullable final Map<String, List<IdPAttributeValue>> target) {
         if (source == null) {
             return;
         }
-        List<IdPAttributeValue<?>> attributeValues = target.get(source.getId());
+        List<IdPAttributeValue> attributeValues = target.get(source.getId());
         if (attributeValues == null) {
             attributeValues = new ArrayList<>();
             target.put(source.getId(), attributeValues);
@@ -230,7 +230,7 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void mergeAttributeValues(@Nullable final IdPAttribute source,
-            @Nonnull final List<IdPAttributeValue<?>> target) {
+            @Nonnull final List<IdPAttributeValue> target) {
         if (source != null) {
             target.addAll(source.getValues());
         }

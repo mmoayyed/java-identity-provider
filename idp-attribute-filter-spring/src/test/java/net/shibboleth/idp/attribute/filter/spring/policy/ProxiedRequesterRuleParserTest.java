@@ -77,7 +77,7 @@ public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTes
         filterContext.getSubcontext(ProxiedRequesterContext.class, true).getRequesters().addAll(Arrays.asList("foo", "bar"));
 
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<IdPAttributeValue> result = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         assertTrue(result.isEmpty());
 
         filterContext.getSubcontext(ProxiedRequesterContext.class).getRequesters().add("https://service.example.edu/shibboleth-sp");

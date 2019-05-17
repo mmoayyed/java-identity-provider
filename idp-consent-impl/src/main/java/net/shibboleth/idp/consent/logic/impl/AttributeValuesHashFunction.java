@@ -51,19 +51,19 @@ import com.google.common.collect.Collections2;
  * 
  * The hash returned is the Base64 encoded representation of the SHA-256 digest.
  */
-public class AttributeValuesHashFunction implements Function<Collection<IdPAttributeValue<?>>, String> {
+public class AttributeValuesHashFunction implements Function<Collection<IdPAttributeValue>, String> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValuesHashFunction.class);
 
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> input) {
+    @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue> input) {
 
         if (input == null) {
             return null;
         }
 
-        final Collection<IdPAttributeValue<?>> filteredInput = Collections2.filter(input, Predicates.notNull());
+        final Collection<IdPAttributeValue> filteredInput = Collections2.filter(input, Predicates.notNull());
 
         if (filteredInput.isEmpty()) {
             return null;

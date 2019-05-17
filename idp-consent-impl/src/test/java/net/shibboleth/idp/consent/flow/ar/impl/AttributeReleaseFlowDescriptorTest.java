@@ -58,7 +58,7 @@ public class AttributeReleaseFlowDescriptorTest {
     }
 
     @Test public void testSettingAttributeValuesHashFunction() throws Exception {
-        final Function<Collection<IdPAttributeValue<?>>, String> function = new AttributeValuesHashFunction();
+        final Function<Collection<IdPAttributeValue>, String> function = new AttributeValuesHashFunction();
         descriptor.setAttributeValuesHashFunction(function);
         Assert.assertEquals(descriptor.getAttributeValuesHashFunction(), function);
     }

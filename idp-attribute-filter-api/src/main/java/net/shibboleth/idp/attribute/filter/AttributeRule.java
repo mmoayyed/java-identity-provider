@@ -183,7 +183,7 @@ public class AttributeRule extends AbstractIdentifiableInitializableComponent im
         log.debug("{} Filtering values for attribute '{}' which currently contains {} values", getLogPrefix(),
                 getAttributeId(), attribute.getValues().size());
 
-        final Set<IdPAttributeValue<?>> matchingValues = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> matchingValues = matcher.getMatchingValues(attribute, filterContext);
 
         if (!isDenyRule) {
             if (null == matchingValues) {

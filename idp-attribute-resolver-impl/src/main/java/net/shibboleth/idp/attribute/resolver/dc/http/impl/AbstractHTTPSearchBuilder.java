@@ -138,7 +138,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
     
     /** {@inheritDoc} */
     @Override public HTTPSearch build(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         
         final HttpUriRequest request = getHttpRequest(resolutionContext, dependencyAttributes);
         
@@ -190,7 +190,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
      * @throws ResolutionException if an error occurs
      */
     @Nonnull @NotEmpty protected String getURL(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String,List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         throw new UnsupportedOperationException("getURL method not overridden by subclass");
     }
     
@@ -204,7 +204,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
      * @throws ResolutionException if an error occurs
      */
     @Nonnull protected HttpUriRequest getHttpRequest(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String,List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         
         // Default just wraps a computed URL into a GET.
         try {
@@ -225,7 +225,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
      */
     @Nullable protected String getResultCacheKey(@Nonnull final HttpUriRequest request,
             @Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) {
         if (request instanceof HttpGet) {
             return ((HttpGet) request).getURI().toString();
         } else {

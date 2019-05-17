@@ -51,9 +51,9 @@ public class ConsentTestingSupport {
     }
 
     public static final Map<String, IdPAttribute> newAttributeMap() {
-        final IdPAttributeValue<?> value1 = new StringAttributeValue("value1");
-        final IdPAttributeValue<?> value2 = new StringAttributeValue("value2");
-        final IdPAttributeValue<?> value3 = new StringAttributeValue("value3");
+        final IdPAttributeValue value1 = new StringAttributeValue("value1");
+        final IdPAttributeValue value2 = new StringAttributeValue("value2");
+        final IdPAttributeValue value3 = new StringAttributeValue("value3");
 
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Collections.singletonList(value1));

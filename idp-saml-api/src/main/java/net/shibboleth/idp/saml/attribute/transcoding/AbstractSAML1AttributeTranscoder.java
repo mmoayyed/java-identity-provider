@@ -136,7 +136,7 @@ public abstract class AbstractSAML1AttributeTranscoder<EncodedType extends IdPAt
     @Nonnull protected IdPAttribute buildIdPAttribute(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final AttributeDesignator attribute,
             @Nonnull final TranscodingRule rule,
-            @Nonnull @NonnullElements final List<IdPAttributeValue<?>> attributeValues)
+            @Nonnull @NonnullElements final List<IdPAttributeValue> attributeValues)
                     throws AttributeDecodingException {
         
         final String id = rule.get(AttributeTranscoderRegistry.PROP_ID, String.class);

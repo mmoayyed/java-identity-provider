@@ -232,8 +232,8 @@ public class LDAPDataConnectorTest {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         final ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
@@ -249,8 +249,8 @@ public class LDAPDataConnectorTest {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement*"));
         dependsAttributes.put("entitlement", attributeValues);
@@ -305,8 +305,8 @@ public class LDAPDataConnectorTest {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         final ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
@@ -323,8 +323,8 @@ public class LDAPDataConnectorTest {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement*"));
         dependsAttributes.put("entitlement", attributeValues);
@@ -425,7 +425,7 @@ public class LDAPDataConnectorTest {
 
             @Override
             @Nonnull public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
-                    @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+                    @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
                 return null;
             }
         }, null);

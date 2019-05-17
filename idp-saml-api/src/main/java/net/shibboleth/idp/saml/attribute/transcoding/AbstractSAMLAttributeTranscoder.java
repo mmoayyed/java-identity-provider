@@ -109,7 +109,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
         
         log.debug("Beginning to decode attribute {}", attributeName);
 
-        final List<IdPAttributeValue<?>> idpAttributeValues = new ArrayList<>();
+        final List<IdPAttributeValue> idpAttributeValues = new ArrayList<>();
         final Iterable<XMLObject> samlAttributeValues = getValues(input);
 
         for (final XMLObject o : samlAttributeValues) {
@@ -119,7 +119,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
                 continue;
             }
 
-            final IdPAttributeValue<?> idpAttributeValue = decodeValue(profileRequestContext, input, rule, o);
+            final IdPAttributeValue idpAttributeValue = decodeValue(profileRequestContext, input, rule, o);
             if (idpAttributeValue == null) {
                 log.debug("Unable to decode value of attribute {}", attributeName);
             } else {
@@ -256,7 +256,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
     @Nonnull protected abstract IdPAttribute buildIdPAttribute(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final AttributeType attribute,
             @Nonnull final TranscodingRule rule,
-            @Nonnull @NonnullElements final List<IdPAttributeValue<?>> attributeValues)
+            @Nonnull @NonnullElements final List<IdPAttributeValue> attributeValues)
                     throws AttributeDecodingException;
     
     /**
@@ -278,7 +278,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
      * 
      * @return the returned final {@link IdPAttributeValue} or null if decoding failed
      */
-    @Nullable protected abstract IdPAttributeValue<?> decodeValue(
+    @Nullable protected abstract IdPAttributeValue decodeValue(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final AttributeType attribute,
             @Nonnull final TranscodingRule rule, @Nullable final XMLObject value);
 

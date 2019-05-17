@@ -100,7 +100,7 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
      * @param scope of the value
      * @return {@link EmptyAttributeValue} or {@link ScopedStringAttributeValue}
      */
-    public static IdPAttributeValue<?> valueOf(@Nullable final String value, @Nonnull @NotEmpty final String scope) {
+    public static IdPAttributeValue valueOf(@Nullable final String value, @Nonnull @NotEmpty final String scope) {
         if (value == null) {
             return EmptyAttributeValue.NULL;
         } else if (value.length() == 0) {

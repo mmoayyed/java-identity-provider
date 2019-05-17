@@ -220,8 +220,8 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        final List<IdPAttributeValue<?>> inputValues;
-        List<IdPAttributeValue<?>> outputValues = null;
+        final List<IdPAttributeValue> inputValues;
+        List<IdPAttributeValue> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
         inputValues = PluginDependencySupport.getMergedAttributeValues(workContext,
@@ -232,14 +232,14 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
         if (null != inputValues && !inputValues.isEmpty()) {
 
             if (1 == inputValues.size()) {
-                final IdPAttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
+                final IdPAttributeValue val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
                 if (null != val) {
                     outputValues = Collections.singletonList(val);
                 }
             } else {
                 // TODO Intermediate to solve typing issues.
-                final List<IdPAttributeValue<?>> xmlVals = new ArrayList<>(inputValues.size());
-                for (final IdPAttributeValue<?> theValue : inputValues) {
+                final List<IdPAttributeValue> xmlVals = new ArrayList<>(inputValues.size());
+                for (final IdPAttributeValue theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {
                         xmlVals.add(val);

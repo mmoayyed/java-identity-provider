@@ -115,7 +115,7 @@ public class CASScopedStringAttributeTranscoderTest {
 
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue<Object>() {
                     @Override
                     public Object getValue() {
@@ -138,7 +138,7 @@ public class CASScopedStringAttributeTranscoderTest {
     }
     
     @Test public void single() throws Exception {
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue(STRING_1, SCOPE_1),
                         new StringAttributeValue(STRING_1),
@@ -187,7 +187,7 @@ public class CASScopedStringAttributeTranscoderTest {
     }
         
     @Test public void multi() throws Exception {
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue(STRING_1, SCOPE_1),
                         new ScopedStringAttributeValue(STRING_2, SCOPE_2));

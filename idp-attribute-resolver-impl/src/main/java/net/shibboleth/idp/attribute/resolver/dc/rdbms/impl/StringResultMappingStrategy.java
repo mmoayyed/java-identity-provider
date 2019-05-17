@@ -97,7 +97,7 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
                         attribute.setValues(
                             Collections.singletonList(StringAttributeValue.valueOf(results.getString(i))));
                     } else {
-                        final List<IdPAttributeValue<?>> values = new ArrayList<>(attribute.getValues());
+                        final List<IdPAttributeValue> values = new ArrayList<>(attribute.getValues());
                         values.add(StringAttributeValue.valueOf(results.getString(i)));
                         attribute.setValues(values);
                     }

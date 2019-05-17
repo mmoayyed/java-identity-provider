@@ -197,7 +197,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final List<IdPAttributeValue<?>> unmappedResults =
+        final List<IdPAttributeValue> unmappedResults =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         getAttributeDependencies(),
                         getDataConnectorDependencies(),
@@ -216,8 +216,8 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             }
         } else {
 
-            final List<IdPAttributeValue<?>> valueList = new ArrayList<>();
-            for (final IdPAttributeValue<?> unmappedValue : unmappedResults) {
+            final List<IdPAttributeValue> valueList = new ArrayList<>();
+            for (final IdPAttributeValue unmappedValue : unmappedResults) {
                 if (unmappedValue instanceof EmptyAttributeValue) {
                     valueList.addAll(mapValue(null));                    
                 } else if (unmappedValue instanceof StringAttributeValue) {

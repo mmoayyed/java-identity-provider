@@ -55,11 +55,11 @@ public class ConsentSerializerTest {
 
     protected IdPAttribute attribute2;
 
-    protected IdPAttributeValue<?> value1;
+    protected IdPAttributeValue value1;
 
-    protected IdPAttributeValue<?> value2;
+    protected IdPAttributeValue value2;
 
-    protected IdPAttributeValue<?> value3;
+    protected IdPAttributeValue value3;
 
     protected Consent consent1;
 
@@ -67,7 +67,7 @@ public class ConsentSerializerTest {
 
     protected Map<String, Consent> consents;
 
-    protected Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
+    protected Function<Collection<IdPAttributeValue>, String> attributeValuesHashFunction;
 
     @BeforeMethod public void setUp() {
         serializer = new ConsentSerializer();

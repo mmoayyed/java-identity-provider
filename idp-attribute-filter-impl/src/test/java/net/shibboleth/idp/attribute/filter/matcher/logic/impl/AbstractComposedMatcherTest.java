@@ -131,7 +131,7 @@ public class AbstractComposedMatcherTest {
             setSubsidiaries(composedMatchers);
         }
 
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(final IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue> getMatchingValues(final IdPAttribute attribute,
                 final AttributeFilterContext filterContext) {
             return null;
         }
@@ -141,7 +141,7 @@ public class AbstractComposedMatcherTest {
     public static class TestMatcher extends AbstractInitializableComponent implements Matcher, DestructableComponent,
             InitializableComponent {
 
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(final IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue> getMatchingValues(final IdPAttribute attribute,
                 final AttributeFilterContext filterContext) {
             return null;
         }

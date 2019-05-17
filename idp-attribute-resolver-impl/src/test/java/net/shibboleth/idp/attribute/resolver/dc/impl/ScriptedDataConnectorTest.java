@@ -104,7 +104,7 @@ public class ScriptedDataConnectorTest {
 
         assertEquals(result.size(), 4);
         
-        List<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
+        List<IdPAttributeValue> values = result.get("ScriptedOne").getValues();
         assertEquals(values.size(), 2);
         assertTrue(values.contains(new StringAttributeValue("Value 1")));
         assertTrue(values.contains(new StringAttributeValue("Value 2")));
@@ -133,7 +133,7 @@ public class ScriptedDataConnectorTest {
         connector.setId("Scripted");
         
         final IdPAttribute attribute = new IdPAttribute("attr");
-        attribute.setValues(Collections.singletonList((IdPAttributeValue<?>)new StringAttributeValue("bar")));
+        attribute.setValues(Collections.singletonList((IdPAttributeValue)new StringAttributeValue("bar")));
         connector.setCustomObject(attribute);
         
         final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("custom.js"));

@@ -111,7 +111,7 @@ public class RegexAttributePredicate extends AbstractAttributePredicate {
             return false;
         }
         
-        for (final IdPAttributeValue<?> value : attribute.getValues()) {
+        for (final IdPAttributeValue value : attribute.getValues()) {
             if (value instanceof StringAttributeValue) {
                 final Matcher m = pattern.matcher((String) value.getValue());
                 if (m.matches()) {

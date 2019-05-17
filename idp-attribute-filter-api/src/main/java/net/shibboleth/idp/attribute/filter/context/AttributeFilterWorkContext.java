@@ -51,15 +51,15 @@ import org.opensaml.messaging.context.BaseContext;
 public final class AttributeFilterWorkContext extends BaseContext {
 
     /** Values, for a given attribute, that are permitted to be released. */
-    private final Map<String, Set<IdPAttributeValue<?>>> permittedValues;
+    private final Map<String, Set<IdPAttributeValue>> permittedValues;
 
     /** Values, for a given attribute, that are not permitted to be released. */
-    private final Map<String, Set<IdPAttributeValue<?>>> deniedValues;
+    private final Map<String, Set<IdPAttributeValue>> deniedValues;
 
     /** Constructor. */
     public AttributeFilterWorkContext() {
-        permittedValues = new HashMap<String, Set<IdPAttributeValue<?>>>();
-        deniedValues = new HashMap<String, Set<IdPAttributeValue<?>>>();
+        permittedValues = new HashMap<String, Set<IdPAttributeValue>>();
+        deniedValues = new HashMap<String, Set<IdPAttributeValue>>();
     }
 
     /**
@@ -68,7 +68,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
     @Nonnull @NonnullElements @Unmodifiable public
-            Map<String, Set<IdPAttributeValue<?>>> getPermittedIdPAttributeValues() {
+            Map<String, Set<IdPAttributeValue>> getPermittedIdPAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -82,7 +82,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @param attributeValues values for the attribute that are permitted to be released
      */
     public void addPermittedIdPAttributeValues(@Nonnull @NotEmpty final String attributeId,
-            @Nullable @NullableElements final Collection<IdPAttributeValue<?>> attributeValues) {
+            @Nullable @NullableElements final Collection<IdPAttributeValue> attributeValues) {
         final AttributeFilterContext parent = (AttributeFilterContext) getParent();
         final Map<String, IdPAttribute> prefilteredAttributes = parent.getPrefilteredIdPAttributes();
         final String trimmedAttributeId =
@@ -94,13 +94,13 @@ public final class AttributeFilterWorkContext extends BaseContext {
             return;
         }
 
-        Set<IdPAttributeValue<?>> permittedAttributeValues = permittedValues.get(trimmedAttributeId);
+        Set<IdPAttributeValue> permittedAttributeValues = permittedValues.get(trimmedAttributeId);
         if (permittedAttributeValues == null) {
             permittedAttributeValues = new HashSet<>();
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
-        for (final IdPAttributeValue<?> value : attributeValues) {
+        for (final IdPAttributeValue value : attributeValues) {
             if (value != null) {
                 if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
                     throw new IllegalArgumentException("permitted value is not a current value of attribute "
@@ -119,7 +119,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * 
      * @return collection of attribute values, indexed by ID, that are not permitted to be released
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<IdPAttributeValue<?>>> getDeniedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<IdPAttributeValue>> getDeniedAttributeValues() {
         return Collections.unmodifiableMap(deniedValues);
     }
 
@@ -133,7 +133,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @param attributeValues values for the attribute that are not permitted to be released
      */
     public void addDeniedIdPAttributeValues(@Nonnull @NotEmpty final String attributeId,
-            @Nullable @NullableElements final Collection<IdPAttributeValue<?>> attributeValues) {
+            @Nullable @NullableElements final Collection<IdPAttributeValue> attributeValues) {
         final AttributeFilterContext parent = (AttributeFilterContext) getParent();
         final Map<String, IdPAttribute> prefilteredAttributes = parent.getPrefilteredIdPAttributes();
         final String trimmedAttributeId =
@@ -145,13 +145,13 @@ public final class AttributeFilterWorkContext extends BaseContext {
             return;
         }
 
-        Set<IdPAttributeValue<?>> deniedAttributeValues = deniedValues.get(trimmedAttributeId);
+        Set<IdPAttributeValue> deniedAttributeValues = deniedValues.get(trimmedAttributeId);
         if (deniedAttributeValues == null) {
             deniedAttributeValues = new HashSet<>();
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 
-        for (final IdPAttributeValue<?> value : attributeValues) {
+        for (final IdPAttributeValue value : attributeValues) {
             if (value != null) {
                 if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
                     throw new IllegalArgumentException("denied value is not a current value of attribute "

@@ -173,7 +173,7 @@ public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes =
+        final Map<String, List<IdPAttributeValue>> dependsAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext,
                         getAttributeDependencies(),
                         getDataConnectorDependencies());

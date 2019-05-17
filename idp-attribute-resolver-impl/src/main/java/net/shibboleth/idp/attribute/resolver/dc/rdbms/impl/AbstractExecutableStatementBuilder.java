@@ -82,11 +82,11 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
      * @return the SQL string
      */
     protected abstract String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException;
 
     /** {@inheritDoc} */
     @Override public ExecutableStatement build(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         final String query = getSQLQuery(resolutionContext, dependencyAttributes);
 
         return new ExecutableStatement() {

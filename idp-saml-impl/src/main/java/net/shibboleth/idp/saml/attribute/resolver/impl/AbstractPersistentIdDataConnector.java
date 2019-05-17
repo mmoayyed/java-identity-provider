@@ -160,7 +160,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final List<IdPAttributeValue<?>> attributeValues =
+        final List<IdPAttributeValue> attributeValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         getAttributeDependencies(),
                         getDataConnectorDependencies(),

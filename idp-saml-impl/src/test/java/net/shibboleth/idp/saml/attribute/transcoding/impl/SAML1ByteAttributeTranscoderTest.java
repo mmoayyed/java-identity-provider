@@ -174,7 +174,7 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
     
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new StringAttributeValue("foo"), new ScopedStringAttributeValue("foo", "bar"),
                         new IdPAttributeValue<Object>() {
                             public Object getValue() {
@@ -196,7 +196,7 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void single() throws Exception {
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
@@ -231,7 +231,7 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void singleRequested() throws Exception {
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
 
         final IdPRequestedAttribute inputAttribute = new IdPRequestedAttribute(ATTR_NAME);
@@ -289,7 +289,7 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void multi() throws Exception {
-        final Collection<IdPAttributeValue<?>> values =
+        final Collection<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

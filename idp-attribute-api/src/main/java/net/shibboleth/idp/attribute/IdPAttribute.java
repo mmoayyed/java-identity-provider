@@ -63,7 +63,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     @Nonnull private Map<Locale, String> displayDescriptions;
 
     /** Values for this attribute. */
-    @Nonnull private List<IdPAttributeValue<?>> values;
+    @Nonnull private List<IdPAttributeValue> values;
 
     /**
      * Constructor.
@@ -156,7 +156,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @return values of the attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<IdPAttributeValue<?>> getValues() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<IdPAttributeValue> getValues() {
         return values;
     }
 
@@ -165,7 +165,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newValues the new values for this attribute
      */
-    public void setValues(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> newValues) {
+    public void setValues(@Nullable @NullableElements final Collection<IdPAttributeValue> newValues) {
         if (newValues != null) {
             values = newValues.stream().
                      map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).

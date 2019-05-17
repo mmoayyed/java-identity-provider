@@ -103,7 +103,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         } catch (final ResolutionException e) {
             fail("resolution failed", e);
         }
-        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(values.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
@@ -118,7 +118,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
     }
     
     @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        final List<IdPAttributeValue> values = new ArrayList<>(3);
         values.add(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
@@ -147,7 +147,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         } catch (final ResolutionException e) {
             fail("resolution failed", e);
         }
-        final Collection<IdPAttributeValue<?>> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(outValues.size(), 2);
         final Collection<String> nameValues = new HashSet<>(2);
@@ -244,7 +244,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         } catch (final ResolutionException e) {
             fail("resolution failed", e);
         }
-        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(values.size(), 1);
         final NameIdentifier id = (NameIdentifier) values.iterator().next().getValue();

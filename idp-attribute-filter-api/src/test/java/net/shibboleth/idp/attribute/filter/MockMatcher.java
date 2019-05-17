@@ -79,7 +79,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
 
     /** {@inheritDoc} */
     @Override
-    public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
+    public Set<IdPAttributeValue> getMatchingValues(IdPAttribute attribute, AttributeFilterContext filterContext) {
         if (fails) {
             return null;
         }
@@ -91,7 +91,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
             return ImmutableSet.copyOf(attribute.getValues());
         }
 
-        HashSet<IdPAttributeValue<?>> values = new HashSet<>();
+        HashSet<IdPAttributeValue> values = new HashSet<>();
         for (IdPAttributeValue value : attribute.getValues()) {
             if (matchingValues.contains(value)) {
                 values.add(value);

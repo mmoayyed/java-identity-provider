@@ -174,7 +174,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * Apply the context to the template. {@inheritDoc}
      */
     @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
@@ -187,9 +187,9 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
 
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());
-                for (final IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue value : entry.getValue()) {
                     values.add(value.getValue());
                 }
                 log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());

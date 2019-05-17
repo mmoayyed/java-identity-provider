@@ -153,7 +153,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * @param values the list to add to.
      * @param value the value to add. Known to be a {@link String} or an {@link IdPAttributeValue}
      */
-    private void addAsIdPAttributeValue(final List<IdPAttributeValue<?>> values, final Object value) {
+    private void addAsIdPAttributeValue(final List<IdPAttributeValue> values, final Object value) {
         if (null == value) {
             values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         } else if (value instanceof String) {
@@ -209,7 +209,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
-        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(attributeValues.size());
+        final List<IdPAttributeValue> valueList = new ArrayList<>(attributeValues.size());
 
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (final Object object : attributeValues) {

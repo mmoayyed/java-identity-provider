@@ -126,7 +126,7 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
             log.debug("Wildcard (*) value rule for attribute {}", attribute.getId());
             return true;
         } else {
-            for (final IdPAttributeValue<?> value : attribute.getValues()) {
+            for (final IdPAttributeValue value : attribute.getValues()) {
                 if (value instanceof StringAttributeValue) {
                     if (toMatch.equals(value.getValue())) {
                         log.debug("Found matching value ({}) in attribute {}", toMatch, attribute.getId());

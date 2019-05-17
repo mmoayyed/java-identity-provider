@@ -55,7 +55,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     @Nonnull private Function<ProfileRequestContext,AttributeReleaseContext> attributeReleaseContextLookupStrategy;
 
     /** Function used to compute the hash of an attribute's values. */
-    @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
+    @Nonnull private Function<Collection<IdPAttributeValue>, String> attributeValuesHashFunction;
 
     /** Constructor. */
     public AttributeReleaseConsentFunction() {
@@ -103,7 +103,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
      * @param function the function used to compute the hash of an attribute's values
      */
     public void setAttributeValuesHashFunction(
-            @Nonnull final Function<Collection<IdPAttributeValue<?>>, String> function) {
+            @Nonnull final Function<Collection<IdPAttributeValue>, String> function) {
         attributeValuesHashFunction = Constraint.isNotNull(function, "Hash function cannot be null");
     }
 

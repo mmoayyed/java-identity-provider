@@ -88,10 +88,10 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final List<IdPAttributeValue<?>> resultantValues = new ArrayList<>();
+        final List<IdPAttributeValue> resultantValues = new ArrayList<>();
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final List<IdPAttributeValue<?>> dependencyValues =
+        final List<IdPAttributeValue> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, 
                         getAttributeDependencies(), 
                         getDataConnectorDependencies(), 

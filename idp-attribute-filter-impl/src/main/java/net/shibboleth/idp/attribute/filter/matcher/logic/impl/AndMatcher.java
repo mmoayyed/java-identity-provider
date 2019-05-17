@@ -53,7 +53,7 @@ public class AndMatcher extends AbstractComposedMatcher {
      * {@link Matcher}. {@inheritDoc}
      */
     @Override @Nullable @NonnullElements 
-    public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    public Set<IdPAttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -67,11 +67,11 @@ public class AndMatcher extends AbstractComposedMatcher {
         final Iterator<Matcher> matcherItr = currentMatchers.iterator();
 
         // pre-load the set with the first contents
-        Set<IdPAttributeValue<?>> match = matcherItr.next().getMatchingValues(attribute, filterContext);
+        Set<IdPAttributeValue> match = matcherItr.next().getMatchingValues(attribute, filterContext);
         if (null == match) {
             return null;
         }
-        final Set<IdPAttributeValue<?>> matchingValues = new HashSet(match);
+        final Set<IdPAttributeValue> matchingValues = new HashSet(match);
         while (matcherItr.hasNext()) {
             match = matcherItr.next().getMatchingValues(attribute, filterContext);
             if (null == match) {

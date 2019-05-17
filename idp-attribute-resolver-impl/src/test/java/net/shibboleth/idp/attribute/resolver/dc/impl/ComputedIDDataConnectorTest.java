@@ -120,7 +120,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        final List<IdPAttributeValue<?>> resultValues =
+        final List<IdPAttributeValue> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         assertEquals(resultValues.size(), 1);
         assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
@@ -224,7 +224,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        List<IdPAttributeValue<?>> resultValues =
+        List<IdPAttributeValue> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         assertEquals(resultValues.size(), 1);
         assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
@@ -332,7 +332,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                         TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
-        final List<IdPAttributeValue<?>> resultValues =
+        final List<IdPAttributeValue> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         assertEquals(resultValues.size(), 1);
 
@@ -340,7 +340,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void nullValue() throws ComponentInitializationException, ResolutionException {
         
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(2);
+        final List<IdPAttributeValue> values = new ArrayList<>(2);
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue("calue"));
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
@@ -373,7 +373,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void emptyValue() throws ComponentInitializationException, ResolutionException {
         
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(1);
+        final List<IdPAttributeValue> values = new ArrayList<>(1);
         values.add(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE));
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
 

@@ -88,7 +88,7 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
      * @param value to inspect
      * @return {@link EmptyAttributeValue} or {@link StringAttributeValue}
      */
-    @Nonnull public static IdPAttributeValue<?> valueOf(@Nullable final String value) {
+    @Nonnull public static IdPAttributeValue valueOf(@Nullable final String value) {
         if (value == null) {
             return EmptyAttributeValue.NULL;
         } else if (value.length() == 0) {

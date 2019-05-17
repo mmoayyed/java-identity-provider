@@ -44,5 +44,5 @@ public interface ExecutableSearchBuilder<T extends ExecutableSearch> {
      * @throws ResolutionException throw if their is a problem creating the executable search
      */
     @Nonnull public T build(@Nonnull AttributeResolutionContext resolutionContext,
-            @Nonnull Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
+            @Nonnull Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException;
 }

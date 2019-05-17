@@ -330,7 +330,7 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
     /** {@inheritDoc} */
     @Override
     @Nonnull protected HttpUriRequest getHttpRequest(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
 
         final VelocityContext context = new VelocityContext();
         log.trace("Creating request using attribute resolution context {}", resolutionContext);
@@ -346,9 +346,9 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
 
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());
-                for (final IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue value : entry.getValue()) {
                     values.add(value.getValue());
                 }
                 log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());
@@ -389,7 +389,7 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
     @Override
     @Nonnull @NotEmpty protected String getResultCacheKey(@Nonnull final HttpUriRequest request,
             @Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
+            @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) {
         
         if (cacheKeyTemplate == null) {
             return null;
@@ -403,9 +403,9 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
         
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());
-                for (final IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue value : entry.getValue()) {
                     values.add(value.getValue());
                 }
                 log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());

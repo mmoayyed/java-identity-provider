@@ -172,7 +172,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
 
 // Checkstyle: CyclomaticComplexity|ReturnCount|MethodLength OFF
     /** {@inheritDoc} */
-    @Override @Nonnull public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Override @Nonnull public Set<IdPAttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -208,7 +208,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
                 return Collections.emptySet();
             }
             
-            final Set<IdPAttributeValue<?>> values = new HashSet<>();
+            final Set<IdPAttributeValue> values = new HashSet<>();
             values.addAll(filterValues(attributeToLog, attribute, requestedAttribute.getAttributeValues()));
             return values;
         } else {
@@ -243,7 +243,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
                 return Collections.emptySet();
             }
 
-            final Set<IdPAttributeValue<?>> values = new HashSet<>();
+            final Set<IdPAttributeValue> values = new HashSet<>();
 
             for (final IdPAttribute requestedAttribute
                     : Collections2.filter(requestedAttributeList, Predicates.notNull())) {
@@ -317,15 +317,15 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * @param requestedValues the values
      * @return the result of the filter
      */
-    @Nonnull private Set<IdPAttributeValue<?>> filterValues(@Nullable final IdPAttribute attribute,
-            @Nonnull @NonnullElements final List<IdPAttributeValue<?>> requestedValues) {
+    @Nonnull private Set<IdPAttributeValue> filterValues(@Nullable final IdPAttribute attribute,
+            @Nonnull @NonnullElements final List<IdPAttributeValue> requestedValues) {
 
         if (null == requestedValues || requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
             return ImmutableSet.copyOf(attribute.getValues());
         }
 
-        final ImmutableSet.Builder<IdPAttributeValue<?>> builder = ImmutableSet.builder();
+        final ImmutableSet.Builder<IdPAttributeValue> builder = ImmutableSet.builder();
 
         for (final IdPAttributeValue attributeValue : attribute.getValues()) {
             if (requestedValues.contains(attributeValue)) {
@@ -333,7 +333,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             }
         }
         
-        final ImmutableSet<IdPAttributeValue<?>> result = builder.build();
+        final ImmutableSet<IdPAttributeValue> result = builder.build();
         log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attribute.getId(), result);
         return result;
     }
@@ -347,7 +347,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * 
      * @return the result of the filter
      */
-    @Nonnull private Set<IdPAttributeValue<?>> filterValues(@Nonnull final String attributeToLog,
+    @Nonnull private Set<IdPAttributeValue> filterValues(@Nonnull final String attributeToLog,
             @Nullable final IdPAttribute attribute, @Nonnull @NonnullElements final List<XMLObject> requestedValues) {
 
         if (requestedValues.isEmpty()) {
@@ -355,7 +355,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             return ImmutableSet.copyOf(attribute.getValues());
         }
 
-        final ImmutableSet.Builder<IdPAttributeValue<?>> builder = ImmutableSet.builder();
+        final ImmutableSet.Builder<IdPAttributeValue> builder = ImmutableSet.builder();
 
         for (final IdPAttributeValue attributeValue : attribute.getValues()) {
             if (attributeValue instanceof StringAttributeValue) {
@@ -370,7 +370,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             }
         }
         
-        final ImmutableSet<IdPAttributeValue<?>> result = builder.build();
+        final ImmutableSet<IdPAttributeValue> result = builder.build();
         log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attributeToLog, result);
         return result;
     }

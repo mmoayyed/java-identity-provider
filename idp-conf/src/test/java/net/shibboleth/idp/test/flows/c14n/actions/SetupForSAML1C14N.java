@@ -60,7 +60,7 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
     }
     
     private NameIdentifier encode(IdPAttribute attribute) {
-        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
+        final Collection<IdPAttributeValue> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             return null;
         }

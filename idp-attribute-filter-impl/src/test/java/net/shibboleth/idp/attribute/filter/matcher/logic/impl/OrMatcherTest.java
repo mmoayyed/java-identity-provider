@@ -87,7 +87,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(value2));
         assertTrue(result.contains(value1));
@@ -111,7 +111,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(value2) && result.contains(value1));
@@ -142,7 +142,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertEquals(result.size(), 2);
         assertTrue(result.contains(value2) && result.contains(value1));
@@ -159,7 +159,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
@@ -170,7 +170,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("test");
         matcher.initialize();
 
-        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         assertNull(result);
     }
     

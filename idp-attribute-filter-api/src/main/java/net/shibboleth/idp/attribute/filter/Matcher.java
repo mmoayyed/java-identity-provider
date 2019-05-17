@@ -41,7 +41,7 @@ public interface Matcher extends IdentifiedComponent {
     public static final Matcher MATCHES_ALL = new Matcher() {
 
         /** {@inheritDoc} */
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
                 @Nonnull final AttributeFilterContext filterContext) {
             return ImmutableSet.copyOf(attribute.getValues());
         }
@@ -56,7 +56,7 @@ public interface Matcher extends IdentifiedComponent {
     public static final Matcher MATCHES_NONE = new Matcher() {
 
         /** {@inheritDoc} */
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
                 @Nonnull final AttributeFilterContext filterContext) {
             return Collections.emptySet();
         }
@@ -71,7 +71,7 @@ public interface Matcher extends IdentifiedComponent {
     public static final Matcher MATCHER_FAILS = new Matcher() {
 
         /** {@inheritDoc} */
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+        @Override public Set<IdPAttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
                 @Nonnull final AttributeFilterContext filterContext) {
             return null;
         }
@@ -89,7 +89,7 @@ public interface Matcher extends IdentifiedComponent {
      * @param filterContext the filter context
      * @return The result of this rule. Null if we failed.
      */
-    @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
+    @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext);
 
 }

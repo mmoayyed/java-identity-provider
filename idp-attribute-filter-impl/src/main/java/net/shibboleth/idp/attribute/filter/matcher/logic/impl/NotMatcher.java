@@ -72,7 +72,7 @@ public final class NotMatcher extends AbstractIdentifiableInitializableComponent
      * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.
      * {@inheritDoc}
      */
-    @Override @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(
+    @Override @Nullable @NonnullElements public Set<IdPAttributeValue> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -83,9 +83,9 @@ public final class NotMatcher extends AbstractIdentifiableInitializableComponent
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final Set<IdPAttributeValue<?>> attributeValues = new HashSet<>(attribute.getValues());
+        final Set<IdPAttributeValue> attributeValues = new HashSet<>(attribute.getValues());
 
-        final Set<IdPAttributeValue<?>> matches = currentMatcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue> matches = currentMatcher.getMatchingValues(attribute, filterContext);
         if (null == matches) {
             return matches;
         }

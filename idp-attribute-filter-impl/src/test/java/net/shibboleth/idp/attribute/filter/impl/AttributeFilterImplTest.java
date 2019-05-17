@@ -142,7 +142,7 @@ public class AttributeFilterImplTest {
         filter.filterAttributes(filterContext);
         final Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
-        final List<IdPAttributeValue<?>> result = resultAttrs.get("attribute1").getValues();
+        final List<IdPAttributeValue> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(new StringAttributeValue("one")));
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
@@ -172,7 +172,7 @@ public class AttributeFilterImplTest {
         filter.initialize();
 
         filter.filterAttributes(filterContext);
-        List<IdPAttributeValue<?>> result = filterContext.getFilteredIdPAttributes().get("attribute1").getValues();
+        List<IdPAttributeValue> result = filterContext.getFilteredIdPAttributes().get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(new StringAttributeValue("one")));
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
@@ -271,7 +271,7 @@ public class AttributeFilterImplTest {
         filter.filterAttributes(filterContext);
         Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
-        List<IdPAttributeValue<?>> result = resultAttrs.get("attribute1").getValues();
+        List<IdPAttributeValue> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
     }

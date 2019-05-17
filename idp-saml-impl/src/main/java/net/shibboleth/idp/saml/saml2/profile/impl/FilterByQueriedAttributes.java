@@ -265,9 +265,9 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
         
         boolean requestedValues = false;
         
-        final Collection<IdPAttributeValue<?>> keepers = new ArrayList<>(attribute.getValues().size());
+        final Collection<IdPAttributeValue> keepers = new ArrayList<>(attribute.getValues().size());
         
-        for (final IdPAttributeValue<?> value : attribute.getValues()) {
+        for (final IdPAttributeValue value : attribute.getValues()) {
             
             for (final IdPAttribute requested : requestedAttributes) {
                 if (!requested.getValues().isEmpty()) {

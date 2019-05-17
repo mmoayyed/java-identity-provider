@@ -160,7 +160,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
      * @return null or an attributeValue;
      * @throws ResolutionException if the IdP Name is empty.
      */
-    @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull final IdPAttributeValue<?> theValue,
+    @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull final IdPAttributeValue theValue,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         if (theValue instanceof StringAttributeValue) {
@@ -184,8 +184,8 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        final List<? extends IdPAttributeValue<?>> inputValues;
-        List<IdPAttributeValue<?>> outputValues = null;
+        final List<? extends IdPAttributeValue> inputValues;
+        List<IdPAttributeValue> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
         inputValues = PluginDependencySupport.getMergedAttributeValues(workContext,
@@ -195,15 +195,15 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
 
         if (null != inputValues && !inputValues.isEmpty()) {
             if (1 == inputValues.size()) {
-                final IdPAttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
+                final IdPAttributeValue val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
                 if (null != val) {
                     outputValues = Collections.singletonList(val);
                 }
             } else {
                 // TODO(rdw) Fix typing
                 // Intermediate to solve typing issues.
-                final List<IdPAttributeValue<?>> xmlVals = new ArrayList<>(inputValues.size());
-                for (final IdPAttributeValue<?> theValue : inputValues) {
+                final List<IdPAttributeValue> xmlVals = new ArrayList<>(inputValues.size());
+                for (final IdPAttributeValue theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {
                         xmlVals.add(val);

@@ -61,7 +61,7 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
 
     private NameID encode(@Nonnull final IdPAttribute attribute) {
 
-        final Collection<IdPAttributeValue<?>> attributeValues = attribute.getValues();
+        final Collection<IdPAttributeValue> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             return null;
         }

@@ -109,7 +109,7 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
      * @param value to inspect
      * @return {@link EmptyAttributeValue} or {@link ByteAttributeValue}
      */
-    @Nonnull public static IdPAttributeValue<?> valueOf(@Nullable final byte[] value) {
+    @Nonnull public static IdPAttributeValue valueOf(@Nullable final byte[] value) {
         if (value == null) {
             return EmptyAttributeValue.NULL;
         } else if (value.length == 0) {

@@ -69,7 +69,7 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         assertEquals(result.size(), 2);
         
-        List<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
+        List<IdPAttributeValue> values = result.get("ScriptedOne").getValues();
         assertEquals(values.size(), 2);
         assertTrue(values.contains(new StringAttributeValue("Value 1")));
         assertTrue(values.contains(new StringAttributeValue("Value 2")));

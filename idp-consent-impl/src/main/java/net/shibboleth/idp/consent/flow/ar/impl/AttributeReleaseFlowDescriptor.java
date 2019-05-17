@@ -43,7 +43,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
     private boolean perAttributeConsentEnabled;
 
     /** Function to create hash of all attribute values. */
-    @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
+    @Nonnull private Function<Collection<IdPAttributeValue>, String> attributeValuesHashFunction;
 
     /** Constructor. */
     public AttributeReleaseFlowDescriptor() {
@@ -82,7 +82,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * 
      * @return function to create hash of all attribute values
      */
-    @Nonnull public Function<Collection<IdPAttributeValue<?>>, String> getAttributeValuesHashFunction() {
+    @Nonnull public Function<Collection<IdPAttributeValue>, String> getAttributeValuesHashFunction() {
         return attributeValuesHashFunction;
     }
 
@@ -125,7 +125,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param function function to create hash of all attribute values
      */
     public void setAttributeValuesHashFunction(
-            @Nonnull final Function<Collection<IdPAttributeValue<?>>, String> function) {
+            @Nonnull final Function<Collection<IdPAttributeValue>, String> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         attributeValuesHashFunction = Constraint.isNotNull(function, "Attribute values hash function cannot be null");

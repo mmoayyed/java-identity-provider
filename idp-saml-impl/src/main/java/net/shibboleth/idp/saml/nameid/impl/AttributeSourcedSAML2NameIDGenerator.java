@@ -164,7 +164,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
                 continue;
             }
 
-            final List<IdPAttributeValue<?>> values = attribute.getValues();
+            final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameID) {
                     if (SAML2ObjectSupport.areNameIDFormatsEquivalent(getFormat(),
@@ -200,7 +200,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
                 continue;
             }
 
-            final List<IdPAttributeValue<?>> values = attribute.getValues();
+            final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
                     log.debug("Generating NameID from Scoped String-valued attribute {}", sourceId);

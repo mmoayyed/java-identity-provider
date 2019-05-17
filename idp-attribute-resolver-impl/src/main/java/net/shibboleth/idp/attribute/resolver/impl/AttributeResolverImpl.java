@@ -462,10 +462,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             // Remove duplicate attribute values.
             log.debug("{} De-duping (and null filtering) attribute definition {} result",
                     logPrefix, definition.getId());
-            final Iterator<IdPAttributeValue<?>> valueIter = resolvedAttribute.getValues().iterator();
-            final Set<IdPAttributeValue<?>> monitor = new HashSet<>(resolvedAttribute.getValues().size());
+            final Iterator<IdPAttributeValue> valueIter = resolvedAttribute.getValues().iterator();
+            final Set<IdPAttributeValue> monitor = new HashSet<>(resolvedAttribute.getValues().size());
             while (valueIter.hasNext()) {
-                 final IdPAttributeValue<?> value = valueIter.next();
+                 final IdPAttributeValue value = valueIter.next();
                 
                 if (isStripNulls()) {
                     if (null == value) {

@@ -63,7 +63,7 @@ public class SAML2ByteAttributeTranscoder extends AbstractSAML2AttributeTranscod
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected IdPAttributeValue<?> decodeValue(
+    @Override @Nullable protected IdPAttributeValue decodeValue(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule, @Nullable final XMLObject value) {
         

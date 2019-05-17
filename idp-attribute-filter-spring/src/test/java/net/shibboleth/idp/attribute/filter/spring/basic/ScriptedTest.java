@@ -76,7 +76,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
-        Set<IdPAttributeValue<?>> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        Set<IdPAttributeValue> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
         assertEquals(x.size(), 1);
         String val = (String) x.iterator().next().getValue();
         assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));

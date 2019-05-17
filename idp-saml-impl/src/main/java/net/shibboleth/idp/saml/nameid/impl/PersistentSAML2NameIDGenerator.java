@@ -245,7 +245,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             pid.setRecipientEntityID(relyingPartyId);
             pid.setPrincipalName(subjectCtx.getPrincipalName());
             
-            final List<IdPAttributeValue<?>> values = attribute.getValues();
+            final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 try {
                     if (value instanceof ScopedStringAttributeValue) {

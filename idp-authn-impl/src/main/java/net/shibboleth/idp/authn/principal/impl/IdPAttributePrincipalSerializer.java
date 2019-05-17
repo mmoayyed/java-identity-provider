@@ -107,7 +107,7 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
         
         final IdPAttribute attribute = ((IdPAttributePrincipal) principal).getAttribute();
         final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-        for (final IdPAttributeValue<?> value : attribute.getValues()) {
+        for (final IdPAttributeValue value : attribute.getValues()) {
             final JsonObject obj = serializeValue(value);
             if (obj != null) {
                 arrayBuilder.add(obj);
@@ -145,11 +145,11 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
         final JsonArray vals = obj.getJsonArray(PRINCIPAL_ENTRY_FIELD);
         if (str != null && !Strings.isNullOrEmpty(str.getString()) && vals != null) {
             final IdPAttribute attribute = new IdPAttribute(str.getString());
-            final List<IdPAttributeValue<?>> values = new ArrayList<>();
+            final List<IdPAttributeValue> values = new ArrayList<>();
             
             for (final JsonValue entry : vals) {
                 if (entry instanceof JsonObject) {
-                    final IdPAttributeValue<?> attrValue = deserializeValue((JsonObject) entry);
+                    final IdPAttributeValue attrValue = deserializeValue((JsonObject) entry);
                     if (attrValue != null) {
                         values.add(attrValue);
                     } else {
@@ -178,7 +178,7 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
      * 
      * @return the object
      */
-    @Nonnull protected JsonObject serializeValue(@Nonnull final IdPAttributeValue<?> value) {
+    @Nonnull protected JsonObject serializeValue(@Nonnull final IdPAttributeValue value) {
         final JsonObjectBuilder builder = getJsonObjectBuilder();
         
         if (value instanceof EmptyAttributeValue) {
@@ -213,7 +213,7 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
      * 
      * @return the attribute value, or null
      */
-    @Nullable protected IdPAttributeValue<?> deserializeValue(@Nonnull final JsonObject object) {
+    @Nullable protected IdPAttributeValue deserializeValue(@Nonnull final JsonObject object) {
         
         if (object.containsKey(EMPTY_VALUE_FIELD)) {
             final JsonValue value = object.get(EMPTY_VALUE_FIELD);

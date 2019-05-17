@@ -266,17 +266,17 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
 
         if (null == attribute.getValues()) {
             log.info("{} Attribute '{}' has no values provided.", getLogPrefix(), attribute.getId());
-            attribute.setValues(Collections.<IdPAttributeValue<?>> emptyList());
+            attribute.setValues(Collections.<IdPAttributeValue> emptyList());
             return;
         }
         log.debug("{} Attribute '{}' has {} value(s).", getLogPrefix(), attribute.getId(),
                 attribute.getValues().size());
-        final List<IdPAttributeValue<?>> inputValues = attribute.getValues();
-        final List<IdPAttributeValue<?>> outputValues = new ArrayList<>(inputValues.size());
+        final List<IdPAttributeValue> inputValues = attribute.getValues();
+        final List<IdPAttributeValue> outputValues = new ArrayList<>(inputValues.size());
 
         for (final Object o : inputValues) {
-            if (o instanceof IdPAttributeValue<?>) {
-                outputValues.add((IdPAttributeValue<?>) o);
+            if (o instanceof IdPAttributeValue) {
+                outputValues.add((IdPAttributeValue) o);
             } else {
                 log.error("{} Attribute '{} has attribute value of type {}.  This will be ignored", getLogPrefix(),
                         attribute.getId(), o.getClass().getName());

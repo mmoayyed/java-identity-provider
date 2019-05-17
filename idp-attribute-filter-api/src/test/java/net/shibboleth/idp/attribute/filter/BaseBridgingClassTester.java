@@ -34,9 +34,9 @@ import org.testng.annotations.Test;
  */
 public class BaseBridgingClassTester {
     
-    protected final IdPAttributeValue<?> VALUE1 = new StringAttributeValue("value1");
-    protected final IdPAttributeValue<?> VALUE2 = new StringAttributeValue("value2");
-    protected final IdPAttributeValue<?> VALUE3 = new StringAttributeValue("value3");
+    protected final IdPAttributeValue VALUE1 = new StringAttributeValue("value1");
+    protected final IdPAttributeValue VALUE2 = new StringAttributeValue("value2");
+    protected final IdPAttributeValue VALUE3 = new StringAttributeValue("value3");
     
     protected final String NAME1 = "foo";
     protected final String NAME2 = "bar";

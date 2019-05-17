@@ -58,7 +58,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
 
     private final static String QUALIFIER = "Qualifier";
 
-    private static IdPAttributeValue<?> saml1NameIdFor(final String ident) {
+    private static IdPAttributeValue saml1NameIdFor(final String ident) {
         NameIdentifier id = saml1Builder.buildObject();
 
         id.setValue(ident);
@@ -67,7 +67,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         return new XMLObjectAttributeValue(id);
     }
 
-    private static IdPAttributeValue<?> saml2NameIdFor(final String ident) {
+    private static IdPAttributeValue saml2NameIdFor(final String ident) {
         NameID id = saml2Builder.buildObject();
 
         id.setValue(ident);

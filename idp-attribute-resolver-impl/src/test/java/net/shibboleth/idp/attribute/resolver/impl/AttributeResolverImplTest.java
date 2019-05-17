@@ -339,7 +339,7 @@ public class AttributeResolverImplTest {
         ad.initialize();
         
         final IdPAttribute i2Val = new IdPAttribute("Atr");
-        final List<IdPAttributeValue<?>>vals = new ArrayList<>();
+        final List<IdPAttributeValue>vals = new ArrayList<>();
         vals.add(new StringAttributeValue("value1"));
         vals.add(new StringAttributeValue("value2"));
         i2Val.setValues(vals);

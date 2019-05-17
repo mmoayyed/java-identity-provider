@@ -133,7 +133,7 @@ public class ScopedAttributeTest {
     }
     
     @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(4);
+        final List<IdPAttributeValue> values = new ArrayList<>(4);
         values.add(new StringAttributeValue("one"));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue("three"));

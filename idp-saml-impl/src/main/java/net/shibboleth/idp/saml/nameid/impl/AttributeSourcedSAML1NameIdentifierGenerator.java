@@ -164,7 +164,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                 continue;
             }
 
-            final List<IdPAttributeValue<?>> values = attribute.getValues();
+            final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameIdentifier) {
                     if (SAML1ObjectSupport.areNameIdentifierFormatsEquivalent(getFormat(),
@@ -200,7 +200,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                 continue;
             }
 
-            final List<IdPAttributeValue<?>> values = attribute.getValues();
+            final List<IdPAttributeValue> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
                     log.debug("Generating NameIdentifier from Scoped String-valued attribute {}", sourceId);

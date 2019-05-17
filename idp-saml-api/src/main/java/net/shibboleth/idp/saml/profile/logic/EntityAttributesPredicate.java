@@ -190,7 +190,7 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
                 for (int tagindex = 0; tagindex < tagvals.size(); ++tagindex) {
                     final String tagvalstr = tagvals.get(tagindex);
 
-                    for (final IdPAttributeValue<?> cval : a.getValues()) {
+                    for (final IdPAttributeValue cval : a.getValues()) {
                         final String cvalstr = attributeValueToString(cval);
                         if (tagvalstr != null && cvalstr != null) {
                             if (tagvalstr.equals(cvalstr)) {
@@ -209,7 +209,7 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
                 // Check each tag regular expression for a match.
                 for (int tagindex = 0; tagindex < tagexps.size(); ++tagindex) {
 
-                    for (final IdPAttributeValue<?> cval : a.getValues()) {
+                    for (final IdPAttributeValue cval : a.getValues()) {
                         final String cvalstr = attributeValueToString(cval);
                         if (tagexps.get(tagindex) != null && cvalstr != null) {
                             if (tagexps.get(tagindex).matcher(cvalstr).matches()) {
@@ -243,7 +243,7 @@ public class EntityAttributesPredicate extends org.opensaml.saml.common.profile.
          * @param value object to convert
          * @return the converted value, or null
          */
-        @Nullable private String attributeValueToString(@Nonnull final IdPAttributeValue<?> value) {
+        @Nullable private String attributeValueToString(@Nonnull final IdPAttributeValue value) {
             
             if (value instanceof ScopedStringAttributeValue) {
                 return ((ScopedStringAttributeValue) value).getValue() + scopeDelimiter +

@@ -149,7 +149,7 @@ public class SimpleAttributeTest {
         } catch (final ResolutionException e) {
             fail("resolution failed", e);
         }
-        final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<IdPAttributeValue> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(values.size(), 2);
         assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
@@ -165,7 +165,7 @@ public class SimpleAttributeTest {
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
     @Test public void nullValue() throws ResolutionException, ComponentInitializationException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        final List<IdPAttributeValue> values = new ArrayList<>(3);
         values.add(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT);
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
@@ -183,7 +183,7 @@ public class SimpleAttributeTest {
 
         final IdPAttribute result = simple.resolve(resolutionContext);
 
-       final List<IdPAttributeValue<?>> outValues = result.getValues();
+       final List<IdPAttributeValue> outValues = result.getValues();
         assertEquals(outValues.size(), 2);
         assertTrue(outValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
         assertTrue(outValues.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));

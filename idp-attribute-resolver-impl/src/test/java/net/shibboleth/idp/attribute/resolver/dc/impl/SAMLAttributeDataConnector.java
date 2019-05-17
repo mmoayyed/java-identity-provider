@@ -132,8 +132,8 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
      * @param attributeValues the input values
      * @return a list of values, Possibly empty.
      */
-    @Nullable protected @Nonnull List<IdPAttributeValue<?>> encodeValues(final List<XMLObject> attributeValues) {
-        final ArrayList<IdPAttributeValue<?>> result = new ArrayList<>(attributeValues.size());
+    @Nullable protected @Nonnull List<IdPAttributeValue> encodeValues(final List<XMLObject> attributeValues) {
+        final ArrayList<IdPAttributeValue> result = new ArrayList<>(attributeValues.size());
 
         for (XMLObject object : attributeValues) {
             IdPAttributeValue val = encodeValue(object);
@@ -161,7 +161,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
             final String attributeName = samlAttribute.getName();
             log.debug("Connector '{}': found attribute named '{}'", getId(), attributeName);
 
-            final List<IdPAttributeValue<?>> values = encodeValues(samlAttribute.getAttributeValues());
+            final List<IdPAttributeValue> values = encodeValues(samlAttribute.getAttributeValues());
             log.debug("Connector '{}': attribute '{}', values '{}'", new Object[] {getId(), attributeName, values,});
 
             final IdPAttribute IdPAttribute = new IdPAttribute(attributeName);

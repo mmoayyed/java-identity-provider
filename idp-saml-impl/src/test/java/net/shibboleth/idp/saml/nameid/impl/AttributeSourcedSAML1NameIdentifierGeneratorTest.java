@@ -58,7 +58,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
 
     private final static String QUALIFIER = "Qualifier";
 
-    private static IdPAttributeValue<?> saml1NameIdFor(final String ident) {
+    private static IdPAttributeValue saml1NameIdFor(final String ident) {
         NameIdentifier id = saml1Builder.buildObject();
 
         id.setValue(ident);
@@ -67,7 +67,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         return new XMLObjectAttributeValue(id);
     }
 
-    private static IdPAttributeValue<?> saml2NameIdFor(final String ident) {
+    private static IdPAttributeValue saml2NameIdFor(final String ident) {
         NameID id = saml2Builder.buildObject();
 
         id.setValue(ident);
@@ -109,7 +109,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
 
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final List<IdPAttributeValue<?>> values = List.of(new IdPAttributeValue<Object>() {
+        final List<IdPAttributeValue> values = List.of(new IdPAttributeValue<Object>() {
             public Object getValue() {
                 return intArray;
             }
