@@ -20,19 +20,18 @@ package net.shibboleth.idp.cas.attribute.transcoding.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.LocalizedStringAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeTranscoder} that supports {@link Attribute} and
@@ -54,7 +53,7 @@ public class CASStringAttributeTranscoder extends AbstractCASAttributeTranscoder
             @Nonnull final IdPAttribute attribute, @Nonnull final TranscodingRule rule,
             @Nonnull final StringAttributeValue value) throws AttributeEncodingException {
         
-        if (value instanceof LocalizedStringAttributeValue || value instanceof ScopedStringAttributeValue) {
+        if (value instanceof ScopedStringAttributeValue) {
             log.warn("Attribute '{}': Lossy encoding of attribute value of type {} to SAML1 String Attribute",
                     attribute.getId(), value.getClass().getSimpleName());
         }

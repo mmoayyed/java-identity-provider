@@ -219,8 +219,8 @@ public class AttributeTest {
 
     /** Tests that values are properly added and modified. */
     @Test(enabled=false) public void values() {
-        LocalizedStringAttributeValue value1 = new LocalizedStringAttributeValue("value1", null);
-        LocalizedStringAttributeValue value2 = new LocalizedStringAttributeValue("value2", null);
+        StringAttributeValue value1 = new StringAttributeValue("value1");
+        StringAttributeValue value2 = new StringAttributeValue("value2");
 
         IdPAttribute attrib = new IdPAttribute("foo");
         Assert.assertTrue(attrib.getValues().isEmpty());
@@ -326,7 +326,7 @@ public class AttributeTest {
         Assert.assertTrue(attrib.compareTo(diff) > 0);
         Assert.assertEquals(attrib.compareTo(dupl) , 0);
         
-        attrib.setValues(Collections.singletonList(new LocalizedStringAttributeValue("value1", null)));
+        attrib.setValues(Collections.singletonList(new StringAttributeValue("value1")));
         attrib.setDisplayDescriptions(Collections.singletonMap(new Locale("en"), "Descrption"));
         attrib.setDisplayNames(Collections.singletonMap(new Locale("en"), "Name"));
         attrib.toString();
