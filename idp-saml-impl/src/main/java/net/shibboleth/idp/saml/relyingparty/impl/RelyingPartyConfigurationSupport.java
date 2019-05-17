@@ -33,6 +33,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
@@ -134,6 +135,35 @@ public final class RelyingPartyConfigurationSupport {
                 new StrategyIndirectedPredicate<>(
                         new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
                         new EntityAttributesPredicate(candidates, trim, matchAll));
+        
+        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        config.setActivationCondition(indirectPredicate);
+
+        return config;
+    }
+
+    /**
+     * A shorthand method for constructing a {@link RelyingPartyConfiguration} with an activation condition based on
+     * a {@link MappedEntityAttributesPredicate}.
+     * 
+     * @param candidates the candidate rules
+     * @param trim true iff tag values in metadata should be trimmed before comparison
+     * @param matchAll true iff all the candidate rules are required to match
+     * 
+     * @return  a default-constructed configuration with the appropriate condition set
+     */
+    @Nonnull public static RelyingPartyConfiguration byMappedTag(
+            @Nonnull @NonnullElements final Collection<Candidate> candidates, final boolean trim,
+            final boolean matchAll) {
+        Constraint.isNotNull(candidates, "Candidate list cannot be null");
+        
+        // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
+        // EntityDescriptor to a lookup sequence of PRC -> RPC -> SAMLMetadataContext -> EntityDescriptor.
+        
+        final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
+                new StrategyIndirectedPredicate<>(
+                        new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
+                        new MappedEntityAttributesPredicate(candidates, trim, matchAll));
         
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setActivationCondition(indirectPredicate);

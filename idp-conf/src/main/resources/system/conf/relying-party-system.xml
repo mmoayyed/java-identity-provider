@@ -43,6 +43,11 @@
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
         c:trim="false" c:matchAll="false" />
 
+    <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
+    <bean id="RelyingPartyByMappedTag" abstract="true" parent="RelyingParty"
+        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byMappedTag"
+        c:trim="false" c:matchAll="false" />
+
     <bean id="TagCandidate" abstract="true"
         class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate" />
         
