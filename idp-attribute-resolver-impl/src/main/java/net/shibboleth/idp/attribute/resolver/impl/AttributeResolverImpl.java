@@ -18,11 +18,13 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -463,7 +465,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             log.debug("{} De-duping (and null filtering) attribute definition {} result",
                     logPrefix, definition.getId());
             final Iterator<IdPAttributeValue> valueIter = resolvedAttribute.getValues().iterator();
+            final List<IdPAttributeValue> result = new ArrayList<>(resolvedAttribute.getValues().size());
             final Set<IdPAttributeValue> monitor = new HashSet<>(resolvedAttribute.getValues().size());
+
             while (valueIter.hasNext()) {
                  final IdPAttributeValue value = valueIter.next();
                 
@@ -481,6 +485,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 if (!monitor.add(value)) {
                     log.debug("{} Removing duplicate value {} of attribute '{}' from resolution result", logPrefix,
                             value, resolvedAttribute.getId());
+                } else {
+                    result.add(value);
                 }
             }
 
@@ -491,7 +497,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 continue;
             }
 
-            resolvedAttribute.setValues(monitor);
+            resolvedAttribute.setValues(result);
             log.debug("{} Attribute '{}' has {} values after post-processing", logPrefix, resolvedAttribute.getId(),
                     monitor.size());
 

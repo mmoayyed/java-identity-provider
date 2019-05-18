@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -264,8 +265,8 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             @Nonnull @NonnullElements final Collection<IdPAttribute> requestedAttributes) {
         
         boolean requestedValues = false;
-        
-        final Collection<IdPAttributeValue> keepers = new ArrayList<>(attribute.getValues().size());
+
+        final List<IdPAttributeValue> keepers = new ArrayList<>(attribute.getValues().size());
         
         for (final IdPAttributeValue value : attribute.getValues()) {
             

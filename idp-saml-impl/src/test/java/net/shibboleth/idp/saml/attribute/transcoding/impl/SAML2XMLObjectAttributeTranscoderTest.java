@@ -171,7 +171,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
     
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<IdPAttributeValue> values =
+        final List<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
                     public Object getNativeValue() {
