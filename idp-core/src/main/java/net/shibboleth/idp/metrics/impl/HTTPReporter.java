@@ -19,6 +19,7 @@ package net.shibboleth.idp.metrics.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.SortedMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -98,7 +99,7 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
     /** JSON object mapper to produce output. */
     @NonnullAfterInit private ObjectMapper jsonMapper;
     
-    /** Formatting string for {@link DateTime} fields. */
+    /** Formatting string for {@link DateFormat} fields. */
     @Nullable private String dateTimeFormat;
 
     /** Whether this component has been initialized. */
@@ -201,7 +202,7 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
     }
     
     /**
-     * Set the {@link DateTime} formatting string to apply when writing {@link DateTime}-valued fields.
+     * Set the {@link DateFormat} formatting string to apply when writing {@link DateFormat}-valued fields.
      * 
      * @param format formatting string
      */
