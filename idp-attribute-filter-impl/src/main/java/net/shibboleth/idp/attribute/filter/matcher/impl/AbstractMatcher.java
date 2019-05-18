@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -61,7 +61,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
     @Override @Nonnull @NonnullElements @Unmodifiable public Set<IdPAttributeValue> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
 
-        final HashSet matchedValues = new HashSet();
+        final Set<IdPAttributeValue> matchedValues = new LinkedHashSet<>();
 
         log.debug("{} Applying value comparison to all values of Attribute '{}'", getLogPrefix(), attribute.getId());
 

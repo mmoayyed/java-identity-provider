@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.context;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,7 +96,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
         Set<IdPAttributeValue> permittedAttributeValues = permittedValues.get(trimmedAttributeId);
         if (permittedAttributeValues == null) {
-            permittedAttributeValues = new HashSet<>();
+            permittedAttributeValues = new LinkedHashSet<>();
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
@@ -147,7 +147,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
         Set<IdPAttributeValue> deniedAttributeValues = deniedValues.get(trimmedAttributeId);
         if (deniedAttributeValues == null) {
-            deniedAttributeValues = new HashSet<>();
+            deniedAttributeValues = new LinkedHashSet<>();
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 

@@ -26,7 +26,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -319,7 +319,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         final IdPAttribute newAttr = attribute.clone();
 
-        final Set<IdPAttributeValue> s = new HashSet(2);
+        final Set<IdPAttributeValue> s = new LinkedHashSet(2);
         s.add(new StringAttributeValue(ProfileRequestContext.class.getName()));
         s.add(new StringAttributeValue("BAR"));
         s.add(new StringAttributeValue("FOO"));

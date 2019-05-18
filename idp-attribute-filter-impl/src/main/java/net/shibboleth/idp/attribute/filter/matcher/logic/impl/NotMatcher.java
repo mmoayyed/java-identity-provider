@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -83,7 +83,7 @@ public final class NotMatcher extends AbstractIdentifiableInitializableComponent
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final Set<IdPAttributeValue> attributeValues = new HashSet<>(attribute.getValues());
+        final Set<IdPAttributeValue> attributeValues = new LinkedHashSet<>(attribute.getValues());
 
         final Set<IdPAttributeValue> matches = currentMatcher.getMatchingValues(attribute, filterContext);
         if (null == matches) {

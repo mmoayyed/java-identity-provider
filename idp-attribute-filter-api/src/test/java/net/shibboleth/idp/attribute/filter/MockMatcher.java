@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filter;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -91,7 +91,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
             return ImmutableSet.copyOf(attribute.getValues());
         }
 
-        HashSet<IdPAttributeValue> values = new HashSet<>();
+        LinkedHashSet<IdPAttributeValue> values = new LinkedHashSet<>();
         for (IdPAttributeValue value : attribute.getValues()) {
             if (matchingValues.contains(value)) {
                 values.add(value);

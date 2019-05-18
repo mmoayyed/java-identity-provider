@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +31,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -56,7 +56,7 @@ public class OrMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final Set<IdPAttributeValue> matchingValues = new LazySet<>();
+        final Set<IdPAttributeValue> matchingValues = new LinkedHashSet<>();
         for (final Matcher matchFunctor : currentMatchers) {
             final Set<IdPAttributeValue> matches = matchFunctor.getMatchingValues(attribute, filterContext);
             if (null == matches) {

@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +71,7 @@ public class AndMatcher extends AbstractComposedMatcher {
         if (null == match) {
             return null;
         }
-        final Set<IdPAttributeValue> matchingValues = new HashSet(match);
+        final Set<IdPAttributeValue> matchingValues = new LinkedHashSet(match);
         while (matcherItr.hasNext()) {
             match = matcherItr.next().getMatchingValues(attribute, filterContext);
             if (null == match) {

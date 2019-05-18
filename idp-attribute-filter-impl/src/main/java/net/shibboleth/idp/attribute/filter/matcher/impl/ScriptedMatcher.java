@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -264,7 +264,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
                 return null;
             }
 
-            final HashSet<IdPAttributeValue> returnValues = new HashSet<>(attribute.getValues());
+            final Set<IdPAttributeValue> returnValues = new LinkedHashSet<>(attribute.getValues());
             returnValues.retainAll((Set) result);
             return Collections.unmodifiableSet(returnValues);
         }
