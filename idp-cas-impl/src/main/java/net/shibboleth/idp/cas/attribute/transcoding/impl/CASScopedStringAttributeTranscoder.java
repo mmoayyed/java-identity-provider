@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
@@ -34,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeTranscoder} that supports {@link Attribute} and
+ * {@link AttributeTranscoder} that supports {@link Attribute} and
  * {@link ScopedStringAttributeValue} objects.
  */
 public class CASScopedStringAttributeTranscoder extends AbstractCASAttributeTranscoder<ScopedStringAttributeValue> {

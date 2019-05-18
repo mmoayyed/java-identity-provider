@@ -27,7 +27,7 @@ import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.testng.Assert;
 
 /**
- * SAML 2 {@link #org.opensaml.saml.saml2.core.StatusResponseType} validator.
+ * SAML 2 {@link StatusResponseType} validator.
  */
 public class SAML2TestStatusResponseTypeValidator {
 

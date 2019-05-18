@@ -26,9 +26,12 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-/** Bean definition parser for a {@link ResolverPluginDependency}. */
+/** Bean definition parser for {@link ResolverAttributeDefinitionDependency} and 
+ * for {@link ResolverDataConnectorDependency}. */
 public abstract class BaseResolverPluginDependencyParser extends AbstractSingleBeanDefinitionParser {
 
     /** Class logger. */

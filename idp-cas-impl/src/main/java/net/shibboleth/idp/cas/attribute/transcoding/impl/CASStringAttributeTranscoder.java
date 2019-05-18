@@ -29,12 +29,13 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeTranscoder} that supports {@link Attribute} and
+ * {@link AttributeTranscoder} that supports {@link Attribute} and
  * {@link StringAttributeValue} objects.
  */
 public class CASStringAttributeTranscoder extends AbstractCASAttributeTranscoder<StringAttributeValue> {

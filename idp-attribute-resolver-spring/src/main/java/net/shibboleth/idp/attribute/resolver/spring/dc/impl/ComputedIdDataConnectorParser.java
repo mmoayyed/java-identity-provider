@@ -31,7 +31,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for configuring {@link ComputedIDDataConnector}.
+ * Spring bean definition parser for configuring ComputedIdDataConnector.
  */
 public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser {
 

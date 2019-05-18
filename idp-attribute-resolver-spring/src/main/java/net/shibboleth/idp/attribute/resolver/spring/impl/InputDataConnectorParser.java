@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-/** Bean definition parser for a {@link ResolverPluginDependency}. */
+/** Bean definition parser for a {@link ResolverDataConnectorDependency}. */
 public class InputDataConnectorParser extends BaseResolverPluginDependencyParser {
 
     /** Element name. */

@@ -25,10 +25,11 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TemplateAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link CryptoTransientIdAttributeDefinitionParser}
+ * Test for {@link TemplateAttributeDefinitionParser}
  */
 @SuppressWarnings("deprecation")
 public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {

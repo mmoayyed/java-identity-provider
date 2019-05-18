@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
  * 
  * @deprecated
  */
-public interface PersistenceManager<ItemType> extends IdentifiedComponent {
+@Deprecated public interface PersistenceManager<ItemType> extends IdentifiedComponent {
 
     /**
      * Determines if an item with the given ID is exists within the persistence store.

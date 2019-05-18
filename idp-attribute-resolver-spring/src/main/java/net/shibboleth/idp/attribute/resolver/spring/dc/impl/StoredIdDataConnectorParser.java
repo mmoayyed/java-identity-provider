@@ -33,7 +33,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for {@link StoredIDDataConnector}.
+ * Spring bean definition parser for StoredIDDataConnector.
  */
 public class StoredIdDataConnectorParser extends ComputedIdDataConnectorParser {
 

@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginDependencyParser;
 
-/** Bean definition parser for a {@link ResolverPluginDependency}. */
+/** Bean definition parser for a {@link ResolverAttributeDefinitionDependency}. */
 public class InputAttributeDefinitionParser extends BaseResolverPluginDependencyParser {
 
     /** Element name. */

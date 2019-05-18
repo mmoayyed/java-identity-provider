@@ -37,6 +37,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -45,7 +46,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 
 /**
- * Test for {@link SubjectDerivedAttributeDefinitionParser} and {@link .
+ * Test for {@link SubjectDerivedAttributeDefinitionParser} and {@link ContextDerivedAttributeDefinitionParser}.
  */
 public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeDefinitionParserTest {
 
