@@ -55,6 +55,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependen
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -167,6 +168,50 @@ public class AttributeResolverImplTest {
 
         assertEquals(context.getResolvedIdPAttributes().size(), 1);
         assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
+    }
+
+    @Test public void resolveWithExports() throws Exception {
+
+        final IdPAttribute attribute1 = new IdPAttribute("ad1");
+        attribute1.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+        final IdPAttribute attribute2 = new IdPAttribute("ad2");
+        attribute2.setValues(Collections.singletonList(new StringAttributeValue("value2")));
+        final IdPAttribute attribute3 = new IdPAttribute("ad3");
+        attribute3.setValues(Collections.singletonList(new StringAttributeValue("value3")));
+        final IdPAttribute attribute4 = new IdPAttribute("ad4");
+        attribute4.setValues(Collections.singletonList(new StringAttributeValue("value3")));
+
+        // Connector1 contributes attribute1 and attribute2
+        final StaticDataConnector connector1 = new StaticDataConnector();
+        connector1.setId("dc1");
+        connector1.setValues(List.of(attribute1, attribute2));
+        connector1.setExportAllAttributes(true);
+
+        // Connector1 contributes attribute2 and attribute3 (but not 4 or 1)
+        final StaticDataConnector connector2 = new StaticDataConnector();
+        connector2.setId("dc2");
+        connector2.setValues(List.of(attribute2, attribute3, attribute4));
+        connector2.setExportAttributes(List.of(attribute2.getId(), attribute3.getId(), attribute1.getId()));
+
+        // Connector 3 contributes nothing
+        final StaticDataConnector connector3 = new StaticDataConnector();
+        connector3.setId("dc3");
+        connector3.setValues(List.of(attribute4));
+
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", null, List.of(connector1, connector2, connector3));
+        for (DataConnector connector : resolver.getDataConnectors().values()) {
+            connector.initialize();
+        }
+        resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        // should have resolved 1, 2 and 3
+        assertEquals(context.getResolvedIdPAttributes().size(), 3);
+        assertEquals(context.getResolvedIdPAttributes().get(attribute1.getId()), attribute1);
+        assertEquals(context.getResolvedIdPAttributes().get(attribute2.getId()), attribute2);
+        assertEquals(context.getResolvedIdPAttributes().get(attribute3.getId()), attribute3);
     }
 
     /** Test that a simple resolve returns the expected results. */

@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorFactoryBean;
@@ -72,6 +73,16 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * {@link org.springframework.beans.factory.config.BeanPostProcessor}<code>&gt;</code>.
      */
     @Nonnull @NotEmpty public static final String ATTR_POSTPROCESSORS_REF = "postProcessorsRef";
+
+    /**
+     * Whether to export all attributes.
+     */
+    @Nonnull @NotEmpty public static final String ATTR_EXPORT_ALL = "exportAllAttributes";
+
+    /**
+     * Which attributes to export.
+     */
+    @Nonnull @NotEmpty public static final String ATTR_EXPORT_NAMES = "exportAttributes";
 
     /** Failover data connector attribute name. */
     @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
@@ -128,6 +139,17 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
         if (config.hasAttributeNS(null, ATTR_NORETRYDELAY)) {
             builder.addPropertyValue("noRetryDelay",
                     StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_NORETRYDELAY)));
+        }
+
+        if (config.hasAttributeNS(null, ATTR_EXPORT_ALL)) {
+            if (config.hasAttributeNS(null, ATTR_EXPORT_NAMES)) {
+                log.warn("{} {} overrides {}", getLogPrefix(), ATTR_EXPORT_ALL, ATTR_EXPORT_NAMES);
+            }
+            builder.addPropertyValue("exportAllAttributes",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_EXPORT_ALL)));
+        } else if (config.hasAttributeNS(null, ATTR_EXPORT_NAMES)) {
+            builder.addPropertyValue("exportAttributes",
+                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, ATTR_EXPORT_NAMES)));
         }
 
         if (isNative(config)) {

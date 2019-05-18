@@ -6,6 +6,7 @@
     <DataConnector id="myHTTP" xsi:type="HTTP"
             httpClientRef="TrustEngineHttpClient"
             executableSearchBuilderRef="template"
+            exportAttributes="foo bar"
             certificateAuthority="%{certificateAuthority}"
             mappingStrategyRef="mapping">
     

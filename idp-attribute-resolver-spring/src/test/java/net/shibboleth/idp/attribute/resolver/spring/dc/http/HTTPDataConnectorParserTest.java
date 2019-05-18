@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc.http;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -295,6 +296,10 @@ public class HTTPDataConnectorParserTest {
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-spring-context.xml");
         assertNotNull(connector);
+        assertFalse(connector.isExportAllAttributes());
+        assertEquals(connector.getExportAttributes().size(), 2);
+        assertTrue(connector.getExportAttributes().contains("foo"));
+        assertTrue(connector.getExportAttributes().contains("bar"));
         
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,

@@ -17,19 +17,26 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link DataConnector}. This test does not test any methods inherited from
@@ -49,13 +56,13 @@ public class AbstractDataConnectorTest {
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
         connector.setFailoverDataConnectorId(" foo ");
-        Assert.assertEquals(connector.getFailoverDataConnectorId(), "foo");
+        assertEquals(connector.getFailoverDataConnectorId(), "foo");
 
         connector.setFailoverDataConnectorId("");
-        Assert.assertNull(connector.getFailoverDataConnectorId());
+        assertNull(connector.getFailoverDataConnectorId());
 
         connector.setFailoverDataConnectorId(null);
-        Assert.assertNull(connector.getFailoverDataConnectorId());
+        assertNull(connector.getFailoverDataConnectorId());
     }
 
     /** Test the resolution of the data connector. */
@@ -65,7 +72,7 @@ public class AbstractDataConnectorTest {
 
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, IdPAttribute>) null);
         connector.initialize();
-        Assert.assertNull(connector.resolve(context));
+        assertNull(connector.resolve(context));
 
         HashMap<String, IdPAttribute> values = new HashMap<>();
         connector = new MockBaseDataConnector("foo", values);
@@ -78,9 +85,19 @@ public class AbstractDataConnectorTest {
         connector = new MockBaseDataConnector("foo", values);
         connector.initialize();
         Map<String, IdPAttribute> result = connector.resolve(context);
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.containsKey(attribute.getId()));
-        Assert.assertEquals(result.get(attribute.getId()), attribute);
+        assertNotNull(result);
+        assertTrue(result.containsKey(attribute.getId()));
+        assertEquals(result.get(attribute.getId()), attribute);
+    }
+
+    @Test public void testExports() {
+        final AbstractDataConnector connector = new MockBaseDataConnector("foo", null);
+        assertFalse(connector.isExportAllAttributes());
+        assertTrue(connector.getExportAttributes().isEmpty());
+        connector.setExportAllAttributes(true);
+        assertTrue(connector.isExportAllAttributes());
+        connector.setExportAttributes(List.of("", "foo", "bar", "foo"));
+        assertEquals(connector.getExportAttributes().size(), 2);
     }
 
     /**

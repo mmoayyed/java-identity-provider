@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -26,6 +27,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * Base class for data connector resolver plugins.
@@ -57,4 +60,20 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
      */
     @Nullable String getFailoverDataConnectorId();
 
+    /**
+     * Gets whether we export all attributes during resolution.
+     * <p>
+     * If this returns false then {@link #getExportAttributes()} returns the
+     * list of attributes to return.
+     *
+     * @return whether we export all attributes
+     */
+    boolean isExportAllAttributes();
+
+    /**
+     * Gets the list of attribute names to export during resolution.
+     *
+     * @return the list of attribute names to export during resolution
+     */
+    @Nonnull @NonnullElements @Unmodifiable Collection<String> getExportAttributes();
 }

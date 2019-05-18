@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -25,13 +26,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * A proxy which wraps a resolved data connector and always returns the same attributes. The goal being that once a data
@@ -124,6 +127,29 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     @Override @Nonnull public String toString() {
         return resolvedConnector.toString();
     }
+
+    /** {@inheritDoc} */
+    @Override public void setExportAllAttributes(@Nullable final boolean what) {
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override public boolean isExportAllAttributes() {
+        return resolvedConnector.isExportAllAttributes();
+    }
+
+    /** {@inheritDoc} */
+    @Override public void setExportAttributes(@Nonnull final Collection<String> what) {
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull @NonnullElements @Unmodifiable public Collection<String> getExportAttributes() {
+        return resolvedConnector.getExportAttributes();
+    }
+
 
     /**
      * Gets the resolved attributes.

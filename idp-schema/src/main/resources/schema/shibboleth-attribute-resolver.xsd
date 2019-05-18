@@ -162,6 +162,16 @@
                         <documentation>Bean Name of a list of bean post processors.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="exportAllAttributes" type="string">
+                    <annotation>
+                        <documentation>Whether all attributes from this data connected are to be exported by the resolution process.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="exportAttributes" type="string">
+                    <annotation>
+                        <documentation>A list of attribute names to be exported by the resolution process from this data connector.</documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

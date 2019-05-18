@@ -22,6 +22,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +87,15 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     /** Data Connector property "noRetryDelay". */
     @Nullable private Duration noRetryDelay;
 
+    /** Do we release all attributes?. */
+    private Boolean exportAllAttributes;
+
+    /** Which named attributes do we release?. */
+    @Nonnull @NonnullElements private Collection<String> exportAttributes = Collections.EMPTY_SET;
+
     /**
      * Data Connector property "failoverDataConnectorId".
-     * 
+     *
      * @return the value of property to set or null if never set
      */
     @Nullable public String getFailoverDataConnectorId() {
@@ -97,7 +104,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
     /**
      * Data Connector property "failoverDataConnectorId".
-     * 
+     *
      * @param id the value to set
      */
     public void setFailoverDataConnectorId(@Nullable final String id) {
@@ -106,7 +113,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     
     /**
      * Data Connector property "noRetryDelay".
-     * 
+     *
      * @return the value of property to set or null if never set
      */
     @Nullable public Duration getNoRetryDelay() {
@@ -115,7 +122,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     
     /**
      * Data Connector property "noRetryDelay".
-     * 
+     *
      * @param delay the value to set
      */
     public void setNoRetryDelay(@Nullable final Duration delay) {
@@ -124,7 +131,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
     /**
      * The resources to use.
-     * 
+     *
      * @param theResources the resources to look at
      */
     public void setResources(@Nonnull @NonnullElements final List<Resource> theResources) {
@@ -134,7 +141,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
     /**
      * The resources to use.
-     * 
+     *
      * @return the resources to look at
      */
     @Nonnull @NonnullElements public List<Resource> getResources() {
@@ -142,8 +149,26 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /**
+     * Sets the list of attribute names to export during resolution.
+     *
+     * @param what the list
+     */
+    public void setExportAttributes(@Nonnull final Collection<String> what) {
+        exportAttributes = what;
+    }
+
+   /**
+     * Set whether we export all attributes.
+     *
+     * @param what whether we export all attributes
+     */
+    public void setExportAllAttributes(final boolean what) {
+        exportAllAttributes = what;
+    }
+
+    /**
      * Set the list of bean factory post processors for this connector.
-     * 
+     *
      * @param processors bean factory post processors to apply
      */
     public void setBeanFactoryPostProcessors(@Nonnull @NonnullElements 
@@ -152,8 +177,8 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /**
-     * get the post processors.
-     * 
+     * Get the post processors.
+     *
      * @return the bean factory post processors
      */
     @Nonnull @NonnullElements public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
@@ -162,7 +187,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
     /**
      * Set the list of bean post processors for this connector.
-     * 
+     *
      * @param processors bean post processors to apply
      */
     public void setBeanPostProcessors(@Nonnull @NonnullElements final List<BeanPostProcessor> processors) {
@@ -171,7 +196,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
     /**
      * Get the list of bean post processors for this connector.
-     * 
+     *
      * @return processors bean post processors to apply
      */
     @Nonnull @NonnullElements public List<BeanPostProcessor> getBeanPostProcessors() {
@@ -183,6 +208,11 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
         super.setValues(what);
         if (null != getFailoverDataConnectorId()) {
             what.setFailoverDataConnectorId(getFailoverDataConnectorId());
+        }
+        if (null != exportAllAttributes) {
+            what.setExportAllAttributes(exportAllAttributes);
+        } else if (!exportAttributes.isEmpty()) {
+            what.setExportAttributes(exportAttributes);
         }
     }
 

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.springframework.context.support.GenericApplicationContext;
@@ -58,6 +59,7 @@ public class ComputedIdDataConnectorParserTest extends BaseAttributeDefinitionPa
     @Test public void resolverDataConnector() throws ComponentInitializationException {
         final PairwiseIdDataConnector connector = getDataConnector("resolver/computedDataConnector.xml", PairwiseIdDataConnector.class);
         final ComputedPairwiseIdStore store = (ComputedPairwiseIdStore) connector.getPairwiseIdStore();
+        assertFalse(connector.isExportAllAttributes());
 
         assertEquals(connector.getId(), "computed");
         assertEquals(connector.getGeneratedAttributeId(), "jenny");

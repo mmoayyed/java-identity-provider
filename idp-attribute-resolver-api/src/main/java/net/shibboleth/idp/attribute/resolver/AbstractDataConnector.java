@@ -19,22 +19,27 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
@@ -56,9 +61,16 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /** How long to wait until we declare the connector live again. */
     @Nonnull private Duration noRetryDelay;
 
+    /** Do we release all attributes?. */
+    private boolean exportAllAttributes;
+
+    /** Which named attributes do we release?. */
+    @Nonnull @NonnullElements private Collection<String> exportAttributes;
+
     /** Constructor. */
     public AbstractDataConnector() {
         noRetryDelay = Duration.ZERO; 
+        exportAttributes = Collections.emptySet();
     }
     
     /**
@@ -68,7 +80,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @return ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    @Nullable public String getFailoverDataConnectorId() {
+    @Override @Nullable public String getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 
@@ -98,7 +110,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * {@inheritDoc}
      */
-    @Nullable public Instant getLastFail() {
+    @Override @Nullable public Instant getLastFail() {
         return lastFail;
     }
 
@@ -112,9 +124,48 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Duration getNoRetryDelay() {
+    @Override @Nonnull public Duration getNoRetryDelay() {
         return noRetryDelay;
     }
+
+    /**
+     * Set whether we export all attributes.
+     *
+     * @param what whether we export all attributes
+     */
+    public void setExportAllAttributes(final boolean what) {
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        exportAllAttributes = what;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public boolean isExportAllAttributes() {
+        return exportAllAttributes;
+    }
+
+    /**
+     *  Sets the list of attribute names to export during resolution.
+     *
+     * @param what the list
+     */
+    public void setExportAttributes(@Nonnull final Collection<String> what) {
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        exportAttributes = what.stream().map(StringSupport::trimOrNull).
+                filter(e -> e != null).
+                collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override @Nonnull @NonnullElements @Unmodifiable public Collection<String> getExportAttributes() {
+        return exportAttributes;
+    }
+
 
     /**
      * {@inheritDoc}

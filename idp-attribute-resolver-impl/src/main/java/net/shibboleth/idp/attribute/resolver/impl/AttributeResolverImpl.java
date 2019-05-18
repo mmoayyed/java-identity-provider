@@ -23,9 +23,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -51,6 +52,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolvedDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPlugin;
@@ -61,7 +63,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
-import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -124,7 +126,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             checkedDefinitions = Collections.emptyMap();
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
-
     }
 
     /**
@@ -218,21 +219,31 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
+
         final boolean timerStarted = startTimer(resolutionContext);
         try {
             log.debug("{} Initiating attribute resolution", logPrefix);
-    
-            if (attributeDefinitions.size() == 0) {
-                log.debug("{} No attribute definition available, no attributes were resolved", logPrefix);
+
+            boolean hasExportingDataConnector = false;
+
+            for (final Entry<String, DataConnector> dataConnectorEntry : dataConnectors.entrySet()) {
+                if (dataConnectorEntry.getValue().isExportAllAttributes() ||
+                        !dataConnectorEntry.getValue().getExportAttributes().isEmpty()) {
+                    hasExportingDataConnector = true;
+                    resolveDataConnector(dataConnectorEntry.getKey(), resolutionContext);
+                }
+            }
+
+            if (attributeDefinitions.size() == 0 && !hasExportingDataConnector) {
+                log.debug("{} No attribute definition available or exporting data connectors" +
+                          ", no attributes were resolved", logPrefix);
                 return;
             }
     
             final Collection<String> attributeIds = getToBeResolvedAttributeIds(resolutionContext);
             log.debug("{} Attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
-    
-            // Create work context to hold intermediate results.
-            final AttributeResolverWorkContext workContext =
-                    resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
     
             for (final String attributeId : attributeIds) {
                 resolveAttributeDefinition(attributeId, resolutionContext);
@@ -241,11 +252,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             log.debug("{} Finalizing resolved attributes", logPrefix);
             finalizeResolvedAttributes(resolutionContext);
     
-            resolutionContext.removeSubcontext(workContext);
-    
             log.debug("{} Final resolved attribute collection: {}", logPrefix,
                     resolutionContext.getResolvedIdPAttributes().keySet());
         } finally {
+            resolutionContext.removeSubcontext(workContext);
+
             if (timerStarted) {
                 stopTimer(resolutionContext);
             }
@@ -425,25 +436,53 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         log.debug("{} Finished resolving dependencies for '{}'", logPrefix, plugin.getId());
     }
 
-    /**
-     * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
-     * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only attribute,
-     * or an attribute that contains no values then it becomes part of the final set of resolved attributes.
-     * 
-     * <p>
-     * Values are also de-duplicated here, so that all the intermediate operations maintain the coherency of
-     * multi-valued result sets produced by data connectors.
-     * </p>
-     * 
-     * @param resolutionContext current resolution context
+    /** Helper method for exporting attributes.
+     * @param attributeId the if (for logging)
+     * @param input the inout list
+     * @return a null stripped, or null list of values
      */
- // Checkstyle: CyclomaticComplexity OFF
-    protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
-        final AttributeResolverWorkContext workContext =
-                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
+    private @Nullable @NonnullElements List<IdPAttributeValue> filterAttributeValues(final String attributeId,
+            final List<IdPAttributeValue> input) {
 
-        final LazySet<IdPAttribute> resolvedAttributes = new LazySet<>();
+        log.debug("{} De-duping (and null filtering) attribute definition {} result",
+                logPrefix, attributeId);
+        final List<IdPAttributeValue> result = new ArrayList<>(input.size());
+        final Set<IdPAttributeValue> monitor = new HashSet<>(input.size());
+
+        for (final IdPAttributeValue value : input) {
+            if (isStripNulls()) {
+                if (null == value) {
+                    log.debug("{} Stripping null value", logPrefix);
+                    continue;
+                } else if (value instanceof EmptyAttributeValue) {
+                    log.debug("{} Stripping {} value", logPrefix, ((EmptyAttributeValue)value).getValue());
+                    continue;
+                }
+                // ByteAttributeValue, StringAttributeValue and XMLObjectValue are Constrained to not be empty
+            }
+
+            if (!monitor.add(value)) {
+                log.debug("{} Removing duplicate value {} of attribute '{}' from resolution result", logPrefix,
+                        value, attributeId);
+            } else {
+                result.add(value);
+            }
+        }
+
+        // No values
+        if (monitor.isEmpty()) {
+            return null;
+        }
+        return result;
+    }
+
+    /**
+     * Helper function to collect suitably resolved attributes.
+     * @param resolvedAttributes bucket to collect attributes into
+     * @param workContext context to extract attributes from
+     */
+    private void collectResolvedAttributes(final Map<String, IdPAttribute> resolvedAttributes,
+            final AttributeResolverWorkContext workContext) {
 
         for (final ResolvedAttributeDefinition definition : workContext.getResolvedIdPAttributeDefinitions().values()) {
             final IdPAttribute resolvedAttribute = definition.getResolvedAttribute();
@@ -461,37 +500,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 continue;
             }
 
-            // Remove duplicate attribute values.
-            log.debug("{} De-duping (and null filtering) attribute definition {} result",
-                    logPrefix, definition.getId());
-            final Iterator<IdPAttributeValue> valueIter = resolvedAttribute.getValues().iterator();
-            final List<IdPAttributeValue> result = new ArrayList<>(resolvedAttribute.getValues().size());
-            final Set<IdPAttributeValue> monitor = new HashSet<>(resolvedAttribute.getValues().size());
-
-            while (valueIter.hasNext()) {
-                 final IdPAttributeValue value = valueIter.next();
-                
-                if (isStripNulls()) {
-                    if (null == value) {
-                        log.debug("{} Stripping null value", logPrefix);
-                        continue;
-                    } else if (value instanceof EmptyAttributeValue) {
-                        log.debug("{} Stripping {} value", logPrefix, ((EmptyAttributeValue)value).getValue());
-                        continue;
-                    } 
-                    // ByteAttributeValue, StringAttributeValue and XMLObjectValue are Constrained to not be empty
-                }
-                
-                if (!monitor.add(value)) {
-                    log.debug("{} Removing duplicate value {} of attribute '{}' from resolution result", logPrefix,
-                            value, resolvedAttribute.getId());
-                } else {
-                    result.add(value);
-                }
-            }
+            final List<IdPAttributeValue> result =
+                    filterAttributeValues(definition.getId(),  resolvedAttribute.getValues());
 
             // Remove value-less attributes.
-            if (monitor.isEmpty()) {
+            if (result == null) {
                 log.debug("{} Removing result of attribute definition '{}', contains no values", logPrefix,
                         definition.getId());
                 continue;
@@ -499,14 +512,90 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
             resolvedAttribute.setValues(result);
             log.debug("{} Attribute '{}' has {} values after post-processing", logPrefix, resolvedAttribute.getId(),
-                    monitor.size());
+                    result.size());
 
-            resolvedAttributes.add(resolvedAttribute);
+            resolvedAttributes.put(resolvedAttribute.getId(), resolvedAttribute);
         }
-
-        resolutionContext.setResolvedIdPAttributes(resolvedAttributes);
     }
- // Checkstyle: CyclomaticComplexity ON
+
+    /**
+     * Helper function to collect attributes from suitabl data connectors.
+     * @param resolvedAttributes bucket to collect attributes into
+     * @param workContext context to extract attributes from
+     */
+    // CheckStyle: CyclomaticComplexit OFF
+    private void collectExportingDataConnectors(final Map<String, IdPAttribute> resolvedAttributes,
+            final AttributeResolverWorkContext workContext) {
+
+        for (final ResolvedDataConnector dataConnector: workContext.getResolvedDataConnectors().values()) {
+
+            if (!dataConnector.isExportAllAttributes() && dataConnector.getExportAttributes().isEmpty()) {
+                continue;
+            }
+
+            for (final IdPAttribute attribute:dataConnector.getResolvedAttributes().values()) {
+                if (!dataConnector.isExportAllAttributes() &&
+                    !dataConnector.getExportAttributes().contains(attribute.getId())) {
+                    continue;
+                }
+                if (resolvedAttributes.get(attribute.getId()) != null) {
+                    log.warn("{} could not export attibute '{}' from data connector '{}' since an attribute of " +
+                            "that name already exists.", logPrefix, attribute.getId(), dataConnector.getId());
+                    continue;
+                }
+                final List<IdPAttributeValue> values = filterAttributeValues(attribute.getId(), attribute.getValues());
+                if (values == null) {
+                    log.debug("{} Removing attribute '{}' from data connector '{}' with no values", logPrefix,
+                            dataConnector.getId(), attribute.getId());
+                    continue;
+                }
+                final IdPAttribute newAttr = new IdPAttribute(attribute.getId());
+                newAttr.setValues(values);
+                if (attribute.getDisplayDescriptions().size() > 0) {
+                    newAttr.setDisplayDescriptions(attribute.getDisplayDescriptions());
+                } else {
+                    newAttr.setDisplayDescriptions(Map.of(Locale.getDefault(),
+                            dataConnector.getId() + "/" + attribute.getId()));
+                }
+                if (attribute.getDisplayNames().size() > 0) {
+                    newAttr.setDisplayNames(attribute.getDisplayNames());
+                } else {
+                    newAttr.setDisplayNames(Map.of(Locale.getDefault(),
+                            dataConnector.getId() + "/" + attribute.getId()));
+                }
+                resolvedAttributes.put(attribute.getId(), newAttr);
+            }
+        }
+    }
+    // CheckStyle: CyclomaticComplexit ON
+
+    /**
+     * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
+     * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only attribute,
+     * or an attribute that contains no values then it becomes part of the final set of resolved attributes.
+     * <p>
+     * Then we handle attribute exports from DataConnectors.
+     *
+     * <p>
+     * Values are also de-duplicated here, so that all the intermediate operations maintain the coherency of
+     * multi-valued result sets produced by data connectors.
+     * </p>
+     *
+     * @param resolutionContext current resolution context
+     */
+    protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
+
+        final Map<String, IdPAttribute> resolvedAttributes = new LazyMap<>();
+
+        collectResolvedAttributes(resolvedAttributes, workContext);
+
+        collectExportingDataConnectors(resolvedAttributes, workContext);
+
+        resolutionContext.setResolvedIdPAttributes(resolvedAttributes.values());
+    }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
