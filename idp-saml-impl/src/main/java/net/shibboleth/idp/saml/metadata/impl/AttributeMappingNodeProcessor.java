@@ -18,7 +18,10 @@
 package net.shibboleth.idp.saml.metadata.impl;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -31,9 +34,13 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
+import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
+import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -64,6 +71,9 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
 
     /** Service used to get the registry of decoding rules. */
     @Nonnull private final ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
+    
+    /** Fallback for URI-named entity tags. */
+    @Nonnull private final AttributeTranscoder<Attribute> defaultTranscoder;
 
     /**
      * Constructor.
@@ -72,6 +82,13 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
      */
     public AttributeMappingNodeProcessor(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
         transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
+        
+        defaultTranscoder = new SAML2StringAttributeTranscoder();
+        try {
+            defaultTranscoder.initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new ConstraintViolationException("Error initializing default transcoder");
+        }
     }
     
     /** {@inheritDoc} */
@@ -119,7 +136,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         final Multimap<String,IdPAttribute> results = HashMultimap.create();
         for (final RequestedAttribute req : requestedAttributes) {
             try {
-                decodeAttribute(registry, req, results);
+                decodeAttribute(registry.getTranscodingRules(req), req, results);
             } catch (final AttributeDecodingException e) {
                 log.warn("Error decoding RequestedAttribute '{}'", req.getName(), e);
             }
@@ -136,7 +153,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
      * @param registry the registry service
      * @param entity the entity
      */
-//CheckStyle: ReturnCount OFF
+//CheckStyle: CyclomaticComplexity|ReturnCount OFF
     private void handleEntityDescriptor(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final EntityDescriptor entity) {
         final Extensions extensions = entity.getExtensions();
@@ -157,7 +174,19 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
                 final EntityAttributes ea = (EntityAttributes) xmlObj;
                 for (final Attribute attr : ea.getAttributes()) {
                     try {
-                        decodeAttribute(registry, attr, results);
+
+                        Collection<TranscodingRule> rulesets = registry.getTranscodingRules(attr);
+                        if (rulesets.isEmpty() && Attribute.URI_REFERENCE.equals(attr.getNameFormat())) {
+                            log.debug("Applying default decoding rule for URI-named attribute {}", attr.getName());
+                            final Map<String,Object> rulemap = new HashMap<>();
+                            rulemap.put(AttributeTranscoderRegistry.PROP_ID, attr.getName());
+                            rulemap.put(AttributeTranscoderRegistry.PROP_TRANSCODER, defaultTranscoder);
+                            rulemap.put(SAML2AttributeTranscoder.PROP_NAME, attr.getName());
+                            final TranscodingRule defaultRule = new TranscodingRule(rulemap);
+                            rulesets = Collections.singletonList(defaultRule);
+                        }
+                        
+                        decodeAttribute(rulesets, attr, results);
                     } catch (final AttributeDecodingException e) {
                         log.warn("Error decoding RequestedAttribute '{}'", attr.getName(), e);
                     }
@@ -169,27 +198,25 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
             entity.getObjectMetadata().put(new AttributesMapContainer<>(results));
         }
     }
-  //CheckStyle: ReturnCount ON
+  //CheckStyle: CyclomaticComplexity|ReturnCount ON
 
     /**
      * Access the registry of transcoding rules to decode the input object.
      * 
      * @param <T> input type
-     * @param registry  registry of transcoding rules
+     * @param rules transcoding rules
      * @param input input object
      * @param results collection to add results to
      * 
      * @throws AttributeDecodingException if an error occurs or no results were obtained
      */
-    protected <T> void decodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
+    private <T> void decodeAttribute(@Nonnull @NonnullElements final Collection<TranscodingRule> rules,
             @Nonnull final T input, @Nonnull @NonnullElements @Live final Multimap<String,IdPAttribute> results)
                     throws AttributeDecodingException {
         
-        final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(input);
-        
-        for (final TranscodingRule rules : rulesets) {
-            final AttributeTranscoder<T> transcoder = TranscoderSupport.getTranscoder(rules);
-            final IdPAttribute decodedAttribute = transcoder.decode(null, input, rules);
+        for (final TranscodingRule rule : rules) {
+            final AttributeTranscoder<T> transcoder = TranscoderSupport.getTranscoder(rule);
+            final IdPAttribute decodedAttribute = transcoder.decode(null, input, rule);
             if (decodedAttribute != null) {
                 results.put(decodedAttribute.getId(), decodedAttribute);
             }

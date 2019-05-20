@@ -101,6 +101,7 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         return context.getBean(ReloadableService.class);
     }
 
+    // Tests use of default mapping behavior for URI-named, string-valued tags.
     @Test public void entityAttributes() throws FilterException {
 
         assertTrue(entityDescriptor.getObjectMetadata().get(AttributesMapContainer.class).isEmpty());
@@ -113,7 +114,7 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         final Multimap<String, IdPAttribute> map = container.get();
 
         assertEquals(map.size(), 1);
-        Collection<IdPAttribute> attribute = map.get("dn1");
+        Collection<IdPAttribute> attribute = map.get("http://macedir.org/entity-category");
         assertEquals(attribute.size(), 1);
 
         IdPAttribute attr = attribute.iterator().next();

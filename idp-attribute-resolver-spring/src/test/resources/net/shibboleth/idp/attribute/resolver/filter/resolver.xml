@@ -15,9 +15,6 @@
 		<AttributeEncoder xsi:type="SAML2String"
 			name="urn:mace:dir:attribute-def:displayName" nameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri"
 			friendlyName="dn1" />
-		<AttributeEncoder xsi:type="SAML2String"
-			name="http://macedir.org/entity-category" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-			friendlyName="c1" />
 	</AttributeDefinition>
 
 	<AttributeDefinition id="dn2" xsi:type="Simple" >
