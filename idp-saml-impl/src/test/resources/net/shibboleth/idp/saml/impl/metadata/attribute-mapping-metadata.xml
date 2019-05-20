@@ -3,15 +3,20 @@
     xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
     xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
-   
-   <EntityDescriptor entityID="http://foo.example.org/shibboleth">
-      
-      <Extensions>
+    
+    <Extensions>
         <mdattr:EntityAttributes>
             <saml:Attribute Name="http://macedir.org/entity-category"
                 NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                 <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
             </saml:Attribute>
+        </mdattr:EntityAttributes>
+    </Extensions>
+   
+    <EntityDescriptor entityID="http://foo.example.org/shibboleth">
+      
+      <Extensions>
+        <mdattr:EntityAttributes>
             <saml:Attribute Name="urn:oasis:names:tc:SAML:profiles:subject-id:req"
                 NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                 <saml:AttributeValue>none</saml:AttributeValue>

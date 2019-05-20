@@ -58,6 +58,8 @@ public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
     
     private String barEntityID = "http://bar.example.org/shibboleth";
     
+    private String bazEntityID = "http://baz.example.org/shibboleth";
+    
     private GenericApplicationContext pendingTeardownContext = null;
     
     private MetadataResolver resolver = null;
@@ -129,7 +131,23 @@ public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
         final EntityAttributesPredicate predicate = new EntityAttributesPredicate(Collections.singletonList(tag));
         Assert.assertFalse(predicate.test(getEntity(fooEntityID)));
         Assert.assertTrue(predicate.test(getEntity(barEntityID)));
+        Assert.assertFalse(predicate.test(getEntity(bazEntityID)));
     }    
+    
+    @Test
+    public void testMultiLevelMatch() throws ResolverException {
+        final Candidate tag1 = new Candidate("http://macedir.org/entity-category", Attribute.URI_REFERENCE);
+        tag1.setValues(Collections.singletonList("http://refeds.org/category/research-and-scholarship"));
+
+        final Candidate tag2 = new Candidate("urn:oasis:names:tc:SAML:profiles:subject-id:req", Attribute.URI_REFERENCE);
+        tag2.setValues(Collections.singletonList("none"));
+
+        final EntityAttributesPredicate predicate =
+                new EntityAttributesPredicate(Arrays.asList(tag1, tag2), false, true);
+        Assert.assertTrue(predicate.test(getEntity(fooEntityID)));
+        Assert.assertFalse(predicate.test(getEntity(barEntityID)));
+        Assert.assertFalse(predicate.test(getEntity(bazEntityID)));
+    }
     
     @Test
     public void testSimpleMatchMapped() throws ResolverException {
@@ -140,6 +158,22 @@ public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
         final MappedEntityAttributesPredicate predicate = new MappedEntityAttributesPredicate(Collections.singletonList(tag));
         Assert.assertFalse(predicate.test(getEntity(fooEntityID)));
         Assert.assertTrue(predicate.test(getEntity(barEntityID)));
+        Assert.assertFalse(predicate.test(getEntity(bazEntityID)));
+    }
+
+    @Test
+    public void testMultiLevelMappedMatch() throws ResolverException {
+        final Candidate tag1 = new Candidate("http://macedir.org/entity-category");
+        tag1.setValues(Collections.singletonList("http://refeds.org/category/research-and-scholarship"));
+
+        final Candidate tag2 = new Candidate("subject-id-req");
+        tag2.setValues(Collections.singletonList("none"));
+
+        final MappedEntityAttributesPredicate predicate =
+                new MappedEntityAttributesPredicate(Arrays.asList(tag1, tag2), false, true);
+        Assert.assertTrue(predicate.test(getEntity(fooEntityID)));
+        Assert.assertFalse(predicate.test(getEntity(barEntityID)));
+        Assert.assertFalse(predicate.test(getEntity(bazEntityID)));
     }
 
 }

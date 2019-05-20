@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.AttributeDecodingException;
@@ -50,6 +51,7 @@ import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
@@ -109,7 +111,12 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
                 if (component == null) {
                     log.error("Attribute transcoding service unavailable");
                 } else {
-                    handleEntityDescriptor(component.getComponent(), (EntityDescriptor) metadataNode);
+                    handleEntityAttributes(component.getComponent(), ((EntityDescriptor) metadataNode).getExtensions());
+                    XMLObject parent = metadataNode.getParent();
+                    while (parent instanceof EntitiesDescriptor) {
+                        handleEntityAttributes(component.getComponent(), ((EntitiesDescriptor) parent).getExtensions());
+                        parent = parent.getParent();
+                    }
                 }
             }
         } finally {
@@ -148,15 +155,14 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     }
 
     /**
-     * Look inside the {@link EntityDescriptor} for entities Attributes and map them.
+     * Look inside the {@link Extensions} for {@link EntityAttributes) and map them.
      * 
      * @param registry the registry service
-     * @param entity the entity
+     * @param extensions the extensions block
      */
-//CheckStyle: CyclomaticComplexity|ReturnCount OFF
-    private void handleEntityDescriptor(@Nonnull final AttributeTranscoderRegistry registry,
-            @Nonnull final EntityDescriptor entity) {
-        final Extensions extensions = entity.getExtensions();
+//CheckStyle: CyclomaticComplexity OFF
+    private void handleEntityAttributes(@Nonnull final AttributeTranscoderRegistry registry,
+            @Nullable final Extensions extensions) {
         if (null == extensions) {
             return;
         }
@@ -195,10 +201,10 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         }
         
         if (!results.isEmpty()) {
-            entity.getObjectMetadata().put(new AttributesMapContainer<>(results));
+            extensions.getParent().getObjectMetadata().put(new AttributesMapContainer<>(results));
         }
     }
-  //CheckStyle: CyclomaticComplexity|ReturnCount ON
+  //CheckStyle: CyclomaticComplexity ON
 
     /**
      * Access the registry of transcoding rules to decode the input object.

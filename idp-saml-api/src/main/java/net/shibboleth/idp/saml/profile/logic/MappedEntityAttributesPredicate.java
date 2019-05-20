@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.logic;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,7 +25,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +71,7 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
         super(candidates);
 
         Constraint.isTrue(Iterables.all(candidates, c -> c.getNameFormat() == null),
-                "Use of nameFormat property is impermissible for MappedEntityAttributesPredicate");
+                "Use of nameFormat property is impermissible with MappedEntityAttributesPredicate");
     }
 
     /**
@@ -83,7 +86,7 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
         super(candidates, trim);
         
         Constraint.isTrue(Iterables.all(candidates, c -> c.getNameFormat() == null),
-                "Use of nameFormat property is impermissible for MappedEntityAttributesPredicate");
+                "Use of nameFormat property is impermissible with MappedEntityAttributesPredicate");
     }
     
     /**
@@ -100,7 +103,7 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
         super(candidates, trim, all);
         
         Constraint.isTrue(Iterables.all(candidates, c -> c.getNameFormat() == null),
-                "Use of nameFormat property is impermissible for MappedEntityAttributesPredicate");
+                "Use of nameFormat property is impermissible with MappedEntityAttributesPredicate");
     }
     
     /**
@@ -119,38 +122,64 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
     @Override
     public boolean test(@Nullable final EntityDescriptor input) {
         
-        if (input == null) {
-            return false;
+        if (input == null || getCandidates().isEmpty()) {
+            return true;
         }
+        
+        final Collection<Candidate> candidates = new ArrayList<>(getCandidates());
 
+        if (doTest(input, input.getEntityID(), candidates)) {
+            
+            // At least one match. Check if sufficient.
+            if (!getMatchAll() || candidates.isEmpty()) {
+                return true;
+            }
+        }
+        
+        XMLObject parent = input.getParent();
+        while (parent instanceof EntitiesDescriptor) {
+            if (doTest(parent, ((EntitiesDescriptor) parent).getName(), candidates)) {
+                
+                // At least one match. Check if sufficient.
+                if (!getMatchAll() || candidates.isEmpty()) {
+                    return true;
+                }
+            }
+            parent = parent.getParent();
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Evaluate the input object's attached object metadata against the supplied candidates.
+     * 
+     * <p>Any candidates that match will be removed from the input collection.</p>
+     * 
+     * @param input input object
+     * @param name label for logging
+     * @param candidates candidates to check
+     * 
+     * @return true iff the attached object metadata matched at least one input candidate
+     */
+    private boolean doTest(@Nullable final XMLObject input, @Nullable final String name,
+            @Nonnull @NonnullElements final Collection<Candidate> candidates) {
         final List<AttributesMapContainer> containerList =
                 input.getObjectMetadata().get(AttributesMapContainer.class);
         if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
                 containerList.get(0).get().isEmpty()) {
-            log.trace("No mapped Entity Attributes for {}", input.getEntityID());
+            log.trace("No mapped Entity Attributes for {}", name);
             return false;
         }
         
         final Multimap<String,? extends IdPAttribute> entityAttributes = containerList.get(0).get();
         
         log.trace("Checking for match against {} Entity Attributes for {}", entityAttributes.size(),
-                input.getEntityID());
+                name);
         
-        // If we find a matching tag, we win. Each tag is treated in OR fashion.
-        final EntityAttributesMatcher matcher = new EntityAttributesMatcher(entityAttributes);
-        
-        // Then we determine whether the overall set of tag containers is AND or OR.
-        if (getMatchAll()) {
-            if (Iterables.all(getCandidates(), matcher::test)) {
-                return true;
-            }
-        } else {
-            if (Iterables.tryFind(getCandidates(), matcher::test).isPresent()) {
-                return true;
-            }
-        }
-        
-        return false;
+        // Remove each candidate that matches. Tag values are OR'd for matching purposes.
+        // Return true iff at least one candidate matches.
+        return candidates.removeIf(new EntityAttributesMatcher(entityAttributes));
     }
 
     /**
