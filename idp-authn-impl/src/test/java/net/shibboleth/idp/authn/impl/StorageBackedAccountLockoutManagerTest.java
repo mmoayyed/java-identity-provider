@@ -105,7 +105,7 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         Assert.assertTrue(manager.check(prc));
         Thread.sleep(4000);
         Assert.assertTrue(manager.check(prc));
-        Thread.sleep(1000);
+        Thread.sleep(1150);
         Assert.assertFalse(manager.check(prc));
     }
 
