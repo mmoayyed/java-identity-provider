@@ -28,6 +28,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -56,71 +57,76 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * 
      * The {@link Function} returns null or an empty list if the {@link Principal} isn't relevant.
      */
-    @Nonnull private Function<Principal,List<IdPAttributeValue>> attributesValueFunction;
+    @NonnullAfterInit private Function<Principal,List<IdPAttributeValue>> attributeValuesFunction;
 
     /** Constructor. */
     public SubjectDerivedAttributeValuesFunction() {
-        scLookupStrategy = new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class);
+        scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 
     /**
-     * Set the strategy used to locate the {@link SubjectContext} associated with a given
+     * Sets the strategy used to locate the {@link SubjectContext} associated with a given
      * {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}.
      * 
      * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
      *            {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
      */
-    public void
-            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
+    public void setSubjectContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
     /**
-     * Sets the attribute value function.
+     * Sets the function to extract attribute values from a {@link Principal}.
      * 
-     * @param engine what to set.
+     * @param strategy strategy function
      */
-    public void setAttributeValuesFunction(@Nonnull final Function<Principal,List<IdPAttributeValue>> engine) {
+    public void setAttributeValuesFunction(@Nonnull final Function<Principal,List<IdPAttributeValue>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        attributesValueFunction = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
+        
+        attributeValuesFunction = Constraint.isNotNull(strategy, "Attribute value lookup strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (attributeValuesFunction == null) {
+            throw new ComponentInitializationException("Attribute value lookup strategy cannot be null");
+        }
     }
 
     /** {@inheritDoc} */
     @Nullable public List<IdPAttributeValue> apply(@Nullable final ProfileRequestContext prc) {
         final SubjectContext cs = scLookupStrategy.apply(prc);
-        final List<IdPAttributeValue> results = new ArrayList<>(1);
+        final List<IdPAttributeValue> results = new ArrayList<>();
 
         for (final Subject subject : cs.getSubjects()) {
             for (final Principal principal : subject.getPrincipals()) {
-                final List<IdPAttributeValue> values = attributesValueFunction.apply(principal);
+                final List<IdPAttributeValue> values = attributeValuesFunction.apply(principal);
                 if ((null != values) && !values.isEmpty()) {
                     results.addAll(values);
                 }
             }
         }
         if (results.isEmpty()) {
-            log.info("{} generated no values, attribute no resolved.", getLogPrefix());
+            log.info("{} Generated no values, no attribute resolved", getLogPrefix());
             return null;
         }
-        log.debug("{} Generated {} values.", getLogPrefix(), results.size());
+        log.debug("{} Generated {} values", getLogPrefix(), results.size());
         log.trace("{} Values:", getLogPrefix(), results);
         return results;
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        Constraint.isNotNull(scLookupStrategy, "SubjectContext lookup strategy cannot be null");
-        Constraint.isNotNull(attributesValueFunction, "Attribute Engine cannot be null");
-
-        super.doInitialize();
-    }
-
-    /** Produce a consistent log prefix.
+    /**
+     * Produce a consistent log prefix.
+     * 
      * @return a  consistent log prefix
      */
     private String getLogPrefix() {
         return "SubjectDerivedAttributeDefinition" + getId();
     }
+    
 }

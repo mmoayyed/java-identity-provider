@@ -24,9 +24,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -36,25 +40,26 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
         Function<Principal, List<IdPAttributeValue>> {
 
     /** The Attribute Name to look for. */
-    @Nonnull private String attributeName;
-
-    /**  Constructor.  */
-    public IdPAttributePrincipalValuesFunction() {
-    }
+    @NonnullAfterInit @NotEmpty private String attributeName;
 
     /**
      * Set the attribute name.
      * 
-     * @param attrName the name to filter on.
+     * @param attrName the attribute name to read values from
      */
-    public void setAttributeName(@Nonnull final String attrName) {
-        attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
+    public void setAttributeName(@Nonnull @NotEmpty final String attrName) {
+        Constraint.isFalse(Strings.isNullOrEmpty(attrName), "Attribute Name cannot be null or empty");
+        
+        attributeName = attrName;
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
-        Constraint.isNotNull(attributeName, "Attribute Name should be non-null");
         super.doInitialize();
+        
+        if (attributeName == null) {
+            throw new ComponentInitializationException("Attribute name cannot be null or empty");
+        }
     }
 
     /** {@inheritDoc} */
@@ -63,10 +68,11 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
         if (null != principal && principal instanceof IdPAttributePrincipal) {
             final IdPAttributePrincipal attributePrincipal = (IdPAttributePrincipal) principal;
             final IdPAttribute attribute = attributePrincipal.getAttribute();
-            if (null != attribute && attributeName.equals(attribute.getId())) {
+            if (attributeName.equals(attribute.getId())) {
                 return attribute.getValues();
             }
         }
         return null;
     }
+
 }

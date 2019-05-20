@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -39,8 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An attribute definition which returns an attribute attributes derived from the {@link ProfileRequestContext}
- * associated with the request via a plugged in {@link Function}.
+ * An attribute definition which returns an attribute whose values are derived from the
+ * {@link ProfileRequestContext} associated with the request via a plugged in {@link Function}.
  */
 public class ContextDerivedAttributeDefinition extends AbstractAttributeDefinition {
 
@@ -55,7 +56,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      * 
      * The function returns null or an empty list if the context isn't relevant.
      */
-    @Nonnull private Function<ProfileRequestContext,List<IdPAttributeValue>> attributeValuesFunction;
+    @NonnullAfterInit private Function<ProfileRequestContext,List<IdPAttributeValue>> attributeValuesFunction;
 
     /** Constructor. */
     public ContextDerivedAttributeDefinition() {
@@ -87,6 +88,15 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
         attributeValuesFunction = Constraint.isNotNull(function, "Attribute Function cannot be null");
     }
 
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+    
+        if (attributeValuesFunction == null) {
+            throw new ComponentInitializationException("Attribute value lookup strategy cannot be null");
+        }
+    }
+
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
@@ -103,14 +113,6 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
         final IdPAttribute attribute = new IdPAttribute(getId());
         attribute.setValues(results);
         return attribute;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        Constraint.isNotNull(prcLookupStrategy, "ProfileRequestContext lookup strategy cannot be null");
-        Constraint.isNotNull(attributeValuesFunction, "AttributeValue Function cannot be null");
-
-        super.doInitialize();
     }
 
 }
