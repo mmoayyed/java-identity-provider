@@ -32,6 +32,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -94,11 +97,38 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
     
     /** {@inheritDoc} */
     @Override
+    @Nullable protected T doTranslate(@Nonnull final IdPAttribute tag) {
+        
+        final List<IdPAttributeValue> values = tag.getValues();
+        if (values.size() != 1) {
+            log.error("Tag '{}' contained multiple values, returning none", tag.getId());
+            return null;
+        }
+
+        log.debug("Converting tag '{}' to Bean property of tyoe '{}'", tag.getId(), propertyType.getSimpleName());
+        
+        final IdPAttributeValue value = values.get(0);
+        if (value instanceof StringAttributeValue) {
+            try {
+                return applicationContext.getBean(((StringAttributeValue) value).getValue(), propertyType);
+            } catch (final BeansException e) {
+                log.error("Error locating appropriately typed bean named {}",
+                        ((StringAttributeValue) value).getValue(), e);
+                return null;
+            }
+        } else {
+            log.error("Tag '{}' contained non-string value, returning null");
+            return null;
+        }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     @Nullable protected T doTranslate(@Nonnull final Attribute tag) {
         
         final List<XMLObject> values = tag.getAttributeValues();
         if (values.size() != 1) {
-            log.error("Tag '{}' contained multiple values, returning none");
+            log.error("Tag '{}' contained multiple values, returning none", tag.getName());
             return null;
         }
         

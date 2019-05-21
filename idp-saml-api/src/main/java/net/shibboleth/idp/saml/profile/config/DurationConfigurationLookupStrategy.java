@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 /**
  * A strategy function that examines SAML metadata associated with a relying party and derives Long-valued
@@ -55,11 +58,37 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
 
     /** {@inheritDoc} */
     @Override
+    @Nullable protected Duration doTranslate(@Nonnull final IdPAttribute tag) {
+        
+        final List<IdPAttributeValue> values = tag.getValues();
+        if (values.size() != 1) {
+            log.error("Tag '{}' contained multiple values, returning none", tag.getId());
+            return null;
+        }
+
+        log.debug("Converting tag '{}' to Duration property", tag.getId());
+        
+        final IdPAttributeValue value = values.get(0);
+        if (value instanceof StringAttributeValue) {
+            try {
+                return durationConverter.convert(((StringAttributeValue) value).getValue());
+            } catch (final IllegalArgumentException e) {
+                log.error("Error converting duration", e);
+                return null;
+            }
+        } else {
+            log.error("Tag '{}' contained non-string value, returning null");
+            return null;
+        }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     @Nullable protected Duration doTranslate(@Nonnull final Attribute tag) {
         
         final List<XMLObject> values = tag.getAttributeValues();
         if (values.size() != 1) {
-            log.error("Tag '{}' contained multiple values, returning none");
+            log.error("Tag '{}' contained multiple values, returning none", tag.getName());
             return null;
         }
         

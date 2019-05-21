@@ -29,6 +29,10 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+
 /**
  * A strategy function that examines SAML metadata associated with a relying party and derives Set<String>-valued
  * configuration settings based on EntityAttribute extension tags.
@@ -42,6 +46,26 @@ public class SetConfigurationLookupStrategy<T> extends AbstractCollectionConfigu
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SetConfigurationLookupStrategy.class);
 
+    /** {@inheritDoc} */
+    @Override
+    @Nullable protected Set<T> doTranslate(@Nonnull final IdPAttribute tag) {
+
+        log.debug("Converting tag '{}' to List<{}> property", tag.getId(), getPropertyType().getSimpleName());
+        
+        final List<IdPAttributeValue> values = tag.getValues();
+        final Set<T> result = new HashSet<>(values.size());
+        for (final IdPAttributeValue value : values) {
+            if (value instanceof StringAttributeValue) {
+                try {
+                    result.add(createInstanceFromString(((StringAttributeValue) value).getValue()));
+                } catch (final Exception e) {
+                    log.error("Error converting tag value into {}", getPropertyType().getSimpleName(), e);
+                }
+            }
+        }
+        return result;
+    }
+    
     /** {@inheritDoc} */
     @Override
     @Nullable protected Set<T> doTranslate(@Nonnull final Attribute tag) {

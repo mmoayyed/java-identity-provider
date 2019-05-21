@@ -53,6 +53,10 @@
     <bean id="RelyingPartyByTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
         c:trim="false" c:matchAll="false" />
+
+    <bean id="RelyingPartyByMappedTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
+        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byMappedTag"
+        c:trim="false" c:matchAll="false" />
     
     <bean id="shibboleth.DefaultMDProfileAliases"
             class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -64,7 +68,8 @@
     </bean>
 
     <bean id="shibboleth.AbstractMDDrivenProperty" abstract="true"
-        p:profileAliases="#{getObject('shibboleth.MDProfileAliases') ?: getObject('shibboleth.DefaultMDProfileAliases')}" />
+        p:profileAliases="#{getObject('shibboleth.MDProfileAliases') ?: getObject('shibboleth.DefaultMDProfileAliases')}"
+        p:ignoreUnmappedEntityAttributes="%{idp.service.relyingparty.ignoreUnmappedEntityAttributes:false}" />
     
     <bean id="shibboleth.MDDrivenStringProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
         class="net.shibboleth.idp.saml.profile.config.StringConfigurationLookupStrategy" />

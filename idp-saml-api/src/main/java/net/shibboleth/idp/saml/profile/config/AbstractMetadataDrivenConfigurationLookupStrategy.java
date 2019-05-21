@@ -45,10 +45,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Collections2;
 
+import net.shibboleth.idp.attribute.AttributesMapContainer;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -93,6 +97,9 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     /** Cache the lookup in the context tree. */
     private boolean enableCaching;
     
+    /** Examine only decoded/mapped tags in object metadata. */
+    private boolean ignoreUnmappedEntityAttributes;
+    
     /** Base name of property to produce. */
     @NonnullAfterInit @NotEmpty private String propertyName;
     
@@ -113,20 +120,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         enableCaching = true;
     }
     
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        
-        if (propertyName == null) {
-            throw new ComponentInitializationException("Property name cannot be null or empty");
-        } else if (propertyAliases == null) {
-            propertyAliases = Collections.emptyList();
-        }
-    }
-
     /**
-     * Set whether tag matching should examine and require an Attribute NameFormat of the URI type.
+     * Sets whether tag matching should examine and require an Attribute NameFormat of the URI type.
      * 
      * <p>Default is false.</p>
      * 
@@ -139,7 +134,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     }
     
     /**
-     * Set whether property lookup should be cached in the profile context tree.
+     * Sets whether property lookup should be cached in the profile context tree.
      * 
      * <p>Default is true.</p>
      * 
@@ -150,9 +145,23 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         
         enableCaching = flag;
     }
+
+    /**
+     * Sets whether property lookup should be based solely on mapped/decoded objects
+     * and not on underlying SAML Attributes.
+     * 
+     * <p>Default is false.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setIgnoreUnmappedEntityAttributes(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        ignoreUnmappedEntityAttributes = flag;
+    }
     
     /**
-     * Set the "base" name of the property/setting to derive.
+     * Sets the "base" name of the property/setting to derive.
      * 
      * @param name base property name
      */
@@ -163,7 +172,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     }
     
     /**
-     * Set profile ID aliases to include when checking for metadata tags (the property name is suffixed to the
+     * Sets profile ID aliases to include when checking for metadata tags (the property name is suffixed to the
      * aliases).
      * 
      * <p>This allows alternative tag names to be checked.</p>
@@ -179,7 +188,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     }
     
     /**
-     * Set a default value to return as the function result in the absence of an explicit property.
+     * Sets a default value to return as the function result in the absence of an explicit property.
      * 
      * @param value default value to return 
      */
@@ -190,7 +199,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     }
     
     /**
-     * Set lookup strategy for metadata to examine.
+     * Sets lookup strategy for metadata to examine.
      * 
      * @param strategy  lookup strategy
      */
@@ -201,7 +210,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     }
 
     /**
-     * Set lookup strategy for profile ID to base property names on.
+     * Sets lookup strategy for profile ID to base property names on.
      * 
      * @param strategy  lookup strategy
      */
@@ -211,7 +220,19 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         profileIdLookupStrategy = Constraint.isNotNull(strategy, "Profile ID lookup strategy cannot be null");
     }
 
-// Checkstyle: CyclomaticComplexity OFF    
+/** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (propertyName == null) {
+            throw new ComponentInitializationException("Property name cannot be null or empty");
+        } else if (propertyAliases == null) {
+            propertyAliases = Collections.emptyList();
+        }
+    }
+
+    // Checkstyle: CyclomaticComplexity|MethodLength OFF    
     /** {@inheritDoc} */
     @Nullable public T apply(@Nullable final BaseContext input) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -254,6 +275,38 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             profileId = "";
         }
         
+        // Look for "primary" tag name based on profile/property using mapped tags.
+        IdPAttribute idpAttribute = findMatchingMappedTag(entity, profileId + '/' + propertyName);
+        if (idpAttribute != null) {
+            log.debug("Found matching tag '{}' for property '{}'", idpAttribute.getId(), propertyName);
+            final T result = translate(idpAttribute);
+            if (enableCaching) {
+                cacheContext.getPropertyMap().put(propertyName, result);
+            }
+            return result;
+        }
+        
+        // Check aliases.
+        for (final String alias : propertyAliases) {
+            idpAttribute = findMatchingMappedTag(entity, alias);
+            if (idpAttribute != null) {
+                log.debug("Found matching tag '{}' for property '{}'", idpAttribute.getId(), propertyName);
+                final T result = translate(idpAttribute);
+                if (enableCaching) {
+                    cacheContext.getPropertyMap().put(propertyName, result);
+                }
+                return result;
+            }
+        }
+        
+        if (ignoreUnmappedEntityAttributes) {
+            log.debug("No applicable mapped tag, default returned for '{}'", propertyName);
+            if (enableCaching) {
+                cacheContext.getPropertyMap().put(propertyName, defaultValue);
+            }
+            return defaultValue;
+        }
+        
         // Look for "primary" tag name based on profile/property.
         Attribute attribute = findMatchingTag(entity, profileId + '/' + propertyName);
         if (attribute != null) {
@@ -265,6 +318,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             return result;
         }
         
+        // Check aliases.
         for (final String alias : propertyAliases) {
             attribute = findMatchingTag(entity, alias);
             if (attribute != null) {
@@ -283,7 +337,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
         return defaultValue;
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
     /**
      * Translate the value(s) into a setting of the appropriate type.
@@ -306,6 +360,24 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     /**
      * Translate the value(s) into a setting of the appropriate type.
      * 
+     * @param tag tag to translate
+     * 
+     * @return the setting derived from the tag's value(s)
+     */
+    @Nullable private T translate(@Nonnull final IdPAttribute tag) {
+        
+        final List<IdPAttributeValue> values = tag.getValues();
+        if (values == null || values.isEmpty()) {
+            log.debug("Tag '{}' contained no values, no setting returned for '{}'", tag.getId(), propertyName);
+            return null;
+        }
+        
+        return doTranslate(tag);
+    }
+
+    /**
+     * Translate the value(s) into a setting of the appropriate type.
+     * 
      * <p>Overrides of this function can assume a non-zero collection of values.</p>
      * 
      * @param tag tag to translate
@@ -313,6 +385,46 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @return the setting derived from the tag's value(s)
      */
     @Nullable protected abstract T doTranslate(@Nonnull final Attribute tag); 
+
+    /**
+     * Translate the value(s) into a setting of the appropriate type.
+     * 
+     * <p>Overrides of this function can assume a non-zero collection of values.</p>
+     * 
+     * @param tag tag to translate
+     * 
+     * @return the setting derived from the tag's value(s)
+     */
+    @Nullable protected abstract T doTranslate(@Nonnull final IdPAttribute tag); 
+    
+    /**
+     * Find first matching attribute in the input object's node metadata.
+     * 
+     * @param entity the metadata to examine
+     * @param name the tag name to search for
+     * 
+     * @return matching attribute, or null
+     */
+    @Nullable private IdPAttribute findMatchingMappedTag(@Nonnull final EntityDescriptor entity,
+            @Nonnull @NotEmpty final String name) {
+        
+        // Check for a tag match in the node metadata of the entity and its parent(s).
+        IdPAttribute tag = findMatchingMappedTag(entity.getObjectMetadata(), name);
+        if (tag != null) {
+            return tag;
+        }
+
+        XMLObject parent = entity.getParent();
+        while (parent instanceof EntitiesDescriptor) {
+            tag = findMatchingMappedTag(parent.getObjectMetadata(), name);
+            if (tag != null) {
+                return tag;
+            }
+            parent = parent.getParent();
+        }
+        
+        return null;
+    }
     
     /**
      * Find a matching entity attribute in the input metadata.
@@ -355,6 +467,27 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         return null;
     }
     
+    /**
+     * Find first matching attribute in the input object's node metadata.
+     * 
+     * @param input the metadata to examine
+     * @param name the tag name to search for
+     * 
+     * @return matching attribute, or null
+     */
+    @Nullable private IdPAttribute findMatchingMappedTag(@Nonnull final LockableClassToInstanceMultiMap input,
+            @Nonnull @NotEmpty final String name) {
+
+        final List<AttributesMapContainer> containerList = input.get(AttributesMapContainer.class);
+        if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
+                containerList.get(0).get().isEmpty()) {
+            return null;
+        }
+        
+        final Collection<IdPAttribute> matches = containerList.get(0).get().get(name);
+        return matches.isEmpty() ? null : matches.iterator().next();
+    }
+
     /**
      * Find a matching entity attribute in the input metadata.
      * 
