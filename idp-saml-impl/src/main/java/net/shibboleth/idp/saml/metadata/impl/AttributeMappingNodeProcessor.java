@@ -183,7 +183,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
 
                         Collection<TranscodingRule> rulesets = registry.getTranscodingRules(attr);
                         if (rulesets.isEmpty() && Attribute.URI_REFERENCE.equals(attr.getNameFormat())) {
-                            log.debug("Applying default decoding rule for URI-named attribute {}", attr.getName());
+                            log.trace("Applying default decoding rule for URI-named attribute {}", attr.getName());
                             final Map<String,Object> rulemap = new HashMap<>();
                             rulemap.put(AttributeTranscoderRegistry.PROP_ID, attr.getName());
                             rulemap.put(AttributeTranscoderRegistry.PROP_TRANSCODER, defaultTranscoder);

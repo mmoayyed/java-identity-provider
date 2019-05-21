@@ -12,7 +12,15 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Default location for mappings. -->
-    <bean parent="shibboleth.TranscodingRuleLoader" c:_0="%{idp.home}/attributes" />
+    <!--
+    The system comes preconfigured to load SAML mappings directly from resource files
+    configured in services.xml so they're monitored for changes.
     
+    You can add mappings here, add more XML resource files,
+    or drop property files into the directory noted below.
+    -->
+
+    <!-- Default directory for custom mappings. -->
+    <bean parent="shibboleth.TranscodingRuleLoader" c:_0="%{idp.home}/attributes/custom" />
+   
 </beans>

@@ -1,4 +1,0 @@
-id = mail
-transcoderBean = SAML1StringTranscoder
-name = urn:mace:dir:attribute-def:mail
-encodeType = false

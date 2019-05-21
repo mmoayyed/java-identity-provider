@@ -76,7 +76,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
 
         final String attributeId = attribute.getId();
 
-        log.debug("Beginning to encode attribute {}", attributeId);
+        log.trace("Beginning to encode attribute {}", attributeId);
 
         final String name = rule.getOrDefault(PROP_NAME, String.class, attributeId);
         
@@ -108,7 +108,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
             throw new AttributeEncodingException("Failed to encode any values for attribute " + attribute.getId());
         }
         
-        log.debug("Encoded {} values for attribute {}", casAttribute.getValues().size(), attributeId);
+        log.trace("Encoded {} values for attribute {}", casAttribute.getValues().size(), attributeId);
         return casAttribute;
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
 
         final String attributeName = getEncodedName(rule);
         
-        log.debug("Beginning to decode attribute {}", attributeName);
+        log.trace("Beginning to decode attribute {}", attributeName);
 
         final List<IdPAttributeValue> idpAttributeValues = new ArrayList<>();
 
@@ -139,7 +139,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
         }
 
         if (!idpAttributeValues.isEmpty()) {
-            log.debug("Decoded {} values for attribute {}", idpAttributeValues.size(), attributeName);
+            log.trace("Decoded {} values for attribute {}", idpAttributeValues.size(), attributeName);
         }
         return buildIdPAttribute(profileRequestContext, input, rule, idpAttributeValues);
     }

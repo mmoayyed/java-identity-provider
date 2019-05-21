@@ -1,4 +1,0 @@
-id = eduPersonPrincipalName
-transcoderBean = SAML1ScopedStringTranscoder
-name = urn:mace:dir:attribute-def:eduPersonPrincipalName
-encodeType = false

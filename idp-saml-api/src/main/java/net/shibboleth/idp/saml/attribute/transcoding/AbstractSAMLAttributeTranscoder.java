@@ -68,7 +68,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
 
         final String attributeId = attribute.getId();
 
-        log.debug("Beginning to encode attribute {}", attributeId);
+        log.trace("Beginning to encode attribute {}", attributeId);
 
         final List<XMLObject> samlAttributeValues = new ArrayList<>();
 
@@ -95,7 +95,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
             }
         }
         
-        log.debug("Encoded {} values for attribute {}", samlAttributeValues.size(), attributeId);
+        log.trace("Encoded {} values for attribute {}", samlAttributeValues.size(), attributeId);
         return buildAttribute(profileRequestContext, attribute, to, rule, samlAttributeValues);
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
 
         final String attributeName = getEncodedName(rule);
         
-        log.debug("Beginning to decode attribute {}", attributeName);
+        log.trace("Beginning to decode attribute {}", attributeName);
 
         final List<IdPAttributeValue> idpAttributeValues = new ArrayList<>();
         final Iterable<XMLObject> samlAttributeValues = getValues(input);
@@ -128,7 +128,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
         }
 
         if (!idpAttributeValues.isEmpty()) {
-            log.debug("Decoded {} values for attribute {}", idpAttributeValues.size(), attributeName);
+            log.trace("Decoded {} values for attribute {}", idpAttributeValues.size(), attributeName);
         }
         return buildIdPAttribute(profileRequestContext, input, rule, idpAttributeValues);
     }

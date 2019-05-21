@@ -1,4 +1,0 @@
-id = uid
-transcoderBean = SAML2StringTranscoder
-name = urn:oid:0.9.2342.19200300.100.1.1
-encodeType = false
