@@ -122,8 +122,10 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
     @Override
     public boolean test(@Nullable final EntityDescriptor input) {
         
-        if (input == null || getCandidates().isEmpty()) {
+        if (getCandidates().isEmpty()) {
             return true;
+        } else if (input == null) {
+            return false;
         }
         
         final Collection<Candidate> candidates = new ArrayList<>(getCandidates());
