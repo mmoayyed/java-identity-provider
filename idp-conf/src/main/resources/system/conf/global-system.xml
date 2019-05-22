@@ -225,8 +225,8 @@
 
     <bean id="shibboleth.DataSealer" lazy-init="true"
         class="net.shibboleth.utilities.java.support.security.DataSealer"
-        p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy"
-        p:lockedAtStartup="#{ !systemProperties.contains('idp.sealer.storePassword') or !systemProperties.contains('idp.sealer.keyPassword') }" />
+        p:keyStrategy-ref="#{ '%{idp.sealer.keyStrategy:shibboleth.DataSealerKeyStrategy}'.trim() }"
+        p:lockedAtStartup="#{!systemProperties.contains('idp.sealer.keyStrategy') and (!systemProperties.contains('idp.sealer.storePassword') or !systemProperties.contains('idp.sealer.keyPassword')) }" />
 
     <!-- This is a convenience for compatibility with the examples for configuring this in V2. -->
     <alias name="shibboleth.DataSealer" alias="shibboleth.TransientIDDataSealer"/>
@@ -248,7 +248,7 @@
         p:cookieManager-ref="shibboleth.PersistentCookieManager"
         p:storageName="%{idp.storage.clientPersistentStorageName:shib_idp_persistent_ss}"
         p:dataSealer-ref="shibboleth.DataSealer"
-        p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
+        p:keyStrategy-ref="#{ '%{idp.sealer.keyStrategy:shibboleth.DataSealerKeyStrategy}'.trim() }" />
 
     <!--
     Default list of ClientStorageService plugins needed for injection into storage read/write flows.
