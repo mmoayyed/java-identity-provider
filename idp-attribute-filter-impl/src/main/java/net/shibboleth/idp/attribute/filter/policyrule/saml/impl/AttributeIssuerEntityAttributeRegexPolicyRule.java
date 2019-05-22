@@ -26,14 +26,14 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
- * Matcher that checks, via an exact match, if the attribute requester contains an entity attribute with a given value.
+ * Matcher that checks, via regex, if the attribute issuer contains an entity attribute with a given value.
  */
-public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEntityAttributeExactPolicyRule {
+public class AttributeIssuerEntityAttributeRegexPolicyRule extends AbstractEntityAttributeRegexPolicyRule {
 
     /** {@inheritDoc} */
     @Override
     @Nullable protected EntityDescriptor getEntityMetadata(@Nonnull final AttributeFilterContext filterContext) {
-        final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
+        final SAMLMetadataContext metadataContext = filterContext.getIssuerMetadataContext();
         return metadataContext != null ? metadataContext.getEntityDescriptor() : null;
     }
 

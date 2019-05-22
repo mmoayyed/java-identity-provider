@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
@@ -65,16 +64,19 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** The attribute recipient's group identity. */
     @Nullable private String attributeRecipientGroupID;
-    
-    /** How was the principal Authenticated? */
-    @Deprecated
-    @Nullable private String principalAuthenticationMethod;
 
-    /** Cache of the metadata context. */
+    /** Cache of IdP metadata context. */
+    @Nullable private SAMLMetadataContext issuerMetadataContext;
+    
+    /** Cache of SP metadata context. */
     @Nullable private SAMLMetadataContext requesterMetadataContext;
 
     /** Cache of the proxied requester context. */
     @Nullable private ProxiedRequesterContext proxiedRequesterContext;
+
+    /** Lookup strategy used to locate the IdP's metadata context. */
+    @Nullable
+    private Function<AttributeFilterContext,SAMLMetadataContext> issuerMetadataContextLookupStrategy;
 
     /** Lookup strategy used to locate the SP's metadata context. */
     @Nullable
@@ -86,8 +88,8 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** Constructor. */
     public AttributeFilterContext() {
-        prefilteredAttributes = new HashMap<String, IdPAttribute>();
-        filteredAttributes = new HashMap<String, IdPAttribute>();
+        prefilteredAttributes = new HashMap<>();
+        filteredAttributes = new HashMap<>();
     }
 
     /**
@@ -244,15 +246,38 @@ public final class AttributeFilterContext extends BaseContext {
         
         return this;
     }
-    
+
     /**
-     * Get the strategy used to locate the SP's metadata context.
+     * Get the strategy used to locate the IdP's metadata context.
      * 
      * @return lookup strategy
      */
-    @NonnullAfterInit
-    public Function<AttributeFilterContext, SAMLMetadataContext> getRequesterMetadataContextLookupStrategy() {
+    @Nullable public Function<AttributeFilterContext,SAMLMetadataContext> getRequesterMetadataContextLookupStrategy() {
         return requesterMetadataContextLookupStrategy;
+    }
+
+    /**
+     * Set the strategy used to locate the IdP's metadata context.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setIssuerMetadataContextLookupStrategy(
+            @Nonnull final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
+        issuerMetadataContextLookupStrategy =
+                Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Get the strategy used to locate the IdP's metadata context.
+     * 
+     * @return lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public Function<AttributeFilterContext,SAMLMetadataContext> getIssuerMetadataContextLookupStrategy() {
+        return issuerMetadataContextLookupStrategy;
     }
 
     /**
@@ -273,7 +298,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @since 3.4.0
      */
-    @NonnullAfterInit
+    @Nullable
     public Function<AttributeFilterContext,ProxiedRequesterContext> getProxiedRequesterContextLookupStrategy() {
         return proxiedRequesterContextLookupStrategy;
     }
@@ -289,6 +314,21 @@ public final class AttributeFilterContext extends BaseContext {
             @Nonnull final Function<AttributeFilterContext,ProxiedRequesterContext> strategy) {
         proxiedRequesterContextLookupStrategy =
                 Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
+    }
+
+    /** Get the Issuer Metadata context.
+     * 
+     * <p>This value is cached and so only calculated once.</p>
+     * 
+     * @return the context
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public SAMLMetadataContext getIssuerMetadataContext() {
+        if (null == issuerMetadataContext && null != issuerMetadataContextLookupStrategy) {
+            issuerMetadataContext = issuerMetadataContextLookupStrategy.apply(this);
+        }
+        return issuerMetadataContext;
     }
 
     /** Get the Requester Metadata context.
