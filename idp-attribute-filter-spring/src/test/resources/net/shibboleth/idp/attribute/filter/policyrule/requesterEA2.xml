@@ -3,5 +3,6 @@
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 	<PolicyRequirementRule xsi:type="EntityAttributeExactMatch"
                        attributeName="urn:example.org:policy"
-                       attributeValue="urn:example.org:policy:ABCD1234" />
+                       attributeValue="urn:example.org:policy:ABCD1234" 
+                       ignoreUnmappedEntityAttributes="true"/>
 </AttributeFilterPolicy>

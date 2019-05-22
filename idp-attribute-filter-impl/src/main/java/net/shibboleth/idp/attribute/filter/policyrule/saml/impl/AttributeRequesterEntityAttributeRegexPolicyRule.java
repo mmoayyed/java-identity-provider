@@ -17,20 +17,24 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
-import java.util.regex.Matcher;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Matcher functor that checks, via matching against a regular expression, if the attribute requester contains an entity
@@ -63,9 +67,10 @@ public class AttributeRequesterEntityAttributeRegexPolicyRule extends AbstractEn
     }
 
     /** {@inheritDoc} */
-    @Override protected boolean entityAttributeValueMatches(final String entityAttributeValue) {
-        final Matcher valueMatcher = valueRegex.matcher(StringSupport.trim(entityAttributeValue));
-        return valueMatcher.matches();
+    @Override protected boolean entityAttributeValueMatches(
+            @Nonnull @NotEmpty @NonnullElements final Set<String> entityAttributeValues) {
+        
+        return Iterables.any(entityAttributeValues, v -> valueRegex.matcher(v).matches());
     }
 
     /** {@inheritDoc} */

@@ -27,8 +27,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Base definition for all EntityAttribute Parsers.<br/>
- * the common attributes are 'attributeName' and 'attributeNameFormat'.
+ * Base definition for all EntityAttribute Parsers.
  */
 public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRuleParser {
 
@@ -42,6 +41,11 @@ public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRulePa
         if (element.hasAttributeNS(null, "attributeNameFormat")) {
             builder.addPropertyValue("nameFormat",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "attributeNameFormat")));
+        }
+        
+        if (element.hasAttributeNS(null, "ignoreUnmappedEntityAttributes")) {
+            builder.addPropertyValue("ignoreUnmappedEntityAttributes",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "ignoreUnmappedEntityAttributes")));
         }
     }
 }

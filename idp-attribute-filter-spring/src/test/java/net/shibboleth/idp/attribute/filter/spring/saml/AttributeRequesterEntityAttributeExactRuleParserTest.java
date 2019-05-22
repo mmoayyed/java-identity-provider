@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
@@ -37,5 +37,7 @@ public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAt
 
         assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+        assertTrue(rule.getIgnoreUnmappedEntityAttributes());
     }
+
 }

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
@@ -35,5 +35,7 @@ public class AttributeRequesterEntityAttributeRegexRuleParserTest extends  BaseA
         final AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml");
         assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+        assertFalse(rule.getIgnoreUnmappedEntityAttributes());
     }
+
 }

@@ -17,19 +17,24 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
+import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
+import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder;
+import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.MockReloadableService;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
-import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.annotations.BeforeClass;
@@ -61,8 +66,14 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
             throws FilterException, ComponentInitializationException {
         metadata = unmarshallElement("/net/shibboleth/idp/filter/impl/saml/shibboleth.net-metadata.xml");
         
+        final AttributeTranscoderRegistryImpl registry = new AttributeTranscoderRegistryImpl();
+        registry.setId("test");
+        registry.setNamingRegistry(Collections.singletonMap(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction()));
+        registry.initialize();
+        
         final NodeProcessingMetadataFilter filter = new NodeProcessingMetadataFilter();
-        filter.setNodeProcessors(Collections.<MetadataNodeProcessor>singletonList(new EntitiesDescriptorNameProcessor()));
+        filter.setNodeProcessors(Arrays.asList(new EntitiesDescriptorNameProcessor(),
+                new AttributeMappingNodeProcessor(new MockReloadableService(registry))));
         filter.initialize();
         filter.filter(metadata);
 

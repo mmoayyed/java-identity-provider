@@ -17,15 +17,22 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
-import java.util.ArrayList;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.AttributesMapContainer;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.AbstractPolicyRule;
+import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -33,20 +40,33 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.XSBase64Binary;
+import org.opensaml.core.xml.schema.XSBoolean;
+import org.opensaml.core.xml.schema.XSDateTime;
+import org.opensaml.core.xml.schema.XSInteger;
 import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.Extensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Multimap;
 
 /**
  * Base class for matchers that check whether a particular entity attribute is present and contains a given value.<br/>
  * 
- * Given the metadata for an entity, this class takes care of navigation to the attribute and extracting the values
+ * Given the metadata for an entity, this class takes care of navigation to the attribute and extracting the values,
+ * including optimized handling of mapped attributes.
  * 
  * Classes wishing to implement Entity Attribute matchers implement {@link #getEntityMetadata(AttributeFilterContext)}
  * to navigate to the entity (probably recipient or issuer) and {@link #entityAttributeValueMatches(String)} to
@@ -55,20 +75,23 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRule {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractEntityAttributePolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractEntityAttributePolicyRule.class);
 
     /** The name of the entity attribute the entity must have. */
-    private String attrName;
+    @NonnullAfterInit @NotEmpty private String attrName;
 
     /** The name format of the entity attribute the entity must have. */
-    private String nameFormat;
+    @Nullable @NotEmpty private String nameFormat;
+    
+    /** Whether to ignore unmapped attributes as an optimization. */
+    private boolean ignoreUnmappedEntityAttributes;
 
     /**
      * Gets the name of the entity attribute the entity must have.
      * 
      * @return name of the entity attribute the entity must have
      */
-    @NonnullAfterInit public String getAttributeName() {
+    @NonnullAfterInit @NotEmpty public String getAttributeName() {
         return attrName;
     }
 
@@ -77,7 +100,9 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @param attributeName name of the entity attribute the entity must have
      */
-    public void setAttributeName(@Nullable final String attributeName) {
+    public void setAttributeName(@Nullable @NotEmpty final String attributeName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         attrName = StringSupport.trimOrNull(attributeName);
     }
 
@@ -86,7 +111,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @return name format of the entity attribute the entity must have
      */
-    @Nullable public String getNameFormat() {
+    @Nullable @NotEmpty public String getNameFormat() {
         return nameFormat;
     }
 
@@ -95,8 +120,42 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @param attributeNameFormat name format of the entity attribute the entity must have
      */
-    public void setNameFormat(@Nullable final String attributeNameFormat) {
+    public void setNameFormat(@Nullable @NotEmpty final String attributeNameFormat) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         nameFormat = StringSupport.trimOrNull(attributeNameFormat);
+    }
+    
+    /**
+     * Gets whether to ignore unmapped/decoded EntityAttribute extensions as an optimization.
+     * 
+     * @return whether to ignore unmapped/decoded EntityAttribute extensions as an optimization
+     */
+    public boolean getIgnoreUnmappedEntityAttributes() {
+        return ignoreUnmappedEntityAttributes;
+    }
+
+    /**
+     * Sets whether to ignore unmapped/decoded EntityAttribute extensions as an optimization.
+     * 
+     * <p>Defaults to false. Only applies if {@link #nameFormat} property is set.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setIgnoreUnmappedEntityAttributes(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        ignoreUnmappedEntityAttributes = flag;
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (attrName == null) {
+            throw new ComponentInitializationException(getLogPrefix() + " Attribute name is null");
+        } else if (nameFormat != null) {
+            ignoreUnmappedEntityAttributes = false;
+        }
     }
 
     /**
@@ -114,51 +173,33 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
 
         final EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
-            log.info("{} No metadata available for the entity, returning FALSE", getLogPrefix());
+            log.info("{} No metadata available for entity, returning FALSE", getLogPrefix());
             return Tristate.FALSE;
         }
 
-        final List<XMLObject> attributeValues = getEntityAttributeValues(entityDescriptor);
-        if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("{} Entity attribute {} for entity {} does not exist or contains no values, returning FALSE",
+        final Set<String> attributeValues = new HashSet<>();
+        
+        getEntityAttributeValues(entityDescriptor, entityDescriptor.getEntityID(), attributeValues);
+
+        XMLObject parent = entityDescriptor.getParent();
+        while (parent instanceof EntitiesDescriptor) {
+            getEntityAttributeValues(parent, ((EntitiesDescriptor) parent).getName(), attributeValues);
+            parent = parent.getParent();
+        }
+        
+        if (attributeValues.isEmpty()) {
+            log.debug("{} No values found for entity attribute {} for entity {}, returning FALSE",
                     getLogPrefix(), getAttributeName(), entityDescriptor.getEntityID());
             return Tristate.FALSE;
         }
-
-        log.debug("{} Checking if entity attribute {} contains the required value.", getLogPrefix(),
-                getAttributeName());
-        String valueString;
-        for (final XMLObject attributeValue : attributeValues) {
-            if (attributeValue instanceof XSAny) {
-                valueString = ((XSAny) attributeValue).getTextContent();
-            } else if (attributeValue instanceof XSString) {
-                valueString = ((XSString) attributeValue).getValue();
-            } else {
-                log.debug("{} Entity attribute {} contains the unsupported value type {}, skipping it", getLogPrefix(),
-                        getAttributeName(), attributeValue.getClass().getName());
-                continue;
-            }
-
-            if (valueString != null) {
-                if (entityAttributeValueMatches(valueString)) {
-                    log.debug("{} Entity attribute {} value {} meets matching requirements", getLogPrefix(),
-                            getAttributeName(), valueString);
-                    return Tristate.TRUE;
-                }
-                log.debug("{} Entity attribute {} value {} does not meet matching requirements", getLogPrefix(),
-                        getAttributeName(), valueString);
-            }
+        
+        if (entityAttributeValueMatches(attributeValues)) {
+            log.debug("{} Entity attribute values for {} match requirements", getLogPrefix(), getAttributeName());
+            return Tristate.TRUE;
         }
-
+        
+        log.debug("{} Entity attribute values for {} do not match requirements", getLogPrefix(), getAttributeName());
         return Tristate.FALSE;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        if (attrName == null) {
-            throw new ComponentInitializationException(getLogPrefix() + " Attribute name is null");
-        }
     }
 
     /**
@@ -171,76 +212,179 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     @Nullable protected abstract EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext);
 
     /**
-     * Checks whether the given entity attribute value matches the rules for particular implementation of this functor.
+     * Checks whether the given entity attribute's values match for particular implementations of this functor.
      * 
-     * @param entityAttributeValue the entity attribute value, never null
+     * @param entityAttributeValues the entity attribute values
      * 
      * @return true if the value matches, false if not
      */
-    protected abstract boolean entityAttributeValueMatches(String entityAttributeValue);
+    protected abstract boolean entityAttributeValueMatches(
+            @Nonnull @NotEmpty @NonnullElements final Set<String> entityAttributeValues);
 
     /**
-         * Gets the entity attribute values from the given entity metadata. If both the attribute name and name format
-         * for this match functor is configured then both must match, otherwise only the attribute name must match.
-         * 
-         * @param entityDescriptor the metadata for the entity
-         * 
-         * @return the values of the designated attribute
-         */
+     * Gets the entity attribute values from the given metadata.
+     * 
+     * <p>If both the attribute name and name format for this match functor is configured then both must match,
+     * otherwise only the attribute name must match.</p>
+     * 
+     * @param metadataObject the metadata object
+     * @param name name of metadata object
+     * @param valueAccumulator stores values of the designated attribute
+     */
 // Checkstyle: CyclomaticComplexity OFF
-    @Nullable @NotEmpty @NonnullElements private List<XMLObject> getEntityAttributeValues(
-            @Nonnull final EntityDescriptor entityDescriptor) {
+    private void getEntityAttributeValues(@Nonnull final XMLObject metadataObject,
+            @Nullable @NotEmpty final String name, @Nonnull @NonnullElements final Set<String> valueAccumulator) {
         
-        List<XMLObject> valueAccumulator = null;
+        if (nameFormat == null) {
+            getMappedEntityAttributeValues(metadataObject, valueAccumulator);
+            if (ignoreUnmappedEntityAttributes) {
+                return;
+            }
+        }
         
         List<XMLObject> entityAttributesCollection = null;
-        if (entityDescriptor.getExtensions() != null) {
-            entityAttributesCollection =
-                    entityDescriptor.getExtensions().getUnknownXMLObjects(EntityAttributes.DEFAULT_ELEMENT_NAME);
+        
+        Extensions extensions = null;
+        if (metadataObject instanceof EntityDescriptor) {
+            extensions = ((EntityDescriptor) metadataObject).getExtensions();
+        } else if (metadataObject instanceof EntitiesDescriptor) {
+            extensions = ((EntitiesDescriptor) metadataObject).getExtensions();
         }
+        
+        if (extensions != null) {
+            entityAttributesCollection = extensions.getUnknownXMLObjects(EntityAttributes.DEFAULT_ELEMENT_NAME);
+        }
+        
         if (entityAttributesCollection == null || entityAttributesCollection.isEmpty()) {
-            log.debug("{} EntityDescriptor for {} does not contain any EntityAttributes", getLogPrefix(),
-                    entityDescriptor.getEntityID());
-            return null;
+            log.debug("{} Metadata for {} does not contain EntityAttributes extension", getLogPrefix(), name);
+            return;
         }
-
+    
         if (entityAttributesCollection.size() > 1) {
-            log.debug("{} EntityDescriptor for {} contains more than one EntityAttributes extension,"
-                    + " only using the first one", getLogPrefix(), entityDescriptor.getEntityID());
+            log.debug("{} Metadata for {} contains more than one EntityAttributes extension,"
+                    + " only using the first one", getLogPrefix(), name);
         }
-
+    
         final List<Attribute> entityAttributes =
                 ((EntityAttributes) entityAttributesCollection.get(0)).getAttributes();
         if (entityAttributes == null || entityAttributes.isEmpty()) {
-            log.debug("{} EntityAttributes extension for {} does not contain any Attributes", getLogPrefix(),
-                    entityDescriptor.getEntityID());
-            return null;
+            log.debug("{} EntityAttributes extension for {} does not contain Attributes", getLogPrefix(), name);
+            return;
         }
-
+    
         for (final Attribute entityAttribute : entityAttributes) {
             if (!Objects.equals(getAttributeName(), entityAttribute.getName())) {
                 continue;
             }
-
+    
             if (getNameFormat() == null || (Objects.equals(getNameFormat(), entityAttribute.getNameFormat()))) {
-                log.debug("{} EntityDescriptor for {} contains an entity attribute with the name {} and the format {}",
-                        new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(),
-                                getNameFormat(),});
-                if (valueAccumulator == null) {
-                    valueAccumulator = new ArrayList<>();
-                }
-                valueAccumulator.addAll(entityAttribute.getAttributeValues());
+                log.debug("{} Metadata for {} contains Attribute with name {} and format {}",
+                        new Object[] {getLogPrefix(), name, getAttributeName(), getNameFormat(),});
+                
+                valueAccumulator.addAll(
+                        Collections2.filter(
+                                Collections2.transform(entityAttribute.getAttributeValues(), this::getStringValue),
+                                Predicates.notNull()));
             }
         }
-        
-        if (valueAccumulator != null && !valueAccumulator.isEmpty()) {
-            return valueAccumulator;
-        }
-
-        log.debug("{} EntityDescriptor for {} does not contain entity attribute with the name {} and the format {}",
-                new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(), getNameFormat()});
-        return null;
     }
 // Checkstyle: CyclomaticComplexity ON
 
+    /**
+     * Gets the mapped entity attribute values from the given metadata.
+     * 
+     * @param metadataObject the metadata object
+     * @param valueAccumulator stores values of the designated attribute
+     */
+    private void getMappedEntityAttributeValues(@Nonnull final XMLObject metadataObject,
+            @Nonnull @NonnullElements final Set<String> valueAccumulator) {
+        
+        final List<AttributesMapContainer> containerList =
+                metadataObject.getObjectMetadata().get(AttributesMapContainer.class);
+        if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
+                containerList.get(0).get().isEmpty()) {
+            log.debug("{} No mapped entity attributes found for {}", getLogPrefix(), attrName);
+            return;
+        }
+        
+        log.debug("{} Checking for mapped entity attributes named {}", getLogPrefix(), attrName);
+        
+        int count = 0;
+        
+        final Multimap<String,? extends IdPAttribute> mappedAttributes = containerList.get(0).get();
+        for (final IdPAttribute attribute : mappedAttributes.get(attrName)) {
+            for (final IdPAttributeValue attributeValue : attribute.getValues()) {
+                if (attributeValue instanceof StringAttributeValue) {
+                    valueAccumulator.add(((StringAttributeValue) attributeValue).getValue());
+                    count++;
+                } else {
+                    log.error("{} Ignoring non-string value in mapped entity attribute {}", getLogPrefix(), attrName);
+                }
+            }
+        }
+        
+        log.debug("{} Added {} values of mapped entity attribute {} for evaluation", getLogPrefix(), count, attrName);
+    }
+
+    /**
+     * Function to return an XMLObject in string form.
+     * 
+     * @param object object to decode
+     * 
+     * @return decoded string, or null
+     */
+// Checkstyle: CyclomaticComplexity OFF
+    @Nullable private String getStringValue(@Nonnull final XMLObject object) {
+        String retVal = null;
+
+        if (object instanceof XSString) {
+
+            retVal = ((XSString) object).getValue();
+
+        } else if (object instanceof XSURI) {
+
+            retVal = ((XSURI) object).getValue();
+
+        } else if (object instanceof XSBoolean) {
+
+            retVal = ((XSBoolean) object).getValue().getValue() ? "1" : "0";
+
+        } else if (object instanceof XSInteger) {
+
+            retVal = ((XSInteger) object).getValue().toString();
+
+        } else if (object instanceof XSDateTime) {
+
+            final Instant dt = ((XSDateTime) object).getValue();
+            if (dt != null) {
+                retVal = DOMTypeSupport.instantToString(dt);
+            } else {
+                retVal = null;
+            }
+
+        } else if (object instanceof XSBase64Binary) {
+
+            retVal = ((XSBase64Binary) object).getValue();
+            
+        } else if (object instanceof ScopedValue) {
+            
+            retVal = ((ScopedValue) object).getValue();
+
+        } else if (object instanceof XSAny) {
+
+            final XSAny wc = (XSAny) object;
+            if (wc.getUnknownAttributes().isEmpty() && wc.getUnknownXMLObjects().isEmpty()) {
+                retVal = wc.getTextContent();
+            } else {
+                retVal = null;
+            }
+        }
+
+        if (null == retVal) {
+            log.info("Value of type {} could not be converted", object.getClass().getSimpleName());
+        }
+        return retVal;
+    }
+// Checkstyle: CyclomaticComplexity ON
+    
 }

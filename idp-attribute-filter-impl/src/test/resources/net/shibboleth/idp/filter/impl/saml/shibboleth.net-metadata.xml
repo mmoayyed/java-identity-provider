@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EntitiesDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="http://shibboleth.net">
     
+    <Extensions>
+        <mdattr:EntityAttributes>
+            <saml:Attribute Name="urn:example.org:entitlements" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"  xsi:type="xs:boolean">32</saml:AttributeValue>
+                <saml:AttributeValue>urn:example.org:entitlements:ABCD</saml:AttributeValue>
+            </saml:Attribute>
+        </mdattr:EntityAttributes>
+    </Extensions>
+    
     <EntityDescriptor entityID="https://idp.shibboleth.net/idp/shibboleth">
        
         <Extensions>
@@ -17,11 +26,10 @@
                 <saml:Attribute Name="urn:example.org:policies">
                     <saml:AttributeValue>urn:example.org:policy:5678</saml:AttributeValue>
                 </saml:Attribute>
-                <saml:Attribute Name="urn:example.org:entitlements" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                    <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"  xsi:type="xs:boolean">32</saml:AttributeValue>
-                    <saml:AttributeValue>urn:example.org:entitlements:ABCD</saml:AttributeValue>
-                    <saml:AttributeValue>urn:example.org:entitlements:1234</saml:AttributeValue>
-                </saml:Attribute>
+	            <saml:Attribute Name="urn:example.org:entitlements" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+	                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"  xsi:type="xs:boolean">32</saml:AttributeValue>
+	                <saml:AttributeValue>urn:example.org:entitlements:1234</saml:AttributeValue>
+	            </saml:Attribute>
             </mdattr:EntityAttributes>
         </Extensions>
 

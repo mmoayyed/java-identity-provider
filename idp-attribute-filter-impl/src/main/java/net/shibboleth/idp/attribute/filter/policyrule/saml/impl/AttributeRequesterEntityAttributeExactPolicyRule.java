@@ -17,13 +17,15 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
-import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -41,14 +43,14 @@ public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEn
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterEntityAttributeExactPolicyRule.class);
 
     /** The value of the entity attribute the entity must have. */
-    @NonnullAfterInit private String value;
+    @NonnullAfterInit @NotEmpty private String value;
 
     /**
      * Gets the value of the entity attribute the entity must have.
      * 
      * @return value of the entity attribute the entity must have
      */
-    @NonnullAfterInit public String getValue() {
+    @NonnullAfterInit @NotEmpty public String getValue() {
         return value;
     }
 
@@ -57,14 +59,15 @@ public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEn
      * 
      * @param attributeValue value of the entity attribute the entity must have
      */
-    public void setValue(@Nonnull final String attributeValue) {
+    public void setValue(@Nonnull @NotEmpty final String attributeValue) {
         value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null.");
     }
 
     /** {@inheritDoc} */
     @Override
-    protected boolean entityAttributeValueMatches(@Nullable final String stringValue) {
-        return Objects.equals(value, stringValue);
+    protected boolean entityAttributeValueMatches(
+            @Nonnull @NotEmpty @NonnullElements final Set<String> entityAttributeValues) {
+        return entityAttributeValues.contains(value);
     }
 
     /** {@inheritDoc} */

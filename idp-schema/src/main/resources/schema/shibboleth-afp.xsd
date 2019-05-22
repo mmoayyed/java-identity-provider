@@ -601,14 +601,21 @@
                         <documentation>The name of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeNameFormat" type="string" use="optional">
-                    <annotation>
-                        <documentation>The name format of the entity attribute to match.</documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="attributeValue" type="string" use="required">
                     <annotation>
                         <documentation>The value of the entity attribute to match.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="attributeNameFormat" type="string">
+                    <annotation>
+                        <documentation>The NameFormat of the entity attribute to match.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="ignoreUnmappedEntityAttributes" type="string">
+                    <annotation>
+                        <documentation>
+                            Boolean attribute, whether to examine only mapped/decoded attributes, default is false.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -635,15 +642,22 @@
                         <documentation>The name of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeNameFormat" type="string" use="optional">
-                    <annotation>
-                        <documentation>The name format of the entity attribute to match.</documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="attributeValueRegex" type="string" use="required">
                     <annotation>
                         <documentation>The regular expression that must match the value of the entity attribute to
                             match.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="attributeNameFormat" type="string">
+                    <annotation>
+                        <documentation>The name format of the entity attribute to match.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="ignoreUnmappedEntityAttributes" type="string">
+                    <annotation>
+                        <documentation>
+                            Boolean attribute, whether to examine only mapped/decoded attributes, default is false.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
