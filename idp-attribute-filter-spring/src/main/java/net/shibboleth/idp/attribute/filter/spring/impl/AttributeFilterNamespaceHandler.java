@@ -43,12 +43,13 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequest
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterInEntityGroupRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIdFormatRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.RegistrationAuthorityRuleParser;
 
 /** Namespace handler for the attribute filtering engine. */
 public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -144,8 +145,11 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new MappedAttributeInMetadataRuleParser());
 
-        registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE,
-                new RegistrationAuthorityRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterRegistrationAuthorityRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterRegistrationAuthorityRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerRegistrationAuthorityRuleParser.SCHEMA_TYPE,
+                new AttributeIssuerRegistrationAuthorityRuleParser());
     }
     // Checkstyle: MethodLength ON
 }

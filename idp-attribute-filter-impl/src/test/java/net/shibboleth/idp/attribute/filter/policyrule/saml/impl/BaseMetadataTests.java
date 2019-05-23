@@ -90,7 +90,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         }
     }
 
-    static protected AttributeFilterContext metadataContext(EntityDescriptor sp, String principal) {
+    static protected AttributeFilterContext reqMetadataContext(EntityDescriptor sp, String principal) {
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         SAMLMetadataContext metadataContext = filterContext.getSubcontext(SAMLMetadataContext.class, true);
@@ -102,9 +102,24 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         }
 
         filterContext.setPrincipal(principal);
-        filterContext
-                .setRequesterMetadataContextLookupStrategy(new ChildContextLookup<AttributeFilterContext, SAMLMetadataContext>(
-                        SAMLMetadataContext.class, false));
+        filterContext.setRequesterMetadataContextLookupStrategy(new ChildContextLookup<>(SAMLMetadataContext.class, false));
         return filterContext;
     }
+
+    static protected AttributeFilterContext issMetadataContext(EntityDescriptor idp, String principal) {
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        SAMLMetadataContext metadataContext = filterContext.getSubcontext(SAMLMetadataContext.class, true);
+
+        metadataContext.setEntityDescriptor(idp);
+        if (idp != null) {
+            metadataContext.setRoleDescriptor(idp.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
+            filterContext.setAttributeIssuerID(idp.getEntityID());
+        }
+
+        filterContext.setPrincipal(principal);
+        filterContext.setIssuerMetadataContextLookupStrategy(new ChildContextLookup<>(SAMLMetadataContext.class, false));
+        return filterContext;
+    }
+
 }

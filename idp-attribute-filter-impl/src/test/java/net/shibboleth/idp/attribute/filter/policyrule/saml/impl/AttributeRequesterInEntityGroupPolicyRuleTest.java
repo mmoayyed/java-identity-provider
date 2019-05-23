@@ -41,11 +41,11 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
     @Test public void parent() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
 
-        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
-        assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(reqMetadataContext(null, null)), Tristate.FALSE);
 
         matcher = getMatcher("urn:otherstuff");
-        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
     }
 
     @Test public void getter() throws ComponentInitializationException {
@@ -56,6 +56,6 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
         matcher.initialize();
-        assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(null, null)), Tristate.FALSE);
     }
 }

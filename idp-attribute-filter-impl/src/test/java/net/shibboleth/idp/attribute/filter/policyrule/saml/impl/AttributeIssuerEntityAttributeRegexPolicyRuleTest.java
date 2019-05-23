@@ -27,18 +27,18 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link AttributeRequesterEntityAttributeRegexPolicyRule}.
+ * test for {@link AttributeIssuerEntityAttributeRegexPolicyRule}.
  */
-public class AttributeRequesterEntityAttributeRegexPolicyRuleTest  extends BaseMetadataTests {
+public class AttributeIssuerEntityAttributeRegexPolicyRuleTest  extends BaseMetadataTests {
 
-    private AttributeRequesterEntityAttributeRegexPolicyRule getMatcher() throws ComponentInitializationException {
+    private AttributeIssuerEntityAttributeRegexPolicyRule getMatcher() throws ComponentInitializationException {
         Pattern pattern = Pattern.compile("urn\\:example.org\\:policy\\:56.*");
         return getMatcher("urn:example.org:policies", pattern, null);
     }
 
-    private AttributeRequesterEntityAttributeRegexPolicyRule getMatcher(String attributeName, Pattern attributeValuePattern,
+    private AttributeIssuerEntityAttributeRegexPolicyRule getMatcher(String attributeName, Pattern attributeValuePattern,
             String attributeNameFormat) throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeRegexPolicyRule matcher = new AttributeRequesterEntityAttributeRegexPolicyRule();
+        AttributeIssuerEntityAttributeRegexPolicyRule matcher = new AttributeIssuerEntityAttributeRegexPolicyRule();
         matcher.setId("matcher");
         matcher.setAttributeName(attributeName);
         matcher.setValueRegex(attributeValuePattern);
@@ -49,10 +49,10 @@ public class AttributeRequesterEntityAttributeRegexPolicyRuleTest  extends BaseM
 
     @Test public void simple() throws ComponentInitializationException {
 
-        AttributeRequesterEntityAttributeRegexPolicyRule matcher = getMatcher();
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        AttributeIssuerEntityAttributeRegexPolicyRule matcher = getMatcher();
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
 
-        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
 
     }
 

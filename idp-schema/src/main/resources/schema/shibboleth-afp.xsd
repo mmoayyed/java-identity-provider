@@ -745,12 +745,10 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeIssuerRegistrationAuthority">
+    <complexType name="RegistrationAuthority">
         <annotation>
             <documentation>
-                A match function that matches the attribute issuer's MDRPI content against a list of potential values.
-                
-                Not supported in V3.
+                A match function that matches the SP (requester) MDRPI against a list of potential values.
             </documentation>
         </annotation>
         <complexContent>
@@ -758,10 +756,10 @@
         </complexContent>
     </complexType>
 
-    <complexType name="RegistrationAuthority">
+    <complexType name="IssuerRegistrationAuthority">
         <annotation>
             <documentation>
-                A match function that matches the SP (requester) MDRPI against a list of potential values.
+                A match function that matches the attribute issuer's MDRPI content against a list of potential values.
             </documentation>
         </annotation>
         <complexContent>

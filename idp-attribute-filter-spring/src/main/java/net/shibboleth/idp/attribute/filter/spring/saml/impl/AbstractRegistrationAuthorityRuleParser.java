@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 
 import javax.annotation.Nonnull;
-import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +28,11 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-/** Spring bean definition parser that creates {@link RegistrationAuthorityPolicyRule} beans. */
-public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
-            "RegistrationAuthority");
+/** Spring bean definition parser that creates RegistrationAuthorityPolicyRule beans. */
+public abstract class AbstractRegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
     /** Name of the attribute carrying the Issuers list. */
     public static final String REGISTRARS_ATTR_NAME = "registrars";
@@ -48,12 +41,7 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
     public static final String MATCH_IF_METADATA_SILENT_ATTR_NAME = "matchIfMetadataSilent";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RegistrationAuthorityRuleParser.class);
-
-    /** {@inheritDoc} */
-    @Override protected Class<RegistrationAuthorityPolicyRule> getNativeBeanClass() {
-        return RegistrationAuthorityPolicyRule.class;
-    }
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractRegistrationAuthorityRuleParser.class);
 
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
@@ -68,9 +56,10 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
         final Attr attr = element.getAttributeNodeNS(null, REGISTRARS_ATTR_NAME);
         if (attr != null) {
-            final AbstractBeanDefinition issuers = SpringSupport.getAttributeValueAsList(attr);
-            log.debug("Registration Authority Filter: Issuers = {}", attr.getValue());
-            builder.addPropertyValue("issuers", issuers);
+            final AbstractBeanDefinition registrars = SpringSupport.getAttributeValueAsList(attr);
+            log.debug("Registration Authority Filter: registrars = {}", attr.getValue());
+            builder.addPropertyValue("registrars", registrars);
         }
     }
+
 }

@@ -26,17 +26,17 @@ import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link AttributeRequesterEntityAttributeExactPolicyRule}.
+ * test for {@link AttributeIssuerEntityAttributeExactPolicyRule}.
  */
-public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMetadataTests {
+public class AttributeIssuerEntityAttributeExactPolicyRuleTest extends BaseMetadataTests {
 
-    private AttributeRequesterEntityAttributeExactPolicyRule getMatcher() throws ComponentInitializationException {
+    private AttributeIssuerEntityAttributeExactPolicyRule getMatcher() throws ComponentInitializationException {
         return getMatcher("urn:example.org:policies", "urn:example.org:policy:1234", null, false);
     }
 
-    private AttributeRequesterEntityAttributeExactPolicyRule getMatcher(String attributeName, String attributeValue,
+    private AttributeIssuerEntityAttributeExactPolicyRule getMatcher(String attributeName, String attributeValue,
             String attributeNameFormat, boolean ignoreUnmapped) throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeExactPolicyRule matcher = new AttributeRequesterEntityAttributeExactPolicyRule();
+        AttributeIssuerEntityAttributeExactPolicyRule matcher = new AttributeIssuerEntityAttributeExactPolicyRule();
         matcher.setId("matcher");
         matcher.setAttributeName(attributeName);
         matcher.setValue(attributeValue);
@@ -48,56 +48,56 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
 
     @Test public void testValue() throws ComponentInitializationException {
 
-        AttributeRequesterEntityAttributeExactPolicyRule matcher = getMatcher();
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        AttributeIssuerEntityAttributeExactPolicyRule matcher = getMatcher();
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
 
-        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
     }
 
     @Test public void testFormat() throws ComponentInitializationException {
 
-        AttributeRequesterEntityAttributeExactPolicyRule matcher =
+        AttributeIssuerEntityAttributeExactPolicyRule matcher =
                 getMatcher("urn:example.org:entitlements", "urn:example.org:entitlements:1234", null, true);
         assertEquals(matcher.getValue(), "urn:example.org:entitlements:1234");
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
 
-        assertEquals(matcher.matches(reqMetadataContext(wikiEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(wikiEntity, "Principal")), Tristate.FALSE);
 
         matcher = getMatcher("urn:example.org:entitlements", "urn:example.org:entitlements:1234", "foo", true);
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
 
-        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
 
         matcher =
                 getMatcher("urn:example.org:entitlements", "urn:example.org:entitlements:1234",
                         "urn:oasis:names:tc:SAML:2.0:attrname-format:uri", true);
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
 
-        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
     }
 
     @Test public void testNoMatch() throws ComponentInitializationException {
 
-        AttributeRequesterEntityAttributeExactPolicyRule matcher =
+        AttributeIssuerEntityAttributeExactPolicyRule matcher =
                 getMatcher("urn:example.org:policies", "urn:example.org:policy:1235", null, false);
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
-        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
 
         matcher = getMatcher("urn:example.org:policiess", "urn:example.org:policy:1234", null, false);
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
-        assertEquals(matcher.matches(reqMetadataContext(noneEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(noneEntity, "Principal")), Tristate.FALSE);
     }
 
     @Test public void testSplitAttribute() throws ComponentInitializationException {
 
-        AttributeRequesterEntityAttributeExactPolicyRule matcher =
+        AttributeIssuerEntityAttributeExactPolicyRule matcher =
                 getMatcher("urn:example.org:policies", "urn:example.org:policy:1234", null, false);
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
-        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(issMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
 
         matcher = getMatcher("urn:example.org:policies", "urn:example.org:policy:5678", null, false);
-        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
-        assertEquals(matcher.matches(reqMetadataContext(noneEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(issMetadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(issMetadataContext(noneEntity, "Principal")), Tristate.FALSE);
     }
 
     @Test public void testUnpopulated()
@@ -107,6 +107,6 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
 
     @Test public void testNoMetadata()
             throws ComponentInitializationException {
-        assertEquals(getMatcher().matches(reqMetadataContext(null, "Principal")), Tristate.FALSE);
+        assertEquals(getMatcher().matches(issMetadataContext(null, "Principal")), Tristate.FALSE);
     }
 }

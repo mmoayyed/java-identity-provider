@@ -24,22 +24,22 @@ import java.util.Set;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerRegistrationAuthorityPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.RegistrationAuthorityRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link RegistrationAuthorityRuleParser}.
+ * test for {@link AttributeIssuerRegistrationAuthorityRuleParser}.
  */
-public class RegistrationAuthorityRuleParserTest extends BaseAttributeFilterParserTest {
+public class AttributeIssuerRegistrationAuthorityRuleParserTest extends BaseAttributeFilterParserTest {
 
 
     @Test public void silentTrue() throws ComponentInitializationException {
-        final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule("registrationAuthorityOne.xml");
+        final AttributeIssuerRegistrationAuthorityPolicyRule rule =
+                (AttributeIssuerRegistrationAuthorityPolicyRule) getPolicyRule("issuerAuthorityOne.xml");
 
         assertTrue(rule.isMatchIfMetadataSilent());
-        final Set<String> issuers = rule.getIssuers();
+        final Set<String> issuers = rule.getRegistrars();
 
         assertEquals(issuers.size(), 2);
         assertTrue(issuers.contains("https://example.org/SilentTrue/One"));
@@ -47,14 +47,16 @@ public class RegistrationAuthorityRuleParserTest extends BaseAttributeFilterPars
     }
 
     @Test public void silentFalse() throws ComponentInitializationException {
-        final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule("registrationAuthorityTwo.xml");
+        final AttributeIssuerRegistrationAuthorityPolicyRule rule
+        = (AttributeIssuerRegistrationAuthorityPolicyRule) getPolicyRule("issuerAuthorityTwo.xml");
 
         assertTrue(rule.isMatchIfMetadataSilent());
-        final Set<String> issuers = rule.getIssuers();
+        final Set<String> issuers = rule.getRegistrars();
 
         assertEquals(issuers.size(), 3);
         assertTrue(issuers.contains("https://example.org/SilentFalse/One"));
         assertTrue(issuers.contains("https://example.org/SilentFalse/Two"));
         assertTrue(issuers.contains("https://example.org/SilentFalse/Three"));
     }
+
 }

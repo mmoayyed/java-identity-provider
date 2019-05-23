@@ -43,13 +43,13 @@ public class AttributeRequesterNameIDFormatExactPolicyRuleTest extends BaseMetad
 
         assertEquals(matcher.getNameIdFormat(), "https://example.org/foo");
 
-        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
-        assertEquals(matcher.matches(metadataContext(null, "Principal")), Tristate.FALSE);
-        assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.TRUE);
+        assertEquals(matcher.matches(reqMetadataContext(null, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(idpEntity, "Principal")), Tristate.FALSE);
 
         matcher = getMatcher("urn:otherstuff");
-        assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
-        assertEquals(matcher.matches(metadataContext(wikiEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+        assertEquals(matcher.matches(reqMetadataContext(wikiEntity, "Principal")), Tristate.FALSE);
     }
 
 
