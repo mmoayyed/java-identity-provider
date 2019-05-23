@@ -655,14 +655,6 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="SourceAttribute" type="string" maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                Attribute IDs which should be used in this definition.
-                                It is preferred to provide these using the dependencies.
-                            </documentation>
-                        </annotation>
-                    </element>
                 </choice>
                 <attribute name="velocityEngine" type="string">
                     <annotation>

@@ -5,8 +5,6 @@
     velocityEngine="otherVe"
     xsi:type="Template"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd" >
-  <SourceAttribute>att1</SourceAttribute>
   <InputAttributeDefinition ref="TheOrphan"/>
-  <SourceAttribute>att2</SourceAttribute>
   <Template>TheTemplate</Template>
 </AttributeDefinition>

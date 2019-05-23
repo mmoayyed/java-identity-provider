@@ -8,8 +8,6 @@
     
   <InputAttributeDefinition ref="TheOrphan"/>
   <Template>TheTemplate</Template>
-  <SourceAttribute>att1</SourceAttribute>
   <Template>TheTemplate</Template>
-  <SourceAttribute>att2</SourceAttribute>
   <Template>TheTemplate</Template>
 </AttributeDefinition>

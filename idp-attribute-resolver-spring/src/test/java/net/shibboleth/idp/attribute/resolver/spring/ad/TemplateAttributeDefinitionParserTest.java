@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
@@ -31,7 +29,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link TemplateAttributeDefinitionParser}
  */
-@SuppressWarnings("deprecation")
 public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test(enabled = false) public void noAttr() throws ComponentInitializationException {
@@ -41,7 +38,6 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
 
         assertEquals(defn.getId(), "templateId");
         assertNull(defn.getTemplateText());
-        assertTrue(defn.getSourceAttributes().isEmpty());
     }
 
     @Test public void withAttr() throws ComponentInitializationException {
@@ -51,9 +47,6 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
 
         assertEquals(defn.getId(), "templateIdAttr");
         assertEquals(defn.getTemplateText(), "TheTemplate");
-        assertEquals(defn.getSourceAttributes().size(), 2);
-        assertTrue(defn.getSourceAttributes().contains("att1"));
-        assertTrue(defn.getSourceAttributes().contains("att2"));
     }
     
     @Test public void dupl() throws ComponentInitializationException {
@@ -63,9 +56,6 @@ public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefiniti
 
         assertEquals(defn.getId(), "templateIdAttr");
         assertEquals(defn.getTemplateText(), "TheTemplate");
-        assertEquals(defn.getSourceAttributes().size(), 2);
-        assertTrue(defn.getSourceAttributes().contains("att1"));
-        assertTrue(defn.getSourceAttributes().contains("att2"));
     }
 
 }

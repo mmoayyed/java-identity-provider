@@ -17,20 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.testng.annotations.Test;
@@ -52,8 +45,6 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.TemplateAttribute}. */
-@ThreadSafe
-@SuppressWarnings("deprecation")
 public class TemplateAttributeTest {
 
     /** The name. */
@@ -162,7 +153,6 @@ public class TemplateAttributeTest {
         attr.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_ATTR);
         attr.setDataConnectorDependencies(Collections.singleton(TestSources.makeDataConnectorDependency("foo", "bar")));
         
-        attr.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         attr.initialize();
         assertNotNull(attr.getTemplate());
         try {
@@ -181,12 +171,9 @@ public class TemplateAttributeTest {
         } catch (final ComponentInitializationException ex) {
             // OK
         }
-        attr.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         attr.setTemplateText( "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
         attr.initialize();
         assertEquals(attr.getTemplateText(), "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}");
-        assertEquals(attr.getSourceAttributes().get(0), TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        assertEquals(attr.getSourceAttributes().size(), 1);
 
     }
 
@@ -236,29 +223,6 @@ public class TemplateAttributeTest {
      * @throws ComponentInitializationException if it goes wrong.
      */
     @Test public void templateWithValues() throws ResolutionException, ComponentInitializationException {
-        templateWithValues(false);
-    }
-
-    /**
-     * Test resolution of an template script with data generated from the attributes, but with
-     * explicit setting of source attributes.
-     *
-     * This is a canary for IDP-1386
-     *
-     * @throws ResolutionException if it goes wrong.
-     * @throws ComponentInitializationException if it goes wrong.
-     */
-    @Test public void templateWithValuesTestSources() throws ResolutionException, ComponentInitializationException {
-        templateWithValues(true);
-    }
-
-    /** Worker function for the templateWithValues and templateWithValuesTestSources tests.
-     *
-     * @param setSources whether to all {@link TemplateAttributeDefinition#setSourceAttributes(List)}
-     * @throws ResolutionException if it goes wrong.
-     * @throws ComponentInitializationException if it goes wrong.
-     */
-    private final void templateWithValues(boolean setSources) throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
@@ -270,17 +234,11 @@ public class TemplateAttributeTest {
         final Set<ResolverAttributeDefinitionDependency> ds = new LazySet<>();
         
         ds.add(TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        if (setSources) {
-            ds.add(TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR+"2"));
-        }
+        
         templateDef.setAttributeDependencies(ds);
         templateDef.setDataConnectorDependencies(Collections.singleton(
                 TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
                             TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME)));
-        if (setSources) {
-            templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR,
-                    TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
-        }
         templateDef.initialize();
 
         final Set<AttributeDefinition> attrDefinitions = new LazySet<>();

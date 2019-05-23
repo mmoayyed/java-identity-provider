@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +32,6 @@ import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -47,10 +44,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -81,38 +75,6 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
     /** VelocityEngine. */
     @NonnullAfterInit private VelocityEngine engine;
-
-    /** The names of the attributes we need. */
-    @Deprecated @Nonnull @NonnullElements private List<String> sourceAttributes;
-    
-    /** Constructor. */
-    public TemplateAttributeDefinition() {
-        sourceAttributes = Collections.emptyList();
-    }
-
-    /**
-     * Get the source attribute IDs.
-     * @deprecated This should be inferred from the environment, but we keep this for V4
-     * @return the source attribute IDs
-     */
-    @Deprecated @Nonnull @Unmodifiable @NonnullElements public List<String> getSourceAttributes() {
-        return Collections.unmodifiableList(sourceAttributes);
-    }
-
-    /**
-     * Set the source attribute IDs.
-     * 
-     * @deprecated This should be inferred from the environment, but we keep this for V4
-     * @param newSourceAttributes the source attribute IDs
-     */
-    @Deprecated public void setSourceAttributes(@Nonnull @NullableElements final List<String> newSourceAttributes) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        Constraint.isNotNull(newSourceAttributes, "Source attribute list cannot be null");
-
-        sourceAttributes = new ArrayList<>(newSourceAttributes.size());
-        CollectionSupport.addIf(sourceAttributes, newSourceAttributes, Predicates.notNull());
-    }
 
     /**
      * Get the template text to be evaluated.
@@ -298,17 +260,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         int valueCount = 0;
 
-        if (getSourceAttributes().isEmpty()) {
-            for (final Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet() ) {
-                valueCount = addAttributeValues(entry.getKey(), entry.getValue(), sourceValues, valueCount);
-            }
-        } else {
-            for (final String attributeName:getSourceAttributes()) {
-                valueCount = addAttributeValues(attributeName,
-                        dependencyAttributes.get(attributeName),
-                        sourceValues,
-                        valueCount);
-            }
+        for (final Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet() ) {
+            valueCount = addAttributeValues(entry.getKey(), entry.getValue(), sourceValues, valueCount);
         }
 
         return valueCount;

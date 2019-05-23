@@ -26,15 +26,12 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -50,10 +47,6 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
     /** SourceValue element name. */
     @Nonnull public static final QName TEMPLATE_ELEMENT_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Template");
-
-    /** SourceValue element name. */
-    @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER =
-            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SourceAttribute");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinitionParser.class);
@@ -80,21 +73,6 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
             log.debug("{} Template is '{}'", getLogPrefix(), templateText);
 
             builder.addPropertyValue("templateText", templateText);
-        }
-
-        final List<Element> sourceAttributeElements =
-            ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER);
-        if (null != sourceAttributeElements && !sourceAttributeElements.isEmpty()) {
-            // V4 deprecation
-            DeprecationSupport.warnOnce(ObjectType.ELEMENT, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER.getLocalPart(),
-                    parserContext.getReaderContext().getResource().getDescription(),
-                    "by using <InputAttributeDefinition> and <InputDataConnector>");
-            final List<String> sourceAttributes = new ManagedList<>(sourceAttributeElements.size());
-            for (final Element element : sourceAttributeElements) {
-                sourceAttributes.add(StringSupport.trimOrNull(element.getTextContent()));
-            }
-            log.debug("{} Source attributes are '{}'.", getLogPrefix(), sourceAttributes);
-            builder.addPropertyValue("sourceAttributes", sourceAttributes);
         }
 
         String velocityEngineRef = StringSupport.trimOrNull(config.getAttributeNS(null, "velocityEngine"));
