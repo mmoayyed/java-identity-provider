@@ -102,6 +102,8 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * @param flag whether optionally requested attributes should be matched
      */
     public void setOnlyIfRequired(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         onlyIfRequired = flag;
     }
 
@@ -120,6 +122,8 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * @param flag whether to match if the metadata contains no AttributeConsumingService
      */
     public void setMatchIfMetadataSilent(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         matchIfMetadataSilent = flag;
     }
 
@@ -142,6 +146,8 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * @param name the Name to look for
      */
     public void setAttributeName(@Nullable @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         attributeName = StringSupport.trimOrNull(name);
     }
 
@@ -164,6 +170,8 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * @param format the NameFormat to look for
      */
     public void setAttributeNameFormat(@Nullable @NotEmpty final String format) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         attributeNameFormat = StringSupport.trimOrNull(format);
         if (attributeNameFormat != null && Attribute.UNSPECIFIED.equals(attributeNameFormat)) {
             attributeNameFormat = null;
