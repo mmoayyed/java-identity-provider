@@ -20,21 +20,22 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerEntityAttributeRegexPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 /**
- * Parser for {@link AttributeRequesterEntityAttributeExactPolicyRule}.
+ * Parser for {@link AttributeIssuerEntityAttributeRegexPolicyRule}.
  */
-public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEntityAttributeExactRuleParser {
+public class AttributeIssuerEntityAttributeRegexRuleParser extends AbstractEntityAttributeRegexRuleParser {
 
     /** Schema type. */
     @Nonnull public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
-            "EntityAttributeExactMatch");
+            "IssuerEntityAttributeRegexMatch");
 
-    @Override @Nonnull protected Class<AttributeRequesterEntityAttributeExactPolicyRule> getNativeBeanClass() {
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<AttributeIssuerEntityAttributeRegexPolicyRule> getNativeBeanClass() {
 
-        return AttributeRequesterEntityAttributeExactPolicyRule.class;
+        return AttributeIssuerEntityAttributeRegexPolicyRule.class;
     }
 
 }

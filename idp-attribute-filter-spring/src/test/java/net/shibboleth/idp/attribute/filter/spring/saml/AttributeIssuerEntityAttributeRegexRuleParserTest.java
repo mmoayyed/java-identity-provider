@@ -21,22 +21,20 @@ import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerEntityAttributeRegexPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link AttributeRequesterEntityAttributeExactRuleParser}.
+ * test for {@link AttributeIssuerEntityAttributeRegexRuleParser}.
  */
-public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
+public class AttributeIssuerEntityAttributeRegexRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeExactPolicyRule rule =
-                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml");
-
-        assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
+        final AttributeIssuerEntityAttributeRegexPolicyRule rule = (AttributeIssuerEntityAttributeRegexPolicyRule) getPolicyRule("issuerEARegex2.xml");
+        assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");
-        assertTrue(rule.getIgnoreUnmappedEntityAttributes());
+        assertFalse(rule.getIgnoreUnmappedEntityAttributes());
     }
 
 }

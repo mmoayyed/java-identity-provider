@@ -21,18 +21,18 @@ import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerEntityAttributeExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link AttributeRequesterEntityAttributeExactRuleParser}.
+ * test for {@link AttributeIssuerEntityAttributeExactRuleParser}.
  */
-public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
+public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeExactPolicyRule rule =
-                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml");
+        AttributeIssuerEntityAttributeExactPolicyRule rule =
+                (AttributeIssuerEntityAttributeExactPolicyRule) getPolicyRule("issuerEA2.xml");
 
         assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");

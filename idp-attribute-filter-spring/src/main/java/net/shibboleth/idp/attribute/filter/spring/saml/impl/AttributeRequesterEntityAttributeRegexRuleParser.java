@@ -23,17 +23,13 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeRegexPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 /**
  * Parser for {@link AttributeRequesterEntityAttributeRegexPolicyRule}.
  */
-public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEntityAttributeRuleParser {
+public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEntityAttributeRegexRuleParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
+    @Nonnull public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
             "EntityAttributeRegexMatch");
 
     /** {@inheritDoc} */
@@ -42,11 +38,4 @@ public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEn
         return AttributeRequesterEntityAttributeRegexPolicyRule.class;
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
-        super.doNativeParse(element, parserContext, builder);
-
-        builder.addPropertyValue("valueRegex", element.getAttributeNS(null, "attributeValueRegex"));
-    }
 }

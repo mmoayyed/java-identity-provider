@@ -584,8 +584,20 @@
     <complexType name="EntityAttributeExactMatch">
         <annotation>
             <documentation>
-                A match function that checks if the attribute requester contains an entity attribute with the
-                specified value.
+                A match function that checks if the attribute requester's metadata
+                contains an entity attribute with the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:EntityAttributeExactMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IssuerEntityAttributeExactMatch">
+        <annotation>
+            <documentation>
+                A match function that checks if the attribute issuer's metadata
+                contains an entity attribute with the specified value.
             </documentation>
         </annotation>
         <complexContent>
@@ -625,8 +637,20 @@
     <complexType name="EntityAttributeRegexMatch">
         <annotation>
             <documentation>
-                A match function that checks if the attribute requester contains an entity attribute with a
-                value that matches the given regular expression.
+                A match function that checks if the attribute requester's metadata
+                contains an entity attribute with a value that matches the given regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:EntityAttributeRegexMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IssuerEntityAttributeRegexMatch">
+        <annotation>
+            <documentation>
+                A match function that checks if the attribute issuer's metadata
+                contains an entity attribute with a value that matches the given regular expression.
             </documentation>
         </annotation>
         <complexContent>
