@@ -115,8 +115,9 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
             return;
         }
         
-        if (acs.getRequestedAttributes().isEmpty() || acs.getObjectMetadata().containsKey(AttributesMapContainer.class) ||
-                acs.getParent() != null) {
+        if (acs.getRequestedAttributes().isEmpty() || 
+            acs.getObjectMetadata().containsKey(AttributesMapContainer.class) ||
+            acs.getParent() != null) {
             log.trace("{} Skipping decode of AttributeConsumingService", getLogPrefix());
             // Nothing to map, already mapped, or attached to metadata (and hence already scanned)
             return;
