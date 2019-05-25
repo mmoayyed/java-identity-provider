@@ -52,6 +52,7 @@ public class ScopesNodeProcessor implements MetadataNodeProcessor {
         } else {
             return;
         }
+
         if (extensions == null) {
             return;
         }

@@ -81,13 +81,13 @@ public class ScopesContainer {
     }
     
     /** Does the provided string match the scopes for this XMLObject?.
-     * <br/> We test against the non regexp scopes for the sake of performance.
+     * <br/> We test first against the non regexp scopes for the sake of performance.
      * @param scope what to test.
      * @return whether it matches any of the scopes.
      */
     public boolean matchesScope(@Nonnull @NotEmpty final String scope) {
         final String strippedScope = StringSupport.trimOrNull(scope);
-        Constraint.isNotNull(strippedScope, "ScopesContainer#matchesScope() requires nonnul or empty Scope");
+        Constraint.isNotNull(strippedScope, "ScopesContainer#matchesScope() requires non null or empty Scope");
         if (simpleScopes.contains(strippedScope)) {
             return true;
         }
