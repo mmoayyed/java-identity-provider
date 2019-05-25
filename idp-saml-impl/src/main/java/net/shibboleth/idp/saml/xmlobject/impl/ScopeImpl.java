@@ -18,15 +18,14 @@
 package net.shibboleth.idp.saml.xmlobject.impl;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.annotation.concurrent.NotThreadSafe;
-
-import net.shibboleth.idp.saml.xmlobject.Scope;
 
 import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSBooleanValue;
+
+import net.shibboleth.idp.saml.xmlobject.Scope;
 
 /** Implementation of {@link Scope}. */
 @NotThreadSafe
@@ -37,9 +36,6 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
 
     /** The string content value. */
     private String scopeValue;
-
-    /** Pattern used to match scopes against criteria. */
-    private Pattern matchPattern;
 
     /**
      * Constructor.
@@ -54,7 +50,7 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     }
 
     /** {@inheritDoc} */
-    public Boolean getRegexp() {
+    @Override public Boolean getRegexp() {
         if (regexp == null) {
             return Boolean.FALSE;
         }
@@ -62,7 +58,7 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     }
 
     /** {@inheritDoc} */
-    public void setRegexp(final Boolean newRegexp) {
+    @Override public void setRegexp(final Boolean newRegexp) {
         if (newRegexp != null) {
             regexp = prepareForAssignment(regexp, new XSBooleanValue(newRegexp, false));
         } else {
@@ -71,39 +67,27 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     }
 
     /** {@inheritDoc} */
-    public XSBooleanValue getRegexpXSBoolean() {
+    @Override public XSBooleanValue getRegexpXSBoolean() {
         return regexp;
     }
 
     /** {@inheritDoc} */
-    public void setRegexp(final XSBooleanValue newRegexp) {
+    @Override public void setRegexp(final XSBooleanValue newRegexp) {
         regexp = prepareForAssignment(regexp, newRegexp);
     }
 
     /** {@inheritDoc} */
-    public String getValue() {
+    @Override public String getValue() {
         return scopeValue;
     }
 
     /** {@inheritDoc} */
-    public void setValue(final String newScopeValue) {
+    @Override public void setValue(final String newScopeValue) {
         scopeValue = prepareForAssignment(scopeValue, newScopeValue);
-        matchPattern = null;
-    }
-
-    /** {@inheritDoc} */
-    public Pattern getMatchPattern() {
-        if (getRegexp() != Boolean.TRUE) {
-            throw new IllegalStateException("Scope value is not indicated to be a regex");
-        }
-        if (matchPattern == null) {
-            matchPattern = Pattern.compile(scopeValue);
-        }
-        return matchPattern;
     }
     
     /** {@inheritDoc} */
-    public List<XMLObject> getOrderedChildren() {
+    @Override public List<XMLObject> getOrderedChildren() {
         return null;
     }
 }

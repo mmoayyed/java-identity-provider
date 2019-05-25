@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.xmlobject;
 
-import java.util.regex.Pattern;
-
 import javax.xml.namespace.QName;
 
 import org.opensaml.core.xml.schema.XSBooleanValue;
@@ -65,26 +63,4 @@ public interface Scope extends XSString {
      */
     public void setRegexp(XSBooleanValue newRegexp);
 
-    /**
-     * Convenience method which returns a match {@link Pattern} that <b>may</b> be used to evaluate whether 
-     * a candidate scope matches the scope criteria given by this extension, when the value is indicated to 
-     * be a regular expression. 
-     * 
-     * <p>
-     * This may only be called when {@link #getRegexp()} evaluates to <code>true</code>. Otherwise an
-     * {@link IllegalStateException} is thrown.
-     * </p>
-     * 
-     * <p>
-     * The scope value supplied to {@link #setValue(String)} <b>MUST</b> be a valid Java regular expression
-     * as defined by {@link Pattern}, else a fatal error will result.
-     * </p>
-     * 
-     * @return match pattern used to evaluate if a scope matches a regular expression scope criteria
-     * 
-     * @deprecated No replacement. The caller should instead evaluate the scope value supplied by
-     * {@link #getValue()} in an implementation-specific manner
-     */
-    @Deprecated
-    public Pattern getMatchPattern();
 }
