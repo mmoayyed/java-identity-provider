@@ -54,13 +54,13 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RelyingPartyConfiguration.class);
     
-    /** Lookup function to supply {@link #responderId} property. */
+    /** Lookup function to supply <code>responderId</code> property. */
     @Nonnull private Function<ProfileRequestContext,String> responderIdLookupStrategy;
 
     /** Controls whether detailed information about errors should be exposed. */
     @Nonnull private Predicate<ProfileRequestContext> detailedErrorsPredicate;
 
-    /** Lookup function to supply {@link #profileConfigurations} property. */
+    /** Lookup function to supply <code>profileConfigurations</code> property. */
     @Nonnull
     private Function<ProfileRequestContext,Map<String,ProfileConfiguration>> profileConfigurationsLookupStrategy;
 
@@ -100,7 +100,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     }
 
     /**
-     * Set a lookup strategy for the {@link #responderId} property.
+     * Set a lookup strategy for the <code>responderId</code> property.
      * 
      * @param strategy  lookup strategy
      * 
@@ -199,7 +199,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     }
 
     /**
-     * Set a lookup strategy for the {@link #profileConfigurations} property.
+     * Set a lookup strategy for the <code>profileConfigurations</code> property.
      * 
      * @param strategy lookup strategy
      * 

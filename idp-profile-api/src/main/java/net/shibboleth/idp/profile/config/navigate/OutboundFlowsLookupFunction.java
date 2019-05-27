@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns {@link ProfileConfiguration#getOutboundInterceptorFlows()} if such a profile is
+ * A function that returns {@link ProfileConfiguration#getOutboundInterceptorFlows}() if such a profile is
  * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
  * {@link ProfileRequestContext}.
  * 

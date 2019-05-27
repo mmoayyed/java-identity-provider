@@ -24,7 +24,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()} if
+ * A function that returns {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId}() if
  * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
  * {@link ProfileRequestContext}.
  * 

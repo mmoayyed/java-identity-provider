@@ -35,7 +35,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A function that returns {@link AuthenticationProfileConfiguration#getAuthenticationFlows()}
+ * A function that returns {@link AuthenticationProfileConfiguration#getAuthenticationFlows}()
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

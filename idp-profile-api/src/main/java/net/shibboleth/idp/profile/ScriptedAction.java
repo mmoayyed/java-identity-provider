@@ -67,6 +67,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * 
      * @deprecated
      */
+    @Deprecated
     public ScriptedAction(@Nonnull final EvaluableScript theScript, @Nullable final String extraInfo) {
         scriptEvaluator = new ActionScriptEvaluator(theScript);
     }
