@@ -38,7 +38,6 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -87,11 +86,6 @@ public class FilterAttributes extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
     /**
-     * Strategy used to locate the {@link AuthenticationContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,AuthenticationContext> authnContextLookupStrategy;
-
-    /**
      * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link ProfileRequestContext}.
      */
     @Nonnull private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
@@ -116,9 +110,6 @@ public class FilterAttributes extends AbstractProfileAction {
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
 
-    /** AuthenticationContext to work from (if any). */
-    @Nullable private AuthenticationContext authenticationContext;
-
     /** AttributeContext to filter. */
     @Nullable private AttributeContext attributeContext;
 
@@ -139,8 +130,6 @@ public class FilterAttributes extends AbstractProfileAction {
         principalNameLookupStrategy =
                 new SubjectContextPrincipalLookupFunction().compose(
                         new ChildContextLookup<>(SubjectContext.class));
-        
-        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
         
         // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
         metadataContextLookupStrategy =
@@ -238,21 +227,6 @@ public class FilterAttributes extends AbstractProfileAction {
 
         principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
-
-    /**
-     * Set the strategy used to locate the {@link AuthenticationContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link AuthenticationContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public void setAuthenticationContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,AuthenticationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        authnContextLookupStrategy =
-                Constraint.isNotNull(strategy, "AuthenticationContext lookup strategy cannot be null");
-    }
     
     /**
      * Set the strategy used to locate the {@link SAMLMetadataContext} associated with a given
@@ -318,11 +292,6 @@ public class FilterAttributes extends AbstractProfileAction {
         if (attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
-        }
-        
-        authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
-        if (authenticationContext == null) {
-            log.debug("{} No authentication context available.", getLogPrefix());
         }
 
         return true;

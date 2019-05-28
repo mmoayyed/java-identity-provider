@@ -75,11 +75,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /** Strategy used to locate the principal name associated with the attribute resolution. */
     @Nullable private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
-    /**
-     * Strategy used to locate an {@link AuthenticationContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nullable private Function<ProfileRequestContext,AuthenticationContext> authnContextLookupStrategy;
-
     /** Strategy used to locate or create the {@link AttributeContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextCreationStrategy;
     
@@ -112,8 +107,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
         principalNameLookupStrategy =
                 new SubjectContextPrincipalLookupFunction().compose(
                         new ChildContextLookup<>(SubjectContext.class));
-        
-        authnContextLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
         
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true).compose(
@@ -157,20 +150,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         principalNameLookupStrategy = strategy;
-    }
-
-    /**
-     * Set the strategy used to locate the {@link AuthenticationContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link AuthenticationContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public void setAuthenticationContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,AuthenticationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        authnContextLookupStrategy = strategy;
     }
     
     /**
@@ -255,10 +234,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
-        }
-        
-        if (authnContextLookupStrategy != null) {
-            authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
         }
         
         if (authenticationContext == null) {
