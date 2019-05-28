@@ -31,7 +31,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProxiedRequesterContext;
@@ -97,7 +96,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes to be filtered
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getPrefilteredIdPAttributes() {
+    @Nonnull @NonnullElements public Map<String,IdPAttribute> getPrefilteredIdPAttributes() {
         return prefilteredAttributes;
     }
 
@@ -105,8 +104,11 @@ public final class AttributeFilterContext extends BaseContext {
      * Sets the attributes which are to be filtered.
      * 
      * @param attributes attributes which are to be filtered
+     * 
+     * @return this context;
      */
-    public void setPrefilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+    @Nonnull public AttributeFilterContext setPrefilteredIdPAttributes(
+            @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
         final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
@@ -115,6 +117,8 @@ public final class AttributeFilterContext extends BaseContext {
         for (final IdPAttribute attribute : checkedAttributes) {
             prefilteredAttributes.put(attribute.getId(), attribute);
         }
+        
+        return this;
     }
 
     /**
@@ -158,10 +162,14 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param resolver metadata resolver
      * 
+     * @return this context
+     * 
      * @since 3.4.0
      */
-    public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
+    @Nonnull public AttributeFilterContext setMetadataResolver(@Nullable final MetadataResolver resolver) {
         metadataResolver = resolver;
+        
+        return this;
     }
 
     /**
@@ -176,10 +184,14 @@ public final class AttributeFilterContext extends BaseContext {
     /**
      * Gets the principal associated with the filtering.
      * 
-     * @param who The principal to set.
+     * @param who principal to set
+     * 
+     * @return this context
      */
-    public void setPrincipal(@Nullable final String who) {
+    @Nonnull public AttributeFilterContext setPrincipal(@Nullable final String who) {
         principal = who;
+        
+        return this;
     }
 
     /**
@@ -195,9 +207,13 @@ public final class AttributeFilterContext extends BaseContext {
      * Sets the attribute issuer (me) associated with this filtering.
      * 
      * @param value the attribute issuer associated with this filtering
+     * 
+     * @return this context
      */
-    @Nullable public void setAttributeIssuerID(@Nullable final String value) {
+    @Nonnull public AttributeFilterContext setAttributeIssuerID(@Nullable final String value) {
         attributeIssuerID = value;
+        
+        return this;
     }
 
     /**
@@ -213,9 +229,13 @@ public final class AttributeFilterContext extends BaseContext {
      * Sets the attribute recipient (her) associated with this filtering.
      * 
      * @param value the attribute recipient associated with this filtering
+     * 
+     * @return this context
      */
-    @Nullable public void setAttributeRecipientID(@Nullable final String value) {
+    @Nonnull public AttributeFilterContext setAttributeRecipientID(@Nullable final String value) {
         attributeRecipientID = value;
+        
+        return this;
     }
 
     /**
@@ -241,7 +261,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @since 3.4.0
      */
-    @Nullable public AttributeFilterContext setAttributeRecipientGroupID(@Nullable final String value) {
+    @Nonnull public AttributeFilterContext setAttributeRecipientGroupID(@Nullable final String value) {
         attributeRecipientGroupID = value;
         
         return this;
@@ -261,12 +281,15 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param strategy lookup strategy
      * 
+     * @return this context
+     * 
      * @since 4.0.0
      */
-    public void setIssuerMetadataContextLookupStrategy(
-            @Nonnull final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
-        issuerMetadataContextLookupStrategy =
-                Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
+    @Nonnull public AttributeFilterContext setIssuerMetadataContextLookupStrategy(
+            @Nullable final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
+        issuerMetadataContextLookupStrategy = strategy;
+        
+        return this;
     }
     
     /**
@@ -284,11 +307,14 @@ public final class AttributeFilterContext extends BaseContext {
      * Set the strategy used to locate the SP's metadata context.
      * 
      * @param strategy lookup strategy
+     * 
+     * @return this context
      */
-    public void setRequesterMetadataContextLookupStrategy(
-            @Nonnull final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
-        requesterMetadataContextLookupStrategy =
-                Constraint.isNotNull(strategy, "MetadataContext lookup strategy cannot be null");
+    @Nonnull public AttributeFilterContext setRequesterMetadataContextLookupStrategy(
+            @Nullable final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
+        requesterMetadataContextLookupStrategy = strategy;
+        
+        return this;
     }
 
     /**
@@ -308,12 +334,15 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param strategy lookup strategy
      * 
+     * @return this context
+     * 
      * @since 3.4.0
      */
-    public void setProxiedRequesterContextLookupStrategy(
-            @Nonnull final Function<AttributeFilterContext,ProxiedRequesterContext> strategy) {
-        proxiedRequesterContextLookupStrategy =
-                Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
+    @Nonnull public AttributeFilterContext setProxiedRequesterContextLookupStrategy(
+            @Nullable final Function<AttributeFilterContext,ProxiedRequesterContext> strategy) {
+        proxiedRequesterContextLookupStrategy = strategy;
+        
+        return this;
     }
 
     /** Get the Issuer Metadata context.
