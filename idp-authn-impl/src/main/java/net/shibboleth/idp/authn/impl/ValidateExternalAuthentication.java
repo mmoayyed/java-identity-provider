@@ -136,8 +136,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         }
         
         if (extContext.getSubject() != null) {
-            log.info("{} External authentication succeeded for Subject: {}", getLogPrefix(),
-                    extContext.getSubject().getPrincipals());
+            log.info("{} External authentication succeeded for Subject", getLogPrefix());
         } else if (extContext.getPrincipal() != null) {
             log.info("{} External authentication succeeded for Principal: {}", getLogPrefix(),
                     extContext.getPrincipal());
