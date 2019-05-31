@@ -146,12 +146,18 @@
         c:type="#{ T(net.shibboleth.idp.ui.context.RelyingPartyUIContext) }"
         c:createContext="true" />
 
+    <bean id="shibboleth.ChildLookup.AttributeContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.attribute.context.AttributeContext) }" />
     <bean id="shibboleth.ChildLookup.AuthenticationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.AuthenticationContext) }" />
     <bean id="shibboleth.ChildLookup.MultiFactorAuthenticationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext) }" />
+    <bean id="shibboleth.ChildLookup.ExternalAuthenticationContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.authn.context.ExternalAuthenticationContext) }" />
     <bean id="shibboleth.ChildLookup.SubjectContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.SubjectContext) }" />

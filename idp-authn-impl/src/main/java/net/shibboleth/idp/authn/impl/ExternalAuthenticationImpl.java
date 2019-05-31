@@ -34,6 +34,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -164,6 +166,14 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         attr = request.getAttribute(AUTHENTICATING_AUTHORITIES_KEY);
         if (attr != null && attr instanceof Collection<?>) {
             extContext.getAuthenticatingAuthorities().addAll((Collection<String>) attr);
+        }
+        
+        attr = request.getAttribute(ATTRIBUTES_KEY);
+        if (attr != null && attr instanceof Collection<?>) {
+            extContext.getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+                    (Collection<IdPAttribute>) attr);
+            extContext.getSubcontext(AttributeContext.class).setIdPAttributes(
+                    (Collection<IdPAttribute>) attr);
         }
         
         attr = request.getAttribute(AUTHENTICATION_ERROR_KEY);

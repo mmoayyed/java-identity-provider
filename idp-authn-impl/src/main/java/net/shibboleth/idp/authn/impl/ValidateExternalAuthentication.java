@@ -20,23 +20,33 @@ package net.shibboleth.idp.authn.impl;
 import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
+import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,15 +75,36 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateExternalAuthentication.class);
 
+    /** Service used to get the engine used to filter attributes. */
+    @Nullable private ReloadableService<AttributeFilter> attributeFilterService;
+
+    /** Optional supplemental metadata source for filtering. */
+    @Nullable private MetadataResolver metadataResolver;
+    
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
     
     /** Context containing the result to validate. */
     @Nullable private ExternalAuthenticationContext extContext;
     
+    /** Context for externally supplied inbound attributes. */
+    @Nullable private AttributeContext attributeContext;
+    
     /** Constructor. */
     public ValidateExternalAuthentication() {
+        this(null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param filterService optional filter service for inbound attributes
+     * 
+     * @since 4.0.0
+     */
+    public ValidateExternalAuthentication(@Nullable final ReloadableService<AttributeFilter> filterService) {
         setMetricName(DEFAULT_METRIC_NAME);
+        attributeFilterService = filterService;
     }
     
     /**
@@ -85,6 +116,19 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         matchExpression = expression;
+    }
+
+    /**
+     * Set a metadata source to use during filtering.
+     * 
+     * @param resolver metadata resolver
+     * 
+     * @since 4.0.0
+     */
+    public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        metadataResolver = resolver;
     }
     
     /** {@inheritDoc} */
@@ -115,7 +159,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
     }
     
     /** {@inheritDoc} */
- // Checkstyle: ReturnCount|CyclomaticComplexity OFF
+ // Checkstyle: ReturnCount|CyclomaticComplexity|MethodLength OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -175,6 +219,9 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             log.debug("{} Disabling caching of authentication result", getLogPrefix());
             authenticationContext.setResultCacheable(false);
         }
+        
+        filterAttributes();
+        
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
         if (authenticationContext.getAuthenticationResult() != null) {
@@ -186,13 +233,22 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             }
         }
     }
- // Checkstyle: ReturnCount|CyclomaticComplexity ON
-
+ // Checkstyle: ReturnCount|CyclomaticComplexity|MethodLength ON
+    
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        // Override supplied Subject with our own, after transferring over any custom Principals.
+        // Override supplied Subject with our own, after transferring over any custom Principals
+        // and adding any filtered inbound attributes.
         extContext.getSubject().getPrincipals().addAll(subject.getPrincipals());
+        
+        if (attributeContext != null && !attributeContext.getIdPAttributes().isEmpty()) {
+            log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
+            extContext.getSubject().getPrincipals().addAll(
+                attributeContext.getIdPAttributes().values().stream().map(
+                        (IdPAttribute a) -> new IdPAttributePrincipal(a)).collect(Collectors.toList()));
+        }
+        
         return extContext.getSubject();
     }
     
@@ -222,4 +278,76 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         
         return true;
     }
+    
+    /**
+     * Check for inbound attributes and apply filtering.
+     */
+    private void filterAttributes() {
+        
+        attributeContext = extContext.getSubcontext(AttributeContext.class);
+        if (attributeContext == null) {
+            log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
+            return;
+        }
+
+        if (attributeContext.getIdPAttributes().isEmpty()) {
+            log.debug("{} No attributes to filter", getLogPrefix());
+            return;
+        }
+
+        if (attributeFilterService == null) {
+            log.warn("{} No AttributeFilter service provided, clearing inbound attributes", getLogPrefix());
+            attributeContext.setIdPAttributes(null);
+            return;
+        }
+        
+        
+        final AttributeFilterContext filterContext = extContext.getSubcontext(AttributeFilterContext.class, true);
+        
+        populateFilterContext(filterContext);
+        
+        ServiceableComponent<AttributeFilter> component = null;
+
+        try {
+            component = attributeFilterService.getServiceableComponent();
+            if (null == component) {
+                log.error("{} Error while filtering inbound attributes: Invalid Attribute Filter configuration",
+                        getLogPrefix());
+                attributeContext.setIdPAttributes(null);
+            } else {
+                final AttributeFilter filter = component.getComponent();
+                filter.filterAttributes(filterContext);
+                filterContext.getParent().removeSubcontext(filterContext);
+                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+            }
+        } catch (final AttributeFilterException e) {
+            log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
+            attributeContext.setIdPAttributes(null);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
+        }        
+    }
+    
+    /**
+     * Fill in the filter context data.
+     * 
+     * <p>This is a very minimally populated context with nothing much set except possibly issuer,
+     * based on the AuthenticationAuthorities data.</p>
+     * 
+     * @param filterContext context to populate
+     */
+    private void populateFilterContext(@Nonnull final AttributeFilterContext filterContext) {
+        
+        filterContext.setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values())
+            .setMetadataResolver(metadataResolver)
+            .setRequesterMetadataContextLookupStrategy(null)
+            .setProxiedRequesterContextLookupStrategy(null);
+        
+        if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
+            filterContext.setAttributeIssuerID(extContext.getAuthenticatingAuthorities().iterator().next());
+        }
+    }
+
 }

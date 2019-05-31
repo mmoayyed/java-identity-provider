@@ -54,7 +54,14 @@ public class ExternalAuthentication {
      * @since 3.4.0
      */
     @Nonnull @NotEmpty public static final String AUTHENTICATING_AUTHORITIES_KEY = "authnAuthorities";
-    
+
+    /** 
+     * Request attribute to which a collection of {@link IdPAttribute} objects may be bound.
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull @NotEmpty public static final String ATTRIBUTES_KEY = "attributes";
+
     /** Request attribute to which an error message may be bound. */
     @Nonnull @NotEmpty public static final String AUTHENTICATION_ERROR_KEY = "authnError";
 
