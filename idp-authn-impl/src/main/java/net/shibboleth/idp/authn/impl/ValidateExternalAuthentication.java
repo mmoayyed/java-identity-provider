@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -340,7 +341,8 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
      */
     private void populateFilterContext(@Nonnull final AttributeFilterContext filterContext) {
         
-        filterContext.setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values())
+        filterContext.setDirection(Direction.INBOUND)
+            .setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values())
             .setMetadataResolver(metadataResolver)
             .setRequesterMetadataContextLookupStrategy(null)
             .setProxiedRequesterContextLookupStrategy(null);

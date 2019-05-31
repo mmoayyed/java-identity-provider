@@ -189,14 +189,27 @@
         </attribute>
     </complexType>
 
-    <!--  
-    
-        The old 'Basic' Schema 
-      
-      -->
-
     <!-- Blanket Match Function -->
     <complexType name="ANY">
+        <annotation>
+            <documentation>A match function that evaluates to true.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType"/>
+        </complexContent>
+    </complexType>
+
+    <!-- Directional Match Functions -->
+    <complexType name="Inbound">
+        <annotation>
+            <documentation>A match function that evaluates to true.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Outbound">
         <annotation>
             <documentation>A match function that evaluates to true.</documentation>
         </annotation>
@@ -579,7 +592,7 @@
         </complexContent>
     </complexType>
 
-    <!-- The old 'SAML' schema -->
+    <!-- SAML-specific. -->
 
     <complexType name="EntityAttributeExactMatch">
         <annotation>

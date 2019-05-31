@@ -38,6 +38,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -402,7 +403,8 @@ public class FilterAttributes extends AbstractProfileAction {
     private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeFilterContext filterContext) {
         
-        filterContext.setMetadataResolver(metadataResolver)
+        filterContext.setDirection(Direction.OUTBOUND)
+            .setMetadataResolver(metadataResolver)
             .setPrincipal(principalNameLookupStrategy.apply(profileRequestContext))
             .setAttributeRecipientID(
                     recipientLookupStrategy != null ? recipientLookupStrategy.apply(profileRequestContext) : null)

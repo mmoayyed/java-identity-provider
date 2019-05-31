@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProxiedRequesterContext;
@@ -43,6 +44,22 @@ import com.google.common.base.Predicates;
 @NotThreadSafe
 public final class AttributeFilterContext extends BaseContext {
 
+    /**
+     * Used to indicate the "direction" of filtering relative to the IdP.
+     * 
+     * @since 4.0.0
+     */
+    public enum Direction {
+        /** Inbound filtering is used to control the acceptance of data from another party. */
+        INBOUND, 
+        
+        /** Outbound filtering is used to control the release of data to another party. */
+        OUTBOUND,
+        };
+    
+    /** Direction of filtering. */
+    @Nonnull private Direction direction;
+        
     /** Attributes which are to be filtered. */
     @Nonnull private Map<String,IdPAttribute> prefilteredAttributes;
 
@@ -89,6 +106,34 @@ public final class AttributeFilterContext extends BaseContext {
     public AttributeFilterContext() {
         prefilteredAttributes = new HashMap<>();
         filteredAttributes = new HashMap<>();
+        
+        direction = Direction.OUTBOUND;
+    }
+    
+    /**
+     * Gets the direction of filtering.
+     * 
+     * @return the direction
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public Direction getDirection() {
+        return direction;
+    }
+    
+    /**
+     * Sets the direction of filtering.
+     * 
+     * @param dir the direction
+     * 
+     * @return this context
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public AttributeFilterContext setDirection(@Nonnull final Direction dir) {
+        direction = Constraint.isNotNull(dir, "Direction cannot be null");
+        
+        return this;
     }
 
     /**
