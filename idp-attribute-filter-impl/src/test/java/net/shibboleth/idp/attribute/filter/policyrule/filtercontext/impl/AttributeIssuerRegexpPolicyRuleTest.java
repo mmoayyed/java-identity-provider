@@ -71,12 +71,12 @@ public class AttributeIssuerRegexpPolicyRuleTest {
 
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
-        assertEquals(getMatcher(true).matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);;
+        assertEquals(getMatcher(true).matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);;
     }
 
     @Test  public void testNoIssuer()
             throws ComponentInitializationException{
-        assertEquals(getMatcher(false).matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);;
+        assertEquals(getMatcher(false).matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FALSE);;
     }
 
 }

@@ -48,8 +48,8 @@ public class AttributeIssuerRegexpPolicyRule extends AbstractRegexpPolicyRule {
 
         final String issuer = filterContext.getAttributeIssuerID();
         if (null == issuer) {
-            log.warn("{} No attribute issuer found for comparison", getLogPrefix());
-            return Tristate.FAIL;
+            log.debug("{} No attribute issuer found for comparison", getLogPrefix());
+            return Tristate.FALSE;
         }
         log.debug("{} Found attribute issuer: {}", getLogPrefix(), issuer);
 

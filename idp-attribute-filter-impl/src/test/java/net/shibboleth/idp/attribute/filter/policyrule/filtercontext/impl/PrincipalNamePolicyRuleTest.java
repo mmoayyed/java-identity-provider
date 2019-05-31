@@ -54,12 +54,12 @@ public class PrincipalNamePolicyRuleTest {
     
     @Test public void testUnpopulated() throws ComponentInitializationException {
         final PrincipalNamePolicyRule matcher = getMatcher(true);
-        assertEquals(matcher.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(matcher.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
     }
 
     @Test public void testNoPrincipal() throws ComponentInitializationException {
         final PrincipalNamePolicyRule matcher = getMatcher(true);
-        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
+        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FALSE);
     }
 
     @Test public void testCaseSensitive() throws ComponentInitializationException {

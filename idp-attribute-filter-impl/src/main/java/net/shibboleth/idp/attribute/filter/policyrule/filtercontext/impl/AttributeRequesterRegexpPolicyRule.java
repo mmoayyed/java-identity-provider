@@ -48,8 +48,8 @@ public class AttributeRequesterRegexpPolicyRule extends AbstractRegexpPolicyRule
 
         final String requester = filterContext.getAttributeRecipientID();
         if (null == requester) {
-            log.warn("{} No attribute requester found for comparison", getLogPrefix());
-            return Tristate.FAIL;
+            log.debug("{} No attribute requester found for comparison", getLogPrefix());
+            return Tristate.FALSE;
         }
         log.debug("{} Found attribute requester: {}", getLogPrefix(), requester);
 

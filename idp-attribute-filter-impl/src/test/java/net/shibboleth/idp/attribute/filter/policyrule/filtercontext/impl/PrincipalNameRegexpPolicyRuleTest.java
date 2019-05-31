@@ -60,12 +60,12 @@ public class PrincipalNameRegexpPolicyRuleTest {
 
     @Test public void testNoPrincipal() throws ComponentInitializationException {
         final PrincipalNameRegexpPolicyRule matcher = getMatcher();
-        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
+        assertEquals(matcher.matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FALSE);
     }
 
     @Test public void testUnpopulated() throws ComponentInitializationException {
         final PrincipalNameRegexpPolicyRule matcher = getMatcher();
-        assertEquals(matcher.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(matcher.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
     }
 
 }

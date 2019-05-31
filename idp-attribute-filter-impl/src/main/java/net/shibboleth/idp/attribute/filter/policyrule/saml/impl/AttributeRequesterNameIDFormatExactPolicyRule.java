@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.AbstractPolicyRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -40,17 +41,17 @@ import org.slf4j.LoggerFactory;
 public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolicyRule {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeRequesterNameIDFormatExactPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterNameIDFormatExactPolicyRule.class);
 
     /** The NameID format that needs to be supported by the entity. */
-    private String nameIdFormat;
+    @NonnullAfterInit @NotEmpty private String nameIdFormat;
 
     /**
      * Get the NameID format that needs to be supported by the entity.
      * 
      * @return NameID format that needs to be supported by the entity
      */
-    @NonnullAfterInit public String getNameIdFormat() {
+    @NonnullAfterInit @NotEmpty public String getNameIdFormat() {
         return nameIdFormat;
     }
 
@@ -59,8 +60,20 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
      * 
      * @param format NameID format that needs to be supported by the entity
      */
-    public void setNameIdFormat(final String format) {
+    public void setNameIdFormat(@Nullable final String format) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         nameIdFormat = StringSupport.trimOrNull(format);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (null == nameIdFormat) {
+            throw new ComponentInitializationException(getLogPrefix() + " No NameID format specified");
+        }
     }
 
     /**
@@ -70,16 +83,16 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
      * 
      * @return the SSO role descriptor of the entity or null if the entity does not have such a descriptor
      */
-    @Nullable protected SSODescriptor getEntitySSODescriptor(final AttributeFilterContext filterContext) {
+    @Nullable protected SSODescriptor getEntitySSODescriptor(@Nonnull final AttributeFilterContext filterContext) {
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
 
         if (null == metadataContext) {
-            log.warn("{} Could not locate SP metadata context", getLogPrefix());
+            log.debug("{} No requester metadata context found", getLogPrefix());
             return null;
         }
         final RoleDescriptor role = metadataContext.getRoleDescriptor();
         if (null == role) {
-            log.warn("{} Could not locate RoleDescriptor in SP metadata", getLogPrefix());
+            log.warn("{} Could not locate RoleDescriptor in requester metadata context", getLogPrefix());
             return null;
         }
         
@@ -101,8 +114,8 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
      */
     @Override
     public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         final SSODescriptor role = getEntitySSODescriptor(filterContext);
         if (role == null) {
             // logged in above
@@ -124,15 +137,6 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
 
         log.debug("{} Entity does not support the NameID format '{}'", getLogPrefix(), nameIdFormat);
         return Tristate.FALSE;
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        if (null == nameIdFormat) {
-            throw new ComponentInitializationException(getLogPrefix() + " No NameID format specified");
-        }
     }
 
 }

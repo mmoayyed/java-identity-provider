@@ -58,12 +58,12 @@ public class AttributeRequesterPolicyRuleTest {
 
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
-        assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
     }
 
     @Test public void testNoRequester()
             throws ComponentInitializationException {
-        assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FAIL);
+        assertEquals(getMatcher().matches(DataSources.populatedFilterContext(null, null, null)), Tristate.FALSE);
     }
 
     @Test public void testCaseSensitive() throws ComponentInitializationException {

@@ -49,8 +49,8 @@ public class PrincipalNamePolicyRule extends AbstractStringPolicyRule {
         final String principal = filterContext.getPrincipal();
 
         if (null == principal) {
-            log.warn("{} No principal found for comparison", getLogPrefix());
-            return Tristate.FAIL;
+            log.debug("{} No principal found for comparison", getLogPrefix());
+            return Tristate.FALSE;
         }
         log.debug("{} Found principal: {}", getLogPrefix(), principal);
 

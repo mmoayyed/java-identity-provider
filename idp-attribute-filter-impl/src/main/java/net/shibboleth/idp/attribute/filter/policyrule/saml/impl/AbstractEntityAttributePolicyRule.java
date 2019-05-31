@@ -173,7 +173,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
 
         final EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
-            log.info("{} No metadata available for entity, returning FALSE", getLogPrefix());
+            log.debug("{} No metadata available for entity, returning FALSE", getLogPrefix());
             return Tristate.FALSE;
         }
 

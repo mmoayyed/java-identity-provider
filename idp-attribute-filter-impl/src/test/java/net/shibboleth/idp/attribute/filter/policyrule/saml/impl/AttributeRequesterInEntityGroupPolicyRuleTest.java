@@ -52,10 +52,10 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         assertEquals(getMatcher("http://shibboleth.net").getEntityGroup(), "http://shibboleth.net");
     }
 
-    @Test public void noGroup() throws ComponentInitializationException {
+    @Test(expectedExceptions=ComponentInitializationException.class)
+    public void noGroup() throws ComponentInitializationException {
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
         matcher.initialize();
-        assertEquals(matcher.matches(reqMetadataContext(null, null)), Tristate.FALSE);
     }
 }

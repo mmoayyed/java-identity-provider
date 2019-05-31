@@ -25,6 +25,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.AbstractPolicyRule;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -45,7 +48,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterInEntityGroupPolicyRule.class);
     
     /** The entity group to match against. */
-    @Nullable private String entityGroup;
+    @NonnullAfterInit @NotEmpty private String entityGroup;
     
     /** Whether to search metadata for AffiliationDescriptor membership. */
     private boolean checkAffiliations;
@@ -55,7 +58,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      * 
      * @return entity group to match against
      */
-    @Nullable public String getEntityGroup() {
+    @NonnullAfterInit @NotEmpty public String getEntityGroup() {
         return entityGroup;
     }
 
@@ -65,6 +68,8 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      * @param group entity group to match against
      */
     public void setEntityGroup(@Nullable final String group) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         entityGroup = StringSupport.trimOrNull(group);
     }
     
@@ -80,7 +85,19 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      * @since 3.4.0
      */
     public void setCheckAffiliations(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         checkAffiliations = flag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (entityGroup == null) {
+            throw new ComponentInitializationException("entityGroup cannot be null");
+        }
     }
 
     /**
@@ -94,7 +111,7 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
 
         if (null == metadataContext) {
-            log.warn("{} Could not locate SP metadata context", getLogPrefix());
+            log.debug("{} No requester metadata found", getLogPrefix());
             return null;
         }
         return metadataContext.getEntityDescriptor();
@@ -110,12 +127,12 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      */
     @Override
     @Nonnull public Tristate matches(@Nonnull final AttributeFilterContext input) {
-
-        Constraint.isNotNull(input, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        if (entityGroup == null) {
-            log.warn("{} No entity group specified, unable to check if entity is in group", getLogPrefix());
+        Constraint.isNotNull(input, "Context must be supplied");
+
+        final EntityDescriptor entity = getEntityMetadata(input);
+        if (entity == null) {
             return Tristate.FALSE;
         }
 
@@ -123,7 +140,6 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
                 new EntityGroupNamePredicate(Collections.singleton(entityGroup),
                         checkAffiliations ? input.getMetadataResolver() : null);
         
-        final EntityDescriptor entity = getEntityMetadata(input);
         return predicate.test(entity) ? Tristate.TRUE : Tristate.FALSE;
     }
 

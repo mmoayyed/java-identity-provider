@@ -34,7 +34,6 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -44,9 +43,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.RootContextLookup;
 import org.opensaml.profile.context.MetricContext;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +66,8 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     /** Log prefix. */
     private String logPrefix;
 
-    /** Strategy to get the {@link ProfileRequestContext}. */
-    @Nonnull private Function<AttributeFilterContext,ProfileRequestContext> profileContextStrategy;
+    /** Strategy to get the {@link MetricContext} for timing. */
+    @Nonnull private Function<AttributeFilterContext,MetricContext> metricContextLookupStrategy;
 
     /**
      * Constructor.
@@ -84,10 +83,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
         filterPolicies = ImmutableList.copyOf(Iterables.filter(checkedPolicies, Predicates.notNull()));
         
-        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
-        profileContextStrategy =
-                new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>().compose(
-                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
+        metricContextLookupStrategy = new ChildContextLookup<>(MetricContext.class).compose(new RootContextLookup<>());
     }
 
     /**
@@ -227,13 +223,10 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @return true iff the {@link #stopTimer(AttributeFilterContext)} method needs to be called
      */
     private boolean startTimer(@Nonnull final AttributeFilterContext filterContext) {
-        final ProfileRequestContext prc = profileContextStrategy.apply(filterContext);
-        if (prc != null) {
-            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
-            if (timerCtx != null) {
-                timerCtx.start(getId());
-                return true;
-            }
+        final MetricContext timerCtx = metricContextLookupStrategy.apply(filterContext);
+        if (timerCtx != null) {
+            timerCtx.start(getId());
+            return true;
         }
         return false;
     }
@@ -244,12 +237,9 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @param filterContext attribute filtering context
      */
     private void stopTimer(@Nonnull final AttributeFilterContext filterContext) {
-        final ProfileRequestContext prc = profileContextStrategy.apply(filterContext);
-        if (prc != null) {
-            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
-            if (timerCtx != null) {
-                timerCtx.stop(getId());
-            }
+        final MetricContext timerCtx = metricContextLookupStrategy.apply(filterContext);
+        if (timerCtx != null) {
+            timerCtx.stop(getId());
         }
     }
 
