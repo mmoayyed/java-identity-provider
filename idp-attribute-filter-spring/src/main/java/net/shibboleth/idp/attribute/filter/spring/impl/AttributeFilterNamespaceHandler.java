@@ -50,6 +50,8 @@ import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterIn
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIdFormatRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ScopeMatchesShibMDScopeParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ValueMatchesShibMDScopeParser;
 
 /** Namespace handler for the attribute filtering engine. */
 public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -150,6 +152,10 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
         registerBeanDefinitionParser(AttributeIssuerRegistrationAuthorityRuleParser.SCHEMA_TYPE,
                 new AttributeIssuerRegistrationAuthorityRuleParser());
+        
+        registerBeanDefinitionParser(ValueMatchesShibMDScopeParser.SCHEMA_TYPE, new ValueMatchesShibMDScopeParser());
+
+        registerBeanDefinitionParser(ScopeMatchesShibMDScopeParser.SCHEMA_TYPE, new ScopeMatchesShibMDScopeParser());
     }
     // Checkstyle: MethodLength ON
 }
