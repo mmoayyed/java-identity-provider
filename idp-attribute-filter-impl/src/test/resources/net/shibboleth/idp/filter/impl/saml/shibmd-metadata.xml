@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<EntitiesDescriptor 
+   xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+   xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <EntityDescriptor entityID="https://none.example.org/idp/shibboleth">
+    
+        <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"/>
+    </EntityDescriptor>
+    
+    <EntityDescriptor entityID="https://both.example.org/idp/shibboleth">
+        <Extensions>
+            <shibmd:Scope regexp="false">entity.both</shibmd:Scope>
+            <shibmd:Scope>entity</shibmd:Scope>
+        </Extensions>
+        <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <Extensions>
+                <shibmd:Scope regexp="false">aa.both</shibmd:Scope>
+                <shibmd:Scope>aa</shibmd:Scope>
+            </Extensions>
+        </AttributeAuthorityDescriptor>
+    </EntityDescriptor>
+    
+    <EntityDescriptor entityID="https://aa.example.org/idp/shibboleth">
+        <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <Extensions>
+                <shibmd:Scope regexp="false">aa.aa</shibmd:Scope>
+                <shibmd:Scope>aa</shibmd:Scope>
+            </Extensions>
+        </AttributeAuthorityDescriptor>
+    </EntityDescriptor>
+
+    <EntityDescriptor entityID="https://entity.example.org/idp/shibboleth">
+        <Extensions>
+            <shibmd:Scope regexp="false">entity.entity</shibmd:Scope>
+            <shibmd:Scope>entity</shibmd:Scope>
+        </Extensions>
+        <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"/>
+    </EntityDescriptor>
+
+</EntitiesDescriptor>
