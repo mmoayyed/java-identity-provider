@@ -618,13 +618,19 @@
                 </choice>
                 <attribute name="attributeValuesFunctionRef" type="string">
                     <annotation>
-                        <documentation>Provides a plug in point to allow general extraction of values from Principals.  Incompatible with idpAttributeName</documentation>
+                        <documentation>
+	                        Provides a plug in point to allow general extraction of values from Principals.
+	                        Mutually exclusive with principalAttributeName.
+                        </documentation>
                     </annotation>
                 </attribute>
 
                 <attribute name="principalAttributeName" type="string">
                     <annotation>
-                        <documentation>The id of the IdPAttribute contained within a IdPAttributePrincipal to look for.  Incompatible with attributeValueEngineRef.</documentation>
+                        <documentation>
+	                        The id of the IdPAttribute contained within a IdPAttributePrincipal to look for.
+	                        Mutually exclusive with attributeValueEngineRef.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -1440,6 +1446,36 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="Subject">
+        <annotation>
+            <documentation>
+                A data connector that constructs attributes by extracting all IdPAttributePrincipal objects
+                found within the Subject(s) associated with the requests.
+                
+                This is a streamlined approach to extracting them one by one with the SubjectDerivedAttribute
+                plugin provided encoding and other attribute metadata can be obtained from the system's
+                generalized transcoding facility.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="noResultIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether an absence of any results will cause an error. If an error
+                            is raised and a failover dependency is defined for this connector the failover will be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
 
     <!--  Support types for DataConnectors  -->
 

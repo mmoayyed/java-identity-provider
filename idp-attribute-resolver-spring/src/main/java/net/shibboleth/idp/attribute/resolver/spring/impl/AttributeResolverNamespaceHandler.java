@@ -42,6 +42,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.PairwiseIdDataConnec
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIdDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.SubjectDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
@@ -110,6 +111,7 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_RESOLVER, new ScriptDataConnectorParser());
         registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME_RESOLVER, new StaticDataConnectorParser());
         registerBeanDefinitionParser(StoredIdDataConnectorParser.TYPE_NAME_RESOLVER, new StoredIdDataConnectorParser());
+        registerBeanDefinitionParser(SubjectDataConnectorParser.TYPE_NAME_RESOLVER, new SubjectDataConnectorParser());
 
 
         // Encoders
