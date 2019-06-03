@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.testng.Assert.*;
@@ -64,6 +65,10 @@ public class AttributeTranscoderRegistryImplTest {
         final Map<String,Object> ruleset1 = new HashMap<>();
         ruleset1.put(AttributeTranscoderRegistry.PROP_ID, "foo");
         ruleset1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        ruleset1.put(AttributeTranscoderRegistry.PROP_DISPLAY_NAME + Locale.ENGLISH.toLanguageTag(), "English name");
+        ruleset1.put(AttributeTranscoderRegistry.PROP_DESCRIPTION + Locale.ENGLISH.toLanguageTag(), "English desc");
+        ruleset1.put(AttributeTranscoderRegistry.PROP_DISPLAY_NAME + Locale.CANADA_FRENCH.toLanguageTag(), "Canadian French name");
+        ruleset1.put(AttributeTranscoderRegistry.PROP_DESCRIPTION + Locale.CANADA_FRENCH.toLanguageTag(), "Canadian French desc");
         ruleset1.put("name", "bar");
         
         final Map<String,Object> ruleset2 = new HashMap<>();
@@ -162,6 +167,11 @@ public class AttributeTranscoderRegistryImplTest {
         
         assertEquals(attributes.get(0).getId(), "foo");
         assertTrue(attributes.get(0).getValues().isEmpty());
+        
+        assertEquals(attributes.get(0).getDisplayNames().get(Locale.forLanguageTag("en")), "English name");
+        assertEquals(attributes.get(0).getDisplayDescriptions().get(Locale.forLanguageTag("en")), "English desc");
+        assertEquals(attributes.get(0).getDisplayNames().get(Locale.forLanguageTag("fr-ca")), "Canadian French name");
+        assertEquals(attributes.get(0).getDisplayDescriptions().get(Locale.forLanguageTag("fr-ca")), "Canadian French desc");
     }
 
     @Test public void testDecodeTwoNoValues() throws AttributeDecodingException {
@@ -179,9 +189,13 @@ public class AttributeTranscoderRegistryImplTest {
         
         assertEquals(attributes.get(0).getId(), "foo");
         assertTrue(attributes.get(0).getValues().isEmpty());
+        assertTrue(attributes.get(0).getDisplayNames().isEmpty());
+        assertTrue(attributes.get(0).getDisplayDescriptions().isEmpty());
 
         assertEquals(attributes.get(1).getId(), "foo2");
         assertTrue(attributes.get(1).getValues().isEmpty());
+        assertTrue(attributes.get(1).getDisplayNames().isEmpty());
+        assertTrue(attributes.get(1).getDisplayDescriptions().isEmpty());
     }
 
     @Test public void testEncodeStringValues() throws AttributeEncodingException {

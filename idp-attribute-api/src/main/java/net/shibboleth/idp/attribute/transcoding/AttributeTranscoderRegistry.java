@@ -52,6 +52,12 @@ public interface AttributeTranscoderRegistry extends IdentifiedComponent {
     /** Property name for accessing relying parties to wrap an activation condition around. */
     @Nonnull @NotEmpty static final String PROP_RELYINGPARTIES = "relyingParties";
     
+    /** Property prefix for language-specific display name of attribute. */
+    @Nonnull @NotEmpty static final String PROP_DISPLAY_NAME = "displayName.";
+
+    /** Property prefix for language-specific description of attribute. */
+    @Nonnull @NotEmpty static final String PROP_DESCRIPTION = "description.";
+    
     /**
      * Obtains a set of instructions for encoding an input {@link IdPAttribute} into a target type.
      * 

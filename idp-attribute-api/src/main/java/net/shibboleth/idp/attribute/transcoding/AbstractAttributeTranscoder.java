@@ -89,7 +89,12 @@ public abstract class AbstractAttributeTranscoder<T> extends AbstractInitializab
             return null;
         }
         
-        return doDecode(profileRequestContext, input, rule);
+        final IdPAttribute attribute = doDecode(profileRequestContext, input, rule);
+        
+        attribute.setDisplayNames(rule.getDisplayNames());
+        attribute.setDisplayDescriptions(rule.getDescriptions());
+        
+        return attribute;
     }
     
     

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.transcoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -28,10 +29,15 @@ import javax.annotation.Nullable;
 
 import org.springframework.core.io.Resource;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Wrapper around a {@link Map} representing a rule for transcoding, used to
@@ -41,6 +47,12 @@ public class TranscodingRule {
 
     /** Underlying map containing the rule. */
     @Nonnull @NonnullElements private final Map<String,Object> rule;
+    
+    /** Map of locale-specific display names. */
+    @Nonnull @NonnullElements private Map<Locale,String> displayNames;
+    
+    /** Map of locale-specific descriptions. */
+    @Nonnull @NonnullElements private Map<Locale,String> descriptions;
     
     /**
      * Constructor.
@@ -59,6 +71,8 @@ public class TranscodingRule {
      */
     public TranscodingRule(@Nonnull @NonnullElements @ParameterName(name="map") final Map<String,Object> map) {
         rule = new HashMap<>(map);
+        processDisplayNames();
+        processDescriptions();
     }
 
     /**
@@ -84,6 +98,8 @@ public class TranscodingRule {
                         rule.put((String) k, v);
                     }
                 });
+        processDisplayNames();
+        processDescriptions();
     }
 
     /**
@@ -135,7 +151,75 @@ public class TranscodingRule {
             return defValue;
         }
     }
+    
+    /**
+     * Get the display names to attach to any {@link IdPAttribute} objects created by this transcoder.
+     * 
+     * @return map of locale-based names
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<Locale,String> getDisplayNames() {
+        return displayNames;
+    }
 
+    /**
+     * Get the descriptions to attach to any {@link IdPAttribute} objects created by this transcoder.
+     * 
+     * @return map of locale-based descriptions
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<Locale,String> getDescriptions() {
+        return descriptions;
+    }
+    
+    /**
+     * Process any properties that start with {@link AttributeTranscoderRegistry.PROP_DISPLAY_NAME} and
+     * create a Locale map around them.
+     */
+    private void processDisplayNames() {
+        
+        final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
+        
+        for (final Map.Entry<String,Object> entry : rule.entrySet()) {
+            if (entry.getValue() instanceof String
+                    && entry.getKey().startsWith(AttributeTranscoderRegistry.PROP_DISPLAY_NAME)) {
+                
+                final String lang = StringSupport.trimOrNull(
+                        entry.getKey().substring(AttributeTranscoderRegistry.PROP_DISPLAY_NAME.length()));
+                if (lang != null) {
+                    builder.put(Locale.forLanguageTag(lang), (String) entry.getValue());
+                } else {
+                    builder.put(Locale.getDefault(), (String) entry.getValue());
+                }
+            }
+        }
+        
+        displayNames = builder.build();
+    }
+
+    /**
+     * Process any properties that start with {@link AttributeTranscoderRegistry.PROP_DESCRIPTION} and
+     * create a Locale map around them.
+     */
+    private void processDescriptions() {
+        
+        final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
+        
+        for (final Map.Entry<String,Object> entry : rule.entrySet()) {
+            if (entry.getValue() instanceof String
+                    && entry.getKey().startsWith(AttributeTranscoderRegistry.PROP_DESCRIPTION)) {
+                
+                final String lang = StringSupport.trimOrNull(
+                        entry.getKey().substring(AttributeTranscoderRegistry.PROP_DESCRIPTION.length()));
+                if (lang != null) {
+                    builder.put(Locale.forLanguageTag(lang), (String) entry.getValue());
+                } else {
+                    builder.put(Locale.getDefault(), (String) entry.getValue());
+                }
+            }
+        }
+        
+        descriptions = builder.build();
+    }
+    
     /**
      * Build a new rule from a property set resource.
      * 
