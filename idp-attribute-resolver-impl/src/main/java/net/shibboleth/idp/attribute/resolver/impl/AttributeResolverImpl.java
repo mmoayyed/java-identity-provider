@@ -551,17 +551,14 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 }
                 final IdPAttribute newAttr = new IdPAttribute(attribute.getId());
                 newAttr.setValues(values);
-                if (attribute.getDisplayDescriptions().size() > 0) {
-                    newAttr.setDisplayDescriptions(attribute.getDisplayDescriptions());
-                } else {
-                    newAttr.setDisplayDescriptions(Map.of(Locale.getDefault(),
-                            dataConnector.getId() + "/" + attribute.getId()));
-                }
                 if (attribute.getDisplayNames().size() > 0) {
                     newAttr.setDisplayNames(attribute.getDisplayNames());
                 } else {
                     newAttr.setDisplayNames(Map.of(Locale.getDefault(),
                             dataConnector.getId() + "/" + attribute.getId()));
+                }
+                if (attribute.getDisplayDescriptions().size() > 0) {
+                    newAttr.setDisplayDescriptions(attribute.getDisplayDescriptions());
                 }
                 resolvedAttributes.put(attribute.getId(), newAttr);
             }
