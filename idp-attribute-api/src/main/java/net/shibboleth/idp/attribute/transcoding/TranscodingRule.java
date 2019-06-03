@@ -184,10 +184,10 @@ public class TranscodingRule {
                 
                 final String lang = StringSupport.trimOrNull(
                         entry.getKey().substring(AttributeTranscoderRegistry.PROP_DISPLAY_NAME.length()));
-                if (lang != null) {
-                    builder.put(Locale.forLanguageTag(lang), (String) entry.getValue());
-                } else {
+                if (lang == null) {
                     builder.put(Locale.getDefault(), (String) entry.getValue());
+                } else if (lang.startsWith(".")) {
+                    builder.put(Locale.forLanguageTag(lang.substring(1)), (String) entry.getValue());
                 }
             }
         }
@@ -209,10 +209,10 @@ public class TranscodingRule {
                 
                 final String lang = StringSupport.trimOrNull(
                         entry.getKey().substring(AttributeTranscoderRegistry.PROP_DESCRIPTION.length()));
-                if (lang != null) {
-                    builder.put(Locale.forLanguageTag(lang), (String) entry.getValue());
-                } else {
+                if (lang == null) {
                     builder.put(Locale.getDefault(), (String) entry.getValue());
+                } else if (lang.startsWith(".")) {
+                    builder.put(Locale.forLanguageTag(lang.substring(1)), (String) entry.getValue());
                 }
             }
         }
