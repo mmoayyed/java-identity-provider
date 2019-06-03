@@ -34,7 +34,6 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -89,9 +88,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
     
     /** Whether to create and populate {@link AttributeResolutionContext}. */
     private boolean createResolutionContext;
-
-    /** AuthenticationContext to work from (if any). */
-    @Nullable private AuthenticationContext authenticationContext;
 
     /**
      * Constructor.
@@ -234,10 +230,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
-        }
-        
-        if (authenticationContext == null) {
-            log.debug("{} No authentication context available.", getLogPrefix());
         }
 
         return true;
