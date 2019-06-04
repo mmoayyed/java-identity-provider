@@ -31,7 +31,7 @@ import com.google.common.base.MoreObjects;
 /** Principal that wraps an {@link IdPAttribute}. */
 public class IdPAttributePrincipal implements Principal {
 
-    /** The attributes. */
+    /** The wrapped attribute. */
     @Nonnull private IdPAttribute attribute;
 
     /**
