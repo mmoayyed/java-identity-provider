@@ -37,7 +37,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +51,6 @@ public class SubjectDataConnector extends AbstractDataConnector {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SubjectDataConnector.class);
-
-    /** Strategy used to locate the {@link ProfileRequestContext} to use. */
-    @Nonnull private Function<AttributeResolutionContext,ProfileRequestContext> prcLookupStrategy;
     
     /** Strategy used to locate the {@link SubjectContext} to use. */
     @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
@@ -64,21 +60,7 @@ public class SubjectDataConnector extends AbstractDataConnector {
     
     /** Constructor. */
     public SubjectDataConnector() {
-        prcLookupStrategy = new ParentContextLookup<>();
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-    }
-
-    /**
-     * Set the strategy used to locate the {@link ProfileRequestContext} associated with a given
-     * {@link AttributeResolutionContext}.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setProfileRequestContextLookupStrategy(
-            @Nonnull final Function<AttributeResolutionContext,ProfileRequestContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
     
     /**
@@ -124,7 +106,7 @@ public class SubjectDataConnector extends AbstractDataConnector {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        final SubjectContext sc = scLookupStrategy.compose(prcLookupStrategy).apply(resolutionContext);
+        final SubjectContext sc = scLookupStrategy.compose(getProfileContextStrategy()).apply(resolutionContext);
         if (sc == null || sc.getSubjects().isEmpty()) {
             if (noResultIsError) {
                 throw new ResolutionException("No Subjects available to obtain attributes");
