@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -32,9 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Wrapper around a {@link Map} representing a rule for transcoding, used to
@@ -50,6 +54,8 @@ public class TranscodingRuleLoader {
     
     /**
      * Load rules from all files found below a directory root.
+     * 
+     * <p>Files are assumed to be Java property files in text format.</p>
      * 
      * <p>Individual rules that fail to load will be skipped.</p>
      * 
@@ -81,6 +87,24 @@ public class TranscodingRuleLoader {
                 }
             }
         }
+    }
+    
+    /**
+     * Constructor.
+     *
+     * @param maps a collection of maps to build rules around directly.
+     */
+    public TranscodingRuleLoader(
+            @Nonnull @NonnullElements @ParameterName(name="maps") final Collection<Map<String,Object>> maps) {
+        Constraint.isNotNull(maps, "Input collection cannot be null");
+        
+        rules = maps
+                .stream()
+                .filter(Predicates.notNull())
+                .map(m -> {
+                    return new TranscodingRule(m);
+                    })
+                .collect(Collectors.toList());
     }
 
     /**
