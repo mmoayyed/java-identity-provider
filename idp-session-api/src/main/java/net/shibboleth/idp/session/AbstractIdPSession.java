@@ -151,7 +151,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     /**
      * Set the last activity instant for the session.
      * 
-     * <p>This manipulates only the internal state of the object. The {@link #setLastActivityInstant(long)}
+     * <p>This manipulates only the internal state of the object. The {@link #setLastActivityInstant(Instant)}
      * method must be overridden to support other persistence requirements.</p>
      * 
      * @param instant last activity instant for the session
