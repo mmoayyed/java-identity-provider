@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.attribute.transcoding.impl;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,7 +39,6 @@ import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -58,9 +58,6 @@ import com.google.common.collect.Multimap;
 public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponent<AttributeTranscoderRegistry>
         implements AttributeTranscoderRegistry {
 
-    /** Bean name for identifying an {@link AttributeTranscoder} object to install. */
-    @Nonnull @NotEmpty static final String PROP_TRANSCODER_BEAN = "transcoderBean";
-    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeTranscoderRegistryImpl.class);
     
@@ -137,12 +134,9 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
                     mapping.getMap().remove(PROP_CONDITION);
                 }
                 
-                final AttributeTranscoder transcoder = buildAttributeTranscoder(mapping);
-                if (transcoder != null) {
-                    mapping.getMap().put(PROP_TRANSCODER, transcoder);
+                final Collection<AttributeTranscoder> transcoders = getAttributeTranscoders(mapping);
+                for (final AttributeTranscoder transcoder : transcoders) {
                     addMapping(internalId, transcoder, mapping.getMap());
-                } else {
-                    log.warn("Unable to locate or build an AttributeTranscoder in rule for {}", internalId);
                 }
             }
         }
@@ -202,46 +196,39 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
     }
     
     /**
-     * Get the appropriate {@link AttributeTranscoder} to use.
+     * Get the appropriate {@link AttributeTranscoder} objects to use.
      * 
      * @param rule transcoding rule
      * 
-     * @return a transcoder to install under the ruleset's {@link #PROP_TRANSCODER}
+     * @return transcoders to install under a copy of each ruleset's {@link #PROP_TRANSCODER} property
      */
-    @Nullable private AttributeTranscoder buildAttributeTranscoder(@Nonnull final TranscodingRule rule) {
+    @Nonnull @NonnullElements private Collection<AttributeTranscoder> getAttributeTranscoders(
+            @Nonnull final TranscodingRule rule) {
         
         AttributeTranscoder transcoder = rule.get(PROP_TRANSCODER, AttributeTranscoder.class);
         if (transcoder != null) {
-            return transcoder;
+            return Collections.singletonList(transcoder);
         }
         
-        final String type = rule.get(PROP_TRANSCODER_CLASS, String.class);
-        if (type != null) {
-            try {
-                transcoder = (AttributeTranscoder) Class.forName(type).getDeclaredConstructor().newInstance();
-                transcoder.initialize();
-                return transcoder;
-            } catch (final InstantiationException | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | NoSuchMethodException | SecurityException
-                    | ClassNotFoundException | ComponentInitializationException e) {
-                log.warn("Unable to create AttributeTranscoder of specified type {}", type, e);
-                return null;
-            }
+        final String beanNames = rule.get(PROP_TRANSCODER, String.class);
+        if (beanNames == null) {
+            log.error("{} property is missing or of incorrect type", PROP_TRANSCODER);
+            return Collections.emptyList();
         }
+
+        final List<AttributeTranscoder> transcoders = new ArrayList<>();
         
-        final String id = rule.get(PROP_TRANSCODER_BEAN, String.class);
-        if (id != null) {
+        for (final String id :StringSupport.stringToList(beanNames, " ")) {
             try {
                 transcoder = getApplicationContext().getBean(id, AttributeTranscoder.class);
                 transcoder.initialize();
-                return transcoder;
+                transcoders.add(transcoder);
             } catch (final Exception e) {
                 log.warn("Unable to locate AttributeTranscoder bean named {}", id, e);
-                return null;
             }
         }
-
-        return null;
+        
+        return transcoders;
     }
     
     /**
@@ -256,6 +243,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
 
         
         final TranscodingRule copy = new TranscodingRule(ruleset);
+        copy.getMap().put(PROP_TRANSCODER, transcoder);
 
         final Class<?> type = transcoder.getEncodedType();
         final String targetName = transcoder.getEncodedName(copy);

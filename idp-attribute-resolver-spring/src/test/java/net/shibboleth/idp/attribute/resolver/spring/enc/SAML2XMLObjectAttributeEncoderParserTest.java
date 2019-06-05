@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseEncoderDefinitionParserT
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
-import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder;
 
 /**
@@ -46,22 +45,22 @@ public class SAML2XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinit
                 getAttributeTranscoderRule("resolver/saml2XmlObject.xml", activation, encodeType).getMap();
 
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2XMLObjectAttributeTranscoder);
-        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "Saml2XmlObject_ATTRIBUTE_NAME");
+        assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME), "Saml2XmlObject_ATTRIBUTE_NAME");
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT), "Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME), "Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME");
         assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
-        checkEncodeType(rule, encodeType!=null ? encodeType : true);
+        checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, encodeType!=null ? encodeType : true);
     }
 
     @Test public void defaultCase() {
         final Map<String,Object> rule = getAttributeTranscoderRule("resolver/saml2XmlObjectDefault.xml").getMap();
 
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2XMLObjectAttributeTranscoder);
-        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "XmlObjectName");
+        assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME), "XmlObjectName");
         assertNull(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT));
         assertNull(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME));
         assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
-        checkEncodeType(rule, true);
+        checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, true);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

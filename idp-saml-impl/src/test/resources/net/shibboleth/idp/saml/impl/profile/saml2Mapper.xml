@@ -28,7 +28,7 @@
 		        <map>
 		            <entry key="id" value="eduPersonAssurance" />
 		            <entry key="transcoder" value-ref="SAML2StringTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
+		            <entry key="saml2.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -38,8 +38,8 @@
 		        <map>
 		            <entry key="id" value="eduPersonAssurance" />
 		            <entry key="transcoder" value-ref="SAML2StringTranscoder" />
-		            <entry key="name" value="http://example.org/name/for/Attribute" />
-		            <entry key="nameFormat" value="http://example.org/Format" />
+		            <entry key="saml2.name" value="http://example.org/name/for/Attribute" />
+		            <entry key="saml2.nameFormat" value="http://example.org/Format" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -49,7 +49,7 @@
 		        <map>
 		            <entry key="id" value="otherPersonAssurance" />
 		            <entry key="transcoder" value-ref="SAML2StringTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
+		            <entry key="saml2.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -59,8 +59,8 @@
 		        <map>
 		            <entry key="id" value="eduPersonScopedAffiliation" />
 		            <entry key="transcoder" value-ref="SAML2ScopedStringTranscoder" />
-		            <entry key="scopeDelimiter" value="#" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
+		            <entry key="saml2.scopeDelimiter" value="#" />
+		            <entry key="saml2.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -70,7 +70,7 @@
 		        <map>
 		            <entry key="id" value="eduPersonTargetedID" />
 		            <entry key="transcoder" value-ref="SAML2XMLObjectTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
+		            <entry key="saml2.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
 		        </map>
             </constructor-arg>
         </bean>

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import static net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder.PROP_ENCODE_TYPE;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
@@ -80,8 +79,8 @@ public abstract class BaseEncoderDefinitionParserTest extends BaseAttributeDefin
 
     }
 
-    static protected void checkEncodeType(final Map<String,Object> rule, boolean expectedValue) {
-        final Object encodeType = rule.getOrDefault(PROP_ENCODE_TYPE, Boolean.TRUE);
+    static protected void checkEncodeType(final Map<String,Object> rule, final String propName, boolean expectedValue) {
+        final Object encodeType = rule.getOrDefault(propName, Boolean.TRUE);
         if (encodeType instanceof Boolean) {
             assertTrue(encodeType.equals(expectedValue));
         } else {

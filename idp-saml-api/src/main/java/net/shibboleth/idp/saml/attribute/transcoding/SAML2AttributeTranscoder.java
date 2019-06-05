@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.attribute.transcoding;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.saml.saml2.core.Attribute;
@@ -31,12 +32,18 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
  * @param <EncodedType> the type of data that can be handled by the transcoder
  */
 public interface SAML2AttributeTranscoder<EncodedType extends IdPAttributeValue> extends
-        SAMLAttributeTranscoder<Attribute> {
+        AttributeTranscoder<Attribute> {
+
+    /** The attribute name. */
+    @Nonnull @NotEmpty static final String PROP_NAME = "saml2.name";
+
+    /** Whether to encode the xsi:type. */
+    @Nonnull @NotEmpty static final String PROP_ENCODE_TYPE = "saml2.encodeType";
 
     /** A friendly, human readable, name for the attribute. */
-    @Nonnull @NotEmpty static final String PROP_FRIENDLY_NAME = "friendlyName";
+    @Nonnull @NotEmpty static final String PROP_FRIENDLY_NAME = "saml2.friendlyName";
 
     /** The format of the attribute name. */
-    @Nonnull @NotEmpty static final String PROP_NAME_FORMAT = "nameFormat";
+    @Nonnull @NotEmpty static final String PROP_NAME_FORMAT = "saml2.nameFormat";
 
 }

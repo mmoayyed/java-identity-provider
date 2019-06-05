@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseEncoderDefinitionParserT
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
-import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ScopedStringAttributeTranscoder;
 
 /**
@@ -46,28 +45,28 @@ public class SAML2ScopedStringAttributeEncoderParserTest extends BaseEncoderDefi
                 getAttributeTranscoderRule("resolver/saml2Scoped.xml", activation, encodeType).getMap();
 
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2ScopedStringAttributeTranscoder);
-        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "ATTRIBUTE_NAME");
+        assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME), "ATTRIBUTE_NAME");
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT), "ATTRIBUTE_NAME_FORMAT");
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME), "ATTRIBUTE_FRIENDLY_NAME");
         assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_TYPE), "attribute");
         assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_ATTR_NAME), "scopeAttrib");
         assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER), "###");
         assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
-        checkEncodeType(rule, encodeType!=null ? encodeType : false);
+        checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, encodeType!=null ? encodeType : false);
     }
     
     @Test public void defaultCase() {
         final Map<String,Object> rule = getAttributeTranscoderRule("resolver/saml2ScopedDefault.xml").getMap();
 
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML2ScopedStringAttributeTranscoder);
-        assertEquals(rule.get(SAMLAttributeTranscoder.PROP_NAME), "name");
+        assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME), "name");
         assertNull(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT));
         assertNull(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME));
         assertNull(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_TYPE));
         assertNull(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_ATTR_NAME));
         assertNull(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER));
         assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
-        checkEncodeType(rule, true);
+        checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, true);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {

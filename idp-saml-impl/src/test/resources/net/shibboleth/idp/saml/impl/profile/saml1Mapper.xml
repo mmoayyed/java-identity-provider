@@ -26,8 +26,8 @@
 		        <map>
 		            <entry key="id" value="eduPersonAssurance" />
 		            <entry key="transcoder" value-ref="SAML1StringTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
-		            <entry key="namespace" value="basic" />
+		            <entry key="saml1.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
+		            <entry key="saml1.namespace" value="basic" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -37,8 +37,8 @@
 		        <map>
 		            <entry key="id" value="eduPersonAssurance" />
 		            <entry key="transcoder" value-ref="SAML1StringTranscoder" />
-		            <entry key="name" value="http://example.org/name/for/Attribute" />
-		            <entry key="namespace" value="basic" />
+		            <entry key="saml1.name" value="http://example.org/name/for/Attribute" />
+		            <entry key="saml1.namespace" value="basic" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -48,8 +48,8 @@
 		        <map>
 		            <entry key="id" value="otherPersonAssurance" />
 		            <entry key="transcoder" value-ref="SAML1StringTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
-		            <entry key="namespace" value="basic" />
+		            <entry key="saml1.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" />
+		            <entry key="saml1.namespace" value="basic" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -59,8 +59,8 @@
 		        <map>
 		            <entry key="id" value="eduPersonScopedAffiliation" />
 		            <entry key="transcoder" value-ref="SAML1ScopedStringTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
-		            <entry key="namespace" value="basic" />
+		            <entry key="saml1.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
+		            <entry key="saml1.namespace" value="basic" />
 		        </map>
             </constructor-arg>
         </bean>
@@ -70,8 +70,8 @@
 		        <map>
 		            <entry key="id" value="eduPersonTargetedID" />
 		            <entry key="transcoder" value-ref="SAML1ScopedStringTranscoder" />
-		            <entry key="name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
-		            <entry key="namespace" value="basic" />
+		            <entry key="saml1.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
+		            <entry key="saml1.namespace" value="basic" />
 		        </map>
             </constructor-arg>
         </bean>

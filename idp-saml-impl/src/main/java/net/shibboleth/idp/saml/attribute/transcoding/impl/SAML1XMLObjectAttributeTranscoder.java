@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class SAML1XMLObjectAttributeTranscoder extends AbstractSAML1AttributeTranscoder<XMLObjectAttributeValue> {
 
     /** Property indicating whether to decode the AttributeValue element itself, or its child element. */
-    @Nonnull @NotEmpty public static final String PROP_INCLUDE_ATTR_VALUE = "includeAttributeValue";
+    @Nonnull @NotEmpty public static final String PROP_INCLUDE_ATTR_VALUE = "saml1.includeAttributeValue";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1XMLObjectAttributeTranscoder.class);

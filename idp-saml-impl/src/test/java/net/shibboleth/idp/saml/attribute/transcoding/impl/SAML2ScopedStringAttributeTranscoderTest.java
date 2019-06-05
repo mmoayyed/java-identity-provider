@@ -37,7 +37,6 @@ import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
-import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -97,8 +96,8 @@ public class SAML2ScopedStringAttributeTranscoderTest extends OpenSAMLInitBaseTe
         final Map<String,Object> ruleset1 = new HashMap<>();
         ruleset1.put(AttributeTranscoderRegistry.PROP_ID, ATTR_NAME);
         ruleset1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        ruleset1.put(SAMLAttributeTranscoder.PROP_ENCODE_TYPE, true);
-        ruleset1.put(SAMLAttributeTranscoder.PROP_NAME, ATTR_NAME);
+        ruleset1.put(SAML2AttributeTranscoder.PROP_ENCODE_TYPE, true);
+        ruleset1.put(SAML2AttributeTranscoder.PROP_NAME, ATTR_NAME);
         ruleset1.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, ATTR_NAMEFORMAT);
         ruleset1.put(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME, ATTR_FRIENDLYNAME);
         ruleset1.put(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER, DELIMITER);

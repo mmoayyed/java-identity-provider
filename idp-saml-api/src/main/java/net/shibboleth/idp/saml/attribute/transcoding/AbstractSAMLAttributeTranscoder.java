@@ -54,8 +54,7 @@ import org.slf4j.LoggerFactory;
  * @param <EncodedType> the type of data that can be handled by the transcoder
  */
 public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAMLObject,
-        EncodedType extends IdPAttributeValue> extends AbstractAttributeTranscoder<AttributeType>
-        implements SAMLAttributeTranscoder<AttributeType> {
+        EncodedType extends IdPAttributeValue> extends AbstractAttributeTranscoder<AttributeType> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeTranscoder.class);

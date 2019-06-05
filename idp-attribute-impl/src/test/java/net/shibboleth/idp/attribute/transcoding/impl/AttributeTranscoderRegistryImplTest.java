@@ -73,8 +73,7 @@ public class AttributeTranscoderRegistryImplTest {
         
         final Map<String,Object> ruleset2 = new HashMap<>();
         ruleset2.put(AttributeTranscoderRegistry.PROP_ID, "foo");
-        ruleset2.put(AttributeTranscoderRegistry.PROP_TRANSCODER_CLASS,
-                "net.shibboleth.idp.attribute.transcoding.impl.PairTranscoder");
+        ruleset2.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
         ruleset2.put("name", "baz");
         
         final Map<String,Object> ruleset3 = new HashMap<>();
@@ -85,8 +84,7 @@ public class AttributeTranscoderRegistryImplTest {
 
         final Map<String,Object> ruleset4 = new HashMap<>();
         ruleset4.put(AttributeTranscoderRegistry.PROP_ID, "foo2");
-        ruleset4.put(AttributeTranscoderRegistry.PROP_TRANSCODER_CLASS,
-                "net.shibboleth.idp.attribute.transcoding.impl.PairTranscoder");
+        ruleset4.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
         ruleset4.put("name", "baz");
         
         registry.setTranscoderRegistry(Arrays.asList(

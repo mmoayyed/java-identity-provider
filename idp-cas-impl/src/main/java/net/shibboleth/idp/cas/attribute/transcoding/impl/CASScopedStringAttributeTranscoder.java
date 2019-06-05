@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class CASScopedStringAttributeTranscoder extends AbstractCASAttributeTranscoder<ScopedStringAttributeValue> {
 
     /** Scope delimiter. */
-    @Nonnull @NotEmpty public static final String PROP_SCOPE_DELIMITER = "scopeDelimiter";
+    @Nonnull @NotEmpty public static final String PROP_SCOPE_DELIMITER = "cas.scopeDelimiter";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CASScopedStringAttributeTranscoder.class);

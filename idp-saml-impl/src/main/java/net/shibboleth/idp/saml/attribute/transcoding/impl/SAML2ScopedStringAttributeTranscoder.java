@@ -45,13 +45,13 @@ import org.slf4j.LoggerFactory;
 public class SAML2ScopedStringAttributeTranscoder extends AbstractSAML2AttributeTranscoder<ScopedStringAttributeValue> {
 
     /** One of "inline" or "attribute", controlling the style of XML encoding. */
-    @Nonnull @NotEmpty public static final String PROP_SCOPE_TYPE = "scopeType";
+    @Nonnull @NotEmpty public static final String PROP_SCOPE_TYPE = "saml2.scopeType";
 
     /** Name of XML attribute when scopeType property is "attribute". */
-    @Nonnull @NotEmpty public static final String PROP_SCOPE_ATTR_NAME = "scopeAttributeName";
+    @Nonnull @NotEmpty public static final String PROP_SCOPE_ATTR_NAME = "saml2.scopeAttributeName";
 
     /** Scope delimiter when scopeType property is "inline". */
-    @Nonnull @NotEmpty public static final String PROP_SCOPE_DELIMITER = "scopeDelimiter";
+    @Nonnull @NotEmpty public static final String PROP_SCOPE_DELIMITER = "saml2.scopeDelimiter";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2ScopedStringAttributeTranscoder.class);

@@ -28,6 +28,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public interface CASAttributeTranscoder extends AttributeTranscoder<Attribute> {
 
     /** The attribute name. */
-    @Nonnull @NotEmpty static final String PROP_NAME = "name";
+    @Nonnull @NotEmpty static final String PROP_NAME = "cas.name";
 
 }

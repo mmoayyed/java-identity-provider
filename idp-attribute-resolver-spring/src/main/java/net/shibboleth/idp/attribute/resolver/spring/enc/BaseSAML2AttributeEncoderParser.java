@@ -27,7 +27,6 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
-import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -41,7 +40,7 @@ public abstract class BaseSAML2AttributeEncoderParser extends BaseAttributeEncod
             @Nonnull final Map<String,Object> rule) {
 
         if (config.hasAttributeNS(null, "name")) {
-            rule.put(SAMLAttributeTranscoder.PROP_NAME,
+            rule.put(SAML2AttributeTranscoder.PROP_NAME,
                     StringSupport.trimOrNull(config.getAttributeNS(null, "name")));
         } else {
             throw new BeanDefinitionStoreException("Missing 'name' attribute, cannot create transcoder rule");
@@ -59,7 +58,7 @@ public abstract class BaseSAML2AttributeEncoderParser extends BaseAttributeEncod
         
         final String value = StringSupport.trimOrNull(config.getAttributeNS(null, "encodeType"));
         if (value != null) {
-            rule.put(SAMLAttributeTranscoder.PROP_ENCODE_TYPE,SpringSupport.getStringValueAsBoolean(value));
+            rule.put(SAML2AttributeTranscoder.PROP_ENCODE_TYPE,SpringSupport.getStringValueAsBoolean(value));
         }
     }
 }

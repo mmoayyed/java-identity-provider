@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- Default Attribute transcoding rules. -->
+
+    <bean parent="shibboleth.TranscodingRule">
+        <constructor-arg>
+            <bean parent="shibboleth.TranscodingProperties">
+                <property name="sourceMap">
+                    <map merge="true">
+                        <entry key="id" value="uid" />
+                        <entry key="transcoder" value="SAML2StringTranscoder SAML1StringTranscoder" />
+                        <entry key="saml2.name" value="urn:oid:0.9.2342.19200300.100.1.1" />
+                        <entry key="saml1.name" value="urn:mace:dir:attribute-def:uid" />
+                    </map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean parent="shibboleth.TranscodingRule">
+        <constructor-arg>
+            <bean parent="shibboleth.TranscodingProperties">
+                <property name="sourceMap">
+                    <map merge="true">
+                        <entry key="id" value="mail" />
+                        <entry key="transcoder" value="SAML2StringTranscoder SAML1StringTranscoder" />
+                        <entry key="saml2.name" value="urn:oid:0.9.2342.19200300.100.1.3" />
+                        <entry key="saml1.name" value="urn:mace:dir:attribute-def:mail" />
+                    </map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean parent="shibboleth.TranscodingRule">
+        <constructor-arg>
+            <bean parent="shibboleth.TranscodingProperties">
+                <property name="sourceMap">
+                    <map merge="true">
+                        <entry key="id" value="eduPersonPrincipalName" />
+                        <entry key="transcoder" value="SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder" />
+                        <entry key="saml2.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" />
+                        <entry key="saml1.name" value="urn:mace:dir:attribute-def:eduPersonPrincipalName" />
+                    </map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean parent="shibboleth.TranscodingRule">
+        <constructor-arg>
+            <bean parent="shibboleth.TranscodingProperties">
+                <property name="sourceMap">
+                    <map merge="true">
+                        <entry key="id" value="eduPersonScopedAffiliation" />
+                        <entry key="transcoder" value="SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder" />
+                        <entry key="saml2.name" value="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />
+                        <entry key="saml1.name" value="urn:mace:dir:attribute-def:eduPersonScopedAffiliation" />
+                    </map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+</beans>

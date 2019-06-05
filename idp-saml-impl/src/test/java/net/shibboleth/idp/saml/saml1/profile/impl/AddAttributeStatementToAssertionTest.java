@@ -39,7 +39,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
-import net.shibboleth.idp.saml.attribute.transcoding.SAMLAttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.idp.saml.saml1.profile.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -107,19 +106,19 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final Map<String,Object> rule1_1 = new HashMap<>();
         rule1_1.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
         rule1_1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        rule1_1.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_1);
+        rule1_1.put(SAML1AttributeTranscoder.PROP_NAME, MY_NAME_1);
         rule1_1.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
 
         final Map<String,Object> rule1_2 = new HashMap<>();
         rule1_2.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
         rule1_2.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        rule1_2.put(SAMLAttributeTranscoder.PROP_NAME, MY_ALTNAME_1);
+        rule1_2.put(SAML1AttributeTranscoder.PROP_NAME, MY_ALTNAME_1);
         rule1_2.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
 
         final Map<String,Object> rule2_1 = new HashMap<>();
         rule2_1.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_2);
         rule2_1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        rule2_1.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_2);
+        rule2_1.put(SAML1AttributeTranscoder.PROP_NAME, MY_NAME_2);
         rule2_1.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
 
         registry.setTranscoderRegistry(Arrays.asList(
@@ -186,7 +185,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final Map<String,Object> rule = new HashMap<>();
         rule.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
         rule.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        rule.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_1);
+        rule.put(SAML1AttributeTranscoder.PROP_NAME, MY_NAME_1);
         rule.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
         
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
@@ -222,7 +221,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final Map<String,Object> rule = new HashMap<>();
         rule.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_1);
         rule.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        rule.put(SAMLAttributeTranscoder.PROP_NAME, MY_NAME_1);
+        rule.put(SAML1AttributeTranscoder.PROP_NAME, MY_NAME_1);
         rule.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
         
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
