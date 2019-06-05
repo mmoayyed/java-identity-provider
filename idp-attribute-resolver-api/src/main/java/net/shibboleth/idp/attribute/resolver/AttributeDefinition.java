@@ -17,15 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Locale;
-import java.util.Map;
-
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /** Definition of attribute definition resolver plugins. */
 @ThreadSafe
@@ -38,19 +32,5 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      * @return true if this attribute is only used as a dependency, false otherwise
      */
     boolean isDependencyOnly();
-
-    /**
-     * Gets the localized human readable descriptions of attribute.
-     * 
-     * @return human readable descriptions of attribute
-     */
-    @NonnullAfterInit @NonnullElements @Unmodifiable Map<Locale, String> getDisplayDescriptions();
-
-    /**
-     * Gets the localized human readable names of the attribute.
-     * 
-     * @return human readable names of the attribute
-     */
-    @NonnullAfterInit @NonnullElements @Unmodifiable Map<Locale, String> getDisplayNames();
 
 }

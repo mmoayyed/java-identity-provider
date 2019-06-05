@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -87,16 +85,6 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
-        return resolvedDefinition.getDisplayDescriptions();
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
-        return resolvedDefinition.getDisplayNames();
-    }
-
-    /** {@inheritDoc} */
     @Override @Nullable public Predicate<ProfileRequestContext> getActivationCondition() {
         return null;
     }
@@ -132,16 +120,6 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
 
     /** {@inheritDoc} */
     @Override public void setDependencyOnly(final boolean isDependencyOnly) {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    @Override public void setDisplayDescriptions(final Map<Locale, String> descriptions) {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    @Override public void setDisplayNames(final Map<Locale, String> names) {
         return;
     }
 

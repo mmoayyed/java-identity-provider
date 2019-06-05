@@ -30,6 +30,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -51,6 +52,9 @@ import com.google.common.collect.ImmutableMap;
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
 public final class AttributeResolutionContext extends BaseContext {
+    
+    /** Registry service to use to attach display metadata to resolved attributes. */
+    @Nullable private ReloadableService<AttributeTranscoderRegistry> registryService;
 
     /** (internal) Names of the attributes that have been requested to be resolved. */
     @Nonnull @NonnullElements private Set<String> requestedAttributeNames;
@@ -66,10 +70,6 @@ public final class AttributeResolutionContext extends BaseContext {
 
     /** The attribute recipient's group identity. */
     @Nullable private String attributeRecipientGroupID;
-
-    /** How was the principal Authenticated? */
-    @Deprecated
-    @Nullable private String principalAuthenticationMethod;
     
     /** Whether the resolver should allow for results to come from cache. */
     private boolean allowCachedResults;
@@ -85,6 +85,33 @@ public final class AttributeResolutionContext extends BaseContext {
         allowCachedResults = true;
         requestedAttributeNames = new HashSet<>();
         resolvedAttributes = new HashMap<>();
+    }
+    
+    /**
+     * Gets a transcoder registry service instance.
+     * 
+     * @return registry service
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public ReloadableService<AttributeTranscoderRegistry> getTranscoderRegistry() {
+        return registryService;
+    }
+    
+    /**
+     * Sets a transcoder registry service instance.
+     * 
+     * @param service registry service
+     * 
+     * @return this context
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public AttributeResolutionContext setTranscoderRegistry(
+            @Nullable final ReloadableService<AttributeTranscoderRegistry> service) {
+        registryService = service;
+        
+        return this;
     }
     
     /**

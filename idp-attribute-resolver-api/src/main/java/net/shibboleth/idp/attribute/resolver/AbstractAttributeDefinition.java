@@ -17,11 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -31,18 +26,14 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -54,12 +45,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
-
-    /** Localized human intelligible attribute name. */
-    @Nonnull private Map<Locale, String> displayNames = Collections.emptyMap();
-
-    /** Localized human readable description of attribute. */
-    @Nonnull private Map<Locale, String> displayDescriptions = Collections.emptyMap();
 
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
@@ -86,68 +71,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         dependencyOnly = isDependencyOnly;
-    }
-
-    /**
-     * Gets the localized human readable descriptions of attribute.
-     * 
-     * @return human readable descriptions of attribute
-     */
-    @Override
-    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions() {
-        return displayDescriptions;
-    }
-
-    /**
-     * Sets the localized human readable descriptions of attribute.
-     * 
-     * @param descriptions localized human readable descriptions of attribute
-     */
-    public void setDisplayDescriptions(@Nullable @NullableElements  final Map<Locale, String> descriptions) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final HashMap<Locale, String> checkedDescriptions = new HashMap<>();
-        String trimmedDescription;
-        for (final Entry<Locale, String> entry : descriptions.entrySet()) {
-            trimmedDescription = StringSupport.trimOrNull(entry.getValue());
-            if (trimmedDescription != null) {
-                checkedDescriptions.put(entry.getKey(), trimmedDescription);
-            }
-        }
-
-        displayDescriptions = ImmutableMap.copyOf(checkedDescriptions);
-    }
-
-    /**
-     * Gets the localized human readable names of the attribute.
-     * 
-     * @return human readable names of the attribute
-     */
-    @Override
-    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames() {
-        return displayNames;
-    }
-
-    /**
-     * Sets the localized human readable names of the attribute.
-     * 
-     * @param names localized human readable names of the attribute
-     */
-    public void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> names) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final HashMap<Locale, String> checkedNames = new HashMap<>();
-        String trimmedName;
-        for (final Entry<Locale, String> entry : names.entrySet()) {
-            trimmedName = StringSupport.trimOrNull(entry.getValue());
-            if (trimmedName != null) {
-                checkedNames.put(entry.getKey(), trimmedName);
-            }
-        }
-
-        displayNames = ImmutableMap.copyOf(checkedNames);
     }
 
     /** {@inheritDoc} */
@@ -193,13 +116,37 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
                     resolvedAttribute.getValues());
         }
 
-        log.trace("{} associating the following display descriptions with the resolved attribute: {}", getLogPrefix(),
-                getDisplayDescriptions());
-        resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
+        if (resolutionContext.getTranscoderRegistry() != null) {
+            ServiceableComponent<AttributeTranscoderRegistry> component = null;
+            try {
+                component = resolutionContext.getTranscoderRegistry().getServiceableComponent();
+                if (component != null) {
+                    
+                    if (resolvedAttribute.getDisplayNames().isEmpty()) {
+                        resolvedAttribute.setDisplayNames(
+                                component.getComponent().getDisplayNames(resolvedAttribute));
+                        log.trace("{} associated display names with the resolved attribute: {}", getLogPrefix(),
+                                resolvedAttribute.getDisplayNames());
+                    }
 
-        log.trace("{} associating the following display names with the resolved attribute: {}", getLogPrefix(),
-                getDisplayNames());
-        resolvedAttribute.setDisplayNames(getDisplayNames());
+                    if (resolvedAttribute.getDisplayDescriptions().isEmpty()) {
+                        resolvedAttribute.setDisplayDescriptions(
+                                component.getComponent().getDescriptions(resolvedAttribute));
+                        log.trace("{} associated descriptions with the resolved attribute: {}", getLogPrefix(),
+                                resolvedAttribute.getDisplayDescriptions());
+                    }
+
+                } else {
+                    log.warn("No transcoder registry available, unable to attach displayName/description metadata");
+                }
+            } finally {
+                if (component != null) {
+                    component.unpinComponent();
+                }
+            }
+        } else {
+            log.debug("No transcoder registry supplied, unable to attach displayName/description metadata");
+        }
 
         return resolvedAttribute;
     }

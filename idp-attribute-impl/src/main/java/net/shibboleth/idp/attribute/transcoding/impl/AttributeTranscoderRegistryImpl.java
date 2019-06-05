@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,6 +39,7 @@ import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -62,15 +64,23 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeTranscoderRegistryImpl.class);
     
     /** Registry of transcoding instructions for a given "name" and type of object. */
-    @Nonnull private final Map<String,Multimap<Class<?>,TranscodingRule>> transcodingRegistry;
+    @Nonnull @NonnullElements private final Map<String,Multimap<Class<?>,TranscodingRule>> transcodingRegistry;
+    
+    /** Registry of display name mappings associated with internal attribute IDs. */
+    @Nonnull @NonnullElements private final Map<String,Map<Locale,String>> displayNameRegistry;
+    
+    /** Registry of description mappings associated with internal attribute IDs. */
+    @Nonnull @NonnullElements private final Map<String,Map<Locale,String>> descriptionRegistry;
     
     /** Registry of naming functions for supported object types. */
-    @Nonnull private final Map<Class<?>,Function<?,String>> namingFunctionRegistry;
+    @Nonnull @NonnullElements private final Map<Class<?>,Function<?,String>> namingFunctionRegistry;
     
     /** Constructor. */
     public AttributeTranscoderRegistryImpl() {
         transcodingRegistry = new HashMap<>();
         namingFunctionRegistry = new HashMap<>();
+        displayNameRegistry = new HashMap<>();
+        descriptionRegistry = new HashMap<>();
     }
     
     /** {@inheritDoc} */
@@ -139,6 +149,32 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
                     addMapping(internalId, transcoder, mapping.getMap());
                 }
             }
+        }
+    }
+    
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<Locale,String> getDisplayNames(
+            @Nonnull final IdPAttribute attribute) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(attribute, "IdPAttribute cannot be null");
+     
+        if (displayNameRegistry.containsKey(attribute.getId())) {
+            return displayNameRegistry.get(attribute.getId());
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<Locale,String> getDescriptions(
+            @Nonnull final IdPAttribute attribute) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(attribute, "IdPAttribute cannot be null");
+        
+        if (descriptionRegistry.containsKey(attribute.getId())) {
+            return descriptionRegistry.get(attribute.getId());
+        } else {
+            return Collections.emptyMap();
         }
     }
     
@@ -269,6 +305,18 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             }
             
             rulesetsForEncodedName.put(type, copy);
+            
+            if (displayNameRegistry.containsKey(id)) {
+                displayNameRegistry.get(id).putAll(copy.getDisplayNames());
+            } else {
+                displayNameRegistry.put(id, new HashMap<>(copy.getDisplayNames()));
+            }
+
+            if (descriptionRegistry.containsKey(id)) {
+                descriptionRegistry.get(id).putAll(copy.getDescriptions());
+            } else {
+                descriptionRegistry.put(id, new HashMap<>(copy.getDescriptions()));
+            }
             
         } else {
             log.warn("Transcoding rule for {} into type {} did not produce an encoded name", id, type.getName());

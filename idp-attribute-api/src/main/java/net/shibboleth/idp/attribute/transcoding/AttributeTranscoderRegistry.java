@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.transcoding;
 
 import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -25,6 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
@@ -54,6 +57,26 @@ public interface AttributeTranscoderRegistry extends IdentifiedComponent {
 
     /** Property prefix for language-specific description of attribute. */
     @Nonnull @NotEmpty static final String PROP_DESCRIPTION = "description";
+    
+    /**
+     * Get the localized display names for an {@link IdPAttribute}.
+     * 
+     * @param attribute input attribute
+     * 
+     * @return map of locale-based names
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<Locale,String> getDisplayNames(
+            @Nonnull final IdPAttribute attribute);
+
+    /**
+     * Get the localized descriptions for an {@link IdPAttribute}.
+     * 
+     * @param attribute input attribute
+     * 
+     * @return map of locale-based descriptions
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<Locale,String> getDescriptions(
+            @Nonnull final IdPAttribute attribute);
     
     /**
      * Obtains a set of instructions for encoding an input {@link IdPAttribute} into a target type.

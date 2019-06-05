@@ -18,9 +18,6 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -47,10 +44,6 @@ public class AbstractAttributeDefinitionTest {
 
         Assert.assertEquals(definition.getId(), "foo");
         Assert.assertFalse(definition.isDependencyOnly());
-        Assert.assertNotNull(definition.getDisplayDescriptions());
-        Assert.assertTrue(definition.getDisplayDescriptions().isEmpty());
-        Assert.assertNotNull(definition.getDisplayNames());
-        Assert.assertTrue(definition.getDisplayNames().isEmpty());
     }
 
     /** Tests setting and retrieving the dependency only option. */
@@ -70,58 +63,6 @@ public class AbstractAttributeDefinitionTest {
 
         definition.setDependencyOnly(false);
         Assert.assertFalse(definition.isDependencyOnly());
-    }
-
-    /** Tests that display descriptions are properly added and modified. */
-    @Test
-    public void displayDescriptions() {
-        Locale en = new Locale("en");
-        Locale enbr = new Locale("en", "br");
-
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
-        
-        Map<Locale, String> descriptions = new HashMap<>();
-        descriptions.put(en, "english");
-        descriptions.put(enbr, null);
-        definition.setDisplayDescriptions(descriptions);
-        
-        Assert.assertFalse(definition.getDisplayDescriptions().isEmpty());
-        Assert.assertEquals(definition.getDisplayDescriptions().size(), 1);
-        Assert.assertNotNull(definition.getDisplayDescriptions().get(en));
-
-        descriptions = definition.getDisplayDescriptions();
-        try {
-            descriptions.put(enbr, "british");
-            Assert.fail("able to add description to unmodifable map");
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
-    }
-
-    /** Tests that display names are properly added and modified. */
-    @Test
-    public void displayNames() {
-        Locale en = new Locale("en");
-        Locale enbr = new Locale("en", "br");
-
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
-
-        Map<Locale, String> names = new HashMap<>();
-        names.put(en, "english");
-        names.put(enbr, null);
-        definition.setDisplayNames(names);
-        
-        Assert.assertFalse(definition.getDisplayNames().isEmpty());
-        Assert.assertEquals(definition.getDisplayNames().size(), 1);
-        Assert.assertNotNull(definition.getDisplayNames().get(en));
-
-        names = definition.getDisplayNames();
-        try {
-            names.put(enbr, "british");
-            Assert.fail("able to add name to unmodifable map");
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
     }
 
     /** Test resolve an attribute. */

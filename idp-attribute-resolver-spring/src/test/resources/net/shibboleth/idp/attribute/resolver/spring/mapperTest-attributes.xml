@@ -44,6 +44,10 @@
         <AttributeEncoder xsi:type="SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonScopedAffiliation" />
         <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" friendlyName="feduPersonScopedAffiliation" 
                scopeDelimiter='#'/>
+        
+        <DisplayName>Color</DisplayName>
+        <DisplayName xml:lang="en-GB">Colour</DisplayName>
+        <DisplayDescription xml:lang="fr-CA">Le Color, eh?</DisplayDescription>
     </AttributeDefinition>
     
     <AttributeDefinition xsi:type="SAML2NameID" id="eduPersonTID" 

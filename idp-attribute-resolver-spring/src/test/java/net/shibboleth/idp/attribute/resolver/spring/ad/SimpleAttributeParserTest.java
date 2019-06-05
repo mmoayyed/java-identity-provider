@@ -20,8 +20,6 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import static org.testng.Assert.*;
 
 import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -55,8 +53,6 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         assertEquals(attrDef.getId(), "simpleUnpopulated");
         assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
-        assertTrue(attrDef.getDisplayDescriptions().isEmpty(), "getDisplayDescriptions().isEmpty()");
-        assertTrue(attrDef.getDisplayNames().isEmpty(), "getDisplayNames().isEmpty()");
         assertEquals(attrDef.getAttributeDependencies().size(), 1);
         
         assertTrue(pendingTeardownContext.getBeansOfType(Collection.class).isEmpty());
@@ -70,17 +66,6 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         assertEquals(attrDef.getId(), "simplePopulated");
         assertTrue(attrDef.isDependencyOnly(), "isDependencyOnly");
-
-        final Map<Locale, String> descriptions = attrDef.getDisplayDescriptions();
-        assertEquals(descriptions.size(), 3, "getDisplayDescriptions");
-        assertEquals(descriptions.get(new Locale("en")), "DescInEnglish");
-        assertEquals(descriptions.get(new Locale("fr")), "DescEnFrancais");
-        assertEquals(descriptions.get(new Locale("ca")), "DescInCanadian");
-
-        final Map<Locale, String> names = attrDef.getDisplayNames();
-        assertEquals(names.size(), 2, "getDisplayNames");
-        assertEquals(names.get(new Locale("en")), "NameInEnglish");
-        assertEquals(names.get(new Locale("fr")), "NameEnFrancais");
 
         Set<ResolverAttributeDefinitionDependency> adDeps = attrDef.getAttributeDependencies();
         assertEquals(adDeps.size(), 2, "getAttributeDependencies");
@@ -102,12 +87,6 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         assertEquals(attrDef.getId(), "simplePopulated2");
         assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
-
-        assertTrue(attrDef.getDisplayDescriptions().isEmpty(), "getDisplayDescriptions().isEmpty()");
-
-        final Map<Locale, String> names = attrDef.getDisplayNames();
-        assertEquals(names.size(), 1, "getDisplayNames");
-        assertEquals(names.get(new Locale("en")), "NameInAmerican");
 
         final Set<ResolverAttributeDefinitionDependency> attrDeps = attrDef.getAttributeDependencies();
         assertEquals(attrDeps.size(), 1, "getAttributeDependencies");

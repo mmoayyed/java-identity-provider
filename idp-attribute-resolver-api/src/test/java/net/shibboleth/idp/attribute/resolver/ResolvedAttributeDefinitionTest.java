@@ -112,8 +112,6 @@ public class ResolvedAttributeDefinitionTest {
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 
         resolvedAttributeDefinition.setDependencyOnly(true);
-        resolvedAttributeDefinition.setDisplayDescriptions(null);
-        resolvedAttributeDefinition.setDisplayNames(null);
 
         resolvedAttributeDefinition.setPropagateResolutionExceptions(true);
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());

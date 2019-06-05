@@ -17,17 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -35,8 +30,6 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Base spring bean definition parser for attribute definitions. AttributeDefinition implementations should provide a
@@ -58,53 +51,15 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    // CheckStyle: CyclomaticComplexity OFF
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-
-        final List<Element> displayNames =
-                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-                        "DisplayName"));
-        if (displayNames != null && !displayNames.isEmpty()) {
-            final Map<Locale, String> names = processLocalizedElement(displayNames);
-            log.debug("{} Setting displayNames {}", getLogPrefix(), names);
-            builder.addPropertyValue("displayNames", names);
-        }
-
-        final List<Element> displayDescriptions =
-                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-                        "DisplayDescription"));
-        if (displayDescriptions != null && !displayDescriptions.isEmpty()) {
-            final Map<Locale, String> names = processLocalizedElement(displayDescriptions);
-            log.debug("{} Setting displayDescriptions {}", getLogPrefix(), names);
-            builder.addPropertyValue("displayDescriptions", names);
-        }
 
         if (config.hasAttributeNS(null, "dependencyOnly")) {
             final String dependencyOnly = StringSupport.trimOrNull(config.getAttributeNS(null, "dependencyOnly"));
             log.debug("{} Setting dependencyOnly {}", getLogPrefix(), dependencyOnly);
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
-    }
-    // CheckStyle: CyclomaticComplexity ON
-
-
-    /**
-     * Used to process string elements that contain an xml:lang attribute expressing localization. returns a
-     * {@link ManagedMap} to allow property replacement to work.
-     * 
-     * @param elements list of elements, must not be null, may be empty
-     * 
-     * @return the localized string indexed by locale
-     */
-    protected Map<Locale, String> processLocalizedElement(@Nonnull final List<Element> elements) {
-        final Map<Locale, String> localizedString = new ManagedMap<>(elements.size());
-        for (final Element element : elements) {
-            localizedString.put(AttributeSupport.getXMLLangAsLocale(element), element.getTextContent());
-        }
-
-        return localizedString;
     }
 
     /**

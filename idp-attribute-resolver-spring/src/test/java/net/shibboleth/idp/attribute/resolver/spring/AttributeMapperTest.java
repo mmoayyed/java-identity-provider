@@ -22,6 +22,8 @@ import static org.testng.Assert.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -44,8 +46,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-/** test the Auto generation of the attribute mapper */
-
+/** Test transcoder registry population via attribute resolver. */
 public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
 
     private GenericApplicationContext pendingTeardownContext = null;
@@ -89,8 +90,10 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
         try {
             serviceableComponent = transcoderRegistry.getServiceableComponent();
             
+            final IdPAttribute idpattr = new IdPAttribute("eduPersonScopedAffiliation");
+            
             Collection<TranscodingRule> rulesets = serviceableComponent.getComponent().getTranscodingRules(
-                    new IdPAttribute("eduPersonScopedAffiliation"), Attribute.class);
+                    idpattr, Attribute.class);
             assertEquals(rulesets.size(), 1);
             final TranscodingRule rule = rulesets.iterator().next();
             assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME, String.class), "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
@@ -98,6 +101,25 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
             assertEquals(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME, String.class), "feduPersonScopedAffiliation");
             assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER, AttributeTranscoder.class) instanceof SAML2ScopedStringAttributeTranscoder);
             assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER, String.class), "#");
+
+            Map<Locale,String> names = rule.getDisplayNames();
+            assertEquals(names.size(), 2);
+            assertEquals(names.get(Locale.getDefault()), "Color");
+            assertEquals(names.get(Locale.UK), "Colour");
+            
+            Map<Locale,String> descs = rule.getDescriptions();
+            assertEquals(descs.size(), 1);
+            assertEquals(descs.get(Locale.CANADA_FRENCH), "Le Color, eh?");
+            
+            names = serviceableComponent.getComponent().getDisplayNames(idpattr);
+            assertEquals(names.size(), 2);
+            assertEquals(names.get(Locale.getDefault()), "Color");
+            assertEquals(names.get(Locale.UK), "Colour");
+            
+            descs = serviceableComponent.getComponent().getDescriptions(idpattr);
+            assertEquals(descs.size(), 1);
+            assertEquals(descs.get(Locale.CANADA_FRENCH), "Le Color, eh?");
+            
         } finally {
             serviceableComponent.unpinComponent();
         }

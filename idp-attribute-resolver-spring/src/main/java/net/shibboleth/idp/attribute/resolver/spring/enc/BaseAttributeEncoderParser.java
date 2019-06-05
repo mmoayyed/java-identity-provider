@@ -17,9 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
@@ -28,6 +30,7 @@ import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -39,6 +42,7 @@ import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Base class for Spring bean definition parser for attribute encoders.
@@ -70,6 +74,7 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     }
     
     /** {@inheritDoc} */
+// Checkstyle: CyclomaticComplexity OFF
     @Override
     protected void doParse(final Element config, final ParserContext context, final BeanDefinitionBuilder builder) {
 
@@ -77,9 +82,29 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
 
         builder.addConstructorArgValue(rule);
         
-        if (config.getParentNode() instanceof Element && ((Element)config.getParentNode()).hasAttributeNS(null, "id")) {
+        final Node parentAttribute = config.getParentNode();
+        
+        if (parentAttribute instanceof Element && ((Element) parentAttribute).hasAttributeNS(null, "id")) {
+            
+            // Handle id property.
             rule.put(AttributeTranscoderRegistry.PROP_ID,
                     StringSupport.trimOrNull(((Element) config.getParentNode()).getAttributeNS(null, "id")));
+            
+            // Handle display metadata.
+            final List<Element> displayNames =
+                    ElementSupport.getChildElements(parentAttribute,
+                            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DisplayName"));
+            if (displayNames != null && !displayNames.isEmpty()) {
+                processLocalizedElement(displayNames, rule, AttributeTranscoderRegistry.PROP_DISPLAY_NAME);
+            }
+
+            final List<Element> displayDescriptions =
+                    ElementSupport.getChildElements(parentAttribute,
+                            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DisplayDescription"));
+            if (displayDescriptions != null && !displayDescriptions.isEmpty()) {
+                processLocalizedElement(displayDescriptions, rule, AttributeTranscoderRegistry.PROP_DESCRIPTION);
+            }
+            
         } else {
             log.warn("Parsing AttributeEncoder with no parent element, resulting rule will be ignored");
         }
@@ -105,6 +130,7 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
         
         doParse(config, context, rule);
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Inject any necessary elements into the mapping rule based on the specific encoder type.
@@ -124,4 +150,27 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
      */
     @Nonnull protected abstract BeanReference buildTranscoder();
     
+    /**
+     * Used to process string elements that contain an xml:lang attribute expressing localization.
+     * 
+     * @param elements list of elements, must not be null, may be empty
+     * @param rule the map of rules to add to
+     * @param propertyPrefix the root property name to install
+     */
+    private void processLocalizedElement(@Nonnull final List<Element> elements, @Nonnull final ManagedMap rule,
+            @Nonnull @NotEmpty final String propertyPrefix) {
+        
+        for (final Element element : elements) {
+            final String value = element.getTextContent();
+            if (value != null) {
+                final String lang = StringSupport.trimOrNull(AttributeSupport.getXMLLang(element));
+                if (lang != null) {
+                    rule.put(propertyPrefix + '.' + lang, value);
+                } else {
+                    rule.put(propertyPrefix, value);
+                }
+            }
+        }
+    }
+
 }

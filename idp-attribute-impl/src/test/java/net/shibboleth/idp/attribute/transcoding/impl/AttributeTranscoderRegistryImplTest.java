@@ -80,6 +80,8 @@ public class AttributeTranscoderRegistryImplTest {
         ruleset3.put(AttributeTranscoderRegistry.PROP_ID, "foo");
         ruleset3.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
         ruleset3.put(AttributeTranscoderRegistry.PROP_CONDITION, Predicates.alwaysFalse());
+        ruleset3.put(AttributeTranscoderRegistry.PROP_DISPLAY_NAME + '.' +  Locale.CANADA_FRENCH.toLanguageTag(), "Canadian French name2");
+        ruleset3.put(AttributeTranscoderRegistry.PROP_DESCRIPTION + '.' +  Locale.FRENCH.toLanguageTag(), "French desc");
         ruleset3.put("name", "ban");
 
         final Map<String,Object> ruleset4 = new HashMap<>();
@@ -94,6 +96,9 @@ public class AttributeTranscoderRegistryImplTest {
                 new TranscodingRule(ruleset4)));
         
         registry.initialize();
+        
+        assertEquals(registry.getDisplayNames(new IdPAttribute("foo")).size(), 2);
+        assertEquals(registry.getDescriptions(new IdPAttribute("foo")).size(), 3);
     }
     
     @AfterClass public void tearDown() {
