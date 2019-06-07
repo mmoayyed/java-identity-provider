@@ -17,18 +17,21 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 /**
  * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method
@@ -37,9 +40,13 @@ import net.shibboleth.idp.attribute.IdPAttribute;
  */
 public abstract class AbstractAttributeDisplayFunction implements Function<IdPAttribute, String> {
 
-    /** Desired locales in order of preference. */
-    @Nonnull private final List<Locale> locales;
+    /** The range of locales from the request. */
+    @Nonnull @Unmodifiable private final List<Locale.LanguageRange> languageRange;
 
+    /** The tags for the fallback languages. */
+    @Nonnull @Unmodifiable private final List<Locale.LanguageRange> defaultLanguageRange;
+
+    
     /**
      * Constructor.
      * 
@@ -49,20 +56,16 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
     public AbstractAttributeDisplayFunction(@Nonnull final HttpServletRequest request,
             @Nullable final List<String> defaultLanguages) {
 
-        final List<Locale> newLocales = new ArrayList<>();
-
-        final Enumeration<Locale> requestLocales = request.getLocales();
-        while (requestLocales.hasMoreElements()) {
-            newLocales.add(requestLocales.nextElement());
+        languageRange = HttpServletSupport.getLanguageRange(request);
+        if (defaultLanguages == null || defaultLanguages.isEmpty()) {
+            defaultLanguageRange = Collections.EMPTY_LIST;
+        } else {
+            defaultLanguageRange = defaultLanguages.
+                    stream().
+                    filter(e -> e != null).
+                    map(s -> new LanguageRange(s)).
+                    collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
         }
-        if (null != defaultLanguages) {
-            for (final String s : defaultLanguages) {
-                if (null != s) {
-                    newLocales.add(new Locale(s));
-                }
-            }
-        }
-        locales = newLocales;
     }
 
     /** {@inheritDoc} */
@@ -70,20 +73,18 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         if (input == null) {
             return "N/A";
         }
+        
         final Map<Locale, String> displayInfo = getDisplayInfo(input);
-        if (null != displayInfo && !displayInfo.isEmpty()) {
-            for (final Locale locale : locales) {
-                String toBeDisplayed = displayInfo.get(locale);
-                if (toBeDisplayed != null) {
-                    return toBeDisplayed;
-                }
-                toBeDisplayed = displayInfo.get(Locale.forLanguageTag(locale.getLanguage()));
-                if (toBeDisplayed != null) {
-                    return toBeDisplayed;
-                }
-            }
+        
+        Locale locale = Locale.lookup(languageRange, displayInfo.keySet());
+        if (locale == null) {
+            locale = Locale.lookup(defaultLanguageRange, displayInfo.keySet());
         }
-        return input.getId();
+        if (locale == null) {
+            return input.getId();
+        } else {
+            return displayInfo.get(locale);
+        }
     }
 
     /**
