@@ -37,6 +37,7 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.idp.saml.metadata.impl.ScopesNodeProcessor;
+import net.shibboleth.idp.saml.metadata.impl.UIInfoNodeProcessor;
 import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -95,9 +96,11 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
 
         if (!filterAttached) {
             final NodeProcessingMetadataFilter filterToAttach = new NodeProcessingMetadataFilter();
-            final List<MetadataNodeProcessor> processors = new ArrayList<>(
-                    Arrays.asList(new EntitiesDescriptorNameProcessor(),
-                            new KeyAuthorityNodeProcessor(), new ScopesNodeProcessor()));
+            final List<MetadataNodeProcessor> processors = new ArrayList<>(List.of(
+                            new EntitiesDescriptorNameProcessor(),
+                            new KeyAuthorityNodeProcessor(), 
+                            new ScopesNodeProcessor(),
+                            new UIInfoNodeProcessor()));
             if (null != transcoderRegistry) {
                 processors.add(new AttributeMappingNodeProcessor(transcoderRegistry));
             }

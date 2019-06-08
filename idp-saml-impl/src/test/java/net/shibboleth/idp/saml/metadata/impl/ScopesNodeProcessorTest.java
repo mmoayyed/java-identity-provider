@@ -21,51 +21,20 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
-import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
-import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.saml2.metadata.AttributeAuthorityDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.saml.metadata.ScopesContainer;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-public final class ScopesNodeProcessorTest extends XMLObjectBaseTestCase {
-    
-    private MetadataResolver resolver;
-    
-    @BeforeClass
-    public void getMetadataResolver() throws URISyntaxException, ComponentInitializationException, ResolverException {
-        final URL mdURL = ScopesNodeProcessorTest.class
-                .getResource("/net/shibboleth/idp/saml/impl/metadata/Scopes-NodeProcessor-metadata.xml");
-        final File mdFile = new File(mdURL.toURI());
-
-        final List<MetadataNodeProcessor> processors = List.of(new ScopesNodeProcessor());
-        
-        final NodeProcessingMetadataFilter metadataFilter = new NodeProcessingMetadataFilter();
-        metadataFilter.setNodeProcessors(processors);
-        metadataFilter.initialize();
-        
-        final FilesystemMetadataResolver fileResolver = new FilesystemMetadataResolver(mdFile);
-        fileResolver.setParserPool(parserPool);
-        fileResolver.setMetadataFilter(metadataFilter);
-        fileResolver.setId("test");
-        fileResolver.initialize();
-        resolver = fileResolver;
-    }
+public final class ScopesNodeProcessorTest extends BaseNodeProcessorTest {
     
     @Test
     public void noScopes() throws ResolverException {
@@ -121,6 +90,11 @@ public final class ScopesNodeProcessorTest extends XMLObjectBaseTestCase {
         assertTrue(aaContainer.matchesScope("AASCOPE2"));
         assertTrue(aaContainer.matchesScope("flibbyAASCOPE2flibby"));
         
+    }
+
+    /** {@inheritDoc} */
+    protected MetadataNodeProcessor getProcessor() {
+        return new ScopesNodeProcessor();
     }
 
 }
