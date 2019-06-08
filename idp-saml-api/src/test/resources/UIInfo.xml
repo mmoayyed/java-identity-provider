@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UIInfo xmlns="urn:oasis:names:tc:SAML:metadata:ui" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:SAML:metadata:ui http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-ui/v1.0/cs01/xsd/sstc-saml-metadata-ui-v1.0.xsd">
+  <DisplayName xml:lang="en-us">Dn</DisplayName>
+  <DisplayName xml:lang="en-gb">Dn</DisplayName>
+  <Description xml:lang="en">Desc</Description>
+  <Description >Desc</Description>
+  <Keywords xml:lang="en">a s r</Keywords>
+  <Keywords >a s r</Keywords>
+  <InformationURL xml:lang="fr">infoURL</InformationURL>
+  <InformationURL >infoURL</InformationURL>
+  <Logo height="100" width="110">Logo2</Logo>
+  <Logo height="10" width="11" xml:lang="en">Logo1</Logo>
+  <Logo height="10" width="12" xml:lang="en">Logo3</Logo>
+  <PrivacyStatementURL xml:lang="fr">privateURL</PrivacyStatementURL>
+</UIInfo>
