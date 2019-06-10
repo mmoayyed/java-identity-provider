@@ -31,7 +31,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
+import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
