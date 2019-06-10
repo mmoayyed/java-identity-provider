@@ -187,7 +187,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             scResults.putAll(authenticationContext.getActiveResults());
             
             final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
-            if (latest != null && !scResults.containsKey(latest.getAuthenticationFlowId())) {
+            if (latest != null) {
                 scResults.put(latest.getAuthenticationFlowId(), latest);
             }
         }
