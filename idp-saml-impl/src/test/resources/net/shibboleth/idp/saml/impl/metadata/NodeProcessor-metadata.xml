@@ -45,5 +45,15 @@ urn:oasis:names:tc:SAML:metadata:ui http://docs.oasis-open.org/security/saml/Pos
                 <shibmd:Scope regexp="true">^.*AASCOPE2.*</shibmd:Scope>
             </Extensions>
         </AttributeAuthorityDescriptor>
-    </EntityDescriptor>   
+    </EntityDescriptor> 
+    
+    <EntityDescriptor entityID="https:sp.example.org">
+    	<SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+	    	<AttributeConsumingService index="1">
+			    <ServiceName xml:lang="fr">Nom D'un Chien</ServiceName>
+			    <ServiceName xml:lang="en">ServiceName</ServiceName>
+			    <ServiceDescription xml:lang="de">ServiceDesc</ServiceDescription>
+			</AttributeConsumingService>
+    	</SPSSODescriptor>
+    </EntityDescriptor>  
 </EntitiesDescriptor>

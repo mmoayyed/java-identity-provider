@@ -23,21 +23,26 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
+import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 
+import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
 
 /**
- * An implementation of {@link MetadataNodeProcessor} which processes any {@link UIInfo}s from any
- * and processes them into an {@link IdPUIInfo}.
+ * An implementation of {@link MetadataNodeProcessor} which processes any {@link UIInfo}s 
+ * into an {@link IdPUIInfo} and processes any {@link AttributeConsumingService} into an
+ * {@link ACSUIInfo}.
  */
 @NotThreadSafe
 public class UIInfoNodeProcessor implements MetadataNodeProcessor {
   
     /** {@inheritDoc} */
     @Override public void process(final XMLObject metadataNode) throws FilterException {
-        
+
         if (metadataNode instanceof UIInfo) {
             metadataNode.getObjectMetadata().put(new IdPUIInfo((UIInfo) metadataNode));
+        } else if (metadataNode instanceof AttributeConsumingService) {
+            metadataNode.getObjectMetadata().put(new ACSUIInfo((AttributeConsumingService)metadataNode));
         }
     }
 

@@ -25,10 +25,12 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -36,7 +38,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 public final class UIInfoNodeProcessorTest extends BaseNodeProcessorTest {
     
     @Test 
-    public void test() throws ResolverException {
+    public void idPUIInfoTest() throws ResolverException {
         final EntityDescriptor entity  = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://scopes.example.org")));
 
         final IDPSSODescriptor idpSSO = entity.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol");
@@ -56,6 +58,24 @@ public final class UIInfoNodeProcessorTest extends BaseNodeProcessorTest {
         assertEquals(uiInfo.getLocaleLogos().get(l).size(), 1);
         assertEquals(uiInfo.getNonLocaleLogos().size(), 2);
     }
+    
+    
+    public void acsUIInfoTest() throws ResolverException {
+        final EntityDescriptor entity  = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://sp.example.org")));
+
+        final AssertionConsumerService acs = entity.
+                getSPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol").
+                getAssertionConsumerServices().
+                get(0);
+       
+        final ACSUIInfo uiInfo = acs.getObjectMetadata().get(ACSUIInfo.class).get(0);
+        
+        
+        final Locale l = Locale.forLanguageTag("en");
+        assertEquals(uiInfo.getServiceNames().get(l), "ServiceName");
+        assertEquals(uiInfo.getServiceDescriptions().get(l), "ServiceDesc");
+    }
+
 
     /** {@inheritDoc} */
     protected MetadataNodeProcessor getProcessor() {
