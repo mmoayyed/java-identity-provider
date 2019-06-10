@@ -214,7 +214,7 @@
         p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
     <bean id="shibboleth.DataSealerKeyStrategy" lazy-init="true"
-            class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
+            class="net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy"
         p:keystoreType="%{idp.sealer.storeType:JCEKS}"
         p:keystoreResource="%{idp.sealer.storeResource:}"
         p:keyVersionResource="%{idp.sealer.versionResource:}"

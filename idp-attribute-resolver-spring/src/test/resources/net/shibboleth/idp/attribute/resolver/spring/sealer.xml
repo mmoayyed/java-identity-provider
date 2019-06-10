@@ -7,7 +7,7 @@
 
     <bean id="shibboleth.TransientIDDataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer">
         <property name="keyStrategy">
-            <bean class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
+            <bean class="net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy"
                 p:keystoreResource="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks"
                 p:keyVersionResource="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.kver"
                 p:keystorePassword="kpassword"
