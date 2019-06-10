@@ -101,19 +101,19 @@
             depends-on="shibboleth.LoggingService">
         <property name="velocityProperties">
             <props>
-                <prop key="space.gobbling">%{idp.velocity.space.gobbling:bc}</prop>
-                <prop key="resource.loader">file, classpath, string</prop>
-                <prop key="classpath.resource.loader.class">
+                <prop key="parser.space_gobbling">%{idp.velocity.space.gobbling:bc}</prop>
+                <prop key="resource.loaders">file, classpath, string</prop>
+                <prop key="resource.loader.classpath.class">
                     org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
                 </prop>
-                <prop key="string.resource.loader.class">
+                <prop key="resource.loader.string.class">
                     org.apache.velocity.runtime.resource.loader.StringResourceLoader
                 </prop>
-                <prop key="file.resource.loader.class">
+                <prop key="resource.loader.file.class">
                     org.apache.velocity.runtime.resource.loader.FileResourceLoader
                 </prop>
-                <prop key="file.resource.loader.path">#{'%{idp.views:%{idp.home}/views}'.trim()}</prop>
-                <prop key="file.resource.loader.cache">false</prop>
+                <prop key="resource.loader.file.path">#{'%{idp.views:%{idp.home}/views}'.trim()}</prop>
+                <prop key="resource.loader.file.cache">false</prop>
             </props>
         </property>
     </bean>
