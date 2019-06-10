@@ -24,9 +24,11 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
+import org.opensaml.saml.saml2.metadata.Organization;
 
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
+import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
 
 /**
  * An implementation of {@link MetadataNodeProcessor} which processes any {@link UIInfo}s 
@@ -43,6 +45,8 @@ public class UIInfoNodeProcessor implements MetadataNodeProcessor {
             metadataNode.getObjectMetadata().put(new IdPUIInfo((UIInfo) metadataNode));
         } else if (metadataNode instanceof AttributeConsumingService) {
             metadataNode.getObjectMetadata().put(new ACSUIInfo((AttributeConsumingService)metadataNode));
+        } else if (metadataNode instanceof Organization) {
+            metadataNode.getObjectMetadata().put(new OrganizationUIInfo((Organization)metadataNode));
         }
     }
 

@@ -55,5 +55,11 @@ urn:oasis:names:tc:SAML:metadata:ui http://docs.oasis-open.org/security/saml/Pos
 			    <ServiceDescription xml:lang="de">ServiceDesc</ServiceDescription>
 			</AttributeConsumingService>
     	</SPSSODescriptor>
+    	<Organization>
+			<OrganizationName xml:lang="en">org</OrganizationName>
+			<OrganizationName xml:lang="fr">gro</OrganizationName>
+			<OrganizationDisplayName xml:lang="en">odn</OrganizationDisplayName>
+			<OrganizationURL xml:lang="en">url</OrganizationURL>
+		</Organization>
     </EntityDescriptor>  
 </EntitiesDescriptor>

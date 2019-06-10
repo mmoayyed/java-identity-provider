@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
+import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -59,7 +60,6 @@ public final class UIInfoNodeProcessorTest extends BaseNodeProcessorTest {
         assertEquals(uiInfo.getNonLocaleLogos().size(), 2);
     }
     
-    
     public void acsUIInfoTest() throws ResolverException {
         final EntityDescriptor entity  = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://sp.example.org")));
 
@@ -74,6 +74,17 @@ public final class UIInfoNodeProcessorTest extends BaseNodeProcessorTest {
         final Locale l = Locale.forLanguageTag("en");
         assertEquals(uiInfo.getServiceNames().get(l), "ServiceName");
         assertEquals(uiInfo.getServiceDescriptions().get(l), "ServiceDesc");
+    }
+
+    public void organizationInfoTest() throws ResolverException {
+        final EntityDescriptor entity  = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://sp.example.org")));
+
+        final OrganizationUIInfo info = entity.getOrganization().getObjectMetadata().get(OrganizationUIInfo.class).get(0);
+
+        assertEquals(info.getOrganizationNames().size(), 2);
+        assertEquals(info.getOrganizationNames().get(Locale.forLanguageTag("en")), "org");
+        assertEquals(info.getOrganizationDisplayNames().size(), 1);
+        assertEquals(info.getOrganizationUrls().size(), 1);
     }
 
 
