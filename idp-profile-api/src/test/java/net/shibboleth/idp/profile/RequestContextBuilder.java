@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -312,7 +313,9 @@ public class RequestContextBuilder {
         }
 
         if (httpRequest == null) {
-            httpRequest = new MockHttpServletRequest();
+            final MockHttpServletRequest hdr = new MockHttpServletRequest();
+            hdr.addHeader("Accept-Language", Locale.ENGLISH.getLanguage());
+            httpRequest = hdr;
         }
 
         if (httpResponse == null) {

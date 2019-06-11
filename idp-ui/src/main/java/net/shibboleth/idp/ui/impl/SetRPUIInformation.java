@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -177,26 +178,6 @@ public class SetRPUIInformation extends AbstractProfileAction {
         return null;
     }
 
-    /**
-     * Pluck the languages from the browser.
-     * 
-     * @return the two letter language
-     */
-    @Nonnull @NonnullElements protected List<String> getBrowserLanguages() {
-
-        final Enumeration<Locale> locales = getHttpServletRequest().getLocales();
-
-        final List<String> languages = new LazyList<>();
-
-        while (locales.hasMoreElements()) {
-            final Locale locale = locales.nextElement();
-            if (null != locale.getLanguage()) {
-                languages.add(locale.getLanguage());
-            }
-        }
-        return languages;
-    }
-
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
 
@@ -242,7 +223,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
         rpUIContext.setRPAttributeConsumingService(acsDesriptor);
         rpUIContext.setRPUInfo(getRPUInfo());
-        rpUIContext.setBrowserLanguages(getBrowserLanguages());
+        rpUIContext.setBrowserLanguageRanges(HttpServletSupport.getLanguageRange(getHttpServletRequest()));
     }
 
 }
