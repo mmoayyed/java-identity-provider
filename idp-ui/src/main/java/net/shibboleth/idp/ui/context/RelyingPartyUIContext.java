@@ -48,7 +48,9 @@ import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * The context which carries the user interface information.
@@ -192,6 +194,8 @@ public final class RelyingPartyUIContext extends BaseContext {
      */
     @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
         Constraint.isNotNull(languages, "Language List cannot be null");
+        // The replacement was created in V4.0
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setBrowserLanguages", null, "setBrowserLanguageRanges");
         browserLanguages = languages.
                 stream().
                 filter(e -> e != null).
