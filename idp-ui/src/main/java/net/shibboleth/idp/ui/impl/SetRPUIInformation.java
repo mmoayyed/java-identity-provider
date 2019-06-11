@@ -18,23 +18,11 @@
 package net.shibboleth.idp.ui.impl;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
-import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.collection.LazyList;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -54,6 +42,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 /**
  * Action to populate the {@link ProfileRequestContext} with a {@link RelyingPartyUIContext}. The contents are populated
