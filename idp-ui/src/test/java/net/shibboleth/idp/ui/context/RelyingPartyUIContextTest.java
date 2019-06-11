@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.ui.context;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale.LanguageRange;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -60,7 +60,7 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         if (null != theUiInfos[which]) {
             result.setRPUInfo(theUiInfos[which]);
         }
-        result.setBrowserLanguages(Arrays.asList("en", "fr"));
+        result.setBrowserLanguageRanges(LanguageRange.parse("en,fr"));
         return result;
     }
 
@@ -160,6 +160,7 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(ctx.getPrivacyStatementURL(), null);
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void logo() {
         RelyingPartyUIContext ctx = getContext();
         
@@ -171,10 +172,11 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
 
     }
     
+    @SuppressWarnings("deprecation")
     @Test public void fallbackLanguage() {
         RelyingPartyUIContext ctx = getContext();
         
-        ctx.setBrowserLanguages(Collections.singletonList("improbable"));
+        ctx.setBrowserLanguages(Collections.singletonList("zh"));
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.png");
         ctx.setFallbackLanguages(Collections.singletonList("de"));
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.pngde");

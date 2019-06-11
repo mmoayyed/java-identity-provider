@@ -22,36 +22,31 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.saml.ext.saml2mdui.Description;
-import org.opensaml.saml.ext.saml2mdui.DisplayName;
-import org.opensaml.saml.ext.saml2mdui.InformationURL;
 import org.opensaml.saml.ext.saml2mdui.Logo;
-import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
 import org.opensaml.saml.saml2.metadata.ContactPersonTypeEnumeration;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Organization;
-import org.opensaml.saml.saml2.metadata.OrganizationDisplayName;
-import org.opensaml.saml.saml2.metadata.OrganizationName;
-import org.opensaml.saml.saml2.metadata.OrganizationURL;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.ServiceDescription;
-import org.opensaml.saml.saml2.metadata.ServiceName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-
+import net.shibboleth.idp.saml.metadata.ACSUIInfo;
+import net.shibboleth.idp.saml.metadata.IdPUIInfo;
+import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -69,25 +64,22 @@ public final class RelyingPartyUIContext extends BaseContext {
     /** The appropriate {@link SPSSODescriptor}. */
     @Nullable private SPSSODescriptor rpSPSSODescriptor;
 
-    /** The appropriate {@link AttributeConsumingService}. */
-    @Nullable private AttributeConsumingService rpAttributeConsumingService;
+    /** The appropriate {@link ACSUIInfo}. */
+    @Nullable private ACSUIInfo rpACSUIinfo;
 
-    /** The appropriate {@link UIInfo}. */
-    @Nullable private UIInfo rpUIInfo;
+    /** The appropriate {@link IdPUIInfo}. */
+    @Nullable private IdPUIInfo rpUIInfo;
 
     /** The languages that this browser wants to know about. */
-    @Nonnull @NonnullElements private List<String> browserLanguages;
+    @Nonnull @NonnullElements private List<LanguageRange> browserLanguages;
     
     /** The languages that this the Operator want to fall back to. */
-    @Nullable private List<String> fallbackLanguages;
-
-    /** The languages that this the bean needs to look at. */
-    @Nonnull @NonnullElements @Unmodifiable private List<String> usableLanguages;
+    @Nonnull private List<LanguageRange> fallbackLanguages;
     
     /** Constructor. */
     public RelyingPartyUIContext() {
         browserLanguages = Collections.emptyList();
-        usableLanguages = Collections.emptyList();
+        fallbackLanguages = Collections.emptyList();
     }
 
     /**
@@ -133,12 +125,12 @@ public final class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * Get the {@link AttributeConsumingService} for the request.
+     * Get the {@link ACSUIInfo} for the request.
      * 
-     * @return Returns the SPSSODescriptor.
+     * @return Returns the RP's {@link ACSUIInfo}.
      */
-    @Nullable protected AttributeConsumingService getRPAttributeConsumingService() {
-        return rpAttributeConsumingService;
+    @Nullable protected ACSUIInfo getRPACSUInfo() {
+        return rpACSUIinfo;
     }
 
     /**
@@ -146,54 +138,87 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the value or null if there is none.
      */
-    @Nullable protected UIInfo getRPUInfo() {
+    @Nullable protected IdPUIInfo getRPUInfo() {
         return rpUIInfo;
     }
 
     /**
-     * Set the RP {@link UIInfo} associated with the request.
-     * 
+     * Set the RP {@link IdPUIInfo} associated with the request.
+     * We normally expect to get this from the object metadata.
      * @param what the value to set
      * 
      * @return this context
      */
     @Nonnull public RelyingPartyUIContext setRPUInfo(@Nullable final UIInfo what) {
-        rpUIInfo = what;
+        if (what == null) {
+            return this;
+        }
+        final List<IdPUIInfo> list = what.getObjectMetadata().get(IdPUIInfo.class);
+        if (list.isEmpty()) {
+            rpUIInfo = new IdPUIInfo(what);
+        } else {
+            rpUIInfo = list.get(0);
+        }
         return this;
     }
 
     /**
-     * Set the {@link AttributeConsumingService} for the request.
-     * 
+     * Set the {@link ACSUIInfo} for the request.
+     * We normally expect to get this from the object metadata.
      * @param what what to set
      * 
      * @return this context
      */
     @Nonnull public RelyingPartyUIContext setRPAttributeConsumingService(
             @Nullable final AttributeConsumingService what) {
-        rpAttributeConsumingService = what;
+        if (what == null) {
+            return this;
+        }
+        final List<ACSUIInfo> list = what.getObjectMetadata().get(ACSUIInfo.class);
+        if (list.isEmpty()) {
+            rpACSUIinfo = new ACSUIInfo(what);
+        } else {
+            rpACSUIinfo = list.get(0);
+        }
+        return this;
+    }
+
+    /**
+     * Set the browser languages.
+     *
+     * @param languages the languages to set
+     * @deprecated use {@link #setBrowserLanguageRanges(List)}
+     * @return this context
+     */
+    @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
+        Constraint.isNotNull(languages, "Language List cannot be null");
+        browserLanguages = languages.
+                stream().
+                filter(e -> e != null).
+                map(s -> new LanguageRange(s)).
+                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
         return this;
     }
 
     /**
      * Set the browser languages.
      * 
-     * @param languages the languages to set
-     * 
+     * @param ranges the languages to set
      * @return this context
      */
-    @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
-        browserLanguages = Constraint.isNotNull(languages, "Language List cannot be null");
-        makeNewusableList();
+    @Nonnull public RelyingPartyUIContext setBrowserLanguageRanges(
+            @Nonnull @NonnullElements final List<LanguageRange> ranges) {
+        browserLanguages = Constraint.isNotNull(ranges, "Language Range cannot be null");
         return this;
     }
+
 
     /**
      * Get the browser languages.
      * 
      * @return the languages.
      */
-    @Nonnull @NonnullElements protected List<String> getBrowserLanguages() {
+    @Nonnull @NonnullElements protected List<LanguageRange> getBrowserLanguages() {
         return browserLanguages;
     }
 
@@ -205,8 +230,14 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return this context
      */
     @Nonnull public RelyingPartyUIContext setFallbackLanguages(@Nullable final List<String> languages) {
-        fallbackLanguages = languages;
-        makeNewusableList();        
+        if (languages == null || languages.isEmpty()) {
+            fallbackLanguages = Collections.EMPTY_LIST;
+        }
+        fallbackLanguages = languages.
+                stream().
+                filter(s -> s != null).
+                map(s -> new LanguageRange(s)).
+                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
         return this;
     }
 
@@ -215,31 +246,8 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the languages.
      */
-    @Nonnull @NonnullElements protected List<String> getFallbackLanguages() {
+    @Nonnull @NonnullElements protected List<LanguageRange> getFallbackLanguages() {
         return fallbackLanguages;
-    }
-
-    /**
-     * Construct the usableLanguages from the {@link #browserLanguages} and the {@link #fallbackLanguages}. 
-     */
-    protected void makeNewusableList() {
-        final ImmutableList.Builder<String> builder = ImmutableList.builder();
-        if (null != browserLanguages) {
-            builder.addAll(browserLanguages);
-        }
-        if (null != fallbackLanguages) {
-            builder.addAll(fallbackLanguages);
-        }
-        usableLanguages = builder.build();
-    }
-
-    /**
-     * Get the all the languages.
-     * 
-     * @return the languages.
-     */
-    @Nonnull @NonnullElements @Unmodifiable protected List<String> getUsableLanguages() {
-        return usableLanguages;
     }
 
     /**
@@ -281,7 +289,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @param url the url to look at
      * @return the input or the default as appropriate
      */
-    protected String policeURLLogo(@Nullable final String url) {
+    @Nullable protected String policeURLLogo(@Nullable final String url) {
         return policeURL(url, Arrays.asList("http", "https", "data"));
     }
 
@@ -291,51 +299,35 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @param url the url to look at
      * @return the input or the default as appropriate
      */
-    protected String policeURLNonLogo(@Nullable final String url) {
+    @Nullable protected String policeURLNonLogo(@Nullable final String url) {
         return policeURL(url, Arrays.asList("http", "https", "mailto"));
-    }
-
-    /**
-     * look at &lt;UIinfo&gt;; if there and if so look for appropriate name.
-     * 
-     * @param lang - which language to look up
-     * @return null or an appropriate name
-     */
-    @Nullable protected String getNameFromUIInfo(final String lang) {
-
-        if (getRPUInfo() != null) {
-            for (final DisplayName name : getRPUInfo().getDisplayNames()) {
-                log.trace("Found name in UIInfo, language '{}'", name.getXMLLang());
-                if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
-                    log.debug("Returning name from UIInfo '{}'", name.getValue());
-                    return name.getValue();
-                }
-            }
-        }
-        log.trace("No name in UIINFO for '{}'", lang);
-        return null;
     }
 
     /**
      * Look for an &lt;AttributeConsumeService&gt; and if its there look for an appropriate name.
      * 
-     * @param lang - which language to look up
      * @return null or an appropriate name
      */
-    @Nullable protected String getNameFromAttributeConsumingService(final String lang) {
+    @Nullable protected String getNameFromAttributeConsumingService() {
 
-        if (null == getRPAttributeConsumingService()) {
+        final ACSUIInfo acsInfo = getRPACSUInfo();
+        if (null == acsInfo) {
+            log.debug("No ACS so no ServiceName");
             return null;
         }
 
-        for (final ServiceName name : getRPAttributeConsumingService().getNames()) {
-            log.trace("Found name in AttributeConsumingService, language '{}'", name.getXMLLang());
-            if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
-                log.debug("Returning name from AttributeConsumingService '{}'", name.getValue());
-                return name.getValue();
-            }
+        final Map<Locale, String> serviceNames = acsInfo.getServiceNames();
+        Locale l = Locale.lookup(getBrowserLanguages(), serviceNames.keySet());
+
+        if (l == null) {
+            l = Locale.lookup(getFallbackLanguages(), serviceNames.keySet());
         }
-        log.trace("No name found in AttributeConsumingService for '{}'", lang);
+
+        if (l != null) {
+            log.debug("Found ServiceName '{}' in ACS, locale '{}'", serviceNames.get(l), l);
+            return serviceNames.get(l);
+        }
+        log.debug("No ServiceName in ACS for '{}' or '{}'", getBrowserLanguages(), getFallbackLanguages());
         return null;
     }
 
@@ -372,22 +364,28 @@ public final class RelyingPartyUIContext extends BaseContext {
     /**
      * look at &lt;UIInfo&gt; if there and if so look for appropriate description.
      * 
-     * @param lang - which language to look up
      * @return null or an appropriate description
      */
-    @Nullable protected String getDescriptionFromUIInfo(final String lang) {
-        if (getRPUInfo() == null || getRPUInfo().getDescriptions() == null) {
-            log.trace("No UIInfo");
+    @Nullable protected String getDescriptionFromUIInfo() {
+
+        final IdPUIInfo info = getRPUInfo();
+        if (info == null) {
+            log.warn("GetDescription: No UIInfo");
             return null;
         }
-        for (final Description desc : getRPUInfo().getDescriptions()) {
-            log.trace("Found description in UIInfo, language '{}'", desc.getXMLLang());
-            if (desc.getXMLLang() != null && desc.getXMLLang().equals(lang)) {
-                log.trace("Returning description from UIInfo '{}'", desc.getValue());
-                return desc.getValue();
-            }
+
+        final Map<Locale, String> descriptions = getRPUInfo().getDescriptions();
+        Locale l = Locale.lookup(getBrowserLanguages(), descriptions.keySet());
+
+        if (l == null) {
+            l = Locale.lookup(getFallbackLanguages(), descriptions.keySet());
         }
-        log.debug("No matching description in UIInfo");
+
+        if (l != null) {
+            log.debug("Found Description '{}' in UIInfo, locale '{}'", descriptions.get(l), l);
+            return descriptions.get(l);
+        }
+        log.debug("No Description in UIINFO for '{}' or '{}'", getBrowserLanguages(), getFallbackLanguages());
         return null;
     }
 
@@ -398,19 +396,24 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return null or an appropriate description
      */
     @Nullable protected String getDescriptionFromAttributeConsumingService(final String lang) {
-        if (getRPAttributeConsumingService() == null) {
-            log.trace("No ACS found");
+        final ACSUIInfo acsInfo = getRPACSUInfo();
+        if (null == acsInfo) {
+            log.debug("No ACS so no ServiceDescription");
             return null;
         }
-        for (final ServiceDescription desc : getRPAttributeConsumingService().getDescriptions()) {
-            log.trace("Found name in AttributeConsumingService, language=" + desc.getXMLLang());
-            if (desc.getXMLLang() != null && desc.getXMLLang().equals(lang)) {
-                log.debug("Returning name from AttributeConsumingService " + desc.getValue());
-                return desc.getValue();
-            }
-        }
-        log.trace("No description in AttributeConsumingService");
 
+        final Map<Locale, String> serviceDescriptions = acsInfo.getServiceDescriptions();
+        Locale l = Locale.lookup(getBrowserLanguages(), serviceDescriptions.keySet());
+
+        if (l == null) {
+            l = Locale.lookup(getFallbackLanguages(), serviceDescriptions.keySet());
+        }
+
+        if (l != null) {
+            log.debug("Found ServiceDescription '{}' in ACS, locale '{}'", serviceDescriptions.get(l), l);
+            return serviceDescriptions.get(l);
+        }
+        log.debug("No ServiceDescription in ACS for '{}' or '{}'", getBrowserLanguages(), getFallbackLanguages());
         return null;
     }
 
@@ -419,14 +422,24 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the {@link Organization} for the relying party.
      */
-    @Nullable protected Organization getOrganization() {
-        if (null != getRPSPSSODescriptor() && null != getRPSPSSODescriptor().getOrganization()) {
-            return getRPSPSSODescriptor().getOrganization();
+    @Nullable protected OrganizationUIInfo getOrganization() {
+
+        Organization organization = null;
+        if (null != getRPSPSSODescriptor()) {
+            organization = getRPSPSSODescriptor().getOrganization();
         }
-        if (null != getRPEntityDescriptor() && null != getRPEntityDescriptor().getOrganization()) {
-            return getRPEntityDescriptor().getOrganization();
+        if (organization == null && getRPEntityDescriptor() != null) {
+            organization = getRPEntityDescriptor().getOrganization();
         }
-        return null;
+        if (organization == null) {
+            return null;
+        }
+
+        final List<OrganizationUIInfo> infoList = organization.getObjectMetadata().get(OrganizationUIInfo.class);
+        if (infoList.isEmpty()) {
+           return new OrganizationUIInfo(organization);
+        }
+        return infoList.get(0);
     }
 
     /**
@@ -487,20 +500,38 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the name or null if there wasn't one 
      */
     @Nullable public String getServiceName() {
-
-        for (final String lang : getUsableLanguages()) {
-            String result;
-            result = getNameFromUIInfo(lang);
-            if (result != null) {
-                return result;
-            }
-
-            result = getNameFromAttributeConsumingService(lang);
-            if (result != null) {
-                return result;
-            }
+        final IdPUIInfo uiinfo = getRPUInfo();
+        final ACSUIInfo acsinfo = getRPACSUInfo();
+        Locale l = null;
+        Map<Locale, String> names = null;
+        log.trace("GetServiceName - looking browser Locales '{}', Falllback locales '{}'");
+        if (uiinfo != null) {
+            log.trace("Looking in UI info for Browser Locales");
+            names = uiinfo.getDisplayNames();
+            l = Locale.lookup(getBrowserLanguages(), names.keySet());
         }
-        // failing that just look at the entity name
+        if (l == null && acsinfo != null) {
+            log.trace("Looking in ACS for Browser Locales");
+            names = acsinfo.getServiceNames();
+            l = Locale.lookup(getBrowserLanguages(), names.keySet());
+        }
+        if (l == null && uiinfo != null) {
+            log.trace("Looking in UI info for Fallback Locales");
+            names = uiinfo.getDisplayNames();
+            l = Locale.lookup(getFallbackLanguages(), names.keySet());
+        }
+        if (l == null && acsinfo != null) {
+            log.trace("Looking in ACS for Fallback Locales");
+            names = acsinfo.getServiceNames();
+            l = Locale.lookup(getFallbackLanguages(), names.keySet());
+        }
+        if (l != null) {
+            final String result = names.get(l);
+            log.debug("Found Name '{}' for Locale '{}'", result, l);
+            return result;
+        }
+
+        log.debug("Nothing found returning name from entity");
         return getNameFromEntityId();
     }
 
@@ -510,18 +541,38 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the description or null if there wasn't one 
      */
     @Nullable public String getServiceDescription() {
-
-        for (final String lang : getUsableLanguages()) {
-            String value = getDescriptionFromUIInfo(lang);
-            if (null != value) {
-                return value;
-            }
-            value = getDescriptionFromAttributeConsumingService(lang);
-            if (null != value) {
-                return value;
-            }
+        final IdPUIInfo uiinfo = getRPUInfo();
+        final ACSUIInfo acsinfo = getRPACSUInfo();
+        Locale l = null;
+        Map<Locale, String> names = null;
+        log.trace("GetServiceDescription - looking browser Locales '{}', Falllback locales '{}'");
+        if (uiinfo != null) {
+            log.trace("Looking in UI info for Browser Locales");
+            names = uiinfo.getDescriptions();
+            l = Locale.lookup(getBrowserLanguages(), names.keySet());
         }
-        log.debug("No description matching the languages found, returning null");
+        if (l == null && acsinfo != null) {
+            log.trace("Looking in ACS for Browser Locales");
+            names = acsinfo.getServiceDescriptions();
+            l = Locale.lookup(getBrowserLanguages(), names.keySet());
+        }
+        if (l == null && uiinfo != null) {
+            log.trace("Looking in UI info for Fallback Locales");
+            names = uiinfo.getDescriptions();
+            l = Locale.lookup(getFallbackLanguages(), names.keySet());
+        }
+        if (l == null && acsinfo != null) {
+            log.trace("Looking in ACS for Fallback Locales");
+            names = acsinfo.getServiceDescriptions();
+            l = Locale.lookup(getFallbackLanguages(), names.keySet());
+        }
+        if (l != null) {
+            final String result = names.get(l);
+            log.debug("Found Name '{}' for Locale '{}'", result, l);
+            return result;
+        }
+
+        log.debug("Nothing found");
         return null;
     }
 
@@ -531,23 +582,12 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return An appropriate string or null
      */
     @Nullable public String getOrganizationDisplayName() {
-        final Organization org = getOrganization();
-        if (null == org || null == org.getDisplayNames() || org.getDisplayNames().isEmpty()) {
-            log.debug("No Organization, OrganizationDisplayName or names, returning null");
+        final OrganizationUIInfo org = getOrganization();
+        if (null == org) {
+            log.debug("No Organization, returning null");
             return null;
         }
-        for (final String lang : getUsableLanguages()) {
-            for (final OrganizationDisplayName name : org.getDisplayNames()) {
-                log.trace("Found OrganizationDisplayName in Organization, language={}", name.getXMLLang());
-
-                if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
-                    log.debug("Returning OrganizationDisplayName from Organization, {}", name.getValue());
-                    return name.getValue();
-                }
-            }
-        }
-        log.debug("No relevant OrganizationDisplayName in Organization, returning null");
-        return null;
+        return getLocalizeString(org.getOrganizationDisplayNames(), "OrganizationDisplayName");
     }
 
     /**
@@ -556,23 +596,12 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return An appropriate string or null
      */
     @Nullable public String getOrganizationName() {
-        final Organization org = getOrganization();
-        if (null == org || null == org.getOrganizationNames() || org.getOrganizationNames().isEmpty()) {
-            log.debug("No Organization, OrganizationName or names, returning null");
+        final OrganizationUIInfo org = getOrganization();
+        if (null == org) {
+            log.debug("No Organization, returning null");
             return null;
         }
-        for (final String lang : getUsableLanguages()) {
-            for (final OrganizationName name : org.getOrganizationNames()) {
-                log.trace("Found OrganizationName in Organization, language={}", name.getXMLLang());
-
-                if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
-                    log.debug("Returning OrganizationName from Organization, {}", name.getValue());
-                    return name.getValue();
-                }
-            }
-        }
-        log.debug("No relevant OrganizationName in Organization, returning null");
-        return null;
+        return getLocalizeString(org.getOrganizationNames(), "OrganizationName");
     }
 
     /**
@@ -581,23 +610,12 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return An appropriate string or the null
      */
     public String getOrganizationURL() {
-        final Organization org = getOrganization();
-        if (null == org || null == org.getURLs() || org.getURLs().isEmpty()) {
-            log.debug("No Organization, OrganizationURL or urls, returning null");
+        final OrganizationUIInfo org = getOrganization();
+        if (null == org) {
+            log.debug("No Organization, returning null");
             return null;
         }
-        for (final String lang : getUsableLanguages()) {
-            for (final OrganizationURL url : org.getURLs()) {
-                log.trace("Found OrganizationURL in Organization, language={}", url.getXMLLang());
-
-                if (url.getXMLLang() != null && url.getXMLLang().equals(lang)) {
-                    log.debug("Returning OrganizationURL from Organization, {}", url.getValue());
-                    return policeURLNonLogo(url.getValue());
-                }
-            }
-        }
-        log.debug("No relevant OrganizationURL in Organization, returning null");
-        return null;
+        return policeURLNonLogo(getLocalizeString(org.getOrganizationUrls(), "OrganizationURLs"));
     }
 
     /**
@@ -645,6 +663,31 @@ public final class RelyingPartyUIContext extends BaseContext {
         return policeURLNonLogo(contact.getEmailAddresses().get(0).getAddress());
     }
 
+    /** Helper function for methods which need localized strings.
+     * @param map the map to lookup
+     * @param type the name we are looking up (for logging)
+     * @return the suitable value, or null
+     */
+    @Nullable private String getLocalizeString(@Nonnull final Map<Locale, String> map, @Nonnull final String type) {
+        if (null == map || map.isEmpty()) {
+            log.debug("No {}s returning null", type);
+            return null;
+        }
+        Locale l = Locale.lookup(getBrowserLanguages(), map.keySet());
+        if (l == null) {
+            log.trace("No {} found from Brower langages '{}' in '{}'",
+                    type, getBrowserLanguages(), map.keySet());
+           l = Locale.lookup(getFallbackLanguages(), map.keySet());
+        }
+        if (l == null) {
+            log.debug("No relevant {} with language match, returning null", type);
+            return null;
+        }
+        final String result = map.get(l);
+        log.debug("Found {} '{}' for '{}'", type, result, l);
+        return result;
+    }
+
     /**
      * Get the &lt;mdui:InformationURL&gt;.
      * 
@@ -652,22 +695,11 @@ public final class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable public String getInformationURL() {
 
-        if (null == getRPUInfo() || null == rpUIInfo.getInformationURLs() || rpUIInfo.getInformationURLs().isEmpty()) {
-            log.debug("No UIInfo or InformationURLs returning null");
+        if (null == getRPUInfo()) {
+            log.debug("No UIInfo returning null");
             return null;
         }
-        for (final String lang : getUsableLanguages()) {
-            for (final InformationURL url : rpUIInfo.getInformationURLs()) {
-                log.trace("Found InformationURL, language={}", url.getXMLLang());
-
-                if (url.getXMLLang() != null && url.getXMLLang().equals(lang)) {
-                    log.debug("Returning InformationURL, {}", url.getValue());
-                    return policeURLNonLogo(url.getValue());
-                }
-            }
-        }
-        log.debug("No relevant InformationURL with language match, returning null");
-        return null;
+        return policeURLNonLogo(getLocalizeString(getRPUInfo().getInformationURLs(), "InformationURL"));
     }
 
     /**
@@ -676,23 +708,11 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the value or null
      */
     @Nullable public String getPrivacyStatementURL() {
-        if (null == getRPUInfo() || null == rpUIInfo.getPrivacyStatementURLs()
-                || rpUIInfo.getPrivacyStatementURLs().isEmpty()) {
-            log.debug("No UIInfo or PrivacyStatementURLs returning null");
+        if (null == getRPUInfo()) {
+            log.debug("No UIInfo returning null");
             return null;
         }
-        for (final String lang : getUsableLanguages()) {
-            for (final PrivacyStatementURL url : rpUIInfo.getPrivacyStatementURLs()) {
-                log.trace("Found PrivacyStatementURL, language={}", url.getXMLLang());
-
-                if (url.getXMLLang() != null && url.getXMLLang().equals(lang)) {
-                    log.debug("Returning PrivacyStatementURL, {}", url.getValue());
-                    return policeURLNonLogo(url.getValue());
-                }
-            }
-        }
-        log.debug("No relevant PrivacyStatementURLs with language match, returning null");
-        return null;
+        return policeURLNonLogo(getLocalizeString(getRPUInfo().getPrivacyStatementURLs(), "PrivacyStatementURL"));
     }
 
     /**
@@ -724,60 +744,6 @@ public final class RelyingPartyUIContext extends BaseContext {
         return height <= maxHeight && height >= minHeight && width <= maxWidth && width >= minWidth;
     }
 
-    /**
-     * Get the Logo of the given language which fits the size.
-     * 
-     * @param lang the language
-     * @param minWidth the minimum width to allow.
-     * @param minHeight the minimum height to allow.
-     * @param maxWidth the maximum width to allow.
-     * @param maxHeight the maximum height to allow.
-     * @return an appropriate logo URL or null.
-     */
-    @Nullable private String getLogoByLanguage(@Nonnull final String lang, final int minWidth, final int minHeight,
-            final int maxWidth, final int maxHeight) {
-        for (final Logo logo : rpUIInfo.getLogos()) {
-            log.trace("Found logo in UIInfo, '{}' ({} x {})", logo.getXMLLang(), logo.getWidth(), logo.getHeight());
-            if (logo.getXMLLang() == null || !logo.getXMLLang().equals(lang)) {
-                log.trace("Language mismatch against '{}'");
-                continue;
-            }
-            if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
-                log.trace("Size mismatch");
-                continue;
-            }
-            log.debug("Returning logo from UIInfo, '{}' ({} x {}) : {}", logo.getXMLLang(), logo.getWidth(),
-                    logo.getHeight(), logo.getURL());
-            return logo.getURL();
-        }
-        return null;
-    }
-
-    /**
-     * Get a Logo without a language which fits the size.
-     * 
-     * @param minWidth the minimum width to allow.
-     * @param minHeight the minimum height to allow.
-     * @param maxWidth the maximum width to allow.
-     * @param maxHeight the maximum height to allow.
-     * @return an appropriate logo URL or null.
-     */
-    @Nullable private String getLogoNoLanguage(final int minWidth, final int minHeight, final int maxWidth,
-            final int maxHeight) {
-        for (final Logo logo : rpUIInfo.getLogos()) {
-            if (null != logo.getXMLLang()) {
-                continue;
-            }
-            log.trace("Found logo in UIInfo, ({} x {})", logo.getWidth(), logo.getHeight());
-            if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
-                log.trace("Size Mismatch");
-                continue;
-            }
-            log.debug("Returning logo from UIInfo, ({} x {}) : {}", logo.getWidth(), logo.getHeight(), logo.getURL());
-            return logo.getURL();
-        }
-        return null;
-    }
 
     /**
      * Get the Logo (or null). We apply the languages and the supplied lengths.
@@ -788,24 +754,61 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
+    // CheckStyle: CyclomaticComplexity OFF
     @Nullable public String getLogo(final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
-        if (null == getRPUInfo() || null == rpUIInfo.getLogos() || rpUIInfo.getLogos().isEmpty()) {
+
+        if (null == getRPUInfo()) {
             log.debug("No UIInfo or logos returning null");
             return null;
         }
 
-        for (final String lang : getUsableLanguages()) {
-            final String result = getLogoByLanguage(lang, minWidth, minHeight, maxWidth, maxHeight);
-            if (null != result) {
-                return policeURLLogo(result);
+        final Map<Locale, List<Logo>> logos = getRPUInfo().getLocaleLogos();
+
+        if (logos != null && !logos.isEmpty()) {
+            for (final Locale l: Locale.filter(getBrowserLanguages(), logos.keySet())) {
+                for (final Logo logo : logos.get(l)) {
+                    log.trace("Found logo in UIInfo, ({} x {}) - {}", logo.getWidth(), logo.getHeight(), l);
+                    if (logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
+                        final String result = policeURLLogo(logo.getURL());
+                        if (result != null) {
+                            log.debug("Found locale logo from UIInfo, ({} x {}) : {}",
+                                    logo.getWidth(), logo.getHeight(), result);
+                            return result;
+                        }
+                    }
+                }
+            }
+            for (final Locale l: Locale.filter(getFallbackLanguages(), logos.keySet())) {
+                for (final Logo logo : logos.get(l)) {
+                    log.trace("Found logo in UIInfo, ({} x {}) - {}", logo.getWidth(), logo.getHeight(), l);
+                    if (logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
+                        final String result = policeURLLogo(logo.getURL());
+                        if (result != null) {
+                            log.debug("Found locale logo from UIInfo, ({} x {}) : {}",
+                                    logo.getWidth(), logo.getHeight(), result);
+                            return result;
+                        }
+                    }
+                }
             }
         }
-        final String result = getLogoNoLanguage(minWidth, minHeight, maxWidth, maxHeight);
-        if (null != result) {
-            return policeURLLogo(result);
+        for (final Logo logo : rpUIInfo.getNonLocaleLogos()) {
+            log.trace("Found logo in UIInfo, ({} x {})", logo.getWidth(), logo.getHeight());
+            if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
+                log.trace("Size Mismatch");
+                continue;
+            }
+            final String result = policeURLLogo(logo.getURL());
+            if (result != null) {
+                log.debug("Found nonlocale logo from UIInfo, ({} x {}) : {}",
+                        logo.getWidth(), logo.getHeight(), logo.getURL());
+                return result;
+            }
         }
+        log.debug("No valid logos which fit found");
         return null;
     }
+    // CheckStyle: CyclomaticComplexity ON
 
     /**
      * Get the Logo (or null). We apply the languages and the supplied lengths.
