@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.transcoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -177,6 +178,7 @@ public class TranscodingRule {
     private void processDisplayNames() {
         
         final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
+        final HashSet<Locale> inserted = new HashSet<Locale>();
         
         for (final Map.Entry<String,Object> entry : rule.entrySet()) {
             if (entry.getValue() instanceof String
@@ -184,10 +186,14 @@ public class TranscodingRule {
                 
                 final String lang = StringSupport.trimOrNull(
                         entry.getKey().substring(AttributeTranscoderRegistry.PROP_DISPLAY_NAME.length()));
+                Locale locale = null;
                 if (lang == null) {
-                    builder.put(Locale.getDefault(), (String) entry.getValue());
+                    locale = Locale.getDefault();
                 } else if (lang.startsWith(".")) {
-                    builder.put(Locale.forLanguageTag(lang.substring(1)), (String) entry.getValue());
+                    locale = Locale.forLanguageTag(lang.substring(1));
+                }
+                if (locale != null && inserted.add(locale)) {
+                    builder.put(locale, (String) entry.getValue());
                 }
             }
         }
@@ -202,6 +208,7 @@ public class TranscodingRule {
     private void processDescriptions() {
         
         final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
+        final HashSet<Locale> inserted = new HashSet<Locale>();
         
         for (final Map.Entry<String,Object> entry : rule.entrySet()) {
             if (entry.getValue() instanceof String
@@ -209,10 +216,14 @@ public class TranscodingRule {
                 
                 final String lang = StringSupport.trimOrNull(
                         entry.getKey().substring(AttributeTranscoderRegistry.PROP_DESCRIPTION.length()));
+                Locale locale = null;
                 if (lang == null) {
-                    builder.put(Locale.getDefault(), (String) entry.getValue());
+                    locale = Locale.getDefault();
                 } else if (lang.startsWith(".")) {
-                    builder.put(Locale.forLanguageTag(lang.substring(1)), (String) entry.getValue());
+                    locale = Locale.forLanguageTag(lang.substring(1));
+                }
+                if (locale != null && inserted.add(locale)) {
+                    builder.put(locale, (String) entry.getValue());
                 }
             }
         }

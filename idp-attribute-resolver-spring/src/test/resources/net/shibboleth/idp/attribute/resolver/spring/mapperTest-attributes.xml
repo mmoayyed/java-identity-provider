@@ -47,7 +47,7 @@
         
         <DisplayName>Color</DisplayName>
         <DisplayName xml:lang="en-GB">Colour</DisplayName>
-        <DisplayDescription xml:lang="fr-CA">Le Color, eh?</DisplayDescription>
+        <DisplayDescription xml:lang="fr-CA">Le Color</DisplayDescription>
     </AttributeDefinition>
     
     <AttributeDefinition xsi:type="SAML2NameID" id="eduPersonTID" 

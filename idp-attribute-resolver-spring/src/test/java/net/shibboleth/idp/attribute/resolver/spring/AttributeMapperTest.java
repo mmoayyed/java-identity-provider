@@ -103,22 +103,30 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
             assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER, String.class), "#");
 
             Map<Locale,String> names = rule.getDisplayNames();
-            assertEquals(names.size(), 2);
-            assertEquals(names.get(Locale.getDefault()), "Color");
+            if (Locale.UK.equals(Locale.getDefault())) {
+                assertEquals(names.size(), 1);
+            } else {
+                assertEquals(names.size(), 2);
+                assertEquals(names.get(Locale.getDefault()), "Color");
+            }
             assertEquals(names.get(Locale.UK), "Colour");
             
             Map<Locale,String> descs = rule.getDescriptions();
             assertEquals(descs.size(), 1);
-            assertEquals(descs.get(Locale.CANADA_FRENCH), "Le Color, eh?");
+            assertEquals(descs.get(Locale.CANADA_FRENCH), "Le Color");
             
             names = serviceableComponent.getComponent().getDisplayNames(idpattr);
-            assertEquals(names.size(), 2);
-            assertEquals(names.get(Locale.getDefault()), "Color");
+            if (Locale.UK.equals(Locale.getDefault())) {
+                assertEquals(names.size(), 1);
+            } else {
+                assertEquals(names.size(), 2);
+                assertEquals(names.get(Locale.getDefault()), "Color");
+            }
             assertEquals(names.get(Locale.UK), "Colour");
             
             descs = serviceableComponent.getComponent().getDescriptions(idpattr);
             assertEquals(descs.size(), 1);
-            assertEquals(descs.get(Locale.CANADA_FRENCH), "Le Color, eh?");
+            assertEquals(descs.get(Locale.CANADA_FRENCH), "Le Color");
             
         } finally {
             serviceableComponent.unpinComponent();
