@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import java.security.GeneralSecurityException;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -124,7 +125,6 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         defaultMappingStrategy = false;
     }
 
-// CheckStyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         if (connectionFactory == null) {
@@ -150,8 +150,14 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             log.error("{} Invalid connector configuration", getLogPrefix(), e);
             throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
         }
+        policeForJVMTrust();
+    }
 
-        // TODO: remove deprecation warning in v4
+// CheckStyle: CyclomaticComplexity OFF
+    /** Police SSL for JVM trust.
+     * @throws ComponentInitializationException if we detect an SSL issue
+     */
+    private void policeForJVMTrust() throws ComponentInitializationException {
         Connection conn = null;
         try {
             conn = connectionFactory.getConnection();
@@ -171,8 +177,8 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                     }
                 }
             }
-        } catch (final Exception e) {
-            log.debug("{} Error inspecting SSL configuration", getLogPrefix(), e);
+        } catch (final GeneralSecurityException | LdapException e) {
+            throw new ComponentInitializationException(getLogPrefix() + " Failed to inspect SLL implementation", e);
         } finally {
             if (conn != null) {
                 try {
@@ -183,8 +189,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             }
         }
     }
-// CheckStyle: CyclomaticComplexity ON
-
+ // CheckStyle: CyclomaticComplexity ON
 
     /**
      * Attempts to retrieve attributes from the LDAP.
