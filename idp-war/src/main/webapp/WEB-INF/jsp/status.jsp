@@ -119,11 +119,7 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
     	for (final Entry<String, Instant> en : entrySet) {
 			final Instant lastFail = en.getValue();
 			final String connectorId = en.getKey();
-	    	if (null != lastFail) {
-                out.println("\tDataConnector " +  connectorId + ": last failed at " + dateTimeFormatter.format(lastFail));
-            } else {
-                out.println("\tDataConnector " +  connectorId + ": has never failed");
-            }
+			out.println("\tDataConnector " +  connectorId + ": last failed at " + dateTimeFormatter.format(lastFail));
             out.println();
         }   
     }    
