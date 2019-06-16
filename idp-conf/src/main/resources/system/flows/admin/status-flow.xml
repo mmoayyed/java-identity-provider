@@ -30,6 +30,8 @@
             <evaluate expression="WriteAuditLog" />
             <evaluate expression="ServiceCollection" result="requestScope.services" />
             <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.metrics.AttributeResolverGaugeSet')" result="requestScope.attributeResolverGaugeSet" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.metrics.MetadataGaugeSet')" result="requestScope.metadataResolverGaugeSet" />            
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
