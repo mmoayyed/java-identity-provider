@@ -134,12 +134,12 @@
                         </element>
                     </choice>
                 </choice>
-                <attribute name="attributeID" type="string" use="required">
+                <attribute name="attributeID" type="afp:string" use="required">
                     <annotation>
                         <documentation>The ID of the attribute to which this rule applies.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="permitAny" type="string">
+                <attribute name="permitAny" type="afp:string">
                     <annotation>
                         <documentation>If present, and true injects an implicit permit value rule of type ANY</documentation>
                     </annotation>
@@ -174,7 +174,7 @@
     </complexType>
 
     <complexType name="IdentityType">
-        <attribute name="id" type="string">
+        <attribute name="id" type="afp:string">
             <annotation>
                 <documentation>An ID, unique within the policy and component type.</documentation>
             </annotation>
@@ -182,7 +182,7 @@
     </complexType>
 
     <complexType name="ReferenceType">
-        <attribute name="ref" type="string">
+        <attribute name="ref" type="afp:string">
             <annotation>
                 <documentation>Used to reference a globally defined policy component.</documentation>
             </annotation>
@@ -292,14 +292,14 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="rulePredicateRef" type="string" use="required">
+                <attribute name="rulePredicateRef" type="afp:string" use="required">
                     <annotation>
                         <documentation>
                             The reference to an externally defined bean to do the predicate work
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="contextStrategyRef" type="string">
+                <attribute name="contextStrategyRef" type="afp:string">
                     <annotation>
                         <documentation>
                             The reference to an externally define bean to lookup the context
@@ -379,7 +379,7 @@
     <complexType name="TargetedStringMatchType" abstract="true">
         <complexContent>
             <extension base="afp:StringMatchType">
-                <attribute name="attributeID" type="string">
+                <attribute name="attributeID" type="afp:string">
                     <annotation>
                         <documentation>
                             The ID of the attribute whose value should be matched. If no attribute ID is specified the
@@ -394,12 +394,12 @@
     <complexType name="StringMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="value" type="string" use="required">
+                <attribute name="value" type="afp:string" use="required">
                     <annotation>
                         <documentation>The string value to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="ignoreCase" type="string">
+                <attribute name="ignoreCase" type="afp:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether case should be ignored when evaluating the match.
@@ -408,7 +408,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caseSensitive" type="string">
+                <attribute name="caseSensitive" type="afp:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether the match evaluation should be case sensitive.
@@ -490,7 +490,7 @@
     <complexType name="TargetedRegexMatchType" abstract="true">
         <complexContent>
             <extension base="afp:RegexMatchType">
-                <attribute name="attributeID" type="string">
+                <attribute name="attributeID" type="afp:string">
                     <annotation>
                         <documentation>
                             The ID of the attribute whose value should be matched. If no attribute ID is specified the
@@ -505,12 +505,12 @@
     <complexType name="RegexMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="regex" type="string" use="required">
+                <attribute name="regex" type="afp:string" use="required">
                     <annotation>
                         <documentation>The regular expression values are matched against.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caseSensitive" type="string">
+                <attribute name="caseSensitive" type="afp:string">
                     <annotation>
                         <documentation>Whether the comparison is case sensitive, default TRUE</documentation>
                     </annotation>
@@ -530,12 +530,12 @@
         <complexContent>
             <extension base="afp:MatchFunctorType">
                 <choice>
-                    <element name="Script" type="string" minOccurs="0">
+                    <element name="Script" type="afp:string" minOccurs="0">
                         <annotation>
                             <documentation>The script to evaluate to construct the attribute.</documentation>
                         </annotation>
                     </element>
-                    <element name="ScriptFile" type="string" minOccurs="0">
+                    <element name="ScriptFile" type="afp:string" minOccurs="0">
                         <annotation>
                             <documentation>
                                 The filesystem path to the script to evaluate to construct the attribute.
@@ -543,7 +543,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="language" type="string">
+                <attribute name="language" type="afp:string">
                     <annotation>
                         <documentation>
                             The JSR-233 name for the scripting language that will be used. By default "javascript" is
@@ -551,7 +551,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="customObjectRef" type="string">
+                <attribute name="customObjectRef" type="afp:string">
                     <annotation>
                         <documentation>
                             The name of a bean defined somewhere else which will be injected into the script as an
@@ -573,17 +573,17 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="attributeID" type="string" use="required">
+                <attribute name="attributeID" type="afp:string" use="required">
                     <annotation>
                         <documentation>The ID of the attribute whose value should be matched.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minimum" type="string">
+                <attribute name="minimum" type="afp:string">
                     <annotation>
                         <documentation>Minimum number of values an attribute may have.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maximum" type="string">
+                <attribute name="maximum" type="afp:string">
                     <annotation>
                         <documentation>Maximum number of values an attribute may have.</documentation>
                     </annotation>
@@ -621,22 +621,22 @@
     <complexType name="EntityAttributeExactMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="attributeName" type="string" use="required">
+                <attribute name="attributeName" type="afp:string" use="required">
                     <annotation>
                         <documentation>The name of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeValue" type="string" use="required">
+                <attribute name="attributeValue" type="afp:string" use="required">
                     <annotation>
                         <documentation>The value of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeNameFormat" type="string">
+                <attribute name="attributeNameFormat" type="afp:string">
                     <annotation>
                         <documentation>The NameFormat of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="ignoreUnmappedEntityAttributes" type="string">
+                <attribute name="ignoreUnmappedEntityAttributes" type="afp:string">
                     <annotation>
                         <documentation>
                             Boolean attribute, whether to examine only mapped/decoded attributes, default is false.
@@ -674,23 +674,23 @@
     <complexType name="EntityAttributeRegexMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="attributeName" type="string" use="required">
+                <attribute name="attributeName" type="afp:string" use="required">
                     <annotation>
                         <documentation>The name of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeValueRegex" type="string" use="required">
+                <attribute name="attributeValueRegex" type="afp:string" use="required">
                     <annotation>
                         <documentation>The regular expression that must match the value of the entity attribute to
                             match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeNameFormat" type="string">
+                <attribute name="attributeNameFormat" type="afp:string">
                     <annotation>
                         <documentation>The name format of the entity attribute to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="ignoreUnmappedEntityAttributes" type="string">
+                <attribute name="ignoreUnmappedEntityAttributes" type="afp:string">
                     <annotation>
                         <documentation>
                             Boolean attribute, whether to examine only mapped/decoded attributes, default is false.
@@ -716,7 +716,7 @@
     <complexType name="NameIDFormatExactMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="nameIdFormat" type="string" use="required">
+                <attribute name="nameIdFormat" type="afp:string" use="required">
                     <annotation>
                         <documentation>The NameID format that needs to be supported by the entity.</documentation>
                     </annotation>
@@ -740,12 +740,12 @@
     <complexType name="EntityGroupMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="groupID" type="string" use="required">
+                <attribute name="groupID" type="afp:string" use="required">
                     <annotation>
                         <documentation>The entity group ID that an entity must be in.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="checkAffiliations" type="string">
+                <attribute name="checkAffiliations" type="afp:string">
                     <annotation>
                         <documentation>
                             Whether to check for membership in metadata-based AffiliationDescriptors.
@@ -839,7 +839,7 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="attributeID" type="string">
+                <attribute name="attributeID" type="afp:string">
                     <annotation>
                         <documentation>
                             The ID of the attribute whose value should be matched. If no attribute ID is specified the
@@ -847,14 +847,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="onlyIfRequired" type="string">
+                <attribute name="onlyIfRequired" type="afp:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether attributes noted as optional should match.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="matchIfMetadataSilent" type="string">
+                <attribute name="matchIfMetadataSilent" type="afp:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a match should occur if (after mapping)
@@ -862,17 +862,17 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeName" type="string">
+                <attribute name="attributeName" type="afp:string">
                     <annotation>
                         <documentation>The name of a requested attribute to look for.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="attributeNameFormat" type="string">
+                <attribute name="attributeNameFormat" type="afp:string">
                     <annotation>
                         <documentation>The name format of a requested attribute to look for.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="objectStrategyRef" type="string">
+                <attribute name="objectStrategyRef" type="afp:string">
                     <annotation>
                         <documentation>Reference to locate XMLObject source of mapped attributes.</documentation>
                     </annotation>
@@ -894,6 +894,12 @@
 
     <simpleType name="anyURIListType">
         <list itemType="string"/>
+    </simpleType>
+
+    <simpleType name="string">
+        <restriction base="string">
+            <minLength value="1"/>
+        </restriction>
     </simpleType>
 
 

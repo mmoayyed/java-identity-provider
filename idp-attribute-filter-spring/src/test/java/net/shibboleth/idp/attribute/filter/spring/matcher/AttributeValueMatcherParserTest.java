@@ -25,6 +25,7 @@ import static org.testng.Assert.fail;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -173,9 +174,9 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         try {
             getMatcher("attributeValueEmptyCaseSensitive.xml");
             fail("should have thrown an exception");
-        } catch (BeanCreationException e) {
-            Assert.assertEquals(rootCause(e), IllegalArgumentException.class);
-        }
+        } catch (FatalBeanException e) {
+            Assert.assertEquals(org.xml.sax.SAXParseException.class, rootCause(e));
+        } 
     }
     
     private void propertyCaseSensitive(final String propValue, final boolean result) throws ComponentInitializationException {
@@ -210,7 +211,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         try {
             propertyCaseSensitive("", false);
         } catch (BeanCreationException e) {
-            Assert.assertEquals(rootCause(e), IllegalArgumentException.class);
+            Assert.assertEquals(IllegalArgumentException.class, rootCause(e));
         }
     }
 
