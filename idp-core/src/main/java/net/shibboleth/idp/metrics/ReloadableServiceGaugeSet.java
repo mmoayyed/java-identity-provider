@@ -54,13 +54,16 @@ public class ReloadableServiceGaugeSet extends AbstractInitializableComponent im
     /** The service to report on. */
     @NonnullAfterInit private ReloadableService service;
     
+    /** The log Prefix. */
+    @Nonnull @NotEmpty private final String logPrefix;
+
     /**
      * Constructor.
      * 
      * @param metricName name to include in metric names produced by this set
      */
     public ReloadableServiceGaugeSet(@Nonnull @NotEmpty @ParameterName(name="metricName") final String metricName) {
-        Constraint.isNotEmpty(metricName, "Metric name cannot be null or empty");
+        logPrefix = Constraint.isNotEmpty(metricName, "Metric name cannot be null or empty");
         
         gauges = new HashMap<>();
 
@@ -113,11 +116,10 @@ public class ReloadableServiceGaugeSet extends AbstractInitializableComponent im
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        
         if (service == null) {
-            throw new ComponentInitializationException("ReloadableService cannot be null");
+            throw new ComponentInitializationException("Injected ReloadableService cannot be null");
         }
+        super.doInitialize();
     }
 
     /** {@inheritDoc} */
@@ -137,5 +139,12 @@ public class ReloadableServiceGaugeSet extends AbstractInitializableComponent im
      */
     @Nonnull @NonnullElements @Live protected Map<String,Metric> getMetricMap() {
         return gauges;
+    }
+
+    /** Get the log prefix.
+     * @return the log prefix (usually the metric name).
+     */
+    @Nonnull @NotEmpty protected final String getLogPrefix() {
+        return logPrefix;
     }
 }

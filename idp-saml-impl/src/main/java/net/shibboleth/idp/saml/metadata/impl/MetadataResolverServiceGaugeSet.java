@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.metadata.impl;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 
@@ -26,6 +27,8 @@ import org.opensaml.saml.metadata.resolver.BatchMetadataResolver;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
@@ -47,36 +50,31 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
  */
 public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet implements MetricSet, MetricFilter {
     
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataResolverServiceGaugeSet.class);
+
     /**
      * Constructor.
      * 
      * @param metricName name to include in metric names produced by this set
      */
-    // Checkstyle: MethodLength OFF
     public MetadataResolverServiceGaugeSet(
             @Nonnull @NotEmpty @ParameterName(name="metricName") final String metricName) {
         super(metricName);
-        
+
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "update"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
-                        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
-                        if (component != null) {
-                            try {                                
-                                for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof RefreshableMetadataResolver 
-                                            && ((RefreshableMetadataResolver) resolver).getLastUpdate() != null) {
-                                        mapBuilder.put(resolver.getId(),
-                                                ((RefreshableMetadataResolver) resolver).getLastUpdate());
-                                    }
+                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
+                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                                if (resolver instanceof RefreshableMetadataResolver
+                                        && ((RefreshableMetadataResolver) resolver).getLastUpdate() != null) {
+                                    mapBuilder.put(resolver.getId(),
+                                            ((RefreshableMetadataResolver) resolver).getLastUpdate());
                                 }
-                            } finally {
-                                component.unpinComponent();
-                            }
-                        }
-                        return mapBuilder.build();
+                            };
+                        });
                     }
                 });
         
@@ -84,77 +82,82 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "refresh"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
-                        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
-                        if (component != null) {
-                            try {                                
-                                for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof RefreshableMetadataResolver 
-                                            && ((RefreshableMetadataResolver) resolver).getLastRefresh() != null) {
-                                        mapBuilder.put(resolver.getId(),
-                                                ((RefreshableMetadataResolver) resolver).getLastRefresh());
-                                    }
+                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
+                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                                if (resolver instanceof RefreshableMetadataResolver
+                                        && ((RefreshableMetadataResolver) resolver).getLastRefresh() != null) {
+                                    mapBuilder.put(resolver.getId(),
+                                            ((RefreshableMetadataResolver) resolver).getLastRefresh());
                                 }
-                            } finally {
-                                component.unpinComponent();
-                            }
-                        }
-                        return mapBuilder.build();
+                            };
+                        });
                     }
                 });
-        
+                
         //TODO v4.0.0 - Switch to use RefreshableMetadataResolver when new methods promoted up
-        // Checkstyle: AnonInnerLength OFF
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
-                        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
-                        if (component != null) {
-                            try {                                
-                                for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof RefreshableMetadataResolver 
-                                            && ((RefreshableMetadataResolver) resolver)
-                                                .getLastSuccessfulRefresh()  != null) {
-                                        mapBuilder.put(resolver.getId(),
-                                                ((RefreshableMetadataResolver) resolver).getLastSuccessfulRefresh());
-                                    }
+                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
+                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                                if (resolver instanceof RefreshableMetadataResolver
+                                        && ((RefreshableMetadataResolver) resolver)
+                                            .getLastSuccessfulRefresh()  != null) {
+                                    mapBuilder.put(resolver.getId(),
+                                            ((RefreshableMetadataResolver) resolver).getLastSuccessfulRefresh());
                                 }
-                            } finally {
-                                component.unpinComponent();
-                            }
-                        }
-                        return mapBuilder.build();
+                            };
+                        });
                     }
                 });
-        // Checkstyle: AnonInnerLength ON
         
         //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted up
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
-                        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
-                        if (component != null) {
-                            try {                                
-                                for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof BatchMetadataResolver 
-                                            && ((BatchMetadataResolver) resolver).getRootValidUntil() != null) {
-                                        mapBuilder.put(resolver.getId(),
-                                                ((BatchMetadataResolver) resolver).getRootValidUntil());
-                                    }
+                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
+                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                                if (resolver instanceof BatchMetadataResolver
+                                        && ((BatchMetadataResolver) resolver).getRootValidUntil() != null) {
+                                    mapBuilder.put(resolver.getId(),
+                                            ((BatchMetadataResolver) resolver).getRootValidUntil());
                                 }
-                            } finally {
-                                component.unpinComponent();
-                            }
-                        }
-                        return mapBuilder.build();
+                            };
+                        });
                     }
                 });
     }
-    // Checkstyle: MethodLength ON
+
+    /** Helper Function for map construction.<br/>
+     * 
+     * This does all the service handling and just calls the specific {@link BiConsumer} to
+     * add each appropriate the value to the map. 
+     * @param consume the thing which does checking and adding the building
+     * @return an appropriate map
+     */
+    private Map<String,Instant> valueGetter(final BiConsumer<Builder, MetadataResolver> consume) {
+        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
+        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
+        if (component != null) {
+            try {
+                // Check type - just in case
+                if (!(component.getComponent() instanceof MetadataResolver)) {
+                    log.warn("{} : Injected Service was not for an Metadata Resolver : ({}) ",
+                            getLogPrefix(), component.getComponent().getClass());
+                } else {
+                    for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
+                        consume.accept(mapBuilder, resolver);
+                    }
+                }
+            } finally {
+                component.unpinComponent();
+            }
+        }
+        return mapBuilder.build();
+    }
+
     
     /** {@inheritDoc} */
     @Override
@@ -164,15 +167,20 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         final ServiceableComponent component = getService().getServiceableComponent();
         if (component != null) {
             try {
-                if (component instanceof MetadataResolver) {
+                if (component.getComponent() instanceof MetadataResolver) {
                     return;
+                } else {
+                    log.error("{} : Injected service was not for a MetadataResolver ({}) ",
+                            getLogPrefix(), component.getClass());
+                    throw new ComponentInitializationException("Injected service was not for a MetadataResolver");
                 }
             } finally {
                 component.unpinComponent();
             }
+        } else {
+            log.debug("{} : Injected service has not initialized sucessfully yet. Skipping type test",
+                    getLogPrefix());
         }
-
-        throw new ComponentInitializationException("Injected service was null or not a MetadataResolver");
     }
 
     /**

@@ -22,6 +22,9 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -42,6 +45,9 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
  */
 public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet implements MetricSet, MetricFilter {
     
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceGaugeSet.class);
+
     /**
      * Constructor.
      * 
@@ -61,7 +67,7 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
                                 getService().getServiceableComponent();
                         if (component != null) {
                             try {                                
-                                final AttributeResolver resolver = component.getComponent();
+                                final Object resolver = component.getComponent();
                                 if (resolver instanceof AttributeResolverImpl) {
                                     final Collection<DataConnector> connectors =
                                             ((AttributeResolverImpl) resolver).getDataConnectors().values();
@@ -70,6 +76,13 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
                                             mapBuilder.put(connector.getId(), connector.getLastFail());
                                         }
                                     }
+                                } else if (resolver instanceof AttributeResolver) {
+                                   log.debug("{} : Cannot get Data Connector failure " +
+                                           " information from unsupported class type {}",
+                                           getLogPrefix(), resolver.getClass());
+                                } else {
+                                    log.warn("{} : Injected Service was not for an AttributeResolver ({})",
+                                            getLogPrefix(), resolver.getClass());
                                 }
                             } finally {
                                 component.unpinComponent();
@@ -90,15 +103,17 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
         final ServiceableComponent component = getService().getServiceableComponent();
         if (component != null) {
             try {
-                if (component instanceof AttributeResolver) {
+                if (component.getComponent() instanceof AttributeResolver) {
                     return;
+                } else {
+                    log.error("{} : Injected service was not for an AttributeResolver ({})",
+                            getLogPrefix(), component.getClass());
+                    throw new ComponentInitializationException("Injected service was not for an AttributeResolver");
                 }
             } finally {
                 component.unpinComponent();
             }
         }
-
-        throw new ComponentInitializationException("Injected service was null or not an AttributeResolver");
     }
 
 }
