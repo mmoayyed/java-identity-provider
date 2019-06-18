@@ -123,9 +123,8 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         return policy.getPolicyRequirementRule();
     }
 
-    protected Matcher getMatcher(String fileName) throws ComponentInitializationException {
+    protected Matcher getMatcher(final String fileName, final GenericApplicationContext context) throws ComponentInitializationException {
 
-        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Matcher");
         setTestContext(context);
         
@@ -135,7 +134,13 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
         rule.initialize();
         return rule.getMatcher();
+    }
+    
+    protected Matcher getMatcher(final String fileName) throws ComponentInitializationException {
 
+        GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        context.setDisplayName("ApplicationContext: Matcher");
+        return getMatcher(fileName, context);
     }
 
 }
