@@ -27,16 +27,9 @@ import java.util.Set;
 
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.StandardEnvironment;
-import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import junit.framework.Assert;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
@@ -158,44 +151,20 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         assertTrue(result.isEmpty());
     }
     
-    private Class rootCause(Throwable what) {
-        Throwable preLast = what;
-        do {
-            final Throwable next = preLast.getCause();
-            if (next == null) {
-                return preLast.getClass();
-            }
-            preLast = next;
-        } while (true);
-    }
-    
     @Test public void emptyCaseSensitive() throws ComponentInitializationException {
 
         try {
             getMatcher("attributeValueEmptyCaseSensitive.xml");
             fail("should have thrown an exception");
         } catch (FatalBeanException e) {
-            Assert.assertEquals(org.xml.sax.SAXParseException.class, rootCause(e));
+            assertEquals(org.xml.sax.SAXParseException.class, rootCause(e));
         } 
     }
     
     private void propertyCaseSensitive(final String propValue, final boolean result) throws ComponentInitializationException {
-    
-        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
-        final MockPropertySource mockEnvVars = new MockPropertySource();
-        mockEnvVars.setProperty("case", propValue);
-        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
-
-        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
-        placeholderConfig.setPlaceholderPrefix("%{");
-        placeholderConfig.setPlaceholderSuffix("}");
-        placeholderConfig.setPropertySources(propertySources);
-        context.addBeanFactoryPostProcessor(placeholderConfig);
-
         final AttributeValueStringMatcher match = (AttributeValueStringMatcher )
-            getMatcher("attributeValuePropertyCaseSensitive.xml", context); 
-               
+            getMatcher("attributeValuePropertyCaseSensitive.xml", contextWithPropertyValue(propValue)); 
+
         assertEquals(result, match.isCaseSensitive());
     }
     
@@ -211,7 +180,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         try {
             propertyCaseSensitive("", false);
         } catch (BeanCreationException e) {
-            Assert.assertEquals(IllegalArgumentException.class, rootCause(e));
+            assertEquals(IllegalArgumentException.class, rootCause(e));
         }
     }
 

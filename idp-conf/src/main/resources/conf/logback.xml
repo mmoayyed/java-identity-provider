@@ -14,7 +14,7 @@
 
     <!-- Location and retention. -->
     
-    <variable name="idp.logfiles" value="${idp.logfiles:-${idp.home}/logs}" />
+    <variable name="idp.logfiles" value="H:/Perforce/Juno/New/java-identity-provider/logs}" />
     <variable name="idp.loghistory" value="${idp.loghistory:-180}" />
     
     <!-- Much higher performance if you operate on DEBUG. -->
@@ -82,7 +82,7 @@
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
-            <Pattern>%date{ISO8601} - %mdc{idp.remote_addr} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
+            <Pattern>%date{ISO8601} - %mdc{idp.remote_addr} - %level [%logger:%line] - %msg%n%ex{full}</Pattern>
         </encoder>
 
         <!-- Ignore Velocity status page error. -->

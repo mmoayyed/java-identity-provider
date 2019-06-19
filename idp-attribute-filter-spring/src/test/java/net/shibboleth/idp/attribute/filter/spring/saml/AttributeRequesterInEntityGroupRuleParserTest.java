@@ -18,7 +18,9 @@
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
@@ -31,10 +33,27 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
-        final AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml");
-     
-        assertEquals(rule.getEntityGroup(), "urn:example.org");
+    private void testRule(final String propValue, final boolean result) throws ComponentInitializationException {
+        final AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", contextWithPropertyValue(propValue));
 
+        assertEquals(rule.getEntityGroup(), "urn:example.org");
+        assertEquals(rule.isCheckAffiliations(), result);
+    }
+
+    @Test public void basic() throws ComponentInitializationException {
+        try {
+            testRule("", false);
+            fail("should fail");
+        } catch (BeanCreationException e) {
+            assertEquals(IllegalArgumentException.class, rootCause(e));
+        }
+    }
+
+    @Test public void egTrue() throws ComponentInitializationException {
+        testRule("true", true);
+    }
+
+    @Test public void egFalse() throws ComponentInitializationException {
+        testRule("false", false);
     }
 }

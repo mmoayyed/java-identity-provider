@@ -90,6 +90,19 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
         checkAffiliations = flag;
     }
 
+    /**
+     * Returns whether we check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}
+     * for membership in an AffiliationDescriptor
+     * as a form of group policy.
+     *
+     * @return the value of {@link #checkAffiliations}
+     *
+     * @since 4.0.0
+     */
+    public boolean isCheckAffiliations() {
+        return checkAffiliations;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {

@@ -3,7 +3,7 @@
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">                            
     <PolicyRequirementRule xsi:type="MappedAttributeInMetadata"
                            id="PRR"
-                           onlyIfRequired="true"
+                           onlyIfRequired="%{prop}"
                            matchIfMetadataSilent="true"/>
                             
     <AttributeRule attributeID="email">
@@ -11,7 +11,7 @@
 		<PermitValueRule xsi:type="MappedAttributeInMetadata"
                      	     id="PermitRule"
 	                         onlyIfRequired="true"
-	                         matchIfMetadataSilent="true"
+	                         matchIfMetadataSilent="%{prop}"
 	                        />
     </AttributeRule>
 </AttributeFilterPolicy>

@@ -25,6 +25,10 @@ import java.util.Map;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterMethod;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
@@ -109,9 +113,8 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         return getBean(claz, context);
     }
 
-    protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
+    protected PolicyRequirementRule getPolicyRule(final String fileName, final GenericApplicationContext context) throws ComponentInitializationException {
 
-        GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
         setTestContext(context);
@@ -121,6 +124,10 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
         policy.initialize();
         return policy.getPolicyRequirementRule();
+    }
+
+    protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
+        return getPolicyRule(fileName, new FilesystemGenericApplicationContext());
     }
 
     protected Matcher getMatcher(final String fileName, final GenericApplicationContext context) throws ComponentInitializationException {
@@ -143,4 +150,30 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         return getMatcher(fileName, context);
     }
 
+    protected Class rootCause(Throwable what) {
+        Throwable preLast = what;
+        do {
+            final Throwable next = preLast.getCause();
+            if (next == null) {
+                return preLast.getClass();
+            }
+            preLast = next;
+        } while (true);
+    }
+    
+    protected GenericApplicationContext contextWithPropertyValue(final String propValue) {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("prop", propValue);
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
+        placeholderConfig.setPropertySources(propertySources);
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+        return context;
+
+    }
 }
