@@ -147,9 +147,13 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newPassThru whether the definition passes unmatched values unchanged or suppresses them.
      */
-    public void setPassThru(final boolean newPassThru) {
+    public void setPassThru(final @Nullable Boolean newPassThru) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        if (newPassThru == null) {
+            log.warn("Attribute Definition {}: empty provided as passThru", getLogPrefix());
+            return;
+        }
         passThru = newPassThru;
     }
 

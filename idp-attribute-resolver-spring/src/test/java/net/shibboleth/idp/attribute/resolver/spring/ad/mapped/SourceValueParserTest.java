@@ -85,6 +85,22 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         }
     }
     
+    @Test public void emptyCase() {
+        SourceValue value = getSourceValue("resolver/sourceValueEmptyCase.xml");
+
+        assertTrue(value.isCaseSensitive());
+        assertTrue(value.isPartialMatch());
+        assertEquals(value.getValue(), "sourceValueAttributes1");
+    }
+
+    @Test public void emptyPartial() {
+        SourceValue value = getSourceValue("resolver/sourceValueEmptyPartial.xml");
+
+        assertFalse(value.isCaseSensitive());
+        assertFalse(value.isPartialMatch());
+    }
+
+    
     @SuppressWarnings("deprecation")
     @Test public void deprecated() {
         SourceValue value = getSourceValue("resolver/sourceValueDeprecated.xml");

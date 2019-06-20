@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -36,6 +39,9 @@ import com.google.common.base.MoreObjects;
  * Represents incoming attribute values and rules used for matching them. The value may include regular expressions.
  */
 public class SourceValue extends AbstractInitializableComponent {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SourceValue.class);
 
     /**
      * Value string. This may contain regular expressions.
@@ -72,14 +78,14 @@ public class SourceValue extends AbstractInitializableComponent {
     /**
      * Set whether case is sensitive.
      *
-     * @param theCaseSensitive whether case should be ignored when matching.  Null defaults to false;
+     * @param theCaseSensitive whether case should be ignored when matching.  Null taken as default;
      */
     public void setCaseSensitive( @Nullable final Boolean theCaseSensitive) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         if (null != theCaseSensitive) {
             caseSensitive = theCaseSensitive;
         } else {
-            caseSensitive = true;
+            log.warn("Empty value specified for case sensitive");
         }
     }
 

@@ -54,6 +54,15 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
         assertEquals(defn.getValueMaps().size(), 2);
         assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
     }
+    
+    @Test public void emptyPassThru() {
+        final MappedAttributeDefinition defn = getDefinition("resolver/empty.xml");
+
+        assertFalse(defn.isPassThru());
+        assertEquals(defn.getValueMaps().size(), 2);
+        assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
+    }
+
 
     @Test public void noDefault() {
         final MappedAttributeDefinition defn = getDefinition("resolver/mappedNoDefault.xml");

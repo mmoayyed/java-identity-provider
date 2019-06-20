@@ -67,9 +67,6 @@ public class SourceValueTest {
         value.setCaseSensitive(false);
         assertFalse(value.isCaseSensitive());
         assertTrue(value.isIgnoreCase());
-        value.setCaseSensitive(null);
-        assertTrue(value.isCaseSensitive());
-        assertFalse(value.isIgnoreCase());
     }
 
     public static SourceValue newSourceValue(final String value, final boolean ignoreCase, final boolean partialMatch)

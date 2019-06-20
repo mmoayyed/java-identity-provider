@@ -28,6 +28,7 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
@@ -60,27 +61,20 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
         final String value = config.getTextContent();
         builder.addPropertyValue("value", value);
 
-        String ignoreCase = null;
-        if (config.hasAttributeNS(null, "ignoreCase")) {
-            ignoreCase = StringSupport.trimOrNull(config.getAttributeNS(null, "ignoreCase"));
-        }
         String caseSensitive = null;
         if (config.hasAttributeNS(null, "caseSensitive")) {
             caseSensitive = StringSupport.trimOrNull(config.getAttributeNS(null, "caseSensitive"));
-        }
-        
-        if (caseSensitive != null) {
-            builder.addPropertyValue("caseSensitive", caseSensitive);
-            if (ignoreCase!=null) {
+            builder.addPropertyValue("caseSensitive", SpringSupport.getStringValueAsBoolean(caseSensitive));
+            if (config.hasAttributeNS(null, "ignoreCase")) {
                 log.warn("{}: Both \"caseSensitive\" and \"ignoreCase\" specified, only the former will be used",
                         parserContext.getReaderContext().getResource().getDescription());
             }
-        } else if (ignoreCase!=null) {
+        } else if (config.hasAttributeNS(null, "ignoreCase")) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT,
                     "ignoreCase",
                     parserContext.getReaderContext().getResource().getDescription(),
                     "caseSensitive");
-            builder.addPropertyValue("ignoreCase", ignoreCase);
+            builder.addPropertyValue("ignoreCase", StringSupport.trimOrNull(config.getAttributeNS(null, "ignoreCase")));
         }
 
         String partialMatch = null;
@@ -89,7 +83,7 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
             builder.addPropertyValue("partialMatch", partialMatch);
         }
 
-        log.debug("SourceValue value: {}, ignoreCase: {}, partialMatch: {}", value, ignoreCase, partialMatch);
+        log.debug("SourceValue value: {}, caseSensitive: {}, partialMatch: {}", value, caseSensitive, partialMatch);
 
     }
 

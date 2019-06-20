@@ -80,7 +80,7 @@ public class MappedAttributeDefinitionParser extends BaseResolverPluginParser {
                     log.info("{} Default value and passThru both specified", getLogPrefix(), getDefinitionId());
                 }
                 passThru = StringSupport.trimOrNull(defaultValueElement.getAttributeNS(null, "passThru"));
-                builder.addPropertyValue("passThru", passThru);
+                builder.addPropertyValue("passThru",  SpringSupport.getStringValueAsBoolean(passThru));
             }
         }
 
