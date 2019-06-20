@@ -123,6 +123,7 @@
                 <entry key="intercept/attribute-release" value="../system/flows/intercept/attribute-release-flow.xml" />
                 <entry key="intercept/attribute-release-query" value="../system/flows/intercept/attribute-release-query-flow.xml" />
                 <entry key="intercept/impersonate" value="../system/flows/intercept/impersonate-flow.xml" />
+                <entry key="intercept/external" value="../system/flows/intercept/external-flow.xml" />
         
                 <!-- Inbound security processing of SAML messages, implemented as intercept flows. -->
                 <entry key="security-policy.abstract" value="../system/flows/saml/security-abstract-flow.xml" />

@@ -33,6 +33,8 @@
                 <bean id="intercept/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow" />
                 
                 <bean id="intercept/impersonate" parent="shibboleth.InterceptFlow" />
+                
+                <bean id="intercept/external" parent="shibboleth.InterceptFlow" />
             </list>
         </property>
     </bean>
