@@ -142,9 +142,12 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @param flag flag to set
      */
-    public void setIgnoreUnmappedEntityAttributes(final boolean flag) {
+    public void setIgnoreUnmappedEntityAttributes(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        if (null == flag) {
+            log.warn("{} empty property passed to ignoreUnmappedEntityAttribute", getLogPrefix());
+            return;
+        }
         ignoreUnmappedEntityAttributes = flag;
     }
     

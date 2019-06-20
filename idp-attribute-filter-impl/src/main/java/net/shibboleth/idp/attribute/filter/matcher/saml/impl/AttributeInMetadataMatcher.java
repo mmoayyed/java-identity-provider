@@ -101,9 +101,12 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * 
      * @param flag whether optionally requested attributes should be matched
      */
-    public void setOnlyIfRequired(final boolean flag) {
+    public void setOnlyIfRequired(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        if (null == flag) {
+            log.warn("{} empty property passed to onlyIfRequired", getLogPrefix());
+            return;
+        }
         onlyIfRequired = flag;
     }
 
@@ -121,9 +124,12 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * 
      * @param flag whether to match if the metadata contains no AttributeConsumingService
      */
-    public void setMatchIfMetadataSilent(final boolean flag) {
+    public void setMatchIfMetadataSilent(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        if (null == flag) {
+            log.warn("{} empty property passed to matchIfMetadataSilent", getLogPrefix());
+            return;
+        }
         matchIfMetadataSilent = flag;
     }
 

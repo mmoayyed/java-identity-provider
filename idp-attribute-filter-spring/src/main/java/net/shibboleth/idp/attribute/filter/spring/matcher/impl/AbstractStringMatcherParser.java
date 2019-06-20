@@ -25,6 +25,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -52,8 +53,8 @@ public abstract class AbstractStringMatcherParser extends BaseAttributeValueMatc
                         parserContext.getReaderContext().getResource().getDescription());
             }
 
-            builder.addPropertyValue("caseSensitive", 
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "caseSensitive")));
+            builder.addPropertyValue("caseSensitive", SpringSupport.getStringValueAsBoolean(
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "caseSensitive"))));
         
         } else if (element.hasAttributeNS(null, "ignoreCase")) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT,

@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.FatalBeanException;
-import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -177,11 +176,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
     }
 
     @Test public void propertyEmptyCaseSensitive() throws ComponentInitializationException {
-        try {
-            propertyCaseSensitive("", false);
-        } catch (BeanCreationException e) {
-            assertEquals(IllegalArgumentException.class, rootCause(e));
-        }
+        propertyCaseSensitive("", false);
     }
 
 }

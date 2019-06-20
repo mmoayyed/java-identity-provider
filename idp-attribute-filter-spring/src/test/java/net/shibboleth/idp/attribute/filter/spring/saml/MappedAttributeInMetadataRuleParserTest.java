@@ -19,9 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
@@ -38,7 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilterParserTest {
 
-     public void test(final String propValue, final boolean result) throws ComponentInitializationException {
+     public void test(final String propValue, final boolean metadataSilentResult, final boolean onlyResult) throws ComponentInitializationException {
         GenericApplicationContext context = contextWithPropertyValue(propValue);
         setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");
@@ -47,16 +45,20 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
         rule.initialize();
         AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) rule.getMatcher();
 
-        assertEquals(matcher.getMatchIfMetadataSilent(), result);
+        assertEquals(matcher.getMatchIfMetadataSilent(), metadataSilentResult);
         assertTrue(matcher.getOnlyIfRequired());
         assertTrue(matcher.getId().endsWith(":PermitRule"));
 
         final PolicyFromMatcher policyRule = (PolicyFromMatcher) getBean(PolicyRequirementRule.class, context);
         matcher = (AttributeInMetadataMatcher) policyRule.getMatcher();
         assertTrue(matcher.getMatchIfMetadataSilent());
-        assertEquals(matcher.getOnlyIfRequired(), result);
+        assertEquals(matcher.getOnlyIfRequired(), onlyResult);
         assertTrue(matcher.getId().endsWith(":PRR"));
-    }
+     }
+
+     public void test(final String propValue, final boolean result) throws ComponentInitializationException {
+         test(propValue, result, result);
+     }
 
      @Test public void testTrue() throws ComponentInitializationException {
          test("true", true);
@@ -67,11 +69,6 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
      }
 
      @Test public void testEmpty() throws ComponentInitializationException {
-         try {
-             test("", false);
-             fail("should fail");
-         } catch (BeanCreationException e) {
-             assertEquals(IllegalArgumentException.class, rootCause(e));
-         }
+         test("", false, true);
      }
 }

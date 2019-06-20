@@ -38,5 +38,15 @@ public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttri
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");
         assertTrue(rule.getIgnoreUnmappedEntityAttributes());
     }
+    
+    @Test public void empty() throws ComponentInitializationException {
+        AttributeIssuerEntityAttributeExactPolicyRule rule =
+                (AttributeIssuerEntityAttributeExactPolicyRule) getPolicyRule("issuerEA3.xml");
+
+        assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
+        assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+        assertFalse(rule.getIgnoreUnmappedEntityAttributes());
+    }
+
 
 }

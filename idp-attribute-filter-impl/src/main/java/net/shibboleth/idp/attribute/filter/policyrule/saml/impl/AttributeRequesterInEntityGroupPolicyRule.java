@@ -81,12 +81,14 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
      * <p>Defaults to false.</p>
      * 
      * @param flag flag to set
-     * 
-     * @since 3.4.0
      */
-    public void setCheckAffiliations(final boolean flag) {
+    public void setCheckAffiliations(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        if (null == flag) {
+            log.warn("{} empty property passed to checkAffiliations", getLogPrefix());
+            return;
+        }
+
         checkAffiliations = flag;
     }
 

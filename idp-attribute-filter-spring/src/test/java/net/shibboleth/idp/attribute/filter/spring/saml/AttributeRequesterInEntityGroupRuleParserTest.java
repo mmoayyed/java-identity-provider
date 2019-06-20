@@ -18,9 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
-import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
@@ -41,12 +39,7 @@ public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttribut
     }
 
     @Test public void basic() throws ComponentInitializationException {
-        try {
-            testRule("", false);
-            fail("should fail");
-        } catch (BeanCreationException e) {
-            assertEquals(IllegalArgumentException.class, rootCause(e));
-        }
+        testRule("", false);
     }
 
     @Test public void egTrue() throws ComponentInitializationException {

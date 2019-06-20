@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
@@ -48,8 +49,8 @@ public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRulePar
 
         builder.addPropertyValue("entityGroup", StringSupport.trimOrNull(element.getAttributeNS(null, "groupID")));
         if (element.hasAttributeNS(null, "checkAffiliations")) {
-            builder.addPropertyValue("checkAffiliations",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "checkAffiliations")));
+            builder.addPropertyValue("checkAffiliations", SpringSupport.getStringValueAsBoolean(
+                            StringSupport.trimOrNull(element.getAttributeNS(null, "checkAffiliations"))));
         }
     }
 }

@@ -19,12 +19,13 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Base definition for all EntityAttribute Parsers.
@@ -44,8 +45,8 @@ public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRulePa
         }
         
         if (element.hasAttributeNS(null, "ignoreUnmappedEntityAttributes")) {
-            builder.addPropertyValue("ignoreUnmappedEntityAttributes",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "ignoreUnmappedEntityAttributes")));
+            builder.addPropertyValue("ignoreUnmappedEntityAttributes", SpringSupport.getStringValueAsBoolean(
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "ignoreUnmappedEntityAttributes"))));
         }
     }
 }

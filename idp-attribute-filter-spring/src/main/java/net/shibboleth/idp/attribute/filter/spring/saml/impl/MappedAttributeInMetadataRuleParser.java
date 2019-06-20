@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
@@ -57,13 +58,13 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
         super.doParse(config, builder);
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
-            builder.addPropertyValue("onlyIfRequired",
-                    StringSupport.trimOrNull(config.getAttributeNS(null, "onlyIfRequired")));
+            builder.addPropertyValue("onlyIfRequired", SpringSupport.getStringValueAsBoolean(
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "onlyIfRequired"))));
         }
 
         if (config.hasAttributeNS(null, "matchIfMetadataSilent")) {
-            builder.addPropertyValue("matchIfMetadataSilent",
-                    StringSupport.trimOrNull(config.getAttributeNS(null, "matchIfMetadataSilent")));
+            builder.addPropertyValue("matchIfMetadataSilent", SpringSupport.getStringValueAsBoolean(
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "matchIfMetadataSilent"))));
         }
         
         if (config.hasAttributeNS(null, "objectStrategyRef")) {
