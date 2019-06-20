@@ -24,7 +24,7 @@
             <element ref="resolver:AttributeDefinition"/>
             <element ref="resolver:DataConnector"/>
         </choice>
-        <attribute name="id" type="string">
+        <attribute name="id" type="resolver:string">
             <annotation>
                 <documentation>A unique identifier for this Resolver.
                 </documentation>
@@ -52,7 +52,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
-                <attribute name="dependencyOnly" type="string">
+                <attribute name="dependencyOnly" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag that indicates whether this attribute definition is
@@ -88,8 +88,8 @@
 	            </annotation>
             </element>
         </sequence>
-        <attribute name="name" type="string"/>
-        <attribute name="encodeType" type="string">
+        <attribute name="name" type="resolver:string"/>
+        <attribute name="encodeType" type="resolver:string">
             <annotation>
                 <documentation>
                     A boolean indicating whether the encoding should include type information. This is
@@ -97,7 +97,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="activationConditionRef" type="string">
+        <attribute name="activationConditionRef" type="resolver:string">
             <annotation>
                 <documentation>
                     A reference to a Predicate which controls whether this encoder will run
@@ -105,7 +105,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="relyingParties" type="string">
+        <attribute name="relyingParties" type="resolver:string">
             <annotation>
                 <documentation>
                     A (space separated) list of entities for which this plugin is to be active
@@ -134,22 +134,22 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
-                <attribute name="noRetryDelay" type="string">
+                <attribute name="noRetryDelay" type="resolver:string">
                     <annotation>
                         <documentation>Time to bypass connector after a failure before trying it again.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="springResources" type="string">
+                <attribute name="springResources" type="resolver:string">
                     <annotation>
                         <documentation>Locations of Spring resource configurations.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="springResourcesRef" type="string">
+                <attribute name="springResourcesRef" type="resolver:string">
                     <annotation>
                         <documentation>Bean Name of locations of Spring resource configurations.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="factoryPostProcessorsRef" type="string">
+                <attribute name="factoryPostProcessorsRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Bean Name of locations of bean factory post processors resource configurations.
@@ -157,17 +157,17 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="postProcessorsRef" type="string">
+                <attribute name="postProcessorsRef" type="resolver:string">
                     <annotation>
                         <documentation>Bean Name of a list of bean post processors.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="exportAllAttributes" type="string">
+                <attribute name="exportAllAttributes" type="resolver:string">
                     <annotation>
                         <documentation>Whether all attributes from this data connected are to be exported by the resolution process.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="exportAttributes" type="string">
+                <attribute name="exportAttributes" type="resolver:string">
                     <annotation>
                         <documentation>A list of attribute names to be exported by the resolution process from this data connector.</documentation>
                     </annotation>
@@ -183,12 +183,12 @@
                 connectors and attribute definitions
             </documentation>
         </annotation>
-        <attribute name="id" type="string" use="required">
+        <attribute name="id" type="resolver:string" use="required">
             <annotation>
                 <documentation>A unique identifier for this definition.</documentation>
             </annotation>
         </attribute>
-        <attribute name="activationConditionRef" type="string">
+        <attribute name="activationConditionRef" type="resolver:string">
             <annotation>
                 <documentation>
                     A reference to a predicate to decide whether this plugin is applicable
@@ -196,7 +196,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="relyingParties" type="string">
+        <attribute name="relyingParties" type="resolver:string">
             <annotation>
                 <documentation>
                     A (space separated) list of entities for which this plugin is to be active
@@ -204,14 +204,14 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="profileContextStrategyRef" type="string">
+        <attribute name="profileContextStrategyRef" type="resolver:string">
             <annotation>
                 <documentation>
                     A reference to a function to locate the profile context
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="propagateResolutionExceptions" type="string">
+        <attribute name="propagateResolutionExceptions" type="resolver:string">
             <annotation>
                 <documentation>
                     Whether to ripple errors produced by the plugin out to the resolver (default is true).
@@ -243,8 +243,8 @@
         <complexType>
             <complexContent>
                 <extension base="resolver:PluginDependencyType">
-                    <attribute name="allAttributes" type="string"/>
-                    <attribute name="attributeNames" type="string"/>
+                    <attribute name="allAttributes" type="resolver:string"/>
+                    <attribute name="attributeNames" type="resolver:string"/>
                 </extension>
             </complexContent>
         </complexType>
@@ -260,7 +260,7 @@
         <annotation>
             <documentation>An (abstract) type that represents a reference to another plugin</documentation>
         </annotation>
-        <attribute name="ref" type="string" use="required"/>
+        <attribute name="ref" type="resolver:string" use="required"/>
     </complexType>
 
     <complexType name="LocalizedStringType">
@@ -280,7 +280,7 @@
             </documentation>
         </annotation>
         <sequence>
-            <element name="ReturnValue" type="string">
+            <element name="ReturnValue" type="resolver:string">
                 <annotation>
                     <documentation>The value to be returned from this value map.</documentation>
                 </annotation>
@@ -292,7 +292,7 @@
                 <complexType>
                     <simpleContent>
                         <extension base="string">
-                            <attribute name="ignoreCase" type="string">
+                            <attribute name="ignoreCase" type="resolver:string">
                                 <annotation>
                                     <documentation>
                                     If true, value matching will be case-insensitive.
@@ -301,12 +301,12 @@
                                     </documentation>
                                 </annotation>
                             </attribute>
-                            <attribute name="caseSensitive" type="string">
+                            <attribute name="caseSensitive" type="resolver:string">
                                 <annotation>
                                     <documentation>If true, value matching will be case-sensitive.</documentation>
                                 </annotation>
                             </attribute>
-                            <attribute name="partialMatch" type="string">
+                            <attribute name="partialMatch" type="resolver:string">
                                 <annotation>
                                     <documentation>
                                         If true, the SourceValue may match only a substring of the incoming value. By
@@ -332,7 +332,7 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="attributeValuesFunctionRef" type="string" use="required">
+                <attribute name="attributeValuesFunctionRef" type="resolver:string" use="required">
                     <annotation>
                         <documentation>The Function to generate the Attribute Values given a PRC</documentation>
                     </annotation>
@@ -368,7 +368,7 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="passThru" type="string">
+                                    <attribute name="passThru" type="resolver:string">
                                         <annotation>
                                             <documentation>
                                                 If true, the source value is passed thru unmodified. If passThru is
@@ -402,7 +402,7 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="scopeDelimiter" type="string">
+                <attribute name="scopeDelimiter" type="resolver:string">
                     <annotation>
                         <documentation>Delimiter between the value and scope.</documentation>
                     </annotation>
@@ -439,12 +439,12 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="regex" type="string" use="required">
+                <attribute name="regex" type="resolver:string" use="required">
                     <annotation>
                         <documentation>The regular expression used to split a value.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caseSensitive" type="string">
+                <attribute name="caseSensitive" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating the case sensitivity of the regular expression.
@@ -468,12 +468,12 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="nameIdFormat" type="string">
+                <attribute name="nameIdFormat" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 1 NameFormat of the NameID.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="nameIdQualifier" type="string" use="optional">
+                <attribute name="nameIdQualifier" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 1 NameQualifier of the NameID.</documentation>
                     </annotation>
@@ -495,17 +495,17 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="nameIdFormat" type="string">
+                <attribute name="nameIdFormat" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="nameIdQualifier" type="string" use="optional">
+                <attribute name="nameIdQualifier" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="nameIdSPQualifier" type="string" use="optional">
+                <attribute name="nameIdSPQualifier" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 2 SPNameQualifier of the NameID.</documentation>
                     </annotation>
@@ -527,7 +527,7 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="scope" type="string" use="required">
+                <attribute name="scope" type="resolver:string" use="required">
                     <annotation>
                         <documentation>Value to use for scoping the attribute.</documentation>
                     </annotation>
@@ -555,12 +555,12 @@
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
-                    <element name="Script" type="string">
+                    <element name="Script" type="resolver:string">
                         <annotation>
                             <documentation>The script to evaluate to construct the attribute.</documentation>
                         </annotation>
                     </element>
-                    <element name="ScriptFile" type="string">
+                    <element name="ScriptFile" type="resolver:string">
                         <annotation>
                             <documentation>
                                 The filesystem path to the script to evaluate to construct the attribute.
@@ -568,7 +568,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="language" type="string">
+                <attribute name="language" type="resolver:string">
                     <annotation>
                         <documentation>
                             The JSR-233 name for the scripting language that will be used. By default "javascript" is
@@ -576,7 +576,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="customObjectRef" type="string">
+                <attribute name="customObjectRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             The name of a bean defined somewhere else which will be injected into the script as an
@@ -616,7 +616,7 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="attributeValuesFunctionRef" type="string">
+                <attribute name="attributeValuesFunctionRef" type="resolver:string">
                     <annotation>
                         <documentation>
 	                        Provides a plug in point to allow general extraction of values from Principals.
@@ -625,7 +625,7 @@
                     </annotation>
                 </attribute>
 
-                <attribute name="principalAttributeName" type="string">
+                <attribute name="principalAttributeName" type="resolver:string">
                     <annotation>
                         <documentation>
 	                        The id of the IdPAttribute contained within a IdPAttributePrincipal to look for.
@@ -654,7 +654,7 @@
                     <element name="DisplayName" type="resolver:LocalizedStringType"/>
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
-                    <element name="Template" type="string">
+                    <element name="Template" type="resolver:string">
                         <annotation>
                             <documentation>
                                 Template specified in the Velocity Template Language used to construct attribute values.
@@ -662,7 +662,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="velocityEngine" type="string">
+                <attribute name="velocityEngine" type="resolver:string">
                     <annotation>
                         <documentation>Name of the velocity engine defined within the application.</documentation>
                     </annotation>
@@ -684,28 +684,28 @@
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
                 </choice>
-                <attribute name="generatedAttributeID" type="string">
+                <attribute name="generatedAttributeID" type="resolver:string">
                     <annotation>
                         <documentation>
                             The name of the attribute produced by this data connector.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="salt" type="string" use="required">
+                <attribute name="salt" type="resolver:string" use="required">
                     <annotation>
                         <documentation>
                             A salt, of at least 16 bytes, used in the computed ID.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="algorithm" type="string">
+                <attribute name="algorithm" type="resolver:string">
                     <annotation>
                         <documentation>
                             The JCE digest algorithm to use, defaults to SHA-1.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encoding" type="string">
+                <attribute name="encoding" type="resolver:string">
                     <annotation>
                         <documentation>
                             An encoding type to apply after the digest, defaults to BASE64 but should
@@ -737,14 +737,14 @@
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
-                    <element name="FilterTemplate" type="string">
+                    <element name="FilterTemplate" type="resolver:string">
                         <annotation>
                             <documentation>
                                 A template used to construct the LDAP filter used to query the directory.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="ReturnAttributes" type="string" minOccurs="0">
+                    <element name="ReturnAttributes" type="resolver:string" minOccurs="0">
                         <annotation>
                             <documentation>
                                 A space separated list of attributes that should be returned from the query.
@@ -779,7 +779,7 @@
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
                     <element name="ResultCacheBean" type="string"/>
                 </choice>
-                <attribute name="ldapURL" type="string">
+                <attribute name="ldapURL" type="resolver:string">
                     <annotation>
                         <documentation>
                         The URL to the LDAP server.
@@ -797,19 +797,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="baseDN" type="string">
+                <attribute name="baseDN" type="resolver:string">
                     <annotation>
                         <documentation>
                             The base DN from which attribute search filtering occurs
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="principal" type="string">
+                <attribute name="principal" type="resolver:string">
                     <annotation>
                         <documentation>The DN for the principal connecting to the LDAP directory.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="principalCredential" type="string">
+                <attribute name="principalCredential" type="resolver:string">
                     <annotation>
                         <documentation>
                             The credential for the principal connecting to the LDAP directory.
@@ -832,7 +832,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="useStartTLS" type="string">
+                <attribute name="useStartTLS" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether startTLS should be used when connecting to the LDAP.
@@ -840,7 +840,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchTimeLimit" type="string">
+                <attribute name="searchTimeLimit" type="resolver:string">
                     <annotation>
                         <documentation>
                             The maximum amount of time to wait for search results. If this limit is
@@ -849,7 +849,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectTimeout" type="string">
+                <attribute name="connectTimeout" type="resolver:string">
                     <annotation>
                         <documentation>
                             The maximum amount of time to wait for connections to open. If this limit is
@@ -858,7 +858,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="responseTimeout" type="string">
+                <attribute name="responseTimeout" type="resolver:string">
                     <annotation>
                         <documentation>
                             The maximum amount of time to wait for operation responses. If this limit is
@@ -867,7 +867,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxResultSize" type="string">
+                <attribute name="maxResultSize" type="resolver:string">
                     <annotation>
                         <documentation>
                             The maximum number of results that may be returned from a query.
@@ -875,7 +875,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="noResultIsError" type="string">
+                <attribute name="noResultIsError" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a query returning no results should be considered an error. If
@@ -885,7 +885,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="multipleResultsIsError" type="string">
+                <attribute name="multipleResultsIsError" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a query returning more than one result should be considered an error. If
@@ -895,54 +895,54 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="lowercaseAttributeNames" type="string">
+                <attribute name="lowercaseAttributeNames" type="resolver:string">
                     <annotation>
                         <documentation>
                             Whether to lowercase LDAP attribute names used as IDs for shibboleth attributes
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="templateEngine" type="string">
+                <attribute name="templateEngine" type="resolver:string">
                     <annotation>
                         <documentation>Name of the template engine defined within the application.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="executableSearchBuilderRef" type="string">
+                <attribute name="executableSearchBuilderRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the ExecutableSearchBuilder implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="mappingStrategyRef" type="string">
+                <attribute name="mappingStrategyRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the MappingStrategy implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="validatorRef" type="string">
+                <attribute name="validatorRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the Validator implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="trustFile" type="string">
+                <attribute name="trustFile" type="resolver:string">
                     <annotation>
                         <documentation>
                             Path to a file with the X.509 trust information to use when connecting to the directory over LDAPS or startTLS
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="authCert" type="string">
+                <attribute name="authCert" type="resolver:string">
                     <annotation>
                         <documentation>
                             Path to a file with the X.509 trust client authentication certificate to use when connecting to the directory over LDAPS or startTLS
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="authKey" type="string">
+                <attribute name="authKey" type="resolver:string">
                     <annotation>
                         <documentation>
                             Path to a file with the X.509 trust client authentication key to use when connecting to the directory over LDAPS or startTLS
@@ -974,14 +974,14 @@
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
                 </choice>
-                <attribute name="pairwiseIdStoreRef" type="string" use="required">
+                <attribute name="pairwiseIdStoreRef" type="resolver:string" use="required">
                     <annotation>
                         <documentation>
                             Bean name of the PairwiseIdStore to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="generatedAttributeID" type="string">
+                <attribute name="generatedAttributeID" type="resolver:string">
                     <annotation>
                         <documentation>
                             The name of the attribute produced by this data connector.
@@ -1027,7 +1027,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="QueryTemplate" type="string"  minOccurs="0">
+                    <element name="QueryTemplate" type="resolver:string"  minOccurs="0">
                         <annotation>
                             <documentation>
                                 A template that will be used to create the SQL query thats pulls information from the
@@ -1037,16 +1037,16 @@
                     </element>
                     <element name="Column" type="resolver:ColumnType"/>
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
-                    <element name="ResultCacheBean" type="string"/>
+                    <element name="ResultCacheBean" type="resolver:string"/>
                 </choice>
-                <attribute name="readOnlyConnection" type="string">
+                <attribute name="readOnlyConnection" type="resolver:string">
                     <annotation>
                         <documentation>
                             DEPRECATED and has no function.  Read Only connections are set in the JDBC RUL
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="queryTimeout" type="string">
+                <attribute name="queryTimeout" type="resolver:string">
                     <annotation>
                         <documentation>
                             Timeout for the queries made to the database.
@@ -1054,7 +1054,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="noResultIsError" type="string">
+                <attribute name="noResultIsError" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a query returning no results should be considered an error. If
@@ -1064,7 +1064,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="multipleResultsIsError" type="string">
+                <attribute name="multipleResultsIsError" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a query returning more than one result should be considered an error. If
@@ -1074,28 +1074,28 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="templateEngine" type="string">
+                <attribute name="templateEngine" type="resolver:string">
                     <annotation>
                         <documentation>
                             Name of the template engine defined within the application.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="executableSearchBuilderRef" type="string">
+                <attribute name="executableSearchBuilderRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the ExecutableSearchBuilder implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="mappingStrategyRef" type="string">
+                <attribute name="mappingStrategyRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the MappingStrategy implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="validatorRef" type="string">
+                <attribute name="validatorRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the Validator implementation to use.
@@ -1129,7 +1129,7 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="customObjectRef" type="string" />
+                                    <attribute name="customObjectRef" type="resolver:string" />
                                 </extension>
                             </simpleContent>
                         </complexType>
@@ -1143,14 +1143,14 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="MIMEType" type="string" />
-                                    <attribute name="charset" type="string" />
-					                <attribute name="customObjectRef" type="string" />
+                                    <attribute name="MIMEType" type="resolver:string" />
+                                    <attribute name="charset" type="resolver:string" />
+					                <attribute name="customObjectRef" type="resolver:string" />
                                 </extension>
                             </simpleContent>
                         </complexType>
                     </element>
-                    <element name="CacheKeyTemplate" type="string">
+                    <element name="CacheKeyTemplate" type="resolver:string">
                         <annotation>
                             <documentation>
                                 A template that will be used to create a key to the caching of the results.
@@ -1163,58 +1163,58 @@
                         </annotation>
                     </element>
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
-                    <element name="ResultCacheBean" type="string"/>
+                    <element name="ResultCacheBean" type="resolver:string"/>
                 </choice>
-                <attribute name="httpClientRef" type="string">
+                <attribute name="httpClientRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the HttpClient to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="httpClientSecurityParametersRef" type="string">
+                <attribute name="httpClientSecurityParametersRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the HttpClientSecurityParameters to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="serverCertificate" type="string">
+                <attribute name="serverCertificate" type="resolver:string">
                     <annotation>
                         <documentation>
                             Location of certificate to authenticate HTTP server
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="certificateAuthority" type="string">
+                <attribute name="certificateAuthority" type="resolver:string">
                     <annotation>
                         <documentation>
                             Location of CA to indirectly authenticate HTTP server
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="clientPrivateKey" type="string">
+                <attribute name="clientPrivateKey" type="resolver:string">
                     <annotation>
                         <documentation>
                             Location of private key to authenticate with via TLS
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="clientCertificate" type="string">
+                <attribute name="clientCertificate" type="resolver:string">
                     <annotation>
                         <documentation>
                             Location of client certificate to authenticate with via TLS
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="templateEngine" type="string">
+                <attribute name="templateEngine" type="resolver:string">
                     <annotation>
                         <documentation>
                             Name of the template engine defined within the application.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxLength" type="string">
+                <attribute name="maxLength" type="resolver:string">
                     <annotation>
                         <documentation>
                             Maximum size of response body to accept.
@@ -1241,28 +1241,28 @@
                         <list itemType="string"/>
                     </simpleType>
                 </attribute>
-                <attribute name="headerMapRef" type="string">
+                <attribute name="headerMapRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing a Map&lt;String,String&gt; of request headers to set.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="executableSearchBuilderRef" type="string">
+                <attribute name="executableSearchBuilderRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the ExecutableSearchBuilder implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="mappingStrategyRef" type="string">
+                <attribute name="mappingStrategyRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the MappingStrategy implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="validatorRef" type="string">
+                <attribute name="validatorRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the Validator implementation to use.
@@ -1286,12 +1286,12 @@
                     <element ref="resolver:InputAttributeDefinition"/>
                     <element ref="resolver:InputDataConnector"/>
                     <element ref="resolver:FailoverDataConnector"/>
-                    <element name="Script" type="string">
+                    <element name="Script" type="resolver:string">
                         <annotation>
                             <documentation>The script to evaluate to construct the attribute.</documentation>
                         </annotation>
                     </element>
-                    <element name="ScriptFile" type="string">
+                    <element name="ScriptFile" type="resolver:string">
                         <annotation>
                             <documentation>
                                 The filesystem path to the script to evaluate to construct the attribute.
@@ -1299,7 +1299,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="language" type="string">
+                <attribute name="language" type="resolver:string">
                     <annotation>
                         <documentation>
                             The JSR-233 name for the scripting language that will be used. By default "javascript" is
@@ -1307,7 +1307,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="customObjectRef" type="string">
+                <attribute name="customObjectRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             The name of a bean defined somewhere else which will be injected into the script as an
@@ -1339,7 +1339,7 @@
                         </annotation>
                         <complexType>
                             <sequence>
-                                <element name="Value" type="string" maxOccurs="unbounded">
+                                <element name="Value" type="resolver:string" maxOccurs="unbounded">
                                     <annotation>
                                         <documentation>
                                             A value of the attribute. If the value contains characters that would
@@ -1348,7 +1348,7 @@
                                     </annotation>
                                 </element>
                             </sequence>
-                            <attribute name="id" type="string" use="required">
+                            <attribute name="id" type="resolver:string" use="required">
                                 <annotation>
                                     <documentation>The ID of the attribute.</documentation>
                                 </annotation>
@@ -1381,7 +1381,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="BeanManagedConnection" type="string">
+                    <element name="BeanManagedConnection" type="resolver:string">
                         <annotation>
                             <documentation>
                                 A connection, or pool of connections, to the database configured in a Spring bean.
@@ -1389,7 +1389,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="queryTimeout" type="string">
+                <attribute name="queryTimeout" type="resolver:string">
                     <annotation>
                         <documentation>
                             Timeout for the queries made to the database.
@@ -1397,14 +1397,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="transactionRetries" type="string">
+                <attribute name="transactionRetries" type="resolver:string">
                     <annotation>
                         <documentation>
                             Number of retries if insert fails (defaults to 3).
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="failFast" type="string">
+                <attribute name="failFast" type="resolver:string">
                     <annotation>
                         <documentation>
                             Whether to fail if the store cannot be verified at startup (defaults to false).
@@ -1422,28 +1422,28 @@
                         <list itemType="string"/>
                     </simpleType>
                 </attribute>
-                <attribute name="generatedAttributeID" type="string">
+                <attribute name="generatedAttributeID" type="resolver:string">
                     <annotation>
                         <documentation>
                             The name of the attribute produced by this data connector.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="salt" type="string">
+                <attribute name="salt" type="resolver:string">
                     <annotation>
                         <documentation>
                             A salt, of at least 16 bytes, used in the computed ID.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="algorithm" type="string">
+                <attribute name="algorithm" type="resolver:string">
                     <annotation>
                         <documentation>
                             The JCE digest algorithm to use, defaults to SHA-1.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encoding" type="string">
+                <attribute name="encoding" type="resolver:string">
                     <annotation>
                         <documentation>
                             An encoding type to apply after the digest, defaults to BASE64 but should
@@ -1479,7 +1479,7 @@
                 <sequence>
                     <element ref="resolver:FailoverDataConnector" minOccurs="0" maxOccurs="1"/>
                 </sequence>
-                <attribute name="noResultIsError" type="string">
+                <attribute name="noResultIsError" type="resolver:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether an absence of any results will cause an error. If an error
@@ -1496,12 +1496,12 @@
     <!--  Support types for DataConnectors  -->
 
     <complexType name="ColumnType">
-        <attribute name="columnName" type="string" use="required">
+        <attribute name="columnName" type="resolver:string" use="required">
             <annotation>
                 <documentation>The name of the database column.</documentation>
             </annotation>
         </attribute>
-        <attribute name="attributeID" type="string">
+        <attribute name="attributeID" type="resolver:string">
             <annotation>
                 <documentation>The name of the attribute that data from this column should be added to.</documentation>
             </annotation>
@@ -1547,7 +1547,7 @@
     </simpleType>
 
     <complexType name="LdapPoolConfigType">
-        <attribute name="minPoolSize" type="string">
+        <attribute name="minPoolSize" type="resolver:string">
             <annotation>
                 <documentation>
                     The minimum number of ldap connections that should always be available in the pool.
@@ -1556,7 +1556,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="maxPoolSize" type="string">
+        <attribute name="maxPoolSize" type="resolver:string">
             <annotation>
                 <documentation>
                     The maximum number of ldap connections that should ever be available in the pool.
@@ -1566,7 +1566,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="blockWhenEmpty" type="string">
+        <attribute name="blockWhenEmpty" type="resolver:string">
             <annotation>
                 <documentation>
                     Whether the pool should block when maxPoolSize objects are in use.
@@ -1576,7 +1576,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="blockWaitTime" type="string">
+        <attribute name="blockWaitTime" type="resolver:string">
             <annotation>
                 <documentation>
                     Amount of time to block while waiting for a connection from the pool.  If no
@@ -1586,7 +1586,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="validatePeriodically" type="string">
+        <attribute name="validatePeriodically" type="resolver:string">
             <annotation>
                 <documentation>
                     Whether each ldap connection should be checked on a periodic basis.
@@ -1594,7 +1594,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="validateTimerPeriod" type="string">
+        <attribute name="validateTimerPeriod" type="resolver:string">
             <annotation>
                 <documentation>
                     Time that the periodic pool validation process should repeat.
@@ -1606,7 +1606,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="validateDN" type="string">
+        <attribute name="validateDN" type="resolver:string">
             <annotation>
                 <documentation>
                     Ldap compare DN to use for connection validation.
@@ -1615,7 +1615,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="validateFilter" type="string">
+        <attribute name="validateFilter" type="resolver:string">
             <annotation>
                 <documentation>
                     Ldap compare filter to use for connection validation.
@@ -1624,7 +1624,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="expirationTime" type="string">
+        <attribute name="expirationTime" type="resolver:string">
             <annotation>
                 <documentation>
                     Time in that an object in the pool should be considered stale and ready for removal.
@@ -1632,7 +1632,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="failFastInitialize" type="string">
+        <attribute name="failFastInitialize" type="resolver:string">
             <annotation>
                 <documentation>
                     A boolean flag indicating whether pool initialization should fail if configuration criteria is not met.
@@ -1643,14 +1643,14 @@
     </complexType>
 
     <complexType name="CacheConfigType">
-        <attribute name="cacheManagerRef" type="string">
+        <attribute name="cacheManagerRef" type="resolver:string">
         <annotation>
                 <documentation>
                     Name of the CacheManager bean that will manage the result cache.  This is not used.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="expireAfterAccess" type="string">
+        <attribute name="expireAfterAccess" type="resolver:string">
         <annotation>
                 <documentation>
                     Length of time a result will be cached after the last access.
@@ -1660,7 +1660,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="expireAfterWrite" type="string">
+        <attribute name="expireAfterWrite" type="resolver:string">
         <annotation>
                 <documentation>
                     Length of time a result will be cached from the time
@@ -1671,7 +1671,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="maximumCachedElements" type="string">
+        <attribute name="maximumCachedElements" type="resolver:string">
         <annotation>
                 <documentation>
                    Maximum number of results that will be held in cache.
@@ -1689,7 +1689,7 @@
     </element>
 
     <complexType name="ContainerManagedConnectionType">
-        <attribute name="resourceName" type="string" use="required">
+        <attribute name="resourceName" type="resolver:string" use="required">
             <annotation>
                 <documentation>The resource name the DataSource is bound to in the JNDI tree.</documentation>
             </annotation>
@@ -1697,12 +1697,12 @@
     </complexType>
 
     <complexType name="PropertyType">
-        <attribute name="name" type="string" use="required">
+        <attribute name="name" type="resolver:string" use="required">
             <annotation>
                 <documentation>The name of the property.</documentation>
             </annotation>
         </attribute>
-        <attribute name="value" type="string" use="required">
+        <attribute name="value" type="resolver:string" use="required">
             <annotation>
                 <documentation>The value of the property,</documentation>
             </annotation>
@@ -1719,14 +1719,14 @@
     </element>
 
     <complexType name="SimpleManagedConnectionType">
-        <attribute name="jdbcDriver" type="string" use="required">
+        <attribute name="jdbcDriver" type="resolver:string" use="required">
             <annotation>
                 <documentation>
                     This is the full qualified class name of the JDBC driver used to connect to the database.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="jdbcURL" type="string" use="required">
+        <attribute name="jdbcURL" type="resolver:string" use="required">
             <annotation>
                 <documentation>
                     The JDBC URL for the database. These are usually of the form
@@ -1734,7 +1734,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="jdbcUserName" type="string">
+        <attribute name="jdbcUserName" type="resolver:string">
             <annotation>
                 <documentation>The user name to use while connecting to the database.</documentation>
             </annotation>
@@ -1753,7 +1753,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string">
+                <attribute name="namespace" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -1768,7 +1768,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string">
+                <attribute name="namespace" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -1783,7 +1783,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string">
+                <attribute name="namespace" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -1798,12 +1798,12 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string">
+                <attribute name="nameFormat" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="string" use="optional">
+                <attribute name="friendlyName" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -1818,12 +1818,12 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string">
+                <attribute name="nameFormat" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="string" use="optional">
+                <attribute name="friendlyName" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -1838,12 +1838,12 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string">
+                <attribute name="nameFormat" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="string" use="optional">
+                <attribute name="friendlyName" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -1858,7 +1858,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeType" type="string" use="optional">
+                <attribute name="scopeType" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>
                             The type of scoping to use for the encoded attribute. Valid values are "inline" or
@@ -1866,7 +1866,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeDelimiter" type="string" use="optional">
+                <attribute name="scopeDelimiter" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>
                             If scopeType is "inline", this is the delimeter used between the attribute value and
@@ -1874,7 +1874,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeAttribute" type="string" use="optional">
+                <attribute name="scopeAttribute" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>
                             If scopeType is "attribute", this is the name of the name of the attribute used to carry the
@@ -1892,7 +1892,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseScopedAttributeEncoderType">
-                <attribute name="namespace" type="string">
+                <attribute name="namespace" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -1907,12 +1907,12 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseScopedAttributeEncoderType">
-                <attribute name="nameFormat" type="string">
+                <attribute name="nameFormat" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="string" use="optional">
+                <attribute name="friendlyName" type="resolver:string" use="optional">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -1930,12 +1930,12 @@
             </documentation>
         </annotation>
         <choice>
-            <element name="Script" type="string">
+            <element name="Script" type="resolver:string">
                 <annotation>
                     <documentation>The script to evaluate to construct the attribute.</documentation>
                 </annotation>
             </element>
-            <element name="ScriptFile" type="string">
+            <element name="ScriptFile" type="resolver:string">
                 <annotation>
                     <documentation>
                         Path of a local resource containing the script to evaluate to construct the attribute.
@@ -1943,7 +1943,7 @@
                 </annotation>
             </element>
         </choice>
-        <attribute name="language" type="string">
+        <attribute name="language" type="resolver:string">
             <annotation>
                 <documentation>
                     The JSR-233 name for the scripting language that will be used.
@@ -1951,7 +1951,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="customObjectRef" type="string">
+        <attribute name="customObjectRef" type="resolver:string">
             <annotation>
                 <documentation>
                     The name of a bean defined somewhere else which will be injected into the script as an
@@ -1960,5 +1960,11 @@
             </annotation>
         </attribute>
     </complexType>
+    
+    <simpleType name="string">
+        <restriction base="string">
+            <minLength value="1"/>
+        </restriction>
+    </simpleType>
 
 </schema>
