@@ -663,10 +663,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     if (columnName != null && attributeId != null) {
                         renamingMap.put(columnName, attributeId);
                     }
-
-                    if (AttributeSupport.hasAttribute(column, new QName("type"))) {
-                        log.warn("{} Column type attribute not supported for LDAP results", getLogPrefix());
-                    }
                 }
                 mapper.addPropertyValue("resultRenamingMap", renamingMap);
             }

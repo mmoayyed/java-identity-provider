@@ -1490,32 +1490,7 @@
                 <documentation>The name of the attribute that data from this column should be added to.</documentation>
             </annotation>
         </attribute>
-        <attribute name="type" type="resolver:ColumnDataType">
-            <annotation>
-                <documentation>The Java data type data in the column should be extracted as.</documentation>
-            </annotation>
-        </attribute>
     </complexType>
-
-    <simpleType name="ColumnDataType">
-        <restriction base="string">
-            <enumeration value="BigDecimal"/>
-            <enumeration value="Boolean"/>
-            <enumeration value="Byte"/>
-            <enumeration value="ByteArray"/>
-            <enumeration value="Date"/>
-            <enumeration value="Double"/>
-            <enumeration value="Float"/>
-            <enumeration value="Integer"/>
-            <enumeration value="Long"/>
-            <enumeration value="Object"/>
-            <enumeration value="Short"/>
-            <enumeration value="String"/>
-            <enumeration value="Time"/>
-            <enumeration value="Timestamp"/>
-            <enumeration value="URL"/>
-        </restriction>
-    </simpleType>
 
     <simpleType name="ConnectionStrategyType">
         <annotation>
