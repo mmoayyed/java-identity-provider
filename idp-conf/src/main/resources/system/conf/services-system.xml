@@ -177,7 +177,7 @@
         c:mdResolver-ref="shibboleth.MetadataResolver" />   
         
     <bean id="shibboleth.AccessControlService"
-        class="net.shibboleth.utilities.java.support.security.DelegatingAccessControlService"
+        class="net.shibboleth.utilities.java.support.security.impl.DelegatingAccessControlService"
         c:acService-ref="shibboleth.ReloadableAccessControlService" />
 
     <bean id="shibboleth.CASServiceRegistry"
