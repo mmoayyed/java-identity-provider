@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.Type4UUIDIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.Type4UUIDIdentifierGenerationStrategy;
 
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;

@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.Type4UUIDIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.Type4UUIDIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 import org.opensaml.core.xml.XMLObject;
