@@ -109,9 +109,9 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
             }
         }
         builder.addPropertyValue("attributeDependencies", 
-                SpringSupport.parseCustomElements(attributeDependencyElements, parserContext));
+                SpringSupport.parseCustomElements(attributeDependencyElements, parserContext, builder));
         builder.addPropertyValue("dataConnectorDependencies", 
-                SpringSupport.parseCustomElements(dataConnectorDependencyElements, parserContext));
+                SpringSupport.parseCustomElements(dataConnectorDependencyElements, parserContext, builder));
     }
 // Checkstyle: CyclomaticComplexity ON
     

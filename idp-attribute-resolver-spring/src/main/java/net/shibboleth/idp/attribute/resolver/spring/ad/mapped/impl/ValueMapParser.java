@@ -82,7 +82,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
         }
 
         final ManagedList<BeanDefinition> sourceValues =
-                SpringSupport.parseCustomElements(sourceValueElements, parserContext);
+                SpringSupport.parseCustomElements(sourceValueElements, parserContext, builder);
 
         log.debug("AttributeDefinition(ValueMap): return value: {}, {} source values ", returnValue,
                 sourceValues.size());

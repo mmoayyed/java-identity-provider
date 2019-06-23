@@ -24,6 +24,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
@@ -37,9 +38,10 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
         final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + ValueMapParserTest.class);
+        final MappedAttributeDefinition defn = getBean(ATTRIBUTE_FILE_PATH + "mapped/resolver/" + fileName,
+                MappedAttributeDefinition.class, context);
 
-        return getBean(ATTRIBUTE_FILE_PATH + "mapped/resolver/"  + fileName, ValueMap.class,
-                context);
+        return defn.getValueMaps().iterator().next();
     }
 
     @Test public void valueMap() {

@@ -352,7 +352,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                             getLogPrefix(), parserContext.getReaderContext().getResource().getDescription());
                 }
                 result.addPropertyValue("trustCredential",
-                        SpringSupport.parseCustomElements(trustElements, parserContext).get(0));
+                        SpringSupport.parseCustomElement(trustElements.get(0), parserContext, result, false));
             }
 
             final List<Element> authElements =
@@ -387,7 +387,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                             parserContext.getReaderContext().getResource().getDescription());
                 }
                 result.addPropertyValue("authCredential", SpringSupport
-                        .parseCustomElements(authElements, parserContext).get(0));
+                        .parseCustomElement(authElements.get(0), parserContext, result, false));
             }
 
             return result.getBeanDefinition();

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -90,7 +91,8 @@ public class MappedAttributeDefinitionParser extends BaseResolverPluginParser {
                     "Attribute Definition '" + getDefinitionId() + "' At least one ValueMap must be specified");
         }
 
-        final List<BeanDefinition> valueMaps = SpringSupport.parseCustomElements(valueMapElements, parserContext);
+        final ManagedList<BeanDefinition> valueMaps =
+                SpringSupport.parseCustomElements(valueMapElements, parserContext, builder);
 
         log.debug("{} passThru = {}, defaultValue = {}, {} value maps",
                 new Object[] {getLogPrefix(), passThru, defaultValue, valueMaps.size(),});

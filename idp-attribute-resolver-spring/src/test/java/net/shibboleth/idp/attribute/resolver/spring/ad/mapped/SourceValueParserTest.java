@@ -26,7 +26,9 @@ import static org.testng.Assert.fail;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -41,8 +43,12 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + SourceValueParserTest.class);
+        final MappedAttributeDefinition defn = getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName,
+                MappedAttributeDefinition.class, context);
 
-        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, SourceValue.class, context);
+        final ValueMap vm = defn.getValueMaps().iterator().next();
+
+        return vm.getSourceValues().iterator().next();
     }
 
     @Test public void simple() {

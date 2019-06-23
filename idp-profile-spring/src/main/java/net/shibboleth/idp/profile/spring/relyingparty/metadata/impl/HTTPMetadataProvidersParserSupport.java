@@ -122,7 +122,8 @@ public final class HTTPMetadataProvidersParserSupport {
                         AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
                 return null;
             }
-            builder.addPropertyValue("tLSTrustEngine", SpringSupport.parseCustomElement(trustEngine, parserContext));
+            builder.addPropertyValue("tLSTrustEngine", 
+                    SpringSupport.parseCustomElement(trustEngine, parserContext, builder));
         }
 
         return builder.getBeanDefinition();
