@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 import org.opensaml.security.httpclient.HttpClientSecurityConfiguration;
 import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;

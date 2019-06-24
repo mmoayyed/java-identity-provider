@@ -274,7 +274,7 @@
         p:storageService-ref="#{'%{idp.artifact.StorageService:shibboleth.StorageService}'.trim()}" />
 
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
-        class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
+        class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy" />
 
     <bean id="shibboleth.StorageBackedAccountLockoutManager" abstract="true"
             class="net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager"

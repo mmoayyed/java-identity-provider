@@ -44,7 +44,7 @@
           p:secure="false" />
 
     <bean id="shibboleth.SessionIDGenerator"
-          class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
+          class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy"
           c:identifierSize="32" />
 
     <bean id="shibboleth.SessionManager"
