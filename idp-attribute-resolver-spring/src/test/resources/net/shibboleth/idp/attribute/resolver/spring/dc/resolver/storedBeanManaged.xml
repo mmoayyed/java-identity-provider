@@ -8,6 +8,7 @@
     retryableErrors="25000 25001"
 	generatedAttributeID="jenny"
 	salt="abcdefghijklmnopqrst"
+	exceptionMapRef="computedIdExceptions"
 	
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 

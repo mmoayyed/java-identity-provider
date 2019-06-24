@@ -713,6 +713,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="exceptionMapRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Spring bean reference to a map of overrides that alter salt or suppress generation
+                            for particular users/services.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -1440,6 +1448,14 @@
                         <documentation>
                             An encoding type to apply after the digest, defaults to BASE64 but should
                             be set to BASE32.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="exceptionMapRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Spring bean reference to a map of overrides that alter salt or suppress generation
+                            for particular users/services.
                         </documentation>
                     </annotation>
                 </attribute>
