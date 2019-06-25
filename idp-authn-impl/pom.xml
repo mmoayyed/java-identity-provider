@@ -163,6 +163,12 @@
             <artifactId>DuoWeb</artifactId>
             <version>${duoweb.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>${cas-client.version}</version>
+        </dependency>        
+        
 
         <!-- DEPRECATED - remove in V5 -->
         <dependency>
