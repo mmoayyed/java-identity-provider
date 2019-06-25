@@ -21,6 +21,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,13 +35,10 @@ import java.security.Principal;
 public class Service implements Principal {
 
     /** Service URL. */
-    @Nonnull
-    @NotEmpty
-    private final String serviceURL;
+    @Nonnull @NotEmpty private final String serviceURL;
 
     /** Group to which service belongs. */
-    @Nullable
-    private final String serviceGroup;
+    @Nullable private final String serviceGroup;
 
     /** Proxy authorization flag. */
     private final boolean authorizedToProxy;
@@ -48,10 +46,11 @@ public class Service implements Principal {
     /** Indicates whether a service wants to receive SLO messages. */
     private final boolean singleLogoutParticipant;
 
-    /** Source of service metadata derived from a SAML entity. */
-    @Nullable
-    private transient EntityDescriptor entityDescriptor;
+    /** Source of service metadata based on SAML metadata. */
+    @Nullable private transient EntityDescriptor entityDescriptor;
 
+    /** Role for service in SAML metadata. */
+    @Nullable private transient RoleDescriptor roleDescriptor;
 
     /**
      * Creates a new service that does not participate in SLO.
@@ -127,8 +126,7 @@ public class Service implements Principal {
      *
      * @return Entity descriptor for service defined in SAML metadata, otherwise null.
      */
-    @Nullable
-    public EntityDescriptor getEntityDescriptor() {
+    @Nullable public EntityDescriptor getEntityDescriptor() {
         return entityDescriptor;
     }
 
@@ -138,7 +136,29 @@ public class Service implements Principal {
      * @param ed SAML entity descriptor.
      */
     public void setEntityDescriptor(@Nullable final EntityDescriptor ed) {
-        this.entityDescriptor = ed;
+        entityDescriptor = ed;
+    }
+    
+    /**
+     * Gets the role in the SAML metadata.
+     * 
+     * @return the role
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public RoleDescriptor getRoleDescriptor() {
+        return roleDescriptor;
+    }
+    
+    /**
+     * Sets the role in the SAML metadata.
+     * 
+     * @param role the role
+     * 
+     * @since 4.0.0
+     */
+    public void setRoleDescriptor(@Nullable final RoleDescriptor role) {
+        roleDescriptor = role;
     }
 
     @Override

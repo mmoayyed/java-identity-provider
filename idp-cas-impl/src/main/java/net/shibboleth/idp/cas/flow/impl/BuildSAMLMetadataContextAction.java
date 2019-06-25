@@ -45,7 +45,7 @@ public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
-        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
+        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
         if (rpCtx == null) {
             throw new IllegalStateException("RelyingPartyContext not found");
         }
@@ -55,6 +55,7 @@ public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
                 ? service.getEntityDescriptor()
                 : new ServiceEntityDescriptor(service);
         mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(service.getRoleDescriptor());
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
 
         return null;

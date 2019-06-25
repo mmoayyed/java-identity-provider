@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.Lists;
 import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
@@ -38,10 +36,12 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.StartsWithLocationCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
@@ -97,7 +97,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
 
     /** SAML metadata resolver. */
     @Nonnull
-    private final MetadataResolver metadataResolver;
+    private final RoleDescriptorResolver metadataResolver;
 
 
     /**
@@ -105,7 +105,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
      *
      * @param resolver SAML metadata resolver.
      */
-    public MetadataServiceRegistry(@Nonnull @ParameterName(name="resolver") final MetadataResolver resolver) {
+    public MetadataServiceRegistry(@Nonnull @ParameterName(name="resolver") final RoleDescriptorResolver resolver) {
         metadataResolver = resolver;
     }
 
@@ -113,11 +113,11 @@ public class MetadataServiceRegistry implements ServiceRegistry {
     @Override
     public Service lookup(final @Nonnull String serviceURL) {
         try {
-            final List<EntityDescriptor> entities = Lists.newArrayList(metadataResolver.resolve(criteria(serviceURL)));
-            if (entities.size() > 1) {
-                throw new ResolverException("Multiple results found");
-            } else if (entities.size() == 1) {
-                return create(serviceURL, entities.get(0));
+            final RoleDescriptor role = metadataResolver.resolveSingle(criteria(serviceURL));
+            if (role instanceof SPSSODescriptor) {
+                return create(serviceURL, (SPSSODescriptor) role);
+            } else {
+                throw new ResolverException("No compatible role resolved");
             }
         } catch (final ResolverException e) {
             log.warn("Metadata resolution failed for {}", serviceURL, e);
@@ -145,53 +145,56 @@ public class MetadataServiceRegistry implements ServiceRegistry {
     }
 
     /**
-     * Create a CAS {@link Service} from an input service URL and the matching {@link EntityDescriptor} that was
+     * Create a CAS {@link Service} from an input service URL and the matching {@link RoleDescriptor} that was
      * resolved from the metadata source.
      *
      * @param serviceURL CAS service URL.
-     * @param entity Entity resolved from metadata.
+     * @param role resolved from metadata.
      *
      * @return CAS service created from inputs.
      */
     @Nonnull
-    protected Service create(@Nonnull final String serviceURL, @Nonnull final EntityDescriptor entity) {
+    protected Service create(@Nonnull final String serviceURL, @Nonnull final SPSSODescriptor role) {
+        
+        final EntityDescriptor entity = (EntityDescriptor) role.getParent();
         final XMLObject parent = entity.getParent();
+                
         final Service service = new Service(
                 serviceURL,
                 parent instanceof EntitiesDescriptor ? ((EntitiesDescriptor) parent).getName() : "unknown",
-                isAuthorizedToProxy(entity),
-                hasSingleLogoutService(entity));
+                isAuthorizedToProxy(role),
+                hasSingleLogoutService(role));
+        service.setRoleDescriptor(role);
         service.setEntityDescriptor(entity);
         return service;
     }
 
-    /** Does the {@link EntityDescriptor} have a {@link MetadataServiceRegistry#PROXY_BINDING} acs. 
-     * @param entity  what to look at
-     * @return Whether is is authorized to proxy
+    /**
+     * Checks if the {@link EntityDescriptor} have a {@link MetadataServiceRegistry#PROXY_BINDING} acs.
+     *  
+     * @param role  what to look at
+     * 
+     * @return whether is is authorized to proxy
      */
-    private boolean isAuthorizedToProxy(@Nonnull final EntityDescriptor entity) {
-        final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
-        if (descriptor != null) {
-            for (final AssertionConsumerService acs : descriptor.getAssertionConsumerServices()) {
-                if (PROXY_BINDING.equals(acs.getBinding())) {
-                    return true;
-                }
+    private boolean isAuthorizedToProxy(@Nonnull final SPSSODescriptor role) {
+        for (final AssertionConsumerService acs : role.getAssertionConsumerServices()) {
+            if (PROXY_BINDING.equals(acs.getBinding())) {
+                return true;
             }
         }
         return false;
     }
 
-    /** Does the {@link EntityDescriptor} has an SLO endpoint.
-     * @param entity what to look at
+    /** Checks if the {@link EntityDescriptor} has an SLO endpoint.
+     * 
+     * @param role what to look at
+     * 
      * @return whether it has an SLO endpoint
      */
-    private boolean hasSingleLogoutService(@Nonnull final EntityDescriptor entity) {
-        final SPSSODescriptor descriptor = entity.getSPSSODescriptor(AbstractProtocolConfiguration.PROTOCOL_URI);
-        if (descriptor != null) {
-            for (final Endpoint endpoint : descriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
-                if (LOGOUT_BINDING.equals(endpoint.getBinding()) && LOGOUT_LOCATION.equals(endpoint.getLocation())) {
-                    return true;
-                }
+    private boolean hasSingleLogoutService(@Nonnull final SPSSODescriptor role) {
+        for (final Endpoint endpoint : role.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME)) {
+            if (LOGOUT_BINDING.equals(endpoint.getBinding()) && LOGOUT_LOCATION.equals(endpoint.getLocation())) {
+                return true;
             }
         }
         return false;

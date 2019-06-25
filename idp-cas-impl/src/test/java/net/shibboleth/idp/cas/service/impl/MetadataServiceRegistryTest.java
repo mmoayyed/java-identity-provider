@@ -23,10 +23,12 @@ import java.util.Timer;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.metadata.resolver.index.MetadataIndex;
 import org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex;
@@ -93,8 +95,10 @@ public class MetadataServiceRegistryTest {
     }
 
     @Test(dataProvider = "parameters")
-    public void testLookup(final String serviceURL, final Service expected) {
-        final MetadataServiceRegistry registry = new MetadataServiceRegistry(metadataResolver);
+    public void testLookup(final String serviceURL, final Service expected) throws ComponentInitializationException {
+        final PredicateRoleDescriptorResolver wrapper = new PredicateRoleDescriptorResolver(metadataResolver);
+        wrapper.initialize();
+        final MetadataServiceRegistry registry = new MetadataServiceRegistry(wrapper);
         final Service actual = registry.lookup(serviceURL);
         if (expected == null) {
             assertNull(actual);

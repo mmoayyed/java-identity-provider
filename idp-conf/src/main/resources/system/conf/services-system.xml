@@ -186,6 +186,6 @@
 
     <bean id="shibboleth.CASMetadataServiceRegistry"
           class="net.shibboleth.idp.cas.service.impl.MetadataServiceRegistry"
-          c:resolver-ref="shibboleth.MetadataResolver" />
+          c:resolver-ref="shibboleth.RoleDescriptorResolver" />
           
  </beans>
