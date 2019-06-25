@@ -117,7 +117,8 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                         .getDescription());
                 throw new BeanCreationException("Too many <TrustEngine>s");
             }
-            final ManagedList<BeanDefinition> engines = SpringSupport.parseCustomElements(trustEngines, parserContext);
+            final ManagedList<BeanDefinition> engines = 
+                    SpringSupport.parseCustomElements(trustEngines, parserContext, builder);
 
             builder.addConstructorArgValue(engines.get(0));
         } else {

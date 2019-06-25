@@ -183,12 +183,14 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         if (null != filters) {
             if (filters.size() == 1) {
                 // Install directly.
-                builder.addPropertyValue("metadataFilter", SpringSupport.parseCustomElements(filters, parserContext));
+                builder.addPropertyValue("metadataFilter",
+                        SpringSupport.parseCustomElement(filters.get(0), parserContext, builder, false));
             } else if (filters.size() > 1) {
                 // Wrap in a chaining filter.
                 final BeanDefinitionBuilder chainBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(MetadataFilterChain.class);
-                chainBuilder.addPropertyValue("filters", SpringSupport.parseCustomElements(filters, parserContext));
+                chainBuilder.addPropertyValue("filters", SpringSupport.parseCustomElements(filters, parserContext,
+                        chainBuilder));
                 builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
             }
         }

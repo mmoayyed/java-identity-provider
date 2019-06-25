@@ -49,7 +49,7 @@ public abstract class AbstractChainingParser extends AbstractTrustEngineParser {
         
         final List<BeanMetadataElement> allChildren = new ManagedList<>(childEngines.size()+ childEngineRefs.size());
         
-        allChildren.addAll(SpringSupport.parseCustomElements(childEngines, parserContext));
+        allChildren.addAll(SpringSupport.parseCustomElements(childEngines, parserContext, builder));
         
         for (final Element ref:childEngineRefs) {
             final String reference = StringSupport.trimOrNull(ref.getAttributeNS(null, "ref"));

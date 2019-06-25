@@ -56,7 +56,7 @@ public class StaticExplicitKeyParser extends AbstractTrustEngineParser {
 
         final BeanDefinitionBuilder resolver =
                 BeanDefinitionBuilder.genericBeanDefinition(StaticCredentialResolver.class);
-        resolver.addConstructorArgValue(SpringSupport.parseCustomElements(credentials, parserContext));
+        resolver.addConstructorArgValue(SpringSupport.parseCustomElements(credentials, parserContext, resolver));
 
         builder.addConstructorArgValue(resolver.getBeanDefinition());
     }

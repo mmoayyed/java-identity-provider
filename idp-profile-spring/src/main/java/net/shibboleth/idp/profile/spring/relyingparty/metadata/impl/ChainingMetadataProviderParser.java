@@ -46,6 +46,7 @@ public class ChainingMetadataProviderParser extends AbstractMetadataProviderPars
         final List<Element> childProviders =
                 ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_ELEMENT_NAME);
 
-        builder.addPropertyValue("resolvers", SpringSupport.parseCustomElements(childProviders, parserContext));
+        builder.addPropertyValue("resolvers",
+                SpringSupport.parseCustomElements(childProviders, parserContext, builder));
     }
 }

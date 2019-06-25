@@ -58,7 +58,8 @@ public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
                 ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_NODE_PROC_ELEMENT_NAME);
 
         if (null != children && !children.isEmpty()) {
-            builder.addPropertyValue("nodeProcessors", SpringSupport.parseCustomElements(children, parserContext));
+            builder.addPropertyValue("nodeProcessors",
+                    SpringSupport.parseCustomElements(children, parserContext, builder));
         }
     }
 

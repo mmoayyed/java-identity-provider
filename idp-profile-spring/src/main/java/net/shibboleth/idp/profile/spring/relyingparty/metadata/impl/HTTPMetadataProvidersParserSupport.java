@@ -123,7 +123,7 @@ public final class HTTPMetadataProvidersParserSupport {
                 return null;
             }
             builder.addPropertyValue("tLSTrustEngine", 
-                    SpringSupport.parseCustomElement(trustEngine, parserContext, builder));
+                    SpringSupport.parseCustomElement(trustEngine, parserContext, builder, false));
         }
 
         return builder.getBeanDefinition();

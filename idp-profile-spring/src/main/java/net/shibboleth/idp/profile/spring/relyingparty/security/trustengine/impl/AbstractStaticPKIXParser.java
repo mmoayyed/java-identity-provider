@@ -66,8 +66,10 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
 
         final BeanDefinitionBuilder builder =
                 BeanDefinitionBuilder.genericBeanDefinition(StaticPKIXValidationInformationResolver.class);
-        builder.addConstructorArgValue(SpringSupport.parseCustomElements(validationInfoElements, parserContext));
-        builder.addConstructorArgValue(SpringSupport.getElementTextContentAsManagedList(trustedNameElements));
+        builder.addConstructorArgValue(
+                SpringSupport.parseCustomElements(validationInfoElements, parserContext, builder));
+        builder.addConstructorArgValue(
+                SpringSupport.getElementTextContentAsManagedList(trustedNameElements));
 
         return builder.getBeanDefinition();
     }
@@ -90,7 +92,8 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
                 ElementSupport.getChildElements(element, PKIXValidationOptionsParser.ELEMENT_NAME);
 
         if (null != validationOptionsElements && !validationOptionsElements.isEmpty()) {
-            builder.addConstructorArgValue(SpringSupport.parseCustomElements(validationOptionsElements, parserContext));
+            builder.addConstructorArgValue(
+                    SpringSupport.parseCustomElements(validationOptionsElements, parserContext, builder));
         }
         return builder.getBeanDefinition();
     }
