@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
-import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
@@ -41,7 +40,7 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
         setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");
 
-        final AttributeRule rule = getBean(MATCHER_PATH + "mappedInMetadata.xml", AttributeRule.class, context);
+        final AttributeRule rule = getAttributeRulesAttributeFilterPolicy(MATCHER_PATH + "mappedInMetadata.xml", context).get(0);
         rule.initialize();
         AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) rule.getMatcher();
 
@@ -49,7 +48,7 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
         assertTrue(matcher.getOnlyIfRequired());
         assertTrue(matcher.getId().endsWith(":PermitRule"));
 
-        final PolicyFromMatcher policyRule = (PolicyFromMatcher) getBean(PolicyRequirementRule.class, context);
+        final PolicyFromMatcher policyRule = (PolicyFromMatcher) getPolicyRuleFromAttributeFilterPolicy(context);
         matcher = (AttributeInMetadataMatcher) policyRule.getMatcher();
         assertTrue(matcher.getMatchIfMetadataSilent());
         assertEquals(matcher.getOnlyIfRequired(), onlyResult);

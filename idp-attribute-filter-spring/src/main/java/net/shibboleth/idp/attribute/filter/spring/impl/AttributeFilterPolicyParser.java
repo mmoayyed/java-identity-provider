@@ -24,7 +24,6 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanMetadataElement;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -77,16 +76,13 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
                 BaseFilterParser.POLICY_REQUIREMENT_RULE);
         if (policyRequirements != null && policyRequirements.size() > 0) {
             final ManagedList<BeanDefinition> requirements =
-                    SpringSupport.parseCustomElements(policyRequirements, parserContext);
+                    SpringSupport.parseCustomElements(policyRequirements, parserContext, builder);
             builder.addConstructorArgValue(requirements.get(0));
         }
 
-        // Get the attribute rules, both inline or referenced.
-        final ManagedList<BeanMetadataElement> attributeRules = new ManagedList<>();
         final List<Element> rules = ElementSupport.getChildElements(config, ATTRIBUTE_RULE);
-        if (rules != null && rules.size() > 0) {
-            attributeRules.addAll(SpringSupport.parseCustomElements(rules, parserContext));
-        }
+        final ManagedList<BeanDefinition> attributeRules = 
+                SpringSupport.parseCustomElements(rules, parserContext, builder);
 
         builder.addConstructorArgValue(attributeRules);
     }

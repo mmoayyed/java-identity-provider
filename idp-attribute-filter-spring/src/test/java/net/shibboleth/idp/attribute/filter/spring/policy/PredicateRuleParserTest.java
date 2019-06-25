@@ -53,7 +53,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         ctx.refresh();
 
-        final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
+        final PredicatePolicyRule rule = (PredicatePolicyRule) getPolicyRuleFromAttributeFilterPolicy(ctx);
 
         assertEquals(rule.getRulePredicate().getClass(), Foo.class);
         assertNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
@@ -75,7 +75,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         ctx.refresh();
 
-        final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
+        final PredicatePolicyRule rule = (PredicatePolicyRule) getPolicyRuleFromAttributeFilterPolicy(ctx);
 
         assertEquals(rule.getRulePredicate().getClass(), Foo.class);
         assertNotNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
@@ -101,7 +101,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         ctx.refresh();
 
-        final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
+        final PredicatePolicyRule rule = (PredicatePolicyRule) getPolicyRuleFromAttributeFilterPolicy(ctx);
         assertEquals(rule.matches(prcFor("https://example.org")), Tristate.FALSE);
         assertEquals(rule.matches(prcFor("https://sp.example.org")), Tristate.TRUE);
         assertEquals(rule.matches(prcFor("https://sp2.example.org")), Tristate.TRUE);

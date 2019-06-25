@@ -25,9 +25,7 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -79,19 +77,22 @@ public class AttributeRuleParser extends BaseFilterParser {
         final List<Element> denyValueRule = ElementSupport.getChildElements(config, BaseFilterParser.DENY_VALUE_RULE);
 
         if (permitValueRule != null && !permitValueRule.isEmpty()) {
+            if (permitValueRule.size() > 1) {
+                log.debug("{} : More than one PermitValueRule, only the first will be used",
+                        parserContext.getReaderContext().getResource().getDescription());
+            }
 
-            final ManagedList<BeanDefinition> permitValueRules =
-                    SpringSupport.parseCustomElements(permitValueRule, parserContext);
-            log.debug("permitValueRules {}", permitValueRules);
-            builder.addPropertyValue("matcher", permitValueRules.get(0));
+            builder.addPropertyValue("matcher", 
+                    SpringSupport.parseCustomElement(permitValueRule.get(0), parserContext, builder, false));
             builder.addPropertyValue("isDenyRule", false);
 
         } else if (denyValueRule != null && !denyValueRule.isEmpty()) {
-
-            final ManagedList<BeanDefinition> denyValueRules =
-                    SpringSupport.parseCustomElements(denyValueRule, parserContext);
-            log.debug("denyValueRules {}", denyValueRules);
-            builder.addPropertyValue("matcher", denyValueRules.get(0));
+            if (denyValueRule.size() > 1) {
+                log.debug("{} : More than one DenyValueRule, only the first will be used",
+                        parserContext.getReaderContext().getResource().getDescription());
+            }
+            builder.addPropertyValue("matcher",
+                    SpringSupport.parseCustomElement(denyValueRule.get(0), parserContext, builder, false));
             builder.addPropertyValue("isDenyRule", true);
 
         } else if (config.hasAttributeNS(null, PERMIT_ANY_ATTRIBUTE)

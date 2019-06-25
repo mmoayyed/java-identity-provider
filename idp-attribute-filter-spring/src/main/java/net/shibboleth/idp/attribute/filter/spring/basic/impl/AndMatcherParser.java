@@ -62,7 +62,8 @@ public class AndMatcherParser extends BaseFilterParser {
         final List<Element> ruleElements =
                 ElementSupport.getChildElementsByTagNameNS(configElement, BaseFilterParser.NAMESPACE, "Rule");
 
-        builder.addPropertyValue("subsidiaries", SpringSupport.parseCustomElements(ruleElements, parserContext));
+        builder.addPropertyValue("subsidiaries",
+                SpringSupport.parseCustomElements(ruleElements, parserContext, builder));
 
     }
 }

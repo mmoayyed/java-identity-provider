@@ -63,7 +63,8 @@ public class NotMatcherParser extends BaseFilterParser {
 
         if (ruleElements != null && !ruleElements.isEmpty()) {
 
-            builder.addPropertyValue("negation", SpringSupport.parseCustomElements(ruleElements, parserContext).get(0));
+            builder.addPropertyValue("negation",
+                    SpringSupport.parseCustomElement(ruleElements.get(0), parserContext, builder, false));
 
         }
     }

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -101,6 +102,18 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
         return beans.iterator().next();
     }
+    
+    protected PolicyRequirementRule getPolicyRuleFromAttributeFilterPolicy(GenericApplicationContext ctx) {
+        final AttributeFilterPolicy afp = ctx.getBean(AttributeFilterPolicy.class);
+        return afp.getPolicyRequirementRule();
+    }
+    
+    protected List<AttributeRule> getAttributeRulesAttributeFilterPolicy(String fileName, GenericApplicationContext ctx) {
+        final AttributeFilterPolicy afp = getBean(fileName,  AttributeFilterPolicy.class, ctx); 
+                
+        return afp.getAttributeRules();
+    }
+
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
