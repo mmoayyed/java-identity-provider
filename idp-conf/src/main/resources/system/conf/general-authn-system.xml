@@ -48,7 +48,7 @@
                 <bean class="net.shibboleth.idp.authn.duo.impl.DuoPrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
-                    p:dataSealer="#{'%{idp.sealer.storeResource:}'.trim().length() > 0 ? getObject('shibboleth.DataSealer') : null}" />
+                    p:dataSealer="#{(systemProperties.contains('idp.sealer.storeResource') or systemProperties.contains('idp.sealer.keyStrategy')) ? getObject('shibboleth.DataSealer') : null}" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer" />                    
             </list>
         </property>
