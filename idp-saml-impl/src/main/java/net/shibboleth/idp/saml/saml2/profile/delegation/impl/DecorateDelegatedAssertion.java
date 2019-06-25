@@ -378,8 +378,10 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * Decorate the Assertion to allow use as a delegated security token by the SAML requester.
      * 
      * @param requestContext the current request context
+     * 
+     * @throws EventException to propagate events 
      */
-    private void decorateDelegatedAssertion(@Nonnull final ProfileRequestContext requestContext) {
+    private void decorateDelegatedAssertion(@Nonnull final ProfileRequestContext requestContext) throws EventException {
         for (final Assertion assertion : assertions) {
             addSAMLPeerSubjectConfirmation(requestContext, assertion);
             addIdPAudienceRestriction(requestContext, assertion);
@@ -514,9 +516,11 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * 
      * @param requestContext the current request context
      * @param assertion the assertion being issued
+     * 
+     * @throws EventException to propagate event signals 
      */
     private void addSAMLPeerSubjectConfirmation(@Nonnull final ProfileRequestContext requestContext,
-            @Nonnull final Assertion assertion) {
+            @Nonnull final Assertion assertion) throws EventException {
         
         final KeyInfoConfirmationDataType scData = 
                 (KeyInfoConfirmationDataType) XMLObjectSupport.getBuilder(KeyInfoConfirmationDataType.TYPE_NAME)
