@@ -33,6 +33,8 @@
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty.MDDriven">
         <property name="profileConfigurations">
             <list>
+                <ref bean="CAS.LoginConfiguration.MDDriven" />
+                <ref bean="CAS.ValidateConfiguration.MDDriven" />
                 <ref bean="Shibboleth.SSO.MDDriven" />
                 <ref bean="SAML1.AttributeQuery.MDDriven" />
                 <ref bean="SAML1.ArtifactResolution.MDDriven" />

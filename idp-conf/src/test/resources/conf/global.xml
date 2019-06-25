@@ -53,6 +53,7 @@
     
     <util:set id="testbed.MetadataIndexes">
         <bean class="org.opensaml.saml.metadata.resolver.index.impl.SAMLArtifactMetadataIndex" />
+        <ref bean="shibboleth.CASMetadataIndices" />
     </util:set>
     
 	<jdbc:embedded-database id="testbed.PairwiseIdDataSource" generate-name="true">
