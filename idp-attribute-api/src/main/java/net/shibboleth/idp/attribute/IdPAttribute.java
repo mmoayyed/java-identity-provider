@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -53,6 +55,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 @NotThreadSafe
 public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     
+    /** Value for testing illegal name. */
+    private static final Predicate<String> SPACE_CONTAINING = Pattern.compile("\\S*").asMatchPredicate();
+    
     /** ID of this attribute. */
     @Nonnull private final String id;
 
@@ -64,7 +69,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /** Values for this attribute. */
     @Nonnull private List<IdPAttributeValue> values;
-
+    
     /**
      * Constructor.
      * 
@@ -81,6 +86,25 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         values = Collections.emptyList();
     }
 
+    /** Centralized method to police deprecated Identifiers.
+     * @param id what to test
+     * @return whether the name is currently deprecated. 
+     */
+    public static boolean isDeprecatedId(@Nonnull @NotEmpty final String id) {
+        return id.indexOf('\'') >= 0 ||
+                id.indexOf('%') >= 0 ||
+                id.indexOf('{') >= 0 ||
+                id.indexOf('}') >= 0;
+    }
+    
+    /** Centralized method to police invalid Identifiers.
+     * @param id what to test
+     * @return whether the name is disallowed. 
+     */
+    public static boolean isInvalidId(@Nullable final String id) {
+       return null == StringSupport.trimOrNull(id) || !SPACE_CONTAINING.test(id);
+    }
+    
     /**
      * Gets the unique ID of the attribute. This ID need not be related to any protocol-specific attribute identifiers.
      * 

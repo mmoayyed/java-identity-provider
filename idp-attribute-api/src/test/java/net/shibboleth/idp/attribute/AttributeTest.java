@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -330,5 +333,24 @@ public class AttributeTest {
         attrib.setDisplayDescriptions(Collections.singletonMap(new Locale("en"), "Descrption"));
         attrib.setDisplayNames(Collections.singletonMap(new Locale("en"), "Name"));
         attrib.toString();
+    }
+    
+    @Test public void names() {
+        assertTrue(IdPAttribute.isDeprecatedId("%"));
+        assertTrue(IdPAttribute.isDeprecatedId("elepha{nt"));
+        assertTrue(IdPAttribute.isDeprecatedId("IAmtheWalru}"));
+        assertTrue(IdPAttribute.isDeprecatedId("JohnHenryBonham%"));
+        assertTrue(IdPAttribute.isDeprecatedId("Now\'StheTImeForallgoodmen"));
+        assertFalse(IdPAttribute.isDeprecatedId("JamesClarkNaxwell"));
+        
+        assertTrue(IdPAttribute.isInvalidId("spaces in names"));
+        assertTrue(IdPAttribute.isInvalidId("\ttabs\tinnames"));
+        assertTrue(IdPAttribute.isInvalidId("Others\rInnames"));
+        assertTrue(IdPAttribute.isInvalidId("Others\nInnames"));
+        assertTrue(IdPAttribute.isInvalidId("  "));
+        assertTrue(IdPAttribute.isInvalidId(""));
+        assertTrue(IdPAttribute.isInvalidId(null));
+        assertFalse(IdPAttribute.isInvalidId("JohnNapier"));
+        
     }
 }
