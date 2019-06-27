@@ -31,6 +31,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
@@ -43,6 +46,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -57,6 +62,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     
     /** Value for testing illegal name. */
     private static final Predicate<String> SPACE_CONTAINING = Pattern.compile("\\S*").asMatchPredicate();
+
+    /** Logger - static. */
+    @Nonnull private static final Logger LOG = LoggerFactory.getLogger(IdPAttribute.class);
     
     /** ID of this attribute. */
     @Nonnull private final String id;
@@ -80,6 +88,14 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
         Constraint.isFalse(isInvalidId(id), "Attribute ID must not have spaces");
         
+        if (isDeprecatedId(id)) {
+            // Issue a deprecation warning once but log more in debug and trace to help fixing
+            DeprecationSupport.warnOnce(ObjectType.BEAN,
+                    "IdPAttribute",
+                    "Attributes with special characters (\'\"%{})", null);
+            LOG.debug("{} - deprecate character in attribute name", id);
+            LOG.trace("Stack", new Exception("Stack Trace, not a thrown exception:"));
+        }
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();
 

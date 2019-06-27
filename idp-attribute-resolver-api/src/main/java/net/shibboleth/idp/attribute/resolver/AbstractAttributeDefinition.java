@@ -31,6 +31,8 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** Base class for attribute definition resolver plugins. */
@@ -84,6 +86,14 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         if (IdPAttribute.isInvalidId(getId())) {
             throw new ComponentInitializationException(
                     "Invalid Attribute Definitions name (" + getId() + ")");
+        }
+        if (IdPAttribute.isDeprecatedId(getId())) {
+            DeprecationSupport.warnOnce(
+                    ObjectType.CONFIGURATION,
+                    "Use of Attributes definition with invalid characters",
+                    getLogPrefix(),
+                    null);
+            log.debug("{} : Deprecated characters in Attribute Defintion id.", getLogPrefix());
         }
     }
 

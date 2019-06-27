@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.Map;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** Unit test for {@link IdPAttribute} class. */
@@ -352,5 +354,12 @@ public class AttributeTest {
         assertTrue(IdPAttribute.isInvalidId(null));
         assertFalse(IdPAttribute.isInvalidId("JohnNapier"));
         
+        try {
+            new IdPAttribute("names  with S");
+            fail("Expected Constraint Violation Exception");
+        } catch (final ConstraintViolationException e) {
+            //expected
+        }
+        new IdPAttribute("Check%for{deprecation");
     }
 }

@@ -120,6 +120,10 @@ public class AbstractAttributeDefinitionTest {
         testInvalidName(new MockAttributeDefinition("Name With Space", (IdPAttribute) null));
         testInvalidName(new MockAttributeDefinition("Name\rWith\tnonprinters", (IdPAttribute) null));
     }
+
+    @Test public void deprecatedName() throws ComponentInitializationException {
+        new MockAttributeDefinition("NameWith\'Oddness", (IdPAttribute) null).initialize();
+    }
     
     /**
      * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
