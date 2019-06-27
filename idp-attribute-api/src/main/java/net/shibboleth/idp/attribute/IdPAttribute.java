@@ -78,7 +78,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     public IdPAttribute(@Nonnull @NotEmpty @ParameterName(name="attributeId") final String attributeId) {
 
         id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
-        Constraint.isTrue(id.indexOf(' ') < 0, "Attribute ID must not have spaces");
+        Constraint.isFalse(isInvalidId(id), "Attribute ID must not have spaces");
         
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();

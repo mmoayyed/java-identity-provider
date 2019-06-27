@@ -17,11 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.regex.Pattern;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -31,9 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -83,10 +81,9 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
         
-        if (!Pattern.matches("\\S*", getId())) {
+        if (IdPAttribute.isInvalidId(getId())) {
             throw new ComponentInitializationException(
-                    "Attributes Definitions must not have spaces in them (" + getId() + ")");
-            
+                    "Invalid Attribute Definitions name (" + getId() + ")");
         }
     }
 
