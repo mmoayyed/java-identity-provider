@@ -24,13 +24,14 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.Status;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Creates the SAML response message for failed ticket validation at the <code>/samlValidate</code> URI.
@@ -39,11 +40,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSamlMessageAction {
 
-    @Nonnull
     @Override
-    protected Response buildSamlResponse(
-            @Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
+    @Nonnull protected Response buildSamlResponse(
+            @Nonnull final ProfileRequestContext<SAMLObject,SAMLObject> profileRequestContext) throws EventException {
 
         final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final TicketValidationResponse validationResponse = getCASResponse(profileRequestContext);
@@ -61,4 +60,5 @@ public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSam
 
         return response;
     }
+
 }

@@ -18,16 +18,19 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext} to facilitate relying party selection
@@ -41,23 +44,45 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
 
+    /** CAS service. */
+    @Nullable private Service service;
+    
+    /** RelyingPartyContext. */
+    @Nullable private RelyingPartyContext rpCtx;
+    
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
-        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
-        if (rpCtx == null) {
-            throw new IllegalStateException("RelyingPartyContext not found");
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
         }
+
+        try {
+            service = getCASService(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
+        if (rpCtx == null) {
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        }
+
+        return true;
+    }    
+    
+    @Override
+    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+        
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        final Service service = getCASService(profileRequestContext);
         final EntityDescriptor entity = service.getEntityDescriptor() != null
                 ? service.getEntityDescriptor()
                 : new ServiceEntityDescriptor(service);
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(service.getRoleDescriptor());
+        
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
-
-        return null;
     }
+
 }

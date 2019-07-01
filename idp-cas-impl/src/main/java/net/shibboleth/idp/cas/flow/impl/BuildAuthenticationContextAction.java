@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
@@ -25,29 +26,50 @@ import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Builds an authentication context from an incoming {@link ServiceTicketRequest} message.
  *
  * @author Marvin S. Addison
  */
-public class BuildAuthenticationContextAction extends
-        AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
+public class BuildAuthenticationContextAction
+        extends AbstractCASProtocolAction<ServiceTicketRequest,ServiceTicketResponse> {
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(LoginConfiguration.class);
+    @Nonnull private final ConfigLookupFunction<LoginConfiguration> configLookupFunction;
 
-    @Nonnull
+    /** Stores off CAS request. */
+    @Nullable private ServiceTicketRequest request;
+    
+    /** Constructor. */
+    public BuildAuthenticationContextAction() {
+        configLookupFunction = new ConfigLookupFunction<>(LoginConfiguration.class);
+    }
+    
     @Override
-    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext){
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
+        try {
+            request = getCASRequest(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    @Nonnull protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final AuthenticationContext ac = new AuthenticationContext();
-        ac.setForceAuthn(getCASRequest(profileRequestContext).isRenew());
+        ac.setForceAuthn(request.isRenew());
         ac.setIsPassive(false);
 
         if (!ac.isForceAuthn()) {
@@ -59,7 +81,6 @@ public class BuildAuthenticationContextAction extends
         
         profileRequestContext.addSubcontext(ac, true);
         profileRequestContext.setBrowserProfile(true);
-        return null;
     }
     
 }

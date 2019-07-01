@@ -28,13 +28,16 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}. The component queries
@@ -46,16 +49,16 @@ import org.springframework.webflow.execution.RequestContext;
 public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
 
     /** Name of group to which unverified services belong. */
-    public static final String UNVERIFIED_GROUP = "unverified";
+    @Nonnull @NotEmpty public static final String UNVERIFIED_GROUP = "unverified";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
     /** List of registries to query for verified CAS services (relying parties). */
-    @Nonnull
-    @NotEmpty
-    private final List<ServiceRegistry> serviceRegistries;
-
+    @Nonnull @NonnullElements @NotEmpty private final List<ServiceRegistry> serviceRegistries;
+    
+    /** Request. */
+    @Nullable private Object request;
 
     /**
      * Creates a new instance.
@@ -65,15 +68,29 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
     public BuildRelyingPartyContextAction(@Nonnull @NotEmpty final ServiceRegistry ... registries) {
         serviceRegistries = Arrays.asList(Constraint.isNotEmpty(registries, "Service registries cannot be null"));
     }
-
-    @Nonnull
+    
     @Override
-    protected Event doExecute(
-        final @Nonnull RequestContext springRequestContext,
-        final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
+        try {
+            request = getCASRequest(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        return true;
+    }
+    
+
+    @Override
+    @Nonnull protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final String serviceURL;
-        final Object request = getCASRequest(profileRequestContext);
+        
         if (request instanceof ServiceTicketRequest) {
             serviceURL = ((ServiceTicketRequest) request).getService();
         } else if (request instanceof ProxyTicketRequest) {
@@ -81,22 +98,30 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         } else if (request instanceof TicketValidationRequest) {
             serviceURL = ((TicketValidationRequest) request).getService();
         } else {
-            throw new IllegalStateException("Service URL not found in flow state");
+            log.warn("{} Service URL not found in flow state", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
+            return;
         }
+        
         Service service = query(serviceURL);
         final RelyingPartyContext rpc = new RelyingPartyContext();
         rpc.setVerified(service != null);
         rpc.setRelyingPartyId(serviceURL);
         if (service != null) {
-            log.debug("Setting up RP context for verified relying party {}", service);
+            log.debug("{} Setting up RP context for verified relying party {}", getLogPrefix(), service);
         } else {
             service = new Service(serviceURL, UNVERIFIED_GROUP, false);
-            log.debug("Setting up RP context for unverified relying party {}", service);
+            log.debug("{} Setting up RP context for unverified relying party {}", getLogPrefix(), service);
         }
-        log.debug("Relying party context created for {}", service);
+        log.debug("{} Relying party context created for {}", getLogPrefix(), service);
+        
         profileRequestContext.addSubcontext(rpc);
-        setCASService(profileRequestContext, service);
-        return null;
+        
+        try {
+            setCASService(profileRequestContext, service);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+        }
     }
 
     /**
@@ -115,6 +140,7 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
                 return service;
             }
         }
+        
         return null;
     }
     

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -55,6 +56,7 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +93,15 @@ public class PrepareTicketValidationResponseAction extends
     
     /** Fallback rule that does a simple/default encode. */
     @NonnullAfterInit private TranscodingRule defaultTranscodingRule;
+    
+    /** Stored off context from request. */
+    @Nullable private AttributeContext attributeContext;
+    
+    /** Profile configuration. */
+    @Nullable private ValidateConfiguration validateConfiguration;
+    
+    /** CAS response. */
+    @Nullable private TicketValidationResponse response;
 
     /** Constructor. */
     public PrepareTicketValidationResponseAction() {
@@ -127,42 +138,60 @@ public class PrepareTicketValidationResponseAction extends
                 Collections.singletonMap(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder));
     }
     
-    /** {@inheritDoc} */
- // CheckStyle: CyclomaticComplexity OFF
     @Override
-    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        final AttributeContext ac = attributeContextFunction.apply(profileRequestContext);
-        if (ac == null) {
-            throw new IllegalStateException("AttributeContext not found in profile request context.");
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
         }
-
-        final ValidateConfiguration validateConfiguration = configLookupFunction.apply(profileRequestContext);
+        
+        attributeContext = attributeContextFunction.apply(profileRequestContext);
+        if (attributeContext == null) {
+            log.warn("{} AttributeContext not found in profile request context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_ATTRIBUTE_CTX);
+            return false;
+        }
+        
+        validateConfiguration = configLookupFunction.apply(profileRequestContext);
         if (validateConfiguration == null) {
-            throw new IllegalArgumentException("Cannot locate ValidateConfiguration");
+            log.warn("{} Cannot locate ValidateConfiguration", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
         }
+        
+        try {
+            response = getCASResponse(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        return true;
+    }    
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final String principal;
         final String userAttributeName = validateConfiguration.getUserAttribute(profileRequestContext);
         if (userAttributeName != null) {
-            log.debug("Using {} for CAS username", userAttributeName);
-            final IdPAttribute attribute = ac.getIdPAttributes().get(userAttributeName);
+            log.debug("{} Using {} for CAS username", getLogPrefix(), userAttributeName);
+            final IdPAttribute attribute = attributeContext.getIdPAttributes().get(userAttributeName);
             if (attribute != null && !attribute.getValues().isEmpty()) {
                 final IdPAttributeValue value = attribute.getValues().get(0);
                 if (value instanceof ScopedStringAttributeValue) {
                     final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) value;
-                    log.warn("Lossy use of attribute value {} from attribute {}",
+                    log.warn("{} Lossy use of attribute value {} from attribute {}", getLogPrefix(),
                             scopedValue.getValue(), attribute.getId());
                     principal = scopedValue.getValue();
                 } else if (value instanceof StringAttributeValue) {
                     principal = ((StringAttributeValue) value).getValue();
                 } else {
-                    log.warn("Use of attribute value type {} from attribute {}",
+                    log.warn("{} Use of attribute value type {} from attribute {}", getLogPrefix(),
                             value.getClass(), attribute.getId());
                     principal = value.getNativeValue().toString();
                 }
             } else {
-                log.debug("Filtered attribute {} has no value", userAttributeName);
+                log.debug("{} Filtered attribute {} has no value", getLogPrefix(), userAttributeName);
                 principal = null;
             }
         } else {
@@ -173,10 +202,9 @@ public class PrepareTicketValidationResponseAction extends
             throw new IllegalStateException("Principal cannot be null");
         }
 
-        final TicketValidationResponse response = getCASResponse(profileRequestContext);
         response.setUserName(principal);
         
-        final Collection<IdPAttribute> inputAttributes = ac.getIdPAttributes().values();
+        final Collection<IdPAttribute> inputAttributes = attributeContext.getIdPAttributes().values();
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(inputAttributes.size());
         
         ServiceableComponent<AttributeTranscoderRegistry> component = null;
@@ -198,7 +226,6 @@ public class PrepareTicketValidationResponseAction extends
         
         encodedAttributes.forEach(a -> response.addAttribute(a));
     }
-    // CheckStyle: CyclomaticComplexity ON
 
     /**
      * Access the registry of transcoding rules to transform the input attribute into a target type.

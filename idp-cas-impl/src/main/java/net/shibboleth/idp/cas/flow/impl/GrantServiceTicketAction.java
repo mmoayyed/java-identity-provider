@@ -21,8 +21,10 @@ import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
@@ -34,16 +36,18 @@ import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Generates and stores a CAS protocol service ticket. Possible outcomes:
@@ -74,9 +78,23 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     /** Manages CAS tickets. */
     @Nonnull private final TicketServiceEx ticketServiceEx;
 
+    /** Profile config. */
+    @Nullable private LoginConfiguration loginConfig;
+    
+    /** Security config. */
+    @Nullable private SecurityConfiguration securityConfig;
+    
+    /** IdP's session. */
+    @Nullable private IdPSession session;
+    
+    /** Authentication result. */
+    @Nullable private AuthenticationResult authnResult;
+    
+    /** CAS request. */
+    @Nullable private ServiceTicketRequest request;
 
     /**
-     * Creates a new instance.
+     * Constructor.
      *
      * @param ticketService Ticket service component.
      */
@@ -90,72 +108,105 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                 new ChildContextLookup<>(SubjectContext.class));
     }
 
-    /** {@inheritDoc} */
-    @Nonnull
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        final ServiceTicketRequest request = getCASRequest(profileRequestContext);
-        final IdPSession session = getIdPSession(profileRequestContext);
-        final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
-        if (config == null) {
-            throw new IllegalStateException("Service ticket configuration undefined");
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
         }
         
-        final SecurityConfiguration securityConfiguration = config.getSecurityConfiguration(profileRequestContext);
-        if (securityConfiguration == null || securityConfiguration == null) {
-            throw new IllegalStateException(
-                    "Invalid service ticket configuration: SecurityConfiguration#idGenerator undefined");
+        loginConfig = configLookupFunction.apply(profileRequestContext);
+        if (loginConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
         }
+        
+        securityConfig = loginConfig.getSecurityConfiguration(profileRequestContext);
+        if (securityConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
+            return false;
+        }
+        
+        try {
+            request = getCASRequest(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+
+        session = getIdPSession(profileRequestContext);
+        if (session == null) {
+            // TODO: I think this should be revisited, unclear why the TicketState later needs this.
+            // It may be needed specifically if the check below for an active AuthnResult fails, but that's
+            // a secondary requirement that would only happen when absolutely needed.
+            log.warn("{} No IdP session found", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
+        }
+        
         final AuthenticationContext authnCtx = authnCtxLookupFunction.apply(profileRequestContext);
-        final AuthenticationResult authnResult;
         if (authnCtx != null) {
             authnResult = authnCtx.getAuthenticationResult();
         } else {
-            authnResult = getLatestAuthenticationResult(session);
+            authnResult = getLatestAuthenticationResult();
         }
+        
+        if (authnResult == null) {
+            log.warn("{} No AuthenticationResult found", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            return false;
+        }
+        
+        return true;
+    }    
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+                
         final ServiceTicket ticket;
         try {
-            log.debug("Granting service ticket for {}", request.getService());
+            log.debug("{} Granting service ticket for {}", getLogPrefix(), request.getService());
             final TicketState state = new TicketState(
                     session.getId(),
                     getPrincipalName(profileRequestContext),
                     authnResult.getAuthenticationInstant(),
                     authnResult.getAuthenticationFlowId());
             ticket = ticketServiceEx.createServiceTicket(
-                    securityConfiguration.getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(config.getTicketValidityPeriod(profileRequestContext)),
+                    securityConfig.getIdGenerator().generateIdentifier(),
+                    Instant.now().plus(loginConfig.getTicketValidityPeriod(profileRequestContext)),
                     request.getService(),
                     state,
                     request.isRenew());
         } catch (final RuntimeException e) {
-            log.error("Failed granting service ticket due to error.", e);
-            return ProtocolError.TicketCreationError.event(this);
+            log.error("{} Failed granting service ticket due to error.", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketCreationError.event(this));
+            return;
         }
-        log.info("Granted service ticket for {}", request.getService());
+        
         final ServiceTicketResponse response = new ServiceTicketResponse(request.getService(), ticket.getId());
         if (request.isSAML()) {
             response.setSaml(true);
         }
-        setCASResponse(profileRequestContext, response);
-        return null;
+        
+        try {
+            setCASResponse(profileRequestContext, response);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return;
+        }
+
+        log.info("{} Granted service ticket for {}", getLogPrefix(), request.getService());
     }
 
     /**
      * Get the IdP session.
      *
-     * @param prc profile request context.
+     * @param prc profile request context
+     * 
      * @return IdP session
      */
-    @Nonnull
-    private IdPSession getIdPSession(final ProfileRequestContext prc) {
+    @Nullable private IdPSession getIdPSession(final ProfileRequestContext prc) {
         final SessionContext sessionContext = sessionContextFunction.apply(prc);
-        if (sessionContext == null || sessionContext.getIdPSession() == null) {
-            throw new IllegalStateException("Cannot locate IdP session");
-        }
-        return sessionContext.getIdPSession();
+        return sessionContext != null ? sessionContext.getIdPSession() : null;
     }
 
     /**
@@ -164,8 +215,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      * @param prc profile request context.
      * @return Principal name.
      */
-    @Nonnull
-    private String getPrincipalName(final ProfileRequestContext prc) {
+    @Nonnull private String getPrincipalName(final ProfileRequestContext prc) {
         final String principal = principalLookupFunction.apply(prc);
         if (principal == null ) {
             throw new IllegalStateException("Cannot determine IdP subject principal name.");
@@ -176,22 +226,20 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     /**
      * Gets the most recent authentication result from the IdP session.
      *
-     * @param session IdP session to ask for authentication results.
-     *
      * @return Latest authentication result.
      *
      * @throws IllegalStateException If no authentication results are found.
      */
-    private AuthenticationResult getLatestAuthenticationResult(final IdPSession session) {
+    @Nullable private AuthenticationResult getLatestAuthenticationResult() {
         AuthenticationResult latest = null;
+        
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
             if (latest == null || result.getAuthenticationInstant().isAfter(latest.getAuthenticationInstant())) {
                 latest = result;
             }
         }
-        if (latest == null) {
-            throw new IllegalStateException("Cannot find authentication results in IdP session");
-        }
+        
         return latest;
     }
+
 }

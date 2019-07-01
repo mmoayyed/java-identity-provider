@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -27,11 +28,12 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action that builds the chain of visited proxies for a successful proxy ticket validation event. Possible outcomes:
@@ -45,35 +47,52 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  */
 public class BuildProxyChainAction
-        extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
+        extends AbstractCASProtocolAction<TicketValidationRequest,TicketValidationResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BuildProxyChainAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BuildProxyChainAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull
-    private final TicketServiceEx ticketServiceEx;
-
+    @Nonnull private final TicketServiceEx ticketServiceEx;
+    
+    /** Response. */
+    @Nullable private TicketValidationResponse response;
+    
+    /** Ticket. */
+    @Nullable private Ticket ticket;
 
     /**
-     * Creates a new instance.
+     * Constructor.
      *
      * @param ticketService Ticket service component.
      */
     public BuildProxyChainAction(@Nonnull final TicketServiceEx ticketService) {
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
-
-    @Nonnull
+    
     @Override
-    protected Event doExecute(
-        final @Nonnull RequestContext springRequestContext,
-        final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
 
-        final TicketValidationResponse response = getCASResponse(profileRequestContext);
-        final Ticket ticket = getCASTicket(profileRequestContext);
+        try {
+            response = getCASResponse(profileRequestContext);
+            ticket = getCASTicket(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        return true;
+    }
+
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+
         if (!(ticket instanceof ProxyTicket)) {
-            return ProtocolError.InvalidTicketType.event(this);
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.InvalidTicketType.event(this));
+            return;
         }
         final ProxyTicket pt = (ProxyTicket) ticket;
         ProxyGrantingTicket pgt;
@@ -81,13 +100,13 @@ public class BuildProxyChainAction
         do {
             pgt = ticketServiceEx.fetchProxyGrantingTicket(pgtId);
             if (pgt == null) {
-                log.debug("PGT {} not found", pgtId);
-                return ProtocolError.BrokenProxyChain.event(this);
+                log.debug("{} PGT {} not found", getLogPrefix(), pgtId);
+                ActionSupport.buildEvent(profileRequestContext, ProtocolError.BrokenProxyChain.event(this));
+                return;
             }
             response.addProxy(pgt.getService());
             pgtId = pgt.getParentId();
         } while (pgtId != null);
-
-        return null;
     }
+
 }

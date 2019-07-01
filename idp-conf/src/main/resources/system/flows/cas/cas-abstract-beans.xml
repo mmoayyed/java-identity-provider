@@ -29,15 +29,14 @@
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
     <bean id="BuildRelyingPartyContext"
-          class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction"
+          class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction" scope="prototype"
           c:registries="#{getObject('shibboleth.CASServiceRegistries') ?: getObject('shibboleth.DefaultCASServiceRegistries')}" />
 
-    <bean id="BuildSAMLMetadataContext"
+    <bean id="BuildSAMLMetadataContext" scope="prototype"
           class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
 
     <bean id="PopulateInboundInterceptContext"
-          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
           p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.InboundFlowsLookupFunction" />
@@ -45,8 +44,7 @@
     </bean>
 
     <bean id="PopulateOutboundInterceptContext"
-          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
           p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.OutboundFlowsLookupFunction" />
@@ -54,37 +52,32 @@
     </bean>
 
     <bean id="PublishProtocolRequest"
-          class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction"
+          class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction" scope="prototype"
           c:isRequest="true" />
 
     <bean id="PublishProtocolResponse"
-          class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction"
+          class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction" scope="prototype"
           c:isRequest="false" />
 
     <bean id="SelectProfileConfiguration"
-          class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
-          scope="prototype" />
+          class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
 
     <bean id="SelectRelyingPartyConfiguration"
-          class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
           p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
     <bean id="PopulateSubjectContext"
-          class="net.shibboleth.idp.profile.impl.PopulateSubjectContext"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.impl.PopulateSubjectContext" scope="prototype"
           p:principalNameLookupStrategy-ref="PrincipalLookupFunction" />
 
     <bean id="ResolveAttributes"
-          class="net.shibboleth.idp.profile.impl.ResolveAttributes"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
           c:resolverService-ref="shibboleth.AttributeResolverService"
           p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
           p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
     <bean id="FilterAttributes"
-          class="net.shibboleth.idp.profile.impl.FilterAttributes"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
           c:filterService-ref="shibboleth.AttributeFilterService"
           p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
           p:metadataResolver-ref="shibboleth.MetadataResolver">
@@ -106,8 +99,7 @@
           p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
 
     <bean id="WriteAuditLog"
-          class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
           p:formattingMap-ref="shibboleth.AuditFormattingMap"
           p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
           p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
@@ -117,5 +109,6 @@
           p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
 
     <bean id="PopulateProtocolError"
-          class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" />
+          class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" scope="prototype" />
+          
 </beans>

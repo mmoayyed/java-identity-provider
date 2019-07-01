@@ -21,10 +21,12 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -32,6 +34,7 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -52,7 +55,6 @@ import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Creates the SAML response message for successful ticket validation at the <code>/samlValidate</code> URI.
@@ -80,27 +82,24 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
 
 
     /**
-     * Creates a new instance with required parameters.
+     * Constructor.
      *
      * @param strategy SAML identifier generation strategy.
      * @param id IdP entity ID.
      */
-    public BuildSamlValidationSuccessMessageAction(final IdentifierGenerationStrategy strategy, final String id) {
+    public BuildSamlValidationSuccessMessageAction(@Nonnull final IdentifierGenerationStrategy strategy,
+            @Nonnull @NotEmpty final String id) {
         Constraint.isNotNull(strategy, "IdentifierGenerationStrategy cannot be null");
         identifierGenerationStrategy = strategy;
         entityID = Constraint.isNotNull(StringSupport.trimOrNull(id), "EntityID cannot be null");
         
         attrValueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
                 XSString.TYPE_NAME);
-
     }
 
-
-    @Nonnull
     @Override
-    protected Response buildSamlResponse(
-            @Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
+    @Nonnull protected Response buildSamlResponse(
+            @Nonnull final ProfileRequestContext<SAMLObject,SAMLObject> profileRequestContext) throws EventException {
 
         final Instant now = Instant.now();
 
@@ -109,7 +108,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         final Ticket ticket = getCASTicket(profileRequestContext);
         final TicketState state = ticket.getTicketState();
         if (state == null) {
-            throw new IllegalStateException("TicketState cannot be null");
+            throw new EventException(ProtocolError.IllegalState.name());
         }
         log.debug("Building SAML response for {} in IdP session {}", request.getService(), state.getSessionId());
 
@@ -210,4 +209,5 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         stringValue.setValue(value);
         return stringValue;
     }
+
 }

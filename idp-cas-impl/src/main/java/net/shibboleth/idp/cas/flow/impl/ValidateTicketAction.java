@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
@@ -31,12 +32,14 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * CAS protocol service ticket validation action. Emits one of the following events based on validation result:
@@ -55,39 +58,55 @@ import org.springframework.webflow.execution.RequestContext;
 public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateTicketAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateTicketAction.class);
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(ValidateConfiguration.class);
+    @Nonnull private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction;
 
     /** Manages CAS tickets. */
-    @Nonnull
-    private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketServiceEx ticketServiceEx;
 
+    /** Profile config. */
+    @Nullable private ValidateConfiguration validateConfig;
 
+    /** CAS request. */
+    @Nullable private TicketValidationRequest request;
+    
     /**
-     * Creates a new instance.
+     * Constructor.
      *
-     * @param ticketService Ticket service component.
+     * @param ticketService ticket service component
      */
     public ValidateTicketAction(@Nonnull final TicketServiceEx ticketService) {
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+        configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
 
-    @Nonnull
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        final ValidateConfiguration config = configLookupFunction.apply(profileRequestContext);
-        if (config == null) {
-            log.warn("Ticket validation configuration undefined");
-            return ProtocolError.IllegalState.event(this);
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
         }
 
-        final TicketValidationRequest request = getCASRequest(profileRequestContext);
+        validateConfig = configLookupFunction.apply(profileRequestContext);
+        if (validateConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext,IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
+        }
+        
+        try {
+            request = getCASRequest(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+
+        return true;
+    }
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+
         final Ticket ticket;
         try {
             final String ticketId = request.getTicket();
@@ -97,32 +116,48 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             } else if (ticketId.startsWith(ProxyConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = ticketServiceEx.removeProxyTicket(ticketId);
             } else {
-                return ProtocolError.InvalidTicketFormat.event(this);
+                ActionSupport.buildEvent(profileRequestContext, ProtocolError.InvalidTicketFormat.event(this));
+                return;
             }
             if (ticket != null) {
-                log.debug("Found and removed {}/{} from ticket store", ticket, ticket.getSessionId());
+                log.debug("{} Found and removed {}/{} from ticket store", getLogPrefix(), ticket,
+                        ticket.getSessionId());
             }
         } catch (final RuntimeException e) {
-            log.debug("CAS ticket retrieval failed with error: {}", e);
-            return ProtocolError.TicketRetrievalError.event(this);
+            log.debug("{} CAS ticket retrieval failed with error: {}", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketRetrievalError.event(this));
+            return;
         }
 
         if (ticket == null || ticket.getExpirationInstant().isBefore(Instant.now())) {
-            return ProtocolError.TicketExpired.event(this);
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketExpired.event(this));
+            return;
         }
 
-        if (config.getServiceComparator(profileRequestContext).compare(
+        if (validateConfig.getServiceComparator(profileRequestContext).compare(
                 ticket.getService(), request.getService()) != 0) {
-            log.debug("Service issued for {} does not match {}", ticket.getService(), request.getService());
-            return ProtocolError.ServiceMismatch.event(this);
+            log.debug("{} Service issued for {} does not match {}", getLogPrefix(), ticket.getService(),
+                    request.getService());
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.ServiceMismatch.event(this));
+            return;
         }
 
-        log.info("Successfully validated {} for {}", request.getTicket(), request.getService());
-        setCASResponse(profileRequestContext, new TicketValidationResponse());
-        setCASTicket(profileRequestContext, ticket);
-        if (ticket instanceof ProxyTicket) {
-            return Events.ProxyTicketValidated.event(this);
+        try {
+            setCASResponse(profileRequestContext, new TicketValidationResponse());
+            setCASTicket(profileRequestContext, ticket);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return;
         }
-        return Events.ServiceTicketValidated.event(this);
+
+        log.info("{} Successfully validated {} for {}", getLogPrefix(), request.getTicket(), request.getService());
+        
+        if (ticket instanceof ProxyTicket) {
+            ActionSupport.buildEvent(profileRequestContext, Events.ProxyTicketValidated.event(this));
+            return;
+        }
+        
+        ActionSupport.buildEvent(profileRequestContext, Events.ServiceTicketValidated.event(this));
     }
+
 }

@@ -18,15 +18,17 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Checks the current {@link ServiceContext} to determine whether the service/relying party is authorized to proxy.
@@ -41,18 +43,34 @@ import org.springframework.webflow.execution.RequestContext;
 public class CheckProxyAuthorizationAction extends AbstractCASProtocolAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CheckProxyAuthorizationAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CheckProxyAuthorizationAction.class);
 
+    /** CAS service. */
+    @Nullable private Service service;
+    
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        final Service service = getCASService(profileRequestContext);
-        if (!service.isAuthorizedToProxy()) {
-            log.info("{} is not authorized to proxy", service.getName());
-            return ProtocolError.ProxyNotAuthorized.event(this);
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
         }
-        return null;
+        
+        try {
+            service = getCASService(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        return true;
+    }    
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+
+        if (!service.isAuthorizedToProxy()) {
+            log.info("{} Service '{}' is not authorized to proxy", getLogPrefix(), service.getName());
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.ProxyNotAuthorized.event(this));
+        }
     }
+
 }

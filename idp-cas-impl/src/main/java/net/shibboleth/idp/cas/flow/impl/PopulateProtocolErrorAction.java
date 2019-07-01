@@ -19,7 +19,11 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,6 +33,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.profile.ActionSupport;
 
 /**
  * Populates error information needed for protocol error messages.
@@ -37,20 +42,30 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
  */
 public class PopulateProtocolErrorAction extends AbstractCASProtocolAction {
 
-    @Nonnull
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateProtocolErrorAction.class);
+    
     @Override
-    protected Event doExecute(
-            @Nonnull final RequestContext springRequestContext,
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
-        final Object request = getCASRequest(profileRequestContext);
+
+        final Object request;
+        try {
+            request = getCASRequest(profileRequestContext);
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
+        }
+
         final AbstractProtocolResponse response;
         if (request instanceof ProxyTicketRequest) {
             response = new ProxyTicketResponse();
         } else if (request instanceof TicketValidationRequest) {
             response = new TicketValidationResponse();
         } else {
-            throw new IllegalArgumentException("Invalid request type: " + request);
+            log.error("{} Invalid request type: {}", getLogPrefix(), request);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MESSAGE);
         }
+        
         String code = (String) springRequestContext.getCurrentEvent().getAttributes().get("code");
         String detail = (String) springRequestContext.getCurrentEvent().getAttributes().get("detailCode");
         if (code == null) {
@@ -59,9 +74,16 @@ public class PopulateProtocolErrorAction extends AbstractCASProtocolAction {
         if (detail == null) {
             detail = ProtocolError.IllegalState.getDetailCode();
         }
+        
         response.setErrorCode(code);
         response.setErrorDetail(detail);
-        setCASResponse(profileRequestContext, response);
-        return null;
+        try {
+            setCASResponse(profileRequestContext, response);
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
+        }
+        
+        return ActionSupport.buildProceedEvent(this);
     }
+
 }

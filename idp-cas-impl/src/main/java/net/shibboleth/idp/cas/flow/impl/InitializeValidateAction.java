@@ -23,6 +23,9 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.profile.ActionSupport;
+
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -41,11 +44,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class InitializeValidateAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
-    @Nonnull
+
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         String service = params.get(ProtocolParam.Service.id());
@@ -67,8 +69,13 @@ public class InitializeValidateAction extends
         }
         ticketValidationRequest.setPgtUrl(params.get(ProtocolParam.PgtUrl.id()));
 
-        setCASRequest(profileRequestContext, ticketValidationRequest);
+        try {
+            setCASRequest(profileRequestContext, ticketValidationRequest);
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
+        }
 
         return result;
     }
+
 }

@@ -25,7 +25,10 @@ import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.SamlParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.profile.ActionSupport;
+
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AssertionArtifact;
@@ -52,14 +55,11 @@ public class ProcessSamlMessageAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    @Nonnull
-    private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
-
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
 
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
 
         profileRequestContext.setProfileId(ValidateConfiguration.PROFILE_ID);
 
@@ -79,7 +79,7 @@ public class ProcessSamlMessageAction extends
                 break;
             }
         } else {
-            log.info("Unexpected SAMLObject type {}", msgContext.getMessage().getClass().getName());
+            log.warn("{} Unexpected SAMLObject type {}", getLogPrefix(), msgContext.getMessage().getClass().getName());
             return ProtocolError.ProtocolViolation.event(this);
         }
         if (ticket == null) {
@@ -92,8 +92,13 @@ public class ProcessSamlMessageAction extends
             ticketValidationRequest.setRenew(true);
         }
 
-        setCASRequest(profileRequestContext, ticketValidationRequest);
+        try {
+            setCASRequest(profileRequestContext, ticketValidationRequest);
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
+        }
 
-        return null;
+        return ActionSupport.buildProceedEvent(this);
     }
+
 }

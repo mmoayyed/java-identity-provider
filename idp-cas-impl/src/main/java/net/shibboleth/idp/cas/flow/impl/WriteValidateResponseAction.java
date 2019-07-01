@@ -20,13 +20,15 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * CAS 1.0 protocol response handler.
@@ -36,12 +38,16 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class WriteValidateResponseAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse>  {
+    
     /** CAS 1.0 protocol content type is plain text. */
-    private static final String CONTENT_TYPE = "text/plain;charset=utf-8";
+    @Nonnull @NotEmpty private static final String CONTENT_TYPE = "text/plain;charset=utf-8";
 
     /** Protocol success flag indicates what kind of response to provide. */
     private final boolean success;
 
+    /** CAS response. */
+    @Nullable private TicketValidationResponse response;
+    
     /**
      * Constructor.
      *
@@ -52,16 +58,27 @@ public class WriteValidateResponseAction extends
     }
 
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
 
-        final TicketValidationResponse response = getCASResponse(profileRequestContext);
         try {
-            final HttpServletResponse servletResponse =
-                    (HttpServletResponse) springRequestContext.getExternalContext().getNativeResponse();
-            servletResponse.setContentType(CONTENT_TYPE);
-            final PrintWriter output = servletResponse.getWriter();
+            response = getCASResponse(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+
+        return true;
+    }
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+
+        try {
+            getHttpServletResponse().setContentType(CONTENT_TYPE);
+            final PrintWriter output = getHttpServletResponse().getWriter();
             if (success) {
                 output.print("yes\n");
                 output.print(response.getUserName() + '\n');
@@ -72,6 +89,6 @@ public class WriteValidateResponseAction extends
         } catch (final IOException e) {
             throw new RuntimeException("IO error writing CAS protocol response", e);
         }
-        return null;
     }
+
 }

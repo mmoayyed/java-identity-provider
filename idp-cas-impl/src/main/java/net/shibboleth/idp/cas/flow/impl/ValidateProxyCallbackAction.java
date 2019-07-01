@@ -22,13 +22,15 @@ import java.net.URISyntaxException;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
@@ -42,6 +44,7 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -74,48 +77,71 @@ public class ValidateProxyCallbackAction
     /** Manages CAS tickets. */
     @Nonnull private final TicketServiceEx ticketServiceEx;
 
+    /** Profile config. */
+    @Nullable private ValidateConfiguration validateConfig;
+    
+    /** Security config. */
+    @Nullable private SecurityConfiguration securityConfig;
+    
+    /** CAS ticket. */
+    @Nullable private Ticket ticket;
 
+    /** CAS request. */
+    @Nullable private TicketValidationRequest request;
+
+    /** CAS response. */
+    @Nullable private TicketValidationResponse response;
+    
     /**
-     * Creates a new instance.
+     * Constructor.
      *
      * @param validator Component that validates the proxy callback endpoint.
      * @param ticketService Ticket service component.
      */
-    public ValidateProxyCallbackAction(
-            @Nonnull final ProxyValidator validator,
+    public ValidateProxyCallbackAction(@Nonnull final ProxyValidator validator,
             @Nonnull final TicketServiceEx ticketService) {
         proxyValidator = Constraint.isNotNull(validator, "ProxyValidator cannot be null");
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         
         configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
+    
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+
+        validateConfig = configLookupFunction.apply(profileRequestContext);
+        if (validateConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
+        }
+        
+        securityConfig = validateConfig.getSecurityConfiguration(profileRequestContext);
+        if (securityConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
+            return false;
+        }
+        
+        try {
+            ticket = getCASTicket(profileRequestContext);
+            request = getCASRequest(profileRequestContext);
+            response = getCASResponse(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+
+        return true;
+    }
 
     @Override
-    @Nonnull
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationRequest request = getCASRequest(profileRequestContext);
-        final TicketValidationResponse response = getCASResponse(profileRequestContext);
-        final Ticket ticket = getCASTicket(profileRequestContext);
-        final ValidateConfiguration config = configLookupFunction.apply(profileRequestContext);
-        if (config == null) {
-            throw new IllegalStateException("Proxy-granting ticket configuration undefined");
-        }
-        
-        final SecurityConfiguration securityConfiguration = config.getSecurityConfiguration(profileRequestContext);
-        if (securityConfiguration == null || securityConfiguration.getIdGenerator() == null) {
-            throw new IllegalStateException(
-                    "Invalid proxy-granting ticket configuration: SecurityConfiguration#idGenerator undefined");
-        }
-        
-        final IdentifierGenerationStrategy pgtGenerator = config.getPGTIOUGenerator(profileRequestContext);
-        if (pgtGenerator == null) {
-            throw new IllegalStateException("Invalid proxy-granting ticket configuration: PGTIOUGenerator undefined");
-        }
+        final IdentifierGenerationStrategy pgtGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
         final ProxyIdentifiers proxyIds = new ProxyIdentifiers(
-                securityConfiguration.getIdGenerator().generateIdentifier(),
+                securityConfig.getIdGenerator().generateIdentifier(),
                 pgtGenerator.generateIdentifier());
         final URI proxyCallbackUri;
         try {
@@ -124,12 +150,16 @@ public class ValidateProxyCallbackAction
                     .addParameter(ProtocolParam.PgtIou.id(), proxyIds.getPgtIou())
                     .build();
         } catch (final URISyntaxException e) {
-            throw new RuntimeException("Error creating proxy callback URL", e);
+            log.warn("{} Error creating proxy callback URL", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.RUNTIME_EXCEPTION);
+            return;
         }
+        
         try {
-            log.debug("Attempting proxy authentication to {}", proxyCallbackUri);
+            log.debug("{} Attempting proxy authentication to {}", getLogPrefix(), proxyCallbackUri);
             proxyValidator.validate(profileRequestContext, proxyCallbackUri);
-            final Instant expiration = Instant.now().plus(config.getTicketValidityPeriod(profileRequestContext));
+            final Instant expiration =
+                    Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
             if (ticket instanceof ServiceTicket) {
                 ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
             } else {
@@ -137,9 +167,10 @@ public class ValidateProxyCallbackAction
             }
             response.setPgtIou(proxyIds.getPgtIou());
         } catch (final Exception e) {
-            log.info("Proxy authentication failed for " + request.getPgtUrl() + ": " + e);
-            return ProtocolError.ProxyCallbackAuthenticationFailure.event(this);
+            log.warn("{} Proxy authentication failed for {}", getLogPrefix(), request.getPgtUrl(), e);
+            ActionSupport.buildEvent(profileRequestContext,
+                    ProtocolError.ProxyCallbackAuthenticationFailure.event(this));
         }
-        return null;
     }
+
 }

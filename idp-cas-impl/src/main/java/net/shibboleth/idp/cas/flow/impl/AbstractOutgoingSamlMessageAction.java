@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -33,6 +32,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -43,8 +44,6 @@ import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.util.SOAPConstants;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Base class for all actions that build SAML {@link Response} messages for output.
@@ -90,8 +89,6 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         }
     }
 
-
-
     /**
      * Build the SAML object.
      * 
@@ -108,15 +105,14 @@ public abstract class AbstractOutgoingSamlMessageAction extends
     }
 
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final MessageContext<SAMLObject> msgContext = new MessageContext<>();
         try {
-            msgContext.setMessage(buildSamlResponse(springRequestContext, profileRequestContext));
-        } catch (final IllegalStateException e) {
-            return ProtocolError.IllegalState.event(this);
+            msgContext.setMessage(buildSamlResponse(profileRequestContext));
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.IllegalState.event(this));
+            return;
         }
         final SAMLBindingContext bindingContext = new SAMLBindingContext();
         bindingContext.setBindingUri(outgoingBinding.getId());
@@ -131,18 +127,18 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         msgContext.addSubcontext(soapCtx);
 
         profileRequestContext.setOutboundMessageContext(msgContext);
-
-        return ActionSupport.buildProceedEvent(this);
     }
 
     /**
      * Build the SAML response.
      * 
-     * @param springRequestContext Spring request context
      * @param profileRequestContext profile request context
+     * 
      * @return SAML response
+     * 
+     * @throws EventException to signal an event
      */
-    protected abstract Response buildSamlResponse(
-            @Nonnull RequestContext springRequestContext,
-            @Nonnull ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext);
+    @Nonnull protected abstract Response buildSamlResponse(
+            @Nonnull final ProfileRequestContext<SAMLObject,SAMLObject> profileRequestContext) throws EventException;
+
 }

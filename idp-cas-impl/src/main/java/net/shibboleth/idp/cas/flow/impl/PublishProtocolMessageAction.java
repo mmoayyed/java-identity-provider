@@ -19,9 +19,12 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import net.shibboleth.idp.profile.ActionSupport;
 
 /**
  * Action to publish the CAS protocol request or response messages, i.e.
@@ -47,19 +50,26 @@ public class PublishProtocolMessageAction extends AbstractCASProtocolAction {
     }
 
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final Object message;
-        if (requestFlag) {
-            message = getCASRequest(profileRequestContext);
-        } else {
-            message = getCASResponse(profileRequestContext);
+        
+        try {
+            if (requestFlag) {
+                message = getCASRequest(profileRequestContext);
+            } else {
+                message = getCASResponse(profileRequestContext);
+            }
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
         }
+        
         final String className = message.getClass().getSimpleName();
         final String keyName = className.substring(0, 1).toLowerCase() + className.substring(1);
         springRequestContext.getFlowScope().put(keyName, message);
-        return null;
+        
+        return ActionSupport.buildProceedEvent(this);
     }
+
 }

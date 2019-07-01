@@ -18,17 +18,19 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Ensures that a service ticket validation request that specifies renew=true matches the renew flag on the ticket
@@ -44,28 +46,48 @@ import org.springframework.webflow.execution.RequestContext;
 public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ValidateRenewAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRenewAction.class);
 
+    /** CAS ticket. */
+    @Nullable private Ticket ticket;
 
-    @Nonnull
+    /** CAS request. */
+    @Nullable private TicketValidationRequest request;
+
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
+        try {
+            ticket = getCASTicket(profileRequestContext);
+            request = getCASRequest(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
 
-        final TicketValidationRequest request = getCASRequest(profileRequestContext);
-        final Ticket ticket = getCASTicket(profileRequestContext);
+        return true;
+    }
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+
         if (ticket instanceof ServiceTicket) {
             if (request.isRenew() != ((ServiceTicket) ticket).isRenew()) {
-                log.debug("Renew=true requested at validation time but ticket not issued with renew=true.");
-                return ProtocolError.TicketNotFromRenew.event(this);
+                log.debug("{} Renew=true requested at validation time but ticket not issued with renew=true",
+                        getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketNotFromRenew.event(this));
+                return;
             }
         } else {
             // Proxy ticket validation
             if (request.isRenew()) {
-                return ProtocolError.RenewIncompatibleWithProxy.event(this);
+                ActionSupport.buildEvent(profileRequestContext, ProtocolError.RenewIncompatibleWithProxy.event(this));
+                return;
             }
         }
-        return null;
     }
+
 }

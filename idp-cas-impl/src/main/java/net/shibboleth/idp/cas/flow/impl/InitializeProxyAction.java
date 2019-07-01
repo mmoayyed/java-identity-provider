@@ -26,7 +26,10 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,12 +58,10 @@ import org.springframework.webflow.execution.RequestContext;
 public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicketRequest, ProxyTicketResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(InitializeProxyAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeProxyAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull
-    private final TicketServiceEx ticketServiceEx;
-
+    @Nonnull private final TicketServiceEx ticketServiceEx;
 
     /**
      * Constructor.
@@ -71,12 +72,10 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
         ticketServiceEx = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
     }
 
-    @Nonnull
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
-
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
+        
         final ParameterMap params = springRequestContext.getRequestParameters();
         String service = params.get(ProtocolParam.TargetService.id());
         Event result = null;
@@ -90,20 +89,27 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
             result = ProtocolError.TicketNotSpecified.event(this);
         }
         final ProxyTicketRequest proxyTicketRequest = new ProxyTicketRequest(ticket, service);
-        setCASRequest(profileRequestContext, proxyTicketRequest);
+        try {
+            setCASRequest(profileRequestContext, proxyTicketRequest);
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
+        }
+        
         if (result == null) {
             try {
-                log.debug("Fetching proxy-granting ticket {}", proxyTicketRequest.getPgt());
+                log.debug("{} Fetching proxy-granting ticket {}", getLogPrefix(), proxyTicketRequest.getPgt());
                 final ProxyGrantingTicket pgt = ticketServiceEx.fetchProxyGrantingTicket(proxyTicketRequest.getPgt());
                 if (pgt == null) {
                     return ProtocolError.TicketExpired.event(this);
                 }
                 setCASTicket(profileRequestContext, pgt);
-            } catch (final RuntimeException e) {
-                log.error("Failed looking up " + proxyTicketRequest.getPgt(), e);
+            } catch (final Exception e) {
+                log.error("{} Failed looking up {}", getLogPrefix(), proxyTicketRequest.getPgt(), e);
                 return ProtocolError.TicketRetrievalError.event(this);
             }
         }
+        
         return result;
     }
+    
 }

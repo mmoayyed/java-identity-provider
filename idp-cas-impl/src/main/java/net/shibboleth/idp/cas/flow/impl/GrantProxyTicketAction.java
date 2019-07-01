@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Predicates;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
@@ -31,6 +32,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
@@ -40,11 +42,13 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Generates and stores a CAS protocol proxy ticket. Possible outcomes:
@@ -59,8 +63,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicketRequest, ProxyTicketResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(GrantProxyTicketAction.class);
-
+    @Nonnull private final Logger log = LoggerFactory.getLogger(GrantProxyTicketAction.class);
 
     /** Profile configuration lookup function. */
     @Nonnull private final ConfigLookupFunction<ProxyConfiguration> configLookupFunction;
@@ -74,15 +77,26 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
     /** Whether to resolve and validate IdP session as part of granting a proxy ticket. */
     @Nonnull private Predicate<ProfileRequestContext> validateIdPSessionPredicate;
 
+    /** Profile config. */
+    @Nullable private ProxyConfiguration proxyConfig;
+    
+    /** Security config. */
+    @Nullable private SecurityConfiguration securityConfig;
+    
+    /** CAS ticket. */
+    @Nullable private ProxyGrantingTicket pgt;
+    
+    /** CAS request. */
+    @Nullable private ProxyTicketRequest request;
 
     /**
-     * Creates a new instance.
+     * Constructor.
      *
      * @param ticketService Ticket service component.
      * @param resolver session resolver
      */
-    public GrantProxyTicketAction(
-            @Nonnull final TicketServiceEx ticketService, @Nonnull final SessionResolver resolver) {
+    public GrantProxyTicketAction(@Nonnull final TicketServiceEx ticketService,
+            @Nonnull final SessionResolver resolver) {
         casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
         
@@ -106,66 +120,90 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         validateIdPSessionPredicate = Constraint.isNotNull(predicate, "Session validation condition cannot be null");
     }
 
-    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        final ProxyGrantingTicket pgt = (ProxyGrantingTicket) getCASTicket(profileRequestContext);
-        if (pgt == null || pgt.getExpirationInstant().isBefore(Instant.now())) {
-            return ProtocolError.TicketExpired.event(this);
-        }
-        final ProxyConfiguration config = configLookupFunction.apply(profileRequestContext);
-        if (config == null) {
-            log.warn("Proxy ticket configuration undefined");
-            return ProtocolError.IllegalState.event(this);
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
         }
         
-        final SecurityConfiguration securityConfiguration = config.getSecurityConfiguration(profileRequestContext);
-        if (securityConfiguration == null || securityConfiguration.getIdGenerator() == null) {
-            log.warn("Invalid proxy ticket configuration: SecurityConfiguration#idGenerator undefined");
-            return ProtocolError.IllegalState.event(this);
+        proxyConfig = configLookupFunction.apply(profileRequestContext);
+        if (proxyConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
         }
+        
+        securityConfig = proxyConfig.getSecurityConfiguration(profileRequestContext);
+        if (securityConfig == null) {
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
+            return false;
+        }
+        
+        try {
+            request = getCASRequest(profileRequestContext);
+            pgt = (ProxyGrantingTicket) getCASTicket(profileRequestContext);
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        
+        return true;
+    }    
+    
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+
+        if (pgt.getExpirationInstant().isBefore(Instant.now())) {
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketExpired.event(this));
+            return;
+        }
+        
         if (validateIdPSessionPredicate.test(profileRequestContext)) {
             IdPSession session = null;
             try {
-                log.debug("Attempting to retrieve session {}", pgt.getSessionId());
+                log.debug("{} Attempting to retrieve session {}", getLogPrefix(), pgt.getSessionId());
                 session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(pgt.getSessionId())));
             } catch (final ResolverException e) {
-                log.warn("IdPSession resolution error: {}", e);
+                log.warn("{} IdPSession resolution error: {}", getLogPrefix(), e);
             }
             boolean expired = true;
             if (session == null) {
-                log.info("IdPSession {} not found", pgt.getSessionId());
+                log.info("{} IdPSession {} not found", getLogPrefix(), pgt.getSessionId());
             } else {
                 try {
                     expired = !session.checkTimeout();
-                    log.debug("Session {} expired={}", pgt.getSessionId(), expired);
+                    log.debug("{} Session {} expired={}", getLogPrefix(), pgt.getSessionId(), expired);
                 } catch (final SessionException e) {
-                    log.warn("Error performing session timeout check: {}. Assuming session has expired.", e);
+                    log.warn("{} Error performing session timeout check: {}. Assuming session has expired.",
+                            getLogPrefix(), e);
                 }
             }
             if (expired) {
-                return ProtocolError.SessionExpired.event(this);
+                ActionSupport.buildEvent(profileRequestContext, ProtocolError.SessionExpired.event(this));
+                return;
             }
         }
-        final ProxyTicketRequest request = getCASRequest(profileRequestContext);
         final ProxyTicket pt;
         try {
-            log.debug("Granting proxy ticket for {}", request.getTargetService());
+            log.debug("{} Granting proxy ticket for {}", getLogPrefix(), request.getTargetService());
             pt = casTicketService.createProxyTicket(
-                    securityConfiguration.getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(config.getTicketValidityPeriod(profileRequestContext)),
+                    securityConfig.getIdGenerator().generateIdentifier(),
+                    Instant.now().plus(proxyConfig.getTicketValidityPeriod(profileRequestContext)),
                     pgt,
                     request.getTargetService());
         } catch (final RuntimeException e) {
             log.error("Failed granting proxy ticket due to error.", e);
-            return ProtocolError.TicketCreationError.event(this);
+            ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketCreationError.event(this));
+            return;
         }
-        log.info("Granted proxy ticket for {}", request.getTargetService());
-        setCASResponse(profileRequestContext, new ProxyTicketResponse(pt.getId()));
-        return null;
+        
+        try {
+            setCASResponse(profileRequestContext, new ProxyTicketResponse(pt.getId()));
+        } catch (final EventException e) {
+            ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return;
+        }
+        
+        log.info("{} Granted proxy ticket for {}", getLogPrefix(), request.getTargetService());
     }
+    
 }

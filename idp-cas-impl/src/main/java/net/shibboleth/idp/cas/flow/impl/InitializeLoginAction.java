@@ -24,6 +24,9 @@ import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.SamlParam;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
+import net.shibboleth.idp.profile.ActionSupport;
+
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -40,11 +43,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
-    @Nonnull
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         String service = params.get(ProtocolParam.Service.id());
@@ -76,8 +77,12 @@ public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTick
             serviceTicketRequest.setMethod(method);
         }
 
-        setCASRequest(profileRequestContext, serviceTicketRequest);
+        try {
+            setCASRequest(profileRequestContext, serviceTicketRequest);
+        } catch (final EventException e) {
+            return ActionSupport.buildEvent(this, e.getEventID());
+        }
 
-        return null;
+        return ActionSupport.buildProceedEvent(this);
     }
 }

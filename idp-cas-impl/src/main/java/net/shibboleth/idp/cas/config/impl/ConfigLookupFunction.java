@@ -50,7 +50,7 @@ public class ConfigLookupFunction<T extends AbstractProtocolConfiguration>
     /** {@inheritDoc} */
     @Nullable public T apply(@Nullable final ProfileRequestContext profileRequestContext) {
         if (profileRequestContext != null) {
-            final RelyingPartyContext rpContext = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
+            final RelyingPartyContext rpContext = profileRequestContext.getSubcontext(RelyingPartyContext.class);
             if (rpContext != null && configClass.isInstance(rpContext.getProfileConfig())) {
                 return configClass.cast(rpContext.getProfileConfig());
             }

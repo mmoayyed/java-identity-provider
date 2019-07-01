@@ -10,7 +10,7 @@
 
     <!-- Action beans -->
     <bean id="InitializeProfileRequestContext"
-          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
           p:profileId="#{T(net.shibboleth.idp.cas.config.impl.LoginConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="true" />
@@ -20,43 +20,39 @@
           p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="PopulateClientStorageLoadContext"
-          class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext"
-          scope="prototype"
+          class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
           p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="PopulateClientStorageSaveContext"
-          class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext"
-          scope="prototype"
+          class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
           p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeLogin"
-          class="net.shibboleth.idp.cas.flow.impl.InitializeLoginAction" />
+          class="net.shibboleth.idp.cas.flow.impl.InitializeLoginAction" scope="prototype"/>
 
     <bean id="BuildAuthenticationContext"
-          class="net.shibboleth.idp.cas.flow.impl.BuildAuthenticationContextAction" />
+          class="net.shibboleth.idp.cas.flow.impl.BuildAuthenticationContextAction" scope="prototype" />
 
     <bean id="GrantServiceTicket"
-          class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction"
+          class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction" scope="prototype"
           c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="PopulateSessionContext"
-          class="net.shibboleth.idp.session.impl.PopulateSessionContext"
-          scope="prototype"
+          class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
           p:activationCondition="%{idp.session.enabled:true}"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
           p:sessionResolver-ref="shibboleth.SessionManager" />
 
     <bean id="LoginConfigLookup"
-          class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"
+          class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction" scope="prototype"
           c:clazz="net.shibboleth.idp.cas.config.impl.LoginConfiguration" />
 
     <bean id="SubjectContextLookup"
-          class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+          class="org.opensaml.messaging.context.navigate.ChildContextLookup" scope="prototype"
           c:type="net.shibboleth.idp.authn.context.SubjectContext" />
 
     <bean id="PopulatePostAuthnInterceptContext"
-          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
-          scope="prototype"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
           p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
@@ -77,4 +73,5 @@
         </constructor-arg>
         <constructor-arg name="f" ref="SessionContextLookup" />
     </bean>
+    
 </beans>

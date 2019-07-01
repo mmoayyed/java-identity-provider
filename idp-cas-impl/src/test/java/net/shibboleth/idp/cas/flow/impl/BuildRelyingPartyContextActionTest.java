@@ -28,13 +28,15 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
+import org.opensaml.profile.action.EventException;
+
 public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
 
     @Autowired
     private BuildRelyingPartyContextAction action;
 
     @Test
-    public void testExecuteFromServiceTicketRequest() {
+    public void testExecuteFromServiceTicketRequest() throws EventException {
         final String serviceURL = "https://serviceA.example.org:8443/landing";
         final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest(serviceURL), null)
@@ -47,7 +49,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
     }
 
     @Test
-    public void testExecuteFromTicketValidationRequest() {
+    public void testExecuteFromTicketValidationRequest() throws EventException {
         final String serviceURL = "http://serviceB.example.org/";
         final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(serviceURL, "ST-123"), null)
@@ -60,7 +62,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
     }
 
     @Test
-    public void testExecuteFromProxyTicketRequest() {
+    public void testExecuteFromProxyTicketRequest() throws EventException {
         final String serviceURL = "http://mallory.untrusted.org/";
         final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ProxyTicketRequest("PGT-123", serviceURL), null)
