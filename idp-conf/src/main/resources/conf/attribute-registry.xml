@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <!--
-    The system comes preconfigured to load SAML mappings directly from resource files
+    The system comes preconfigured to load rules directly from resource files
     configured in services.xml so they're monitored for changes.
     
     You can add mappings here, add more XML resource files,

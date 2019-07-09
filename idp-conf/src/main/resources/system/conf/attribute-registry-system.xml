@@ -52,9 +52,6 @@
         
     <bean id="shibboleth.TranscodingRuleLoader"
         class="net.shibboleth.idp.attribute.transcoding.impl.TranscodingRuleLoader" abstract="true" />
-    
-    <util:map id="shibboleth.DefaultTranscodingProperties">
-    </util:map>
 
     <bean id="shibboleth.TranscodingProperties" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">

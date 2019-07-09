@@ -41,8 +41,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Wrapper around a {@link Map} representing a rule for transcoding, used to
- * detect and load the rules at runtime from a Spring context.
+ * A mechanism for loading a set of {@link TranscodingRule} objects from sources such as maps
+ * or directories of property files.
  */
 public class TranscodingRuleLoader {
     
