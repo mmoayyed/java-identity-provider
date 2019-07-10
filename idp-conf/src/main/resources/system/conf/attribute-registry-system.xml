@@ -54,12 +54,12 @@
         class="net.shibboleth.idp.attribute.transcoding.impl.TranscodingRuleLoader" abstract="true" />
 
     <bean id="shibboleth.TranscodingProperties" lazy-init="true"
-            class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="saml1.encodeType" value="%{idp.service.attribute.registry.encodeType:true}" />
-                <entry key="saml2.encodeType" value="%{idp.service.attribute.registry.encodeType:true}" />
-            </map>
+            class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="saml1.encodeType">%{idp.service.attribute.registry.encodeType:true}</prop>
+                <prop key="saml2.encodeType">%{idp.service.attribute.registry.encodeType:true}</prop>
+            </props>
         </property>
     </bean>
     
