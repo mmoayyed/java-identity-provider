@@ -21,6 +21,6 @@
     -->
 
     <!-- Default directory for custom mappings. -->
-    <bean parent="shibboleth.TranscodingRuleLoader" c:_0="%{idp.home}/attributes/custom" />
+    <bean parent="shibboleth.TranscodingRuleLoader" c:_0="%{idp.home}/conf/attributes/custom" />
    
 </beans>

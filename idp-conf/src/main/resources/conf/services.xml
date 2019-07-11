@@ -73,7 +73,7 @@
     <util:list id ="shibboleth.AttributeRegistryResources">
         <value>%{idp.home}/conf/attribute-registry.xml</value>
         <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
-        <value>%{idp.home}/attributes/default-rules.xml</value>
+        <value>%{idp.home}/conf/attributes/default-rules.xml</value>
     </util:list>
 
     <!-- This set of resources uses only AttributeEncoders for compatibility. -->
