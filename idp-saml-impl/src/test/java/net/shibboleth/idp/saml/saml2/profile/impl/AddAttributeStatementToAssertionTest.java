@@ -71,6 +71,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** The name of the second attribute. */
     private final static String MY_NAME_2 = "myName2";
 
+    /** The name of the third attribute. */
+    private final static String MY_NAME_3 = "myName3";
+
     /** The second name of the first attribute. */
     private final static String MY_ALTNAME_1 = "myAltName1";
 
@@ -120,10 +123,17 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule2_1.put(SAML2AttributeTranscoder.PROP_NAME, MY_NAME_2);
         rule2_1.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
 
+        final Map<String,Object> rule3_1 = new HashMap<>();
+        rule3_1.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_3);
+        rule3_1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule3_1.put(SAML2AttributeTranscoder.PROP_NAME, MY_NAME_3);
+        rule3_1.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
+
         registry.setTranscoderRegistry(Arrays.asList(
                 new TranscodingRule(rule1_1),
                 new TranscodingRule(rule1_2),
-                new TranscodingRule(rule2_1)));
+                new TranscodingRule(rule2_1),
+                new TranscodingRule(rule3_1)));
         registry.initialize();
         
         action = new AddAttributeStatementToAssertion();
@@ -265,7 +275,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 Assert.assertNotNull(assertion.getAttributeStatements());
                 Assert.assertEquals(assertion.getAttributeStatements().size(), 1);
 
-                AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
+                final AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
                 testAttributeStatement(attributeStatement);
             }
         }
@@ -286,12 +296,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final Response response = (Response) prc.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 1);
 
-        Assertion assertion = response.getAssertions().get(0);
+        final Assertion assertion = response.getAssertions().get(0);
         Assert.assertNotNull(assertion.getAttributeStatements());
         Assert.assertEquals(assertion.getAttributeStatements().size(), 1);
 
         final AttributeStatement attributeStatement = assertion.getAttributeStatements().get(0);
-
         testAttributeStatement(attributeStatement);
     }
 
@@ -310,7 +319,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final Response response = (Response) prc.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 1);
 
-        Assertion assertion = response.getAssertions().get(0);
+        final Assertion assertion = response.getAssertions().get(0);
         Assert.assertNotNull(assertion.getAttributeStatements());
         Assert.assertEquals(assertion.getAttributeStatements().size(), 1);
 
@@ -331,9 +340,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
         attribute2.setValues(Collections.singletonList(new StringAttributeValue(MY_VALUE_2)));
+        
+        final IdPAttribute attribute3 = new IdPAttribute(MY_NAME_3);
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2));
+        attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2, attribute3));
 
         return attribCtx;
     }

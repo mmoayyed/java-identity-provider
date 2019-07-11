@@ -145,7 +145,9 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
                 throw new AttributeEncodingException("Attribute transoding service unavailable");
             }
             for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
-                encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
+                if (!attribute.getValues().isEmpty()) {
+                    encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
+                }
             }
         } finally {
             if (null != component) {
