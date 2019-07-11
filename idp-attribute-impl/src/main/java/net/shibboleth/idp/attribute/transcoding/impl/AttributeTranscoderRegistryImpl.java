@@ -260,7 +260,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
                 transcoder.initialize();
                 transcoders.add(transcoder);
             } catch (final Exception e) {
-                log.warn("Unable to locate AttributeTranscoder bean named {}", id, e);
+                log.error("Unable to locate AttributeTranscoder bean named {}", id, e);
             }
         }
         
@@ -338,7 +338,13 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         final Object baseCondition = ruleset.get(PROP_CONDITION);
         if (baseCondition instanceof Predicate) {
             effectiveCondition = (Predicate) baseCondition;
-        } else if (baseCondition != null) {
+        } else if (baseCondition instanceof String) {
+            try {
+                effectiveCondition = getApplicationContext().getBean((String) baseCondition, Predicate.class);
+            } catch (final Exception e) {
+                log.error("Unable to locate Predicate bean named {}", baseCondition, e);
+            }
+        } else {
             log.error("{} property did not contain a Predicate object, ignored", PROP_CONDITION);
         }
 
