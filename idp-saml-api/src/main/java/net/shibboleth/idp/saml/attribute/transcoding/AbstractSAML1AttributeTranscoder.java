@@ -103,7 +103,7 @@ public abstract class AbstractSAML1AttributeTranscoder<EncodedType extends IdPAt
 
         final String name = rule.get(PROP_NAME, String.class);
         if (Strings.isNullOrEmpty(name)) {
-            throw new AttributeEncodingException("Required transcoder property 'name' not found");
+            throw new AttributeEncodingException("Required transcoder property '" + PROP_NAME + "' not found");
         }
 
         final AttributeDesignator samlAttribute;
