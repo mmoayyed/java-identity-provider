@@ -30,9 +30,10 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.util.AttributeMap;
-import org.opensaml.saml.common.AbstractSAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.EntityGroupName;
 import org.opensaml.saml.saml2.metadata.AdditionalMetadataLocation;
@@ -54,7 +55,7 @@ import org.opensaml.xmlsec.signature.Signature;
  *
  * @author Marvin S. Addison
  */
-public class ServiceEntityDescriptor extends AbstractSAMLObject implements EntityDescriptor {
+public class ServiceEntityDescriptor extends AbstractXMLObject implements EntityDescriptor {
 
     /** Underlying CAS service. */
     @Nonnull private final Service svc;

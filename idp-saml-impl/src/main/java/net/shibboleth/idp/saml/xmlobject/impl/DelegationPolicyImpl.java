@@ -24,12 +24,12 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
 
+import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.saml.common.AbstractSAMLObject;
 
 /** Implementation of {@link DelegationPolicy}. */
 @NotThreadSafe
-public class DelegationPolicyImpl extends AbstractSAMLObject implements DelegationPolicy {
+public class DelegationPolicyImpl extends AbstractXMLObject implements DelegationPolicy {
 
     /** The VerifyDepth attribute. */
     private Long maximumTokenDelegationChainLength;
