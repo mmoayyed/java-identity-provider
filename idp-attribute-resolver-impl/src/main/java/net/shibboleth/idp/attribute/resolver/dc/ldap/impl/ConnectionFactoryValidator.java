@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -84,7 +85,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
      *
      * @param what whether {@link #validate()} should throw or log errors
      */
-    public void setThrowValidateError(final Boolean what) {
+    public void setThrowValidateError(@Nullable final Boolean what) {
         if (null != what) {
             throwOnValidateError = what;
         }

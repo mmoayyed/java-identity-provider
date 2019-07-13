@@ -94,9 +94,18 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
      * Sets whether the match evaluation is case sensitive.
      * 
      * @param isCaseSensitive whether the match evaluation is case sensitive
+     */
+    public void setCaseSensitive(final boolean isCaseSensitive) {
+        caseSensitive = isCaseSensitive;
+    }
+
+    /**
+     * Sets whether the match evaluation is case sensitive (Boolean Object parameter).
+     * 
+     * @param isCaseSensitive whether the match evaluation is case sensitive
      * @since 4.0.0
      */
-    public void setCaseSensitive(final @Nullable Boolean isCaseSensitive) {
+    public void setCaseSensitiveBoolean(final @Nullable Boolean isCaseSensitive) {
         if (null == isCaseSensitive) {
             log.warn("{} empty property passed to isCaseSensitive", getLogPrefix());
             return;

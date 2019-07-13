@@ -49,7 +49,7 @@ public class AttributeRequesterInEntityGroupRuleParser extends BasePolicyRulePar
 
         builder.addPropertyValue("entityGroup", StringSupport.trimOrNull(element.getAttributeNS(null, "groupID")));
         if (element.hasAttributeNS(null, "checkAffiliations")) {
-            builder.addPropertyValue("checkAffiliations", SpringSupport.getStringValueAsBoolean(
+            builder.addPropertyValue("checkAffiliationsBoolean", SpringSupport.getStringValueAsBoolean(
                             StringSupport.trimOrNull(element.getAttributeNS(null, "checkAffiliations"))));
         }
     }

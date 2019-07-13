@@ -41,4 +41,13 @@ public class SubjectDataConnectorParserTest extends BaseAttributeDefinitionParse
         assertTrue(connector.isNoResultIsError());
     }
     
+    @Test public void emptyNoResultIsError() {
+        final SubjectDataConnector connector = getDataConnector("resolver/subjectAttributesNull.xml", SubjectDataConnector.class);
+
+        assertFalse(connector.isExportAllAttributes());
+        assertEquals(connector.getExportAttributes().size(), 2);
+        assertTrue(connector.getExportAttributes().contains("foo"));
+        assertTrue(connector.getExportAttributes().contains("bar"));
+        assertFalse(connector.isNoResultIsError());
+    }
 }

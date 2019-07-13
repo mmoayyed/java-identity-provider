@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
@@ -95,6 +96,24 @@ public class SubjectDataConnector extends AbstractDataConnector {
     public void setNoResultIsError(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
+        noResultIsError = flag;
+    }
+
+    /**
+     * Sets whether obtaining no results should be treated as an error.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * @since 4.0.0
+     */
+    public void setNoResultIsErrorBoolean(final @Nullable Boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (null == flag) {
+            log.warn("{} empty property passed to setNoResultIsError", getLogPrefix());
+            return;
+        }
+
         noResultIsError = flag;
     }
 

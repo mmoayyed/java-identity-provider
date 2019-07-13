@@ -136,18 +136,32 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     }
 
     /**
+     * Sets whether to ignore unmapped/decoded EntityAttribute extensions as an optimization
+     * (Boolean Object parameter)
+     * 
+     * <p>Defaults to false. Only applies if {@link #nameFormat} property is set.</p>
+     * 
+     * @param flag flag to set
+     * @since 4.0.0
+     */
+    public void setIgnoreUnmappedEntityAttributesBoolean(final @Nullable Boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (null == flag) {
+            log.warn("{} empty property passed to ignoreUnmappedEntityAttribute", getLogPrefix());
+            return;
+        }
+        ignoreUnmappedEntityAttributes = flag;
+    }
+
+    /**
      * Sets whether to ignore unmapped/decoded EntityAttribute extensions as an optimization.
      * 
      * <p>Defaults to false. Only applies if {@link #nameFormat} property is set.</p>
      * 
      * @param flag flag to set
      */
-    public void setIgnoreUnmappedEntityAttributes(final @Nullable Boolean flag) {
+    public void setIgnoreUnmappedEntityAttributes(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        if (null == flag) {
-            log.warn("{} empty property passed to ignoreUnmappedEntityAttribute", getLogPrefix());
-            return;
-        }
         ignoreUnmappedEntityAttributes = flag;
     }
     

@@ -38,8 +38,8 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Strategy for summoning up an {@link AttributeResolverImpl} from a populated {@link ApplicationContext}. We do this by
- * finding all the configured {@link AttributeDefinition}, {@link DataConnector} and {@link PrincipalConnector} beans
- * and bunging them into the Attribute Resolver which we then initialize.
+ * finding all the configured {@link AttributeDefinition} and {@link DataConnector} beans and bunging them into the
+ * Attribute Resolver which we then initialize.
  */
 public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitializableComponent implements
         Function<ApplicationContext,ServiceableComponent<AttributeResolver>> {
@@ -61,7 +61,11 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
     * Sets whether to strip nulls from attribute values.
     * @param doStripNulls what to set 
     */
-   public void setStripNulls(final Boolean doStripNulls) {
+   public void setStripNulls(@Nullable final Boolean doStripNulls) {
+       if (null == doStripNulls) {
+           log.warn("Attribute resolver: {} empty value passed to stripNulls. Ignored", getId());
+           return;
+       }
        stripNulls = doStripNulls;
    }
 

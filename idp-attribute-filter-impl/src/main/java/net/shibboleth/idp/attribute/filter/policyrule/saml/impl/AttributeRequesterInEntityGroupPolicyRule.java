@@ -75,14 +75,14 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
     
     /**
      * Set whether to check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}
-     * for membership in an AffiliationDescriptor
-     * as a form of group policy.
+     * for membership in an AffiliationDescriptor as a form of group policy (Boolean parameter).
      * 
      * <p>Defaults to false.</p>
      * 
      * @param flag flag to set
+     * @since 4.0.0
      */
-    public void setCheckAffiliations(final @Nullable Boolean flag) {
+    public void setCheckAffiliationsBoolean(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         if (null == flag) {
             log.warn("{} empty property passed to checkAffiliations", getLogPrefix());
@@ -91,6 +91,21 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
 
         checkAffiliations = flag;
     }
+    
+    /**
+     * Set whether to check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}
+     * for membership in an AffiliationDescriptor
+     * as a form of group policy.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setCheckAffiliations(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkAffiliations = flag;
+    }
+
 
     /**
      * Returns whether we check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}

@@ -97,16 +97,27 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     }
 
     /**
-     * Sets whether optionally requested attributes should be matched.
+     * Sets whether optionally requested attributes should be matched (Boolean Object parameter).
      * 
      * @param flag whether optionally requested attributes should be matched
+     * @since 4.0.0
      */
-    public void setOnlyIfRequired(final @Nullable Boolean flag) {
+    public void setOnlyIfRequiredBoolean(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         if (null == flag) {
             log.warn("{} empty property passed to onlyIfRequired", getLogPrefix());
             return;
         }
+        onlyIfRequired = flag;
+    }
+
+    /**
+     * Sets whether optionally requested attributes should be matched.
+     * 
+     * @param flag whether optionally requested attributes should be matched
+     */
+    public void setOnlyIfRequired(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         onlyIfRequired = flag;
     }
 
@@ -120,16 +131,27 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     }
 
     /**
-     * Sets whether to match if the metadata contains no AttributeConsumingService.
+     * Sets whether to match if the metadata contains no AttributeConsumingService (Boolean object parameter).
      * 
      * @param flag whether to match if the metadata contains no AttributeConsumingService
+     * @since 4.0.0
      */
-    public void setMatchIfMetadataSilent(final @Nullable Boolean flag) {
+    public void setMatchIfMetadataSilentBoolean(final @Nullable Boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         if (null == flag) {
             log.warn("{} empty property passed to matchIfMetadataSilent", getLogPrefix());
             return;
         }
+        matchIfMetadataSilent = flag;
+    }
+
+    /**
+     * Sets whether to match if the metadata contains no AttributeConsumingService.
+     * 
+     * @param flag whether to match if the metadata contains no AttributeConsumingService
+     */
+    public void setMatchIfMetadataSilent(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         matchIfMetadataSilent = flag;
     }
 

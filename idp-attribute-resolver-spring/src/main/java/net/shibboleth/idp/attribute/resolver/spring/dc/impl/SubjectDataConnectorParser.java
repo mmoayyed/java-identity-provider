@@ -24,10 +24,11 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SubjectDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Bean definition Parser for a {@link SubjectDataConnector}. */
 public class SubjectDataConnectorParser extends AbstractDataConnectorParser {
@@ -45,10 +46,9 @@ public class SubjectDataConnectorParser extends AbstractDataConnectorParser {
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         
-        final String noResultIsError =
-                AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
-        if (noResultIsError != null) {
-            builder.addPropertyValue("noResultIsError", noResultIsError);
+        if (config.hasAttributeNS(null, "noResultIsError")) {
+            builder.addPropertyValue("noResultIsErrorBoolean", SpringSupport.getStringValueAsBoolean(
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "noResultIsError"))));
         }
     }
 

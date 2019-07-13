@@ -45,7 +45,7 @@ public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRulePa
         }
         
         if (element.hasAttributeNS(null, "ignoreUnmappedEntityAttributes")) {
-            builder.addPropertyValue("ignoreUnmappedEntityAttributes", SpringSupport.getStringValueAsBoolean(
+            builder.addPropertyValue("ignoreUnmappedEntityAttributesBoolean", SpringSupport.getStringValueAsBoolean(
                     StringSupport.trimOrNull(element.getAttributeNS(null, "ignoreUnmappedEntityAttributes"))));
         }
     }
