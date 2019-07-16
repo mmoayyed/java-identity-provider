@@ -480,8 +480,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         
         if (getByIssuedSelectSQL == null) {
             getByIssuedSelectSQL = "SELECT * FROM " + tableName + " WHERE " + issuerColumn + "= ? AND "
-                    + recipientColumn + "= ? AND " + persistentIdColumn + "= ? AND "
-                    + deactivationTimeColumn + " IS NULL";
+                    + recipientColumn + "= ? AND " + persistentIdColumn + "= ?";
         }
         
         if (getBySourceSelectSQL == null) {
@@ -654,7 +653,12 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
             }
     
             if (entries.size() > 1) {
-                log.warn("More than one record found, only the first will be returned");
+                log.error("More than one record found for a single persistent ID value");
+            }
+            
+            if (entries.get(0).getDeactivationTime() != null &&
+                    !entries.get(0).getDeactivationTime().isAfter(Instant.now())) {
+                return null;
             }
     
             return entries.get(0);

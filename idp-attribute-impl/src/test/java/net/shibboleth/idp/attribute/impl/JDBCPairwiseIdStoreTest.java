@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -107,8 +108,7 @@ public class JDBCPairwiseIdStoreTest {
                 Objects.equals(one.getRecipientEntityID(), other.getRecipientEntityID()) &&
                 Objects.equals(one.getSourceSystemId(), other.getSourceSystemId()) &&
                 Objects.equals(one.getPrincipalName(), other.getPrincipalName()) &&
-                Objects.equals(one.getPeerProvidedId(), other.getPeerProvidedId()) &&
-                Objects.equals(one.getDeactivationTime(), other.getDeactivationTime());
+                Objects.equals(one.getPeerProvidedId(), other.getPeerProvidedId());
     }
    
     @Test public void storeEntry() throws ComponentInitializationException, IOException, SQLException {
@@ -141,7 +141,16 @@ public class JDBCPairwiseIdStoreTest {
         Assert.assertNull(id2.getDeactivationTime());
         Assert.assertTrue(comparePersistentIdEntrys(id2, id));
         
-        store.deactivate(id2);
+        id.setDeactivationTime(Instant.now().plus(1, ChronoUnit.HOURS));
+        store.deactivate(id);
+        
+        id2 = store.getByIssuedValue(id2);
+        
+        Assert.assertNotNull(id2.getDeactivationTime());
+        Assert.assertTrue(comparePersistentIdEntrys(id2, id));
+        
+        id.setDeactivationTime(null);
+        store.deactivate(id);
         
         Assert.assertNull(store.getByIssuedValue(id2));
      
