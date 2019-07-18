@@ -27,6 +27,8 @@ http\://www.w3.org/TR/2013/REC-xmlenc-core1-20130411/xenc-schema-11.xsd = schema
 http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd = schema/saml-schema-assertion-2.0.xsd
 http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-protocol-2.0.xsd = schema/saml-schema-protocol-2.0.xsd
 http\://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd = schema/saml-schema-metadata-2.0.xsd
+http\://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-algsupport-v1.0.xsd = schema/sstc-saml-metadata-algsupport-v1.0.xsd
+
 
 # Legacy Filter
 classpath\:/schema/shibboleth-2.0-afp.xsd = schema/shibboleth-afp.xsd

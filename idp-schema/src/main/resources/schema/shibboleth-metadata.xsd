@@ -2,6 +2,7 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata"
     xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:security="urn:mace:shibboleth:2.0:security"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport"
     elementFormDefault="qualified">
 
     <annotation>
@@ -12,6 +13,8 @@
         schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd"/>
     <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
         schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"/>
+    <import namespace="urn:oasis:names:tc:SAML:metadata:algsupport"
+        schemaLocation="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-algsupport-v1.0.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security"
         schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
@@ -1181,6 +1184,52 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="Algorithm">
+        <annotation>
+            <documentation>
+                A filter that adds SAML Algorithm Support extension content to metadata in order to drive software
+                behavior based on them. Sequences of algorithm elements are supplied, and when an Entity or
+                ConditionRef is encountered, the preceding elements are applied to the corresponding entities.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <choice minOccurs="0" maxOccurs="unbounded">
+                        <element ref="alg:DigestMethod" />
+                        <element ref="alg:SigningMethod" />
+                        <element ref="md:EncryptionMethod" />
+                        <element name="Entity" type="string">
+                            <annotation>
+                                <documentation>
+                                    An entityID to identify an EntityDescriptor to add all the preceding
+                                    extension elements to. 
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="ConditionRef" type="string">
+                            <annotation>
+                                <documentation>
+                                    The ID of a Spring bean to inject as a condition Predicate to identify one
+                                    or more EntityDescriptors to add all the preceding extension elements to. 
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="ConditionScript" type="shibmd:ScriptType">
+                            <annotation>
+                                <documentation>
+                                    A script implementing Predicate&lt;EntityDescriptor&gt; to identify one
+                                    or more EntityDescriptors to add all the preceding extension elements to. 
+                                </documentation>
+                            </annotation>
+                        </element>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="NodeProcessing">
         <annotation>
             <documentation>
