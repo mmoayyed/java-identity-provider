@@ -61,11 +61,7 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
     * Sets whether to strip nulls from attribute values.
     * @param doStripNulls what to set 
     */
-   public void setStripNulls(@Nullable final Boolean doStripNulls) {
-       if (null == doStripNulls) {
-           log.warn("Attribute resolver: {} empty value passed to stripNulls. Ignored", getId());
-           return;
-       }
+   public void setStripNulls(final boolean doStripNulls) {
        stripNulls = doStripNulls;
    }
 

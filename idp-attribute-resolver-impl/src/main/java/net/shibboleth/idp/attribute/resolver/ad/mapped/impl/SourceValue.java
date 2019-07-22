@@ -22,8 +22,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.MoreObjects;
 
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -33,15 +32,10 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.MoreObjects;
-
 /**
  * Represents incoming attribute values and rules used for matching them. The value may include regular expressions.
  */
 public class SourceValue extends AbstractInitializableComponent {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SourceValue.class);
 
     /**
      * Value string. This may contain regular expressions.
@@ -80,13 +74,9 @@ public class SourceValue extends AbstractInitializableComponent {
      *
      * @param theCaseSensitive whether case should be ignored when matching.  Null taken as default;
      */
-    public void setCaseSensitive( @Nullable final Boolean theCaseSensitive) {
+    public void setCaseSensitive(final boolean theCaseSensitive) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        if (null != theCaseSensitive) {
-            caseSensitive = theCaseSensitive;
-        } else {
-            log.warn("Empty value specified for case sensitive");
-        }
+        caseSensitive = theCaseSensitive;
     }
 
 
@@ -105,14 +95,10 @@ public class SourceValue extends AbstractInitializableComponent {
      * @param theIgnoreCase whether case should be ignored when matching.  Null defaults to false;
      * @deprecated in V4 - use setCaseSensitive
      */
-    public void setIgnoreCase( @Nullable final Boolean theIgnoreCase) {
+    public void setIgnoreCase(final boolean theIgnoreCase) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         DeprecationSupport.warnOnce(ObjectType.METHOD, "setIgnoreCase", null, "setCaseSensitive");
-        if (null != theIgnoreCase) {
             setCaseSensitive(!theIgnoreCase);
-        } else {
-            setCaseSensitive(true);
-        }
     }
 
 
@@ -132,13 +118,9 @@ public class SourceValue extends AbstractInitializableComponent {
      *
      * @param thePartialMatch whether partial matches should be allowed.  Null defaults to false;
      */
-    public void setPartialMatch( @Nullable final Boolean thePartialMatch) {
+    public void setPartialMatch(final boolean thePartialMatch) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        if (null != thePartialMatch) {
-            partialMatch = thePartialMatch;
-        } else {
-            partialMatch = false;
-        }
+        partialMatch = thePartialMatch;
     }
     
     /**

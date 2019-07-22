@@ -31,6 +31,7 @@ import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
@@ -266,7 +267,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             final String noResultIsError =
                     AttributeSupport.getAttributeValue(configElement, new QName("noResultIsError"));
             if (noResultIsError != null) {
-                mapper.addPropertyValue("noResultAnError", noResultIsError);
+                mapper.addPropertyValue("noResultAnError", SpringSupport.getStringValueAsBoolean(noResultIsError));
             }
 
             final String multipleResultsIsError =

@@ -670,7 +670,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String noResultIsError =
                     AttributeSupport.getAttributeValue(configElement, new QName("noResultIsError"));
             if (noResultIsError != null) {
-                mapper.addPropertyValue("noResultAnError", noResultIsError);
+                mapper.addPropertyValue("noResultAnError", SpringSupport.getStringValueAsBoolean(noResultIsError));
             }
 
             final String multipleResultsIsError =

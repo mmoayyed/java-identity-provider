@@ -21,6 +21,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.dc.impl.SubjectDataConnector;
@@ -41,7 +42,7 @@ public class SubjectDataConnectorParserTest extends BaseAttributeDefinitionParse
         assertTrue(connector.isNoResultIsError());
     }
     
-    @Test public void emptyNoResultIsError() {
+    @Test(expectedExceptions = {BeanCreationException.class}) public void emptyNoResultIsError() {
         final SubjectDataConnector connector = getDataConnector("resolver/subjectAttributesNull.xml", SubjectDataConnector.class);
 
         assertFalse(connector.isExportAllAttributes());

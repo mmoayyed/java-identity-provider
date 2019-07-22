@@ -28,7 +28,6 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SubjectDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Bean definition Parser for a {@link SubjectDataConnector}. */
 public class SubjectDataConnectorParser extends AbstractDataConnectorParser {
@@ -47,8 +46,8 @@ public class SubjectDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         
         if (config.hasAttributeNS(null, "noResultIsError")) {
-            builder.addPropertyValue("noResultIsErrorBoolean", SpringSupport.getStringValueAsBoolean(
-                    StringSupport.trimOrNull(config.getAttributeNS(null, "noResultIsError"))));
+            builder.addPropertyValue("noResultIsError", SpringSupport.getStringValueAsBoolean(
+                    config.getAttributeNS(null, "noResultIsError")));
         }
     }
 

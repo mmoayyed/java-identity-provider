@@ -62,8 +62,6 @@ public class SourceValueTest {
         assertTrue(value.isCaseSensitive());
         value.setIgnoreCase(true);
         assertFalse(value.isCaseSensitive());
-        value.setIgnoreCase(null);
-        assertTrue(value.isCaseSensitive());
         value.setCaseSensitive(false);
         assertFalse(value.isCaseSensitive());
         assertTrue(value.isIgnoreCase());

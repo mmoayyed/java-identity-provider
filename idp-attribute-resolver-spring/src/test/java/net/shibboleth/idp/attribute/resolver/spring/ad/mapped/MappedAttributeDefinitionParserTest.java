@@ -23,6 +23,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
@@ -55,7 +56,7 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
         assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
     }
     
-    @Test public void emptyPassThru() {
+    @Test(expectedExceptions = {BeanCreationException.class}) public void emptyPassThru() {
         final MappedAttributeDefinition defn = getDefinition("resolver/empty.xml");
 
         assertFalse(defn.isPassThru());

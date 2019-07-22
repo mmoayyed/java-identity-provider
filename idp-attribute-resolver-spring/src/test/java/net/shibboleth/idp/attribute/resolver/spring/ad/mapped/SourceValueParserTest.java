@@ -23,6 +23,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
@@ -85,7 +86,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         }
     }
     
-    @Test public void emptyCase() {
+    @Test(expectedExceptions = {BeanCreationException.class}) public void emptyCase() {
         SourceValue value = getSourceValue("resolver/sourceValueEmptyCase.xml");
 
         assertTrue(value.isCaseSensitive());
@@ -93,7 +94,7 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
         assertEquals(value.getValue(), "sourceValueAttributes1");
     }
 
-    @Test public void emptyPartial() {
+    @Test(expectedExceptions = {BeanCreationException.class}) public void emptyPartial() {
         SourceValue value = getSourceValue("resolver/sourceValueEmptyPartial.xml");
 
         assertFalse(value.isCaseSensitive());

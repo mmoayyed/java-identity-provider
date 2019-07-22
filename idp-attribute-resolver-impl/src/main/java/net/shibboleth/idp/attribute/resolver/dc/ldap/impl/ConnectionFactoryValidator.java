@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -30,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -67,6 +67,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
      * @param factory the connection factory
      */
     @Nonnull public void setConnectionFactory(@Nonnull final ConnectionFactory factory) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         connectionFactory = Constraint.isNotNull(factory, "Connection factory must be non-null");
     }
 
@@ -85,10 +86,9 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
      *
      * @param what whether {@link #validate()} should throw or log errors
      */
-    public void setThrowValidateError(@Nullable final Boolean what) {
-        if (null != what) {
-            throwOnValidateError = what;
-        }
+    public void setThrowValidateError(final boolean what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwOnValidateError = what;
     }
 
     /**

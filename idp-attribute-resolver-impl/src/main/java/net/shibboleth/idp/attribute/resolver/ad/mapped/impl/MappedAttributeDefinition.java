@@ -143,22 +143,6 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /**
-     * Sets whether the definition passes unmatched values through (Boolean object parameter).
-     * 
-     * @param newPassThru whether the definition passes unmatched values unchanged or suppresses them.
-     * @since 4.0.0
-     */
-    public void setPassThruBoolean(final @Nullable Boolean newPassThru) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        if (newPassThru == null) {
-            log.warn("Attribute Definition {}: empty provided as passThru", getLogPrefix());
-            return;
-        }
-        passThru = newPassThru;
-    }
-
-    /**
      * Sets whether the definition passes unmatched values through.
      * 
      * @param newPassThru whether the definition passes unmatched values unchanged or suppresses them.

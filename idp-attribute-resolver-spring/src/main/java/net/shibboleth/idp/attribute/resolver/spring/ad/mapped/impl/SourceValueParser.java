@@ -74,13 +74,14 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
                     "ignoreCase",
                     parserContext.getReaderContext().getResource().getDescription(),
                     "caseSensitive");
-            builder.addPropertyValue("ignoreCase", StringSupport.trimOrNull(config.getAttributeNS(null, "ignoreCase")));
+            builder.addPropertyValue("ignoreCase", SpringSupport.getStringValueAsBoolean(
+                    config.getAttributeNS(null, "ignoreCase")));
         }
 
         String partialMatch = null;
         if (config.hasAttributeNS(null, "partialMatch")) {
             partialMatch = StringSupport.trimOrNull(config.getAttributeNS(null, "partialMatch"));
-            builder.addPropertyValue("partialMatch", partialMatch);
+            builder.addPropertyValue("partialMatch", SpringSupport.getStringValueAsBoolean(partialMatch));
         }
 
         log.debug("SourceValue value: {}, caseSensitive: {}, partialMatch: {}", value, caseSensitive, partialMatch);
