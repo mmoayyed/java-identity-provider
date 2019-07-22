@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -63,12 +64,12 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
 
         if (element.hasAttributeNS(null, "removeRolelessEntityDescriptors")) {
             builder.addPropertyValue("removeRolelessEntityDescriptors",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "removeRolelessEntityDescriptors")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "removeRolelessEntityDescriptors")));
         }
 
         if (element.hasAttributeNS(null, "removeEmptyEntitiesDescriptors")) {
             builder.addPropertyValue("removeEmptyEntitiesDescriptors",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "removeEmptyEntitiesDescriptors")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "removeEmptyEntitiesDescriptors")));
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
@@ -64,7 +65,8 @@ public class NameIDFormatFilterParser extends AbstractSingleBeanDefinitionParser
         builder.setLazyInit(true);
 
         if (element.hasAttributeNS(null, "removeExistingFormats")) {
-            builder.addPropertyValue("removeExistingFormats", element.getAttributeNS(null, "removeExistingFormats"));
+            builder.addPropertyValue("removeExistingFormats", 
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "removeExistingFormats")));
         }
         
         // Accumulate formats to attach as rule values.

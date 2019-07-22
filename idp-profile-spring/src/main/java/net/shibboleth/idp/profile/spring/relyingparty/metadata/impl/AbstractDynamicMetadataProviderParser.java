@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -110,7 +111,7 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
 
         if (element.hasAttributeNS(null, "removeIdleEntityData")) {
             builder.addPropertyValue("removeIdleEntityData",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "removeIdleEntityData")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "removeIdleEntityData")));
         }
 
         if (element.hasAttributeNS(null, "cleanupTaskInterval")) {
@@ -156,8 +157,7 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
         }
         
         if (element.hasAttributeNS(null, "initializeFromPersistentCacheInBackground")) {
-            builder.addPropertyValue("initializeFromPersistentCacheInBackground",
-                    StringSupport.trimOrNull(
+            builder.addPropertyValue("initializeFromPersistentCacheInBackground", SpringSupport.getStringValueAsBoolean(
                             element.getAttributeNS(null, "initializeFromPersistentCacheInBackground")));
         }
         

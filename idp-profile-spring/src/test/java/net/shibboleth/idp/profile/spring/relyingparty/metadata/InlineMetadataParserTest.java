@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.testng.Assert;
@@ -57,6 +58,25 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         Assert.assertFalse(entities.hasNext());
 
     }
+    
+    @Test(expectedExceptions = {BeanCreationException.class}) public void badResolveViaPredicatesOnly() throws ResolverException, IOException {
+        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntityBadRVPO.xml", "beans.xml");
+
+        Assert.assertEquals(resolver.getId(), "badRVPO");
+
+        Assert.assertTrue(resolver.isFailFastInitialization());
+        Assert.assertTrue(resolver.isRequireValidMetadata());
+        
+        Assert.assertFalse(resolver.isResolveViaPredicatesOnly());
+        Assert.assertNotNull(resolver.getIndexes());
+        Assert.assertFalse(resolver.getIndexes().isEmpty());
+
+        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
+        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
+        Assert.assertFalse(entities.hasNext());
+
+    }
+
 
     @Test public void entities() throws ResolverException, IOException {
         final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntities.xml", "beans.xml");

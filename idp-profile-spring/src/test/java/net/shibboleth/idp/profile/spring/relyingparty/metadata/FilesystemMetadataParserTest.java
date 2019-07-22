@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -111,4 +112,22 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         Assert.assertTrue(resolver.isResolveViaPredicatesOnly());
     }
     
+    @Test(expectedExceptions = {BeanCreationException.class}) public void badRVPO() throws IOException {
+        ApplicationContext appContext = getApplicationContext("filesystemResolverContext",
+                "fileBadRVPO.xml", "beans.xml");
+        
+        RelyingPartyMetadataProvider rpProvider = 
+                appContext.getBean("BadRVPO", RelyingPartyMetadataProvider.class);
+        FilesystemMetadataResolver resolver = 
+                FilesystemMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
+        
+        Assert.assertEquals(resolver.getId(), "BadRVPO");
+        
+        Assert.assertTrue(resolver.isSatisfyAnyPredicates());
+        Assert.assertTrue(resolver.isUseDefaultPredicateRegistry());
+        Assert.assertNotNull(resolver.getCriterionPredicateRegistry());
+        Assert.assertSame(resolver.getCriterionPredicateRegistry(), appContext.getBean("metadata.CriterionPredicateRegistry"));
+        Assert.assertFalse(resolver.isResolveViaPredicatesOnly());
+    }
+
 }

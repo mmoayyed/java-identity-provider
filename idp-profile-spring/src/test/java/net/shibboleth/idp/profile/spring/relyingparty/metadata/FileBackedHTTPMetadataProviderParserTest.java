@@ -66,6 +66,58 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
 
+    @Test(expectedExceptions = {BeanCreationException.class}) public void badIFBVF() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL,
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
+
+        FileBackedHTTPMetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, propSource, "fileBackedHTTPEntityBadIFBF.xml", "beans.xml");
+
+        Assert.assertEquals(resolver.getId(), "BadIFBF");
+
+        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
+        Assert.assertTrue(resolver.isFailFastInitialization());
+        Assert.assertTrue(resolver.isRequireValidMetadata());
+
+        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
+        Assert.assertFalse(entities.hasNext());
+
+        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Duration.ofHours(12));
+        Assert.assertSame(resolver.getParserPool(), parserPool);
+
+        Assert.assertEquals(resolver.isInitializeFromBackupFile(), true);
+        Assert.assertEquals(resolver.getBackupFileInitNextRefreshDelay(), Duration.ofSeconds(10));
+
+        Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+    }
+
+    
+    @Test(expectedExceptions = {BeanCreationException.class}) public void badTLS() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL,
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
+
+        FileBackedHTTPMetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, propSource, "fileBackedHTTPEntityDisRegardTLSBad.xml", "beans.xml");
+
+        Assert.assertEquals(resolver.getId(), "badTLS");
+
+        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
+        Assert.assertTrue(resolver.isFailFastInitialization());
+        Assert.assertTrue(resolver.isRequireValidMetadata());
+
+        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
+        Assert.assertFalse(entities.hasNext());
+
+        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), Duration.ofHours(12));
+        Assert.assertSame(resolver.getParserPool(), parserPool);
+
+        Assert.assertEquals(resolver.isInitializeFromBackupFile(), false);
+        Assert.assertEquals(resolver.getBackupFileInitNextRefreshDelay(), Duration.ofSeconds(10));
+
+        Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+    }
+
+
     @Test public void entities() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL,
                 RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITIES_XML, false));

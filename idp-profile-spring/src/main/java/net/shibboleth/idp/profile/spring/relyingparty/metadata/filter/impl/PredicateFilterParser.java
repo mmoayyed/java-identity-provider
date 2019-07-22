@@ -69,8 +69,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             final BeanDefinitionBuilder builder) {
 
         if (element.hasAttributeNS(null, "removeEmptyEntitiesDescriptors")) {
-            builder.addPropertyValue("removeEmptyEntitiesDescriptors",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "removeEmptyEntitiesDescriptors")));
+            builder.addPropertyValue("removeEmptyEntitiesDescriptors", SpringSupport.getStringValueAsBoolean(
+                    element.getAttributeNS(null, "removeEmptyEntitiesDescriptors")));
         }
 
         final BeanDefinitionBuilder directionBuilder =
@@ -234,7 +234,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             final BeanDefinitionBuilder builder =
                     BeanDefinitionBuilder.genericBeanDefinition(EntityAttributesPredicate.class);
             builder.addConstructorArgValue(managedTagList);
-            builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "trim")));
+            builder.addConstructorArgValue(SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "trim")));
             return builder;
         }
 

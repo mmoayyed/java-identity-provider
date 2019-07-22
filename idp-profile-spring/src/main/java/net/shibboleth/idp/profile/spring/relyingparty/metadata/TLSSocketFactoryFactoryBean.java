@@ -19,8 +19,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
@@ -28,6 +26,8 @@ import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+
+import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
 
 /**
  * A factory bean for producing instances of {@link LayeredConnectionSocketFactory} for use in {@link HttpClient}.
@@ -69,6 +69,7 @@ public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
     public void setConnectionDisregardTLSCertificate(final boolean disregard) {
         connectionDisregardTLSCertificate = disregard;
     }
+
 
     /** {@inheritDoc} */
     @Override public Class getObjectType() {

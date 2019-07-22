@@ -126,7 +126,8 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         }
 
         if (element.hasAttributeNS(null, "requireSignedRoot")) {
-            builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedRoot"));
+            builder.addPropertyValue("requireSignedRoot", 
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "requireSignedRoot")));
         }
 
         if (element.hasAttributeNS(null, "defaultCriteriaRef")) {

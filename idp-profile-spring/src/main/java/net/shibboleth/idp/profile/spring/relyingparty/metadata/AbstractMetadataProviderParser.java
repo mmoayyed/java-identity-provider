@@ -167,12 +167,12 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
         if (isPresentNotChaining(element, "failFastInitialization")) {
             builder.addPropertyValue("failFastInitialization",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "failFastInitialization")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "failFastInitialization")));
         }
 
         if (isPresentNotChaining(element, "requireValidMetadata")) {
             builder.addPropertyValue("requireValidMetadata",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "requireValidMetadata")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "requireValidMetadata")));
         }
 
         processPredicateOptions(element, parserContext, builder);
@@ -208,12 +208,12 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         
         if (isPresentNotChaining(element, "satisfyAnyPredicates")) {
             builder.addPropertyValue("satisfyAnyPredicates",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "satisfyAnyPredicates")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "satisfyAnyPredicates")));
         }
 
         if (isPresentNotChaining(element, "useDefaultPredicateRegistry")) {
             builder.addPropertyValue("useDefaultPredicateRegistry",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "useDefaultPredicateRegistry")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "useDefaultPredicateRegistry")));
         }
 
         if (isPresentNotChaining(element, "criterionPredicateRegistryRef")) {

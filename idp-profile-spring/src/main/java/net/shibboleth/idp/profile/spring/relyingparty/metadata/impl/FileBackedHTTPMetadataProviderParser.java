@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -50,7 +51,7 @@ public class FileBackedHTTPMetadataProviderParser extends HTTPMetadataProviderPa
         
         if (element.hasAttributeNS(null, "initializeFromBackupFile")) {
             builder.addPropertyValue("initializeFromBackupFile",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "initializeFromBackupFile")));
+                    SpringSupport.getStringValueAsBoolean(element.getAttributeNS(null, "initializeFromBackupFile")));
         }
         
         if (element.hasAttributeNS(null, "backupFileInitNextRefreshDelay")) {

@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -63,8 +64,8 @@ public class InlineMetadataProviderParser extends AbstractMetadataProviderParser
         }
         
         if (element.hasAttributeNS(null, "resolveViaPredicatesOnly")) {
-            builder.addPropertyValue("resolveViaPredicatesOnly",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "resolveViaPredicatesOnly")));
+            builder.addPropertyValue("resolveViaPredicatesOnly", SpringSupport.getStringValueAsBoolean(
+                    element.getAttributeNS(null, "resolveViaPredicatesOnly")));
         }
         
     }

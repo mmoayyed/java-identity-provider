@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -56,8 +57,8 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
         }
 
         if (element.hasAttributeNS(null, "resolveViaPredicatesOnly")) {
-            builder.addPropertyValue("resolveViaPredicatesOnly",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "resolveViaPredicatesOnly")));
+            builder.addPropertyValue("resolveViaPredicatesOnly", SpringSupport.getStringValueAsBoolean(
+                    element.getAttributeNS(null, "resolveViaPredicatesOnly")));
         }
 
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
