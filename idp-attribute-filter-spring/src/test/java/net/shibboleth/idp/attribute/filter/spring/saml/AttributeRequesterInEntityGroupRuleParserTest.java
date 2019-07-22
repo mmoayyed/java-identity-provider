@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import static org.testng.Assert.assertEquals;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
@@ -38,7 +39,7 @@ public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttribut
         assertEquals(rule.isCheckAffiliations(), result);
     }
 
-    @Test public void basic() throws ComponentInitializationException {
+    @Test(expectedExceptions = {BeanCreationException.class}) public void basic() throws ComponentInitializationException {
         testRule("", false);
     }
 

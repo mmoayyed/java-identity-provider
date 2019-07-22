@@ -53,8 +53,8 @@ public abstract class AbstractStringMatcherParser extends BaseAttributeValueMatc
                         parserContext.getReaderContext().getResource().getDescription());
             }
 
-            builder.addPropertyValue("caseSensitiveBoolean", SpringSupport.getStringValueAsBoolean(
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "caseSensitive"))));
+            builder.addPropertyValue("caseSensitive", SpringSupport.getStringValueAsBoolean(
+                    element.getAttributeNS(null, "caseSensitive")));
         
         } else if (element.hasAttributeNS(null, "ignoreCase")) {
             DeprecationSupport.warnOnce(ObjectType.ELEMENT,

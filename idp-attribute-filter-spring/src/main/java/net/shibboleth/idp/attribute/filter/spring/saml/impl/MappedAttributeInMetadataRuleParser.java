@@ -58,13 +58,13 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
         super.doParse(config, builder);
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
-            builder.addPropertyValue("onlyIfRequiredBoolean", SpringSupport.getStringValueAsBoolean(
+            builder.addPropertyValue("onlyIfRequired", SpringSupport.getStringValueAsBoolean(
                     StringSupport.trimOrNull(config.getAttributeNS(null, "onlyIfRequired"))));
         }
 
         if (config.hasAttributeNS(null, "matchIfMetadataSilent")) {
-            builder.addPropertyValue("matchIfMetadataSilentBoolean", SpringSupport.getStringValueAsBoolean(
-                    StringSupport.trimOrNull(config.getAttributeNS(null, "matchIfMetadataSilent"))));
+            builder.addPropertyValue("matchIfMetadataSilent", SpringSupport.getStringValueAsBoolean(
+                    config.getAttributeNS(null, "matchIfMetadataSilent")));
         }
         
         if (config.hasAttributeNS(null, "objectStrategyRef")) {

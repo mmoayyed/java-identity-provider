@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
@@ -67,7 +68,7 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
          test("false", false);
      }
 
-     @Test public void testEmpty() throws ComponentInitializationException {
+     @Test(expectedExceptions = {BeanCreationException.class}) public void testEmpty() throws ComponentInitializationException {
          test("", false, true);
      }
 }

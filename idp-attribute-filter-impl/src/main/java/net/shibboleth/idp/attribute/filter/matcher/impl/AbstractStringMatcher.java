@@ -19,9 +19,6 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -30,9 +27,6 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
  * General {@link Matcher} for {@link String} comparison of strings in Attribute Filters.   
  */
 public abstract class AbstractStringMatcher extends AbstractMatcher implements Matcher {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractStringMatcher.class);
 
     /** String to match for a positive evaluation. */
     private String matchString;
@@ -99,21 +93,6 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
         caseSensitive = isCaseSensitive;
     }
 
-    /**
-     * Sets whether the match evaluation is case sensitive (Boolean Object parameter).
-     * 
-     * @param isCaseSensitive whether the match evaluation is case sensitive
-     * @since 4.0.0
-     */
-    public void setCaseSensitiveBoolean(final @Nullable Boolean isCaseSensitive) {
-        if (null == isCaseSensitive) {
-            log.warn("{} empty property passed to isCaseSensitive", getLogPrefix());
-            return;
-        }
-        caseSensitive = isCaseSensitive;
-    }
-
-    
     /**
      * Matches the given value against the provided match string. 
      * 
