@@ -54,7 +54,7 @@
             </saml:Attribute>
             <saml:Attribute Name="http://shibboleth.net/ns/profiles/saml1/sso/browser/includeAttributeStatement"
                     NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                <saml:AttributeValue xsi:type="xsd:boolean">1</saml:AttributeValue>
+                <saml:AttributeValue>1</saml:AttributeValue>
             </saml:Attribute>
             <Entity>https://sp.example.org</Entity>
         </MetadataFilter>
