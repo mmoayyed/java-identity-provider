@@ -59,7 +59,7 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
      * @return whether the policy evaluation is case insensitive
      * @deprecated in V4: Use isCaseSensitive
      */
-    public boolean isIgnoreCase() {
+    @Deprecated public boolean isIgnoreCase() {
         DeprecationSupport.warnOnce(ObjectType.METHOD, "isIgnoreCase", null, "isCaseSensitive");
         return !isCaseSensitive();
     }
@@ -70,7 +70,7 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
      * @param isCaseInsensitive whether the policy evaluation is case insensitive
      * @deprecated in V4: Use setCaseSensitive
      */
-    public void setIgnoreCase(final boolean isCaseInsensitive) {
+    @Deprecated public void setIgnoreCase(final boolean isCaseInsensitive) {
         DeprecationSupport.warnOnce(ObjectType.METHOD, "setIgnoreCase", null, "setCaseSensitive");
         setCaseSensitive(!isCaseInsensitive);
     }

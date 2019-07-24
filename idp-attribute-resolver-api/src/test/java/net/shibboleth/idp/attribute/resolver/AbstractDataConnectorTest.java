@@ -46,14 +46,14 @@ public class AbstractDataConnectorTest {
 
     /** Test instantiation and post-instantiation state. */
     @Test public void instantiation() {
-        MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
+        MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.emptyMap());
 
         Assert.assertNull(connector.getFailoverDataConnectorId());
     }
 
     /** Test getting/setting dependency ID. */
     @Test public void failoverDependencyId() {
-        MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
+        MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.emptyMap());
 
         connector.setFailoverDataConnectorId(" foo ");
         assertEquals(connector.getFailoverDataConnectorId(), "foo");

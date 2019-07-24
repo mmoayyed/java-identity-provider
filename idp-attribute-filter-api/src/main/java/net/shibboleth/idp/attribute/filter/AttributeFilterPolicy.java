@@ -27,6 +27,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -41,13 +48,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /**
  * A policy describing if a set of attribute value filters is applicable.
@@ -92,7 +92,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
         if (null != attributeRules) {
             valuePolicies = ImmutableList.copyOf(Iterables.filter(attributeRules, Predicates.notNull()));
         } else {
-            valuePolicies = Collections.EMPTY_LIST;
+            valuePolicies = Collections.emptyList();
         }
     }
 

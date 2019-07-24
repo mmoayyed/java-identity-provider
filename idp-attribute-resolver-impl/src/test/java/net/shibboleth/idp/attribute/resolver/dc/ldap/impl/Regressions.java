@@ -98,7 +98,7 @@ public class Regressions {
      * @return ldap data connector
      * @throws ComponentInitializationException 
      */
-    protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder builder,
+    protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder<ExecutableSearchFilter> builder,
             final SearchResultMappingStrategy strategy) throws ComponentInitializationException {
         final LDAPDataConnector connector = new LDAPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);

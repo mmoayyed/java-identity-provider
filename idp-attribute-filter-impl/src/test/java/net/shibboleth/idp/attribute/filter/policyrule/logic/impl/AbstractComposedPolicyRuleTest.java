@@ -44,7 +44,7 @@ public class AbstractComposedPolicyRuleTest {
     @Test
     public void testInitDestroy() throws ComponentInitializationException {
         final List<PolicyRequirementRule> firstList = new ArrayList<>(2);
-        ComposedPolicyRule rule = new ComposedPolicyRule(Collections.EMPTY_LIST);
+        ComposedPolicyRule rule = new ComposedPolicyRule(Collections.emptyList());
         
         for (int i = 0; i < 2;i++) {
             firstList.add(new TestMatcher());

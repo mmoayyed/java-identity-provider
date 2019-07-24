@@ -310,7 +310,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
         
         int count = 0;
         
-        final Multimap<String,? extends IdPAttribute> mappedAttributes = containerList.get(0).get();
+        final Multimap<String, IdPAttribute> mappedAttributes = containerList.get(0).get();
         for (final IdPAttribute attribute : mappedAttributes.get(attrName)) {
             for (final IdPAttributeValue attributeValue : attribute.getValues()) {
                 if (attributeValue instanceof StringAttributeValue) {

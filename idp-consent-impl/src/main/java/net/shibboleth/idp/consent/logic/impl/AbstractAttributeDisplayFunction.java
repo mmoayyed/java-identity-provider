@@ -58,7 +58,7 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
 
         languageRange = HttpServletSupport.getLanguageRange(request);
         if (defaultLanguages == null || defaultLanguages.isEmpty()) {
-            defaultLanguageRange = Collections.EMPTY_LIST;
+            defaultLanguageRange = Collections.emptyList();
         } else {
             defaultLanguageRange = defaultLanguages.
                     stream().

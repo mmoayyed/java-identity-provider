@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
  */
 public class ResolvedDataConnectorTest {
 
-    private final Map<String, IdPAttribute> resolvedData = Collections.EMPTY_MAP;
+    private final Map<String, IdPAttribute> resolvedData = Collections.emptyMap();
 
     @Test public void init() {
         MockStaticDataConnector dc = new MockStaticDataConnector();

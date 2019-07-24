@@ -50,7 +50,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
 
     /** Constructor. */
     public PrincipalEvalPredicateFactoryRegistry() {
-        registry = new ConcurrentHashMap();
+        registry = new ConcurrentHashMap<>();
     }
     
     /**
@@ -60,7 +60,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      */
     public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements @ParameterName(name="fromMap") final
             Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
-        registry = new ConcurrentHashMap(Constraint.isNotNull(fromMap, "Source map cannot be null"));
+        registry = new ConcurrentHashMap<>(Constraint.isNotNull(fromMap, "Source map cannot be null"));
     }
     
     /**
@@ -76,7 +76,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         final String trimmed =
                 Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
-        final Pair key = new Pair(principalType, trimmed);
+        final Pair key = new Pair<>(principalType, trimmed);
         final PrincipalEvalPredicateFactory factory = registry.get(key);
         if (factory != null) {
             log.debug("Registry located predicate factory of type '{}' for principal type '{}' and operator '{}'",
@@ -105,7 +105,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         
         log.debug("Registering predicate factory of type '{}' for principal type '{}' and operator '{}'",
                 factory.getClass().getName(), principalType, operator);
-        registry.put(new Pair(principalType, trimmed), factory);
+        registry.put(new Pair<>(principalType, trimmed), factory);
     }
     
     /**
@@ -121,6 +121,6 @@ public final class PrincipalEvalPredicateFactoryRegistry {
                 Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
         log.debug("Deregistering predicate factory for principal type '{}' and operator '{}'", principalType, operator);
-        registry.remove(new Pair(principalType, trimmed));
+        registry.remove(new Pair<>(principalType, trimmed));
     }
 }

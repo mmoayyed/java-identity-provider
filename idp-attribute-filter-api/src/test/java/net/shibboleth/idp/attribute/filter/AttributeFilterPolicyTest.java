@@ -229,7 +229,7 @@ public class AttributeFilterPolicyTest {
         AttributeFilterContext ctx = new AttributeFilterContext();
         AttributeFilterWorkContext workCtx = ctx.getSubcontext(AttributeFilterWorkContext.class, true);
         IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
-        attribute.setValues(Collections.EMPTY_LIST);
+        attribute.setValues(Collections.emptyList());
         ctx.setPrefilteredIdPAttributes(Arrays.asList(attribute));
         policy.initialize();
         policy.apply(ctx);

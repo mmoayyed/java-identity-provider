@@ -125,7 +125,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         final AttributeFilterImpl filter = new AttributeFilterImpl("test", Collections.singletonList(policy));
         filter.initialize();
         
-        return new MockReloadableService(filter);
+        return new MockReloadableService<AttributeFilter>(filter);
     }
 
 }

@@ -244,7 +244,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     public void setRetryableErrors(@Nullable @NonnullElements final Collection<String> errors) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        retryableErrors = new ArrayList(StringSupport.normalizeStringCollection(errors));
+        retryableErrors = new ArrayList<>(StringSupport.normalizeStringCollection(errors));
     }
     
     /**

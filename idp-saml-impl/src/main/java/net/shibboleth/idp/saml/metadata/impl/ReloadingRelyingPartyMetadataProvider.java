@@ -81,7 +81,7 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
                 component.unpinComponent();
             }
         }
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     /** {@inheritDoc} */

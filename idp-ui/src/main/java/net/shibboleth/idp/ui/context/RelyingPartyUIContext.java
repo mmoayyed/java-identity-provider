@@ -235,7 +235,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      */
     @Nonnull public RelyingPartyUIContext setFallbackLanguages(@Nullable final List<String> languages) {
         if (languages == null || languages.isEmpty()) {
-            fallbackLanguages = Collections.EMPTY_LIST;
+            fallbackLanguages = Collections.emptyList();
         }
         fallbackLanguages = languages.
                 stream().

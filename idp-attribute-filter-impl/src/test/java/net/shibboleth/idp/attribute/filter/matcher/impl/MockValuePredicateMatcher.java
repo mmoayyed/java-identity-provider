@@ -25,7 +25,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 public class MockValuePredicateMatcher extends AbstractMatcher {
 
-    Predicate valuePredicate;
+    Predicate<IdPAttributeValue> valuePredicate;
 
     /**
      * Constructor.
@@ -33,7 +33,7 @@ public class MockValuePredicateMatcher extends AbstractMatcher {
      * @param valueMatchingPredicate
      * @throws ComponentInitializationException
      */
-    public MockValuePredicateMatcher(Predicate valueMatchingPredicate) throws ComponentInitializationException {
+    public MockValuePredicateMatcher(Predicate<IdPAttributeValue> valueMatchingPredicate) throws ComponentInitializationException {
         valuePredicate  = valueMatchingPredicate;
         setId("mock1");
         initialize();

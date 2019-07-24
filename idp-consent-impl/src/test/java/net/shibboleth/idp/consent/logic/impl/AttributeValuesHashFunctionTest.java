@@ -42,7 +42,7 @@ public class AttributeValuesHashFunctionTest {
     }
 
     @Test public void testEmptyInput() {
-        Assert.assertNull(function.apply(Collections.EMPTY_LIST));
+        Assert.assertNull(function.apply(Collections.emptyList()));
     }
     
     @Test public void testNullValue() {

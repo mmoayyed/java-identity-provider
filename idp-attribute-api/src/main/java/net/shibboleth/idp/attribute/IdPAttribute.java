@@ -211,7 +211,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
                      map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).
                      collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
         } else {
-            values = List.of();
+            values = Collections.emptyList();
         }
     }
 

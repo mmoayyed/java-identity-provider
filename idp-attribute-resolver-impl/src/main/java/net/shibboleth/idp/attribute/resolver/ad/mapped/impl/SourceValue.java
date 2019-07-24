@@ -95,7 +95,7 @@ public class SourceValue extends AbstractInitializableComponent {
      * @param theIgnoreCase whether case should be ignored when matching.  Null defaults to false;
      * @deprecated in V4 - use setCaseSensitive
      */
-    public void setIgnoreCase(final boolean theIgnoreCase) {
+    @Deprecated public void setIgnoreCase(final boolean theIgnoreCase) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         DeprecationSupport.warnOnce(ObjectType.METHOD, "setIgnoreCase", null, "setCaseSensitive");
             setCaseSensitive(!theIgnoreCase);
@@ -108,7 +108,7 @@ public class SourceValue extends AbstractInitializableComponent {
      * @return whether case should be ignored when matching
      * @deprecated in V4 - use isCaseSensitive
      */
-    public boolean isIgnoreCase() {
+    @Deprecated public boolean isIgnoreCase() {
         DeprecationSupport.warnOnce(ObjectType.METHOD, "isIgnoreCase", null, "isCaseSensitive");
         return !isCaseSensitive();
     }

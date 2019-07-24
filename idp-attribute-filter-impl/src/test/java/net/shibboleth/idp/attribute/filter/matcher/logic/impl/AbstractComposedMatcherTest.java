@@ -45,7 +45,7 @@ public class AbstractComposedMatcherTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         final List<Matcher> firstList = new ArrayList<>(2);
-        ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
+        ComposedMatcher matcher = new ComposedMatcher(Collections.emptyList());
 
         for (int i = 0; i < 2; i++) {
             firstList.add(new TestMatcher());

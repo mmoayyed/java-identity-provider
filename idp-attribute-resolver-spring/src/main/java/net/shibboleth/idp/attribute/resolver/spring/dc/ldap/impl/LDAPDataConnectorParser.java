@@ -656,7 +656,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                             AttributeResolverNamespaceHandler.NAMESPACE, "Column");
 
             if (!columns.isEmpty()) {
-                final ManagedMap renamingMap = new ManagedMap();
+                final ManagedMap<String, String> renamingMap = new ManagedMap<>();
                 for (final Element column : columns) {
                     final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
                     final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");

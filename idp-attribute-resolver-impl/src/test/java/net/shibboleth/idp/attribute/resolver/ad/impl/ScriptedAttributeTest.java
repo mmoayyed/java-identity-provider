@@ -554,32 +554,32 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
                 DigestUtils.md5Hex("12345678some#salt#value#12345679") + "@switch.ch");
 
         attribute = runExample("example2.script", "example2.attribute.xml", "eduPersonAffiliation");
-        HashSet<IdPAttributeValue> set = new HashSet(attribute.getValues());
+        HashSet<IdPAttributeValue> set = new HashSet<>(attribute.getValues());
         assertEquals(set.size(), 3);
         assertTrue(set.contains(new StringAttributeValue("affiliate")));
         assertTrue(set.contains(new StringAttributeValue("student")));
         assertTrue(set.contains(new StringAttributeValue("staff")));
 
         attribute = runExample("example3.script", "example3.attribute.xml", "eduPersonAffiliation");
-        set = new HashSet(attribute.getValues());
+        set = new HashSet<>(attribute.getValues());
         assertEquals(set.size(), 2);
         assertTrue(set.contains(new StringAttributeValue("member")));
         assertTrue(set.contains(new StringAttributeValue("staff")));
 
         attribute = runExample("example3.script", "example3.attribute.2.xml", "eduPersonAffiliation");
-        set = new HashSet(attribute.getValues());
+        set = new HashSet<>(attribute.getValues());
         assertEquals(set.size(), 3);
         assertTrue(set.contains(new StringAttributeValue("member")));
         assertTrue(set.contains(new StringAttributeValue("staff")));
         assertTrue(set.contains(new StringAttributeValue("walkin")));
 
         attribute = runExample("example4.script", "example4.attribute.xml", "eduPersonEntitlement");
-        set = new HashSet(attribute.getValues());
+        set = new HashSet<>(attribute.getValues());
         assertEquals(set.size(), 1);
         assertTrue(set.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
 
         attribute = runExample("example4.script", "example4.attribute.2.xml", "eduPersonEntitlement");
-        set = new HashSet(attribute.getValues());
+        set = new HashSet<>(attribute.getValues());
         assertEquals(set.size(), 2);
         assertTrue(set.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
         assertTrue(set.contains(new StringAttributeValue("LittleGreenMen")));
@@ -598,7 +598,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         final IdPAttribute result = scripted.resolve(generateContext());
-        final HashSet<IdPAttributeValue> set = new HashSet(result.getValues());
+        final HashSet<IdPAttributeValue> set = new HashSet<>(result.getValues());
         assertEquals(set.size(), 3);
         assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
         assertTrue(set.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));

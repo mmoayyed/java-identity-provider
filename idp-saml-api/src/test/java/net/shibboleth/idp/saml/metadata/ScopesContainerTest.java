@@ -34,7 +34,7 @@ public class ScopesContainerTest {
         final ScopesContainer scopes = new ScopesContainer();
         assertFalse(scopes.matchesScope("foo"));
         scopes.setRegexpScopes(null);
-        scopes.setSimpleScopes(Collections.EMPTY_SET);
+        scopes.setSimpleScopes(Collections.emptySet());
         assertFalse(scopes.matchesScope("foo"));
         scopes.setRegexpScopes(Set.of(""));
         scopes.setSimpleScopes(Collections.singleton((String)null));

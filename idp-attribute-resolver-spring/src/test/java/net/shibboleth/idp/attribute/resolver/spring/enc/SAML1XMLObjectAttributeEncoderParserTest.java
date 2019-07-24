@@ -47,9 +47,9 @@ public class SAML1XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinit
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML1XMLObjectAttributeTranscoder);
         assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAME), "SAML1_XMLObject_ATTRIBUTE_NAME");
         assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAMESPACE), "SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
-        assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertEquals(activation, ((Predicate<Object>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML1AttributeTranscoder.PROP_ENCODE_TYPE, encodeType!=null ? encodeType : true);
-}
+    }
     
     @Test public void defaultCase() {
         final Map<String,Object> rule = getAttributeTranscoderRule("resolver/saml1XmlObjectDefault.xml").getMap();
@@ -57,7 +57,7 @@ public class SAML1XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinit
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML1XMLObjectAttributeTranscoder);
         assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAME), "XMLObject_ATTRIBUTE");
         assertNull(rule.get(SAML1AttributeTranscoder.PROP_NAMESPACE));
-        assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertFalse(((Predicate<Object>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML1AttributeTranscoder.PROP_ENCODE_TYPE, true);
     }
     

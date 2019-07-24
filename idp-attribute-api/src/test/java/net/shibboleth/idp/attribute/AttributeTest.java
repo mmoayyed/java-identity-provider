@@ -98,7 +98,7 @@ public class AttributeTest {
         attrib.setDisplayNames(null);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
-        attrib.setDisplayNames(Collections.EMPTY_MAP);
+        attrib.setDisplayNames(Collections.emptyMap());
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
         Map<Locale, String> displayNames = new HashMap<>();
@@ -164,7 +164,7 @@ public class AttributeTest {
         attrib.setDisplayDescriptions(null);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
-        attrib.setDisplayNames(Collections.EMPTY_MAP);
+        attrib.setDisplayNames(Collections.emptyMap());
         Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
 
         Map<Locale, String> displayDescriptions = new HashMap<>();
@@ -232,10 +232,10 @@ public class AttributeTest {
         attrib.setValues(null);
         Assert.assertTrue(attrib.getValues().isEmpty());
 
-        attrib.setValues(Collections.EMPTY_LIST);
+        attrib.setValues(Collections.emptyList());
         Assert.assertTrue(attrib.getValues().isEmpty());
         
-        List attribValues = new ArrayList();
+        List<IdPAttributeValue> attribValues = new ArrayList<>();
         attrib.setValues(attribValues);
         Assert.assertTrue(attrib.getValues().isEmpty());
         

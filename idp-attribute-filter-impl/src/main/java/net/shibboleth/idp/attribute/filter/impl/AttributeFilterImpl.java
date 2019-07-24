@@ -29,6 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
@@ -127,7 +128,8 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     
             IdPAttribute filteredAttribute;
             for (final String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
-                final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
+                final Collection<IdPAttributeValue> filteredAttributeValues =
+                        getFilteredValues(attributeId, filterContext);
                 if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
                     try {
                         filteredAttribute = prefilteredAttributes.get(attributeId).clone();
@@ -156,7 +158,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @return null if no values were permitted to be released, an empty collection if values were permitted but then
      *         all were removed by deny policies, a collection containing permitted values
      */
-    @Nullable protected Collection getFilteredValues(@Nonnull @NotEmpty final String attributeId,
+    @Nullable protected Collection<IdPAttributeValue> getFilteredValues(@Nonnull @NotEmpty final String attributeId,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attributeId, "attributeId can not be null");
         Constraint.isNotNull(filterContext, "filterContext can not be null");
@@ -165,7 +167,8 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
                 filterContext.getSubcontext(AttributeFilterWorkContext.class, false);
         Constraint.isNotNull(filterWorkContext, "Attribute filter work context can not be null");
 
-        final Collection filteredAttributeValues = filterWorkContext.getPermittedIdPAttributeValues().get(attributeId);
+        final Collection<IdPAttributeValue> filteredAttributeValues = filterWorkContext.
+                getPermittedIdPAttributeValues().get(attributeId);
 
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),

@@ -71,7 +71,7 @@ public class AndMatcher extends AbstractComposedMatcher {
         if (null == match) {
             return null;
         }
-        final Set<IdPAttributeValue> matchingValues = new LinkedHashSet(match);
+        final Set<IdPAttributeValue> matchingValues = new LinkedHashSet<>(match);
         while (matcherItr.hasNext()) {
             match = matcherItr.next().getMatchingValues(attribute, filterContext);
             if (null == match) {

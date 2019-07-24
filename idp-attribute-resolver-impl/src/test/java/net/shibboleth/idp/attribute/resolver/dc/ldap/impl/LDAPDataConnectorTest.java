@@ -109,7 +109,7 @@ public class LDAPDataConnectorTest {
      * @return ldap data connector
      * @throws ComponentInitializationException 
      */
-    protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder builder,
+    protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder<ExecutableSearchFilter> builder,
             final SearchResultMappingStrategy strategy) throws ComponentInitializationException {
         final LDAPDataConnector connector = new LDAPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
@@ -157,7 +157,7 @@ public class LDAPDataConnectorTest {
             // OK
         }
 
-        final ExecutableSearchBuilder requestBuilder =
+        final ExecutableSearchBuilder<ExecutableSearchFilter> requestBuilder =
                 newParameterizedExecutableSearchFilterBuilder("(uid={principalName})");
         connector.setExecutableSearchBuilder(requestBuilder);
         try {
@@ -350,7 +350,7 @@ public class LDAPDataConnectorTest {
         assertEquals(filter.getResultCacheKey(), "(cn=domain\\5cuser\\2a)");
     }
 
-    protected void resolve(final ExecutableSearchBuilder builder) throws ComponentInitializationException,
+    protected void resolve(final ExecutableSearchBuilder<ExecutableSearchFilter> builder) throws ComponentInitializationException,
             ResolutionException {
         final LDAPDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
         connector.initialize();
@@ -380,7 +380,7 @@ public class LDAPDataConnectorTest {
         assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
     }
 
-    protected void resolveMulti(final ExecutableSearchBuilder builder) throws ComponentInitializationException,
+    protected void resolveMulti(final ExecutableSearchBuilder<ExecutableSearchFilter> builder) throws ComponentInitializationException,
             ResolutionException {
         final LDAPDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
         connector.initialize();

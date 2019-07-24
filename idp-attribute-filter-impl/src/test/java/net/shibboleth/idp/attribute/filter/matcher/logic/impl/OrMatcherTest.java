@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -124,7 +125,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
             // expect this
         }
 
-        matcher = newOrMatcher(Collections.EMPTY_LIST);
+        matcher = newOrMatcher(Collections.emptyList());
         matcher.setId("test");
         try {
             matcher.initialize();
@@ -152,9 +153,10 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNoMatchingValues() throws Exception {
+        final Predicate p = equalTo("Nothing");
+        final Predicate q = equalTo("Zippo");
         final OrMatcher matcher =
-                newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo("Nothing")),
-                        new MockValuePredicateMatcher(equalTo("Zippo"))));
+                newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(p), new MockValuePredicateMatcher(q)));
 
         matcher.setId("Test");
         matcher.initialize();

@@ -140,7 +140,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
             throws ComponentInitializationException {
-        final AndMatcher matcher = newAndMatcher(Collections.EMPTY_LIST);
+        final AndMatcher matcher = newAndMatcher(Collections.emptyList());
         matcher.setId("test");
         matcher.initialize();
     }

@@ -44,10 +44,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class ScopesContainer {
 
     /** The (non Regexp) scopes. */
-    @Nonnull private Set<String> simpleScopes = Collections.EMPTY_SET;
+    @Nonnull private Set<String> simpleScopes = Collections.emptySet();
     
     /** The Regexp scopes. */
-    @Nonnull private List<Predicate<String>> regexpScopes = Collections.EMPTY_LIST;
+    @Nonnull private List<Predicate<String>> regexpScopes = Collections.emptyList();
     
     /** Sets the non-regexp Scopes.
      * <br> We force the input to be a set so as to enforce no duplicates and any performance hit as a result.
@@ -55,7 +55,7 @@ public class ScopesContainer {
      */
     public void setSimpleScopes(@Nullable final Set<String> scopes) {
         if (scopes == null || scopes.isEmpty()) {
-            simpleScopes = Collections.EMPTY_SET;
+            simpleScopes = Collections.emptySet();
         } else {
             simpleScopes = scopes.stream().
                     map(StringSupport::trimOrNull).
@@ -70,7 +70,7 @@ public class ScopesContainer {
      */
     public void setRegexpScopes(@Nullable final Set<String> scopes) {
         if (scopes == null || scopes.isEmpty()) {
-            regexpScopes = Collections.EMPTY_LIST;
+            regexpScopes = Collections.emptyList();
         } else {
             regexpScopes = scopes.stream().
                     filter(e -> null != e).

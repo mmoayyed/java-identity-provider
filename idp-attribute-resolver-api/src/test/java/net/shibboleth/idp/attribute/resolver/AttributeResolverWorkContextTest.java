@@ -115,7 +115,7 @@ public class AttributeResolverWorkContextTest {
             // expected this
         }
 
-        connector = new MockDataConnector("bar", (Map) null);
+        connector = new MockDataConnector("bar", (Map<String,IdPAttribute>) null);
         connector.initialize();
 
         context.recordDataConnectorResolution(connector, null);
@@ -131,7 +131,7 @@ public class AttributeResolverWorkContextTest {
         try {
             MockStaticDataConnector other = new MockStaticDataConnector();
             other.setId("bar");
-            other.setValues(Collections.EMPTY_LIST);
+            other.setValues(Collections.emptyList());
             other.initialize();
             context.recordDataConnectorResolution(other, null);
             Assert.fail("Cannot cross the same bridge twice or add the same resolvedId twice");

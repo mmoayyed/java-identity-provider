@@ -73,7 +73,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         
         final NodeProcessingMetadataFilter filter = new NodeProcessingMetadataFilter();
         filter.setNodeProcessors(Arrays.asList(new EntitiesDescriptorNameProcessor(),
-                new AttributeMappingNodeProcessor(new MockReloadableService(registry))));
+                new AttributeMappingNodeProcessor(new MockReloadableService<>(registry))));
         filter.initialize();
         filter.filter(metadata);
 

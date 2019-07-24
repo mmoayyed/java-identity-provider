@@ -88,7 +88,7 @@ public class ContextDerivedAttributeDefinitionTest {
     }
     
     @Test public void empty() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue> list = Collections.EMPTY_LIST;
+        final List<IdPAttributeValue> list = Collections.emptyList();
         
         final IdPAttribute attr = new IdPAttribute("wibble");
         attr.setValues(list);

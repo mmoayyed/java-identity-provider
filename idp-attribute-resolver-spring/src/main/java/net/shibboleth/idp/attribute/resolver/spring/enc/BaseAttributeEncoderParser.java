@@ -78,7 +78,7 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     @Override
     protected void doParse(final Element config, final ParserContext context, final BeanDefinitionBuilder builder) {
 
-        final ManagedMap rule = new ManagedMap();
+        final ManagedMap<String, Object> rule = new ManagedMap<>();
 
         builder.addConstructorArgValue(rule);
         
@@ -157,7 +157,8 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
      * @param rule the map of rules to add to
      * @param propertyPrefix the root property name to install
      */
-    private void processLocalizedElement(@Nonnull final List<Element> elements, @Nonnull final ManagedMap rule,
+    private void processLocalizedElement(@Nonnull final List<Element> elements,
+            @Nonnull final ManagedMap<String, Object> rule,
             @Nonnull @NotEmpty final String propertyPrefix) {
         
         for (final Element element : elements) {

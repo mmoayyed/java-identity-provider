@@ -91,7 +91,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     private Boolean exportAllAttributes;
 
     /** Which named attributes do we release?. */
-    @Nonnull @NonnullElements private Collection<String> exportAttributes = Collections.EMPTY_SET;
+    @Nonnull @NonnullElements private Collection<String> exportAttributes = Collections.emptySet();
 
     /**
      * Data Connector property "failoverDataConnectorId".

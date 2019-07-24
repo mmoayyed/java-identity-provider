@@ -90,7 +90,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
      */
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
         this(flowId, new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
-                Collections.EMPTY_SET, Collections.EMPTY_SET));
+                Collections.emptySet(), Collections.emptySet()));
     }
     
     /**

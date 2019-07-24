@@ -240,7 +240,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
                         getLogPrefix());
             }
             
-            final Multimap<String,? extends IdPAttribute> requestedAttributes = containerList.get(0).get();
+            final Multimap<String,IdPAttribute> requestedAttributes = containerList.get(0).get();
 
             final Collection<? extends IdPAttribute> requestedAttributeList =
                     requestedAttributes.get(attribute.getId());

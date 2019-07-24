@@ -43,7 +43,8 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 /**
  * Additional gauges for attribute resolver.
  */
-public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet implements MetricSet, MetricFilter {
+public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<AttributeResolver>
+                        implements MetricSet, MetricFilter {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceGaugeSet.class);
@@ -62,7 +63,7 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet 
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "failure"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
+                        final Builder<String,Instant> mapBuilder = ImmutableMap.<String,Instant>builder();
                         final ServiceableComponent<AttributeResolver> component =
                                 getService().getServiceableComponent();
                         if (component != null) {

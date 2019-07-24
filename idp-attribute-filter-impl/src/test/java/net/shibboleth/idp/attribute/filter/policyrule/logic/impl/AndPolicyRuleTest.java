@@ -60,7 +60,7 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
     @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
             throws ComponentInitializationException {
-        final AndPolicyRule rule = newAndPolicyRule(Collections.EMPTY_LIST);
+        final AndPolicyRule rule = newAndPolicyRule(Collections.emptyList());
         rule.setId("test");
         rule.initialize();
     }

@@ -42,8 +42,9 @@ import javax.annotation.Nonnull;
 
 /**
  * A set of gauges for a reloadable service.
+ * @param <T> Type of service we are monitoring
  */
-public class ReloadableServiceGaugeSet extends AbstractInitializableComponent implements MetricSet, MetricFilter {
+public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent implements MetricSet, MetricFilter {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty protected static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp";
@@ -98,7 +99,7 @@ public class ReloadableServiceGaugeSet extends AbstractInitializableComponent im
      * 
      * @return service to report on
      */
-    @NonnullAfterInit public ReloadableService getService() {
+    @NonnullAfterInit public ReloadableService<T> getService() {
         return service;
     }
     

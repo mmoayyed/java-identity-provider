@@ -290,7 +290,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
             return false;
         }
 
-        final AbstractResolverPlugin<ResolvedType> other = (AbstractResolverPlugin<ResolvedType>) obj;
+        final AbstractResolverPlugin other = (AbstractResolverPlugin) obj;
         return java.util.Objects.equals(getId(), other.getId());
     }
 

@@ -319,7 +319,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         final IdPAttribute newAttr = attribute.clone();
 
-        final Set<IdPAttributeValue> s = new LinkedHashSet(2);
+        final Set<IdPAttributeValue> s = new LinkedHashSet<>(2);
         s.add(new StringAttributeValue(ProfileRequestContext.class.getName()));
         s.add(new StringAttributeValue("BAR"));
         s.add(new StringAttributeValue("FOO"));

@@ -73,14 +73,14 @@ public abstract class AbstractMatchesShibMDScopeMatcher
         if (issuerContext == null) {
             LOG.warn("{} internal error: no IssueContext found",
                     getLogPrefix());
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         final RoleDescriptor roleDescriptor = issuerContext.getRoleDescriptor();
         final EntityDescriptor entityDescriptor = issuerContext.getEntityDescriptor();
         final List<ScopesContainer> roleContainers;
         if (roleDescriptor == null) {
             LOG.debug("{} No Role Descriptor found");
-            roleContainers = Collections.EMPTY_LIST;
+            roleContainers = Collections.emptyList();
         } else {
             roleContainers = roleDescriptor.getObjectMetadata().get(ScopesContainer.class);
         }
@@ -88,7 +88,7 @@ public abstract class AbstractMatchesShibMDScopeMatcher
         final List<ScopesContainer> entityContainers;
         if (entityDescriptor == null) {
             LOG.debug("{} No Entity Descriptor found");
-            entityContainers = Collections.EMPTY_LIST;
+            entityContainers = Collections.emptyList(); 
         } else {
             entityContainers= entityDescriptor.getObjectMetadata().get(ScopesContainer.class);
         }
@@ -101,7 +101,7 @@ public abstract class AbstractMatchesShibMDScopeMatcher
             LOG.debug("{} No <shibmd:Scope> found for {}, no atributes matched",
                     getLogPrefix(),
                     entityDescriptor == null? "<unknown>" : entityDescriptor.getID());
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         
         for (final IdPAttributeValue value : attribute.getValues()) {

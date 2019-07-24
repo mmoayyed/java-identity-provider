@@ -253,7 +253,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
                     AttributeResolverNamespaceHandler.NAMESPACE, "Column");
             if (!columns.isEmpty()) {
-                final ManagedMap renamingMap = new ManagedMap();
+                final ManagedMap<String, String> renamingMap = new ManagedMap<>();
                 for (final Element column : columns) {
                     final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
                     final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");

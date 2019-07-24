@@ -90,7 +90,7 @@ public class RDBMSDataConnectorTest {
      * @param strategy to map results
      * @return rdbms data connector
      */
-    protected RDBMSDataConnector createUserRdbmsDataConnector(final ExecutableSearchBuilder builder,
+    protected RDBMSDataConnector createUserRdbmsDataConnector(final ExecutableSearchBuilder<ExecutableStatement> builder,
             final ResultMappingStrategy strategy) {
         final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
@@ -108,7 +108,7 @@ public class RDBMSDataConnectorTest {
      * @param strategy to map results
      * @return rdbms data connector
      */
-    protected RDBMSDataConnector createGroupRdbmsDataConnector(final ExecutableSearchBuilder builder,
+    protected RDBMSDataConnector createGroupRdbmsDataConnector(final ExecutableSearchBuilder<ExecutableStatement> builder,
             final ResultMappingStrategy strategy) {
         final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME + "ForGroups");
@@ -138,7 +138,7 @@ public class RDBMSDataConnectorTest {
             // OK
         }
 
-        final ExecutableSearchBuilder statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
+        final ExecutableSearchBuilder<ExecutableStatement> statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         try {
             connector.initialize();
@@ -174,7 +174,7 @@ public class RDBMSDataConnectorTest {
     @Test public void failFastInitialize() throws ComponentInitializationException {
         final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        final ExecutableSearchBuilder statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
+        final ExecutableSearchBuilder<ExecutableStatement> statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         connector.setDataSource(new JDBCDataSource());
 

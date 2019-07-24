@@ -55,7 +55,7 @@ public class AttributeContextTest {
         context.setIdPAttributes(null);
         contextAttributes(context, 0);
         
-        context.setIdPAttributes(Collections.EMPTY_SET);
+        context.setIdPAttributes(Collections.emptySet());
         contextAttributes(context, 0);
     }
 

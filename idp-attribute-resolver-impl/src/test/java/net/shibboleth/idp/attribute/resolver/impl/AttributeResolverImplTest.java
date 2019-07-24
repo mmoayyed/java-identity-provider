@@ -70,7 +70,7 @@ public class AttributeResolverImplTest {
     /** Test post-instantiation state. */
     @Test public void initDestroy() throws Exception {
         final MockAttributeDefinition attrDef = new MockAttributeDefinition("foo", new IdPAttribute("test"));
-        final MockDataConnector dataCon = new MockDataConnector("bar", (Map) null);
+        final MockDataConnector dataCon = new MockDataConnector("bar", (Map<String, IdPAttribute>) null);
         dataCon.initialize();
         final AttributeResolverImpl resolver =
                 newAttributeResolverImpl("toto", Collections.singleton((AttributeDefinition) attrDef),
@@ -134,15 +134,15 @@ public class AttributeResolverImplTest {
     /** Test getting, setting, overwriting, defensive collection copy. */
     @Test public void setDataConnectors() throws Exception {
         final ArrayList<DataConnector> connectors = new ArrayList<>();
-        connectors.add(new MockDataConnector("foo", (Map) null));
+        connectors.add(new MockDataConnector("foo", (Map<String, IdPAttribute>) null));
         connectors.add(null);
-        connectors.add(new MockDataConnector("bar", (Map) null));
+        connectors.add(new MockDataConnector("bar", (Map<String, IdPAttribute>) null));
 
         final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", null, connectors);
         assertNotNull(resolver.getDataConnectors());
         assertEquals(resolver.getDataConnectors().size(), 2);
 
-        connectors.add(new MockDataConnector("foo", (Map) null));
+        connectors.add(new MockDataConnector("foo", (Map<String, IdPAttribute>) null));
         try {
             newAttributeResolverImpl(" foo ", null, connectors);
             fail();
@@ -295,7 +295,7 @@ public class AttributeResolverImplTest {
     /** Test that resolve w/ dependencies returns the expected results. */
 
     @Test public void resolveWithDependencies() throws Exception {
-        final MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
+        final MockDataConnector dc1 = new MockDataConnector("dc1", (Map<String, IdPAttribute>) null);
         dc1.initialize();
 
         final IdPAttribute attr = new IdPAttribute("test");
@@ -462,7 +462,7 @@ public class AttributeResolverImplTest {
     }
 
     @Test public void cachedDataConnectorDependency() throws ComponentInitializationException, ResolutionException {
-        final MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
+        final MockDataConnector dc1 = new MockDataConnector("dc1", (Map<String, IdPAttribute>) null);
         dc1.initialize();
 
         final ResolverDataConnectorDependency dep1 = TestSources.makeDataConnectorDependency("dc1", null);

@@ -23,6 +23,11 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -30,11 +35,6 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Bridging class to go from a {@link PolicyRequirementRule} to a {@link Matcher}.
@@ -81,7 +81,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
             return null;
         } else if (Tristate.FALSE == result) {
             log.debug("{} The rule returned FALSE, no values returned", getLogPrefix());
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         } else {
             log.debug("{} The rule returned TRUE, all values returned", getLogPrefix());
             return ImmutableSet.copyOf(attribute.getValues());
