@@ -191,7 +191,7 @@
     <complexType name="PasswordBearingString">
         <simpleContent>
             <extension base="string">
-                <attribute name="password" type="sec:string">
+                <attribute name="password" type="string">
                     <annotation>
                         <documentation>
                             Password associated with the resource identified by elements of this type.

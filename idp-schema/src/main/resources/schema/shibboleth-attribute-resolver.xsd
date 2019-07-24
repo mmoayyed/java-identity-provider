@@ -280,7 +280,7 @@
             </documentation>
         </annotation>
         <sequence>
-            <element name="ReturnValue" type="resolver:string">
+            <element name="ReturnValue" type="string">
                 <annotation>
                     <documentation>The value to be returned from this value map.</documentation>
                 </annotation>
@@ -809,7 +809,7 @@
                         <documentation>The DN for the principal connecting to the LDAP directory.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="principalCredential" type="resolver:string">
+                <attribute name="principalCredential" type="string">
                     <annotation>
                         <documentation>
                             The credential for the principal connecting to the LDAP directory.

@@ -54,7 +54,7 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:ReloadingMetadataProviderType">
-                <attribute name="resourceRef" type="string">
+                <attribute name="resourceRef" type="shibmd:string">
                     <annotation>
                         <documentation>the name of a bean with the (Spring) resource to use</documentation>
                     </annotation>
@@ -81,7 +81,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="indexesRef" type="string">
+                <attribute name="indexesRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             ID of a Set of MetadataIndex instances used to support resolution of metadata based on
@@ -89,7 +89,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="resolveViaPredicatesOnly" type="string">
+                <attribute name="resolveViaPredicatesOnly" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Flag indicating whether resolution may be performed solely by applying predicates to the
@@ -125,28 +125,28 @@
                         </complexType>
                     </element>
                 </sequence>
-                <attribute name="backingFile" type="string" use="required">
+                <attribute name="backingFile" type="shibmd:string" use="required">
                     <annotation>
                         <documentation>
                             The path to the temporary file used to store valid metadata on-disk.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="initializeFromBackupFile" type="string">
+                <attribute name="initializeFromBackupFile" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Flag indicating whether initialization should first attempt to load metadata from backup file.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="backupFileInitNextRefreshDelay" type="string">
+                <attribute name="backupFileInitNextRefreshDelay" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Duration in milliseconds after which to schedule next refresh when initialized from backup file. 
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="httpClientRef" type="string">
+                <attribute name="httpClientRef" type="shibmd:string">
                     <annotation>
                         <documentation>
 	                        The reference to an externally defined Spring bean which specifies an
@@ -156,7 +156,7 @@
                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="httpClientSecurityParametersRef" type="string">
+                <attribute name="httpClientSecurityParametersRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A reference to an externally defined Spring bean which specifies an
@@ -164,17 +164,17 @@
                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="metadataURL" type="string" use="required">
+                <attribute name="metadataURL" type="shibmd:string" use="required">
                     <annotation>
                         <documentation>The URL from which to retrieve the metadata.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="disregardTLSCertificate" type="string">
+                <attribute name="disregardTLSCertificate" type="shibmd:string">
                     <annotation>
                         <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectionTimeout" type="string">
+                <attribute name="connectionTimeout" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum length of time to wait for the remote server to response.
@@ -182,7 +182,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectionRequestTimeout" type="string">
+                <attribute name="connectionRequestTimeout" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum length of time to wait for a connection to be returned from the connection manager.
@@ -190,7 +190,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="socketTimeout" type="string">
+                <attribute name="socketTimeout" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum period inactivity between two consecutive data packets.
@@ -198,19 +198,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyHost" type="string">
+                <attribute name="proxyHost" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Hostname of the HTTP proxy through which connections will be made.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyPort" type="string">
+                <attribute name="proxyPort" type="shibmd:string">
                     <annotation>
                         <documentation>Port of the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyUser" type="string">
+                <attribute name="proxyUser" type="shibmd:string">
                     <annotation>
                         <documentation>User name used with the HTTP proxy through which connections will be made.
                         </documentation>
@@ -241,7 +241,7 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:ReloadingMetadataProviderType">
-                <attribute name="metadataFile" type="string" use="required">
+                <attribute name="metadataFile" type="shibmd:string" use="required">
                     <annotation>
                         <documentation>The path to the metadata file.</documentation>
                     </annotation>
@@ -281,14 +281,14 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="velocityEngine" type="string">
+                                    <attribute name="velocityEngine" type="shibmd:string">
                                         <annotation>
                                             <documentation>
                                                 Name of the Velocity Engine defined within the application.
                                             </documentation>
                                         </annotation>
                                     </attribute>
-                                    <attribute name="encodingStyle" type="string">
+                                    <attribute name="encodingStyle" type="shibmd:string">
                                         <annotation>
                                             <documentation>
                                                 Enum value indicating whether and how the entityID should be encoded into the 
@@ -296,7 +296,7 @@
                                             </documentation>
                                         </annotation>
                                     </attribute>
-                                    <attribute name="transformRef" type="string">
+                                    <attribute name="transformRef" type="shibmd:string">
                                         <annotation>
                                             <documentation>
                                                 Reference to an optional transform function for the entity ID.
@@ -319,7 +319,7 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="match" type="string" use="required">
+                                    <attribute name="match" type="shibmd:string" use="required">
                                         <annotation>
                                             <documentation>
                                                 Regular expression against which the entityID is evaluated.
@@ -344,14 +344,14 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="transformRef" type="string">
+                                    <attribute name="transformRef" type="shibmd:string">
                                         <annotation>
                                             <documentation>
                                                 Reference to an optional transform function for the entity ID.
                                             </documentation>
                                         </annotation>
                                     </attribute>
-                                    <attribute name="secondaryURLBuildersRef" type="string">
+                                    <attribute name="secondaryURLBuildersRef" type="shibmd:string">
                                         <annotation>
                                             <documentation>
                                                 Reference to a list of secondary URL builders for non-entityID-based lookups.
@@ -389,7 +389,7 @@
                         </complexType>
                     </element>
                 </sequence>
-                <attribute name="httpClientRef" type="string">
+                <attribute name="httpClientRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A reference to an externally defined Spring bean which specifies an
@@ -400,7 +400,7 @@
                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="httpClientSecurityParametersRef" type="string">
+                <attribute name="httpClientSecurityParametersRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A reference to an externally defined Spring bean which specifies an
@@ -416,12 +416,12 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="disregardTLSCertificate" type="string">
+                <attribute name="disregardTLSCertificate" type="shibmd:string">
                     <annotation>
                         <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectionTimeout" type="string">
+                <attribute name="connectionTimeout" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum length of time to wait for the remote server to response.
@@ -429,7 +429,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectionRequestTimeout" type="string">
+                <attribute name="connectionRequestTimeout" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum length of time to wait for a connection to be returned from the connection manager.
@@ -437,7 +437,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="socketTimeout" type="string">
+                <attribute name="socketTimeout" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum period inactivity between two consecutive data packets.
@@ -445,7 +445,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxConnectionsTotal" type="string">
+                <attribute name="maxConnectionsTotal" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Max total simultaneous connections allowed by the pooling connection manager.
@@ -453,7 +453,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxConnectionsPerRoute" type="string">
+                <attribute name="maxConnectionsPerRoute" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Max simultaneous connections per route allowed by the pooling connection manager.
@@ -461,17 +461,17 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyHost" type="string">
+                <attribute name="proxyHost" type="shibmd:string">
                     <annotation>
                         <documentation>Hostname of the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyPort" type="string">
+                <attribute name="proxyPort" type="shibmd:string">
                     <annotation>
                         <documentation>Port of the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyUser" type="string">
+                <attribute name="proxyUser" type="shibmd:string">
                     <annotation>
                         <documentation>User name for the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
@@ -493,21 +493,21 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:DynamicMetadataProviderType"> 
-                <attribute name="sourceManagerRef" type="string">
+                <attribute name="sourceManagerRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Bean reference to the XMLObjectLoadSaveManager which serves as the local source of metadata.
                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sourceKeyGeneratorRef" type="string">
+                <attribute name="sourceKeyGeneratorRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Bean reference to the function which generates the source key from criteria at runtime.
                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sourceDirectory" type="string">
+                <attribute name="sourceDirectory" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Convenience mechanism for wiring a FilesystemLoadSaveManager loading from the specified
@@ -539,12 +539,12 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:MetadataProviderType">
-                <attribute name="parserPoolRef" type="string">
+                <attribute name="parserPoolRef" type="shibmd:string">
                     <annotation>
                         <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="indexesRef" type="string">
+                <attribute name="indexesRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             ID of a Set of MetadataIndex instances used to support resolution of metadata based on
@@ -552,12 +552,12 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="taskTimerRef" type="string">
+                <attribute name="taskTimerRef" type="shibmd:string">
                     <annotation>
                         <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="refreshDelayFactor" type="string">
+                <attribute name="refreshDelayFactor" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Factor applied to metadata's expiration time in order to determine next refresh
@@ -565,7 +565,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minCacheDuration" type="string">
+                <attribute name="minCacheDuration" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The minimum duration for which metadata will be cached before it is refreshed.
@@ -573,7 +573,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxCacheDuration" type="string">
+                <attribute name="maxCacheDuration" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum duration for which metadata will be cached before it is refreshed.
@@ -581,7 +581,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="negativeLookupCacheDuration" type="string">
+                <attribute name="negativeLookupCacheDuration" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The duration for which a negative lookup result will be cached. 
@@ -590,7 +590,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxIdleEntityData" type="string">
+                <attribute name="maxIdleEntityData" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum duration for which metadata will be allowed to be idle (no requests for it) 
@@ -598,19 +598,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="removeIdleEntityData" type="string">
+                <attribute name="removeIdleEntityData" type="shibmd:string">
                     <annotation>
                         <documentation>A boolean flag indicating whether idle metadata should be removed.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="expirationWarningThreshold" type="string">
+                <attribute name="expirationWarningThreshold" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Impending expiration warning threshold for metadata refresh.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cleanupTaskInterval" type="string">
+                <attribute name="cleanupTaskInterval" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The interval at which the internal cleanup task should run.  This task performs
@@ -619,14 +619,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="persistentCacheManagerRef" type="string">
+                <attribute name="persistentCacheManagerRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The manager for the persistent cache store for resolved metadata.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="persistentCacheManagerDirectory" type="string">
+                <attribute name="persistentCacheManagerDirectory" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The directory used for an internally-constructed filesystem-based persistent cache.
@@ -635,21 +635,21 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="persistentCacheKeyGeneratorRef" type="string">
+                <attribute name="persistentCacheKeyGeneratorRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Function for generating the string key used with the cache manager.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="initializeFromPersistentCacheInBackground" type="string">
+                <attribute name="initializeFromPersistentCacheInBackground" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether should initialize from the persistent cache in the background.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="backgroundInitializationFromCacheDelay" type="string">
+                <attribute name="backgroundInitializationFromCacheDelay" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The delay after which to schedule the background initialization from the persistent cache. 
@@ -657,7 +657,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="initializationFromCachePredicateRef" type="string">
+                <attribute name="initializationFromCachePredicateRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Predicate which determines whether a given entity should be loaded from the
@@ -675,12 +675,12 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:MetadataProviderType">
-                <attribute name="parserPoolRef" type="string">
+                <attribute name="parserPoolRef" type="shibmd:string">
                     <annotation>
                         <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="indexesRef" type="string">
+                <attribute name="indexesRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             ID of a Set of MetadataIndex instances used to support resolution of metadata based on
@@ -688,7 +688,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="resolveViaPredicatesOnly" type="string">
+                <attribute name="resolveViaPredicatesOnly" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Flag indicating whether resolution may be performed solely by applying predicates to the
@@ -696,12 +696,12 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="taskTimerRef" type="string">
+                <attribute name="taskTimerRef" type="shibmd:string">
                     <annotation>
                         <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="refreshDelayFactor" type="string">
+                <attribute name="refreshDelayFactor" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Factor applied to metadata's expiration time in order to determine next refresh
@@ -709,21 +709,21 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxRefreshDelay" type="string">
+                <attribute name="maxRefreshDelay" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Maximum amount time, from the previous, before a metadata refresh cycle runs.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="minRefreshDelay" type="string">
+                <attribute name="minRefreshDelay" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Minimum amount of time, from the previous, before a metadata refresh cycle runs.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="expirationWarningThreshold" type="string">
+                <attribute name="expirationWarningThreshold" type="shibmd:string">
                     <annotation>
                         <documentation>
                             Impending expiration warning threshold for metadata refresh.
@@ -749,7 +749,7 @@
                 <documentation>A unique identifier that may be used to identify a particular provider.</documentation>
             </annotation>
         </attribute>
-        <attribute name="requireValidMetadata" type="string">
+        <attribute name="requireValidMetadata" type="shibmd:string">
             <annotation>
                 <documentation>
                     A boolean flag indicating whether the metadata retrieved must be valid. At a minimum, metadata is
@@ -758,7 +758,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="failFastInitialization" type="string">
+        <attribute name="failFastInitialization" type="shibmd:string">
             <annotation>
                 <documentation>
                     Determines if the metadata provider "fails fast" during initialization. This means that
@@ -766,7 +766,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="satisfyAnyPredicates" type="string">
+        <attribute name="satisfyAnyPredicates" type="shibmd:string">
             <annotation>
                 <documentation>
                     Flag which determines whether predicates used in filtering are connected by 
@@ -774,14 +774,14 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="criterionPredicateRegistryRef" type="string">
+        <attribute name="criterionPredicateRegistryRef" type="shibmd:string">
             <annotation>
                 <documentation>
                     Reference to bean for the predicate registry used in resolving predicates from criteria.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="useDefaultPredicateRegistry" type="string">
+        <attribute name="useDefaultPredicateRegistry" type="shibmd:string">
             <annotation>
                 <documentation>
                     Flag which determines whether the default predicate registry will be used if one is not supplied explicitly.
@@ -789,7 +789,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="sortKey" type="string">
+        <attribute name="sortKey" type="shibmd:string">
             <annotation>
                 <documentation>
                     This Integer value determines the processing order for top level Metadata providers.
@@ -820,7 +820,7 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
-                <attribute name="maxValidityInterval" type="string">
+                <attribute name="maxValidityInterval" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The maximum amount of time, from now, which the validUntil attribute may be set.
@@ -842,7 +842,7 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
-                <attribute name="schemaBuilderRef" type="string">
+                <attribute name="schemaBuilderRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The reference to an externally defined Spring bean which specifies a
@@ -864,7 +864,7 @@
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
                 <choice minOccurs="0" maxOccurs="1"> 
-                    <element name="PublicKey" type="string" minOccurs="0" maxOccurs="1">
+                    <element name="PublicKey" type="shibmd:string" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>The PEM of the public key used to sign the metadata.</documentation>
                         </annotation>
@@ -875,33 +875,33 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="trustEngineRef" type="string">
+                <attribute name="trustEngineRef" type="shibmd:string">
                     <annotation>
                         <documentation>The ID of the trust engine used to validate the signature.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="requireSignedRoot" type="string">
+                <attribute name="requireSignedRoot" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a signature is required on the incoming metadata's root element.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="certificateFile" type="string">
+                <attribute name="certificateFile" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The location of a file containing a certificate with the public key to test against.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="defaultCriteriaRef" type="string">
+                <attribute name="defaultCriteriaRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The ID of the optional set of static criteria supplied to the trust engine.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signaturePrevalidatorRef" type="string">
+                <attribute name="signaturePrevalidatorRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The ID of the optional signature prevalidator used to validate some
@@ -909,7 +909,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="dynamicTrustedNamesStrategyRef" type="string">
+                <attribute name="dynamicTrustedNamesStrategyRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The ID of the optional strategy used to build at runtime the set of dynamic
@@ -943,7 +943,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="removeRolelessEntityDescriptors" type="string">
+                <attribute name="removeRolelessEntityDescriptors" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entity descriptors that do not contain at least one role,
@@ -951,7 +951,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="removeEmptyEntitiesDescriptors" type="string">
+                <attribute name="removeEmptyEntitiesDescriptors" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entities descriptors that do not contain at least one entity
@@ -975,7 +975,7 @@
             <extension base="shibmd:MetadataFilterType">
                 <sequence>
                     <choice minOccurs="0">
-                        <element name="AttributeFilterRef" type="string">
+                        <element name="AttributeFilterRef" type="shibmd:string">
                             <annotation>
                                 <documentation>
                                     The ID of a Spring bean to inject as a condition Predicate to determine whether
@@ -1000,7 +1000,7 @@
                                 </documentation>
                             </annotation>
                         </element>
-                        <element name="Entity" type="string">
+                        <element name="Entity" type="shibmd:string">
                             <annotation>
                                 <documentation>
                                     An entityID to identify an EntityDescriptor to add all the preceding
@@ -1008,7 +1008,7 @@
                                 </documentation>
                             </annotation>
                         </element>
-                        <element name="ConditionRef" type="string">
+                        <element name="ConditionRef" type="shibmd:string">
                             <annotation>
                                 <documentation>
                                     The ID of a Spring bean to inject as a condition Predicate to identify one
@@ -1042,14 +1042,14 @@
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
                 <choice minOccurs="0" maxOccurs="unbounded">
-                    <element name="Format" type="string">
+                    <element name="Format" type="shibmd:string">
                         <annotation>
                             <documentation>
                                 A format to add. 
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="Entity" type="string">
+                    <element name="Entity" type="shibmd:string">
                         <annotation>
                             <documentation>
                                 An entityID to identify an EntityDescriptor to add all the preceding
@@ -1057,7 +1057,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="ConditionRef" type="string">
+                    <element name="ConditionRef" type="shibmd:string">
                         <annotation>
                             <documentation>
                                 The ID of a Spring bean to inject as a condition Predicate to identify one
@@ -1100,14 +1100,14 @@
         <complexContent>
             <extension base="shibmd:MetadataFilterType">
                 <choice minOccurs="0" maxOccurs="unbounded">
-                    <element name="Entity" type="string">
+                    <element name="Entity" type="shibmd:string">
                         <annotation>
                             <documentation>
                                 An entityID to use in a predicate that matches on entityID. 
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="Group" type="string">
+                    <element name="Group" type="shibmd:string">
                         <annotation>
                             <documentation>
                                 A name to use in a predicate that matches on EntitiesDescriptor group/containment. 
@@ -1122,10 +1122,10 @@
                         </annotation>
                         <complexType>
                             <sequence>
-                                <element name="Value" type="string" maxOccurs="unbounded"/>
+                                <element name="Value" type="shibmd:string" maxOccurs="unbounded"/>
                             </sequence>
-                            <attribute name="name" type="string" use="required" />
-                            <attribute name="nameFormat" type="string"/>
+                            <attribute name="name" type="shibmd:string" use="required" />
+                            <attribute name="nameFormat" type="shibmd:string"/>
                         </complexType>
                     </element>
                     <element name="MappedTag">
@@ -1136,9 +1136,9 @@
                         </annotation>
                         <complexType>
                             <sequence>
-                                <element name="Value" type="string" maxOccurs="unbounded"/>
+                                <element name="Value" type="shibmd:string" maxOccurs="unbounded"/>
                             </sequence>
-                            <attribute name="name" type="string" use="required" />
+                            <attribute name="name" type="shibmd:string" use="required" />
                         </complexType>
                     </element>
                     <element name="ConditionScript" type="shibmd:ScriptType">
@@ -1150,7 +1150,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="direction" type="string" use="required">
+                <attribute name="direction" type="shibmd:string" use="required">
                     <annotation>
                         <documentation>
                             One of the values "include" or "exclude" indicating whether to whitelist or blacklist
@@ -1158,14 +1158,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="conditionRef" type="string">
+                <attribute name="conditionRef" type="shibmd:string">
                     <annotation>
                         <documentation>
                             The ID of a Spring bean to inject as a condition Predicate.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="trim" type="string">
+                <attribute name="trim" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a Predicate based on EntityAttribute extensions
@@ -1173,7 +1173,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="removeEmptyEntitiesDescriptors" type="string">
+                <attribute name="removeEmptyEntitiesDescriptors" type="shibmd:string">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entities descriptors that do not contain at least one entity
@@ -1200,7 +1200,7 @@
                         <element ref="alg:DigestMethod" />
                         <element ref="alg:SigningMethod" />
                         <element ref="md:EncryptionMethod" />
-                        <element name="Entity" type="string">
+                        <element name="Entity" type="shibmd:string">
                             <annotation>
                                 <documentation>
                                     An entityID to identify an EntityDescriptor to add all the preceding
@@ -1208,7 +1208,7 @@
                                 </documentation>
                             </annotation>
                         </element>
-                        <element name="ConditionRef" type="string">
+                        <element name="ConditionRef" type="shibmd:string">
                             <annotation>
                                 <documentation>
                                     The ID of a Spring bean to inject as a condition Predicate to identify one
@@ -1292,12 +1292,12 @@
             </documentation>
         </annotation>
         <choice>
-            <element name="Script" type="string">
+            <element name="Script" type="shibmd:string">
                 <annotation>
                     <documentation>The script to evaluate to construct the attribute.</documentation>
                 </annotation>
             </element>
-            <element name="ScriptFile" type="string">
+            <element name="ScriptFile" type="shibmd:string">
                 <annotation>
                     <documentation>
                         Path of a local resource containing the script to evaluate to construct the attribute.
@@ -1305,7 +1305,7 @@
                 </annotation>
             </element>
         </choice>
-        <attribute name="language" type="string">
+        <attribute name="language" type="shibmd:string">
             <annotation>
                 <documentation>
                     The JSR-233 name for the scripting language that will be used.
@@ -1313,7 +1313,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="customObjectRef" type="string">
+        <attribute name="customObjectRef" type="shibmd:string">
             <annotation>
                 <documentation>
                     The name of a bean defined somewhere else which will be injected into the script as an
@@ -1322,4 +1322,10 @@
             </annotation>
         </attribute>
     </complexType>
+
+    <simpleType name="string">
+        <restriction base="string">
+            <minLength value="1"/>
+        </restriction>
+    </simpleType>
 </schema>
