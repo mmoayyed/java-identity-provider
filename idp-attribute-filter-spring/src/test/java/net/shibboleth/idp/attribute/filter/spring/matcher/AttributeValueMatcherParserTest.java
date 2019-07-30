@@ -22,6 +22,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.lang.IllegalArgumentException;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.xml.sax.SAXParseException;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -157,7 +159,8 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
             getMatcher("attributeValueEmptyCaseSensitive.xml");
             fail("should have thrown an exception");
         } catch (FatalBeanException e) {
-            assertEquals(org.xml.sax.SAXParseException.class, rootCause(e));
+            final Class c = rootCause(e);
+            assertTrue((c == SAXParseException.class)|(c == IllegalArgumentException.class));
         } 
     }
     
