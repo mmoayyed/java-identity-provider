@@ -56,40 +56,17 @@
     </util:map>
 
     <!-- Example script to see if second factor is required. -->
-    <bean id="checkSecondFactor" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript"
-        p:customObject-ref="shibboleth.AttributeResolverService">
+    <bean id="checkSecondFactor" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
         <constructor-arg>
             <value>
             <![CDATA[
                 nextFlow = "authn/Password";
 
-                // Go straight to second factor if we have to, or set up for an attribute lookup first.
+                // Check if second factor is necessary for request to be satisfied.
                 authCtx = input.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
                 mfaCtx = authCtx.getSubcontext("net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext");
                 if (mfaCtx.isAcceptable()) {
-                    // Attribute check is required to decide if first factor alone is enough.
-                    resCtx = input.getSubcontext(
-                        "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
-                    rpCtx = input.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext");
-                    resCtx.setAttributeRecipientID(rpCtx.getRelyingPartyId());
-
-                    // Look up the username using a standard function.
-                    usernameLookupStrategyClass
-                        = Java.type("net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy");
-                    usernameLookupStrategy = new usernameLookupStrategyClass();
-                    resCtx.setPrincipal(usernameLookupStrategy.apply(input));
-                        
-                    resCtx.getRequestedIdPAttributeNames().add("allowedLoginMethods");
-                    resCtx.resolveAttributes(custom);
-                    
-                    // Check for an attribute that authorizes use of first factor.
-                    attribute = resCtx.getResolvedIdPAttributes().get("allowedLoginMethods");
-                    valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
-                    if (attribute != null && attribute.getValues().contains(new valueType("IPAddress"))) {
-                        nextFlow = null;
-                    }
-                    
-                    input.removeSubcontext(resCtx);   // cleanup
+                    nextFlow = null;
                 }
                 
                 nextFlow;   // pass control to second factor or end with the first
