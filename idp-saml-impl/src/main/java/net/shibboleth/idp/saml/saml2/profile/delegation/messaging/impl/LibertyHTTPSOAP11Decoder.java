@@ -58,8 +58,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * 
  */
-public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDecoder<SAMLObject> 
-        implements SAMLMessageDecoder {
+public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDecoder  implements SAMLMessageDecoder {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LibertyHTTPSOAP11Decoder.class);
@@ -68,7 +67,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
     @Nullable private BindingDescriptor bindingDescriptor;
     
     /** Message handler to use in processing the message body. */
-    private MessageHandler<SAMLObject> bodyHandler;
+    private MessageHandler bodyHandler;
     
     /**
      * Constructor.
@@ -105,7 +104,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * 
      * @return Returns the bodyHandler.
      */
-    public MessageHandler<SAMLObject> getBodyHandler() {
+    public MessageHandler getBodyHandler() {
         return bodyHandler;
     }
 
@@ -114,7 +113,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * 
      * @param newBodyHandler The bodyHandler to set.
      */
-    public void setBodyHandler(final MessageHandler<SAMLObject> newBodyHandler) {
+    public void setBodyHandler(final MessageHandler newBodyHandler) {
         bodyHandler = newBodyHandler;
     }
     
@@ -131,7 +130,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
-        final MessageContext<SAMLObject> messageContext = new MessageContext<>();
+        final MessageContext messageContext = new MessageContext();
         final HttpServletRequest request = getHttpServletRequest();
 
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
@@ -164,8 +163,13 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
         
         populateBindingContext(getMessageContext());
         
-        final SAMLObject samlMessage = getMessageContext().getMessage();
-        log.debug("Decoded SOAP message which included SAML message of type {}", samlMessage.getElementQName());
+        final Object samlMessage = getMessageContext().getMessage();
+        if (samlMessage instanceof SAMLObject) {
+            log.debug("Decoded SOAP message which included SAML message of type {}",
+                    ((SAMLObject) samlMessage).getElementQName());
+        } else {
+            throw new MessageDecodingException("Decoded SOAP message did not include SAML message");
+        }
     }
     
     /**
@@ -173,7 +177,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * 
      * @param messageContext the current message context
      */
-    protected void populateBindingContext(final MessageContext<SAMLObject> messageContext) {
+    protected void populateBindingContext(final MessageContext messageContext) {
         final SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setBindingDescriptor(bindingDescriptor);

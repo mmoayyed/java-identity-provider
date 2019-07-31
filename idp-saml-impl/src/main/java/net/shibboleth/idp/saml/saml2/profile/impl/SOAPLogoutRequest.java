@@ -257,7 +257,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
-            final InOutOperationContext<LogoutResponse,LogoutRequest> opContext = new SAMLSOAPClientContextBuilder()
+            final InOutOperationContext opContext = new SAMLSOAPClientContextBuilder()
                     .setOutboundMessage(logoutRequest)
                     .setProtocol(SAMLConstants.SAML20P_NS)
                     .setPipelineName(soapPipelineName)
@@ -271,10 +271,12 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
                     logoutRequest.getDestination());
             
             soapClient.send(logoutRequest.getDestination(), opContext);
-            final LogoutResponse response = opContext.getInboundMessageContext().getMessage();
+            final Object response = opContext.getInboundMessageContext().getMessage();
             
             if (response == null) {
                 throw new MessageException("No response message received");
+            } else if (!(response instanceof LogoutResponse)) {
+                throw new MessageException("Message received was not of correct type");
             }
             
             // Store off message so audit extraction works.
@@ -288,7 +290,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             
             log.debug("{} Processing LogoutResponse received via SOAP 1.1 binding from endpoint: {}", getLogPrefix(),
                     logoutRequest.getDestination());
-            handleResponse(profileRequestContext, response);
+            handleResponse(profileRequestContext, (LogoutResponse) response);
         } catch (final ClassCastException e) {
             log.warn("{} SOAP message payload was not an instance of LogoutResponse", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);

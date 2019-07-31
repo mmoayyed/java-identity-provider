@@ -170,7 +170,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         log.debug("Resolved effective role descriptor from criteria: {}", roleDescriptor);
 
         if (entityID != null || entityDescriptor != null || roleDescriptor != null) {
-            final ProfileRequestContext prc = new ProfileRequestContext<>();
+            final ProfileRequestContext prc = new ProfileRequestContext();
             final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
             rpc.setVerified(true);
 

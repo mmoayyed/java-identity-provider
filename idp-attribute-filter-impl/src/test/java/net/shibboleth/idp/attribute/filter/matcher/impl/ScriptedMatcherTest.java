@@ -306,7 +306,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         matcher.setId("prc");
         matcher.initialize();
-        final  ProfileRequestContext<Object, Object> prc = new ProfileRequestContext<>();
+        final  ProfileRequestContext prc = new ProfileRequestContext();
         prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
         final SubjectContext sc = prc.getSubcontext(SubjectContext.class, true);
         

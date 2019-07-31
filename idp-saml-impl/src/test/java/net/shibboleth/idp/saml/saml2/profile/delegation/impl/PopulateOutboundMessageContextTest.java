@@ -43,9 +43,9 @@ public class PopulateOutboundMessageContextTest {
     
     @BeforeMethod
     public void setUp() {
-        prc = new ProfileRequestContext<>();
-        prc.setInboundMessageContext(new MessageContext<>());
-        prc.setOutboundMessageContext(new MessageContext<>());
+        prc = new ProfileRequestContext();
+        prc.setInboundMessageContext(new MessageContext());
+        prc.setOutboundMessageContext(new MessageContext());
         
         action = new PopulateOutboundMessageContext();
     }

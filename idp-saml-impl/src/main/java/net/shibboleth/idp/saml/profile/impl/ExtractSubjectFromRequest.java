@@ -131,7 +131,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final MessageContext<?> msgCtx = profileRequestContext.getInboundMessageContext();
+        final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();
         if (msgCtx == null || msgCtx.getMessage() == null) {
             log.debug("{} No inbound message", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
@@ -208,7 +208,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
         @Nullable public SAMLObject apply(@Nullable final ProfileRequestContext profileRequestContext) {
             
             if (profileRequestContext != null) {
-                final MessageContext<?> msgCtx = profileRequestContext.getInboundMessageContext();
+                final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();
                 if (msgCtx != null) {
                     return msgCtx.getSubcontext(
                             SAMLSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();

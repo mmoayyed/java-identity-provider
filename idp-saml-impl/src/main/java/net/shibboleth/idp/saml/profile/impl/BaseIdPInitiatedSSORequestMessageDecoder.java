@@ -37,12 +37,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Decodes an incoming Shibboleth Authentication Request message.
- * 
- * @param <RequestType> type of decoded message
  */
 @NotThreadSafe
-public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> extends
-        AbstractHttpServletRequestMessageDecoder<RequestType> {
+public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractHttpServletRequestMessageDecoder {
 
     /** Name of the query parameter carrying the service provider entity ID: {@value} . */
     @Nonnull @NotEmpty public static final String PROVIDER_ID_PARAM = "providerId";

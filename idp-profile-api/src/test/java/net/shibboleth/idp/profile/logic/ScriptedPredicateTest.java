@@ -39,9 +39,9 @@ public class ScriptedPredicateTest {
     private ProfileRequestContext noChild;
 
     @BeforeClass public void setup() {
-        withChild = new ProfileRequestContext<>();
+        withChild = new ProfileRequestContext();
         withChild.getSubcontext(RelyingPartyContext.class, true);
-        noChild = new ProfileRequestContext<>();
+        noChild = new ProfileRequestContext();
     }
 
     @Test public void simple() throws ScriptException {

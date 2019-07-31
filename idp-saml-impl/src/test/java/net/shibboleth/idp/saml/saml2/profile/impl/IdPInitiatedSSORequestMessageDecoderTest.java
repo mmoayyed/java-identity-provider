@@ -26,7 +26,6 @@ import java.time.temporal.ChronoUnit;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -80,7 +79,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         
         decoder.decode();
         
-        MessageContext<SAMLObject> messageContext = decoder.getMessageContext();
+        final MessageContext messageContext = decoder.getMessageContext();
         Assert.assertNotNull(messageContext);
         AuthnRequest authnRequest = (AuthnRequest) messageContext.getMessage();
         Assert.assertNotNull(authnRequest);

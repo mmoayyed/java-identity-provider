@@ -42,7 +42,7 @@ public class LogicTest {
     
 
     @Test public void empty() {
-        final ProfileRequestContext pfc = new ProfileRequestContext<>();
+        final ProfileRequestContext pfc = new ProfileRequestContext();
         
         assertFalse(aiip.test(pfc));
         assertFalse(app.test(pfc));
@@ -55,7 +55,7 @@ public class LogicTest {
     }
     
     @Test public void wrong() {
-        final ProfileRequestContext pfc = new ProfileRequestContext<>();
+        final ProfileRequestContext pfc = new ProfileRequestContext();
         final AttributeResolutionContext arc = pfc.getSubcontext(AttributeResolutionContext.class, true);
         
         arc.setAttributeIssuerID("badValue");
@@ -68,7 +68,7 @@ public class LogicTest {
     }
 
     @Test public void correct() {
-        final ProfileRequestContext pfc = new ProfileRequestContext<>();
+        final ProfileRequestContext pfc = new ProfileRequestContext();
         final AttributeResolutionContext arc = pfc.getSubcontext(AttributeResolutionContext.class, true);
         
         arc.setAttributeIssuerID("AII");

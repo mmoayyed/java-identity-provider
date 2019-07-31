@@ -43,9 +43,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * An action that extracts the Duo factor and device or passcode from HTTP request headers into a
  * {@link DuoAuthenticationContext}, and attaches it to the {@link AuthenticationContext}.
- * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
@@ -57,8 +54,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * @post If getHttpServletRequest() != null, the content of the headers are checked.
  *      The information found will be attached via a {@link DuoAuthenticationContext}.
  */
-public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMessageType>
-        extends AbstractAuthenticationAction<InboundMessageType,OutboundMessageType> {
+public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractDuoAuthenticationFromHeaders.class);
@@ -181,8 +177,7 @@ public class ExtractDuoAuthenticationFromHeaders<InboundMessageType,OutboundMess
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override protected void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext,
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
         log.debug("{} Checking for Duo authentication headers", getLogPrefix());

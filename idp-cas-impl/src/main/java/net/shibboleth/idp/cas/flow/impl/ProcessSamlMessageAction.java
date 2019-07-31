@@ -30,7 +30,6 @@ import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AssertionArtifact;
 import org.opensaml.saml.saml1.core.Request;
 import org.slf4j.Logger;
@@ -70,7 +69,7 @@ public class ProcessSamlMessageAction extends
         }
 
         // Extract ticket from SAML request
-        final MessageContext<SAMLObject> msgContext = profileRequestContext.getInboundMessageContext();
+        final MessageContext msgContext = profileRequestContext.getInboundMessageContext();
         String ticket = null;
         if (msgContext.getMessage() instanceof Request) {
             final Request request = (Request) msgContext.getMessage();

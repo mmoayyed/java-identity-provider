@@ -66,15 +66,11 @@ import com.google.common.collect.Iterables;
  * A base class for authentication related actions that validate credentials and produce an
  * {@link AuthenticationResult}.
  * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
- * 
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  */
-public abstract class AbstractValidationAction<InboundMessageType, OutboundMessageType>
-        extends AbstractAuthenticationAction<InboundMessageType, OutboundMessageType>
+public abstract class AbstractValidationAction extends AbstractAuthenticationAction
             implements PrincipalSupportingComponent {
 
     /** Default prefix for metrics. */
@@ -219,8 +215,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * 
      * @param strategy lookup strategy
      */
-    public void setRequesterLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         requesterLookupStrategy = strategy;
@@ -277,8 +272,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
@@ -346,8 +340,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
      */
-    protected void buildAuthenticationResult(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void buildAuthenticationResult(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
         if (addDefaultPrincipals && authenticationContext.getAttemptedFlow() != null) {
@@ -423,8 +416,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext} if
      *  the exception message is not classified
      */
-    protected void handleError(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
 
@@ -450,8 +442,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext} if
      *  the message is not classified
      */
-    protected void handleError(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void handleError(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nullable final String message,
             @Nonnull @NotEmpty final String eventId) {
 
@@ -492,8 +483,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @param eventId the event to "return" via an {@link org.opensaml.profile.context.EventContext} if
      *  the message is not classified
      */
-    protected void handleWarning(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void handleWarning(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext, @Nullable final String message,
             @Nonnull @NotEmpty final String eventId) {
         

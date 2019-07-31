@@ -107,7 +107,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final MessageContext<SAMLObject> msgContext = new MessageContext<>();
+        final MessageContext msgContext = new MessageContext();
         try {
             msgContext.setMessage(buildSamlResponse(profileRequestContext));
         } catch (final EventException e) {
@@ -139,6 +139,6 @@ public abstract class AbstractOutgoingSamlMessageAction extends
      * @throws EventException to signal an event
      */
     @Nonnull protected abstract Response buildSamlResponse(
-            @Nonnull final ProfileRequestContext<SAMLObject,SAMLObject> profileRequestContext) throws EventException;
+            @Nonnull final ProfileRequestContext profileRequestContext) throws EventException;
 
 }

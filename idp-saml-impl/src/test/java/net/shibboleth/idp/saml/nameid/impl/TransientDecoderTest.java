@@ -156,7 +156,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         canon.setDecoder(decoder);
         canon.initialize();
         
-        prc = new ProfileRequestContext<>();
+        prc = new ProfileRequestContext();
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameid));

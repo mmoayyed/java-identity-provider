@@ -58,8 +58,8 @@ public class SAML2ActionSupportTest extends OpenSAMLInitBaseTestCase {
                         .setRelyingPartyProfileConfigurations(SAML2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
-        final ProfileRequestContext<Object, Response> profileRequestContext =
-                (ProfileRequestContext<Object, Response>) springRequestContext.getConversationScope().get(
+        final ProfileRequestContext profileRequestContext =
+                (ProfileRequestContext) springRequestContext.getConversationScope().get(
                         ProfileRequestContext.BINDING_KEY);
 
         ActionTestSupportAction action = new ActionTestSupportAction();

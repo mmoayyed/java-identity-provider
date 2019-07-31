@@ -30,13 +30,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
 /**
  * Adaptor that wraps a {@link ProfileAction} with a Spring Web Flow compatible action implementation
  * so that it can be executed as part of a flow.
- * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
  */
 @ThreadSafe
-public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType>
-    extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
+public class WebFlowProfileActionAdaptor extends AbstractProfileAction {
 
     /** A POJO bean being adapted.  */
     @Nonnull private final ProfileAction action;
@@ -52,8 +48,7 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public void execute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    @Nonnull public void execute(@Nonnull final ProfileRequestContext profileRequestContext) {
         action.execute(profileRequestContext);
     }
 

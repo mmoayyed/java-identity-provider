@@ -27,7 +27,6 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.Status;
 import org.opensaml.saml.saml1.core.StatusCode;
@@ -41,8 +40,8 @@ import org.opensaml.saml.saml1.core.StatusMessage;
 public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSamlMessageAction {
 
     @Override
-    @Nonnull protected Response buildSamlResponse(
-            @Nonnull final ProfileRequestContext<SAMLObject,SAMLObject> profileRequestContext) throws EventException {
+    @Nonnull protected Response buildSamlResponse(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws EventException {
 
         final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final TicketValidationResponse validationResponse = getCASResponse(profileRequestContext);

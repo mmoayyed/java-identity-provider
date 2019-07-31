@@ -57,7 +57,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         assertEquals(rule.getRulePredicate().getClass(), Foo.class);
         assertNull(rule.getProfileContextStrategy().apply(new AttributeFilterContext()));
-        ProfileRequestContext pc = new ProfileRequestContext<>();
+        ProfileRequestContext pc = new ProfileRequestContext();
         assertSame(
                 rule.getProfileContextStrategy().apply(
                         pc.getSubcontext(RelyingPartyContext.class, true).getSubcontext(AttributeFilterContext.class,
@@ -121,7 +121,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
         /** {@inheritDoc} */
         @Override public ProfileRequestContext apply(@Nullable AttributeFilterContext input) {
-            return new ProfileRequestContext<>();
+            return new ProfileRequestContext();
         }
 
     }

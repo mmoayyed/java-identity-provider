@@ -52,13 +52,10 @@ import org.slf4j.LoggerFactory;
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, SubjectCanonicalizationContext)}
  * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
- * 
  * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
  */
-public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, OutboundMessageType>
-        extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
+public abstract class AbstractSubjectCanonicalizationAction
+        extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSubjectCanonicalizationAction.class);
@@ -158,8 +155,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         scContext = scCtxLookupStrategy.apply(profileRequestContext);
         if (scContext == null) {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
@@ -178,8 +174,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * 
      * @return true iff execution should continue
      */
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
         
         if (c14nContext.getSubject() == null) {
@@ -193,8 +188,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
     
     /** {@inheritDoc} */
     @Override
-    protected final void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         doExecute(profileRequestContext, scContext);
     }
 
@@ -204,8 +198,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * @param profileRequestContext the current IdP profile request context
      * @param c14nContext the current subject canonicalization context
      */
-    protected void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
         
     }

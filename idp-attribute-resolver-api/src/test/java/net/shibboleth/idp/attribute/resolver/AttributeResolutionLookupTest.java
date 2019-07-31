@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 public class AttributeResolutionLookupTest {
     
     @Test public void apply() {
-        final ProfileRequestContext pfc = new ProfileRequestContext<>();
+        final ProfileRequestContext pfc = new ProfileRequestContext();
         pfc.getSubcontext(AttributeResolutionContext.class, true).setAttributeIssuerID("child");
 
         final TestClass what = new TestClass();

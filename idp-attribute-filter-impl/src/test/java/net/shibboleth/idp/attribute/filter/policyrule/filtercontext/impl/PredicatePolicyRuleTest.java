@@ -52,7 +52,7 @@ public class PredicatePolicyRuleTest {
         rule.setId("id");
         rule.setRulePredicate(new TestPred(false));
         rule.initialize();
-        ProfileRequestContext pc = new ProfileRequestContext<>();
+        ProfileRequestContext pc = new ProfileRequestContext();
         RelyingPartyContext rpc = pc.getSubcontext(RelyingPartyContext.class, true);
         assertEquals(rule.matches(rpc.getSubcontext(AttributeFilterContext.class, true)), Tristate.FALSE);
     }
@@ -102,7 +102,7 @@ public class PredicatePolicyRuleTest {
 
         /** {@inheritDoc} */
         @Override @Nullable public ProfileRequestContext apply(@Nullable AttributeFilterContext input) {
-            return new ProfileRequestContext<>();
+            return new ProfileRequestContext();
         }
 
     }

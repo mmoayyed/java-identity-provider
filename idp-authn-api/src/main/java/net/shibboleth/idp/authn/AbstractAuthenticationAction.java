@@ -40,13 +40,10 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
  * Authentication action implementations should override
  * {@link #doExecute(ProfileRequestContext, AuthenticationContext)}
  * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
- * 
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
-public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundMessageType>
-        extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
+public abstract class AbstractAuthenticationAction
+        extends AbstractProfileAction {
 
     /**
      * Strategy used to extract, and create if necessary, the {@link AuthenticationContext} from the
@@ -75,8 +72,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
     
     /** {@inheritDoc} */
     @Override
-    protected final boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (super.doPreExecute(profileRequestContext)) {
             authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
@@ -93,8 +89,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
     
     /** {@inheritDoc} */
     @Override
-    protected final void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         doExecute(profileRequestContext, authnContext);
     }
 
@@ -106,8 +101,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
      * 
      * @return true iff execution should continue
      */
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         return true;
     }
@@ -118,8 +112,7 @@ public abstract class AbstractAuthenticationAction<InboundMessageType, OutboundM
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
      */
-    protected void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
     }

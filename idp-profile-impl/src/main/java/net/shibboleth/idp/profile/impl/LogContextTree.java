@@ -112,14 +112,14 @@ public class LogContextTree extends AbstractProfileAction {
         final String indentString = getIndent(indent);
         
         if (current instanceof ProfileRequestContext) {
-            final ProfileRequestContext<?,?> prc = (ProfileRequestContext) current;
+            final ProfileRequestContext prc = (ProfileRequestContext) current;
             
             log.debug("{} PRC: {}", indentString, prc.getClass().getName());
             for (final BaseContext subcontext : prc) {
                 logContext(subcontext, indent+1);
             }
             
-            final MessageContext<?> inbound = prc.getInboundMessageContext();
+            final MessageContext inbound = prc.getInboundMessageContext();
             if (inbound != null) {
                 log.debug("{} PRC InboundMessageContext: {}", indentString, inbound.getClass().getName());
                 for (final BaseContext subcontext : inbound) {
@@ -129,7 +129,7 @@ public class LogContextTree extends AbstractProfileAction {
                 log.debug("{} PRC InboundMessageContext not present", indentString);
             }
             
-            final MessageContext<?> outbound = prc.getOutboundMessageContext();
+            final MessageContext outbound = prc.getOutboundMessageContext();
             if (outbound != null) {
                 log.debug("{} PRC OutboundMessageContext: {}", indentString, outbound.getClass().getName());
                 for (final BaseContext subcontext : outbound) {

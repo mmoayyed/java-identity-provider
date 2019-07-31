@@ -36,7 +36,6 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
@@ -98,8 +97,8 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
     }
 
     @Override
-    @Nonnull protected Response buildSamlResponse(
-            @Nonnull final ProfileRequestContext<SAMLObject,SAMLObject> profileRequestContext) throws EventException {
+    @Nonnull protected Response buildSamlResponse(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws EventException {
 
         final Instant now = Instant.now();
 

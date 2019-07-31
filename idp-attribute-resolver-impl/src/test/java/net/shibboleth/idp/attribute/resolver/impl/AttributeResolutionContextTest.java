@@ -114,7 +114,7 @@ public class AttributeResolutionContextTest {
     }
     
     @Test public void lookupsParent() {
-        final ProfileRequestContext profileCtx = new ProfileRequestContext<>();
+        final ProfileRequestContext profileCtx = new ProfileRequestContext();
         final AttributeResolutionContext context = profileCtx.getSubcontext(AttributeResolutionContext.class, true);
         
         context.setPrincipal(THE_PRINCIPAL);

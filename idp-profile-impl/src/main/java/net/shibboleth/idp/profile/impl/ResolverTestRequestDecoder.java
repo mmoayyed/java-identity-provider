@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Decodes an incoming resolver test message.
  */
-public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessageDecoder<ResolverTestRequest> {
+public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessageDecoder {
 
     /** Name of the query parameter carrying the subject name: {@value} . */
     @Nonnull @NotEmpty public static final String PRINCIPAL_PARAM = "principal";
@@ -70,7 +70,7 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
         
         final ResolverTestRequest message = new ResolverTestRequest(getPrincipal(request), getRequesterId(request),
                 getIndex(request), getProtocol(request));
-        final MessageContext<ResolverTestRequest> messageContext = new MessageContext<>();
+        final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(message);
         setMessageContext(messageContext);
         

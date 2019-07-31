@@ -32,7 +32,7 @@ import org.springframework.expression.EvaluationContext;
  * @author Daniel Lutz
  */
 public class SpringExpressionPredicate
-    extends net.shibboleth.ext.spring.util.SpringExpressionPredicate<ProfileRequestContext<?,?>> {
+    extends net.shibboleth.ext.spring.util.SpringExpressionPredicate<ProfileRequestContext> {
 
     /**
      * Constructor.
@@ -46,7 +46,7 @@ public class SpringExpressionPredicate
     /** {@inheritDoc} */
     @Override
     protected void prepareContext(@Nonnull final EvaluationContext context,
-            @Nullable final ProfileRequestContext<?,?> input) {
+            @Nullable final ProfileRequestContext input) {
         context.setVariable("profileContext", input);
     }
 

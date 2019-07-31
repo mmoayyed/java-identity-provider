@@ -70,7 +70,7 @@ public class ScriptedDataConnectorTest {
 
         connector.initialize();
 
-        final AttributeResolutionContext context = new ProfileRequestContext<>().getSubcontext(AttributeResolutionContext.class,  true);
+        final AttributeResolutionContext context = new ProfileRequestContext().getSubcontext(AttributeResolutionContext.class,  true);
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         
         connector.resolve(context);
@@ -85,7 +85,7 @@ public class ScriptedDataConnectorTest {
 
         connector.initialize();
 
-        final AttributeResolutionContext context = new ProfileRequestContext<>().getSubcontext(AttributeResolutionContext.class,  true);
+        final AttributeResolutionContext context = new ProfileRequestContext().getSubcontext(AttributeResolutionContext.class,  true);
         
         final SubjectContext sc = context.getParent().getSubcontext(SubjectContext.class, true);
         
@@ -141,7 +141,7 @@ public class ScriptedDataConnectorTest {
 
         connector.initialize();
 
-        final AttributeResolutionContext context = new ProfileRequestContext<>().getSubcontext(AttributeResolutionContext.class,  true);
+        final AttributeResolutionContext context = new ProfileRequestContext().getSubcontext(AttributeResolutionContext.class,  true);
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final Map<String, IdPAttribute> result = connector.resolve(context);
 

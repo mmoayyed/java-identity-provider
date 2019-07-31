@@ -117,7 +117,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         AttributeDefinition attr = getAttributeDefn("resolver/relyingParties.xml", SimpleAttributeDefinition.class, context);
         RelyingPartyIdPredicate pre = (RelyingPartyIdPredicate) attr.getActivationCondition();
-        ProfileRequestContext prc = new ProfileRequestContext<>();
+        ProfileRequestContext prc = new ProfileRequestContext();
         RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
         rpContext.setRelyingPartyId("p1");
         assertTrue(pre.test(prc));

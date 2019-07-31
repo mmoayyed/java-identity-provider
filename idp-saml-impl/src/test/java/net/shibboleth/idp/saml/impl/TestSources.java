@@ -199,7 +199,7 @@ public final class TestSources {
 
     public static AttributeResolutionContext createResolutionContext(String principal, String issuerID,
             String recipientId) {
-        ProfileRequestContext parent = new ProfileRequestContext<>();
+        ProfileRequestContext parent = new ProfileRequestContext();
         AttributeResolutionContext retVal = parent.getSubcontext(AttributeResolutionContext.class, true);
 
         retVal.setAttributeIssuerID(issuerID);

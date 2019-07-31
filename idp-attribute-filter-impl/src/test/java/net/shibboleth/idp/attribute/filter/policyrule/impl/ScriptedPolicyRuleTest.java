@@ -216,7 +216,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         
         assertEquals(rule.matches(filterContext), Tristate.FAIL);
         
-        final ProfileRequestContext<Object, Object> prc = new ProfileRequestContext<>(); 
+        final ProfileRequestContext prc = new ProfileRequestContext(); 
         prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
         final SubjectContext sc = prc.getSubcontext(SubjectContext.class, true);
         

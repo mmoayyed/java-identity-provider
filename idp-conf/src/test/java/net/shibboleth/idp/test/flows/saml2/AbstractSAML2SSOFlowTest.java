@@ -28,7 +28,6 @@ import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -204,8 +203,8 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
 
     }
 
-    public MessageContext<SAMLObject> buildOutboundMessageContext(AuthnRequest authnRequest, String bindingUri) {
-        MessageContext<SAMLObject> messageContext = new MessageContext<>();
+    public MessageContext buildOutboundMessageContext(AuthnRequest authnRequest, String bindingUri) {
+        final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
 
         SAMLPeerEntityContext peerContext = messageContext.getSubcontext(SAMLPeerEntityContext.class, true);

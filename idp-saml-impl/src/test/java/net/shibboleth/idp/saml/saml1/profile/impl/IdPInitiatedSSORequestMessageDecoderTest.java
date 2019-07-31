@@ -78,9 +78,9 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         
         decoder.decode();
         
-        MessageContext<IdPInitiatedSSORequest> messageContext = decoder.getMessageContext();
+        MessageContext messageContext = decoder.getMessageContext();
         Assert.assertNotNull(messageContext);
-        IdPInitiatedSSORequest ssoRequest = messageContext.getMessage();
+        IdPInitiatedSSORequest ssoRequest = (IdPInitiatedSSORequest) messageContext.getMessage();
         Assert.assertNotNull(ssoRequest);
         
         Assert.assertEquals(ssoRequest.getEntityId(), entityId, "Incorrect decoded entityId value");

@@ -41,12 +41,8 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>The base class adds a common mechanism for applying regular expression transforms to
  * the username prior to being added to the context tree.</p>
- *  
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
  */
-public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessageType>
-        extends AbstractAuthenticationAction<InboundMessageType, OutboundMessageType> {
+public abstract class AbstractExtractionAction extends AbstractAuthenticationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractExtractionAction.class);

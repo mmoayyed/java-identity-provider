@@ -34,7 +34,7 @@ public class SpoofSAMLMessage extends AbstractProfileAction {
     protected void doExecute(
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        MessageContext mc = new MessageContext<>();
+        final MessageContext mc = new MessageContext();
         profileRequestContext.setInboundMessageContext(mc);
         SAMLPeerEntityContext spec = mc.getSubcontext(SAMLPeerEntityContext.class, true);
         

@@ -54,16 +54,12 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * </p>
  * 
- * @param <InboundMessageType> type of inbound message
- * @param <OutboundMessageType> type of outbound message
- * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event any, as set
  */
-public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageType> 
-        extends AbstractProfileAction<InboundMessageType, OutboundMessageType> {
+public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
     
     /** Used to indicate the target message context for invocation of the adapted message handler. */
     public enum Direction {
@@ -141,8 +137,7 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
@@ -211,8 +206,7 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
 
     /** {@inheritDoc} */
     @Override
-    protected void doPostExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
+    protected void doPostExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
         if (metricCtx != null) {

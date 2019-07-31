@@ -34,7 +34,6 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.messaging.encoder.servlet.BaseHttpServletResponseXMLMessageEncoder;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.encoding.SAMLMessageEncoder;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
@@ -52,8 +51,7 @@ import org.w3c.dom.Element;
  * Encoder for Liberty ID-WSF 2.0 SOAP 1.1 HTTP binding carrying SAML protocol messages
  * used in SAML delegation.
  */
-public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageEncoder<SAMLObject> 
-        implements SAMLMessageEncoder {
+public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageEncoder implements SAMLMessageEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(LibertyHTTPSOAP11Encoder.class);
@@ -83,8 +81,8 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
     
     /** {@inheritDoc} */
     public void prepareContext() throws MessageEncodingException {
-        final MessageContext<SAMLObject> messageContext = getMessageContext();
-        XMLObject payload = null;
+        final MessageContext messageContext = getMessageContext();
+        Object payload = null;
         
         final Fault fault = SOAPMessagingSupport.getSOAP11Fault(messageContext);
         if (fault != null) {
@@ -96,14 +94,14 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
             payload = messageContext.getMessage();
         }
         
-        if (payload == null) {
-            throw new MessageEncodingException("No outbound message or Fault contained in message context");
+        if (payload == null || !(payload instanceof XMLObject)) {
+            throw new MessageEncodingException("No outbound XML message or Fault contained in message context");
         }
         
         if (payload instanceof Envelope) {
             storeSOAPEnvelope((Envelope) payload);
         } else {
-            buildAndStoreSOAPMessage(payload);
+            buildAndStoreSOAPMessage((XMLObject) payload);
         }
         
     }

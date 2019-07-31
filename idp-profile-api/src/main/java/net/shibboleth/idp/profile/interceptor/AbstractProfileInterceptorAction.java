@@ -42,12 +42,9 @@ import org.slf4j.LoggerFactory;
  * 
  * Interceptor action implementations should override
  * {@link #doExecute(ProfileRequestContext, ProfileInterceptorContext)}
- * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
  */
-public abstract class AbstractProfileInterceptorAction<InboundMessageType, OutboundMessageType> extends
-        AbstractProfileAction<InboundMessageType, OutboundMessageType> {
+public abstract class AbstractProfileInterceptorAction extends
+        AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileInterceptorAction.class);
@@ -95,16 +92,14 @@ public abstract class AbstractProfileInterceptorAction<InboundMessageType, Outbo
      * 
      * @return true iff execution should continue
      */
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         return true;
     }
 
     /** {@inheritDoc} */
-    @Override protected final void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    @Override protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         doExecute(profileRequestContext, profileInterceptorContext);
     }
 
@@ -114,8 +109,7 @@ public abstract class AbstractProfileInterceptorAction<InboundMessageType, Outbo
      * @param profileRequestContext the current profile request context
      * @param interceptorContext the current profile interceptor context
      */
-    protected void doExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
     }

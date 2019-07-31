@@ -61,13 +61,10 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>Action implementations may override {@link #doExecute(RequestContext, ProfileRequestContext)}
  * if they require SWF functionality, but most should override {@link #doExecute(ProfileRequestContext)}
  * instead.</p>
- * 
- * @param <InboundMessageType> type of in-bound message
- * @param <OutboundMessageType> type of out-bound message
  */
 @ThreadSafe
-public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageType>
-        extends AbstractConditionalProfileAction<InboundMessageType,OutboundMessageType>
+public abstract class AbstractProfileAction
+        extends AbstractConditionalProfileAction
         implements Action, MessageSource, MessageSourceAware {
 
     /** Class logger. */
@@ -116,7 +113,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext =
+        final ProfileRequestContext profileRequestContext =
                 profileContextLookupStrategy.apply(springRequestContext);
         if (profileRequestContext == null) {
             log.error("{} IdP profile request context is not available", getLogPrefix());
@@ -143,7 +140,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
      * @return a Web Flow event produced by the action
      */
     @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         
         // Attach the Spring context to the context tree.
         final SpringRequestContext springSubcontext =
@@ -172,7 +169,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
      * @return  an event based on the profile request context, or "proceed"
      */
     @Nonnull protected Event getResult(@Nonnull final ProfileAction action,
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         
         // Check for an EventContext on output.
         final EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class, false);

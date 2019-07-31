@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Decodes an incoming metadata query request.
  */
-public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessageDecoder<MetadataQueryRequest> {
+public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessageDecoder {
 
     /** Name of the query parameter carrying the entityID: {@value} . */
     @Nonnull @NotEmpty public static final String ENTITY_ID_PARAM = "entityID";
@@ -66,7 +66,7 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
         message.setEntityID(getEntityID(request));
         message.setProtocol(getProtocol(request));
         
-        final MessageContext<MetadataQueryRequest> messageContext = new MessageContext<>();
+        final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(message);
         setMessageContext(messageContext);
         

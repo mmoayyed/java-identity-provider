@@ -25,13 +25,13 @@ import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.binding.decoding.SAMLMessageDecoder;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
-public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSORequestMessageDecoder<SAMLObject> 
+public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSORequestMessageDecoder 
     implements SAMLMessageDecoder {
 
     /** Protocol binding implemented by this decoder. */
@@ -97,7 +97,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     protected void doDecode() throws MessageDecodingException {
         ssoRequest = buildIdPInitiatedSSORequest();
         
-        final MessageContext<SAMLObject> messageContext = new MessageContext<>();
+        final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(buildAuthnRequest());
         
         populateBindingContext(messageContext);
@@ -135,7 +135,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
      * 
      * @param messageContext the current message context
      */
-    protected void populateBindingContext(@Nonnull final MessageContext<SAMLObject> messageContext) {
+    protected void populateBindingContext(@Nonnull final MessageContext messageContext) {
         final String relayState = ssoRequest.getRelayState();
         log.debug("Decoded SAML RelayState of: {}", relayState);
         
@@ -151,9 +151,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     /** {@inheritDoc} */
     @Override
     @Nullable protected String getMessageToLog() {
-        final SAMLObject message = getMessageContext().getMessage();
-        if (message == null) {
-            log.warn("Decoded message was null, nothing to log");
+        final Object message = getMessageContext().getMessage();
+        if (message == null || !(message instanceof XMLObject)) {
+            log.warn("Decoded message was null or invalid, nothing to log");
             return null;
         }
         
@@ -162,7 +162,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         builder.append("\nSynthetically constructed SAML 2 AuthnRequest was: \n");
         
         try {
-            final Element dom = XMLObjectSupport.marshall(message);
+            final Element dom = XMLObjectSupport.marshall((XMLObject) message);
             builder.append(SerializeSupport.prettyPrintXML(dom));
             return builder.toString();
         } catch (final MarshallingException e) {

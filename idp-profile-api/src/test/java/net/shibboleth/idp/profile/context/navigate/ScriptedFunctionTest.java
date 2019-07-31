@@ -54,7 +54,7 @@ public class ScriptedFunctionTest {
 
     
     @Test public void simpleScript() throws ScriptException {
-        ProfileRequestContext prc = new ProfileRequestContext<>();
+        ProfileRequestContext prc = new ProfileRequestContext();
         
         final Object string = ScriptedContextLookupFunction.inlineScript(stringReturn()).apply(prc);
 
@@ -66,7 +66,7 @@ public class ScriptedFunctionTest {
     }
     
     @Test public void custom() throws ScriptException {
-        ProfileRequestContext prc = new ProfileRequestContext<>();
+        ProfileRequestContext prc = new ProfileRequestContext();
         
         final ScriptedContextLookupFunction script = ScriptedContextLookupFunction.inlineScript("custom;");
         script.setCustomObject("String");
@@ -78,7 +78,7 @@ public class ScriptedFunctionTest {
     
     
     @Test public void withType() throws ScriptException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        ProfileRequestContext prc = new ProfileRequestContext<>();
+        ProfileRequestContext prc = new ProfileRequestContext();
 
         final ScriptedContextLookupFunction script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
         
@@ -97,14 +97,14 @@ public class ScriptedFunctionTest {
     @Test(expectedExceptions={ClassCastException.class,}) public void wrongType() throws ScriptException {
         final ScriptedContextLookupFunction script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
         
-        script1.apply(new MessageContext<>());
+        script1.apply(new MessageContext());
         
     }
 
     @Test public void messageContext() throws ScriptException {
         final ScriptedContextLookupFunction<MessageContext> script1 = ScriptedContextLookupFunction.inlineMessageContextScript(stringReturn(), Object.class);
         
-        Assert.assertEquals(script1.apply(new MessageContext<>()), "String");
+        Assert.assertEquals(script1.apply(new MessageContext()), "String");
         Assert.assertEquals(script1.apply(null), "String");
     }
 }

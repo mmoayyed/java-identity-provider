@@ -33,8 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
-public class IdPInitiatedSSORequestMessageDecoder extends 
-        BaseIdPInitiatedSSORequestMessageDecoder<IdPInitiatedSSORequest> {
+public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSORequestMessageDecoder {
     
     /** Protocol binding implemented by this decoder. */
     @Nonnull @NotEmpty private static final String BINDING_URI = "urn:mace:shibboleth:1.0:profiles:AuthnRequest";
@@ -56,7 +55,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends
     protected void doDecode() throws MessageDecodingException {
         final IdPInitiatedSSORequest ssoRequest = buildIdPInitiatedSSORequest();
 
-        final MessageContext<IdPInitiatedSSORequest> messageContext = new MessageContext<>();
+        final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(ssoRequest);
         
         messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
@@ -77,9 +76,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends
      * 
      * @throws MessageDecodingException if the message content is invalid
      */
-    protected void populateBindingContext(@Nonnull final MessageContext<IdPInitiatedSSORequest> messageContext)
+    protected void populateBindingContext(@Nonnull final MessageContext messageContext)
         throws MessageDecodingException {
-        final String relayState = messageContext.getMessage().getRelayState();
+        final String relayState = ((IdPInitiatedSSORequest) messageContext.getMessage()).getRelayState();
         if (relayState == null) {
             throw new MessageDecodingException("Legacy Shibboleth authentication requests require a target parameter");
         }

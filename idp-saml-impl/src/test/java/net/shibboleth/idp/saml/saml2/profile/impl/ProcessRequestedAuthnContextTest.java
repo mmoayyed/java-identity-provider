@@ -52,7 +52,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
 
     private MockRequestContext src; 
     
-    private ProfileRequestContext<AuthnRequest, Object> prc;
+    private ProfileRequestContext prc;
     
     private AuthenticationContext ac;
     
@@ -100,7 +100,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testEmptyRef() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
         rac.getAuthnContextClassRefs().add(ref);
         
@@ -112,7 +112,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testDisallowed() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
         rac.getAuthnContextClassRefs().add(ref);
         
@@ -127,7 +127,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testNoOperator() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
         ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
@@ -144,7 +144,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testOperator() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         rac.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
         AuthnContextClassRef ref = classBuilder.buildObject();
         ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
@@ -164,7 +164,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testDecls() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         rac.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
         AuthnContextDeclRef ref = declBuilder.buildObject();
         ref.setAuthnContextDeclRef(AuthnContext.PPT_AUTHN_CTX);
@@ -184,7 +184,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testIgnore() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
         ref.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
@@ -198,7 +198,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     @Test public void testIgnore2() throws ComponentInitializationException {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
-        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
         ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
