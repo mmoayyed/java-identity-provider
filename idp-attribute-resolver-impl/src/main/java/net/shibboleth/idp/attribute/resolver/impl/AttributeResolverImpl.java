@@ -101,7 +101,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /** Constructor. */
     public AttributeResolverImpl() {
-        profileContextStrategy = new ParentContextLookup<>();
+        profileContextStrategy = new ParentContextLookup<>(ProfileRequestContext.class);
     }
     
     /** Sets the attribute definitions for this resolver.

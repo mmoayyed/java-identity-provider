@@ -11,7 +11,8 @@
 		c:type="org.opensaml.profile.context.ProfileRequestContext" />
 
 	<bean id="findAttributeCtx"
-		class="org.opensaml.messaging.context.navigate.ParentContextLookup" />
+		class="org.opensaml.messaging.context.navigate.ParentContextLookup"
+		c:type="net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext" />
 
 	<bean id="principalFn"
 		class="net.shibboleth.idp.attribute.resolver.context.navigate.AttributePrincipalLookupFunction"

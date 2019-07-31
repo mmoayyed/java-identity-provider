@@ -97,7 +97,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     /** Constructor. */
     public ScriptedAttributeDefinition() {
         // Defaults to ProfileRequestContext -> AttributeContext.
-        prcLookupStrategy = new ParentContextLookup<>();
+        prcLookupStrategy = new ParentContextLookup<>(ProfileRequestContext.class);
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 

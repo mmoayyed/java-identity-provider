@@ -52,8 +52,8 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
     /** Constructor. */
     public PredicatePolicyRule() {
         profileContextStrategy =
-                new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>().compose(
-                        new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
+                new ParentContextLookup<>(ProfileRequestContext.class).compose(
+                        new ParentContextLookup<>(RelyingPartyContext.class));
     }
 
     /**

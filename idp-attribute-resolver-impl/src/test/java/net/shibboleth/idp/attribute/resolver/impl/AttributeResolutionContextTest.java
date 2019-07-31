@@ -150,9 +150,9 @@ public class AttributeResolutionContextTest {
         assertNull(issuerFn.apply(profileCtx), THE_ISSUER);
         assertNull(recipientFn.apply(profileCtx), THE_RECIPIENT);
 
-        principalFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());
-        recipientFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());
-        issuerFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());
+        principalFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<>(AttributeResolutionContext.class));
+        recipientFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<>(AttributeResolutionContext.class));
+        issuerFn.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<>(AttributeResolutionContext.class));
         
         assertSame(principalFn.apply(profileCtx), THE_PRINCIPAL);
         assertSame(issuerFn.apply(profileCtx), THE_ISSUER);

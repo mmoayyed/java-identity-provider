@@ -149,7 +149,7 @@
     
     <bean id="SOAPClient.OperationContextLookup" 
         class="org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup" 
-        c:targetClass="#{T(org.opensaml.messaging.context.InOutOperationContext)}" />
+        c:targetClass="org.opensaml.messaging.context.InOutOperationContext" />
     
     <bean id="SOAPClient.OperationContextEntityIDLookup"
         class="org.opensaml.saml.common.binding.security.impl.OperationContextEntityIDLookup" />

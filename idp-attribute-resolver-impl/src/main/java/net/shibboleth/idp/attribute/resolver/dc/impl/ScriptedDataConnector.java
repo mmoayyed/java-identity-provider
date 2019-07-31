@@ -84,7 +84,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
     /** Constructor. */
     public ScriptedDataConnector() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
-        prcLookupStrategy = new ParentContextLookup<>();
+        prcLookupStrategy = new ParentContextLookup<>(ProfileRequestContext.class);
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 

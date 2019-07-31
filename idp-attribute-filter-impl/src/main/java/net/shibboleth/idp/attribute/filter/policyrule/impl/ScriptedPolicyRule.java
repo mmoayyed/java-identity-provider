@@ -79,9 +79,9 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     public ScriptedPolicyRule() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         prcLookupStrategy =
-                new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>().compose(
-                        new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
-        scLookupStrategy = new ChildContextLookup<ProfileRequestContext,SubjectContext>(SubjectContext.class);
+                new ParentContextLookup<>(ProfileRequestContext.class).compose(
+                        new ParentContextLookup<>(RelyingPartyContext.class));
+        scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 
     /**

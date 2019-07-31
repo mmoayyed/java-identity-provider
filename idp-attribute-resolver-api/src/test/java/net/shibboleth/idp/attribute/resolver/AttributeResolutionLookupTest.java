@@ -47,7 +47,7 @@ public class AttributeResolutionLookupTest {
         parent.setAttributeIssuerID("parent");
 
         final TestClass what = new TestClass();
-        what.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<ProfileRequestContext, AttributeResolutionContext>());        
+        what.setAttributeResolutionContextLookupStrategy(new ParentContextLookup<>(AttributeResolutionContext.class));        
         Assert.assertEquals(what.apply(pfc), "parent");
     }
 

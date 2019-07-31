@@ -85,8 +85,8 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     public ScriptedMatcher() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         prcLookupStrategy =
-                new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>().compose(
-                        new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
+                new ParentContextLookup<>(ProfileRequestContext.class).compose(
+                        new ParentContextLookup<>(RelyingPartyContext.class));
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 

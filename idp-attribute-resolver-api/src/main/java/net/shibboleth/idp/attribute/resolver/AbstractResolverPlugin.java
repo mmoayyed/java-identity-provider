@@ -65,20 +65,23 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     private boolean propagateResolutionExceptions = true;
 
     /** Strategy to get the {@link ProfileRequestContext}. */
-    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> profileContextStrategy =
-            new ParentContextLookup<>();
+    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> profileContextStrategy;
 
     /** Criterion that must be met for this plugin to be active for the given request. */
     @Nullable private Predicate<ProfileRequestContext> activationCondition;
 
     /** The {@link ResolverAttributeDefinitionDependency}s this plug-in depends on. */
-    @Nonnull @NonnullElements private Set<ResolverAttributeDefinitionDependency> attributeDependencies =
-            Collections.emptySet();
+    @Nonnull @NonnullElements private Set<ResolverAttributeDefinitionDependency> attributeDependencies;
     
     /** The {@link ResolverDataConnectorDependency}s this plug-in depends on. */
-    @Nonnull @NonnullElements private Set<ResolverDataConnectorDependency> dataConnectorDependencies =
-            Collections.emptySet();
+    @Nonnull @NonnullElements private Set<ResolverDataConnectorDependency> dataConnectorDependencies;
 
+    /** Constructor. */
+    public AbstractResolverPlugin() {
+        profileContextStrategy = new ParentContextLookup<>(ProfileRequestContext.class);
+        attributeDependencies = Collections.emptySet();
+        dataConnectorDependencies = Collections.emptySet(); 
+    }
 
     /** {@inheritDoc} */
     @Override public boolean isPropagateResolutionExceptions() {
@@ -99,22 +102,24 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     }
 
     /**
-     * Sets the mechanism to find out the {@link ProfileRequestContext}.
-     * 
-     * @param strategy the mechanism
-     */
-    public void setProfileContextStrategy(final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        profileContextStrategy = Constraint.isNotNull(strategy, "Profile Context Strategy cannot be null");
-    }
-
-    /**
      * Gets the mechanism to find out the {@link ProfileRequestContext}.
      * 
      * @return the mechanism
      */
     public Function<AttributeResolutionContext, ProfileRequestContext> getProfileContextStrategy() {
         return profileContextStrategy;
+    }
+
+    /**
+     * Sets the mechanism to find out the {@link ProfileRequestContext}.
+     * 
+     * @param strategy the mechanism
+     */
+    public void setProfileContextStrategy(final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
+        profileContextStrategy = Constraint.isNotNull(strategy, "Profile Context Strategy cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -130,6 +135,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> pred) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
         activationCondition = Constraint.isNotNull(pred, "Activation condition cannot be null");
     }
 

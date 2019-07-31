@@ -60,7 +60,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
 
     /** Constructor. */
     public ContextDerivedAttributeDefinition() {
-        prcLookupStrategy = new ParentContextLookup<>();
+        prcLookupStrategy = new ParentContextLookup<>(ProfileRequestContext.class);
     }
 
     /**
