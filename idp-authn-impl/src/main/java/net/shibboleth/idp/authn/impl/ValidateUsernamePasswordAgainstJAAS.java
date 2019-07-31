@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.LanguageCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -368,9 +369,10 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     }
         
     /**
-     * A callback handler that provides static name and password data to a JAAS login process.
+     * A callback handler that provides name and password data to a JAAS login process,
+     * along with other miscellany.
      * 
-     * This handler only supports {@link NameCallback} and {@link PasswordCallback}.
+     * This handler supports {@link NameCallback}, {@link PasswordCallback}, and {@link LanguageCalback}.
      */
     protected class SimpleCallbackHandler implements CallbackHandler {
 
@@ -395,8 +397,16 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                 } else if (cb instanceof PasswordCallback) {
                     final PasswordCallback pcb = (PasswordCallback) cb;
                     pcb.setPassword(getUsernamePasswordContext().getPassword().toCharArray());
+                } else if (cb instanceof LanguageCallback) {
+                    if (getHttpServletRequest() != null) {
+                        final LanguageCallback lcb = (LanguageCallback) cb;
+                        lcb.setLocale(getHttpServletRequest().getLocale());
+                    } else {
+                        log.warn("{} Language callback invoked, no HttpServletRequest available", getLogPrefix());
+                    }
                 }
             }
         }
     }
+
 }
