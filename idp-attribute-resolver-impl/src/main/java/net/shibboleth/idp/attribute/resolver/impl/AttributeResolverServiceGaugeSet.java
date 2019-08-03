@@ -95,7 +95,7 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
 // Checkstyle: AnonInnerLength ON
         
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {

@@ -131,38 +131,42 @@ public class ReloadMetadata extends AbstractProfileAction {
         
         return true;
     }
+    
+    /** Iterate over all providers to find the one with the name, recursing into
+     * chaining providers.
+     * @param rootResolver where to start
+     * @return the resolver, or null if none found.
+     */
+    @Nullable private MetadataResolver findProvider(final MetadataResolver rootResolver) {
+        if (Objects.equals(id, rootResolver.getId())
+                && (rootResolver instanceof RefreshableMetadataResolver
+                        || rootResolver instanceof ClearableMetadataResolver)) {
+            return rootResolver;
+        } else if (rootResolver instanceof ChainingMetadataResolver) {
+            for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
+                final MetadataResolver result = findProvider(childResolver);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
 
-// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Reloading metadata from '{}'", getLogPrefix(), id);
 
         final ServiceableComponent<MetadataResolver> component = metadataResolverService.getServiceableComponent();
         try {
-            MetadataResolver toProcess = null;
-            
             MetadataResolver rootResolver = component.getComponent();
             
             // Step down into wrapping component.
             if (rootResolver instanceof RelyingPartyMetadataProvider) {
                 rootResolver = ((RelyingPartyMetadataProvider) rootResolver).getEmbeddedResolver(); 
             }
-            
-            if (Objects.equals(id, rootResolver.getId())
-                    && (rootResolver instanceof RefreshableMetadataResolver
-                            || rootResolver instanceof ClearableMetadataResolver)) {
-                toProcess = rootResolver;
-            } else if (rootResolver instanceof ChainingMetadataResolver) {
-                for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
-                    if (Objects.equals(id, childResolver.getId())
-                            && (childResolver instanceof RefreshableMetadataResolver
-                                    || childResolver instanceof ClearableMetadataResolver)) {
-                        toProcess = childResolver;
-                        break;
-                    }
-                }
-            }
-            
+            final MetadataResolver toProcess = findProvider(rootResolver);
+
             if (toProcess != null) {
                 if (toProcess instanceof RefreshableMetadataResolver) {
                     ((RefreshableMetadataResolver)toProcess).refresh();
@@ -195,6 +199,5 @@ public class ReloadMetadata extends AbstractProfileAction {
             }
         }
     }
-// Checkstyle: CyclomaticComplexity ON
     
 }

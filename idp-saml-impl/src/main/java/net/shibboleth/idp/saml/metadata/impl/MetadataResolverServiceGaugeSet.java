@@ -17,7 +17,9 @@
 package net.shibboleth.idp.saml.metadata.impl;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -183,6 +185,24 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         }
     }
 
+    /** Get all the resolvers rooted in the provider tree (including the root).
+     * @param parent - root of the chaining resolver tree.
+     * @return - the list.
+     */
+    private List<MetadataResolver> getAllChildren(final ChainingMetadataResolver parent) {
+        final ArrayList<MetadataResolver> result = new ArrayList<>(1+ parent.getResolvers().size());
+        // Add ourselves
+        result.add(parent);
+        for (final MetadataResolver child: parent.getResolvers()) {
+            if (child instanceof ChainingMetadataResolver) {
+                result.addAll(getAllChildren((ChainingMetadataResolver) child));
+            } else {
+                result.add(child);
+            }
+        }
+        return result;
+    }
+
     /**
      * Return the resolvers to report on.
      * 
@@ -201,7 +221,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         }
         
         if (root instanceof ChainingMetadataResolver) {
-            return ((ChainingMetadataResolver) root).getResolvers();
+            return getAllChildren((ChainingMetadataResolver) root);
         } else {
             return Collections.singletonList(root);
         }
