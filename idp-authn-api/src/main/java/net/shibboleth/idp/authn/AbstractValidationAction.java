@@ -246,11 +246,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * 
      * <p>Setting to a null or empty collection will maintain the default behavior of relying on the flow.</p>
      * 
-     * @param <T> a type of principal to add, if not generic
      * @param principals supported principals to include
      */
-    public <T extends Principal> void setSupportedPrincipals(
-            @Nullable @NonnullElements final Collection<T> principals) {
+    public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         getSubject().getPrincipals().clear();
