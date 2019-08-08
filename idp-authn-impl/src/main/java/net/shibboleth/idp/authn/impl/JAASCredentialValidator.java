@@ -22,7 +22,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -42,9 +41,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
-import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
-import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -206,7 +202,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
         
         for (final Pair<String,Subject> loginConfig : configs) {
             
-            if (!isAcceptable(requestedPrincipalCtx, loginConfig.getFirst(), loginConfig.getSecond())) {
+            if (!isAcceptable(requestedPrincipalCtx, loginConfig.getSecond(), loginConfig.getFirst())) {
                 continue;
             }
 
@@ -245,57 +241,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
         
         throw caughtException;
     }
-    
-    /**
-     * Checks a particular JAAS configuration and principal collection for suitability.
-     * 
-     * @param requestedPrincipalCtx the relevant context
-     * @param configName name of JAAS config
-     * @param subject collection of custom principals to check, embedded in a subject
-     * 
-     * @return true iff the request does not specify requirements or the principal collection is empty
-     *  or the combination is acceptable
-     */
-    private boolean isAcceptable(@Nullable final RequestedPrincipalContext requestedPrincipalCtx,
-            @Nonnull @NotEmpty final String configName, @Nullable final Subject subject) {
         
-        if (subject != null && requestedPrincipalCtx != null && requestedPrincipalCtx.getOperator() != null) {
-            log.debug("{} Request contains principal requirements, evaluating JAAS config '{}' for compatibility",
-                    getLogPrefix(), configName);
-            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                final PrincipalEvalPredicateFactory factory =
-                        requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                p.getClass(), requestedPrincipalCtx.getOperator());
-                if (factory != null) {
-                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
-                    final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
-                        public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
-                            return subject.getPrincipals(c);
-                        }
-                    };
-                    if (predicate.test(wrapper)) {
-                        log.debug("{} JAAS config '{}' compatible with principal type '{}' and operator '{}'",
-                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
-                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
-                        return true;
-                    } else {
-                        log.debug("{} JAAS config '{}' not compatible with principal type '{}' and operator '{}'",
-                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
-                    }
-                } else {
-                    log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
-                            getLogPrefix(), p.getClass(), requestedPrincipalCtx.getOperator());
-                }
-            }
-            
-            log.debug("{} Skipping JAAS config '{}', not compatible with request's principal requirements",
-                    getLogPrefix(), configName);
-            return false;
-        }
-        
-        return true;
-    }
-    
     /**
      * Create a JAAS configuration and attempt a login with it.
      * 

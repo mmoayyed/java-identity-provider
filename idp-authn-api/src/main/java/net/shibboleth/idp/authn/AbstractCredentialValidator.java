@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.authn;
 
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -24,7 +28,14 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -34,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 /**
  * An abstract {@link CredentialValidator} that handles some common behavior.
@@ -41,7 +53,7 @@ import com.google.common.base.Predicates;
  * @since 4.0.0
  */
 public abstract class AbstractCredentialValidator extends AbstractIdentifiedInitializableComponent
-        implements CredentialValidator {
+        implements CredentialValidator, PrincipalSupportingComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractCredentialValidator.class);
@@ -51,6 +63,9 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     
     /** Cached log prefix. */
     @Nullable private String logPrefix;
+    
+    /** Container that carries additional {@link Principal} objects. */
+    @Nullable private Subject customPrincipals;
     
     /** Constructor. */
     public AbstractCredentialValidator() {
@@ -76,6 +91,35 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     
     /** {@inheritDoc} */
     @Override
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
+            @Nonnull final Class<T> c) {
+        return customPrincipals != null ? customPrincipals.getPrincipals(c) : Collections.emptySet();
+    }
+    
+    /**
+     * Set supported non-user-specific principals that the validator will include in the subjects
+     * it generates.
+     * 
+     * @param principals supported principals to include
+     */
+    public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        if (principals != null && !principals.isEmpty()) {
+            final Collection<Principal> copy = Collections2.filter(principals, Predicates.notNull());
+            if (!copy.isEmpty()) {
+                customPrincipals = new Subject();
+                customPrincipals.getPrincipals().addAll(copy);
+            } else {
+                customPrincipals = null;
+            }
+        } else {
+            customPrincipals = null;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Subject validate(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
@@ -84,6 +128,9 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
         
         if (!activationCondition.test(profileRequestContext)) {
             log.debug("{} Activation condition was false, ignoring request", getLogPrefix());
+            return null;
+        } else if (!isAcceptable(authenticationContext.getSubcontext(RequestedPrincipalContext.class),
+                customPrincipals, getId())) {
             return null;
         }
         
@@ -108,6 +155,20 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
             @Nullable final ErrorHandler errorHandler) throws Exception;
 
     /**
+     * Decorate the subject with custom principals if needed.
+     * 
+     * @param subject the subject being returned
+     * 
+     * @return the decorated subject
+     */
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
+        if (customPrincipals != null) {
+            subject.getPrincipals().addAll(customPrincipals.getPrincipals());
+        }
+        return subject;
+    }
+    
+    /**
      * Return a prefix for logging messages for this component.
      * 
      * @return a string for insertion at the beginning of any log messages
@@ -119,4 +180,54 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
         return logPrefix;
     }
     
+    /**
+     * Checks a particular request and principal collection for suitability.
+     * 
+     * @param requestedPrincipalCtx the relevant context
+     * @param subject collection of custom principals to check, embedded in a subject
+     * @param configName name for logging
+     * 
+     * @return true iff the request does not specify requirements or the principal collection is empty
+     *  or the combination is acceptable
+     */
+    protected boolean isAcceptable(@Nullable final RequestedPrincipalContext requestedPrincipalCtx,
+            @Nullable final Subject subject, @Nonnull @NotEmpty final String configName) {
+        
+        if (subject != null && requestedPrincipalCtx != null && requestedPrincipalCtx.getOperator() != null) {
+            log.debug("{} Request contains principal requirements, checking validator '{}' for compatibility",
+                    getLogPrefix(), configName);
+            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                final PrincipalEvalPredicateFactory factory =
+                        requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), requestedPrincipalCtx.getOperator());
+                if (factory != null) {
+                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
+                        public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
+                            return subject.getPrincipals(c);
+                        }
+                    };
+                    if (predicate.test(wrapper)) {
+                        log.debug("{} Validator '{}' compatible with principal type '{}' and operator '{}'",
+                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
+                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                        return true;
+                    } else {
+                        log.debug("{} Validator '{}' not compatible with principal type '{}' and operator '{}'",
+                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
+                    }
+                } else {
+                    log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
+                            getLogPrefix(), p.getClass(), requestedPrincipalCtx.getOperator());
+                }
+            }
+            
+            log.debug("{} Skipping validator '{}', not compatible with request's principal requirements",
+                    getLogPrefix(), configName);
+            return false;
+        }
+        
+        return true;
+    }
+
 }

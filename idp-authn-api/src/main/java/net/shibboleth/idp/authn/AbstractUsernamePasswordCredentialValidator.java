@@ -217,7 +217,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             usernamePasswordContext.setPassword(null);
         }
         
-        return subject;
+        return super.populateSubject(subject);
     }
     
 }
