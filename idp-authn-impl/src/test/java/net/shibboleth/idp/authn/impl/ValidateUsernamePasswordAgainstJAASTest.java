@@ -57,12 +57,14 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
-/** {@link ValidateUsernamePasswordAgainstJAAS} unit test. */
+/** Unit test for JAAS validation. */
 public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationContextTest {
 
     private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
     
-    private ValidateUsernamePasswordAgainstJAAS action;
+    private JAASCredentialValidator validator;
+    
+    private ValidateCredentials action;
 
     private InMemoryDirectoryServer directoryServer;
 
@@ -91,7 +93,11 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
 
-        action = new ValidateUsernamePasswordAgainstJAAS();
+        validator = new JAASCredentialValidator();
+        validator.setId("jaastest");
+        
+        action = new ValidateCredentials();
+        action.setValidators(Collections.singletonList(validator));
         
         final Map<String,Collection<String>> mappings = new HashMap<>();
         mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
@@ -102,6 +108,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
     }
 
     @Test public void testMissingFlow() throws Exception {
+        validator.initialize();
         action.initialize();
 
         final Event event = action.execute(src);
@@ -110,6 +117,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
     @Test public void testMissingUser() throws Exception {
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        
+        validator.initialize();
         action.initialize();
 
         final Event event = action.execute(src);
@@ -120,6 +129,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
+        
+        validator.initialize();
         action.initialize();
 
         final Event event = action.execute(src);
@@ -132,6 +143,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
+        
+        validator.initialize();
         action.initialize();
 
         doExtract(prc);
@@ -149,11 +162,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -178,12 +192,13 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 
-        action.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
+        validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
                 Collections.<Principal>singletonList(new TestPrincipal("test2")))));
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -200,13 +215,15 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         
-        action.setMatchExpression(Pattern.compile("foo.+"));
+        validator.setMatchExpression(Pattern.compile("foo.+"));
+        validator.initialize();
+        
         action.initialize();
         
         doExtract(prc);
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
     @Test public void testBadUsername() throws Exception {
@@ -215,10 +232,11 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        
+        validator.initialize();
         action.initialize();
 
         doExtract(prc);
@@ -237,10 +255,11 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -260,10 +279,11 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -284,11 +304,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
-        action.setRemoveContextAfterValidation(false);
+        validator.setRemoveContextAfterValidation(false);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -315,12 +336,13 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 
-        action.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
+        validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
                 Collections.<Principal>singletonList(new TestPrincipal("test1")))));
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -343,11 +365,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -368,11 +391,12 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setLoginConfigType("JavaLoginConfig");
-        System.out.println(getCurrentDir());
-        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+        validator.setLoginConfigType("JavaLoginConfig");
+        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
-        action.setMatchExpression(Pattern.compile(".+_THE_.+"));
+        validator.setMatchExpression(Pattern.compile(".+_THE_.+"));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);

@@ -27,20 +27,21 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.LanguageCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
-import net.shibboleth.idp.authn.AbstractUsernamePasswordValidationAction;
+import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
@@ -50,36 +51,23 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that checks for a {@link net.shibboleth.idp.authn.context.UsernamePasswordContext} and directly produces an
- * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by invoking a JAAS configuration.
+ * A password validator that authenticates against JAAS.
  * 
- * <p>Various optional properties are supported to control the JAAS configuration process.</p>
- *  
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#NO_CREDENTIALS}
- * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
- * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
- * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
- * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
- * successful login. On a failed login, the
- * {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext,
- *    Exception, String)}
- * method is called.
+ * <p>Support for complex chaining of JAAS modules remains supported but should be
+ * avoided in favor of the new support for chaining validators in most cases.</p>
+ * 
+ * @since 4.0.0
  */
-public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswordValidationAction {
-
-    /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn";
+@ThreadSafe
+public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialValidator {
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstJAAS.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(JAASCredentialValidator.class);
     
     /** Type of JAAS Configuration to instantiate. */
     @Nullable private String loginConfigType;
@@ -93,17 +81,8 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     /** Strategy function to dynamically derive the login config(s) to use. */
     @Nullable private Function<ProfileRequestContext,Collection<Pair<String,Subject>>> loginConfigStrategy;
     
-    /** Saved off context. */
-    @Nullable private RequestedPrincipalContext requestedPrincipalCtx;
-    
-    /** Tracks any principals derived from the login configuration to add to the Subject. */
-    @Nullable private Subject derivedSubject;
-    
-    /** Tracker for current login config for reporting. */
-    @Nullable private String currentLoginConfigName;
-    
     /** Constructor. */
-    public ValidateUsernamePasswordAgainstJAAS() {
+    public JAASCredentialValidator() {
         // For compatibility with V2.
         loginConfigurations = Collections.singletonList(new Pair<String,Subject>("ShibUserPassAuth", null));
     }
@@ -207,82 +186,77 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-        return true;
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
+    @Nullable protected Subject doValidate(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext,
+            @Nonnull final UsernamePasswordContext usernamePasswordContext,
+            @Nullable final WarningHandler warningHandler,
+            @Nullable final ErrorHandler errorHandler) throws Exception {
 
+        final RequestedPrincipalContext requestedPrincipalCtx =
+                authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+        
         final Collection<Pair<String,Subject>> configs;
         if (loginConfigStrategy != null) {
             configs = loginConfigStrategy.apply(profileRequestContext);
         } else {
             configs = loginConfigurations;
         }
-        
-        boolean eventSignaled = false;
+
+        Exception caughtException = null;
         
         for (final Pair<String,Subject> loginConfig : configs) {
             
-            if (!isAcceptable(authenticationContext, loginConfig.getFirst(), loginConfig.getSecond())) {
+            if (!isAcceptable(requestedPrincipalCtx, loginConfig.getFirst(), loginConfig.getSecond())) {
                 continue;
             }
-            
+
+            final String currentLoginConfigName = loginConfig.getFirst();
+
             try {
-                currentLoginConfigName = loginConfig.getFirst();
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
-                        getUsernamePasswordContext().getUsername(), currentLoginConfigName);
-                authenticate(currentLoginConfigName);
+                        usernamePasswordContext.getUsername(), currentLoginConfigName);
+                final Subject subject = authenticate(currentLoginConfigName, usernamePasswordContext);
                 log.info("{} Login by '{}' via '{}' succeeded", getLogPrefix(),
-                        getUsernamePasswordContext().getUsername(), currentLoginConfigName);
-                recordSuccess(profileRequestContext);
-                derivedSubject = loginConfig.getSecond();
-                buildAuthenticationResult(profileRequestContext, authenticationContext);
-                ActionSupport.buildProceedEvent(profileRequestContext);
-                return;
+                        usernamePasswordContext.getUsername(), currentLoginConfigName);
+                return populateSubject(subject, loginConfig.getSecond(), usernamePasswordContext);
             } catch (final LoginException e){ 
-                log.info("{} Login by '{}' via '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(),
+                log.info("{} Login by '{}' via '{}' failed", getLogPrefix(), usernamePasswordContext.getUsername(),
                         currentLoginConfigName, e);
-                handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-                recordFailure(profileRequestContext, true);
-                eventSignaled = true;
+                if (errorHandler != null) {
+                    errorHandler.handleError(profileRequestContext, authenticationContext, e,
+                            AuthnEventIds.INVALID_CREDENTIALS);
+                }
+                caughtException = e;
             } catch (final Exception e) {
                 log.warn("{} Login by '{}' via '{}' produced exception", getLogPrefix(),
-                        getUsernamePasswordContext().getUsername(), currentLoginConfigName, e);
-                handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-                recordFailure(profileRequestContext, false);
-                eventSignaled = true;
+                        usernamePasswordContext.getUsername(), currentLoginConfigName, e);
+                if (errorHandler != null) {
+                    errorHandler.handleError(profileRequestContext, authenticationContext, e,
+                            AuthnEventIds.AUTHN_EXCEPTION);
+                }
+                caughtException = e;
             }
         }
-    
-        if (!eventSignaled) {
-            log.warn("{} No JAAS application configurations are available or acceptable for use", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "RequestUnsupported",
-                    AuthnEventIds.REQUEST_UNSUPPORTED);
+        
+        if (caughtException == null) {
+            log.info("{} No JAAS application configurations are available or acceptable for use", getLogPrefix());
+            return null;
         }
+        
+        throw caughtException;
     }
     
     /**
      * Checks a particular JAAS configuration and principal collection for suitability.
      * 
-     * @param authenticationContext the authentication context
+     * @param requestedPrincipalCtx the relevant context
      * @param configName name of JAAS config
      * @param subject collection of custom principals to check, embedded in a subject
      * 
      * @return true iff the request does not specify requirements or the principal collection is empty
      *  or the combination is acceptable
      */
-    private boolean isAcceptable(@Nonnull final AuthenticationContext authenticationContext,
+    private boolean isAcceptable(@Nullable final RequestedPrincipalContext requestedPrincipalCtx,
             @Nonnull @NotEmpty final String configName, @Nullable final Subject subject) {
         
         if (subject != null && requestedPrincipalCtx != null && requestedPrincipalCtx.getOperator() != null) {
@@ -326,12 +300,16 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      * Create a JAAS configuration and attempt a login with it.
      * 
      * @param loginConfigName the application name to use
+     * @param usernamePasswordContext input context
+     * 
+     * @return the JAAS result
      * 
      * @throws LoginException if the JAAS login process fails
      * @throws NoSuchAlgorithmException if a JAAS configuration cannot be created
      */
-    private void authenticate(@Nonnull @NotEmpty final String loginConfigName)
-            throws LoginException, NoSuchAlgorithmException {
+    @Nonnull private Subject authenticate(@Nonnull @NotEmpty final String loginConfigName,
+            @Nonnull final UsernamePasswordContext usernamePasswordContext)
+                    throws LoginException, NoSuchAlgorithmException {
         
         final javax.security.auth.login.LoginContext jaasLoginCtx;
         
@@ -340,32 +318,35 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                     getLoginConfigType(), getLoginConfigParameters().getClass().getName());
             final Configuration loginConfig =
                     Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
-            jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, getSubject(),
-                    new SimpleCallbackHandler(), loginConfig);
+            jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, null,
+                    new SimpleCallbackHandler(usernamePasswordContext), loginConfig);
         } else {
             log.debug("{} Using system JAAS configuration", getLogPrefix());
-            jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, getSubject(),
-                    new SimpleCallbackHandler());
+            jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, null,
+                    new SimpleCallbackHandler(usernamePasswordContext));
         }
 
         jaasLoginCtx.login();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         
-        final Subject theSubject = super.populateSubject(subject);
-        if (derivedSubject != null) {
-            theSubject.getPrincipals().addAll(derivedSubject.getPrincipals());
-        }
-        return theSubject;
+        return jaasLoginCtx.getSubject();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String getMetricName() {
-        return super.getMetricName() + '.' + currentLoginConfigName;
+    /**
+     * Finish decorating the result.
+     * 
+     * @param subject the JAAS result
+     * @param derivedSubject container for additional principals
+     * @param usernamePasswordContext input context
+     * 
+     * @return final result
+     */
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject,
+            @Nullable final Subject derivedSubject, @Nonnull final UsernamePasswordContext usernamePasswordContext) {
+
+        if (derivedSubject != null) {
+            subject.getPrincipals().addAll(derivedSubject.getPrincipals());
+        }
+        return super.populateSubject(subject, usernamePasswordContext);
     }
         
     /**
@@ -376,6 +357,18 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      */
     protected class SimpleCallbackHandler implements CallbackHandler {
 
+        /** Context for call. */
+        @Nonnull private final UsernamePasswordContext context;
+        
+        /**
+         * Constructor.
+         *
+         * @param usernamePasswordContext input context
+         */
+        public SimpleCallbackHandler(@Nonnull final UsernamePasswordContext usernamePasswordContext) {
+            context = usernamePasswordContext;
+        }
+        
         /**
          * Handle a callback.
          * 
@@ -393,17 +386,10 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             for (final Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
                     final NameCallback ncb = (NameCallback) cb;
-                    ncb.setName(getUsernamePasswordContext().getUsername());
+                    ncb.setName(context.getUsername());
                 } else if (cb instanceof PasswordCallback) {
                     final PasswordCallback pcb = (PasswordCallback) cb;
-                    pcb.setPassword(getUsernamePasswordContext().getPassword().toCharArray());
-                } else if (cb instanceof LanguageCallback) {
-                    if (getHttpServletRequest() != null) {
-                        final LanguageCallback lcb = (LanguageCallback) cb;
-                        lcb.setLocale(getHttpServletRequest().getLocale());
-                    } else {
-                        log.warn("{} Language callback invoked, no HttpServletRequest available", getLogPrefix());
-                    }
+                    pcb.setPassword(context.getPassword().toCharArray());
                 }
             }
         }

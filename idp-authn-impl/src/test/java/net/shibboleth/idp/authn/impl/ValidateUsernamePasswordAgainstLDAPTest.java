@@ -63,12 +63,14 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
-/** {@link ValidateUsernamePasswordAgainstLDAP} unit test. */
+/** Unit test for LDAP credential validation. */
 public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationContextTest {
 
     private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
 
-    private ValidateUsernamePasswordAgainstLDAP action;
+    private LDAPCredentialValidator validator;
+    
+    private ValidateCredentials action;
 
     private InMemoryDirectoryServer directoryServer;
 
@@ -117,20 +119,25 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
 
-        action = new ValidateUsernamePasswordAgainstLDAP();
+        validator = new LDAPCredentialValidator();
+        validator.setId("ldaptest");
+        
+        action = new ValidateCredentials();
+        action.setValidators(Collections.singletonList(validator));
 
-        Map<String, Collection<String>> mappings = new HashMap<>();
+        final Map<String, Collection<String>> mappings = new HashMap<>();
         mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
         mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
         mappings.put("ExpiringPassword", Collections.singleton("ACCOUNT_WARNING"));
         mappings.put("ExpiredPassword", Arrays.asList("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
         action.setClassifiedMessages(mappings);
-
         action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
     @Test public void testMissingFlow() throws Exception {
-        action.setAuthenticator(authenticator);
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         final Event event = action.execute(src);
@@ -139,7 +146,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
     @Test public void testMissingUser() throws Exception {
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(authenticator);
+
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         final Event event = action.execute(src);
@@ -150,7 +160,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
-        action.setAuthenticator(authenticator);
+        
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         final Event event = action.execute(src);
@@ -166,14 +179,17 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
-        action.setAuthenticator(authenticator);
-        action.setMatchExpression(Pattern.compile("foo.+"));
+        
+        validator.setAuthenticator(authenticator);
+        validator.setMatchExpression(Pattern.compile("foo.+"));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
     @Test public void testBadConfig() throws Exception {
@@ -182,7 +198,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(new Authenticator(new SearchDnResolver(), authHandler));
+        
+        validator.setAuthenticator(new Authenticator(new SearchDnResolver(), authHandler));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -207,8 +226,11 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(new Authenticator(dnResolver,
+        
+        validator.setAuthenticator(new Authenticator(dnResolver,
                 new BindAuthenticationHandler(new DefaultConnectionFactory("ldap://unknown:389"))));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -235,7 +257,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(authenticator);
+        
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -260,7 +285,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(authenticator);
+        
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -277,7 +305,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(authenticator);
+        
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -309,7 +340,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
                 response.setAccountState(new PasswordPolicyAccountState(PasswordPolicyControl.Error.PASSWORD_EXPIRED));
             }
         });
-        action.setAuthenticator(errorAuthenticator);
+        validator.setAuthenticator(errorAuthenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -343,7 +376,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
                         new PasswordPolicyAccountState(PasswordPolicyControl.Error.CHANGE_AFTER_RESET));
             }
         });
-        action.setAuthenticator(errorAuthenticator);
+        validator.setAuthenticator(errorAuthenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -387,7 +422,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
                         new AccountState(new AccountState.DefaultWarning(java.util.Calendar.getInstance(), 10)));
             }
         });
-        action.setAuthenticator(warningAuthenticator);
+        validator.setAuthenticator(warningAuthenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -427,7 +464,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setAuthenticator(authenticator);
+        validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -468,7 +507,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(defaultFilterAuthenticator);
+        validator.setAuthenticator(defaultFilterAuthenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -509,7 +550,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
 
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        action.setAuthenticator(defaultFilterAuthenticator);
+        validator.setAuthenticator(defaultFilterAuthenticator);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -545,8 +588,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setAuthenticator(authenticator);
-        action.setMatchExpression(Pattern.compile(".+_THE_.+"));
+        validator.setAuthenticator(authenticator);
+        validator.setMatchExpression(Pattern.compile(".+_THE_.+"));
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -582,8 +627,10 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        action.setAuthenticator(authenticator);
-        action.setRemoveContextAfterValidation(false);
+        validator.setAuthenticator(authenticator);
+        validator.setRemoveContextAfterValidation(false);
+        validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
@@ -600,4 +647,5 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends BaseAuthenticationC
         extract.initialize();
         extract.execute(src);
     }
+    
 }
