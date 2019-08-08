@@ -30,7 +30,6 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -41,12 +40,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An abstract {@link CredentialValidator} that checks for a {@link UsernamePasswordContext} and delegates
- * to subclasses to produce an {@link net.shibboleth.idp.authn.AuthenticationResult}.
+ * to subclasses to produce a result.
  * 
  * @since 4.0.0
  */
-public abstract class AbstractUsernamePasswordCredentialValidator extends AbstractIdentifiedInitializableComponent
-        implements CredentialValidator {
+public abstract class AbstractUsernamePasswordCredentialValidator extends AbstractCredentialValidator {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.password"; 
@@ -66,19 +64,10 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
     
-    /** Cached log prefix. */
-    @Nullable private String logPrefix;
-    
     /** Constructor. */
     public AbstractUsernamePasswordCredentialValidator() {
         usernamePasswordContextLookupStrategy = new ChildContextLookup<>(UsernamePasswordContext.class);
         removeContextAfterValidation = true;
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public void setId(final String id) {
-        super.setId(id);
     }
     
     /**
@@ -151,12 +140,12 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     
     /** {@inheritDoc} */
     @Override
-    public Subject validate(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected Subject doValidate(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
         
-        final UsernamePasswordContext upContext = getUsernamePasswordContext(authenticationContext);
+        final UsernamePasswordContext upContext = usernamePasswordContextLookupStrategy.apply(authenticationContext);
         if (upContext == null) {
             log.info("{} No UsernamePasswordContext available", getLogPrefix());
             if (errorHandler != null) {
@@ -208,18 +197,6 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             @Nullable final ErrorHandler errorHandler) throws Exception;
 
     /**
-     * Get the {@link UsernamePasswordContext} to validate. 
-     * 
-     * @param authenticationContext parent context
-     * 
-     * @return context to validate
-     */
-    @Nullable protected UsernamePasswordContext getUsernamePasswordContext(
-            @Nonnull final AuthenticationContext authenticationContext) {
-        return usernamePasswordContextLookupStrategy.apply(authenticationContext);
-    }
-
-    /**
      * Decorate the subject with "standard" content from the validation
      * and clean up as instructed.
      * 
@@ -241,18 +218,6 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         }
         
         return subject;
-    }
-
-    /**
-     * Return a prefix for logging messages for this component.
-     * 
-     * @return a string for insertion at the beginning of any log messages
-     */
-    @Nonnull @NotEmpty protected String getLogPrefix() {
-        if (logPrefix == null) {
-            logPrefix = "Credential Validator " + (getId() != null ? getId() : "(unknown)") + ":";
-        }
-        return logPrefix;
     }
     
 }
