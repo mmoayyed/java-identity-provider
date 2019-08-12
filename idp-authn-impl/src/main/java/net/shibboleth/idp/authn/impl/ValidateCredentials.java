@@ -218,7 +218,11 @@ public class ValidateCredentials extends AbstractValidationAction implements War
                 }
             } catch (final Exception e) {
                 recordFailure();
-                if (!errorSignaled) {
+                if (requireAll) {
+                    super.handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+                    errorSignaled = true;
+                    break;
+                } else if (!errorSignaled) {
                     super.handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
                     errorSignaled = true;
                 }

@@ -22,6 +22,4 @@
         <value>ShibUserPassAuth</value>
     </util:list>
 
-    <alias name="ValidateUsernamePasswordAgainstJAAS" alias="ValidateUsernamePassword"/>
-
 </beans>

@@ -15,8 +15,6 @@
         <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes:1.1}" />
     </bean>
 
-    <alias name="ValidateUsernamePasswordAgainstLDAP" alias="ValidateUsernamePassword" />
-
     <!-- Connection Configuration -->
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig" abstract="true" p:ldapUrl="%{idp.authn.LDAP.ldapURL}"
         p:useStartTLS="%{idp.authn.LDAP.useStartTLS:true}"
