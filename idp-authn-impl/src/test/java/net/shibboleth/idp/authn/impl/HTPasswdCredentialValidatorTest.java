@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.io.File;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +49,7 @@ import org.testng.annotations.Test;
 /** Unit test for htpasswd file validation. */
 public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTest {
 
-    private static final String DATA_PATH = "net/shibboleth/idp/authn/impl/";
+    private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
     
     private HTPasswdCredentialValidator validator;
     
@@ -61,7 +59,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         super.setUp();
 
         validator = new HTPasswdCredentialValidator();
-        validator.setResource(new ClassPathResource(DATA_PATH + "htpasswd.txt"));
+        validator.setResource(new ClassPathResource("net/shibboleth/idp/authn/impl/htpasswd.txt"));
         validator.setId("htpasswdtest");
         
         action = new ValidateCredentials();
@@ -219,7 +217,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        validator.setResource(new FileSystemResource(getCurrentDir() + "/src/test/resources/" + DATA_PATH + "/htpasswd.txt"));
+        validator.setResource(new FileSystemResource(DATA_PATH + "htpasswd.txt"));
         validator.initialize();
         
         action.initialize();
@@ -338,13 +336,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
         extract.execute(src);
-    }
-
-    private String getCurrentDir() throws IOException {
-
-        final String currentDir = new java.io.File(".").getCanonicalPath();
-
-        return currentDir.replace(File.separatorChar, '/');
     }
     
 }
