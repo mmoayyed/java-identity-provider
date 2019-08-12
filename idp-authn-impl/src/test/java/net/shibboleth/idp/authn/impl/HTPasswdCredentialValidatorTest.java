@@ -20,8 +20,6 @@ package net.shibboleth.idp.authn.impl;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.security.URIParameter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,69 +37,39 @@ import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.net.URISupport;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
-import com.unboundid.ldap.listener.InMemoryListenerConfig;
-import com.unboundid.ldap.sdk.LDAPException;
+/** Unit test for htpasswd file validation. */
+public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTest {
 
-/** Unit test for JAAS validation. */
-public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationContextTest {
-
-    private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
+    private static final String DATA_PATH = "net/shibboleth/idp/authn/impl/";
     
-    private JAASCredentialValidator validator;
+    private HTPasswdCredentialValidator validator;
     
     private ValidateCredentials action;
-
-    private InMemoryDirectoryServer directoryServer;
-
-    /**
-     * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
-     * 
-     * @throws LDAPException if the in-memory directory server cannot be created
-     */
-    @BeforeClass public void setupDirectoryServer() throws LDAPException {
-
-        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
-        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
-        directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true, DATA_PATH + "loginLDAPTest.ldif");
-        directoryServer.startListening();
-    }
-
-    /**
-     * Shutdown the in-memory directory server.
-     */
-    @AfterClass public void teardownDirectoryServer() {
-        directoryServer.shutDown(true);
-    }
 
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
 
-        validator = new JAASCredentialValidator();
-        validator.setId("jaastest");
+        validator = new HTPasswdCredentialValidator();
+        validator.setResource(new ClassPathResource(DATA_PATH + "htpasswd.txt"));
+        validator.setId("htpasswdtest");
         
         action = new ValidateCredentials();
         action.setValidators(Collections.singletonList(validator));
         
         final Map<String,Collection<String>> mappings = new HashMap<>();
-        mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
-        mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
+        mappings.put("InvalidPassword", Collections.singleton(AuthnEventIds.INVALID_CREDENTIALS));
+        mappings.put(AuthnEventIds.UNKNOWN_USERNAME, Collections.singleton(AuthnEventIds.UNKNOWN_USERNAME));
         action.setClassifiedMessages(mappings);
         
         action.setHttpServletRequest(new MockHttpServletRequest());
@@ -136,50 +104,8 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
-
-    @Test public void testNoConfig() throws Exception {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
-
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        ac.setAttemptedFlow(authenticationFlows.get(0));
-        
-        validator.initialize();
-        action.initialize();
-
-        doExtract(prc);
-
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
-        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
-        Assert.assertEquals(errorCtx.getExceptions().size(), 1);
-        Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
-    }
-
-    @Test public void testBadConfig() throws Exception {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
-
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        ac.setAttemptedFlow(authenticationFlows.get(0));
-        validator.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
-        validator.initialize();
-        
-        action.initialize();
-
-        doExtract(prc);
-
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
-        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
-        Assert.assertEquals(errorCtx.getExceptions().size(), 1);
-        Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
-    }
-
-    @Test public void testUnsupportedConfig() throws Exception {
+    
+    @Test public void testUnsupported() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -192,11 +118,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 
-        validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
-                Collections.<Principal>singletonList(new TestPrincipal("test2")))));
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setSupportedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test2")));
         validator.initialize();
         
         action.initialize();
@@ -232,20 +154,18 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
         
         validator.initialize();
+        
         action.initialize();
 
         doExtract(prc);
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, "UnknownUsername");
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.UNKNOWN_USERNAME);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
-        Assert.assertTrue(errorCtx.isClassifiedError("UnknownUsername"));
+        Assert.assertTrue(errorCtx.isClassifiedError(AuthnEventIds.UNKNOWN_USERNAME));
         Assert.assertFalse(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
@@ -255,9 +175,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        
         validator.initialize();
         
         action.initialize();
@@ -272,16 +190,13 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         Assert.assertTrue(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testAuthorized() throws Exception {
+    @Test public void testAuthorizedMD5() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
         validator.initialize();
         
         action.initialize();
@@ -297,6 +212,73 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
+    @Test public void testAuthorizedMD5WithFile() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        validator.setResource(new FileSystemResource(getCurrentDir() + "/src/test/resources/" + DATA_PATH + "/htpasswd.txt"));
+        validator.initialize();
+        
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL");
+    }
+
+    @Test public void testAuthorizedSHA() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL2");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        validator.initialize();
+        
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL2");
+    }
+
+    @Test public void testAuthorizedCrypt() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL3");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        validator.initialize();
+        
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL3");
+    }
+    
     @Test public void testAuthorizedAndKeep() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
@@ -304,9 +286,6 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
         validator.setRemoveContextAfterValidation(false);
         validator.initialize();
         
@@ -336,11 +315,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 
-        validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
-                Collections.<Principal>singletonList(new TestPrincipal("test1")))));
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setSupportedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
         validator.initialize();
         
         action.initialize();
@@ -356,58 +331,6 @@ public class ValidateUsernamePasswordAgainstJAASTest extends BaseAuthenticationC
                 .next().getName(), "PETER_THE_PRINCIPAL");
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(TestPrincipal.class).iterator()
                 .next().getName(), "test1");
-    }
-    
-    @Test public void testMultiConfigAuthorized() throws Exception {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
-
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        ac.setAttemptedFlow(authenticationFlows.get(0));
-
-        validator.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
-        validator.initialize();
-        
-        action.initialize();
-
-        doExtract(prc);
-
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
-        
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
-                .next().getName(), "PETER_THE_PRINCIPAL");
-    }
-    
-    @Test public void testMatchAndAuthorized() throws Exception {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
-
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        ac.setAttemptedFlow(authenticationFlows.get(0));
-
-        validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
-        validator.setMatchExpression(Pattern.compile(".+_THE_.+"));
-        validator.initialize();
-        
-        action.initialize();
-
-        doExtract(prc);
-
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
-        
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
-                .next().getName(), "PETER_THE_PRINCIPAL");
     }
     
     private void doExtract(ProfileRequestContext prc) throws Exception {

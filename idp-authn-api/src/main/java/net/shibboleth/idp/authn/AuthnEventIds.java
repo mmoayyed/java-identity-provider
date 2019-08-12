@@ -44,6 +44,9 @@ public final class AuthnEventIds {
     
     /** ID of event returned if there are no credentials available in the request. */
     @Nonnull @NotEmpty public static final String NO_CREDENTIALS = "NoCredentials";
+
+    /** ID of event returned if a username is unknown. */
+    @Nonnull @NotEmpty public static final String UNKNOWN_USERNAME = "UnknownUsername";
     
     /** ID of event returned if the given credentials are invalid. */
     @Nonnull @NotEmpty public static final String INVALID_CREDENTIALS = "InvalidCredentials";
