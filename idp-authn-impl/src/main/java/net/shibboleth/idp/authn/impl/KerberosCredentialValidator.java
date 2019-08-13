@@ -201,29 +201,31 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
                 // We don't call logout, since that would destroy the contents of the Subject.
                 
                 if (servicePrincipal != null) {
-                    log.debug("{} TGT acquired for {}, " +
+                    log.debug("{} TGT acquired for '{}', " +
                             "attempting to verify authenticity of TGT using service principal {}",
-                            getLogPrefix(), usernamePasswordContext.getUsername(), servicePrincipal);
+                            getLogPrefix(), usernamePasswordContext.getTransformedUsername(), servicePrincipal);
                     verifyKDC(subject);
                 }
                 
-                log.info("{} Login by '{}' succeeded", getLogPrefix(), usernamePasswordContext.getUsername());
+                log.info("{} Login by '{}' succeeded", getLogPrefix(),
+                        usernamePasswordContext.getTransformedUsername());
                 return populateSubject(subject, usernamePasswordContext);
             } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 log.error("{} Unable to instantiate JAAS module for Kerberos", getLogPrefix(), e);
                 throw e;
             } catch (final LoginException e) {
-                log.info("{} Login by {} failed", getLogPrefix(), usernamePasswordContext.getUsername(), e);
+                log.info("{} Login by '{}' failed", getLogPrefix(), usernamePasswordContext.getTransformedUsername(),
+                        e);
                 eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
                 throw e;
             } catch(final GSSException e) {
-                log.warn("{} Login by {} failed during GSS context establishment to verify KDC", getLogPrefix(),
-                        usernamePasswordContext.getUsername(), e);
+                log.warn("{} Login by '{}' failed during GSS context establishment to verify KDC", getLogPrefix(),
+                        usernamePasswordContext.getTransformedUsername(), e);
                 eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
                 throw e;
             } catch (final Exception e) {
-                log.warn("{} Login by {} produced unknown exception", getLogPrefix(),
-                        usernamePasswordContext.getUsername(), e);
+                log.warn("{} Login by '{}' produced unknown exception", getLogPrefix(),
+                        usernamePasswordContext.getTransformedUsername(), e);
                 throw e;
             }
         } catch (final Exception e) {
@@ -357,7 +359,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
             for (final Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
                     final NameCallback ncb = (NameCallback) cb;
-                    ncb.setName(context.getUsername());
+                    ncb.setName(context.getTransformedUsername());
                 } else if (cb instanceof PasswordCallback) {
                     final PasswordCallback pcb = (PasswordCallback) cb;
                     pcb.setPassword(context.getPassword().toCharArray());

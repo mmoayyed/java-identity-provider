@@ -132,11 +132,11 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
         
+        final String username = usernamePasswordContext.getTransformedUsername();
         
-        final String passwd = credentialMap.get(usernamePasswordContext.getUsername());
+        final String passwd = credentialMap.get(username);
         if (passwd == null) {
-            log.debug("{} Username '{}' not found in password resource", getLogPrefix(),
-                    usernamePasswordContext.getUsername());
+            log.debug("{} Username '{}' not found in password resource", getLogPrefix(), username);
             final LoginException e = new LoginException(AuthnEventIds.UNKNOWN_USERNAME); 
             if (errorHandler != null) { 
                 errorHandler.handleError(profileRequestContext, authenticationContext, e,
@@ -145,16 +145,15 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
             throw e;
         }
 
-        log.debug("{} Attempting to authenticate user '{}' ", getLogPrefix(),
-                usernamePasswordContext.getUsername());
+        log.debug("{} Attempting to authenticate user '{}' ", getLogPrefix(), username);
         
         
         if (authenticate(usernamePasswordContext, passwd)) {
-            log.info("{} Login by '{}' succeeded", getLogPrefix(), usernamePasswordContext.getUsername());
+            log.info("{} Login by '{}' succeeded", getLogPrefix(), username);
             return populateSubject(new Subject(), usernamePasswordContext);
         }
         
-        log.info("{} Login by '{}' failed", getLogPrefix(), usernamePasswordContext.getUsername());
+        log.info("{} Login by '{}' failed", getLogPrefix(), username);
         
         final LoginException e = new LoginException(AuthnEventIds.INVALID_CREDENTIALS); 
         if (errorHandler != null) { 

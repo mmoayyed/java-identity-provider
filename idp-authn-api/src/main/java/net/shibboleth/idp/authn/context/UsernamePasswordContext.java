@@ -31,11 +31,14 @@ import org.opensaml.messaging.context.BaseContext;
  */
 public final class UsernamePasswordContext extends BaseContext {
 
-    /** The username. */
-    private String username;
+    /** The original username. */
+    @Nullable private String username;
 
+    /** The transformed username. */
+    @Nullable private String transformedUsername;
+    
     /** The password associated with the username. */
-    private String password;
+    @Nullable private String password;
 
     /**
      * Gets the username.
@@ -47,7 +50,7 @@ public final class UsernamePasswordContext extends BaseContext {
     }
 
     /**
-     * Sets the username.
+     * Sets the username and resets the transformed version to be identical.
      * 
      * @param name the username
      * 
@@ -55,9 +58,35 @@ public final class UsernamePasswordContext extends BaseContext {
      */
     @Nonnull public UsernamePasswordContext setUsername(@Nullable final String name) {
         username = name;
+        transformedUsername = name;
         return this;
     }
 
+    /**
+     * Gets the transformed username after undergoing some kind of reformatting or normalization.
+     * 
+     * @return the transformed username
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public String getTransformedUsername() {
+        return transformedUsername;
+    }
+
+    /**
+     * Sets the username and resets the transformed version to be identical.
+     * 
+     * @param name the username
+     * 
+     * @return this context
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public UsernamePasswordContext setTransformedUsername(@Nullable final String name) {
+        transformedUsername = name;
+        return this;
+    }
+    
     /**
      * Gets the password associated with the username.
      * 

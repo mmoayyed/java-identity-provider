@@ -123,7 +123,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
         
-        final String username = usernamePasswordContext.getUsername();
+        final String username = usernamePasswordContext.getTransformedUsername();
         
         String eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
         
@@ -204,7 +204,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         
         final Subject subject = new Subject();
         subject.getPrincipals().add(
-                new LdapPrincipal(usernamePasswordContext.getUsername(), ldapResponse.getLdapEntry()));
+                new LdapPrincipal(usernamePasswordContext.getTransformedUsername(), ldapResponse.getLdapEntry()));
         return super.populateSubject(subject, usernamePasswordContext);
     }
 

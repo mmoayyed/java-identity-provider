@@ -210,14 +210,14 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
 
             try {
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
-                        usernamePasswordContext.getUsername(), currentLoginConfigName);
+                        usernamePasswordContext.getTransformedUsername(), currentLoginConfigName);
                 final Subject subject = authenticate(currentLoginConfigName, usernamePasswordContext);
                 log.info("{} Login by '{}' via '{}' succeeded", getLogPrefix(),
-                        usernamePasswordContext.getUsername(), currentLoginConfigName);
+                        usernamePasswordContext.getTransformedUsername(), currentLoginConfigName);
                 return populateSubject(subject, loginConfig.getSecond(), usernamePasswordContext);
             } catch (final LoginException e){ 
-                log.info("{} Login by '{}' via '{}' failed", getLogPrefix(), usernamePasswordContext.getUsername(),
-                        currentLoginConfigName, e);
+                log.info("{} Login by '{}' via '{}' failed", getLogPrefix(),
+                        usernamePasswordContext.getTransformedUsername(), currentLoginConfigName, e);
                 if (errorHandler != null) {
                     errorHandler.handleError(profileRequestContext, authenticationContext, e,
                             AuthnEventIds.INVALID_CREDENTIALS);
@@ -225,7 +225,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
                 caughtException = e;
             } catch (final Exception e) {
                 log.warn("{} Login by '{}' via '{}' produced exception", getLogPrefix(),
-                        usernamePasswordContext.getUsername(), currentLoginConfigName, e);
+                        usernamePasswordContext.getTransformedUsername(), currentLoginConfigName, e);
                 if (errorHandler != null) {
                     errorHandler.handleError(profileRequestContext, authenticationContext, e,
                             AuthnEventIds.AUTHN_EXCEPTION);
@@ -332,7 +332,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
             for (final Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
                     final NameCallback ncb = (NameCallback) cb;
-                    ncb.setName(context.getUsername());
+                    ncb.setName(context.getTransformedUsername());
                 } else if (cb instanceof PasswordCallback) {
                     final PasswordCallback pcb = (PasswordCallback) cb;
                     pcb.setPassword(context.getPassword().toCharArray());
