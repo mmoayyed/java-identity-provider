@@ -17,7 +17,12 @@
 
 package net.shibboleth.idp.authn;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -29,9 +34,12 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -64,10 +72,28 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
     
+    /** Match patterns and replacement strings to apply prior to use. */
+    @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
+
+    /** Convert username to uppercase prior to transforms? */
+    private boolean uppercase;
+    
+    /** Convert username to lowercase prior to transforms? */
+    private boolean lowercase;
+    
+    /** Trim username prior to transforms? */
+    private boolean trim;
+    
     /** Constructor. */
     public AbstractUsernamePasswordCredentialValidator() {
         usernamePasswordContextLookupStrategy = new ChildContextLookup<>(UsernamePasswordContext.class);
         removeContextAfterValidation = true;
+
+        transforms = Collections.emptyList();
+        
+        uppercase = false;
+        lowercase = false;
+        trim = false;
     }
     
     /**
@@ -138,6 +164,56 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         matchExpression = expression;
     }
     
+    /**
+     * A collection of regular expression and replacement pairs.
+     * 
+     * @param newTransforms collection of replacement transforms
+     */
+    public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String, String>> newTransforms) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
+        
+        transforms = new ArrayList();
+        for (final Pair<String,String> p : newTransforms) {
+            final Pattern pattern = Pattern.compile(StringSupport.trimOrNull(p.getFirst()));
+            transforms.add(new Pair(pattern, Constraint.isNotNull(
+                    StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
+        }
+    }
+
+    /**
+     * Controls conversion to uppercase prior to applying any transforms.
+     * 
+     * @param flag  uppercase flag
+     */
+    public void setUppercase(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        uppercase = flag;
+    }
+
+    /**
+     * Controls conversion to lowercase prior to applying any transforms.
+     * 
+     * @param flag lowercase flag
+     */
+    public void setLowercase(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        lowercase = flag;
+    }
+    
+    /**
+     * Controls whitespace trimming prior to applying any transforms.
+     * 
+     * @param flag trim flag
+     */
+    public void setTrim(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        trim = flag;
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected Subject doValidate(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -169,8 +245,10 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             throw new LoginException(AuthnEventIds.INVALID_CREDENTIALS);
         }
         
-        if (matchExpression != null && !matchExpression.matcher(upContext.getUsername()).matches()) {
-            log.debug("{} Username '{}' did not match expression", getLogPrefix(), upContext.getUsername());
+        upContext.setTransformedUsername(applyTransforms(upContext.getUsername()));
+        
+        if (matchExpression != null && !matchExpression.matcher(upContext.getTransformedUsername()).matches()) {
+            log.debug("{} Username '{}' did not match expression", getLogPrefix(), upContext.getTransformedUsername());
             return null;
         }
                 
@@ -179,6 +257,9 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
 
     /**
      * Override method for subclasses to use to perform the actual validation.
+     * 
+     * <p>Any configured transforms will have been applied to populate the context with a transformed
+     * username prior to this method call.</p>
      * 
      * @param profileRequestContext profile request context
      * @param authenticationContext authentication context
@@ -207,7 +288,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      */
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject,
             @Nonnull final UsernamePasswordContext usernamePasswordContext) {
-        subject.getPrincipals().add(new UsernamePrincipal(usernamePasswordContext.getUsername()));
+        subject.getPrincipals().add(new UsernamePrincipal(usernamePasswordContext.getTransformedUsername()));
         if (savePasswordToCredentialSet) {
             subject.getPrivateCredentials().add(new PasswordPrincipal(usernamePasswordContext.getPassword()));
         }
@@ -220,4 +301,43 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         return super.populateSubject(subject);
     }
     
+    /**
+     * Apply any configured regular expression replacements to an input value and return the result.
+     * 
+     * @param input the input string
+     * 
+     * @return  the result of applying the expressions
+     */
+    @Nonnull @NotEmpty protected String applyTransforms(@Nonnull @NotEmpty final String input) {
+        
+        String s = input;
+        
+        if (trim) {
+            log.trace("{} Trimming whitespace of input string '{}'", getLogPrefix(), s);
+            s = s.trim();
+        }
+        
+        if (lowercase) {
+            log.trace("{} Converting input string '{}' to lowercase", getLogPrefix(), s);
+            s = s.toLowerCase();
+        } else if (uppercase) {
+            log.trace("{} Converting input string '{}' to uppercase", getLogPrefix(), s);
+            s = s.toUpperCase();
+        }
+        
+        if (transforms.isEmpty()) {
+            return s;
+        }
+        
+        for (final Pair<Pattern,String> p : transforms) {            
+            final Matcher m = p.getFirst().matcher(s);
+            log.trace("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
+                    p.getFirst().pattern(), s);
+            s = m.replaceAll(p.getSecond());
+            log.trace("{} Result of replacement is '{}'", getLogPrefix(), s);
+        }
+        
+        return s;
+    }
+
 }
