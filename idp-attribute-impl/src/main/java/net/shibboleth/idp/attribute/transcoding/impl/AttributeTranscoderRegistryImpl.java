@@ -344,7 +344,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             } catch (final Exception e) {
                 log.error("Unable to locate Predicate bean named {}", baseCondition, e);
             }
-        } else {
+        } else if (baseCondition != null) {
             log.error("{} property did not contain a Predicate object, ignored", PROP_CONDITION);
         }
 
