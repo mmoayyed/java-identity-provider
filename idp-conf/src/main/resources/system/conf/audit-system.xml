@@ -431,6 +431,19 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.DESTINATION_URL"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.ext.spring.util.SpringExpressionFunction"
+                                p:inputType="org.opensaml.messaging.context.MessageContext" p:outputType="java.net.URI"
+                                c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).getEndpointURL(#input) : null" />
+                        </constructor-arg>
+                        <constructor-arg name="f" ref="shibboleth.MessageContextLookup.Outbound"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.RESPONSE_ID"/>
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
@@ -713,6 +726,12 @@
                     <bean parent="shibboleth.Functions.Compose"
                           c:g-ref="shibboleth.PrincipalNameLookup.Subject"
                           c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.DESTINATION_URL"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ServiceLookupFunction" />
                 </entry>
                 <entry>
                     <key>
