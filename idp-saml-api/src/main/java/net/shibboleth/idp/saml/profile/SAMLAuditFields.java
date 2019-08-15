@@ -92,7 +92,7 @@ public final class SAMLAuditFields {
     /** ForceAuthn requested field. */
     @Nonnull @NotEmpty public static final String FORCE_AUTHN = "fauth";
 
-    /** Signed inbound message field. {@since 4.0.0} */
+    /** Signed inbound message field. @since 4.0.0 */
     @Nonnull @NotEmpty public static final String SIGNING = "XX";
 
     /** Encryption field. */

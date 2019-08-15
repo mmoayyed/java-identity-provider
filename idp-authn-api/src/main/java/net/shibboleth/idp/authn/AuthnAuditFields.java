@@ -26,6 +26,12 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  */
 public final class AuthnAuditFields {
 
+    /** Requested principal(s) operator field. @since 4.0.0 */
+    @Nonnull @NotEmpty public static final String REQ_PRINC_OP = "ROP";
+
+    /** Requested principal(s) field. @since 4.0.0 */
+    @Nonnull @NotEmpty public static final String REQ_PRINC = "RPRIN";
+
     /** Authentication flow ID field. */
     @Nonnull @NotEmpty public static final String AUTHN_FLOW_ID = "AF";
 

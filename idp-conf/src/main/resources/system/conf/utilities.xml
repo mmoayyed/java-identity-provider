@@ -152,6 +152,9 @@
     <bean id="shibboleth.ChildLookup.AuthenticationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.AuthenticationContext) }" />
+    <bean id="shibboleth.ChildLookup.RequestedPrincipalContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.authn.context.RequestedPrincipalContext) }" />
     <bean id="shibboleth.ChildLookup.MultiFactorAuthenticationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext) }" />

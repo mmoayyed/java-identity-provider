@@ -41,7 +41,7 @@ public final class IdPAuditFields {
     /** URI field. */
     @Nonnull @NotEmpty public static final String URI = "URI";
 
-    /** Destination URL field. {@since 4.0.0} */
+    /** Destination URL field. @since 4.0.0 */
     @Nonnull @NotEmpty public static final String DESTINATION_URL = "DEST";
     
     /** Session ID field. */
