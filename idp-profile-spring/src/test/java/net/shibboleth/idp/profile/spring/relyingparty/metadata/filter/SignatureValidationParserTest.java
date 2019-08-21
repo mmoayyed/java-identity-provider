@@ -115,5 +115,21 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
     @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void none() throws IOException, ResolverException {
                 getBean(MetadataResolver.class, "filter/signingNone.xml", "beans.xml");
     }
+
+    @Test public void configPropertiesDefaults() throws IOException {
+        SignatureValidationFilter filter =
+                getBean(SignatureValidationFilter.class, "filter/signature-config-defaults.xml", "filter/switch.xml", "beans.xml");
+
+        Assert.assertTrue(filter.getRequireSignedRoot());
+        Assert.assertFalse(filter.isAlwaysVerifyTrustedSource());
+    }
     
+    @Test public void configPropertiesCustom() throws IOException {
+        SignatureValidationFilter filter =
+                getBean(SignatureValidationFilter.class, "filter/signature-config-custom.xml", "filter/switch.xml", "beans.xml");
+
+        Assert.assertFalse(filter.getRequireSignedRoot());
+        Assert.assertTrue(filter.isAlwaysVerifyTrustedSource());
+    }
+
 }

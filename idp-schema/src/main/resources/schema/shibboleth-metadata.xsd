@@ -887,6 +887,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="alwaysVerifyTrustedSource" type="shibmd:string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether the root signature of a trusted source should always be verified.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="certificateFile" type="shibmd:string">
                     <annotation>
                         <documentation>
