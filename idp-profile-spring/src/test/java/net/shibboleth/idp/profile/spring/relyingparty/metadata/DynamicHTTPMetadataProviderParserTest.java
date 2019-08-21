@@ -68,7 +68,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertTrue(resolver.getIndexes().isEmpty());
         
         Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Duration.ofMinutes(10));
-        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75f);
+        Assert.assertEquals(resolver.getRefreshDelayFactor().floatValue(), 0.75f);
         Assert.assertEquals(resolver.getMinCacheDuration(), Duration.ofMinutes(10));
         Assert.assertEquals(resolver.getMaxCacheDuration(), Duration.ofHours(8));
         Assert.assertEquals(resolver.getMaxIdleEntityData(), Duration.ofHours(8));
@@ -199,7 +199,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(resolver.getParserPool());
         
         Assert.assertEquals(resolver.getNegativeLookupCacheDuration(), Duration.ofMinutes(5));
-        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.50f);
+        Assert.assertEquals(resolver.getRefreshDelayFactor().floatValue(), 0.50f);
         Assert.assertEquals(resolver.getMinCacheDuration(), Duration.ofMinutes(5));
         Assert.assertEquals(resolver.getMaxCacheDuration(), Duration.ofHours(4));
         Assert.assertEquals(resolver.getMaxIdleEntityData(), Duration.ofHours(2));
