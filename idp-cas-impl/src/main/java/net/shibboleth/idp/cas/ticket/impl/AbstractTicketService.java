@@ -192,7 +192,8 @@ public abstract class AbstractTicketService implements TicketServiceEx {
                 throw new RuntimeException("Failed to store ticket " + ticket);
             }
             log.debug("Storing {} in context {}", ticket, sessionId);
-            if (!storageService.create(sessionId, ticket.getId(), ticket, serializer(ticket.getClass()), expiry)) {
+            if (!storageService.create(sessionId, ticket.getId(), ticket,
+                    (StorageSerializer<T>) serializer(ticket.getClass()), expiry)) {
                 throw new RuntimeException("Failed to store ticket " + ticket);
             }
         } catch (final IOException e) {

@@ -154,7 +154,7 @@ public class FilterAttributes extends AbstractProfileAction {
                         new ChildContextLookup<>(SubjectContext.class));
 
         // Default is to locate the overall root.
-        profileRequestContextFromFilterLookupStrategy = new RootContextLookup<>();
+        profileRequestContextFromFilterLookupStrategy = new RootContextLookup<>(ProfileRequestContext.class);
                 
         // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
         metadataContextLookupStrategy =
