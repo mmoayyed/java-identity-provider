@@ -42,6 +42,18 @@
         </dependency>
         
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>compile</scope><!-- normally runtime -->
+        </dependency>
+
+<!--        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>compile</scope>
+        </dependency> -->
+
+        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
         </dependency>

@@ -21,8 +21,8 @@
         The following properties are used.  If they are not specified on the command line then
         they will be prompted for if needed.
 
-        idp.src.dir (update only):  Where to install from.  No default
-        idp.target.dir (all): where to install to.  Default is basedir.
+        idp.src.dir (update only):  Where to install from.  Default is basedir
+        idp.target.dir (all): where to install to.  Default is basedir for build-war, shibboleth-idp otherwise
         idp.host.name: If we are creating certificates
         idp.uri.subject.alt.name: If we are creating certificates.  Defaulted
         idp.sealer.password:

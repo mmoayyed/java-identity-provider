@@ -1,0 +1,134 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.installer.impl;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.taskdefs.Copy;
+import org.apache.tools.ant.taskdefs.Jar;
+import org.apache.tools.ant.types.FileSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/** Code to build the war file during an install or on request.<p/>
+ * This code<ul>
+ * <li>Deletes any old detritus</li>
+ * <li>Creates a directory called webapp.tmp and populates it from the dist folder</li>
+ * <li>Overwrites this from edit-webapp</li>
+ * <li>Deletes the old idp.war</li>
+ * <li>Builds a jar file called idp.war</li>
+ * <li>Deletes webapp.tmp</li>
+ * </ul>
+ */
+public final class BuildWar {
+
+    /** Log. */
+    public static final Logger LOG = LoggerFactory.getLogger(BuildWar.class);
+    
+    /** And psuedo project as parent. */
+    private static final Project ANT_PROJECT = new Project();
+
+    /** private Constructor. */
+    private BuildWar() {}
+
+    /** Method to do the work of building the war.
+     * @param installerProps The environment for the work.
+     * @throws BuildException if unexpected badness occurs.
+     */
+    public static void buildWar(final InstallerProperties installerProps) throws BuildException {
+        final Path target = installerProps.getTargetDir();
+        final Path warFile = target.resolve("war").resolve("idp.war");
+
+        LOG.info("Rebuilding {}", warFile.toAbsolutePath());
+        try {
+            DeletingVisitor.deleteTree(target.resolve("webpapp"));
+        } catch (final IOException e) {
+            LOG.warn("Deleting {} failed", target.resolve("webpapp").toAbsolutePath(), e);
+        }
+        final Path webAppTmp =target.resolve("webpapp.tmp");
+        try {
+            DeletingVisitor.deleteTree(webAppTmp);
+        } catch (final IOException e) {
+            LOG.warn("Deleting {} failed", webAppTmp.toAbsolutePath(), e);
+        }
+        final Path distWebApp =  target.resolve("dist").resolve("webapp");
+        final Copy initial = getCopyTask(distWebApp, webAppTmp);
+        initial.setPreserveLastModified(true);
+        initial.setFailOnError(true);
+        initial.setVerbose(LOG.isDebugEnabled());
+        LOG.info("Initial populate from {} to {}", distWebApp, webAppTmp);
+        initial.execute();
+        
+        final Path editWebApp = target.resolve("edit-webapp"); 
+        final Copy overlay = getCopyTask(editWebApp, webAppTmp);
+        overlay.setOverwrite(true);
+        overlay.setPreserveLastModified(true);
+        overlay.setFailOnError(true);
+        overlay.setVerbose(LOG.isDebugEnabled());
+        LOG.info("Overlay from {} to {}", editWebApp, webAppTmp);
+        overlay.execute();
+
+        warFile.toFile().delete();
+        final Jar jarTask = new Jar();
+        jarTask.setDestFile(warFile.toFile());
+        jarTask.setBasedir(webAppTmp.toFile());
+        jarTask.setProject(ANT_PROJECT);
+        LOG.info("Creating war file {}", warFile);
+        jarTask.execute();
+        try {
+            DeletingVisitor.deleteTree(webAppTmp);
+        } catch (final IOException e) {
+            LOG.warn("Deleting {} failed", webAppTmp, e);
+        }
+    }
+    
+    /** Copy files.  We use ant rather than {@link Files#copy(Path, Path, java.nio.file.CopyOption...)}
+     * because the latter has issues with the Windows ReadOnly Attribute, and the former is tried
+     * and tested technology.
+     * @param from where to copy from
+     * @param to where to copy to
+     * @return a partially populated {@link Copy} task 
+     */
+    private static Copy getCopyTask(final Path from, final Path to) {
+        final Copy result = new Copy();
+        result.setTodir(to.toFile());
+        final FileSet fromSet = new FileSet();
+        fromSet.setDir(from.toFile());
+        result.addFileset(fromSet);
+        result.setProject(ANT_PROJECT);
+        return result;
+    }
+
+    /** Program entry to build war. Calls {@link #buildWar(InstallerProperties)}.
+     * @param args input
+     */
+    public static void main(final String[] args) {
+        try {
+            LOG.error("Starting build");
+            final InstallerProperties ip = new InstallerProperties(true);
+            ip.initialize();
+            buildWar(ip);
+        } catch (final Throwable e) {
+            LOG.error("Build WebApp failed", e);
+        }
+    }
+}

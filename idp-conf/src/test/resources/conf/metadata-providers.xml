@@ -24,7 +24,6 @@
 	<!-- Metadata Configuration -->
 	<!-- ========================================== -->
 
-
 	<!-- Example metadata provider. -->
 
     <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="exampleMetadata">
@@ -71,5 +70,4 @@
     </MetadataProvider>
 
     <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="exampleMetadata-sp123"/>
-
 </MetadataProvider>
