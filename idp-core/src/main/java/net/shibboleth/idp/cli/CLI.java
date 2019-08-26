@@ -65,7 +65,7 @@ public final class CLI {
         CommandLineArguments argObject = null;
         
         try {
-            final Constructor construct = Class.forName(argType).getConstructor();
+            final Constructor<?> construct = Class.forName(argType).getConstructor();
             final Object obj = construct.newInstance();
             if (!(obj instanceof CommandLineArguments)) {
                 errorAndExit("Argument class was not of the correct type");

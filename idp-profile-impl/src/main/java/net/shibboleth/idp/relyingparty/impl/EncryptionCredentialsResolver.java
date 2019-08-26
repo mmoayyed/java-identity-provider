@@ -77,9 +77,8 @@ public class EncryptionCredentialsResolver implements CredentialResolver, Identi
         final Iterable<Credential> creds = resolve(criteriaSet);
         if (creds.iterator().hasNext()) {
             return creds.iterator().next();
-        } else {
-            return null;
         }
+        return null;
     }
     
     /** {@inheritDoc} */
@@ -96,10 +95,9 @@ public class EncryptionCredentialsResolver implements CredentialResolver, Identi
                 if (resolver instanceof DefaultRelyingPartyConfigurationResolver) {
                     log.trace("Saw expected instance of DefaultRelyingPartyConfigurationResolver");
                     return ((DefaultRelyingPartyConfigurationResolver)resolver).getEncryptionCredentials();
-                } else {
-                    log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
-                    return Collections.emptyList();
                 }
+                log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
+                return Collections.emptyList();
             }
         } finally {
             if (null != component) {

@@ -475,49 +475,49 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
             return;
 
-        } else {
-            final Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
+        }
+        
+        final Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
 
-            // In this branch, we check each flow for compatibility *and* then double check to see if an active
-            // result from that flow also exists and is compatible. This favors a matching inactive flow that is
-            // higher in request precedence than an active result.
-            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                log.debug("{} Checking for an inactive flow or active result compatible with "
-                        + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
-                        p.getName());
-                final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
-                if (predicate != null) {
-                    for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
-                        if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                                && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
-                            
-                            // Now check for an active result we can use from this flow. Not all results from a flow
-                            // will necessarily match the request just because the flow might.
-                            final AuthenticationResult result = activeResults.get(descriptor.getId());
-                            if (result == null || !descriptor.getReuseCondition().test(profileRequestContext)
-                                    || !predicate.test(result)) {
-                                if (!authenticationContext.isPassive()
-                                        || descriptor.isPassiveAuthenticationSupported()) {
-                                    selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
-                                    return;
-                                }
-                            } else {
-                                selectActiveResult(profileRequestContext, authenticationContext, result);
+        // In this branch, we check each flow for compatibility *and* then double check to see if an active
+        // result from that flow also exists and is compatible. This favors a matching inactive flow that is
+        // higher in request precedence than an active result.
+        for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+            log.debug("{} Checking for an inactive flow or active result compatible with "
+                    + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                    p.getName());
+            final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+            if (predicate != null) {
+                for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
+                    if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
+                            && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
+                        
+                        // Now check for an active result we can use from this flow. Not all results from a flow
+                        // will necessarily match the request just because the flow might.
+                        final AuthenticationResult result = activeResults.get(descriptor.getId());
+                        if (result == null || !descriptor.getReuseCondition().test(profileRequestContext)
+                                || !predicate.test(result)) {
+                            if (!authenticationContext.isPassive()
+                                    || descriptor.isPassiveAuthenticationSupported()) {
+                                selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                                 return;
                             }
+                        } else {
+                            selectActiveResult(profileRequestContext, authenticationContext, result);
+                            return;
                         }
                     }
-                } else {
-                    log.warn("{} Configuration does not support requested principal evaluation with "
-                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
-                            p.getClass());
                 }
+            } else {
+                log.warn("{} Configuration does not support requested principal evaluation with "
+                        + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                        p.getClass());
             }
-            
-            log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext,
-                    authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
         }
+        
+        log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
+        ActionSupport.buildEvent(profileRequestContext,
+                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 // Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
         

@@ -99,13 +99,13 @@ public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnR
             if (value == null) {
                 return null;
             } else if (value instanceof Object[]) {
-                final List<Object> encodedValues = new ArrayList();
+                final List<Object> encodedValues = new ArrayList<>();
                 for (final Object o : (Object[]) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues.toArray();
             } else if (value instanceof Collection<?>) {
-                final List<Object> encodedValues = new ArrayList();
+                final List<Object> encodedValues = new ArrayList<>();
                 for (final Object o : (Collection<?>) value) {
                     encodedValues.add(encode(o));
                 }

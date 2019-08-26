@@ -115,9 +115,8 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
             final XMLObject nameID = XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(rawNameID));
             if (nameID instanceof NameID) {
                 return new SAML2SPSession(id, creation, expiration, (NameID) nameID, sessionIndex);
-            } else {
-                throw new IOException("XMLObject stored in NameID field was not a NameID");
             }
+            throw new IOException("XMLObject stored in NameID field was not a NameID");
         } catch (final XMLParserException | UnmarshallingException e) {
             throw new IOException("Unable to parse or unmarshall NameID field", e);
         }

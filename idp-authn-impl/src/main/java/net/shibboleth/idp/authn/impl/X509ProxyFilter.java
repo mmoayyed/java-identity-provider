@@ -97,7 +97,7 @@ public class X509ProxyFilter implements Filter {
                     (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
             
             if (null == certs || 0 == certs.length) {
-                final List<X509Certificate> proxyCerts = new ArrayList<X509Certificate>();
+                final List<X509Certificate> proxyCerts = new ArrayList<>();
 
                 if (leafHeader != null) {
                     final String pem = httpRequest.getHeader(leafHeader);

@@ -55,14 +55,13 @@ public class ProxiedRequesterPolicyRule extends AbstractStringPolicyRule {
 
         if (isCaseSensitive()) {
             return ctx.getRequesters().contains(getMatchString()) ? Tristate.TRUE : Tristate.FALSE;
-        } else { 
-            for (final String requester : ctx.getRequesters()) {
-                if (stringCompare(requester) == Tristate.TRUE) {
-                    return Tristate.TRUE;
-                }
+        }
+        for (final String requester : ctx.getRequesters()) {
+            if (stringCompare(requester) == Tristate.TRUE) {
+                return Tristate.TRUE;
             }
-            return Tristate.FALSE;
-        } 
+        }
+        return Tristate.FALSE; 
     }
 
 }

@@ -194,7 +194,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     @Test public void custom() throws Exception {
         
         final ScriptedMatcher matcher = newScriptedMatcher(new EvaluableScript("custom;"));
-        final Set<IdPAttributeValue> custom = Collections.singleton((IdPAttributeValue)attribute.getValues().get(0));
+        final Set<IdPAttributeValue> custom = Collections.singleton(attribute.getValues().get(0));
         matcher.setId("Test");
         matcher.setCustomObject(custom);
         matcher.initialize();

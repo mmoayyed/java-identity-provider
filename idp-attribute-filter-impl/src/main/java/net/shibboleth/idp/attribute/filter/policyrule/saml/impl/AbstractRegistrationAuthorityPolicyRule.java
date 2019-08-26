@@ -158,9 +158,8 @@ public abstract class AbstractRegistrationAuthorityPolicyRule extends AbstractPo
             log.debug("{} The peer's metadata did not contain a RegistrationInfo descriptor", getLogPrefix());
             if (matchIfMetadataSilent) {
                 return Tristate.TRUE;
-            } else {
-                return Tristate.FALSE;
             }
+            return Tristate.FALSE;
         }
 
         final String authority = info.getRegistrationAuthority();

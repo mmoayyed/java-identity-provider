@@ -178,14 +178,13 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             // Not in whitelist. Only accept if a regexp applies.
             if (matchExpression == null) {
                 return false;
-            } else {
-                return matchExpression.matcher(username).matches();
             }
-        } else {
-            // In whitelist (or none). Check blacklist, and if necessary a regexp.
-            return !blacklistedUsernames.contains(username)
-                    && (matchExpression == null || matchExpression.matcher(username).matches());
+            return matchExpression.matcher(username).matches();
         }
+        
+        // In whitelist (or none). Check blacklist, and if necessary a regexp.
+        return !blacklistedUsernames.contains(username)
+                && (matchExpression == null || matchExpression.matcher(username).matches());
     }
 
     /** {@inheritDoc} */

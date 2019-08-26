@@ -85,7 +85,7 @@ public class FlowDescriptorLookupFunction<T extends ProfileInterceptorFlowDescri
             return null;
         }
 
-        return (T) interceptorFlowDescriptor;
+        return interceptorFlowDescriptorType.cast(interceptorFlowDescriptor);
     }
 
 }

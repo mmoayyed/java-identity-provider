@@ -65,8 +65,8 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
     
     @Test(expectedExceptions=ComponentInitializationException.class)
     public void testBadConfig() throws ComponentInitializationException {
-        final InitializeOutboundMessageContextForError action = new InitializeOutboundMessageContextForError();
-        action.initialize();
+        final InitializeOutboundMessageContextForError a = new InitializeOutboundMessageContextForError();
+        a.initialize();
     }
 
     @Test public void testWithOutboundContext() {

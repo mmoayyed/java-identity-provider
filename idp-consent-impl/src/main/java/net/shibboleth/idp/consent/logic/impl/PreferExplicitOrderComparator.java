@@ -48,7 +48,7 @@ import com.google.common.collect.Ordering;
 public class PreferExplicitOrderComparator implements Comparator<String> {
 
     /** Explicit ordering. */
-    @Nullable private Ordering explicitOrdering;
+    @Nullable private Ordering<String> explicitOrdering;
 
     /** Strings in order. */
     @Nonnull @NonnullElements @Unmodifiable private List<String> explicitOrder;

@@ -157,10 +157,9 @@ public class MetadataGeneratorParameters {
         if (null == file || !file.exists()) {
             return null;
         }
-        final FileReader fr = new FileReader(file);
-        final BufferedReader reader = new BufferedReader(fr);
 
-        try {
+        try (final FileReader fr = new FileReader(file);
+                final BufferedReader reader = new BufferedReader(fr)) {
             final List<String> output = new ArrayList<>();
             String s = reader.readLine();
             while (s != null) {
@@ -178,13 +177,6 @@ public class MetadataGeneratorParameters {
                 output.remove(last);
             }
             return output;
-
-        } finally {
-            try {
-                reader.close();
-                fr.close();
-            } catch (final IOException e1) {
-            }
         }
     }
 

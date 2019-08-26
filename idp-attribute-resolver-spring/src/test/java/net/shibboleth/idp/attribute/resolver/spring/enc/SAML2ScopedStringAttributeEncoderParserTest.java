@@ -51,7 +51,7 @@ public class SAML2ScopedStringAttributeEncoderParserTest extends BaseEncoderDefi
         assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_TYPE), "attribute");
         assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_ATTR_NAME), "scopeAttrib");
         assertEquals(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER), "###");
-        assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertEquals(activation, ((Predicate<?>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, encodeType!=null ? encodeType : false);
     }
     
@@ -65,7 +65,7 @@ public class SAML2ScopedStringAttributeEncoderParserTest extends BaseEncoderDefi
         assertNull(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_TYPE));
         assertNull(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_ATTR_NAME));
         assertNull(rule.get(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER));
-        assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertFalse(((Predicate<?>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, true);
     }
     

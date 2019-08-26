@@ -348,7 +348,7 @@ public class HTTPDataConnectorParserTest {
         assertEquals(((StringAttributeValue)attrs.get("bar").getValues().get(1)).getValue(), "bar2");
     }
     
-    private HTTPDataConnector getDataConnector(final PropertySource propSource, final String... beanDefinitions)
+    private HTTPDataConnector getDataConnector(final PropertySource<?> propSource, final String... beanDefinitions)
             throws IOException {
 
         final ResourceLoader loader = new PreferFileSystemResourceLoader();

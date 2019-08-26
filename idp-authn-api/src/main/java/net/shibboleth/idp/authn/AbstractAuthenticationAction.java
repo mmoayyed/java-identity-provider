@@ -82,9 +82,8 @@ public abstract class AbstractAuthenticationAction
             }
     
             return doPreExecute(profileRequestContext, authnContext);
-        } else {
-            return false;
         }
+        return false;
     }
     
     /** {@inheritDoc} */

@@ -82,8 +82,8 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     PopulateMultiFactorAuthenticationContext() {
         transitionMapLookupStrategy = FunctionSupport.constant(null);
         multiFactorContextCreationStrategy =
-                new ChildContextLookup(MultiFactorAuthenticationContext.class, true).compose(
-                        new ChildContextLookup(AuthenticationContext.class));
+                new ChildContextLookup<>(MultiFactorAuthenticationContext.class, true).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
         activeResultLookupStrategy = new DefaultResultLookupStrategy();
     }
     

@@ -260,9 +260,8 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
             // Non-null result can only be a Boolean or Tristate.
             if (result instanceof Boolean) {
                 return ((Boolean) result).booleanValue() ? Tristate.TRUE : Tristate.FALSE;
-            } else {
-                return (Tristate) result;
             }
+            return (Tristate) result;
         }
 
         /** {@inheritDoc} */

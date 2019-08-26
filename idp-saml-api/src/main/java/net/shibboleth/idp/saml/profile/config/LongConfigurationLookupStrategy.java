@@ -64,10 +64,9 @@ public class LongConfigurationLookupStrategy extends AbstractMetadataDrivenConfi
         final IdPAttributeValue value = values.get(0);
         if (value instanceof StringAttributeValue) {
             return Long.decode(((StringAttributeValue) value).getValue());
-        } else {
-            log.error("Tag '{}' contained non-string value, returning null");
-            return null;
         }
+        log.error("Tag '{}' contained non-string value, returning null");
+        return null;
     }
     
     /** {@inheritDoc} */

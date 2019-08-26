@@ -60,10 +60,12 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @BeforeMethod public void setUserConfiguredInterceptFlows() {
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
-        final List activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
+        final List<ProfileInterceptorFlowDescriptor> activatedFlows =
+                flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
         activatedFlows.clear();
 
-        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        final List<ProfileInterceptorFlowDescriptor> interceptFlows =
+                flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
         interceptFlows.clear();
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
@@ -108,7 +110,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testOneAvailableFlow() {
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
-        final List activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
+        final List<String> activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
         activatedFlows.add("test-proceed-1-flow");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
@@ -128,7 +130,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testTwoAvailableFlows() {
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
-        final List activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
+        final List<String> activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
         activatedFlows.add("test-proceed-1-flow");
         activatedFlows.add("test-proceed-2-flow");
         
@@ -149,7 +151,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testErrorFlow() {
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
-        final List activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
+        final List<String> activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
         activatedFlows.add("test-error-flow");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
@@ -169,7 +171,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testProceedThenErrorFlow() {
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
-        final List activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
+        final List<String> activatedFlows = flow.getApplicationContext().getBean(ACTIVATED_FLOWS_BEAN_ID, List.class);
         activatedFlows.add("test-proceed-1-flow");
         activatedFlows.add("test-error-flow");
 

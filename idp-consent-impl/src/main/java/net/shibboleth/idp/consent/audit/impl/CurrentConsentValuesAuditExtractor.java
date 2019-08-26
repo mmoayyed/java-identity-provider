@@ -62,9 +62,8 @@ public class CurrentConsentValuesAuditExtractor implements Function<ProfileReque
         final ConsentContext consentContext = consentContextLookupStrategy.apply(input);
         if (consentContext != null && !consentContext.getCurrentConsents().isEmpty()) {
             return Collections2.transform(consentContext.getCurrentConsents().values(), Consent::getValue);
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
 }

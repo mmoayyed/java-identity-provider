@@ -73,20 +73,20 @@ public final class SAMLEncoderSupport {
         LOG.debug("Encoding value {} of attribute {}", value, attribute.getId());
         
         if (withType) {
-            final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
+            final XMLObjectBuilder<XSString> stringBuilder =
                     XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
                             XSString.TYPE_NAME);
             final XSString samlAttributeValue =
                     stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
             samlAttributeValue.setValue(value);
             return samlAttributeValue;
-        } else {
-            final XMLObjectBuilder<XSAny> anyBuilder = (XMLObjectBuilder<XSAny>)
-                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
-            final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
-            samlAttributeValue.setTextContent(value);
-            return samlAttributeValue;
         }
+        
+        final XMLObjectBuilder<XSAny> anyBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
+        final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
+        samlAttributeValue.setTextContent(value);
+        return samlAttributeValue;
     }
 
     /**
@@ -110,20 +110,19 @@ public final class SAMLEncoderSupport {
         }
 
         if (withType) {
-            final XMLObjectBuilder<XSBase64Binary> binaryBuilder = (XMLObjectBuilder<XSBase64Binary>)
+            final XMLObjectBuilder<XSBase64Binary> binaryBuilder =
                     XMLObjectProviderRegistrySupport.getBuilderFactory().<XSBase64Binary>getBuilderOrThrow(
                             XSBase64Binary.TYPE_NAME);
             final XSBase64Binary samlAttributeValue =
                     binaryBuilder.buildObject(attributeValueElementName, XSBase64Binary.TYPE_NAME);
             samlAttributeValue.setValue(Base64Support.encode(value, Base64Support.UNCHUNKED));
             return samlAttributeValue;
-        } else {
-            final XMLObjectBuilder<XSAny> anyBuilder = (XMLObjectBuilder<XSAny>)
-                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
-            final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
-            samlAttributeValue.setTextContent(Base64Support.encode(value, Base64Support.UNCHUNKED));
-            return samlAttributeValue;
         }
+        final XMLObjectBuilder<XSAny> anyBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
+        final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
+        samlAttributeValue.setTextContent(Base64Support.encode(value, Base64Support.UNCHUNKED));
+        return samlAttributeValue;
     }
 
     /**
@@ -144,8 +143,8 @@ public final class SAMLEncoderSupport {
         Constraint.isNotNull(attribute, "Attribute cannot be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 
-        final XMLObjectBuilder<XSAny> attributeValueBuilder = (XMLObjectBuilder<XSAny>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
+        final XMLObjectBuilder<XSAny> attributeValueBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
         final XSAny samlAttributeValue = attributeValueBuilder.buildObject(attributeValueElementName);
         samlAttributeValue.getUnknownXMLObjects().add(value);
 
@@ -176,8 +175,9 @@ public final class SAMLEncoderSupport {
             return null;
         }
         
-        final XMLObjectBuilder<ScopedValue> scopedValueBuilder = (XMLObjectBuilder<ScopedValue>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(ScopedValue.TYPE_NAME);
+        final XMLObjectBuilder<ScopedValue> scopedValueBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<ScopedValue>getBuilderOrThrow(
+                        ScopedValue.TYPE_NAME);
         final ScopedValue scopedValue =
                 withType ? scopedValueBuilder.buildObject(attributeValueElementName, ScopedValue.TYPE_NAME)
                         : scopedValueBuilder.buildObject(attributeValueElementName);

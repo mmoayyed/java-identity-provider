@@ -63,9 +63,8 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
                 rule.get(AttributeTranscoderRegistry.PROP_ID, String.class));
         if (name != null) {
             return new NamingFunction().apply(new Attribute(name));
-        } else {
-            return null;
         }
+        return null;
     }
     
     /** {@inheritDoc} */
@@ -196,7 +195,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
             throw new AttributeDecodingException("Required transcoder property 'id' not found");
         }
         
-        if (!((Attribute) attribute).getValues().isEmpty() && attributeValues.isEmpty()) {
+        if (!attribute.getValues().isEmpty() && attributeValues.isEmpty()) {
             throw new AttributeDecodingException("Failed to decode any values for attribute " + attribute.getName());
         }
         

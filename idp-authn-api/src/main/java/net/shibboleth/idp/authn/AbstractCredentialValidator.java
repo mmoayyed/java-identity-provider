@@ -212,10 +212,9 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
                                 getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
                         requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         return true;
-                    } else {
-                        log.debug("{} Validator '{}' not compatible with principal type '{}' and operator '{}'",
-                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
                     }
+                    log.debug("{} Validator '{}' not compatible with principal type '{}' and operator '{}'",
+                            getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
                 } else {
                     log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
                             getLogPrefix(), p.getClass(), requestedPrincipalCtx.getOperator());

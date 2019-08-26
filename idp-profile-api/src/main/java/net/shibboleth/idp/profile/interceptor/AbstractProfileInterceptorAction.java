@@ -57,7 +57,7 @@ public abstract class AbstractProfileInterceptorAction extends
 
     /** Constructor. */
     public AbstractProfileInterceptorAction() {
-        interceptorContextlookupStrategy = new ChildContextLookup(ProfileInterceptorContext.class, true);
+        interceptorContextlookupStrategy = new ChildContextLookup<>(ProfileInterceptorContext.class, true);
     }
 
     /**

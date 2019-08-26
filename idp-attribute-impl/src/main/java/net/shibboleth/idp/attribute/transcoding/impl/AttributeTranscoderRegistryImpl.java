@@ -137,15 +137,15 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             
             final String internalId = StringSupport.trimOrNull(mapping.get(PROP_ID, String.class));
             if (internalId != null) {
-                final Predicate activationCondition = buildActivationCondition(mapping.getMap());
+                final Predicate<?> activationCondition = buildActivationCondition(mapping.getMap());
                 if (activationCondition != null) {
                     mapping.getMap().put(PROP_CONDITION, activationCondition);
                 } else {
                     mapping.getMap().remove(PROP_CONDITION);
                 }
                 
-                final Collection<AttributeTranscoder> transcoders = getAttributeTranscoders(mapping);
-                for (final AttributeTranscoder transcoder : transcoders) {
+                final Collection<AttributeTranscoder<?>> transcoders = getAttributeTranscoders(mapping);
+                for (final AttributeTranscoder<?> transcoder : transcoders) {
                     addMapping(internalId, transcoder, mapping.getMap());
                 }
             }
@@ -160,9 +160,8 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
      
         if (displayNameRegistry.containsKey(attribute.getId())) {
             return displayNameRegistry.get(attribute.getId());
-        } else {
-            return Collections.emptyMap();
         }
+        return Collections.emptyMap();
     }
 
     /** {@inheritDoc} */
@@ -173,9 +172,8 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         
         if (descriptionRegistry.containsKey(attribute.getId())) {
             return descriptionRegistry.get(attribute.getId());
-        } else {
-            return Collections.emptyMap();
         }
+        return Collections.emptyMap();
     }
     
     /** {@inheritDoc} */
@@ -224,9 +222,8 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             
             return propertyCollections != null ? ImmutableList.copyOf(propertyCollections.get(effectiveType))
                     : Collections.emptyList();
-        } else {
-            log.warn("Object of type {} did not have a canonical name", from.getClass().getName());
         }
+        log.warn("Object of type {} did not have a canonical name", from.getClass().getName());
         
         return Collections.emptyList();
     }
@@ -238,10 +235,10 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
      * 
      * @return transcoders to install under a copy of each ruleset's {@link #PROP_TRANSCODER} property
      */
-    @Nonnull @NonnullElements private Collection<AttributeTranscoder> getAttributeTranscoders(
+    @Nonnull @NonnullElements private Collection<AttributeTranscoder<?>> getAttributeTranscoders(
             @Nonnull final TranscodingRule rule) {
         
-        AttributeTranscoder transcoder = rule.get(PROP_TRANSCODER, AttributeTranscoder.class);
+        AttributeTranscoder<?> transcoder = rule.get(PROP_TRANSCODER, AttributeTranscoder.class);
         if (transcoder != null) {
             return Collections.singletonList(transcoder);
         }
@@ -252,7 +249,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             return Collections.emptyList();
         }
 
-        final List<AttributeTranscoder> transcoders = new ArrayList<>();
+        final List<AttributeTranscoder<?>> transcoders = new ArrayList<>();
         
         for (final String id :StringSupport.stringToList(beanNames, " ")) {
             try {
@@ -274,7 +271,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
      * @param transcoder the transcoder for this rule
      * @param ruleset transcoding rules
      */
-    private void addMapping(@Nonnull @NotEmpty final String id, @Nonnull final AttributeTranscoder transcoder,
+    private void addMapping(@Nonnull @NotEmpty final String id, @Nonnull final AttributeTranscoder<?> transcoder,
             @Nonnull final Map<String,Object> ruleset) {
 
         
@@ -333,11 +330,11 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
     @Nullable private Predicate<ProfileRequestContext> buildActivationCondition(
             @Nonnull final Map<String,Object> ruleset) {
         
-        Predicate effectiveCondition = null;
+        Predicate<ProfileRequestContext> effectiveCondition = null;
         
         final Object baseCondition = ruleset.get(PROP_CONDITION);
         if (baseCondition instanceof Predicate) {
-            effectiveCondition = (Predicate) baseCondition;
+            effectiveCondition = (Predicate<ProfileRequestContext>) baseCondition;
         } else if (baseCondition instanceof String) {
             try {
                 effectiveCondition = getApplicationContext().getBean((String) baseCondition, Predicate.class);
@@ -348,7 +345,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             log.error("{} property did not contain a Predicate object, ignored", PROP_CONDITION);
         }
 
-        Predicate relyingPartyCondition = null;
+        Predicate<ProfileRequestContext> relyingPartyCondition = null;
 
         final Object relyingParties = ruleset.get(PROP_RELYINGPARTIES);
         if (relyingParties instanceof Collection) {

@@ -66,7 +66,7 @@ public abstract class AbstractConsentStorageActionTest extends AbstractConsentAc
     }
 
     protected Map<String, Consent> readConsentsFromStorage() throws IOException {
-        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
         Assert.assertNotNull(record);
 
         final ConsentSerializer consentSerializer =

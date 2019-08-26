@@ -235,7 +235,7 @@ public class SPNEGOAuthnControllerTest {
                 failedGSSController.continueSPNEGO(TEST_CONVERSATION_KEY, "Negotiate " + NEGOTIATE_HEADER_DATA, req,
                         null);
 
-        Assert.assertSame((GSSException) ((ExternalAuthenticationException) req
+        Assert.assertSame(((ExternalAuthenticationException) req
                 .getAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY)).getCause(), expected);
         assertAuthenticationExceptionCause(req, mv, GSSException.class);
     }
@@ -282,7 +282,7 @@ public class SPNEGOAuthnControllerTest {
                 mockedGSSController.continueSPNEGO(TEST_CONVERSATION_KEY, "Negotiate " + NEGOTIATE_HEADER_DATA, req,
                         null);
 
-        Assert.assertSame((RuntimeException) ((ExternalAuthenticationException) req
+        Assert.assertSame(((ExternalAuthenticationException) req
                 .getAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY)).getCause(), e);
         assertAuthenticationExceptionCause(req, mv, RuntimeException.class);
     }
@@ -354,7 +354,7 @@ public class SPNEGOAuthnControllerTest {
         ModelAndView mv =
                 mockedGSSController.continueSPNEGO(TEST_CONVERSATION_KEY, "Negotiate " + NEGOTIATE_HEADER_DATA, req,
                         null);
-        Assert.assertSame((GSSException) ((ExternalAuthenticationException) req
+        Assert.assertSame(((ExternalAuthenticationException) req
                 .getAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY)).getCause(), gssException);
         assertAuthenticationExceptionCause(req, mv, GSSException.class);
     }
@@ -430,7 +430,7 @@ public class SPNEGOAuthnControllerTest {
         AuthenticationContext ac = new AuthenticationContext();
         SPNEGOContext sc = new SPNEGOContext();
         KerberosSettings ks = new KerberosSettings();
-        List<KerberosRealmSettings> realms = new ArrayList<KerberosRealmSettings>();
+        List<KerberosRealmSettings> realms = new ArrayList<>();
         realms.add(new KerberosRealmSettings());
         ks.setRealms(realms);
         sc.setKerberosSettings(ks);
@@ -455,7 +455,7 @@ public class SPNEGOAuthnControllerTest {
     }
 
     private void assertAuthenticationExceptionCause(MockHttpServletRequest request, ModelAndView mv,
-            Class exceptedExceptionClass) {
+            Class<?> exceptedExceptionClass) {
         Assert.assertNull(mv);
         Assert.assertEquals(((ExternalAuthenticationException) request
                 .getAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY)).getCause().getClass(),
@@ -492,8 +492,8 @@ public class SPNEGOAuthnControllerTest {
 
         private ProfileRequestContext profileRequestContext;
 
-        public void setProfileRequestContext(ProfileRequestContext profileRequestContext) {
-            this.profileRequestContext = profileRequestContext;
+        public void setProfileRequestContext(ProfileRequestContext prc) {
+            profileRequestContext = prc;
         }
 
         @Override

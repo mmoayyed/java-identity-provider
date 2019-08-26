@@ -40,7 +40,7 @@ public class SignatureChainingParserTest extends AbstractSecurityParserTest {
         
         Assert.assertEquals(chain.getChain().size(),2);
         
-        final TrustedCredentialTrustEngine engine = (TrustedCredentialTrustEngine) chain.getChain().get(1);
+        final TrustedCredentialTrustEngine<?> engine = (TrustedCredentialTrustEngine<?>) chain.getChain().get(1);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         

@@ -77,8 +77,8 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
     }
 
     private void setRequestedAttributesInContext(final AttributeFilterContext context,
-            final Multimap<String, IdPRequestedAttribute> multimap) {
-        final AttributesMapContainer<IdPRequestedAttribute> container = new AttributesMapContainer<>(multimap);
+            final Multimap<String, IdPAttribute> multimap) {
+        final AttributesMapContainer container = new AttributesMapContainer(multimap);
         final SAMLMetadataContext samlMetadataContext = context.getSubcontext(SAMLMetadataContext.class, true);
         final AttributeConsumingServiceContext acsCtx =
                 samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true);
@@ -93,7 +93,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
         final AttributeFilterContext context = new AttributeFilterContext();
 
         if (null != attributeId) {
-            final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
+            final Multimap<String, IdPAttribute> multimap = ArrayListMultimap.create();
             multimap.put(attributeId, attribute);
             setRequestedAttributesInContext(context, multimap);
         }
@@ -212,7 +212,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         final AttributeFilterContext context = new AttributeFilterContext();
 
-        final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
+        final Multimap<String, IdPAttribute> multimap = ArrayListMultimap.create();
         multimap.put(req1.getId(), req1);
         multimap.put(req2.getId(), req2);
         setRequestedAttributesInContext(context, multimap);

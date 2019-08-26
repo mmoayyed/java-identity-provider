@@ -130,7 +130,7 @@ public class ScriptedAction extends AbstractProfileAction {
             ActionSupport.buildProceedEvent(profileContext);
         } else {
             log.debug("{} signaled event: {}", getLogPrefix(), result);
-            ActionSupport.buildEvent(profileContext, (String) result);
+            ActionSupport.buildEvent(profileContext, result);
         }
     }
 

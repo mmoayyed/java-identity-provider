@@ -52,8 +52,8 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
 
     private TransientSAML1NameIdentifierGenerator generator;
     
-    public void setAttributeName(@Nullable final String attributeName) {
-        this.attributeName = attributeName;
+    public void setAttributeName(@Nullable final String name) {
+        attributeName = name;
     }
 
     public void setGenerator(@Nullable final TransientSAML1NameIdentifierGenerator gen) {
@@ -66,8 +66,9 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
             return null;
         }
 
-        final SAMLObjectBuilder<NameIdentifier> identifierBuilder =  (SAMLObjectBuilder<NameIdentifier>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                NameIdentifier.DEFAULT_ELEMENT_NAME);
+        final SAMLObjectBuilder<NameIdentifier> identifierBuilder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);
 
         final NameIdentifier nameId = identifierBuilder.buildObject();
         nameId.setFormat(NameIdentifier.UNSPECIFIED);
@@ -78,14 +79,13 @@ public class SetupForSAML1C14N extends AbstractProfileAction {
             if (attrValue instanceof StringAttributeValue) {
                 final String value = ((StringAttributeValue)attrValue).getValue();
                 // Check for empty or all-whitespace, but don't trim.
-                if (StringSupport.trimOrNull((String) value) == null) {
+                if (StringSupport.trimOrNull(value) == null) {
                     continue;
                 }
-                nameId.setValue((String) value);
+                nameId.setValue(value);
                 return nameId;
-            } else {
-                continue;
             }
+            continue;
         }
         return null;
     }

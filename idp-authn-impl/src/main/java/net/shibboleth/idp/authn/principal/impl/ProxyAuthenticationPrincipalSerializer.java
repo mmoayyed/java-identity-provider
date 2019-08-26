@@ -30,6 +30,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -79,52 +80,50 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
+        
         final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
         for (final String aa : Collections2.filter(((ProxyAuthenticationPrincipal) principal).getAuthorities(),
                 Predicates.notNull())) {
             arrayBuilder.add(aa);
         }
+
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        gen.writeStartObject().write(PROXY_AUTH_FIELD, arrayBuilder.build()).writeEnd();
-        gen.close();
+        
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
+            gen.writeStartObject().write(PROXY_AUTH_FIELD, arrayBuilder.build()).writeEnd();
+        }
         return sink.toString();
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public ProxyAuthenticationPrincipal deserialize(@Nonnull @NotEmpty final String value)
             throws IOException {
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing ProxyAuthenticationPrincipal");
-        }
         
-        final JsonValue jsonValue = ((JsonObject) st).get(PROXY_AUTH_FIELD);
-        if (jsonValue != null && ValueType.ARRAY.equals(jsonValue.getValueType())) {
-            final ProxyAuthenticationPrincipal ret = new ProxyAuthenticationPrincipal();
-            for (final JsonValue e : (JsonArray) jsonValue) {
-                if (ValueType.STRING.equals(e.getValueType())) {
-                    ret.getAuthorities().add(((JsonString) e).getString());
-                }
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing ProxyAuthenticationPrincipal");
             }
-            return ret;
-        } else {
+            
+            final JsonValue jsonValue = ((JsonObject) st).get(PROXY_AUTH_FIELD);
+            if (jsonValue != null && ValueType.ARRAY.equals(jsonValue.getValueType())) {
+                final ProxyAuthenticationPrincipal ret = new ProxyAuthenticationPrincipal();
+                for (final JsonValue e : (JsonArray) jsonValue) {
+                    if (ValueType.STRING.equals(e.getValueType())) {
+                        ret.getAuthorities().add(((JsonString) e).getString());
+                    }
+                }
+                return ret;
+            }
             throw new IOException("Serialized ProxyAuthenticationPrincipal missing array field");
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing ProxyAuthenticationPrincipal", e);
         }
     }
 

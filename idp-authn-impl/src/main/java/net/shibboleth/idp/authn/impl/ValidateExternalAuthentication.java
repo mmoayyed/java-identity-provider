@@ -267,14 +267,14 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             if (princs != null && !princs.isEmpty()) {
                 if (matchExpression.matcher(princs.iterator().next().getName()).matches()) {
                     return true;
-                } else {
-                    log.info("{} Username did not match expression", getLogPrefix());
-                    return false;
                 }
-            } else {
-                log.info("{} Match expression set, but not UsernamePrincipal found");
+                
+                log.info("{} Username did not match expression", getLogPrefix());
                 return false;
             }
+            
+            log.info("{} Match expression set, but not UsernamePrincipal found");
+            return false;
         }
         
         return true;

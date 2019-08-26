@@ -183,27 +183,27 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         Constraint.isNotEmpty(filteredConsents, "Consents cannot be empty");
 
         final StringWriter sink = new StringWriter(128);
-        final JsonGenerator gen = generatorFactory.createGenerator(sink);
-
-        gen.writeStartArray();
-        for (final Consent consent : filteredConsents) {
-            gen.writeStartObject();
-            final Integer symbol = symbolics.get(consent.getId());
-            if (symbol != null) {
-                gen.write(ID_FIELD, symbol);
-            } else {
-                gen.write(ID_FIELD, consent.getId());
-            }
-            if (consent.getValue() != null) {
-                gen.write(VALUE_FIELD, consent.getValue());
-            }
-            if (!consent.isApproved()) {
-                gen.write(IS_APPROVED_FIELD, false);
+        
+        try (final JsonGenerator gen = generatorFactory.createGenerator(sink)) {
+            gen.writeStartArray();
+            for (final Consent consent : filteredConsents) {
+                gen.writeStartObject();
+                final Integer symbol = symbolics.get(consent.getId());
+                if (symbol != null) {
+                    gen.write(ID_FIELD, symbol);
+                } else {
+                    gen.write(ID_FIELD, consent.getId());
+                }
+                if (consent.getValue() != null) {
+                    gen.write(VALUE_FIELD, consent.getValue());
+                }
+                if (!consent.isApproved()) {
+                    gen.write(IS_APPROVED_FIELD, false);
+                }
+                gen.writeEnd();
             }
             gen.writeEnd();
         }
-        gen.writeEnd();
-        gen.close();
 
         final String serialized = sink.toString();
         log.debug("Serialized '{}' as '{}'", consents, serialized);

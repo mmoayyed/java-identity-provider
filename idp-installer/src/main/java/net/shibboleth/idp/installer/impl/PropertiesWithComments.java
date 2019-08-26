@@ -176,20 +176,19 @@ public class PropertiesWithComments {
      * @throws IOException is the write fails
      */
     public void store(final OutputStream output) throws IOException {
-        final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
-
-        for (final Object o : contents) {
-            if (o instanceof String) {
-                writer.write((String) o);
-            } else if (o instanceof CommentedProperty) {
-                final CommentedProperty commentedProperty = (CommentedProperty) o;
-                commentedProperty.write(writer);
+        
+        try (final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
+            for (final Object o : contents) {
+                if (o instanceof String) {
+                    writer.write((String) o);
+                } else if (o instanceof CommentedProperty) {
+                    final CommentedProperty commentedProperty = (CommentedProperty) o;
+                    commentedProperty.write(writer);
+                }
+                writer.newLine();
             }
-            writer.newLine();
+            writer.flush();
         }
-        writer.flush();
-        writer.close();
-        output.close();
     }
 
     /**

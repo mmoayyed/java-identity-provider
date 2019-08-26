@@ -67,7 +67,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
 
     /** Constructor. */
     public CounterStorageKeyFunction() {
-        setInterceptorContextLookupStrategy(new ChildContextLookup(ProfileInterceptorContext.class));
+        setInterceptorContextLookupStrategy(new ChildContextLookup<>(ProfileInterceptorContext.class));
         setStorageContextLookupStrategy(new FlowIdLookupFunction());
     }
 
@@ -167,7 +167,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
 
         final String counterStorageKey = getCounterStorageKey(storageKey);
 
-        final StorageRecord storageRecord = storageService.read(storageContext, counterStorageKey);
+        final StorageRecord<?> storageRecord = storageService.read(storageContext, counterStorageKey);
         log.debug("Read storage record '{}' with context '{}' and key '{}'", storageRecord, storageContext,
                 counterStorageKey);
 

@@ -101,16 +101,15 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        final ServiceableComponent component = getService().getServiceableComponent();
+        final ServiceableComponent<?> component = getService().getServiceableComponent();
         if (component != null) {
             try {
                 if (component.getComponent() instanceof AttributeResolver) {
                     return;
-                } else {
-                    log.error("{} : Injected service was not for an AttributeResolver ({})",
-                            getLogPrefix(), component.getClass());
-                    throw new ComponentInitializationException("Injected service was not for an AttributeResolver");
                 }
+                log.error("{} : Injected service was not for an AttributeResolver ({})",
+                        getLogPrefix(), component.getClass());
+                throw new ComponentInitializationException("Injected service was not for an AttributeResolver");
             } finally {
                 component.unpinComponent();
             }

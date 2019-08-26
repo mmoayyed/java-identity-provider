@@ -303,10 +303,9 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
                 } catch (final ResolutionException e) {
                     throw new ScriptException(e);
                 }
-            } else {
-                throw new ScriptException(getLogPrefix() + " returned variable was of wrong type ("
-                        + result.getClass().toString() + ")");
             }
+            throw new ScriptException(getLogPrefix() + " returned variable was of wrong type ("
+                    + result.getClass().toString() + ")");
         }
     }
 

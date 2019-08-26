@@ -179,7 +179,7 @@ public final class DuoSupport {
     private static String createQueryString(@Nonnull final List<NameValuePair> params)
             throws UnsupportedEncodingException {
 
-        final ArrayList<String> args = new ArrayList<String>();
+        final ArrayList<String> args = new ArrayList<>();
 
         // sort by name
         Collections.sort(params, new Comparator<NameValuePair>() {

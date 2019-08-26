@@ -54,7 +54,7 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
     
     /** Constructor. */
     public DuoAuthAuthenticator() {
-        wrapperTypeRef = new TypeReference<DuoResponseWrapper<DuoAuthResponse>>() {};
+        wrapperTypeRef = new TypeReference<>() {};
         paramEscaper = UrlEscapers.urlFormParameterEscaper();
     }
     
@@ -90,7 +90,7 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
                 rb.addParameter(DuoAuthAPI.DUO_PASSCODE, duoContext.getPasscode());
             }
             if (!duoContext.getPushInfo().isEmpty()) {
-                final ArrayList<String> pushinfo = new ArrayList<String>(duoContext.getPushInfo().size());
+                final ArrayList<String> pushinfo = new ArrayList<>(duoContext.getPushInfo().size());
                 for (final Map.Entry<String,String> entry : duoContext.getPushInfo().entrySet()) {
                     pushinfo.add(paramEscaper.escape(entry.getKey()) + "=" + paramEscaper.escape(entry.getValue()));
                 }

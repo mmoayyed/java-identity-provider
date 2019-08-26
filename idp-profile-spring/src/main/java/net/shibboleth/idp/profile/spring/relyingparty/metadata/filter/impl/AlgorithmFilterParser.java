@@ -83,7 +83,7 @@ public class AlgorithmFilterParser extends AbstractSingleBeanDefinitionParser {
         // Accumulate objects to attach as rule values.
         final List<XMLObject> accumulator = new ArrayList<>();
 
-        final ManagedMap<Object, ManagedList<XMLObject>> ruleMap = new ManagedMap();
+        final ManagedMap<Object, ManagedList<XMLObject>> ruleMap = new ManagedMap<>();
 
         Element child = ElementSupport.getFirstChildElement(element);
 
@@ -111,17 +111,17 @@ public class AlgorithmFilterParser extends AbstractSingleBeanDefinitionParser {
                 final BeanDefinitionBuilder entityIdBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(EntityIdPredicate.class);
                 entityIdBuilder.addConstructorArgValue(ElementSupport.getElementContentAsString(child));
-                final ManagedList<XMLObject> forRule = new ManagedList(accumulator.size());
+                final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(entityIdBuilder.getBeanDefinition(), forRule);
             } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
                     "ConditionRef")) {
-                final ManagedList<XMLObject> forRule = new ManagedList(accumulator.size());
+                final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(new RuntimeBeanReference(ElementSupport.getElementContentAsString(child)), forRule);
             } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
                     "ConditionScript")) {
-                final ManagedList<XMLObject> forRule = new ManagedList(accumulator.size());
+                final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition(),
                         forRule);

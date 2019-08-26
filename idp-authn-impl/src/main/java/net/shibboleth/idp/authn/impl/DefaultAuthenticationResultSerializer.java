@@ -155,7 +155,6 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -202,20 +201,15 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     
     // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
     @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        try {
-            final JsonReader reader = readerFactory.createReader(new StringReader(value));
-            JsonStructure st = null;
-            try {
-                st = reader.read();
-            } finally {
-                reader.close();
-            }
+        try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
+            
+            final JsonStructure st = reader.read();
+            
             if (!(st instanceof JsonObject)) {
                 throw new IOException("Found invalid data structure while parsing AuthenticationResult");
             }
@@ -282,22 +276,17 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         boolean serialized = false;
         for (final PrincipalSerializer<String> serializer : principalSerializers) {
             if (serializer.supports(principal)) {
-                final JsonReader reader = readerFactory.createReader(new StringReader(serializer.serialize(principal)));
-                try {
+                try (final JsonReader reader =
+                        readerFactory.createReader(new StringReader(serializer.serialize(principal)))) {
                     generator.write(reader.readObject());
-                } finally {
-                    reader.close();
                 }
                 serialized = true;
             }
         }
         if (!serialized && genericSerializer.supports(principal)) {
-            final JsonReader reader =
-                    readerFactory.createReader(new StringReader(genericSerializer.serialize(principal)));
-            try {
+            try (final JsonReader reader =
+                    readerFactory.createReader(new StringReader(genericSerializer.serialize(principal)))) {
                 generator.write(reader.readObject());
-            } finally {
-                reader.close();
             }
         }
     }
@@ -313,7 +302,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Nullable private Principal deserializePrincipal(@Nonnull final JsonValue jsonValue) throws IOException {
         if (jsonValue instanceof JsonObject) {
             final String json = ((JsonObject) jsonValue).toString();
-            for (final PrincipalSerializer serializer : principalSerializers) {
+            for (final PrincipalSerializer<? super String> serializer : principalSerializers) {
                 if (serializer.supports(json)) {
                     return serializer.deserialize(json);
                 }

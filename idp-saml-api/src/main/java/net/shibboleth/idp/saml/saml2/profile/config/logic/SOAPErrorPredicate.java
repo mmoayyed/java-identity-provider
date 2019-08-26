@@ -88,10 +88,9 @@ public class SOAPErrorPredicate extends AbstractRelyingPartyPredicate {
         if (((ECPProfileConfiguration) rpCtx.getProfileConfig()).getLocalEvents(input).contains(event)) {
             log.debug("Error event {} will be handled locally", event);
             return false;
-        } else {
-            log.debug("Error event {} will be handled with SOAP fault", event);
-            return true;
         }
+        log.debug("Error event {} will be handled with SOAP fault", event);
+        return true;
     }
 
 }

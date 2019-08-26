@@ -232,7 +232,7 @@ public final class RequestedPrincipalContext extends BaseContext {
                 final HashSet<T> set = new HashSet<>();
                 for (final Principal p : principals) {
                     if (c.isAssignableFrom(p.getClass())) {
-                        set.add((T)p);
+                        set.add(c.cast(p));
                     }
                 }
                 return set;
@@ -253,10 +253,9 @@ public final class RequestedPrincipalContext extends BaseContext {
         return isAcceptable(new PrincipalSupportingComponent() {
             public <TT extends Principal> Set<TT> getSupportedPrincipals(final Class<TT> c) {
                 if (c.isAssignableFrom(principal.getClass())) {
-                    return Collections.singleton((TT) principal);
-                } else {
-                    return Collections.emptySet();
+                    return Collections.singleton(c.cast(principal));
                 }
+                return Collections.emptySet();
             }
         });
     }

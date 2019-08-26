@@ -116,10 +116,9 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
                         ((StringAttributeValue) value).getValue(), e);
                 return null;
             }
-        } else {
-            log.error("Tag '{}' contained non-string value, returning null");
-            return null;
         }
+        log.error("Tag '{}' contained non-string value, returning null");
+        return null;
     }
     
     /** {@inheritDoc} */

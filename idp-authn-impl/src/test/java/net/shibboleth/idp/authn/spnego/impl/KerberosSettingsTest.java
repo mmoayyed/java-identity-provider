@@ -46,7 +46,7 @@ public class KerberosSettingsTest {
         realm1.setKeytab(KEYTAB);
         realm1.initialize();
 
-        realms = new ArrayList<KerberosRealmSettings>();
+        realms = new ArrayList<>();
         realms.add(realm1);
     }
 

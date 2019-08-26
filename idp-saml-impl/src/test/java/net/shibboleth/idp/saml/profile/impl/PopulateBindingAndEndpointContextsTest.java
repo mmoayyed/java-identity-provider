@@ -100,7 +100,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
                 prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true));
         
         action = new PopulateBindingAndEndpointContexts();
-        action.setEndpointResolver(new DefaultEndpointResolver());
+        action.setEndpointResolver(new DefaultEndpointResolver<>());
         action.setEndpointType(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
         final List<BindingDescriptor> bindings = new ArrayList<>();
         bindings.add(new BindingDescriptor());
@@ -138,7 +138,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
-        badaction.setEndpointResolver(new DefaultEndpointResolver());
+        badaction.setEndpointResolver(new DefaultEndpointResolver<>());
         badaction.setBindingDescriptorsLookupStrategy(
                 FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(Collections.singletonList(binding)));
         badaction.initialize();
@@ -288,7 +288,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         binding.setSynchronous(true);
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
-        badaction.setEndpointResolver(new DefaultEndpointResolver());
+        badaction.setEndpointResolver(new DefaultEndpointResolver<>());
         badaction.setBindingDescriptorsLookupStrategy(
                 FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(Collections.singletonList(binding)));
         badaction.initialize();

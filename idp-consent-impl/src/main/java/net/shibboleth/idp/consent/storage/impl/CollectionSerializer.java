@@ -77,14 +77,14 @@ public class CollectionSerializer extends AbstractInitializableComponent impleme
         final Collection<String> filteredInstance = Collections2.filter(instance, Predicates.notNull());
 
         final StringWriter sink = new StringWriter(128);
-        final JsonGenerator gen = generatorFactory.createGenerator(sink);
-
-        gen.writeStartArray();
-        for (final String element : filteredInstance) {
-            gen.write(element);
+        
+        try (final JsonGenerator gen = generatorFactory.createGenerator(sink)) {
+            gen.writeStartArray();
+            for (final String element : filteredInstance) {
+                gen.write(element);
+            }
+            gen.writeEnd();
         }
-        gen.writeEnd();
-        gen.close();
 
         final String serialized = sink.toString();
         log.debug("Serialized '{}' as '{}'", instance, serialized);

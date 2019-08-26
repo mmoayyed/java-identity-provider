@@ -189,11 +189,10 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
                 log.debug("{} The peer's metadata did not contain requested attribute information"
                         + ", returning all the input values", getLogPrefix());
                 return ImmutableSet.copyOf(attribute.getValues());
-            } else {
-                log.debug("{} The peer's metadata did not contain requested attribute information"
-                        + ", returning no values", getLogPrefix());
-                return Collections.emptySet();
             }
+            log.debug("{} The peer's metadata did not contain requested attribute information"
+                    + ", returning no values", getLogPrefix());
+            return Collections.emptySet();
         }
     
         if (attributeName != null) {
@@ -217,55 +216,54 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             final Set<IdPAttributeValue> values = new LinkedHashSet<>();
             values.addAll(filterValues(attributeToLog, attribute, requestedAttribute.getAttributeValues()));
             return values;
-        } else {
-            // Utilize pre-mapped approach.
-            final List<AttributesMapContainer> containerList =
-                    service.getObjectMetadata().get(AttributesMapContainer.class);
-            if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
-                    containerList.get(0).get().isEmpty()) {
-                log.debug("{} No decoded attributes found when filtering", getLogPrefix());
-                if (matchIfMetadataSilent) {
-                    // TODO: not sure what the right answer is here
-                    log.debug("{} The peer's metadata did not contain requested attribute information"
-                            + ", returning all the input values", getLogPrefix());
-                    return ImmutableSet.copyOf(attribute.getValues());
-                } else {
-                    log.debug("{} The peer's metadata did not contain requested attribute information"
-                            + ", returning no values", getLogPrefix());
-                    return Collections.emptySet();
-                }
-            }
-            if (containerList.size() > 1) {
-                log.error("{} More than one set of mapped attributes found when filtering, this shouldn't ever happen",
-                        getLogPrefix());
-            }
-            
-            final Multimap<String,IdPAttribute> requestedAttributes = containerList.get(0).get();
-
-            final Collection<? extends IdPAttribute> requestedAttributeList =
-                    requestedAttributes.get(attribute.getId());
-            if (null == requestedAttributeList) {
-                log.debug("{} Decoded attribute {} not found in metadata", getLogPrefix(), attribute.getId());
-                return Collections.emptySet();
-            }
-
-            final Set<IdPAttributeValue> values = new LinkedHashSet<>();
-
-            for (final IdPAttribute requestedAttribute
-                    : Collections2.filter(requestedAttributeList, Predicates.notNull())) {
-
-                if (requestedAttribute instanceof IdPRequestedAttribute
-                        && !((IdPRequestedAttribute) requestedAttribute).getIsRequired() && onlyIfRequired) {
-                    log.debug("{} Decoded attribute {} found in metadata, but not required, values not matched",
-                            getLogPrefix(), attribute.getId());
-                    continue;
-                }
-
-                values.addAll(filterValues(attribute, requestedAttribute.getValues()));
-            }
-            
-            return values;
         }
+        
+        // Utilize pre-mapped approach.
+        final List<AttributesMapContainer> containerList =
+                service.getObjectMetadata().get(AttributesMapContainer.class);
+        if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
+                containerList.get(0).get().isEmpty()) {
+            log.debug("{} No decoded attributes found when filtering", getLogPrefix());
+            if (matchIfMetadataSilent) {
+                // TODO: not sure what the right answer is here
+                log.debug("{} The peer's metadata did not contain requested attribute information"
+                        + ", returning all the input values", getLogPrefix());
+                return ImmutableSet.copyOf(attribute.getValues());
+            }
+            log.debug("{} The peer's metadata did not contain requested attribute information"
+                    + ", returning no values", getLogPrefix());
+            return Collections.emptySet();
+        }
+        if (containerList.size() > 1) {
+            log.error("{} More than one set of mapped attributes found when filtering, this shouldn't ever happen",
+                    getLogPrefix());
+        }
+        
+        final Multimap<String,IdPAttribute> requestedAttributes = containerList.get(0).get();
+
+        final Collection<? extends IdPAttribute> requestedAttributeList =
+                requestedAttributes.get(attribute.getId());
+        if (null == requestedAttributeList) {
+            log.debug("{} Decoded attribute {} not found in metadata", getLogPrefix(), attribute.getId());
+            return Collections.emptySet();
+        }
+
+        final Set<IdPAttributeValue> values = new LinkedHashSet<>();
+
+        for (final IdPAttribute requestedAttribute
+                : Collections2.filter(requestedAttributeList, Predicates.notNull())) {
+
+            if (requestedAttribute instanceof IdPRequestedAttribute
+                    && !((IdPRequestedAttribute) requestedAttribute).getIsRequired() && onlyIfRequired) {
+                log.debug("{} Decoded attribute {} found in metadata, but not required, values not matched",
+                        getLogPrefix(), attribute.getId());
+                continue;
+            }
+
+            values.addAll(filterValues(attribute, requestedAttribute.getValues()));
+        }
+        
+        return values;
     
     }
 // Checkstyle: CyclomaticComplexity|ReturnCount|MethodLength ON

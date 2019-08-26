@@ -87,7 +87,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
         
-        requestLookupStrategy = new MessageLookup(Request.class).compose(new InboundMessageContextLookup());
+        requestLookupStrategy = new MessageLookup<>(Request.class).compose(new InboundMessageContextLookup());
     }
 
     /**

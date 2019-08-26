@@ -40,7 +40,7 @@ public class UpdateCounterTest extends AbstractConsentStorageActionTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
         Assert.assertNotNull(record);
         Assert.assertEquals(record.getVersion(), 1);
     }
@@ -52,7 +52,7 @@ public class UpdateCounterTest extends AbstractConsentStorageActionTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        StorageRecord record = getMemoryStorageService().read("context", "key");
+        StorageRecord<?> record = getMemoryStorageService().read("context", "key");
         Assert.assertNotNull(record);
         Assert.assertEquals(record.getVersion(), 1);
 

@@ -83,7 +83,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (langs != null) {
-            fallbackLanguages = new ArrayList(Collections2.filter(langs, Predicates.notNull()));
+            fallbackLanguages = new ArrayList<>(Collections2.filter(langs, Predicates.notNull()));
         } else {
             fallbackLanguages = null;
         }

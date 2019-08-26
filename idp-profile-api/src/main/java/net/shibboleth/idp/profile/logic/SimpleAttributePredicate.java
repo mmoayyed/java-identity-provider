@@ -125,13 +125,12 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
         if ("*".equals(toMatch)) {
             log.debug("Wildcard (*) value rule for attribute {}", attribute.getId());
             return true;
-        } else {
-            for (final IdPAttributeValue value : attribute.getValues()) {
-                if (value instanceof StringAttributeValue) {
-                    if (toMatch.equals(((StringAttributeValue)value).getValue())) {
-                        log.debug("Found matching value ({}) in attribute {}", toMatch, attribute.getId());
-                        return true;
-                    }
+        }
+        for (final IdPAttributeValue value : attribute.getValues()) {
+            if (value instanceof StringAttributeValue) {
+                if (toMatch.equals(((StringAttributeValue)value).getValue())) {
+                    log.debug("Found matching value ({}) in attribute {}", toMatch, attribute.getId());
+                    return true;
                 }
             }
         }

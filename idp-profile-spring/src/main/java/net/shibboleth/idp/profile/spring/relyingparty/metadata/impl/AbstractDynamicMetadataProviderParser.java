@@ -183,9 +183,8 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
 
         if (element.hasAttributeNS(null, "taskTimerRef")) {
             return StringSupport.trimOrNull(StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef")));
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

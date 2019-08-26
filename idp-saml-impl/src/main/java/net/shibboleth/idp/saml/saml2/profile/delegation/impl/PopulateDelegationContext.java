@@ -524,10 +524,9 @@ public class PopulateDelegationContext extends AbstractProfileAction {
                 if (requestedAttribute.isRequired()) {
                     log.debug("Metadata delegation request attribute indicated it was required");
                     return DelegationRequest.REQUESTED_REQUIRED;
-                } else {
-                    log.debug("Metadata delegation request attribute indicated it was NOT required");
-                    return DelegationRequest.REQUESTED_OPTIONAL;
                 }
+                log.debug("Metadata delegation request attribute indicated it was NOT required");
+                return DelegationRequest.REQUESTED_OPTIONAL;
             }
         }
         

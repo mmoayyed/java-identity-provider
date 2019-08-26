@@ -48,7 +48,7 @@ public class SAML2XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinit
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME), "Saml2XmlObject_ATTRIBUTE_NAME");
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT), "Saml2XmlObject_ATTRIBUTE_NAME_FORMAT");
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME), "Saml2XmlObject_ATTRIBUTE_FRIENDLY_NAME");
-        assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertEquals(activation, ((Predicate<?>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, encodeType!=null ? encodeType : true);
     }
 
@@ -59,7 +59,7 @@ public class SAML2XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinit
         assertEquals(rule.get(SAML2AttributeTranscoder.PROP_NAME), "XmlObjectName");
         assertNull(rule.get(SAML2AttributeTranscoder.PROP_NAME_FORMAT));
         assertNull(rule.get(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME));
-        assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertFalse(((Predicate<?>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML2AttributeTranscoder.PROP_ENCODE_TYPE, true);
     }
     

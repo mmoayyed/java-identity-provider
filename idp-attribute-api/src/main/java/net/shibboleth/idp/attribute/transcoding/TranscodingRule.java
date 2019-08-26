@@ -124,9 +124,9 @@ public class TranscodingRule {
     @Nullable public <T> T get(@Nonnull @NotEmpty final String key, @Nonnull final Class<T> type) {
         final Object value = rule.get(key);
         if (type.isInstance(value)) {
-            return (T) value;
+            return type.cast(value);
         } else if (type == Boolean.class && value instanceof String) {
-            return (T) Boolean.valueOf((String) value);
+            return type.cast(Boolean.valueOf((String) value));
         } else {
             return null;
         }
@@ -148,9 +148,8 @@ public class TranscodingRule {
         final T value = get(key, type);
         if (value != null) {
             return value;
-        } else {
-            return defValue;
         }
+        return defValue;
     }
     
     /**
@@ -178,7 +177,7 @@ public class TranscodingRule {
     private void processDisplayNames() {
         
         final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
-        final HashSet<Locale> inserted = new HashSet<Locale>();
+        final HashSet<Locale> inserted = new HashSet<>();
         
         for (final Map.Entry<String,Object> entry : rule.entrySet()) {
             if (entry.getValue() instanceof String
@@ -208,7 +207,7 @@ public class TranscodingRule {
     private void processDescriptions() {
         
         final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
-        final HashSet<Locale> inserted = new HashSet<Locale>();
+        final HashSet<Locale> inserted = new HashSet<>();
         
         for (final Map.Entry<String,Object> entry : rule.entrySet()) {
             if (entry.getValue() instanceof String

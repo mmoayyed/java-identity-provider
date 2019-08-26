@@ -95,9 +95,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         } catch (final IOException e) {
             if (!sessionManager.isMaskStorageFailure()) {
                 throw new SessionException("Exception updating expiration of session record", e);
-            } else {
-                log.error("Exception updating expiration of master record for session {}", getId(), e);
             }
+            log.error("Exception updating expiration of master record for session {}", getId(), e);
         }
     }
     
@@ -126,15 +125,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     // The same address type is now set, so recheck. No need to update storage regardless.
                     if (nowBound.equals(address)) {
                         return;
-                    } else {
-                        log.warn("Client address is {} but session {} already bound to {}", address, getId(), nowBound);
-                        throw new SessionException("A different address of the same type was bound to the session");
                     }
-                } else {
-                    // We're still clear, so update ourselves again and try to write back.
-                    super.bindToAddress(address);
-                    success = writeToStorage();
+                    log.warn("Client address is {} but session {} already bound to {}", address, getId(), nowBound);
+                    throw new SessionException("A different address of the same type was bound to the session");
                 }
+                // We're still clear, so update ourselves again and try to write back.
+                super.bindToAddress(address);
+                success = writeToStorage();
             }
             if (!success) {
                 log.error("Exhausted retry attempts updating record for session {}", getId());
@@ -142,9 +139,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         } catch (final IOException e) {
             if (!sessionManager.isMaskStorageFailure()) {
                 throw new SessionException("Exception updating address binding of session record", e);
-            } else {
-                log.error("Exception updating address binding of master record for session {}", getId(), e);
             }
+            log.error("Exception updating address binding of master record for session {}", getId(), e);
         }
     }
 
@@ -238,10 +234,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         } catch (final IOException e) {
             if (!sessionManager.isMaskStorageFailure()) {
                 throw new SessionException("Exception saving AuthenticationResult record to storage", e);
-            } else {
-                log.error("Exception saving AuthenticationResult record for session {} and flow {}", getId(),
-                        result.getAuthenticationFlowId(), e);
             }
+            log.error("Exception saving AuthenticationResult record for session {} and flow {}", getId(),
+                    result.getAuthenticationFlowId(), e);
             return null;
         }
     }
@@ -262,10 +257,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             } catch (final IOException e) {
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException("Exception updating AuthenticationResult expiration in storage", e);
-                } else {
-                    log.error("Exception updating AuthenticationResult expiration for session {} and flow {}", getId(),
-                            flowId, e);
                 }
+                log.error("Exception updating AuthenticationResult expiration for session {} and flow {}", getId(),
+                        flowId, e);
             }
         } else {
             log.warn("No flow descriptor installed for ID {}, unable to update result in storage", flowId);
@@ -282,10 +276,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             } catch (final IOException e) {
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException("Exception removing AuthenticationResult record from storage", e);
-                } else {
-                    log.error("Exception removing AuthenticationResult record for session {} and flow {}", getId(),
-                            result.getAuthenticationFlowId(), e);
                 }
+                log.error("Exception removing AuthenticationResult record for session {} and flow {}", getId(),
+                        result.getAuthenticationFlowId(), e);
             }
             
             // Try and update the master record with the updated flow list.
@@ -309,15 +302,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException(
                             "Exception updating session record after AuthenticationResult removal", e);
-                } else {
-                    log.error("Exception updating record for session {}", getId(), e);
                 }
+                log.error("Exception updating record for session {}", getId(), e);
             }
             // If we reach here and a problem occurred, we must be masking storage problems.
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -378,9 +369,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 // An exception implies the record *might* still be accessible later.
             }
             return result;
-        } else {
-            return null;
         }
+        return null;
     }
     
 // Checkstyle: CyclomaticComplexity OFF
@@ -427,16 +417,14 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             } catch (final IOException e) {
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException("Exception saving SPSession record to storage", e);
-                } else {
-                    log.error("Exception saving SPSession record for IdP session {} and service {}", getId(),
-                            spSession.getId(), e);
                 }
+                log.error("Exception saving SPSession record for IdP session {} and service {}", getId(),
+                        spSession.getId(), e);
                 return null;
             }
-        } else {
-            log.debug("Ignoring SPSession add, session manager is not configured to track them");
-            return null;
         }
+        log.debug("Ignoring SPSession add, session manager is not configured to track them");
+        return null;
     }
  // Checkstyle: CyclomaticComplexity ON
 
@@ -476,15 +464,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 if (!sessionManager.isMaskStorageFailure()) {
                     throw new SessionException(
                             "Exception updating session record after SPSession removal", e);
-                } else {
-                    log.error("Exception updating record for session {}", getId(), e);
                 }
+                log.error("Exception updating record for session {}", getId(), e);
             }
             // If we reach here and a problem occurred, we must be masking storage problems.
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
     
     /** {@inheritDoc} */
@@ -492,9 +478,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     public boolean checkTimeout() throws SessionException {
         if (getLastActivityInstant().plus(sessionManager.getSessionTimeout()).isAfter(Instant.now())) {
             return super.checkTimeout();
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -550,10 +535,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             final StorageRecord<AuthenticationResult> record = sessionManager.getStorageService().read(getId(), flowId);
             if (record != null) {
                 return record.getValue(flow, getId(), flowId);
-            } else {
-                log.debug("No AuthenticationResult for flow {} in session {}", flowId, getId());
-                return null;
             }
+            log.debug("No AuthenticationResult for flow {} in session {}", flowId, getId());
+            return null;
         } catch (final IOException e) {
             log.error("Exception loading AuthenticationResult for flow {} from storage", flowId, e);
             throw e;
@@ -669,8 +653,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         log.debug("Saving SPSession for service {} in session {}", session.getId(), getId());
 
         // Look up the serializer instance for that class type.
-        final StorageSerializer spSessionSerializer =
-                sessionManager.getSPSessionSerializerRegistry().lookup(session.getClass());
+        final StorageSerializer<SPSession> spSessionSerializer =
+                (StorageSerializer<SPSession>) sessionManager.getSPSessionSerializerRegistry().lookup(
+                        session.getClass());
         if (spSessionSerializer == null) {
             throw new IOException("No serializer registered for SPSession type " + session.getClass().getName());
         }
@@ -718,9 +703,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     @Nonnull @NotEmpty private String getSPSessionStorageKey(@Nonnull @NotEmpty final String serviceId) {
         if (serviceId.length() > sessionManager.getStorageService().getCapabilities().getKeySize()) {
             return DigestUtils.sha256Hex(serviceId);
-        } else {
-            return serviceId;
         }
+        return serviceId;
     }
     
     /**

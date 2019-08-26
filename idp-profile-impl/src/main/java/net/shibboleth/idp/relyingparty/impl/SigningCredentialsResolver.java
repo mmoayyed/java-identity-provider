@@ -77,9 +77,8 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
         final Iterable<Credential> creds = resolve(criteriaSet);
         if (creds.iterator().hasNext()) {
             return creds.iterator().next();
-        } else {
-            return null;
         }
+        return null;
     }
     
     /** {@inheritDoc} */
@@ -96,10 +95,9 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
                 if (resolver instanceof DefaultRelyingPartyConfigurationResolver) {
                     log.trace("Saw expected instance of DefaultRelyingPartyConfigurationResolver");
                     return ((DefaultRelyingPartyConfigurationResolver)resolver).getSigningCredentials();
-                } else {
-                    log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
-                    return Collections.emptyList();
                 }
+                log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
+                return Collections.emptyList();
             }
         } finally {
             if (null != component) {

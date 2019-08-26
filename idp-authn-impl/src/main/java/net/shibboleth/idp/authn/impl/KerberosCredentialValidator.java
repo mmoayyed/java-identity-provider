@@ -191,8 +191,8 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
                 final Subject subject = new Subject();
                 final LoginModule clientLoginModule = (LoginModule) Class.forName(loginModuleClassName).
                         getDeclaredConstructor().newInstance();
-                clientLoginModule.initialize(subject, new SimpleCallbackHandler(usernamePasswordContext), new HashMap(),
-                        clientOptions);
+                clientLoginModule.initialize(subject, new SimpleCallbackHandler(usernamePasswordContext),
+                        new HashMap<>(), clientOptions);
                 if (!clientLoginModule.login() || !clientLoginModule.commit()) {
                     clientLoginModule.abort();
                     throw new LoginException("Login module reported failure");
@@ -264,7 +264,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
             serverLoginModule = (LoginModule) Class.forName(loginModuleClassName).
                     getDeclaredConstructor().newInstance();
             final Subject serverSubject = new Subject();
-            serverLoginModule.initialize(serverSubject, null, new HashMap(), serverOptions);
+            serverLoginModule.initialize(serverSubject, null, new HashMap<>(), serverOptions);
             if (!serverLoginModule.login() || !serverLoginModule.commit()) {
                 serverLoginModule.abort();
                 throw new LoginException("Login module reported failure");
@@ -281,11 +281,11 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
             // so that the null credential above indicating the default credentials pulls from the JAAS subject.
             final byte[] token = Subject.doAs(subject, new PrivilegedExceptionAction<byte[]>() {
                 public byte[] run() throws GSSException {
-                    final byte[] token = new byte[0];
+                    final byte[] itoken = new byte[0];
                     // This is a one pass context initialization.
                     context.requestMutualAuth(false);
                     context.requestCredDeleg(false);
-                    return context.initSecContext(token, 0, token.length);
+                    return context.initSecContext(itoken, 0, itoken.length);
                 }
             });
             
@@ -313,9 +313,8 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
         } catch (final PrivilegedActionException e) {
             if (e.getException() != null) {
                 throw e.getException();
-            } else {
-                throw e;
             }
+            throw e;
         } finally {
             if (serverLoginModule != null) {
                 serverLoginModule.logout();

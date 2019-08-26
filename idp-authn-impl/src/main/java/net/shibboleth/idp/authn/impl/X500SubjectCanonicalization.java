@@ -158,7 +158,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
 
         if (certificate != null && !subjectAltNameTypes.isEmpty()) {
             log.debug("{} Searching for subjectAltName types ({})", getLogPrefix(), subjectAltNameTypes);
-            final List altnames = X509Support.getAltNames(certificate, subjectAltNameTypes.toArray(new Integer[0]));
+            final List<?> altnames = X509Support.getAltNames(certificate, subjectAltNameTypes.toArray(new Integer[0]));
             for (final Object altname : altnames) {
                 if (altname instanceof String) {
                     log.debug("{} Extracted String-valued subjectAltName: {}", getLogPrefix(), altname);

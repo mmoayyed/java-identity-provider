@@ -163,7 +163,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         return getMatcher(fileName, context);
     }
 
-    protected Class rootCause(Throwable what) {
+    protected Class<?> rootCause(Throwable what) {
         Throwable preLast = what;
         do {
             final Throwable next = preLast.getCause();

@@ -50,7 +50,7 @@ public class ResolverTestSupport {
 
     public static final String[] EPE3_VALUES = new String[] {"urn:example.org:entitlement2"};
 
-    public static AttributeResolutionContext buildResolutionContext(ResolverPlugin... plugins) {
+    public static AttributeResolutionContext buildResolutionContext(ResolverPlugin<?>... plugins) {
         final AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
@@ -58,7 +58,7 @@ public class ResolverTestSupport {
         MockStaticAttributeDefinition definition;
         MockStaticDataConnector connector;
         try {
-            for (ResolverPlugin plugin : plugins) {
+            for (ResolverPlugin<?> plugin : plugins) {
                 if (plugin instanceof MockStaticAttributeDefinition) {
                     definition = (MockStaticAttributeDefinition) plugin;
                     workContext.recordAttributeDefinitionResolution(definition,

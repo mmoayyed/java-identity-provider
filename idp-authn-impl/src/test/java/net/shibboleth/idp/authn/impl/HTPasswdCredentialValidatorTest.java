@@ -37,7 +37,6 @@ import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactor
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -121,7 +120,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -140,7 +139,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
         
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -157,7 +156,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.UNKNOWN_USERNAME);
@@ -178,7 +177,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
@@ -199,7 +198,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -222,7 +221,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -244,7 +243,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -266,7 +265,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -289,7 +288,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -318,7 +317,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -331,7 +330,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
                 .next().getName(), "test1");
     }
     
-    private void doExtract(ProfileRequestContext prc) throws Exception {
+    private void doExtract() throws Exception {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

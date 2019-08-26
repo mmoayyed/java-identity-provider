@@ -52,26 +52,30 @@ public class LibertyHTTPSOAP11EncoderTest extends XMLObjectBaseTestCase {
      */
     @Test
     public void testResponseEncoding() throws Exception {
-        SAMLObjectBuilder<StatusCode> statusCodeBuilder = (SAMLObjectBuilder<StatusCode>) builderFactory
-                .getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
+        SAMLObjectBuilder<StatusCode> statusCodeBuilder =
+                (SAMLObjectBuilder<StatusCode>) builderFactory.<StatusCode>getBuilderOrThrow(
+                        StatusCode.DEFAULT_ELEMENT_NAME);
         StatusCode statusCode = statusCodeBuilder.buildObject();
         statusCode.setValue(StatusCode.SUCCESS);
 
-        SAMLObjectBuilder<Status> statusBuilder = (SAMLObjectBuilder<Status>) builderFactory
-                .getBuilder(Status.DEFAULT_ELEMENT_NAME);
+        SAMLObjectBuilder<Status> statusBuilder =
+                (SAMLObjectBuilder<Status>) builderFactory.<Status>getBuilderOrThrow(
+                        Status.DEFAULT_ELEMENT_NAME);
         Status responseStatus = statusBuilder.buildObject();
         responseStatus.setStatusCode(statusCode);
 
-        SAMLObjectBuilder<Response> responseBuilder = (SAMLObjectBuilder<Response>) builderFactory
-                .getBuilder(Response.DEFAULT_ELEMENT_NAME);
+        SAMLObjectBuilder<Response> responseBuilder =
+                (SAMLObjectBuilder<Response>) builderFactory.<Response>getBuilderOrThrow(
+                        Response.DEFAULT_ELEMENT_NAME);
         Response samlMessage = responseBuilder.buildObject();
         samlMessage.setID("foo");
         samlMessage.setVersion(SAMLVersion.VERSION_20);
         samlMessage.setIssueInstant(Instant.ofEpochMilli(0));
         samlMessage.setStatus(responseStatus);
 
-        SAMLObjectBuilder<Endpoint> endpointBuilder = (SAMLObjectBuilder<Endpoint>) builderFactory
-                .getBuilder(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
+        SAMLObjectBuilder<AssertionConsumerService> endpointBuilder =
+                (SAMLObjectBuilder<AssertionConsumerService>) builderFactory.<AssertionConsumerService>getBuilderOrThrow(
+                        AssertionConsumerService.DEFAULT_ELEMENT_NAME);
         Endpoint samlEndpoint = endpointBuilder.buildObject();
         samlEndpoint.setLocation("http://example.org");
         samlEndpoint.setResponseLocation("http://example.org/response");

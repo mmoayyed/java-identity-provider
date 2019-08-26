@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.consent.flow.storage.impl;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentAction;
 import net.shibboleth.idp.consent.logic.impl.FlowIdLookupFunction;
 import net.shibboleth.idp.consent.storage.impl.ConsentSerializer;
@@ -69,7 +71,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     @NonnullAfterInit private Function<ProfileRequestContext,String> storageKeyLookupStrategy;
 
     /** Storage serializer. */
-    @NonnullAfterInit private StorageSerializer storageSerializer;
+    @NonnullAfterInit private StorageSerializer<Map<String,Consent>> storageSerializer;
 
     /** Storage service from the {@link ProfileInterceptorFlowDescriptor}. */
     @Nullable private StorageService storageService;
@@ -109,10 +111,21 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * 
      * @return the storage serializer
      */
-    @NonnullAfterInit public StorageSerializer getStorageSerializer() {
+    @NonnullAfterInit public StorageSerializer<Map<String,Consent>> getStorageSerializer() {
         return storageSerializer;
     }
 
+    /**
+     * Set the storage serializer.
+     * 
+     * @param serializer storage serializer
+     */
+    public void setStorageSerializer(@Nonnull final StorageSerializer<Map<String,Consent>> serializer) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        storageSerializer = Constraint.isNotNull(serializer, "Storage serializer cannot be null");
+    }
+    
     /**
      * Set the storage context lookup strategy.
      * 
@@ -133,17 +146,6 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         storageKeyLookupStrategy = Constraint.isNotNull(strategy, "Storage key lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the storage serializer.
-     * 
-     * @param serializer storage serializer
-     */
-    public void setStorageSerializer(@Nonnull final StorageSerializer serializer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        storageSerializer = Constraint.isNotNull(serializer, "Storage serializer cannot be null");
     }
 
     /**

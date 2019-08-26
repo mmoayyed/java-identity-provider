@@ -228,9 +228,8 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) {
         if (request instanceof HttpGet) {
             return ((HttpGet) request).getURI().toString();
-        } else {
-            return null;
         }
+        return null;
     }
 
 }

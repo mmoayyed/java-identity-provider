@@ -204,7 +204,7 @@ public class AttributeFilterPolicyTest {
         AttributeFilterContext ctx = apply(Tristate.TRUE);
         AttributeFilterWorkContext workCtx = ctx.getSubcontext(AttributeFilterWorkContext.class, false);
         
-        Collection values = workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME);
+        Collection<?> values = workCtx.getPermittedIdPAttributeValues().get(ATTR_NAME);
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.containsAll(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue(

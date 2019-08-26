@@ -181,9 +181,8 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
             log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
                     new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
             throw new MessageHandlerException("Profile is not available for RP configuration");
-        } else {
-            rpCtx.setProfileConfig(profileConfiguration);
         }
+        rpCtx.setProfileConfig(profileConfiguration);
     }
     
 }

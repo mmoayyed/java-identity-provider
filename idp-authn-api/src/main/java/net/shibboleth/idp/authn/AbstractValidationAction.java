@@ -302,10 +302,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                                 p.getClass(), rpCtx.getOperator());
                         rpCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         return true;
-                    } else {
-                        log.debug("{} Not compatible with principal type '{}' and operator '{}'", getLogPrefix(),
-                                p.getClass(), rpCtx.getOperator());
                     }
+                    log.debug("{} Not compatible with principal type '{}' and operator '{}'", getLogPrefix(),
+                            p.getClass(), rpCtx.getOperator());
                 } else {
                     log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
                             getLogPrefix(), p.getClass(), rpCtx.getOperator());

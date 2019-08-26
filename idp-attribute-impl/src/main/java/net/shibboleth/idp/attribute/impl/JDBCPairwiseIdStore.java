@@ -528,9 +528,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
                 log.error("Exception verifying database", e);
                 throw new ComponentInitializationException(
                         "The database was not reachable or was not defined with an appropriate table + primary key");
-            } else {
-                log.warn("The database was not reachable or was not defined with an appropriate table + primary key",e);
             }
+            log.warn("The database was not reachable or was not defined with an appropriate table + primary key",e);
         }
     }
 
@@ -612,9 +611,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
                     if (--retries < 0) {
                         log.warn("Error retryable, but retry limit exceeded");
                         throw new IOException(e);
-                    } else {
-                        log.info("Retrying pairwise ID lookup/create operation");
                     }
+                    log.info("Retrying pairwise ID lookup/create operation");
                 } else {
                     throw new IOException(e);
                 }

@@ -27,7 +27,6 @@ import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 public class SubjectContextPrincipalLookupFunction implements ContextDataLookupFunction<SubjectContext,String> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public String apply(@Nullable final SubjectContext input) {
         
         if (input != null) {

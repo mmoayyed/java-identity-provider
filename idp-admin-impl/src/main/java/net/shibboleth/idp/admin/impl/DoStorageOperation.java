@@ -172,27 +172,27 @@ public class DoStorageOperation extends AbstractProfileAction {
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
             
             if ("GET".equals(request.getMethod())) {
-                final StorageRecord record;
+                final StorageRecord<?> record;
                 try {
                     record = storageService.read(context, key);
                     if (record != null) {
                         response.setStatus(HttpServletResponse.SC_OK);
                         final JsonFactory jsonFactory = new JsonFactory();
-                        final JsonGenerator g = jsonFactory.createGenerator(
-                                response.getOutputStream()).useDefaultPrettyPrinter();
-                        g.setCodec(objectMapper);
-                        g.writeStartObject();
-                        g.writeObjectFieldStart("data");
-                        g.writeStringField("type", "records");
-                        g.writeStringField("id", storageService.getId() + '/' + context +'/' + key);
-                        g.writeObjectFieldStart("attributes");
-                        g.writeStringField("value", record.getValue());
-                        g.writeNumberField("version", record.getVersion());
-                        if (record.getExpiration() != null) {
-                            g.writeFieldName("expiration");
-                            g.writeObject(Instant.ofEpochMilli(record.getExpiration()));
+                        try (final JsonGenerator g = jsonFactory.createGenerator(
+                                response.getOutputStream()).useDefaultPrettyPrinter()) {
+                            g.setCodec(objectMapper);
+                            g.writeStartObject();
+                            g.writeObjectFieldStart("data");
+                            g.writeStringField("type", "records");
+                            g.writeStringField("id", storageService.getId() + '/' + context +'/' + key);
+                            g.writeObjectFieldStart("attributes");
+                            g.writeStringField("value", record.getValue());
+                            g.writeNumberField("version", record.getVersion());
+                            if (record.getExpiration() != null) {
+                                g.writeFieldName("expiration");
+                                g.writeObject(Instant.ofEpochMilli(record.getExpiration()));
+                            }
                         }
-                        g.close();
                     } else {
                         sendError(HttpServletResponse.SC_NOT_FOUND,
                                 "Record Not Found", "The specified record was not present or has expired.");

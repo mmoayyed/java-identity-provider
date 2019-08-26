@@ -31,7 +31,7 @@ public class SPNEGOContextTest {
         KerberosSettings settings = new KerberosSettings();
         KerberosRealmSettings realm1 = new KerberosRealmSettings();
         KerberosRealmSettings realm2 = new KerberosRealmSettings();
-        ArrayList<KerberosRealmSettings> realms = new ArrayList<KerberosRealmSettings>();
+        ArrayList<KerberosRealmSettings> realms = new ArrayList<>();
         realms.add(realm1);
         realms.add(realm2);
         settings.setRealms(realms);

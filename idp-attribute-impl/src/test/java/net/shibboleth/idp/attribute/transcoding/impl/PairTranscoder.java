@@ -48,9 +48,8 @@ public class PairTranscoder extends AbstractAttributeTranscoder<Pair> {
         final String name = rule.get("name", String.class);
         if (name != null) {
             return "{Pair}" + name;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -66,9 +65,8 @@ public class PairTranscoder extends AbstractAttributeTranscoder<Pair> {
         try {
             if (attribute.getValues().isEmpty() || !canEncodeValue(attribute, attribute.getValues().get(0))) {
                 return to.getDeclaredConstructor(Object.class, Object.class).newInstance(name, null);
-            } else {
-                return to.getDeclaredConstructor(Object.class, Object.class).newInstance(name, attribute.getValues().get(0).getNativeValue());
             }
+            return to.getDeclaredConstructor(Object.class, Object.class).newInstance(name, attribute.getValues().get(0).getNativeValue());
         } catch (final InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new AttributeEncodingException(e);

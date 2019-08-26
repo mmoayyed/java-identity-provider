@@ -157,7 +157,7 @@ public final class AttributeFilterContext extends BaseContext {
         final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
-        prefilteredAttributes = new HashMap<String, IdPAttribute>(checkedAttributes.size());
+        prefilteredAttributes = new HashMap<>(checkedAttributes.size());
 
         for (final IdPAttribute attribute : checkedAttributes) {
             prefilteredAttributes.put(attribute.getId(), attribute);
@@ -184,7 +184,7 @@ public final class AttributeFilterContext extends BaseContext {
         final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
-        filteredAttributes = new HashMap<String, IdPAttribute>(checkedAttributes.size());
+        filteredAttributes = new HashMap<>(checkedAttributes.size());
 
         for (final IdPAttribute attribute : checkedAttributes) {
             filteredAttributes.put(attribute.getId(), attribute);

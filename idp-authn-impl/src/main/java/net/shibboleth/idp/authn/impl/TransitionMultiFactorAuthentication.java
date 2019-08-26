@@ -104,8 +104,8 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     /** Constructor. */
     TransitionMultiFactorAuthentication() {
         multiFactorContextLookupStrategy =
-                new ChildContextLookup(MultiFactorAuthenticationContext.class).compose(
-                        new ChildContextLookup(AuthenticationContext.class));
+                new ChildContextLookup<>(MultiFactorAuthenticationContext.class).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
         
         eventContextLookupStrategy = new WebFlowCurrentEventLookupFunction();
         
@@ -272,10 +272,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 doExecute(profileRequestContext, authenticationContext);
                 return;
-            } else {
-                log.debug("{} Condition blocked reuse of active result for '{}' flow", getLogPrefix(), flowId);
-                mfaContext.getActiveResults().remove(flowId);
             }
+            log.debug("{} Condition blocked reuse of active result for '{}' flow", getLogPrefix(), flowId);
+            mfaContext.getActiveResults().remove(flowId);
         }
      
         if (validateLoginTransitions) {

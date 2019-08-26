@@ -222,9 +222,8 @@ public class FlowDefinitionResourceFactory {
         final int basePathIndex = filePath.lastIndexOf(basePath);
         if (basePathIndex != -1) {
             return filePath.substring(basePathIndex);
-        } else {
-            return filePath;
         }
+        return filePath;
     }
 
     /**

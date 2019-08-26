@@ -833,7 +833,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @return null
      */
-    public Collection getReleasedAttributes() {
+    public Collection<?> getReleasedAttributes() {
         unsupportedMethod("getReleasedAttributes");
         return null;
     }
@@ -843,7 +843,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setReleasedAttributes(final Collection param) {
+    public void setReleasedAttributes(final Collection<?> param) {
         unsupportedMethod("setReleasedAttributes");
     }
 

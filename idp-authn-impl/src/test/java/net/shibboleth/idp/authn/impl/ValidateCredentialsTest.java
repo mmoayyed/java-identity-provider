@@ -40,7 +40,6 @@ import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.jaas.LdapPrincipal;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -142,7 +141,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
@@ -167,7 +166,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
@@ -184,7 +183,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
@@ -209,7 +208,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -244,7 +243,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -279,7 +278,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         action.setRequireAll(true);
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
@@ -305,7 +304,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         action.setRequireAll(true);
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -332,7 +331,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    private void doExtract(ProfileRequestContext prc) throws Exception {
+    private void doExtract() throws Exception {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

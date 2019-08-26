@@ -121,9 +121,8 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
 
         if (separator < 0) {
             return new StringAttributeValue(value);
-        } else {
-            return new ScopedStringAttributeValue(value.substring(0, separator), value.substring(separator + 1));
         }
+        return new ScopedStringAttributeValue(value.substring(0, separator), value.substring(separator + 1));
     }
 
     /**

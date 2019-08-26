@@ -107,8 +107,7 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
 
         if (isCaseSensitive()) {
             return value.equals(matchString);
-        } else {
-            return value.equalsIgnoreCase(matchString);
         }
+        return value.equalsIgnoreCase(matchString);
     }
 }

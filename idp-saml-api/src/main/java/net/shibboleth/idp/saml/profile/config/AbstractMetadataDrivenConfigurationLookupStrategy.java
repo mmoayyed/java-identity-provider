@@ -475,7 +475,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * 
      * @return matching attribute, or null
      */
-    @Nullable private IdPAttribute findMatchingMappedTag(@Nonnull final LockableClassToInstanceMultiMap input,
+    @Nullable private IdPAttribute findMatchingMappedTag(@Nonnull final LockableClassToInstanceMultiMap<?> input,
             @Nonnull @NotEmpty final String name) {
 
         final List<AttributesMapContainer> containerList = input.get(AttributesMapContainer.class);

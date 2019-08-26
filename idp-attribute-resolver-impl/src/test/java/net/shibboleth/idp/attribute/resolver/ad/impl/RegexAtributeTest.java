@@ -92,7 +92,7 @@ public class RegexAtributeTest {
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(f.size(), 1);
         assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
@@ -121,7 +121,7 @@ public class RegexAtributeTest {
 
         final IdPAttribute result = attrDef.resolve(resolutionContext);
         
-        final Collection f = result.getValues();
+        final Collection<?> f = result.getValues();
 
         assertEquals(f.size(), 1);
         assertTrue(f.contains(new StringAttributeValue("Connect")));
@@ -175,7 +175,7 @@ public class RegexAtributeTest {
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(f.size(), 1);
         assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);

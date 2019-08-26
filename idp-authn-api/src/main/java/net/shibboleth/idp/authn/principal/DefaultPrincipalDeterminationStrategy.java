@@ -97,9 +97,8 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
         final Set<T> principals = ac.getAuthenticationResult().getSupportedPrincipals(principalType);
         if (principals.isEmpty()) {
             return defaultPrincipal;
-        } else {
-            return descriptor.getHighestWeighted(principals); 
         }
+        return descriptor.getHighestWeighted(principals);
     }
     
 }

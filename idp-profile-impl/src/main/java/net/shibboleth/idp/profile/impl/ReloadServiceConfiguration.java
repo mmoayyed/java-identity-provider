@@ -64,10 +64,10 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     @Nonnull private Logger log = LoggerFactory.getLogger(ReloadServiceConfiguration.class);
     
     /** Lookup function to locate service bean to operate on. */
-    @Nonnull private Function<ProfileRequestContext,ReloadableService> serviceLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ReloadableService<?>> serviceLookupStrategy;
     
     /** The service to reload. */
-    @Nullable private ReloadableService service;
+    @Nullable private ReloadableService<?> service;
     
     /** Constructor. */
     public ReloadServiceConfiguration() {
@@ -79,7 +79,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
      * 
      * @param strategy  lookup strategy
      */
-    public void setServiceLookupStrategy(@Nonnull final Function<ProfileRequestContext,ReloadableService> strategy) {
+    public void setServiceLookupStrategy(@Nonnull final Function<ProfileRequestContext,ReloadableService<?>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         serviceLookupStrategy = Constraint.isNotNull(strategy, "ReloadableService lookup strategy cannot be null");
@@ -144,11 +144,12 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     /**
      * Default strategy locates a bean identified with a flow-scope parameter in the web flow application context.
      */
-    private class WebFlowApplicationContextLookupStrategy implements Function<ProfileRequestContext,ReloadableService> {
+    private class WebFlowApplicationContextLookupStrategy
+            implements Function<ProfileRequestContext,ReloadableService<?>> {
 
         /** {@inheritDoc} */
         @Override
-        @Nullable public ReloadableService apply(@Nullable final ProfileRequestContext input) {
+        @Nullable public ReloadableService<?> apply(@Nullable final ProfileRequestContext input) {
             
             final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class);
             if (springRequestContext == null) {
@@ -171,7 +172,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
             try {
                 final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(id);
                 if (bean != null && bean instanceof ReloadableService) {
-                    return (ReloadableService) bean;
+                    return (ReloadableService<?>) bean;
                 }
             } catch (final BeansException e) {
                 

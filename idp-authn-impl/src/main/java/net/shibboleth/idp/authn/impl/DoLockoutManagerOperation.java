@@ -184,16 +184,16 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                     final boolean lockout = lockoutManager.check(profileRequestContext);
                     response.setStatus(HttpServletResponse.SC_OK);
                     final JsonFactory jsonFactory = new JsonFactory();
-                    final JsonGenerator g = jsonFactory.createGenerator(
-                            response.getOutputStream()).useDefaultPrettyPrinter();
-                    g.setCodec(objectMapper);
-                    g.writeStartObject();
-                    g.writeObjectFieldStart("data");
-                    g.writeStringField("type", "lockout-statuses");
-                    g.writeStringField("id", managerId + '/' + key);
-                    g.writeObjectFieldStart("attributes");
-                    g.writeBooleanField("lockout", lockout);
-                    g.close();
+                    try (final JsonGenerator g = jsonFactory.createGenerator(
+                            response.getOutputStream()).useDefaultPrettyPrinter()) {
+                        g.setCodec(objectMapper);
+                        g.writeStartObject();
+                        g.writeObjectFieldStart("data");
+                        g.writeStringField("type", "lockout-statuses");
+                        g.writeStringField("id", managerId + '/' + key);
+                        g.writeObjectFieldStart("attributes");
+                        g.writeBooleanField("lockout", lockout);
+                    }
                 } catch (final IOException e) {
                     sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
                             "Lockout manager error.");

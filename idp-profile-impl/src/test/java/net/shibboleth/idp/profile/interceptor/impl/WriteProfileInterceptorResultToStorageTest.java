@@ -101,7 +101,7 @@ public class WriteProfileInterceptorResultToStorageTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final StorageRecord storageRecord = ss.read("context", "key");
+        final StorageRecord<?> storageRecord = ss.read("context", "key");
         Assert.assertNotNull(storageRecord);
         Assert.assertEquals(storageRecord.getValue(), "value");
         Assert.assertEquals(storageRecord.getExpiration(), null);
@@ -117,7 +117,7 @@ public class WriteProfileInterceptorResultToStorageTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final StorageRecord storageRecord = ss.read("context", "key");
+        final StorageRecord<?> storageRecord = ss.read("context", "key");
         Assert.assertNotNull(storageRecord);
         Assert.assertEquals(storageRecord.getValue(), "value");
         Assert.assertEquals(storageRecord.getExpiration(), Long.valueOf(expiration.toEpochMilli()));
@@ -132,7 +132,7 @@ public class WriteProfileInterceptorResultToStorageTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        StorageRecord storageRecord = ss.read("context", "key");
+        StorageRecord<?> storageRecord = ss.read("context", "key");
         Assert.assertNotNull(storageRecord);
         Assert.assertEquals(storageRecord.getValue(), "value");
         Assert.assertEquals(storageRecord.getExpiration(), null);

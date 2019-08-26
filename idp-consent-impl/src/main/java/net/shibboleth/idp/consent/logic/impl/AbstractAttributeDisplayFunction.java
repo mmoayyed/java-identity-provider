@@ -82,9 +82,8 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         }
         if (locale == null) {
             return input.getId();
-        } else {
-            return displayInfo.get(locale);
         }
+        return displayInfo.get(locale);
     }
 
     /**

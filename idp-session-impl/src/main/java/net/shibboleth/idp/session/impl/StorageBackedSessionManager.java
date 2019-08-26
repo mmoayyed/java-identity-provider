@@ -174,7 +174,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         sessionTimeout = Duration.ofHours(1);
         sessionSlop = Duration.ZERO;
         serializer = new StorageBackedIdPSessionSerializer(this, null);
-        flowDescriptorMap = new HashMap();
+        flowDescriptorMap = new HashMap<>();
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
         storageServiceThreshold = 1024 * 1024;
@@ -582,9 +582,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                         }
                     }
                     return ImmutableList.of();
-                } else {
-                    throw new ResolverException("HttpServletRequest is null");
                 }
+                throw new ResolverException("HttpServletRequest is null");
             }
 
             final SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
@@ -592,9 +591,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 final IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
                 if (session != null) {
                     return ImmutableList.of(session);
-                } else {
-                    return ImmutableList.of();
                 }
+                return ImmutableList.of();
             }
 
             final SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
@@ -657,7 +655,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 serviceKey = serviceKey.substring(0, keySize);
             }
 
-            StorageRecord sessionList = null;
+            StorageRecord<?> sessionList = null;
 
             try {
                 sessionList = storageService.read(serviceId, serviceKey);
@@ -736,7 +734,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 serviceKey = serviceKey.substring(0, keySize);
             }
 
-            StorageRecord sessionList = null;
+            StorageRecord<?> sessionList = null;
 
             try {
                 sessionList = storageService.read(serviceId, serviceKey);
@@ -802,9 +800,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                     storageService.read(sessionId, SESSION_MASTER_KEY);
             if (sessionRecord != null) {
                 return sessionRecord.getValue(serializer, sessionId, SESSION_MASTER_KEY);
-            } else {
-                log.debug("Primary lookup failed for session ID {}", sessionId);
             }
+            log.debug("Primary lookup failed for session ID {}", sessionId);
         } catch (final IOException e) {
             log.error("Exception while querying for session ID {}", sessionId, e);
             if (!maskStorageFailure) {
@@ -841,7 +838,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             serviceKey = serviceKey.substring(0, keySize);
         }
 
-        StorageRecord sessionList = null;
+        StorageRecord<?> sessionList = null;
 
         try {
             sessionList = storageService.read(serviceId, serviceKey);
@@ -857,7 +854,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             return ImmutableList.of();
         }
 
-        final ImmutableList.Builder builder = ImmutableList.<IdPSession> builder();
+        final ImmutableList.Builder<IdPSession> builder = ImmutableList.builder();
 
         final StringBuilder writeBackSessionList = new StringBuilder(sessionList.getValue().length());
 

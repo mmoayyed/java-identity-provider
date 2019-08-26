@@ -219,9 +219,8 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
                     if (isStatementInOwnAssertion() || ((Response) outboundMessage).getAssertions().isEmpty()) {
                         return SAML2ActionSupport.addAssertionToResponse(AddAttributeStatementToAssertion.this,
                                 (Response) outboundMessage, getIdGenerator(), getIssuerId());
-                    } else {
-                        return ((Response) outboundMessage).getAssertions().get(0);
-                    } 
+                    }
+                    return ((Response) outboundMessage).getAssertions().get(0); 
                 }
             }
             

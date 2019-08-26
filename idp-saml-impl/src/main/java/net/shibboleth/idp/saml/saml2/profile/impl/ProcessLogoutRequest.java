@@ -133,15 +133,13 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);
         
-        sessionResolverCriteriaStrategy = new Function<ProfileRequestContext,CriteriaSet>() {
-            @Override
+        sessionResolverCriteriaStrategy = new Function<>() {
             public CriteriaSet apply(final ProfileRequestContext input) {
                 if (logoutRequest != null && logoutRequest.getIssuer() != null && logoutRequest.getNameID() != null) {
                     return new CriteriaSet(new SPSessionCriterion(logoutRequest.getIssuer().getValue(),
                             logoutRequest.getNameID().getValue()));
-                } else {
-                    return new CriteriaSet();
                 }
+                return new CriteriaSet();
             }
         };
     

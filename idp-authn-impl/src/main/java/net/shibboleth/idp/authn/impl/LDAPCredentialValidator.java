@@ -157,30 +157,30 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
                     }
                 }
                 return populateSubject(usernamePasswordContext, response);
+            }
+            
+            log.info("{} Login by '{}' failed", getLogPrefix(), username);
+            authenticationContext.getSubcontext(
+                    LDAPResponseContext.class, true).setAuthenticationResponse(response);
+            if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
+                    || AuthenticationResultCode.INVALID_CREDENTIAL == response.getAuthenticationResultCode()) {
+                throw new LdapException(
+                        String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()));
+            } else if (response.getAccountState() != null) {
+                final AccountState state = response.getAccountState();
+                eventToSignal = AuthnEventIds.ACCOUNT_ERROR;
+                throw new LdapException(
+                        String.format("%s:%s:%s", state.getError(), response.getResultCode(), response.getMessage())
+                        );
+            } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
+                throw new LdapException(String.format("%s:%s", response.getResultCode(), response.getMessage()));
             } else {
-                log.info("{} Login by '{}' failed", getLogPrefix(), username);
-                authenticationContext.getSubcontext(
-                        LDAPResponseContext.class, true).setAuthenticationResponse(response);
-                if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
-                        || AuthenticationResultCode.INVALID_CREDENTIAL == response.getAuthenticationResultCode()) {
-                    throw new LdapException(
-                            String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()));
-                } else if (response.getAccountState() != null) {
-                    final AccountState state = response.getAccountState();
-                    eventToSignal = AuthnEventIds.ACCOUNT_ERROR;
-                    throw new LdapException(
-                            String.format("%s:%s:%s", state.getError(), response.getResultCode(), response.getMessage())
-                            );
-                } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
-                    throw new LdapException(String.format("%s:%s", response.getResultCode(), response.getMessage()));
-                } else {
-                    eventToSignal = AuthnEventIds.AUTHN_EXCEPTION;
-                    final LdapException e =
-                            new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
-                            response.getControls(), response.getReferralURLs(), response.getMessageId());
-                    log.warn("{} Login by {} produced exception", getLogPrefix(), username, e);
-                    throw e;
-                }
+                eventToSignal = AuthnEventIds.AUTHN_EXCEPTION;
+                final LdapException e =
+                        new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
+                        response.getControls(), response.getReferralURLs(), response.getMessageId());
+                log.warn("{} Login by {} produced exception", getLogPrefix(), username, e);
+                throw e;
             }
         } catch (final LdapException e) {
             if (errorHandler != null) {

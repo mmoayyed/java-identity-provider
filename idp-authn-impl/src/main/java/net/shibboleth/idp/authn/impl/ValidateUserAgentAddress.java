@@ -94,7 +94,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     public void setMappings(@Nonnull @NonnullElements final Map<String,Collection<IPRange>> newMappings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        mappings = new HashMap(newMappings.size());
+        mappings = new HashMap<>(newMappings.size());
         for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey())) {
                 mappings.put(e.getKey(), new ArrayList<>(Collections2.filter(e.getValue(), Predicates.notNull())));

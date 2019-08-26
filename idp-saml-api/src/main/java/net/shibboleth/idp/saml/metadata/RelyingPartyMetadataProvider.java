@@ -195,9 +195,8 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     public Instant getLastRefresh() {
         if (resolver instanceof RefreshableMetadataResolver) {
             return ((RefreshableMetadataResolver) resolver).getLastRefresh();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -205,27 +204,24 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     public Instant getLastUpdate() {
         if (resolver instanceof RefreshableMetadataResolver) {
             return ((RefreshableMetadataResolver) resolver).getLastUpdate();
-        } else {
-            return null;
         }
+        return null;
     }
     
     /** {@inheritDoc} */
     public Instant getLastSuccessfulRefresh() {
         if (resolver instanceof RefreshableMetadataResolver) {
             return ((RefreshableMetadataResolver) resolver).getLastSuccessfulRefresh();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /** {@inheritDoc} */
     public Boolean wasLastRefreshSuccess() {
         if (resolver instanceof RefreshableMetadataResolver) {
             return ((RefreshableMetadataResolver) resolver).wasLastRefreshSuccess();
-        } else {
-            return null;
         }
+        return null;
     }
     
     /** {@inheritDoc} */

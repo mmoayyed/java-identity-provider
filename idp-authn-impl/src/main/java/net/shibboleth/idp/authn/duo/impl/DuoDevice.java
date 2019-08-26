@@ -51,7 +51,7 @@ public class DuoDevice {
 
     /** Constructor. */
     public DuoDevice() {
-        capabilities = new ArrayList<String>();
+        capabilities = new ArrayList<>();
     }
 
     /**

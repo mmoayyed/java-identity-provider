@@ -58,7 +58,7 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
     @Nonnull private Function<SAMLMetadataContext,AttributeConsumingService> acsLookupStrategy;
 
     /** Map of requested attributes. */
-    @Nullable private final Multimap<String,IdPRequestedAttribute> requestedAttributesMap;
+    @Nullable private final Multimap<String,IdPAttribute> requestedAttributesMap;
 
     /**
      * Constructor.
@@ -104,7 +104,7 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
      * @param prc the profile request context
      * @return the map of requested attributes or <code>null</code>
      */
-    @Nullable protected Multimap<String, IdPRequestedAttribute>
+    @Nullable protected Multimap<String, IdPAttribute>
             getRequestedAttributes(@Nullable final ProfileRequestContext prc) {
         if (prc != null) {
             final SAMLMetadataContext metadataContext = metadataContextLookupStrategy.apply(prc);
@@ -128,10 +128,11 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
     /** {@inheritDoc} */
     public boolean test(@Nullable final IdPAttribute input) {
         if (input != null && requestedAttributesMap != null && !requestedAttributesMap.isEmpty()) {
-            final Collection<IdPRequestedAttribute> requestedAttrs = requestedAttributesMap.get(input.getId());
+            final Collection<IdPAttribute> requestedAttrs = requestedAttributesMap.get(input.getId());
             if (requestedAttrs != null) {
-                for (final IdPRequestedAttribute requestedAttr : requestedAttrs) {
-                    if (requestedAttr != null && requestedAttr.getIsRequired()) {
+                for (final IdPAttribute requestedAttr : requestedAttrs) {
+                    if (requestedAttr instanceof IdPRequestedAttribute
+                            && ((IdPRequestedAttribute) requestedAttr).getIsRequired()) {
                         log.debug("Attribute '{}' is required", input);
                         return true;
                     }

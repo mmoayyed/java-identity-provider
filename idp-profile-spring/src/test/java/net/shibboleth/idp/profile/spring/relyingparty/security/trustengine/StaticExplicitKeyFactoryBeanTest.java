@@ -43,7 +43,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
         final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean("staticKeySingle", TrustEngine.class, TESTPATH);
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
-        Credential credential  = (Credential) resolver.resolveSingle(null);
+        Credential credential  = resolver.resolveSingle(null);
         
         Assert.assertNotNull(credential.getPublicKey());
     }
@@ -84,7 +84,7 @@ public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest
         Iterator<Credential> credentials = resolver.resolve(null).iterator();
         
         Assert.assertTrue(credentials.hasNext());
-        final Credential first = (Credential) credentials.next();
+        final Credential first = credentials.next();
         Assert.assertNotNull(first.getPublicKey());
         Assert.assertFalse(first instanceof X509Credential);
 

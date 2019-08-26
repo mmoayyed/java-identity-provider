@@ -28,20 +28,20 @@ import org.testng.annotations.Test;
 
 public class ChainingTrustEngineTest extends AbstractSecurityParserTest {
     
-    private ChainingTrustEngine lookup(String file) throws IOException {
+    private ChainingTrustEngine<?> lookup(String file) throws IOException {
         return getBean(ChainingTrustEngine.class, "trustengine/" + file);
     }
 
     
     @Test public void one() throws IOException, SecurityException {
-        final ChainingTrustEngine engine = lookup("chainingTrue.xml");
+        final ChainingTrustEngine<?> engine = lookup("chainingTrue.xml");
         
         Assert.assertEquals(engine.getChain().size(), 1);
         Assert.assertTrue(engine.validate(null, null));
     }
 
     @Test public void two() throws IOException, SecurityException {
-        final ChainingTrustEngine engine = lookup("chainingTrueFalse.xml");
+        final ChainingTrustEngine<?> engine = lookup("chainingTrueFalse.xml");
         
         Assert.assertEquals(engine.getChain().size(), 2);
         Assert.assertTrue(engine.validate(null, null));

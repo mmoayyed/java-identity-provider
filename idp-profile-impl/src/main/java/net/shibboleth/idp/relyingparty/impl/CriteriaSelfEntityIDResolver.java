@@ -104,9 +104,8 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
         final String entityID = resolveSingle(criteria);
         if (entityID != null) {
             return Collections.singletonList(entityID);
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -120,10 +119,8 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
         final RelyingPartyConfiguration rpc = rpcResolver.resolveSingle(prcSet);
         if (rpc != null) {
             return rpc.getResponderId(prc);
-        } else {
-            return null;
-            
         }
+        return null;
     }
 
     /**
@@ -174,9 +171,8 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
                 metadataContext.setRoleDescriptor(roleDescriptor);
             }
             return prc;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

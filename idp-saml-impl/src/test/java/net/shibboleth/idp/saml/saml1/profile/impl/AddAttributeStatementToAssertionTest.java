@@ -129,7 +129,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         registry.initialize();
         
         action = new AddAttributeStatementToAssertion();
-        action.setTranscoderRegistry(new MockReloadableService(registry));
+        action.setTranscoderRegistry(new MockReloadableService<>(registry));
     }
 
     /** Test that the action errors out properly if there is no relying party context. */
@@ -191,7 +191,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
         localregistry.initialize();
         
-        action.setTranscoderRegistry(new MockReloadableService(localregistry));
+        action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
@@ -227,7 +227,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
         localregistry.initialize();
         
-        action.setTranscoderRegistry(new MockReloadableService(localregistry));
+        action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));

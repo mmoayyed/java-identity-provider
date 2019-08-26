@@ -137,7 +137,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         registry.initialize();
         
         action = new AddAttributeStatementToAssertion();
-        action.setTranscoderRegistry(new MockReloadableService(registry));
+        action.setTranscoderRegistry(new MockReloadableService<>(registry));
     }
 
     /** Test that the action errors out properly if there is no relying party context. */
@@ -199,14 +199,14 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
         localregistry.initialize();
         
-        action.setTranscoderRegistry(new MockReloadableService(localregistry));
+        action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.setIgnoringUnencodableAttributes(true);
         action.initialize();
@@ -235,14 +235,14 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
         localregistry.initialize();
         
-        action.setTranscoderRegistry(new MockReloadableService(localregistry));
+        action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
         attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.setIgnoringUnencodableAttributes(false);
         action.initialize();
@@ -260,7 +260,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 SAML2ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.setStatementInOwnAssertion(true);
         action.initialize();
@@ -287,7 +287,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 SAML2ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);
@@ -310,7 +310,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     @Test public void testNoAssertionInResponse() throws Exception {
         final AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);

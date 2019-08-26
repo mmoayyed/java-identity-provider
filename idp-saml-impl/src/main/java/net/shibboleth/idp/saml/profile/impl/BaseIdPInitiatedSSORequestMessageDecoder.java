@@ -208,12 +208,10 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
             final String sessionID = request.getRequestedSessionId();
             if (sessionID != null) {
                 return "_" + sessionID + '!' + timeString;
-            } else {
-                return idGenerator.generateIdentifier();
             }
-        } else {
             return idGenerator.generateIdentifier();
         }
+        return idGenerator.generateIdentifier();
     }
     
     /**

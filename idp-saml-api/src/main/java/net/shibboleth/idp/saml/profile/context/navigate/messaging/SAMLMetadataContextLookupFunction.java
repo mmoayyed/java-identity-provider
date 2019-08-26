@@ -40,9 +40,8 @@ public class SAMLMetadataContextLookupFunction extends AbstractRelyingPartyLooku
             if (peer != null) {
                 if (peer instanceof SAMLMetadataContext) {
                     return (SAMLMetadataContext) peer;
-                } else {
-                    return peer.getSubcontext(SAMLMetadataContext.class);
-                }    
+                }
+                return peer.getSubcontext(SAMLMetadataContext.class);    
             }
         }
         

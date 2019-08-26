@@ -74,10 +74,9 @@ public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
         if (providerId != null) {
             log.debug("Resolved Liberty ID-WSF Sender providerId value: {}", providerId);
             return true;
-        } else {
-            log.debug("Unable to resolve Liberty ID-WSF Sender providerId value, skipping further processing");
-            return false;
         }
+        log.debug("Unable to resolve Liberty ID-WSF Sender providerId value, skipping further processing");
+        return false;
     }
 
     /** {@inheritDoc} */

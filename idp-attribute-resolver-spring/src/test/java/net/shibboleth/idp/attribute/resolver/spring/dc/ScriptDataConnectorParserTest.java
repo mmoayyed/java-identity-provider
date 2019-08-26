@@ -57,7 +57,7 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
         final ScriptedDataConnector dataConnector = getDataConnector(source, ScriptedDataConnector.class);
         dataConnector.initialize();
         
-        final Map custom = (Map) dataConnector.getCustomObject();
+        final Map<?,?> custom = (Map<?,?>) dataConnector.getCustomObject();
         
         assertEquals(custom.size(), 1);
         assertEquals(custom.get("bar"), "foo");

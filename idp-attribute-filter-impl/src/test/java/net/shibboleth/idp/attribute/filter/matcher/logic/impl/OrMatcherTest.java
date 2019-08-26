@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.MockValuePredicateMatcher;
@@ -137,7 +138,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testRegressionGetValues() throws ComponentInitializationException {
         final OrMatcher matcher =
-                newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
+                newOrMatcher(Arrays.asList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
                         new MockValuePredicateMatcher(Predicates.alwaysFalse()), new MockValuePredicateMatcher(
                                 equalTo(value1)), new MockValuePredicateMatcher(equalTo(value2))));
         matcher.setId("Test");
@@ -153,10 +154,10 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNoMatchingValues() throws Exception {
-        final Predicate p = equalTo("Nothing");
-        final Predicate q = equalTo("Zippo");
+        final Predicate<IdPAttributeValue> p = equalTo(StringAttributeValue.valueOf("Nothing"));
+        final Predicate<IdPAttributeValue> q = equalTo(StringAttributeValue.valueOf("Zippo"));
         final OrMatcher matcher =
-                newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(p), new MockValuePredicateMatcher(q)));
+                newOrMatcher(Arrays.asList(new MockValuePredicateMatcher(p), new MockValuePredicateMatcher(q)));
 
         matcher.setId("Test");
         matcher.initialize();
@@ -168,7 +169,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testFails() throws Exception {
-        final OrMatcher matcher = newOrMatcher(Arrays.<Matcher>asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        final OrMatcher matcher = newOrMatcher(Arrays.asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
         matcher.setId("test");
         matcher.initialize();
 

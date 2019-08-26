@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 public class StaticExplicitKeySignatureParserTest extends AbstractSecurityParserTest {
  
     @Test public void simple() throws IOException, ResolverException {
-        final TrustedCredentialTrustEngine engine = (TrustedCredentialTrustEngine) getBean(TrustEngine.class, "trustengine/staticExplicitSignature.xml");
+        final TrustedCredentialTrustEngine<?> engine = (TrustedCredentialTrustEngine<?>) getBean(TrustEngine.class, "trustengine/staticExplicitSignature.xml");
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         

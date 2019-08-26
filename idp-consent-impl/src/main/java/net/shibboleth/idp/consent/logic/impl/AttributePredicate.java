@@ -105,14 +105,13 @@ public class AttributePredicate extends AbstractInitializableComponent implement
             // Not in whitelist. Only accept if a regexp applies.
             if (matchExpression == null) {
                 return false;
-            } else {
-                return matchExpression.matcher(attributeId).matches();
             }
-        } else {
-            // In whitelist (or none). Check blacklist, and if necessary a regexp.
-            return !blacklistedAttributeIds.contains(attributeId)
-                    && (matchExpression == null || matchExpression.matcher(attributeId).matches());
+            return matchExpression.matcher(attributeId).matches();
         }
+        
+        // In whitelist (or none). Check blacklist, and if necessary a regexp.
+        return !blacklistedAttributeIds.contains(attributeId)
+                && (matchExpression == null || matchExpression.matcher(attributeId).matches());
     }
 
     /**

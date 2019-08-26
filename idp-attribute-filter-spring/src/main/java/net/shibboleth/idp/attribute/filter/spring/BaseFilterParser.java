@@ -117,9 +117,8 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
             @Nonnull @NotEmpty final String componentNamespace, @Nonnull @NotEmpty final String reference) {
         if (reference.startsWith("/")) {
             return reference;
-        } else {
-            return getQualifiedId(configElement, componentNamespace, reference);
         }
+        return getQualifiedId(configElement, componentNamespace, reference);
     }
 
     /**

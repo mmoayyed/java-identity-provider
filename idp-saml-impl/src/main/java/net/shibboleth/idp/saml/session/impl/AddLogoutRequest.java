@@ -96,7 +96,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
     /** Constructor. */
     public AddLogoutRequest() {
         // Default strategy is a 16-byte secure random source.
-        idGeneratorLookupStrategy = new Function<ProfileRequestContext,IdentifierGenerationStrategy>() {
+        idGeneratorLookupStrategy = new Function<>() {
             public IdentifierGenerationStrategy apply(final ProfileRequestContext input) {
                 return new SecureRandomIdentifierGenerationStrategy();
             }

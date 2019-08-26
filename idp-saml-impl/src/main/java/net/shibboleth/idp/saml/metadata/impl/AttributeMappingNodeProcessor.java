@@ -150,7 +150,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         }
         
         if (!results.isEmpty()) {
-            acs.getObjectMetadata().put(new AttributesMapContainer<>(results));
+            acs.getObjectMetadata().put(new AttributesMapContainer(results));
         }
     }
 
@@ -201,7 +201,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         }
         
         if (!results.isEmpty()) {
-            extensions.getParent().getObjectMetadata().put(new AttributesMapContainer<>(results));
+            extensions.getParent().getObjectMetadata().put(new AttributesMapContainer(results));
         }
     }
   //CheckStyle: CyclomaticComplexity ON

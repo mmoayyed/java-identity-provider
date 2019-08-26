@@ -68,9 +68,8 @@ public class MultiFactorAuthenticationTransition {
     @Nonnull public Function<ProfileRequestContext,String> getNextFlowStrategy(@Nonnull @NotEmpty final String event) {
         if (nextFlowStrategyMap.containsKey(event)) {
             return nextFlowStrategyMap.get(event);
-        } else {
-            return FunctionSupport.constant(null);
         }
+        return FunctionSupport.constant(null);
     }
     
     /**

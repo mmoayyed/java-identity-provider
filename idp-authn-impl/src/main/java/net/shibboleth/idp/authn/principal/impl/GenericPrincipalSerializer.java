@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.json.JsonException;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -98,7 +99,6 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     }
         
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         final Class<? extends Principal> principalType = principal.getClass();
         if (compatiblePrincipalTypes.contains(principalType)) {
@@ -117,77 +117,73 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        gen.writeStartObject();
         
-        Integer symbol = symbolics.get(principal.getClass().getName());
-        if (symbol != null) {
-            gen.write(PRINCIPAL_TYPE_FIELD, symbol);
-        } else {
-            gen.write(PRINCIPAL_TYPE_FIELD, principal.getClass().getName());
-        }
-        
-        symbol = symbolics.get(principal.getName());
-        if (symbol != null) {
-            gen.write(PRINCIPAL_NAME_FIELD, symbol);
-        } else {
-            gen.write(PRINCIPAL_NAME_FIELD, principal.getName());
-        }
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
+            gen.writeStartObject();
             
-        gen.writeEnd();
-        gen.close();
+            Integer symbol = symbolics.get(principal.getClass().getName());
+            if (symbol != null) {
+                gen.write(PRINCIPAL_TYPE_FIELD, symbol);
+            } else {
+                gen.write(PRINCIPAL_TYPE_FIELD, principal.getClass().getName());
+            }
+            
+            symbol = symbolics.get(principal.getName());
+            if (symbol != null) {
+                gen.write(PRINCIPAL_NAME_FIELD, symbol);
+            } else {
+                gen.write(PRINCIPAL_NAME_FIELD, principal.getName());
+            }
+                
+            gen.writeEnd();
+        }
         return sink.toString();
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Principal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing a generic principal");
-        }
-        final JsonObject obj = (JsonObject) st;
-        final JsonValue typefield = obj.get(PRINCIPAL_TYPE_FIELD);
-        final JsonValue namefield = obj.get(PRINCIPAL_NAME_FIELD);
-        if (typefield != null && namefield != null) {
-            final String type = desymbolize(typefield);
-            final String name = desymbolize(namefield);
-            if (!Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(name)) {
-                try {
-                    final Class<? extends Principal> pclass = Class.forName(type).asSubclass(Principal.class);
-                    final Constructor<? extends Principal> ctor = pclass.getConstructor(String.class);
-                    return ctor.newInstance(name);
-                } catch (final ClassNotFoundException | NoSuchMethodException | SecurityException
-                            | InstantiationException | IllegalAccessException | IllegalArgumentException
-                            | InvocationTargetException e) {
-                    log.warn("Exception instantiating custom Principal type {} with name {}", type, name, e);
+
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing a generic principal");
+            }
+            final JsonObject obj = (JsonObject) st;
+            final JsonValue typefield = obj.get(PRINCIPAL_TYPE_FIELD);
+            final JsonValue namefield = obj.get(PRINCIPAL_NAME_FIELD);
+            if (typefield != null && namefield != null) {
+                final String type = desymbolize(typefield);
+                final String name = desymbolize(namefield);
+                if (!Strings.isNullOrEmpty(type) && !Strings.isNullOrEmpty(name)) {
+                    try {
+                        final Class<? extends Principal> pclass = Class.forName(type).asSubclass(Principal.class);
+                        final Constructor<? extends Principal> ctor = pclass.getConstructor(String.class);
+                        return ctor.newInstance(name);
+                    } catch (final ClassNotFoundException | NoSuchMethodException | SecurityException
+                                | InstantiationException | IllegalAccessException | IllegalArgumentException
+                                | InvocationTargetException e) {
+                        log.warn("Exception instantiating custom Principal type {} with name {}", type, name, e);
+                    }
+                } else {
+                    log.warn("Unparseable Principal type or name in structure");
                 }
             } else {
-                log.warn("Unparseable Principal type or name in structure");
+                log.warn("Missing Principal type or name in structure");
             }
-        } else {
-            log.warn("Missing Principal type or name in structure");
+            return null;
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing a generic principal", e);
         }
-        return null;
     }
 
     

@@ -305,9 +305,8 @@ public class DefaultRelyingPartyConfigurationResolver
             if (configuration.test(context)) {
                 log.debug("Relying party configuration {} is applicable", configuration.getId());
                 return configuration;
-            } else {
-                log.debug("Relying party configuration {} is not applicable", configuration.getId());
             }
+            log.debug("Relying party configuration {} is not applicable", configuration.getId());
         }
 
         log.debug("No relying party configurations are applicable, returning the default configuration {}",

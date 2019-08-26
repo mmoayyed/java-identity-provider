@@ -244,9 +244,8 @@ public class RemoteUserAuthServlet extends HttpServlet {
                     httpRequest.setAttribute(ExternalAuthentication.SUBJECT_KEY, subject);
                     ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                     return;
-                } else {
-                    log.info("Java Subject not found in attribute {}", subjectAttribute);
                 }
+                log.info("Java Subject not found in attribute {}", subjectAttribute);
             }
             
             String username = null;
@@ -329,10 +328,9 @@ public class RemoteUserAuthServlet extends HttpServlet {
                         httpRequest.setAttribute(ExternalAuthentication.SUBJECT_KEY, subject);
                         ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                         return;
-                    } else {
-                        log.error("Unable to locate AuthenticationFlowDescriptor, can't process "
-                                + "authentication methods from header");
                     }
+                    log.error("Unable to locate AuthenticationFlowDescriptor, can't process "
+                            + "authentication methods from header");
                 }
                 
                 httpRequest.setAttribute(ExternalAuthentication.PRINCIPAL_NAME_KEY, username);

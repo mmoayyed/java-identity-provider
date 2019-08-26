@@ -58,9 +58,8 @@ public class CurrentConsentIdsAuditExtractor implements Function<ProfileRequestC
         final ConsentContext consentContext = consentContextLookupStrategy.apply(input);
         if (consentContext != null) {
             return consentContext.getCurrentConsents().keySet();
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
 }

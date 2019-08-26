@@ -37,7 +37,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
  * 
  * @param <T> The exact type being deployed.
  */
-public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolverPlugin> extends
+public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolverPlugin<?>> extends
         AbstractComponentAwareFactoryBean<T> {
 
     /** The component Id. */

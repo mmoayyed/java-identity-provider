@@ -159,7 +159,7 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
             getMatcher("attributeValueEmptyCaseSensitive.xml");
             fail("should have thrown an exception");
         } catch (FatalBeanException e) {
-            final Class c = rootCause(e);
+            final Class<?> c = rootCause(e);
             assertTrue((c == SAXParseException.class)|(c == IllegalArgumentException.class));
         } 
     }

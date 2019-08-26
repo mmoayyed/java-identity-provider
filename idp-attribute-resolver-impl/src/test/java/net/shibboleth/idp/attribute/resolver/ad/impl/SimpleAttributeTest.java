@@ -112,7 +112,7 @@ public class SimpleAttributeTest {
             fail("resolution failed", e);
         }
 
-        final Collection values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         assertEquals(values.size(), 2);
         assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT), "looking for " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
         assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
@@ -227,7 +227,7 @@ public class SimpleAttributeTest {
             fail("resolution failed", e);
         }
 
-        final Collection values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
         assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),

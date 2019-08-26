@@ -128,9 +128,9 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
                 }
                 
                 return true;
-            } else {
-                return usernames != null && usernames.size() == 1;
             }
+            
+            return usernames != null && usernames.size() == 1;
         }
         
     }

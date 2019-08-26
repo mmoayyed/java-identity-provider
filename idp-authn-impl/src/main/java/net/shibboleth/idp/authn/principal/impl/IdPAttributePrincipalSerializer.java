@@ -32,6 +32,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
+import javax.json.JsonException;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -92,81 +93,77 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof IdPAttributePrincipal;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(128);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        gen.writeStartObject()
-           .write(PRINCIPAL_NAME_FIELD, principal.getName());        
-        
-        final IdPAttribute attribute = ((IdPAttributePrincipal) principal).getAttribute();
-        final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-        for (final IdPAttributeValue value : attribute.getValues()) {
-            final JsonObject obj = serializeValue(value);
-            if (obj != null) {
-                arrayBuilder.add(obj);
-            } else {
-                log.warn("Skipping unsupported attribute value type ({})", value.getClass());
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
+            gen.writeStartObject()
+               .write(PRINCIPAL_NAME_FIELD, principal.getName());        
+            
+            final IdPAttribute attribute = ((IdPAttributePrincipal) principal).getAttribute();
+            final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
+            for (final IdPAttributeValue value : attribute.getValues()) {
+                final JsonObject obj = serializeValue(value);
+                if (obj != null) {
+                    arrayBuilder.add(obj);
+                } else {
+                    log.warn("Skipping unsupported attribute value type ({})", value.getClass());
+                }
             }
+            gen.write(PRINCIPAL_ENTRY_FIELD, arrayBuilder.build());
+            gen.writeEnd();
         }
-        gen.write(PRINCIPAL_ENTRY_FIELD, arrayBuilder.build());
-        gen.writeEnd();
-        gen.close();
         return sink.toString();
     }
         
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public IdPAttributePrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing IdPAttributePrincipal");
-        }
-        final JsonObject obj = (JsonObject) st;
-        final JsonString str = obj.getJsonString(PRINCIPAL_NAME_FIELD);
-        final JsonArray vals = obj.getJsonArray(PRINCIPAL_ENTRY_FIELD);
-        if (str != null && !Strings.isNullOrEmpty(str.getString()) && vals != null) {
-            final IdPAttribute attribute = new IdPAttribute(str.getString());
-            final List<IdPAttributeValue> values = new ArrayList<>();
+        
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
             
-            for (final JsonValue entry : vals) {
-                if (entry instanceof JsonObject) {
-                    final IdPAttributeValue attrValue = deserializeValue((JsonObject) entry);
-                    if (attrValue != null) {
-                        values.add(attrValue);
-                    } else {
-                        log.warn("Skipping unsupported attribute value serialization");
-                    }
-                } else {
-                    log.warn("Skipping non-object attribute value array entry");
-                }
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing IdPAttributePrincipal");
             }
             
-            attribute.setValues(values);
-            return new IdPAttributePrincipal(attribute);
-        } else {
+            final JsonObject obj = (JsonObject) st;
+            final JsonString str = obj.getJsonString(PRINCIPAL_NAME_FIELD);
+            final JsonArray vals = obj.getJsonArray(PRINCIPAL_ENTRY_FIELD);
+            if (str != null && !Strings.isNullOrEmpty(str.getString()) && vals != null) {
+                final IdPAttribute attribute = new IdPAttribute(str.getString());
+                final List<IdPAttributeValue> values = new ArrayList<>();
+                
+                for (final JsonValue entry : vals) {
+                    if (entry instanceof JsonObject) {
+                        final IdPAttributeValue attrValue = deserializeValue((JsonObject) entry);
+                        if (attrValue != null) {
+                            values.add(attrValue);
+                        } else {
+                            log.warn("Skipping unsupported attribute value serialization");
+                        }
+                    } else {
+                        log.warn("Skipping non-object attribute value array entry");
+                    }
+                }
+                
+                attribute.setValues(values);
+                return new IdPAttributePrincipal(attribute);
+            }
             log.warn("Skipping IdPAttributePrincipal missing attribute name or values");
+            
+            return null;
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing IdPAttributePrincipal", e);
         }
-        
-        return null;
     }
 
     /**
@@ -221,9 +218,8 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
             if (value instanceof JsonNumber) {
                 if (((JsonNumber) value).intValueExact() == 0) {
                     return EmptyAttributeValue.NULL;
-                } else {
-                    return EmptyAttributeValue.ZERO_LENGTH;
                 }
+                return EmptyAttributeValue.ZERO_LENGTH;
             }
         } else if (object.containsKey(STRING_VALUE_FIELD)) {
             final JsonValue value = object.get(STRING_VALUE_FIELD);

@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URISupport;
 
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -147,7 +146,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.initialize();
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
@@ -170,7 +169,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
@@ -201,7 +200,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -220,7 +219,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
         
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -239,7 +238,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.initialize();
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
@@ -262,7 +261,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
@@ -286,7 +285,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -312,7 +311,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -345,7 +344,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -373,7 +372,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -399,7 +398,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         
         action.initialize();
 
-        doExtract(prc);
+        doExtract();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -410,7 +409,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
     
-    private void doExtract(ProfileRequestContext prc) throws Exception {
+    private void doExtract() throws Exception {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

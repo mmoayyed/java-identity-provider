@@ -130,9 +130,8 @@ public class CacheConfigParser {
     private static long getMaxSize(@Nullable final String maximumSize) {
         if (maximumSize != null) {
             return Long.parseLong(maximumSize);
-        }  else {
-            return  DEFAULT_CACHE_ENTRIES;   
         }
+        return  DEFAULT_CACHE_ENTRIES;
     }
     
     /** Helper function to return the TTL with a suitable default.
@@ -142,9 +141,8 @@ public class CacheConfigParser {
     @Nonnull private static Duration getTimeToLive(@Nullable final String timeToLive) {
         if (timeToLive != null) {
             return new StringToDurationConverter().convert(timeToLive);
-        }  else {
-            return DEFAULT_TTL_MS;   
         }
+        return DEFAULT_TTL_MS;
     }
     
     /**

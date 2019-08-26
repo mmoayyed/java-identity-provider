@@ -53,7 +53,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
     @Nonnull @NonnullElements private final Map<String,Metric> gauges;
     
     /** The service to report on. */
-    @NonnullAfterInit private ReloadableService service;
+    @NonnullAfterInit private ReloadableService<T> service;
     
     /** The log Prefix. */
     @Nonnull @NotEmpty private final String logPrefix;
@@ -108,7 +108,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
      * 
      * @param svc service instance
      */
-    public void setService(@Nonnull final ReloadableService svc) {
+    public void setService(@Nonnull final ReloadableService<T> svc) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         service = Constraint.isNotNull(svc, "ReloadableService cannot be null");

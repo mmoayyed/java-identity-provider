@@ -133,7 +133,7 @@ public enum ProtocolError {
      * @return Spring webflow event.
      */
     @Nonnull public Event event(@Nonnull final Object source) {
-        final LocalAttributeMap attributes = new LocalAttributeMap();
+        final LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
         attributes.put("code", errorCode);
         attributes.put("detailCode", errorDetailCode);
         return new Event(source, name(), attributes);

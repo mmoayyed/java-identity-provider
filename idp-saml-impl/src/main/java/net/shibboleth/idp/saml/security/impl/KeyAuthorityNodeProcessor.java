@@ -124,9 +124,8 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
         final List<XMLObject> keyAuthorities = extensions.getUnknownXMLObjects(KeyAuthority.DEFAULT_ELEMENT_NAME);
         if (keyAuthorities == null) {
             return Collections.emptyList();
-        } else {
-            return keyAuthorities;
         }
+        return keyAuthorities;
     }
     
 }

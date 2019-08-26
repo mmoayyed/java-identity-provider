@@ -73,23 +73,22 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
     /**
      * Get a registered {@link StorageSerializer} for a given {@link SPSession} type, if any.
      * 
+     * @param <T> type of SPSession
      * @param type a type of SPSession
      * @return a corresponding StorageSerializer, or null
      */
-    @Nullable public StorageSerializer<? extends SPSession> lookup(
-            @Nonnull final Class<? extends SPSession> type) {
+    @Nullable public <T extends SPSession> StorageSerializer<T> lookup(@Nonnull final Class<T> type) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(type, "SPSession type cannot be null");
         
-        final StorageSerializer<? extends SPSession> serializer = registry.get(type);
+        final StorageSerializer<T> serializer = (StorageSerializer<T>) registry.get(type);
         if (serializer != null) {
             log.debug("Registry located StorageSerializer of type '{}' for SPSession type '{}'",
                     serializer.getClass().getName(), type);
             return serializer;
-        } else {
-            log.debug("Registry failed to locate StorageSerializer for SPSession type '{}'", type);
-            return null;
         }
+        log.debug("Registry failed to locate StorageSerializer for SPSession type '{}'", type);
+        return null;
     }
 
 }

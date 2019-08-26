@@ -54,7 +54,7 @@ public class ScriptedFunctionTest {
 
     
     @Test public void simpleScript() throws ScriptException {
-        ProfileRequestContext prc = new ProfileRequestContext();
+        final ProfileRequestContext prc = new ProfileRequestContext();
         
         final Object string = ScriptedContextLookupFunction.inlineScript(stringReturn()).apply(prc);
 
@@ -66,9 +66,9 @@ public class ScriptedFunctionTest {
     }
     
     @Test public void custom() throws ScriptException {
-        ProfileRequestContext prc = new ProfileRequestContext();
+        final ProfileRequestContext prc = new ProfileRequestContext();
         
-        final ScriptedContextLookupFunction script = ScriptedContextLookupFunction.inlineScript("custom;");
+        final ScriptedContextLookupFunction<ProfileRequestContext> script = ScriptedContextLookupFunction.inlineScript("custom;");
         script.setCustomObject("String");
         Assert.assertEquals(script.apply(prc), "String");
  
@@ -78,9 +78,9 @@ public class ScriptedFunctionTest {
     
     
     @Test public void withType() throws ScriptException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        ProfileRequestContext prc = new ProfileRequestContext();
+        final ProfileRequestContext prc = new ProfileRequestContext();
 
-        final ScriptedContextLookupFunction script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
+        final ScriptedContextLookupFunction<ProfileRequestContext> script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
         
         final String string = (String) script1.apply(prc);
         Assert.assertEquals(string, "String");
@@ -91,13 +91,6 @@ public class ScriptedFunctionTest {
         
         final Integer integer = (Integer) ScriptedContextLookupFunction.inlineScript(integerReturn()).apply(prc);
         Assert.assertEquals(integer.intValue(), 37);
-        
-    }
-    
-    @Test(expectedExceptions={ClassCastException.class,}) public void wrongType() throws ScriptException {
-        final ScriptedContextLookupFunction script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
-        
-        script1.apply(new MessageContext());
         
     }
 

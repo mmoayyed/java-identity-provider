@@ -183,7 +183,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             
             sc.setPrincipalName(canonicalPrincipalName);
     
-            final Map scResults = sc.getAuthenticationResults();
+            final Map<String,AuthenticationResult> scResults = sc.getAuthenticationResults();
             scResults.putAll(authenticationContext.getActiveResults());
             
             final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
@@ -254,11 +254,11 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         
         if (matches.isEmpty()) {
             return null;
-        } else {
-            final AuthenticationFlowDescriptor flowDescriptor = authenticationContext.getAvailableFlows().get(
-                    authenticationContext.getAuthenticationResult().getAuthenticationFlowId());
-            return flowDescriptor.getHighestWeighted(matches);
         }
+        
+        final AuthenticationFlowDescriptor flowDescriptor = authenticationContext.getAvailableFlows().get(
+                authenticationContext.getAuthenticationResult().getAuthenticationFlowId());
+        return flowDescriptor.getHighestWeighted(matches);
     }
 
 }

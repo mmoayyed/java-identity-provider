@@ -89,11 +89,11 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         relyingPartyLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
         usernameLookupStrategy = new SubjectContextPrincipalLookupFunction().compose(
-                new ChildContextLookup(SubjectContext.class));
+                new ChildContextLookup<>(SubjectContext.class));
         authenticationMethodLookupStrategy = new AuthnContextAuditExtractor(
-                new MessageLookup(SAMLObject.class).compose(new OutboundMessageContextLookup()));
+                new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup()));
         statusCodeLookupStrategy = new StatusCodeAuditExtractor(
-                new MessageLookup(SAMLObject.class).compose(new OutboundMessageContextLookup()));
+                new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup()));
     }
     
     /**

@@ -142,7 +142,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
                     } else {
                         final Subject subject = new Subject();
                         subject.getPrincipals().addAll(config.getSecond());
-                        loginConfigurations.add(new Pair<String,Subject>(trimmed, subject));
+                        loginConfigurations.add(new Pair<>(trimmed, subject));
                     }
                 }
             }

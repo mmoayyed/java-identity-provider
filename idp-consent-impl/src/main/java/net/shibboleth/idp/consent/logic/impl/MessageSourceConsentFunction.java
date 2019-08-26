@@ -159,9 +159,8 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
             }
     
             return Collections.singletonMap(id, consent);
-        } else {
-            return Collections.emptyMap();
         }
+        return Collections.emptyMap();
     }
     
 

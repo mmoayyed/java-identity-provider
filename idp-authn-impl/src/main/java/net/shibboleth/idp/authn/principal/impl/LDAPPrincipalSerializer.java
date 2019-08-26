@@ -31,6 +31,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -77,81 +78,77 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof LdapPrincipal;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        gen.writeStartObject()
-           .write(PRINCIPAL_NAME_FIELD, principal.getName());
-        final LdapEntry entry = ((LdapPrincipal) principal).getLdapEntry();
-        if (entry != null) {
-            final JsonObjectBuilder objectBuilder = getJsonObjectBuilder();
-            objectBuilder.add("dn", entry.getDn());
-            for (final LdapAttribute attr : entry.getAttributes()) {
-                final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-                for (final String value : attr.getStringValues()) {
-                    arrayBuilder.add(value);
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
+            gen.writeStartObject()
+               .write(PRINCIPAL_NAME_FIELD, principal.getName());
+            final LdapEntry entry = ((LdapPrincipal) principal).getLdapEntry();
+            if (entry != null) {
+                final JsonObjectBuilder objectBuilder = getJsonObjectBuilder();
+                objectBuilder.add("dn", entry.getDn());
+                for (final LdapAttribute attr : entry.getAttributes()) {
+                    final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
+                    for (final String value : attr.getStringValues()) {
+                        arrayBuilder.add(value);
+                    }
+                    objectBuilder.add(attr.getName(), arrayBuilder.build());
                 }
-                objectBuilder.add(attr.getName(), arrayBuilder.build());
+                gen.write(PRINCIPAL_ENTRY_FIELD, objectBuilder.build());
             }
-            gen.write(PRINCIPAL_ENTRY_FIELD, objectBuilder.build());
+            gen.writeEnd();
         }
-        gen.writeEnd();
-        gen.close();
         return sink.toString();
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public LdapPrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing LdapPrincipal");
-        }
-        final JsonObject obj = (JsonObject) st;
-        final JsonString str = obj.getJsonString(PRINCIPAL_NAME_FIELD);
-        if (str != null) {
-            if (!Strings.isNullOrEmpty(str.getString())) {
-                LdapEntry entry = null;
-                final JsonObject jsonEntry = obj.getJsonObject(PRINCIPAL_ENTRY_FIELD);
-                if (jsonEntry != null) {
-                    entry = new LdapEntry();
-                    for (final Map.Entry<String, JsonValue> e : jsonEntry.entrySet()) {
-                        if ("dn".equalsIgnoreCase(e.getKey())) {
-                            entry.setDn(((JsonString) e.getValue()).getString());
-                        } else {
-                            final LdapAttribute attr = new LdapAttribute(e.getKey());
-                            for (final JsonValue v : (JsonArray) e.getValue()) {
-                                attr.addStringValue(((JsonString) v).getString());
+        
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
+            
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing LdapPrincipal");
+            }
+            
+            final JsonObject obj = (JsonObject) st;
+            final JsonString str = obj.getJsonString(PRINCIPAL_NAME_FIELD);
+            if (str != null) {
+                if (!Strings.isNullOrEmpty(str.getString())) {
+                    LdapEntry entry = null;
+                    final JsonObject jsonEntry = obj.getJsonObject(PRINCIPAL_ENTRY_FIELD);
+                    if (jsonEntry != null) {
+                        entry = new LdapEntry();
+                        for (final Map.Entry<String, JsonValue> e : jsonEntry.entrySet()) {
+                            if ("dn".equalsIgnoreCase(e.getKey())) {
+                                entry.setDn(((JsonString) e.getValue()).getString());
+                            } else {
+                                final LdapAttribute attr = new LdapAttribute(e.getKey());
+                                for (final JsonValue v : (JsonArray) e.getValue()) {
+                                    attr.addStringValue(((JsonString) v).getString());
+                                }
+                                entry.addAttribute(attr);
                             }
-                            entry.addAttribute(attr);
                         }
                     }
+                    return new LdapPrincipal(str.getString(), entry);
                 }
-                return new LdapPrincipal(str.getString(), entry);
-            } else {
                 log.warn("Skipping null/empty LdapPrincipal");
             }
+            return null;
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing LdapPrincipal", e);
         }
-        return null;
     }
 
     /**

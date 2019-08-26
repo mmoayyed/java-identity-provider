@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
 /**
  * A factory bean for producing instances of {@link LayeredConnectionSocketFactory} for use in {@link HttpClient}.
  */
-public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
+public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean<LayeredConnectionSocketFactory> {
     
     /** The optional trust engine used in evaluating server TLS credentials. */
     private TrustEngine<?> tlsTrustEngine;
@@ -72,12 +72,12 @@ public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
 
 
     /** {@inheritDoc} */
-    @Override public Class getObjectType() {
+    @Override public Class<LayeredConnectionSocketFactory> getObjectType() {
         return LayeredConnectionSocketFactory.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected Object createInstance() throws Exception {
+    @Override protected LayeredConnectionSocketFactory createInstance() throws Exception {
         final boolean haveTrustEngine = tlsTrustEngine != null 
                 || (httpClientSecurityParameters != null && httpClientSecurityParameters.getTLSTrustEngine() != null);
         final boolean haveClientTLSCred = 

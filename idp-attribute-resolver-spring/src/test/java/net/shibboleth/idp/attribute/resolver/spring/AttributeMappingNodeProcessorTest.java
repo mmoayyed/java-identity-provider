@@ -84,11 +84,11 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         setTestContext(context);
         context.setDisplayName("ApplicationContext: ");
 
-        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(new HashSet<>(Arrays.asList(new StringToDurationConverter())));
-        service.afterPropertiesSet();
+        final ConversionServiceFactoryBean service1 = new ConversionServiceFactoryBean();
+        service1.setConverters(new HashSet<>(Arrays.asList(new StringToDurationConverter())));
+        service1.afterPropertiesSet();
 
-        context.getBeanFactory().setConversionService(service.getObject());
+        context.getBeanFactory().setConversionService(service1.getObject());
         
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -136,25 +136,25 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
 
         final AttributesMapContainer container = acs.getObjectMetadata().get(AttributesMapContainer.class).get(0);
 
-        final Multimap<String,IdPRequestedAttribute> map = container.get();
+        final Multimap<String,IdPAttribute> map = container.get();
 
         assertEquals(map.size(), 3);
 
-        Collection<IdPRequestedAttribute> attribute = map.get("dn1");
+        Collection<IdPAttribute> attribute = map.get("dn1");
         assertEquals(attribute.size(), 1);
-        IdPRequestedAttribute attr = attribute.iterator().next();
+        IdPRequestedAttribute attr = IdPRequestedAttribute.class.cast(attribute.iterator().next());
         assertTrue(attr.getValues().isEmpty());
         assertFalse(attr.getIsRequired());
 
         attribute = map.get("dn2");
         assertEquals(attribute.size(), 1);
-        attr = attribute.iterator().next();
+        attr = IdPRequestedAttribute.class.cast(attribute.iterator().next());
         assertTrue(attr.getValues().isEmpty());
         assertTrue(attr.getIsRequired());
         
         attribute = map.get("eppn");
         assertEquals(attribute.size(), 1);
-        attr = attribute.iterator().next();
+        attr = IdPRequestedAttribute.class.cast(attribute.iterator().next());
         assertTrue(attr.getValues().isEmpty());
         assertFalse(attr.getIsRequired());
     }

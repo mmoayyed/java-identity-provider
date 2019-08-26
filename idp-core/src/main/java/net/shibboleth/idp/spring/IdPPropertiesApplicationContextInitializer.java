@@ -96,10 +96,9 @@ public class IdPPropertiesApplicationContextInitializer
                 if (isFailFast(applicationContext)) {
                     log.error("Unable to load properties from resource '{}'", resource);
                     throw new ConstraintViolationException("Unable to load properties from resource");
-                } else {
-                    log.warn("Unable to load properties from resource '{}'", resource);
-                    return;
                 }
+                log.warn("Unable to load properties from resource '{}'", resource);
+                return;
             }
 
             if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
@@ -223,10 +222,9 @@ public class IdPPropertiesApplicationContextInitializer
                         if (isFailFast(applicationContext)) {
                             log.error("Unable to load properties from resource '{}'", additionalResource);
                             throw new ConstraintViolationException("Unable to load properties from resource");
-                        } else {
-                            log.warn("Unable to load properties from resource '{}'", additionalResource);
-                            continue;
                         }
+                        log.warn("Unable to load properties from resource '{}'", additionalResource);
+                        continue;
                     }
                 } else {
                     log.warn("Unable to find resource '{}'", additionalResource);

@@ -138,20 +138,16 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             throw new ResolutionException("Executable statement cannot be null");
         }
         Connection connection = null;
-        ResultSet queryResult = null;
         try {
             connection = dataSource.getConnection();
-            queryResult = statement.execute(connection);
-            log.trace("Data connector '{}': search returned {}", getId(), queryResult);
-            return getMappingStrategy().map(queryResult);
+            try (final ResultSet queryResult = statement.execute(connection)) {
+                log.trace("Data connector '{}': search returned {}", getId(), queryResult);
+                return getMappingStrategy().map(queryResult);
+            }
         } catch (final SQLException e) {
             throw new ResolutionException(getLogPrefix() + " Unable to execute SQL query", e);
         } finally {
             try {
-                if (queryResult != null) {
-                    queryResult.close();
-                }
-
                 if (connection != null && !connection.isClosed()) {
                     connection.close();
                 }
@@ -161,4 +157,5 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             }
         }
     }
+
 }

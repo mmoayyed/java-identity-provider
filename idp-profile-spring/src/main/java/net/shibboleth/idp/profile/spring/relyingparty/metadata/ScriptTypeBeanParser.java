@@ -51,7 +51,7 @@ public final class ScriptTypeBeanParser {
      * 
      * @return bean definition builder
      */
-    @Nonnull public static BeanDefinitionBuilder parseScriptType(@Nonnull final Class type,
+    @Nonnull public static BeanDefinitionBuilder parseScriptType(@Nonnull final Class<?> type,
             @Nonnull final Element element) {
         
         final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(type);

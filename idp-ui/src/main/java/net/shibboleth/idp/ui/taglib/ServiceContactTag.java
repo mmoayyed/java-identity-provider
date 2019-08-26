@@ -97,15 +97,13 @@ public class ServiceContactTag extends ServiceTagSupport {
             // Nonempty email. Construct an href
             log.debug("constructing hyperlink from name '{}' and email '{}'", name, email);
             return buildHyperLink(email, name);
-        } else {
-            log.debug("no email found, using name '{}' with no hyperlink", name);
-
-            if (null == name) {
-                return name;
-            } else {
-                return HTMLEncoder.encodeForHTML(name);
-            }
         }
+        log.debug("no email found, using name '{}' with no hyperlink", name);
+
+        if (null != name) {
+            return HTMLEncoder.encodeForHTML(name);
+        }
+        return null;
     }
 
     /**

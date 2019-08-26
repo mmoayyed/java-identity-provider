@@ -25,7 +25,7 @@ import org.opensaml.security.trust.TrustEngine;
 /**
  *
  */
-public class MockTrustEngine implements TrustEngine {
+public class MockTrustEngine<T> implements TrustEngine<T> {
 
     private final boolean result;
     
@@ -38,7 +38,7 @@ public class MockTrustEngine implements TrustEngine {
     }
     
     /** {@inheritDoc} */
-    @Override public boolean validate(Object token, CriteriaSet trustBasisCriteria) throws SecurityException {
+    @Override public boolean validate(T token, CriteriaSet trustBasisCriteria) throws SecurityException {
         return result;
     }
 

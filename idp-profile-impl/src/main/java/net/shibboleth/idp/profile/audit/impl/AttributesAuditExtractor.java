@@ -94,9 +94,8 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
         if (attributeCtx != null) {
             return (useUnfiltered ? attributeCtx.getUnfilteredIdPAttributes()
                     : attributeCtx.getIdPAttributes()).keySet();
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
 }

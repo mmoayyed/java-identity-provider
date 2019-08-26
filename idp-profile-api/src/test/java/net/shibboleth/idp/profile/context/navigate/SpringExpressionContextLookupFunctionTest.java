@@ -28,11 +28,9 @@ public class SpringExpressionContextLookupFunctionTest {
 
     
     @Test public void simpleTest() {
-        SpringExpressionContextLookupFunction func = new SpringExpressionContextLookupFunction(Integer.class, "#input", Integer.class);
-
-        func = new SpringExpressionContextLookupFunction(ProfileRequestContext.class, "99", Integer.class);
-        
+        SpringExpressionContextLookupFunction<ProfileRequestContext> func =
+                new SpringExpressionContextLookupFunction<>(ProfileRequestContext.class, "99", Integer.class);
         Assert.assertEquals(func.apply(null), 99);
-        
     }
+    
 }

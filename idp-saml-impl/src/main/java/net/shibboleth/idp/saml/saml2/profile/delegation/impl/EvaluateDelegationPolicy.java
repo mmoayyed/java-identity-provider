@@ -306,10 +306,9 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
             if (DelegationRestrictionType.TYPE_NAME.equals(conditionChild.getSchemaType())) {
                 if (conditionChild instanceof DelegationRestrictionType) {
                     return (DelegationRestrictionType) conditionChild;
-                } else {
-                    log.warn("Saw Condition of xsi:type DelegationRestrictionType, but incorrect class instance: {}",
-                            conditionChild.getClass().getName());
                 }
+                log.warn("Saw Condition of xsi:type DelegationRestrictionType, but incorrect class instance: {}",
+                        conditionChild.getClass().getName());
             }
         }
         return null;
@@ -328,11 +327,10 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
         if (value != null) {
             log.debug("Strategy resolved policy max token delegation chain length: {}", value);
             return value;
-        } else {
-            log.debug("Returning default policy max token delegation chain length: {}", 
-                    BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH);
-            return BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH;
         }
+        log.debug("Returning default policy max token delegation chain length: {}", 
+                BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH);
+        return BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH;
         
     }
     

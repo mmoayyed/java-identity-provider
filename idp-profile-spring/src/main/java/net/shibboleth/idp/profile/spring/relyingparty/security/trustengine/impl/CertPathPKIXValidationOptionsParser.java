@@ -45,7 +45,7 @@ public class CertPathPKIXValidationOptionsParser extends PKIXValidationOptionsPa
             "PolicyOID");
 
     /** {@inheritDoc} */
-    @Override protected Class getBeanClass(final Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return CertPathPKIXValidationOptions.class;
     }
 

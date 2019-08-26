@@ -103,9 +103,9 @@ public class AbstractProfileActionTest {
             prevEvent = null;
         }
 
-        public MockProfileAction(String newEvent, String prevEvent) {
-            this.newEvent = newEvent;
-            this.prevEvent = prevEvent;
+        public MockProfileAction(String newEv, String prev) {
+            newEvent = newEv;
+            prevEvent = prev;
             thrownException = null;
         }
         
@@ -119,7 +119,7 @@ public class AbstractProfileActionTest {
 
             executed = true;
             
-            final PreviousEventContext prevCtx = profileRequestContext.getSubcontext(PreviousEventContext.class, false);
+            final PreviousEventContext<?> prevCtx = profileRequestContext.getSubcontext(PreviousEventContext.class, false);
             if (prevEvent != null) {
                 if (prevCtx == null || !prevCtx.getEvent().equals(prevEvent)) {
                     org.opensaml.profile.action.ActionSupport.buildEvent(profileRequestContext, "InvalidPreviousEvent");

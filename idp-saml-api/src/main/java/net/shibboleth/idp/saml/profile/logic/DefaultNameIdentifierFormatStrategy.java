@@ -134,10 +134,9 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
             if (fromMetadata.isEmpty()) {
                 log.debug("No formats specified in configuration or in metadata, returning default");
                 return Collections.singletonList(defaultFormat);
-            } else {
-                log.debug("Configuration did not specify any formats, relying on metadata alone");
-                return fromMetadata;
             }
+            log.debug("Configuration did not specify any formats, relying on metadata alone");
+            return fromMetadata;
         } else if (fromMetadata.isEmpty()) {
             log.debug("Metadata did not specify any formats, relying on configuration alone");
             return fromConfig;

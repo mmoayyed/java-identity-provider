@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
@@ -57,50 +58,47 @@ public class UsernamePrincipalSerializer extends AbstractPrincipalSerializer<Str
     @Nonnull private final Logger log = LoggerFactory.getLogger(UsernamePrincipalSerializer.class);
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof UsernamePrincipal;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        gen.writeStartObject()
-            .write(USERNAME_FIELD, principal.getName())
-            .writeEnd();
-        gen.close();
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
+            gen.writeStartObject()
+                .write(USERNAME_FIELD, principal.getName())
+                .writeEnd();
+        }
         return sink.toString();
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public UsernamePrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing UsernamePrincipal");
-        }
-        final JsonString str = ((JsonObject) st).getJsonString(USERNAME_FIELD);
-        if (str != null) {
-            final String username = str.getString();
-            if (!Strings.isNullOrEmpty(username)) {
-                return new UsernamePrincipal(username);
+        
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
+            
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing UsernamePrincipal");
             }
+            
+            final JsonString str = ((JsonObject) st).getJsonString(USERNAME_FIELD);
+            if (str != null) {
+                final String username = str.getString();
+                if (!Strings.isNullOrEmpty(username)) {
+                    return new UsernamePrincipal(username);
+                }
+            }
+            return null;
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing UsernamePrincipal", e);
         }
-        return null;
     }
 
 }

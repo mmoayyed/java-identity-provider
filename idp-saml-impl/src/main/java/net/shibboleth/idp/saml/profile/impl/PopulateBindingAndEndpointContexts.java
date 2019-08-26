@@ -510,7 +510,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * 
      * @return criterion to give to resolver
      */
-    @Nonnull private EndpointCriterion buildEndpointCriterion(@Nonnull @NotEmpty final String unverifiedBinding) {
+    @Nonnull private EndpointCriterion<?> buildEndpointCriterion(@Nonnull @NotEmpty final String unverifiedBinding) {
         final Endpoint endpoint = (Endpoint) endpointBuilder.buildObject(endpointType);
         
         if (inboundMessage instanceof IdPInitiatedSSORequest) {
@@ -538,11 +538,11 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 endpoint.setBinding(unverifiedBinding);
                 log.debug("{} Defaulting binding in \"unverified\" request to {}", getLogPrefix(), unverifiedBinding);
             }
-            return new EndpointCriterion(endpoint, true);
-        } else {
-            // Here we only skip endpoint validation if the skip flag has been set.
-            return new EndpointCriterion(endpoint, skipValidationSinceSigned);
+            return new EndpointCriterion<>(endpoint, true);
         }
+        
+        // Here we only skip endpoint validation if the skip flag has been set.
+        return new EndpointCriterion<>(endpoint, skipValidationSinceSigned);
     }
     
 }

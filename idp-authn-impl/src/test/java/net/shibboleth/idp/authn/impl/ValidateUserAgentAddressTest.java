@@ -34,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.net.IPRange;
 
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -74,7 +73,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
@@ -84,7 +83,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
@@ -103,7 +102,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("PasswordAuthentication")));
         ac.addSubcontext(rpc, true);
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -122,7 +121,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("UserAgentAuthentication")));
         ac.addSubcontext(rpc, true);
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -131,7 +130,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
     
-    private void doExtract(ProfileRequestContext prc) throws ComponentInitializationException {
+    private void doExtract() throws ComponentInitializationException {
         final ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

@@ -53,18 +53,18 @@ public class FlowDescriptorLookupFunctionTest {
         pic.setAttemptedFlow(new ConsentFlowDescriptor());
 
         final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(prc);
 
-        Assert.assertTrue(flow instanceof ConsentFlowDescriptor);
+        Assert.assertNotNull(flow);
     }
 
     @Test public void testLookupChild() {
         pic.setAttemptedFlow(new ConsentFlowDescriptor());
 
         final FlowDescriptorLookupFunction<AttributeReleaseFlowDescriptor> strategy =
-                new FlowDescriptorLookupFunction(AttributeReleaseFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(AttributeReleaseFlowDescriptor.class);
 
         final AttributeReleaseFlowDescriptor flow = strategy.apply(prc);
 
@@ -75,17 +75,17 @@ public class FlowDescriptorLookupFunctionTest {
         pic.setAttemptedFlow(new AttributeReleaseFlowDescriptor());
 
         final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(prc);
 
-        Assert.assertTrue(flow instanceof ConsentFlowDescriptor);
+        Assert.assertNotNull(flow);
     }
 
     @Test public void testNullInput() {
 
         final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(null);
 
@@ -96,7 +96,7 @@ public class FlowDescriptorLookupFunctionTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
         final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(null);
 
@@ -106,7 +106,7 @@ public class FlowDescriptorLookupFunctionTest {
     @Test public void testNoAttemptedFlow() {
 
         final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(null);
 

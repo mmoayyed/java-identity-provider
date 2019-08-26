@@ -138,9 +138,8 @@ public final class MultiRelyingPartyContext extends BaseContext {
         
         if (relyingPartyIterator != null) {
             return ((RelyingPartyContextIterator) relyingPartyIterator).current;
-        } else {
-            return null;
         }
+        return null;
     }
     
     /**

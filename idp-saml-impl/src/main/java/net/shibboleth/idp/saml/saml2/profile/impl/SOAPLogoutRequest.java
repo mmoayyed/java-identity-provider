@@ -257,7 +257,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
-            final InOutOperationContext opContext = new SAMLSOAPClientContextBuilder()
+            final InOutOperationContext opContext = new SAMLSOAPClientContextBuilder<>()
                     .setOutboundMessage(logoutRequest)
                     .setProtocol(SAMLConstants.SAML20P_NS)
                     .setPipelineName(soapPipelineName)

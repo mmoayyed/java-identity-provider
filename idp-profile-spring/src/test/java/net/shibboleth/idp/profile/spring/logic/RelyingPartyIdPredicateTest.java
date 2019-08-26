@@ -42,8 +42,7 @@ public class RelyingPartyIdPredicateTest {
     
     @Test
     public void constructors() {
-        GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        try {
+        try (final GenericApplicationContext context = new FilesystemGenericApplicationContext()) {
             context.setDisplayName("ApplicationContext: Matcher");
             SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -81,8 +80,6 @@ public class RelyingPartyIdPredicateTest {
             Assert.assertTrue(testCandidate(bean, "Single"));
             Assert.assertTrue(testCandidate(bean, "Double"));
             Assert.assertTrue(testCandidate(bean, "Elephant"));
-        } finally {
-            context.close();
         }
     }
 

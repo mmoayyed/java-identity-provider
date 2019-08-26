@@ -106,9 +106,8 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
 
             if (attributes.isEmpty()) {
                 return null;
-            } else {
-                return attributes;
             }
+            return attributes;
         } catch (final SQLException e) {
             throw new ResolutionException("Error reading data from result set", e);
         }

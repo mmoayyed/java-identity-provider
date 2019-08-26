@@ -123,9 +123,8 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         final Iterator<RelyingPartyConfiguration> results = resolve(criteria).iterator();
         if (results.hasNext()) {
             return results.next();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -138,9 +137,8 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         final ProfileRequestContext prc = buildContext(criteria);
         if (prc != null) {
             return delegate.resolve(prc);
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
         
     }
 
@@ -192,9 +190,8 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
                 metadataContext.setRoleDescriptor(roleDescriptor);
             }
             return prc;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

@@ -31,6 +31,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -88,7 +89,6 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         if (principal instanceof PasswordPrincipal) {
             if (sealer == null) {
@@ -96,13 +96,11 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
                 return false;
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         
         if (sealer == null) {
@@ -110,8 +108,7 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
         }
         
         final StringWriter sink = new StringWriter(32);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        try {
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
             gen.writeStartObject()
                .write(PASSWORD_FIELD, sealer.wrap(principal.getName(),
                        Instant.now().plus(Duration.ofDays(365))))
@@ -119,12 +116,10 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
         } catch (final DataSealerException e) {
             throw new IOException(e);
         }
-        gen.close();
         return sink.toString();
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         if (JSON_PATTERN.matcher(value).matches()) {
             if (sealer == null) {
@@ -132,43 +127,40 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
                 return false;
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public PasswordPrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
         
         if (sealer == null) {
             throw new IOException("No DataSealer was provided, unable to support PasswordPrincipal deserialization");
         }
 
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing PasswordPrincipal");
-        }
-        final JsonObject obj = (JsonObject) st;
-        final JsonString str = obj.getJsonString(PASSWORD_FIELD);
-        if (str != null) {
-            if (!Strings.isNullOrEmpty(str.getString())) {
-                try {
-                    return new PasswordPrincipal(sealer.unwrap(str.getString()));
-                } catch (final DataSealerException e) {
-                    throw new IOException(e);
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
+            
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing PasswordPrincipal");
+            }
+            
+            final JsonObject obj = (JsonObject) st;
+            final JsonString str = obj.getJsonString(PASSWORD_FIELD);
+            if (str != null) {
+                if (!Strings.isNullOrEmpty(str.getString())) {
+                    try {
+                        return new PasswordPrincipal(sealer.unwrap(str.getString()));
+                    } catch (final DataSealerException e) {
+                        throw new IOException(e);
+                    }
                 }
-            } else {
                 log.warn("Skipping null/empty PasswordPrincipal");
             }
+            return null;
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing PasswordPincipal", e);
         }
-        return null;
     }
 
     /**

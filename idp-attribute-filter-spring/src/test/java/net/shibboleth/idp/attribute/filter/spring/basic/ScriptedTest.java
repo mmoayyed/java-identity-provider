@@ -96,7 +96,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         
         final ScriptedPolicyRule what = (ScriptedPolicyRule) getPolicyRule(getScript());
         
-        final Map custom = (Map) what.getCustomObject();
+        final Map<?,?> custom = (Map<?,?>) what.getCustomObject();
      
         assertEquals(custom.size(), 1);
         assertEquals(custom.get("bar"), "foo");

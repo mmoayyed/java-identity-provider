@@ -228,7 +228,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
 
         // Read back account state. No state obviously means no lockout, but in the case of errors
         // that does fail open. Of course, in-memory won't fail...
-        StorageRecord sr = null;
+        StorageRecord<?> sr = null;
         try {
             sr = storageService.read(getId(), key);
         } catch (final IOException e) {
@@ -256,9 +256,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
                         doIncrement(profileRequestContext, key, 10);
                     }
                     return true;
-                } else {
-                    log.debug("Lockout for '{}' has elapsed", key);
                 }
+                log.debug("Lockout for '{}' has elapsed", key);
             } else {
                 log.debug("Invalid attempts counter for '{}' has only reached {}", key, counter);
             }
@@ -289,9 +288,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
                 log.debug("Clearing lockout state for '{}'", key);
                 storageService.delete(getId(), key);
                 return true;
-            } else {
-                log.warn("No lockout key returned for request");
             }
+            log.warn("No lockout key returned for request");
         } catch (final IOException e) {
             log.error("Error deleting lockout entry", e);
         }
@@ -320,7 +318,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         log.debug("Reading account lockout data for '{}'", key);
         
         int counter = 0;
-        StorageRecord sr = null;
+        StorageRecord<?> sr = null;
         try {
             sr = storageService.read(getId(), key);
             if (sr != null) {

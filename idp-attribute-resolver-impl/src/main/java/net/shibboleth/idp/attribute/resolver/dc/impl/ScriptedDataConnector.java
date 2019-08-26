@@ -279,7 +279,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
                 throw new ScriptException("Output was of the wrong type");
             }
 
-            final Collection outputCollection = (Collection) res;
+            final Collection<?> outputCollection = (Collection<?>) res;
             final Map<String, IdPAttribute> outputMap = new HashMap<>(outputCollection.size());
             for (final Object o : outputCollection) {
                 if (o instanceof IdPAttribute) {

@@ -95,9 +95,8 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
     protected String getTaskTimerRef(final Element element) {
         if (element.hasAttributeNS(null, "taskTimerRef")) {
             return StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef"));
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

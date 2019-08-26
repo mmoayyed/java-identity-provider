@@ -90,7 +90,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
         }
 
         try {
-            final StorageRecord record = idStore.read(TransientIdParameters.CONTEXT, transientId);
+            final StorageRecord<?> record = idStore.read(TransientIdParameters.CONTEXT, transientId);
             if (null == record) {
                 log.info("{} Could not find transient identifier", getLogPrefix());
                 return null;

@@ -52,10 +52,10 @@ public class GSSAcceptorLoginModule {
     @Nullable private LoginModule krbModule;
 
     /** Hashtable to hold state of the JAAS login module. */
-    @Nonnull private Map<String, String> state = new HashMap<String, String>();
+    @Nonnull private Map<String, String> state = new HashMap<>();
 
     /** Options for the JAAS login module. */
-    @Nonnull private Map<String, String> options = new HashMap<String, String>();
+    @Nonnull private Map<String, String> options = new HashMap<>();
 
     /** The realm settings. */
     @Nonnull private KerberosRealmSettings realm;

@@ -147,9 +147,8 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
         @Override protected BasicX509CredentialNameEvaluator createInstance() throws Exception {
             if (trustedNameCheckEnabled) {
                 return new BasicX509CredentialNameEvaluator();
-            } else {
-                return null;
             }
+            return null;
         }
     }
 }

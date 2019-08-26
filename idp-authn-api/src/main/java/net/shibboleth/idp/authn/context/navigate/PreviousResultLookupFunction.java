@@ -30,13 +30,11 @@ import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 public class PreviousResultLookupFunction implements ContextDataLookupFunction<AuthenticationContext,Boolean> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Boolean apply(@Nullable final AuthenticationContext input) {
         if (input != null && input.getAuthenticationResult() != null) {
             return input.getAuthenticationResult().isPreviousResult();
-        } else {
-            return null;
         }
+        return null;
     }
 
 }

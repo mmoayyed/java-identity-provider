@@ -366,9 +366,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             if (libertySSOSEndpointURL != null) {
                 log.debug("Using Liberty SSOS endpoint URL resolved via strategy: {}", libertySSOSEndpointURL);
                 return;
-            } else {
-                log.debug("Liberty SSOS endpoint URL strategy was unable to resolve a value");
             }
+            log.debug("Liberty SSOS endpoint URL strategy was unable to resolve a value");
         }
         log.debug("No effective Liberty SSOS endpoint URL could be determined");
     }
@@ -585,24 +584,22 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
                     if (response.getAssertions().isEmpty()) {
                         log.debug("Outbound Response contained no Assertions, nothing to decorate");
                         return Collections.emptyList();
-                    } else { 
-                        for (final Assertion assertion : response.getAssertions()) {
-                            if (!assertion.getAuthnStatements().isEmpty()) {
-                                log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
-                                return Collections.singletonList(assertion);
-                            }
-                        }
-                        log.debug("Found no Assertion with AuthnStatement in outbound Response, returning first");
-                        return Collections.singletonList(response.getAssertions().get(0));
                     }
+                    for (final Assertion assertion : response.getAssertions()) {
+                        if (!assertion.getAuthnStatements().isEmpty()) {
+                            log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
+                            return Collections.singletonList(assertion);
+                        }
+                    }
+                    log.debug("Found no Assertion with AuthnStatement in outbound Response, returning first");
+                    return Collections.singletonList(response.getAssertions().get(0));
                 } else {
                     log.debug("Found no Assertion to decorate");
                     return null;
                 }
-            } else {
-                log.debug("Input ProfileRequestContext or outbound MessageContext was null");
-                return null;
             }
+            log.debug("Input ProfileRequestContext or outbound MessageContext was null");
+            return null;
         }
         
     }
@@ -628,10 +625,9 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
                         LibertyConstants.DEFAULT_SSOS_ENDPOINT_URL_PORT,
                         request.getServletContext().getContextPath() 
                             + LibertyConstants.DEFAULT_SSOS_ENDPOINT_URL_RELATIVE_PATH);
-            } else {
-                log.debug("Input HttpServletRequest was null");
-                return null;
             }
+            log.debug("Input HttpServletRequest was null");
+            return null;
         }
     }
 }

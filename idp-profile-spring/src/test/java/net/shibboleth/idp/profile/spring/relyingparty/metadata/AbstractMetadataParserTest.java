@@ -107,7 +107,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         }
     }
     
-    protected ApplicationContext getApplicationContext(final String contextName, final PropertySource propSource, final String... files)
+    protected ApplicationContext getApplicationContext(final String contextName, final PropertySource<?> propSource, final String... files)
             throws IOException {
         final Resource[] resources = new Resource[files.length];
 
@@ -141,7 +141,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         return getApplicationContext(contextName, null, files);
     }
 
-    protected <T> T getBean(final Class<T> claz, final PropertySource propSource, final String... files) throws IOException {
+    protected <T> T getBean(final Class<T> claz, final PropertySource<?> propSource, final String... files) throws IOException {
         final ApplicationContext context = getApplicationContext(claz.getCanonicalName(), propSource, files);
 
         if (context.containsBean("shibboleth.ParserPool")) {

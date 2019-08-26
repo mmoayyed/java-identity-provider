@@ -143,7 +143,7 @@ public class TemplateAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final IdPAttribute val = attr.resolve(context);
-        final Collection results = val.getValues();
+        final Collection<?> results = val.getValues();
 
         assertEquals(results.size(), 0, "Templated value count");
 
@@ -210,7 +210,7 @@ public class TemplateAttributeTest {
         resolver.resolveAttributes(context);
 
         final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
-        final Collection results = a.getValues();
+        final Collection<?> results = a.getValues();
         assertEquals(results.size(), 1, "Templated value count");
         assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
 
@@ -255,7 +255,7 @@ public class TemplateAttributeTest {
         resolver.resolveAttributes(context);
 
         final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
-        final Collection results = a.getValues();
+        final Collection<?> results = a.getValues();
         assertEquals(results.size(), 2, "Templated value count");
         String s =
                 "Att " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + "-"
@@ -299,7 +299,7 @@ public class TemplateAttributeTest {
         resolver.resolveAttributes(context);
 
         final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
-        final Collection results = a.getValues();
+        final Collection<?> results = a.getValues();
         assertEquals(results.size(), 2, "Templated value count");
         assertTrue(results.contains(new StringAttributeValue("Att ")), "First Match");
         assertTrue(results.contains(new StringAttributeValue("Att ${at1}")), "Second Match");

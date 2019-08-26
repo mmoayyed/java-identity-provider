@@ -282,10 +282,9 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
             if (DelegationRestrictionType.TYPE_NAME.equals(conditionChild.getSchemaType())) {
                 if (conditionChild instanceof DelegationRestrictionType) {
                     return (DelegationRestrictionType) conditionChild;
-                } else {
-                    log.warn("Saw Condition of xsi:type DelegationRestrictionType, but incorrect class instance: {}",
-                            conditionChild.getClass().getName());
                 }
+                log.warn("Saw Condition of xsi:type DelegationRestrictionType, but incorrect class instance: {}",
+                        conditionChild.getClass().getName());
             }
         }
         return null;

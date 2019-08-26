@@ -37,7 +37,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 public abstract class HTTPMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Default caching type. */
-    private static final Class DEFAULT_CACHING_CLASS = HttpClientFactoryBean.class;
+    private static final Class<?> DEFAULT_CACHING_CLASS = HttpClientFactoryBean.class;
 
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);

@@ -172,9 +172,8 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
             while (collisions < 5) {
                 if (idStore.create(TransientIdParameters.CONTEXT, id, principalTokenId, expiration.toEpochMilli())) {
                     return id;
-                } else {
-                    ++collisions;
                 }
+                ++collisions;
             }
         
             throw new SAMLException("Exceeded allowable number of collisions");

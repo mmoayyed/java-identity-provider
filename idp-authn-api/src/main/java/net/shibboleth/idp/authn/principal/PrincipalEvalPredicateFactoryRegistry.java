@@ -76,17 +76,16 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         final String trimmed =
                 Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
-        final Pair key = new Pair<>(principalType, trimmed);
+        final Pair<?,?> key = new Pair<>(principalType, trimmed);
         final PrincipalEvalPredicateFactory factory = registry.get(key);
         if (factory != null) {
             log.debug("Registry located predicate factory of type '{}' for principal type '{}' and operator '{}'",
                     factory.getClass().getName(), principalType, trimmed);
             return factory;
-        } else {
-            log.debug("Registry failed to locate predicate factory for principal type '{}' and operator '{}'",
-                    principalType, trimmed);
-            return null;
         }
+        log.debug("Registry failed to locate predicate factory for principal type '{}' and operator '{}'",
+                principalType, trimmed);
+        return null;
     }
     
     /**

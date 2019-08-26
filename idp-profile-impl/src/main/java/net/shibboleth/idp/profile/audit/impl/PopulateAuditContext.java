@@ -253,10 +253,10 @@ public class PopulateAuditContext extends AbstractProfileAction {
             final Object values = entry.getValue().apply(profileRequestContext);
             if (values != null) {
                 if (values instanceof Collection) {
-                    if (!((Collection) values).isEmpty()) {
-                        log.trace("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
-                                entry.getKey());
-                        for (final Object value : (Collection) values) {
+                    if (!((Collection<?>) values).isEmpty()) {
+                        log.trace("{} Adding {} value(s) for field '{}'", getLogPrefix(),
+                                ((Collection<?>) values).size(), entry.getKey());
+                        for (final Object value : (Collection<?>) values) {
                             addField(entry.getKey(), value);
                         }
                     }

@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 /** {@link PreferExplicitOrderComparator} unit test. */
 public class PreferExplicitOrderComparatorTest {
 
-    private Comparator c;
+    private Comparator<String> c;
 
     private List<String> valuesInOrder;
 
@@ -86,7 +86,7 @@ public class PreferExplicitOrderComparatorTest {
 
     @Test public void testExplicitOrderingWithKnownValuesOnly() {
 
-        toBeSorted = new ArrayList(valuesInOrder);
+        toBeSorted = new ArrayList<>(valuesInOrder);
 
         Collections.shuffle(toBeSorted);
 

@@ -46,13 +46,11 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         final Document doc = parserPool.parse(resource.getInputStream());
             final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
         
-        final GenericApplicationContext context = new GenericApplicationContext();
-        
-        context.registerBeanDefinition("ElementTTL", ccp.createCache(null));
-        context.refresh();
-        context.getBean("ElementTTL", Cache.class);
-        
-        context.close();
+        try (final GenericApplicationContext context = new GenericApplicationContext()) {
+            context.registerBeanDefinition("ElementTTL", ccp.createCache(null));
+            context.refresh();
+            context.getBean("ElementTTL", Cache.class);
+        }
     }
 
     @Test public void access() throws XMLParserException, IOException {
@@ -61,13 +59,11 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         final Document doc = parserPool.parse(resource.getInputStream());
             final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
         
-        final GenericApplicationContext context = new GenericApplicationContext();
-        
-        context.registerBeanDefinition("Access", ccp.createCache(null));
-        context.refresh();
-        context.getBean("Access", Cache.class);
-        
-        context.close();
+        try (final GenericApplicationContext context = new GenericApplicationContext()) {
+            context.registerBeanDefinition("Access", ccp.createCache(null));
+            context.refresh();
+            context.getBean("Access", Cache.class);
+        }
     }
 
     @Test public void write() throws XMLParserException, IOException {
@@ -76,13 +72,11 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         final Document doc = parserPool.parse(resource.getInputStream());
             final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
         
-        final GenericApplicationContext context = new GenericApplicationContext();
-        
-        context.registerBeanDefinition("Write", ccp.createCache(null));
-        context.refresh();
-        context.getBean("Write", Cache.class);
-        
-        context.close();
+        try (final GenericApplicationContext context = new GenericApplicationContext()) {
+            context.registerBeanDefinition("Write", ccp.createCache(null));
+            context.refresh();
+            context.getBean("Write", Cache.class);
+        }
     }
 
     @Test public void both() throws XMLParserException, IOException {
@@ -91,13 +85,11 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         final Document doc = parserPool.parse(resource.getInputStream());
             final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
         
-        final GenericApplicationContext context = new GenericApplicationContext();
-        
-        context.registerBeanDefinition("Write", ccp.createCache(null));
-        context.refresh();
-        context.getBean("Write", Cache.class);
-        
-        context.close();
+        try (final GenericApplicationContext context = new GenericApplicationContext()) {
+            context.registerBeanDefinition("Write", ccp.createCache(null));
+            context.refresh();
+            context.getBean("Write", Cache.class);
+        }
     }
 
 }

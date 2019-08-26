@@ -69,9 +69,8 @@ public class SpringStatusMessageLookupFunctionTest {
         public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
             if (code.equals("Mappable")) {
                 return "Mapped";
-            } else {
-                return defaultMessage;
             }
+            return defaultMessage;
         }
 
         /** {@inheritDoc} */

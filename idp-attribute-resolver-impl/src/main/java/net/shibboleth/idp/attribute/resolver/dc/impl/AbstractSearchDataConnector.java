@@ -50,7 +50,7 @@ import com.google.common.cache.Cache;
  * @param <T1> type of executable search
  * @param <T2> type of mapping strategy
  */
-public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2 extends MappingStrategy>
+public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2 extends MappingStrategy<?>>
     extends AbstractDataConnector {
 
     /** Class logger. */

@@ -336,7 +336,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         // Sanity check
         Assert.assertEquals(servletRequest.getRequestURL().toString(), "https://idp.example.org/idp/profile/SAML2/Redirect/SSO");
         
-        Pair<ProfileRequestContext, HttpServletRequest> input = new Pair<>(prc, (HttpServletRequest)servletRequest);
+        Pair<ProfileRequestContext, HttpServletRequest> input = new Pair<>(prc, servletRequest);
         
         LibertySSOSEndpointURLStrategy strategy = new DecorateDelegatedAssertion.LibertySSOSEndpointURLStrategy();
         Assert.assertEquals(strategy.apply(input), ssosURL);

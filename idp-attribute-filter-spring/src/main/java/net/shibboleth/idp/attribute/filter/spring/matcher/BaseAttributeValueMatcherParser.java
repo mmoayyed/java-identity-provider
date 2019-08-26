@@ -73,16 +73,13 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
         if (isPolicyRule(element)) {
             if (hasAttributeId(element)) {
                 return PolicyFromMatcherId.class;
-            } else {
-                return PolicyFromMatcher.class;
             }
-        } else {
-            if (hasAttributeId(element)) {
-                return MatcherFromPolicy.class;
-            } else {
-                return getNativeBeanClass();
-            }
+            return PolicyFromMatcher.class;
         }
+        if (hasAttributeId(element)) {
+            return MatcherFromPolicy.class;
+        }
+        return getNativeBeanClass();
     }
 
     /**

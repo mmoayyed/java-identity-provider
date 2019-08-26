@@ -68,8 +68,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
 
     protected <Type> Type getBean(String fileName, Class<Type> claz) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
-        try {
+        try (final GenericApplicationContext context = new GenericApplicationContext()) {
             SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(context);
     
@@ -82,13 +81,11 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
             Assert.assertEquals(beans.size(), 1);
     
             return beans.iterator().next();
-        } finally {
-            context.close();
         }
     }
         
     @BeforeClass public void setup() {
-        registry = new MockReloadableService(getBean(PATH + "saml1Mapper.xml", AttributeTranscoderRegistryImpl.class));
+        registry = new MockReloadableService<>(getBean(PATH + "saml1Mapper.xml", AttributeTranscoderRegistryImpl.class));
     }
     
     @BeforeMethod public void setUpMethod() throws ComponentInitializationException, XMLParserException, UnmarshallingException {

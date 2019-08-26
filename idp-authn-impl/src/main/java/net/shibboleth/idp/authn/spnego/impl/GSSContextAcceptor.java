@@ -247,7 +247,7 @@ public class GSSContextAcceptor {
      */
     @Nonnull private GSSCredential getServerCredential(@Nonnull final Subject subject)
             throws PrivilegedActionException {
-        final PrivilegedExceptionAction<GSSCredential> action = new PrivilegedExceptionAction<GSSCredential>() {
+        final PrivilegedExceptionAction<GSSCredential> action = new PrivilegedExceptionAction<>() {
             public GSSCredential run() throws GSSException {
                 final GSSManager manager = GSSManager.getInstance();
                 final GSSCredential newServerCreds =

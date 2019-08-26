@@ -104,9 +104,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
         final Iterator<PKIXValidationInformation> pkixInfoIter = resolve(criteriaSet).iterator();
         if (pkixInfoIter.hasNext()) {
             return pkixInfoIter.next();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -301,9 +300,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
                 log.debug("Resolved cached PKIXValidationInformation from KeyAuthority object metadata");
                 accumulator.addAll(cachedPKIXInfo);
                 return;
-            } else {
-                log.debug("Found no cached PKIXValidationInformation in KeyAuthority object metadata, resolving XML");
             }
+            log.debug("Found no cached PKIXValidationInformation in KeyAuthority object metadata, resolving XML");
         } finally {
             // Note: with the standard Java ReentrantReadWriteLock impl, you can not upgrade a read lock
             // to a write lock! So have to release here and then acquire the write lock below.

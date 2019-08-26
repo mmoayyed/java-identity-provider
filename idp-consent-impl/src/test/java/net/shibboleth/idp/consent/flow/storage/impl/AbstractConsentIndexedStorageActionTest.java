@@ -39,7 +39,7 @@ public abstract class AbstractConsentIndexedStorageActionTest extends AbstractCo
     }
 
     protected Collection<String> readStorageKeysFromIndex() throws IOException {
-        final StorageRecord index = getMemoryStorageService().read("context", "_index");
+        final StorageRecord<?> index = getMemoryStorageService().read("context", "_index");
         Assert.assertNotNull(index);
 
         final CollectionSerializer collectionSerializer =

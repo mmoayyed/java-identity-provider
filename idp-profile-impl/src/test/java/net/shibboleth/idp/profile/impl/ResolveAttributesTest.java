@@ -73,7 +73,7 @@ public class ResolveAttributesTest {
         ad1.initialize();
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(resolver));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService<>(resolver));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -111,7 +111,7 @@ public class ResolveAttributesTest {
         attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
         prc.addSubcontext(attributeResolutionCtx);
 
-        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(resolver));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService<>(resolver));
         action.initialize();
 
         Event event = action.execute(src);
@@ -166,7 +166,7 @@ public class ResolveAttributesTest {
         ad1.initialize();
         resolver.initialize();
 
-        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(resolver));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService<>(resolver));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -186,7 +186,7 @@ public class ResolveAttributesTest {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
-        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService(null));
+        final ResolveAttributes action = new ResolveAttributes(new MockReloadableService<>(null));
         action.setMaskFailures(false);
         action.initialize();
 

@@ -53,7 +53,7 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     /** {@inheritDoc} */
     @Override
     public Object getNativeValue() {
-        return new Pair<String, String>(getValue(), scope);
+        return new Pair<>(getValue(), scope);
     }
 
     /**

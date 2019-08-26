@@ -91,7 +91,7 @@ public class PrescopedAtributeTest {
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(f.size(), 2);
         assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Data")));
@@ -182,7 +182,7 @@ public class PrescopedAtributeTest {
         attrDef.initialize();
         final IdPAttribute result = attrDef.resolve(resolutionContext);
         
-        final Collection f = result.getValues();
+        final Collection<?> f = result.getValues();
 
         assertEquals(f.size(), 2);
         assertTrue(f.contains(new ScopedStringAttributeValue("one", "two")));
@@ -217,7 +217,7 @@ public class PrescopedAtributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         // 2 empty attribute values are produced, but they get de-duped into a single value
         assertEquals(f.size(), 1);

@@ -114,8 +114,8 @@ public abstract class AbstractIdPSession implements IdPSession {
         creationInstant = Constraint.isNotNull(creationTime, "Creation time cannot be null");
         lastActivityInstant = creationTime;
 
-        authenticationResults = new ConcurrentHashMap(5);
-        spSessions = new ConcurrentHashMap(10);
+        authenticationResults = new ConcurrentHashMap<>(5);
+        spSessions = new ConcurrentHashMap<>(10);
     }
 
     /** {@inheritDoc} */
@@ -277,9 +277,8 @@ public abstract class AbstractIdPSession implements IdPSession {
         // Record may be actually present, or not yet loaded.
         if (authenticationResults.remove(result.getAuthenticationFlowId(), Optional.of(result))) {
             return true;
-        } else {
-            return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.absent());
         }
+        return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.absent());
     }
 
     /** {@inheritDoc} */
@@ -346,9 +345,8 @@ public abstract class AbstractIdPSession implements IdPSession {
         // Record may be actually present, or not yet loaded.
         if (spSessions.remove(spSession.getId(), Optional.of(spSession))) {
             return true;
-        } else {
-            return spSessions.remove(spSession.getId(), Optional.absent());
         }
+        return spSessions.remove(spSession.getId(), Optional.absent());
     }
 
     /** {@inheritDoc} */

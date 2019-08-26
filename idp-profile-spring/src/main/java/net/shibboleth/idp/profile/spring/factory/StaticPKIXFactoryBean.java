@@ -197,9 +197,8 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
         
         if (checkNames) {
             return new PKIXX509CredentialTrustEngine(resolver);
-        } else {
-            return new PKIXX509CredentialTrustEngine(resolver, null);
         }
+        return new PKIXX509CredentialTrustEngine(resolver, null);
     }
     
 }

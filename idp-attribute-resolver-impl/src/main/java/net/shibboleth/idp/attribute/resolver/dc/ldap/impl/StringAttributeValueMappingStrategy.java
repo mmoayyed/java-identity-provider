@@ -102,9 +102,8 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
         log.trace("Mapping strategy mapped {} to {}", results, attributes);
         if (attributes.isEmpty()) {
             return null;
-        } else {
-            return attributes;
         }
+        return attributes;
     }
  // Checkstyle: CyclomaticComplexity ON
     

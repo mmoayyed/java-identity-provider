@@ -56,8 +56,8 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
         generator = gen;
     }
 
-    public void setAttributeName(@Nullable final String attributeName) {
-        this.attributeName = attributeName;
+    public void setAttributeName(@Nullable final String name) {
+        attributeName = name;
     }
 
     private NameID encode(@Nonnull final IdPAttribute attribute) {
@@ -67,7 +67,8 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
             return null;
         }
         final SAMLObjectBuilder<NameID> identifierBuilder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(NameID.DEFAULT_ELEMENT_NAME);
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);
         final NameID nameId = identifierBuilder.buildObject();
         nameId.setFormat(NameIDType.UNSPECIFIED);
         for (final IdPAttributeValue attrValue : attributeValues) {
@@ -77,14 +78,13 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
             if (attrValue instanceof StringAttributeValue) {
                 final String value = ((StringAttributeValue)attrValue).getValue();
                 // Check for empty or all-whitespace, but don't trim.
-                if (StringSupport.trimOrNull((String) value) == null) {
+                if (StringSupport.trimOrNull(value) == null) {
                     continue;
                 }
-                nameId.setValue((String) value);
+                nameId.setValue(value);
                 return nameId;
-            } else {
-                continue;
             }
+            continue;
         }
         return null;
     }

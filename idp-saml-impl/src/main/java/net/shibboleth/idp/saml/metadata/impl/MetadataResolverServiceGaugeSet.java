@@ -50,11 +50,13 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 /**
  * Additional gauges for metadata resolvers.
  */
-public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet implements MetricSet, MetricFilter {
+public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<MetadataResolver>
+    implements MetricSet, MetricFilter {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataResolverServiceGaugeSet.class);
 
+// Checkstyle: MethodLength OFF
     /**
      * Constructor.
      * 
@@ -68,8 +70,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "update"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
-                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                        return valueGetter(new BiConsumer<Builder<String,Instant>, MetadataResolver>() {
+                            public void accept(final Builder<String,Instant> mapBuilder,
+                                    final MetadataResolver resolver) {
                                 if (resolver instanceof RefreshableMetadataResolver
                                         && ((RefreshableMetadataResolver) resolver).getLastUpdate() != null) {
                                     mapBuilder.put(resolver.getId(),
@@ -84,8 +87,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "refresh"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
-                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                        return valueGetter(new BiConsumer<Builder<String,Instant>, MetadataResolver>() {
+                            public void accept(final Builder<String,Instant> mapBuilder,
+                                    final MetadataResolver resolver) {
                                 if (resolver instanceof RefreshableMetadataResolver
                                         && ((RefreshableMetadataResolver) resolver).getLastRefresh() != null) {
                                     mapBuilder.put(resolver.getId(),
@@ -101,8 +105,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
-                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                        return valueGetter(new BiConsumer<Builder<String,Instant>, MetadataResolver>() {
+                            public void accept(final Builder<String,Instant> mapBuilder,
+                                    final MetadataResolver resolver) {
                                 if (resolver instanceof RefreshableMetadataResolver
                                         && ((RefreshableMetadataResolver) resolver)
                                             .getLastSuccessfulRefresh()  != null) {
@@ -119,8 +124,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        return valueGetter(new BiConsumer<Builder, MetadataResolver>() {
-                            public void accept(final Builder mapBuilder, final MetadataResolver resolver) {
+                        return valueGetter(new BiConsumer<Builder<String,Instant>, MetadataResolver>() {
+                            public void accept(final Builder<String,Instant> mapBuilder,
+                                    final MetadataResolver resolver) {
                                 if (resolver instanceof BatchMetadataResolver
                                         && ((BatchMetadataResolver) resolver).getRootValidUntil() != null) {
                                     mapBuilder.put(resolver.getId(),
@@ -131,6 +137,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                     }
                 });
     }
+// Checkstyle: MethodLength ON
 
     /** Helper Function for map construction.<br/>
      * 
@@ -139,9 +146,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
      * @param consume the thing which does checking and adding the building
      * @return an appropriate map
      */
-    private Map<String,Instant> valueGetter(final BiConsumer<Builder, MetadataResolver> consume) {
-        final Builder mapBuilder = ImmutableMap.<String,Instant>builder();
-        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
+    private Map<String,Instant> valueGetter(final BiConsumer<Builder<String,Instant>, MetadataResolver> consume) {
+        final Builder<String,Instant> mapBuilder = ImmutableMap.builder();
+        final ServiceableComponent<?> component = getService().getServiceableComponent();
         if (component != null) {
             try {
                 // Check type - just in case
@@ -149,7 +156,8 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                     log.warn("{} : Injected Service was not for an Metadata Resolver : ({}) ",
                             getLogPrefix(), component.getComponent().getClass());
                 } else {
-                    for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
+                    for (final MetadataResolver resolver : getMetadataResolvers(
+                            (MetadataResolver) component.getComponent())) {
                         consume.accept(mapBuilder, resolver);
                     }
                 }
@@ -166,23 +174,21 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        final ServiceableComponent component = getService().getServiceableComponent();
+        final ServiceableComponent<?> component = getService().getServiceableComponent();
         if (component != null) {
             try {
                 if (component.getComponent() instanceof MetadataResolver) {
                     return;
-                } else {
-                    log.error("{} : Injected service was not for a MetadataResolver ({}) ",
-                            getLogPrefix(), component.getClass());
-                    throw new ComponentInitializationException("Injected service was not for a MetadataResolver");
                 }
+                log.error("{} : Injected service was not for a MetadataResolver ({}) ",
+                        getLogPrefix(), component.getClass());
+                throw new ComponentInitializationException("Injected service was not for a MetadataResolver");
             } finally {
                 component.unpinComponent();
             }
-        } else {
-            log.debug("{} : Injected service has not initialized sucessfully yet. Skipping type test",
-                    getLogPrefix());
         }
+        log.debug("{} : Injected service has not initialized sucessfully yet. Skipping type test",
+                getLogPrefix());
     }
 
     /** Get all the resolvers rooted in the provider tree (including the root).
@@ -222,9 +228,8 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
         
         if (root instanceof ChainingMetadataResolver) {
             return getAllChildren((ChainingMetadataResolver) root);
-        } else {
-            return Collections.singletonList(root);
         }
+        return Collections.singletonList(root);
     }
 
 }

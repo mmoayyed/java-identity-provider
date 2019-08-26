@@ -191,11 +191,10 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
                 if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
                     return ((BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig())
                             .getMaximumTokenDelegationChainLength(profileRequestContext);
-                } else {
-                    log.debug("Profile config was not BrowserSSOProfileConfiguration, can't evaluate: {}", 
-                            relyingPartyContext.getProfileConfig() != null ? 
-                                    relyingPartyContext.getProfileConfig().getClass().getName() : "null");
                 }
+                log.debug("Profile config was not BrowserSSOProfileConfiguration, can't evaluate: {}", 
+                        relyingPartyContext.getProfileConfig() != null ? 
+                                relyingPartyContext.getProfileConfig().getClass().getName() : "null");
             }
         }
         log.debug("Unable to resolve max delegation chain length from inbound token or profile config, " 
@@ -219,16 +218,15 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
                     final Response response = (Response) outboundMessage;
                     if (response.getAssertions().isEmpty()) {
                         return null;
-                    } else {
-                        for (final Assertion theAssertion : response.getAssertions()) {
-                            if (!theAssertion.getAuthnStatements().isEmpty()) {
-                                log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
-                                return theAssertion;
-                            }
+                    }
+                    for (final Assertion theAssertion : response.getAssertions()) {
+                        if (!theAssertion.getAuthnStatements().isEmpty()) {
+                            log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
+                            return theAssertion;
                         }
-                        log.debug("Found no Assertion with AuthnStatement in outbound Response, returning first");
-                        return response.getAssertions().get(0);
-                    } 
+                    }
+                    log.debug("Found no Assertion with AuthnStatement in outbound Response, returning first");
+                    return response.getAssertions().get(0); 
                 }
             }
             

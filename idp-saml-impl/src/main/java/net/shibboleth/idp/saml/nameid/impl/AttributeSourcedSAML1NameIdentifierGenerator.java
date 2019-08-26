@@ -175,9 +175,8 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                                 nameIdentifier.getFormat())) {
                             log.info("Returning NameIdentifier from XMLObject-valued attribute {}", sourceId);
                             return nameIdentifier;
-                        } else {
-                            log.debug("Attribute {} value was NameIdentifier, but Format did not match", sourceId);
                         }
+                        log.debug("Attribute {} value was NameIdentifier, but Format did not match", sourceId);
                     }
                 }
             }

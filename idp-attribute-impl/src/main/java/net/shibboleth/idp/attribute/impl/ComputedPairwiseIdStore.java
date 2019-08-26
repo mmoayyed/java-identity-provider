@@ -290,22 +290,20 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
                     log.debug("Overriding salt for principal '{}' and relying party '{}'", principalName,
                             relyingPartyId);
                     return s.getBytes();
-                } else {
-                    log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
-                            principalName, relyingPartyId);
-                    return null;
                 }
+                log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
+                        principalName, relyingPartyId);
+                return null;
             } else if (override.containsKey(WILDCARD_OVERRIDE)) {
                 final String s = override.get(WILDCARD_OVERRIDE);
                 if (s != null) {
                     log.debug("Overriding salt for principal '{}' and relying party '{}'", principalName,
                             relyingPartyId);
                     return s.getBytes();
-                } else {
-                    log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
-                            principalName, relyingPartyId);
-                    return null;
                 }
+                log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
+                        principalName, relyingPartyId);
+                return null;
             }
         }
         

@@ -67,7 +67,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
 
-        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -83,7 +83,7 @@ public class FilterAttributesTest {
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
         engine.initialize();
         
-        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -126,7 +126,7 @@ public class FilterAttributesTest {
         attributeCtx.setIdPAttributes(attributes);
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
-        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -188,7 +188,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -247,7 +247,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(new MockReloadableService(engine));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -270,7 +270,7 @@ public class FilterAttributesTest {
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
-        final FilterAttributes action = new FilterAttributes(new MockReloadableService(null));
+        final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(null));
         action.setMaskFailures(false);
         action.initialize();
 

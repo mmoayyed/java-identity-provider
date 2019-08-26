@@ -265,7 +265,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
             }
 
             final Set<IdPAttributeValue> returnValues = new LinkedHashSet<>(attribute.getValues());
-            returnValues.retainAll((Set) result);
+            returnValues.retainAll((Set<?>) result);
             return Collections.unmodifiableSet(returnValues);
         }
 

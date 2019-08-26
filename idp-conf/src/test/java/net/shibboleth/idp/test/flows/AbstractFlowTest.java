@@ -217,7 +217,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * {@link HttpServletRequestResponseContext#loadCurrent(HttpServletRequest, HttpServletResponse)}
      */
     @BeforeMethod public void initializeThreadLocals() {
-        HttpServletRequestResponseContext.loadCurrent((HttpServletRequest) request, (HttpServletResponse) response);
+        HttpServletRequestResponseContext.loadCurrent(request, response);
     }
 
     /**

@@ -161,11 +161,10 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
             if (session != null) {
                 log.debug("{} Got session to propagate logout: {}", getLogPrefix(), session);
                 return true;
-            } else {
-                log.debug("{} No sessions remaining for logout propagation", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, SESSION_NOT_FOUND);
-                return false;
             }
+            log.debug("{} No sessions remaining for logout propagation", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, SESSION_NOT_FOUND);
+            return false;
         }
 
         final RequestContext requestContext = getRequestContext(profileRequestContext);

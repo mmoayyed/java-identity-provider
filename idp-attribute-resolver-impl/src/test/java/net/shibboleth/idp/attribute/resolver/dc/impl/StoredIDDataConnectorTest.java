@@ -183,8 +183,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver = constructResolver(1);
 
         
-        final PairwiseIdDataConnector connector =
-                (PairwiseIdDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
+        final PairwiseIdDataConnector connector = ComputedIDDataConnectorTest.connectorFromResolver(resolver);
         ComponentSupport.initialize(resolver);
         connector.initialize();
         

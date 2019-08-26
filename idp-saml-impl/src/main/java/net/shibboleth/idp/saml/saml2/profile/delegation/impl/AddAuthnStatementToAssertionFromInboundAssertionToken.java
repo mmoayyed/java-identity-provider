@@ -316,9 +316,8 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
                         return SAML2ActionSupport.addAssertionToResponse(
                                 AddAuthnStatementToAssertionFromInboundAssertionToken.this,
                                 (Response) outboundMessage, getIdGenerator(), getIssuerId());
-                    } else {
-                        return ((Response) outboundMessage).getAssertions().get(0);
-                    } 
+                    }
+                    return ((Response) outboundMessage).getAssertions().get(0); 
                 }
             }
             

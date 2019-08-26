@@ -88,7 +88,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
     @Test public void testDefaultNaturalAttributeOrdering() throws Exception {
 
-        final Map<String, IdPAttribute> orderedAttributes = new TreeMap(Ordering.natural());
+        final Map<String, IdPAttribute> orderedAttributes = new TreeMap<>(Ordering.natural());
         orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
 
         action = new PopulateAttributeReleaseContext();
@@ -108,7 +108,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
         final List<String> attributeOrder = Arrays.asList("attribute2", "attribute3", "attribute1");
 
-        final Map<String, IdPAttribute> orderedAttributes = new TreeMap(Ordering.explicit(attributeOrder));
+        final Map<String, IdPAttribute> orderedAttributes = new TreeMap<>(Ordering.explicit(attributeOrder));
         orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
 
         action = new PopulateAttributeReleaseContext();

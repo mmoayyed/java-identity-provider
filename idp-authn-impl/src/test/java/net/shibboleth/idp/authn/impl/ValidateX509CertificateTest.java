@@ -30,7 +30,6 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.credential.CredentialResolver;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.trust.TrustEngine;
@@ -122,7 +121,7 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -150,7 +149,7 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -180,14 +179,14 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        doExtract(prc);
+        doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(ac.getAuthenticationResult());
     }
     
-    private void doExtract(ProfileRequestContext prc) throws ComponentInitializationException, CertificateException {
+    private void doExtract() throws ComponentInitializationException, CertificateException {
         final ExtractX509CertificateFromRequest extract = new ExtractX509CertificateFromRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
 

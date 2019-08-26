@@ -243,19 +243,18 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
                 //
                 if (propagateResolutionExceptions) {
                     throw e;
-                } else {
-                    if (e instanceof NoResultAnErrorResolutionException
-                            || e instanceof MultipleResultAnErrorResolutionException) {
-                        log.debug(
-                                "Resolver plugin '{}' produced the following error but was configured not to propagate",
-                                getId(), e);
-                    } else {
-                        log.error(
-                                "Resolver plugin '{}' produced the following error but was configured not to propagate",
-                                getId(), e);
-                    }
-                    return null;
                 }
+                if (e instanceof NoResultAnErrorResolutionException
+                        || e instanceof MultipleResultAnErrorResolutionException) {
+                    log.debug(
+                            "Resolver plugin '{}' produced the following error but was configured not to propagate",
+                            getId(), e);
+                } else {
+                    log.error(
+                            "Resolver plugin '{}' produced the following error but was configured not to propagate",
+                            getId(), e);
+                }
+                return null;
             }
         } finally {
             if (timerStarted) {
@@ -296,7 +295,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
             return false;
         }
 
-        final AbstractResolverPlugin other = (AbstractResolverPlugin) obj;
+        final AbstractResolverPlugin<?> other = (AbstractResolverPlugin<?>) obj;
         return java.util.Objects.equals(getId(), other.getId());
     }
 

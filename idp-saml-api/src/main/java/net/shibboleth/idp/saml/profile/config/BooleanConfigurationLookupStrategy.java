@@ -62,10 +62,9 @@ public class BooleanConfigurationLookupStrategy extends AbstractMetadataDrivenCo
         final IdPAttributeValue value = values.get(0);
         if (value instanceof StringAttributeValue) {
             return XSBooleanValue.valueOf(((StringAttributeValue) value).getValue()).getValue();
-        } else {
-            log.error("Tag '{}' contained non-string value, returning null");
-            return null;
         }
+        log.error("Tag '{}' contained non-string value, returning null");
+        return null;
     }
     
     /** {@inheritDoc} */
@@ -95,9 +94,8 @@ public class BooleanConfigurationLookupStrategy extends AbstractMetadataDrivenCo
             final String value = ((XSString) object).getValue();
             if (value != null) {
                 return XSBooleanValue.valueOf(value).getValue();
-            } else {
-                return null;
             }
+            return null;
         } else if (object instanceof XSBoolean) {
             final XSBooleanValue value = ((XSBoolean) object).getValue();
             return value != null ? value.getValue() : null;
@@ -110,9 +108,8 @@ public class BooleanConfigurationLookupStrategy extends AbstractMetadataDrivenCo
                 final String value = wc.getTextContent();
                 if (value != null) {
                     return XSBooleanValue.valueOf(value).getValue();
-                } else {
-                    return null;
                 }
+                return null;
             }
         }
         

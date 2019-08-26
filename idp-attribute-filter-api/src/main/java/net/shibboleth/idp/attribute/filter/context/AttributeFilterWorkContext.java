@@ -58,8 +58,8 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
     /** Constructor. */
     public AttributeFilterWorkContext() {
-        permittedValues = new HashMap<String, Set<IdPAttributeValue>>();
-        deniedValues = new HashMap<String, Set<IdPAttributeValue>>();
+        permittedValues = new HashMap<>();
+        deniedValues = new HashMap<>();
     }
 
     /**

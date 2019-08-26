@@ -172,7 +172,8 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     @Nonnull @NonnullElements protected List<String> getStorageKeysFromIndex() throws IOException {
 
-        final StorageRecord storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
+        final StorageRecord<Collection<String>> storageRecord =
+            getStorageService().read(getStorageContext(), getStorageIndexKey());
 
         log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                 getStorageContext(), getStorageIndexKey());
@@ -181,8 +182,8 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             return Collections.emptyList();
         }
 
-        return new ArrayList<>((Collection<String>) storageRecord.getValue(getStorageKeysSerializer(),
-                getStorageContext(), getStorageIndexKey()));
+        return new ArrayList<>(storageRecord.getValue(getStorageKeysSerializer(), getStorageContext(),
+                getStorageIndexKey()));
     }
 
     /**
@@ -194,7 +195,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     protected boolean addKeyToStorageIndex(@Nonnull final String keyToAdd) throws IOException {
 
-        final StorageRecord storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
+        final StorageRecord<?> storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
         log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                 getStorageContext(), getStorageIndexKey());
 
@@ -202,17 +203,17 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             log.debug("{} Creating storage index with key '{}'", getLogPrefix(), keyToAdd);
             return getStorageService().create(getStorageContext(), getStorageIndexKey(),
                     Collections.singletonList(keyToAdd), storageKeysSerializer, null);
-        } else {
-            final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
-            if (keys.add(keyToAdd)) {
-                log.debug("{} Updating storage index by adding key '{}'", getLogPrefix(), keyToAdd);
-                return getStorageService().update(getStorageContext(), getStorageIndexKey(), keys,
-                        storageKeysSerializer, null);
-            } else {
-                log.debug("{} Storage key '{}' already indexed, nothing to do", getLogPrefix(), keyToAdd);
-                return false;
-            }
         }
+        
+        final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
+        if (keys.add(keyToAdd)) {
+            log.debug("{} Updating storage index by adding key '{}'", getLogPrefix(), keyToAdd);
+            return getStorageService().update(getStorageContext(), getStorageIndexKey(), keys,
+                    storageKeysSerializer, null);
+        }
+        
+        log.debug("{} Storage key '{}' already indexed, nothing to do", getLogPrefix(), keyToAdd);
+        return false;
     }
 
     /**
@@ -224,7 +225,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     protected boolean removeKeyFromStorageIndex(@Nonnull final String keyToRemove) throws IOException {
 
-        final StorageRecord storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
+        final StorageRecord<?> storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
         log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                 getStorageContext(), getStorageIndexKey());
 
@@ -232,17 +233,17 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             log.debug("{} No storage record exists with context '{}' and key '{}', nothing to do", getLogPrefix(),
                     getStorageContext(), getStorageIndexKey());
             return false;
-        } else {
-            final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
-            if (keys.remove(keyToRemove)) {
-                log.debug("{} Updating storage index by removing key '{}'", getLogPrefix(), keyToRemove);
-                return getStorageService().update(getStorageContext(), storageIndexKey, keys, storageKeysSerializer,
-                        null);
-            } else {
-                log.debug("{} Storage key '{}' not indexed, nothing to do", getLogPrefix(), keyToRemove);
-                return false;
-            }
         }
+        
+        final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
+        if (keys.remove(keyToRemove)) {
+            log.debug("{} Updating storage index by removing key '{}'", getLogPrefix(), keyToRemove);
+            return getStorageService().update(getStorageContext(), storageIndexKey, keys, storageKeysSerializer,
+                    null);
+        }
+        
+        log.debug("{} Storage key '{}' not indexed, nothing to do", getLogPrefix(), keyToRemove);
+        return false;
     }
 
 //CheckStyle: ReturnCount OFF
@@ -282,7 +283,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         }
 
         if (storageKeysStrategy != null) {
-            final List<String> sortedKeys = storageKeysStrategy.apply(new Pair(profileRequestContext, keys));
+            final List<String> sortedKeys = storageKeysStrategy.apply(new Pair<>(profileRequestContext, keys));
             if (sortedKeys != null) {
                 keys = sortedKeys;
             }

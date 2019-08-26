@@ -56,9 +56,9 @@ public final class AttributeResolverWorkContext extends BaseContext {
 
     /** Constructor. */
     public AttributeResolverWorkContext() {
-        resolvedAttributeDefinitions = new HashMap<String, ResolvedAttributeDefinition>();
+        resolvedAttributeDefinitions = new HashMap<>();
 
-        resolvedDataConnectors = new HashMap<String, ResolvedDataConnector>();
+        resolvedDataConnectors = new HashMap<>();
     }
 
     /**

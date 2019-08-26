@@ -65,7 +65,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     @Nonnull private final Logger log = LoggerFactory.getLogger(SignatureValidationParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class getBeanClass(final Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return SignatureValidationFilter.class;
     }
 

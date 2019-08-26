@@ -47,7 +47,7 @@ public class SAML1Base64AttributeEncoderParserTest extends BaseEncoderDefinition
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML1ByteAttributeTranscoder);
         assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAME), "SAML1_BASE64_ATTRIBUTE_NAME");
         assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAMESPACE), "SAML1_BASE64_ATTRIBUTE_NAME_SPACE");
-        assertEquals(activation, ((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertEquals(activation, ((Predicate<?>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML1AttributeTranscoder.PROP_ENCODE_TYPE, encodeType==null ? false : encodeType);
     }
 
@@ -58,7 +58,7 @@ public class SAML1Base64AttributeEncoderParserTest extends BaseEncoderDefinition
         assertTrue(rule.get(AttributeTranscoderRegistry.PROP_TRANSCODER) instanceof SAML1ByteAttributeTranscoder);
         assertEquals(rule.get(SAML1AttributeTranscoder.PROP_NAME), "Base64_ATTRIBUTE");
         assertNull(rule.get(SAML1AttributeTranscoder.PROP_NAMESPACE));
-        assertFalse(((Predicate) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
+        assertFalse(((Predicate<?>) rule.get(AttributeTranscoderRegistry.PROP_CONDITION)).test(null));
         checkEncodeType(rule, SAML1AttributeTranscoder.PROP_ENCODE_TYPE, true);
     }
     

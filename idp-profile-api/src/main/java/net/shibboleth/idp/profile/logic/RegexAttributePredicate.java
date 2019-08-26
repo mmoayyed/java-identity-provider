@@ -113,7 +113,7 @@ public class RegexAttributePredicate extends AbstractAttributePredicate {
         
         for (final IdPAttributeValue value : attribute.getValues()) {
             if (value instanceof StringAttributeValue) {
-                final Matcher m = pattern.matcher((String) ((StringAttributeValue)value).getValue());
+                final Matcher m = pattern.matcher(((StringAttributeValue)value).getValue());
                 if (m.matches()) {
                     log.debug("Found matching value '{}' in attribute '{}'", m.group(), attributeId);
                     return true;

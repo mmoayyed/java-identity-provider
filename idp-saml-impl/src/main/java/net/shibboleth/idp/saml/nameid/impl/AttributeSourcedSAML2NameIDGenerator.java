@@ -172,9 +172,8 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
                             ((NameID) ((XMLObjectAttributeValue) value).getValue()).getFormat())) {
                         log.info("Returning NameID from XMLObject-valued attribute {}", sourceId);
                         return (NameID) ((XMLObjectAttributeValue) value).getValue();
-                    } else {
-                        log.debug("Attribute {} value was NameID, but Format did not match", sourceId);
                     }
+                    log.debug("Attribute {} value was NameID, but Format did not match", sourceId);
                 }
             }
         }

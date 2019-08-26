@@ -98,7 +98,7 @@ public class ScopedAttributeTest {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         assertEquals(f.size(), 2);
         assertTrue(
@@ -154,7 +154,7 @@ public class ScopedAttributeTest {
 
         final IdPAttribute  result = attrDef.resolve(resolutionContext);
         
-        final Collection f = result.getValues();
+        final Collection<?> f = result.getValues();
 
         assertEquals(f.size(), 2);
         assertTrue(f.contains(new ScopedStringAttributeValue("one", TEST_SCOPE)));

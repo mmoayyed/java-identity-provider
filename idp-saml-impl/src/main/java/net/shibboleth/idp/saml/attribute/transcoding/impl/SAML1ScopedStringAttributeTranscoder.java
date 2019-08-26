@@ -110,10 +110,9 @@ public class SAML1ScopedStringAttributeTranscoder extends AbstractSAML1Attribute
                 }
                 
                 return ScopedStringAttributeValue.valueOf(stringValue, scopeValue);
-            } else {
-                log.warn("Object does not support required interface to access the scope via XML attribute");
-                return null;
             }
+            log.warn("Object does not support required interface to access the scope via XML attribute");
+            return null;
         } else if ("inline".equals(scopeType)) {
             final String scopeDelimiter = rule.getOrDefault(PROP_SCOPE_DELIMITER, String.class, "@");
             final int offset = stringValue.indexOf(scopeDelimiter);

@@ -39,7 +39,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
     private String matchingAttribute;
 
     /** Values, of the attribute, considered to match this matcher. */
-    private Collection matchingValues;
+    private Collection<?> matchingValues;
     
     /** state variable */
     private boolean initialized;
@@ -73,7 +73,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
      * 
      * @param values values, of the attribute, considered to match this matcher
      */
-    public void setMatchingValues(Collection values) {
+    public void setMatchingValues(Collection<?> values) {
         matchingValues = values;
     }
 

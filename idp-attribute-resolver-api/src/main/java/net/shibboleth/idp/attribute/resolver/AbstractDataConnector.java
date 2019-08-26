@@ -193,13 +193,12 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         if (null == result) {
             log.debug("{} no attributes were produced during resolution", getId());
             return result;
-        } else {
-            log.debug("{} produced the following {} attributes during resolution {}", new Object[] {getLogPrefix(),
-                    result.size(), result.keySet(),});
-            for (final String attrName : result.keySet()) {
-                final IdPAttribute attr = result.get(attrName);
-                log.debug("{} Attribute '{}': Values '{}'", new Object[] {getLogPrefix(), attrName, attr.getValues(),});
-            }
+        }
+        log.debug("{} produced the following {} attributes during resolution {}", new Object[] {getLogPrefix(),
+                result.size(), result.keySet(),});
+        for (final String attrName : result.keySet()) {
+            final IdPAttribute attr = result.get(attrName);
+            log.debug("{} Attribute '{}': Values '{}'", new Object[] {getLogPrefix(), attrName, attr.getValues(),});
         }
 
         return result;

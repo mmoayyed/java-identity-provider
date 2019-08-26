@@ -47,7 +47,7 @@ public class DuoPreauthAuthenticator extends AbstractDuoAuthenticator {
 
     /** Constructor. */
     public DuoPreauthAuthenticator() {
-        wrapperTypeRef = new TypeReference<DuoResponseWrapper<DuoPreauthResponse>>() {};
+        wrapperTypeRef = new TypeReference<>() {};
     }
 
     /**

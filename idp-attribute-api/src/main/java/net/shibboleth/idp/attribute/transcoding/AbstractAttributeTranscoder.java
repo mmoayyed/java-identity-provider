@@ -147,7 +147,8 @@ public abstract class AbstractAttributeTranscoder<T> extends AbstractInitializab
             return false;
         }
 
-        final Predicate condition = rule.get(AttributeTranscoderRegistry.PROP_CONDITION, Predicate.class);
+        final Predicate<ProfileRequestContext> condition =
+                rule.get(AttributeTranscoderRegistry.PROP_CONDITION, Predicate.class);
         if (condition != null) {
             if (!condition.test(profileRequestContext)) {
                 log.debug("Transcoder inactive");

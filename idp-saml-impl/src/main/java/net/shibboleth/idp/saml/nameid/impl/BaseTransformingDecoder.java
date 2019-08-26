@@ -61,10 +61,10 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
-        transforms = new ArrayList();
+        transforms = new ArrayList<>();
         for (final Pair<String,String> p : newTransforms) {
             final Pattern pattern = Pattern.compile(StringSupport.trimOrNull(p.getFirst()));
-            transforms.add(new Pair(pattern, Constraint.isNotNull(
+            transforms.add(new Pair<>(pattern, Constraint.isNotNull(
                     StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
         }
     }

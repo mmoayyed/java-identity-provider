@@ -100,7 +100,7 @@ public class CounterStorageKeyFunctionTest {
 
         keys = Arrays.asList("key1", "key2", "key3", "key4");
 
-        input = new Pair(prc, keys);
+        input = new Pair<>(prc, keys);
 
         f = new CounterStorageKeyFunction();
     }
@@ -128,7 +128,7 @@ public class CounterStorageKeyFunctionTest {
     @Test public void testNullProfileRequestContextInput() throws Exception {
         f.initialize();
 
-        final List<String> sortedKeys = f.apply(new Pair(null, keys));
+        final List<String> sortedKeys = f.apply(new Pair<>(null, keys));
 
         Assert.assertNull(sortedKeys);
     }
@@ -136,7 +136,7 @@ public class CounterStorageKeyFunctionTest {
     @Test public void testNullKeysInput() throws Exception {
         f.initialize();
 
-        final List<String> sortedKeys = f.apply(new Pair(prc, null));
+        final List<String> sortedKeys = f.apply(new Pair<>(prc, null));
 
         Assert.assertNull(sortedKeys);
     }

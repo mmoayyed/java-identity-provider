@@ -83,7 +83,7 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
 
         setTestContext(context);
         
-        return (PairwiseIdDataConnector) context.getBean(PairwiseIdDataConnector.class);
+        return context.getBean(PairwiseIdDataConnector.class);
     }
 
     @Test public void beanManaged() throws ComponentInitializationException, IOException {

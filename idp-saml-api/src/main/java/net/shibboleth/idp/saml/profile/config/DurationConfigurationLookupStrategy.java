@@ -76,10 +76,9 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
                 log.error("Error converting duration", e);
                 return null;
             }
-        } else {
-            log.error("Tag '{}' contained non-string value, returning null");
-            return null;
         }
+        log.error("Tag '{}' contained non-string value, returning null");
+        return null;
     }
     
     /** {@inheritDoc} */
@@ -114,9 +113,8 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
                     log.error("Error converting duration", e);
                     return null;
                 }
-            } else {
-                return null;
             }
+            return null;
         } else if (object instanceof XSInteger) {
             final Integer value = ((XSInteger) object).getValue();
             return value != null ? Duration.ofMillis(value.longValue()) : null;
@@ -131,9 +129,8 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
                         log.error("Error converting duration", e);
                         return null;
                     }
-                } else {
-                    return null;
                 }
+                return null;
             }
         }
         

@@ -72,9 +72,8 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             return null;
         }
 
-        try {
-            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 
             for (final IdPAttributeValue value : filteredInput) {
                 if (value instanceof ScopedStringAttributeValue) {
@@ -102,9 +101,6 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             }
 
             objectOutputStream.flush();
-            objectOutputStream.close();
-            byteArrayOutputStream.close();
-
             return CodecUtil.b64(HashUtil.sha256(byteArrayOutputStream.toByteArray()));
 
         } catch (final IOException e) {
@@ -113,4 +109,5 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
         }
     }
     // CheckStyle: CyclomaticComplexity ON
+    
 }

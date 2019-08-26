@@ -67,7 +67,7 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
     public MapRequestedAttributesInAttributeConsumingService() {
         // At this point, by default  the SAMLMetadataContext hangs off the SAMLPeerContext
         attributeConsumingServiceContextLookupStrategy =
-                new ChildContextLookup(AttributeConsumingServiceContext.class).compose(
+                new ChildContextLookup<>(AttributeConsumingServiceContext.class).compose(
                         new ChildContextLookup<>(SAMLMetadataContext.class).compose(
                                 new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
                                         new InboundMessageContextLookup())));

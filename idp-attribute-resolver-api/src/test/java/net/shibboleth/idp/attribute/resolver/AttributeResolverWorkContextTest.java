@@ -58,7 +58,6 @@ public class AttributeResolverWorkContextTest {
         Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions());
         Assert.assertEquals(context.getResolvedIdPAttributeDefinitions().size(), 1);
         Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("foo"));
-        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
         Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo").getResolvedDefinition() == definition);
         Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo").resolve(parent) == attribute);
 
@@ -76,9 +75,7 @@ public class AttributeResolverWorkContextTest {
         Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions());
         Assert.assertEquals(context.getResolvedIdPAttributeDefinitions().size(), 2);
         Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("foo"));
-        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
         Assert.assertNotNull(context.getResolvedIdPAttributeDefinitions().get("bar"));
-        Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("bar") instanceof ResolvedAttributeDefinition);
         Assert.assertTrue(context.getResolvedIdPAttributeDefinitions().get("bar").getResolvedDefinition() == definition);
         Assert.assertNull(context.getResolvedIdPAttributeDefinitions().get("bar").resolve(parent));
     }
@@ -104,7 +101,6 @@ public class AttributeResolverWorkContextTest {
         Assert.assertNotNull(context.getResolvedDataConnectors());
         Assert.assertEquals(context.getResolvedDataConnectors().size(), 1);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("foo"));
-        Assert.assertTrue(context.getResolvedDataConnectors().get("foo") instanceof ResolvedDataConnector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo").getResolvedConnector() == connector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo").resolve(parent) == attributes);
 
@@ -122,9 +118,7 @@ public class AttributeResolverWorkContextTest {
         Assert.assertNotNull(context.getResolvedDataConnectors());
         Assert.assertEquals(context.getResolvedDataConnectors().size(), 2);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("foo"));
-        Assert.assertTrue(context.getResolvedDataConnectors().get("foo") instanceof ResolvedDataConnector);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("bar"));
-        Assert.assertTrue(context.getResolvedDataConnectors().get("bar") instanceof ResolvedDataConnector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar").getResolvedConnector() == connector);
         Assert.assertNull(context.getResolvedDataConnectors().get("bar").resolve(parent));
         

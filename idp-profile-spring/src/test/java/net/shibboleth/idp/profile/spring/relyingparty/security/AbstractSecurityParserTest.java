@@ -89,8 +89,7 @@ public class AbstractSecurityParserTest {
         
         if (name != null) {
             return context.getBean(name, claz);
-        } else {
-            return context.getBean(claz);
         }
+        return context.getBean(claz);
     }
 }

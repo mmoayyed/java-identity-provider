@@ -392,7 +392,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             return principals.iterator().next();
         } else {
             final Object[] principalArray = principals.toArray();
-            Arrays.sort(principalArray, new WeightedComparator());
+            Arrays.sort(principalArray, new WeightedComparator<>());
             return (T) principalArray[principalArray.length - 1];
         }
     }
@@ -429,12 +429,14 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /**
      * A {@link Comparator} that compares the mapped weights of the two operands, using a weight of zero
      * for any unmapped values.
+     * 
+     * @param <T> object type
      */
-    private class WeightedComparator implements Comparator {
+    private class WeightedComparator<T> implements Comparator<T> {
 
         /** {@inheritDoc} */
         @Override
-        public int compare(final Object o1, final Object o2) {
+        public int compare(final T o1, final T o2) {
             
             final int weight1 = principalWeightMap.containsKey(o1) ? principalWeightMap.get(o1) : 0;
             final int weight2 = principalWeightMap.containsKey(o2) ? principalWeightMap.get(o2) : 0;

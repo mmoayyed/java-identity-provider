@@ -98,7 +98,7 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
 
         String val = name.getValue();
 
-        final StorageRecord record = store.read(TransientIdParameters.CONTEXT, val);
+        final StorageRecord<?> record = store.read(TransientIdParameters.CONTEXT, val);
         
         Assert.assertNotNull(record);
         Assert.assertTrue(val.length() >= transientGenerator.getIdSize());

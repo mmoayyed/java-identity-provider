@@ -63,7 +63,7 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
     public void setFormats(@Nonnull final Collection<String> theFormats) {
         Constraint.isNotNull(theFormats, "Format collection cannot be null");
         
-        formats = new HashSet(theFormats.size());
+        formats = new HashSet<>(theFormats.size());
         CollectionSupport.addIf(formats, theFormats, Predicates.notNull());
     }
     

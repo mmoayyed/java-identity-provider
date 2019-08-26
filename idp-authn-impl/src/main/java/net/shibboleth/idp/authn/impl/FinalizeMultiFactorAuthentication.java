@@ -87,8 +87,8 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
     /** Constructor. */
     public FinalizeMultiFactorAuthentication() {
         multiFactorContextLookupStrategy =
-                new ChildContextLookup(MultiFactorAuthenticationContext.class).compose(
-                        new ChildContextLookup(AuthenticationContext.class));
+                new ChildContextLookup<>(MultiFactorAuthenticationContext.class).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
                 
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();

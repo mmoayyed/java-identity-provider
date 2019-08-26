@@ -281,9 +281,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             final Collection<String> attributeIds = new LazyList<>();
             attributeIds.addAll(attributeDefinitions.keySet());
             return attributeIds;
-        } else {
-            return resolutionContext.getRequestedIdPAttributeNames();
         }
+        return resolutionContext.getRequestedIdPAttributeNames();
 
     }
 
@@ -376,9 +375,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
                 workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
                 return;
-            } else {
-                throw new ResolutionException("Previous resolve failed");
             }
+            throw new ResolutionException("Previous resolve failed");
         }
 
         resolveDependencies(connector, resolutionContext);
@@ -394,11 +392,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
                 workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
                 return;
-            } else {
-                // Pass it on. Do not look at propagateException because this is handled in the
-                // connector code logic.
-                throw e;
             }
+            // Pass it on. Do not look at propagateException because this is handled in the
+            // connector code logic.
+            throw e;
         }
 
         if (null != resolvedAttributes) {

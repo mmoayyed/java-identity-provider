@@ -277,9 +277,8 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
                     if (isStatementInOwnAssertion() || ((Response) outboundMessage).getAssertions().isEmpty()) {
                         return SAML2ActionSupport.addAssertionToResponse(AddAuthnStatementToAssertion.this,
                                 (Response) outboundMessage, getIdGenerator(), getIssuerId());
-                    } else {
-                        return ((Response) outboundMessage).getAssertions().get(0);
-                    } 
+                    }
+                    return ((Response) outboundMessage).getAssertions().get(0); 
                 }
             }
             

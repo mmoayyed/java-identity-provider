@@ -94,20 +94,16 @@ public class MergePropertiesTask extends Task {
         
         final PropertiesWithComments in = new PropertiesWithComments(); 
 
-        try {
-            final FileInputStream stream = new FileInputStream(inFile);
+        try (final FileInputStream stream = new FileInputStream(inFile)) {
             in.load(stream);
-            stream.close();
         } catch (final IOException e) {
             log("Could not load input " + inFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
         
         final Properties merge = new Properties(); 
-        try {
-            final FileInputStream stream = new FileInputStream(mergeFile);
+        try (final FileInputStream stream = new FileInputStream(mergeFile)) {
             merge.load(stream);
-            stream.close();
         } catch (final IOException e) {
             log("Could not load merge " + mergeFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
@@ -121,10 +117,8 @@ public class MergePropertiesTask extends Task {
             } 
         }
 
-        try {
-            final FileOutputStream stream = new FileOutputStream(outFile);
+        try (final FileOutputStream stream = new FileOutputStream(outFile)) {
             in.store(stream);
-            stream.close();
         } catch (final IOException e) {
             log("Could not store output " + outFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);

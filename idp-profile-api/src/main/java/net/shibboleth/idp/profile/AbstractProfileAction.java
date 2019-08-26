@@ -181,7 +181,7 @@ public abstract class AbstractProfileAction
             } else if (event instanceof String) {
                 return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
             } else if (event instanceof AttributeMap) {
-                final AttributeMap map = (AttributeMap) eventCtx.getEvent();
+                final AttributeMap<Object> map = (AttributeMap<Object>) eventCtx.getEvent();
                 return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
             }
         }

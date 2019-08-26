@@ -282,10 +282,9 @@ public class PairwiseIdDataConnector extends AbstractDataConnector {
             pid = pidStore.getBySourceValue(pid, true);
             if (pid != null && pid.getPairwiseId() != null) {
                 return encodeAsAttribute(pid.getPairwiseId());
-            } else {
-                log.warn("{} Pairwise ID store did not return a value", getLogPrefix());
-                return null;
             }
+            log.warn("{} Pairwise ID store did not return a value", getLogPrefix());
+            return null;
         } catch (final IOException e) {
             throw new ResolutionException(e);
         }

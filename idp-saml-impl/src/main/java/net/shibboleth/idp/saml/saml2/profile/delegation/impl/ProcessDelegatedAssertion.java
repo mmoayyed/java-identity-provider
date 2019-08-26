@@ -205,9 +205,8 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
                 if (presenterContext != null) {
                     log.debug("Saw SAML presenter entityID: {}", presenterContext.getEntityId());
                     return presenterContext.getEntityId();
-                } else {
-                    return null;
                 }
+                return null;
             }
             
             return null;

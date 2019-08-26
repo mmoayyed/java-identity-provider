@@ -93,28 +93,22 @@ public class RewritePropertiesTask extends Task {
         }
         
         final PropertiesWithComments properties = new PropertiesWithComments(); 
-        try {
-            final InputStream in = new FileInputStream(propertyNameFile);
+        try (final InputStream in = new FileInputStream(propertyNameFile)) {
             properties.loadNameReplacement(in);
-            in.close();
         } catch (final IOException e) {
             log("Could not load name replacements " + propertyNameFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
 
-        try {
-            final InputStream in = new FileInputStream(inFile); 
+        try (final InputStream in = new FileInputStream(inFile)) { 
             properties.load(in);
-            in.close();
         } catch (final IOException e) {
             log("Could not load input " + inFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
         
-        try {
-            final FileOutputStream out = new FileOutputStream(outFile);
+        try (final FileOutputStream out = new FileOutputStream(outFile)) {
             properties.store(out);
-            out.close();
         } catch (final IOException e) {
             log("Could not store output " + outFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);

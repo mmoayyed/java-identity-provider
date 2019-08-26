@@ -39,7 +39,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
 public abstract class AbstractDynamicHTTPMetadataProviderParser extends AbstractDynamicMetadataProviderParser {
 
     /** Default caching type . */
-    private static final Class DEFAULT_CACHING_CLASS = InMemoryCachingHttpClientFactoryBean.class;
+    private static final Class<?> DEFAULT_CACHING_CLASS = InMemoryCachingHttpClientFactoryBean.class;
 
     /** Default max total connections. */
     private static final Integer DEFAULT_MAX_CONNECTIONS_TOTAL = 100;

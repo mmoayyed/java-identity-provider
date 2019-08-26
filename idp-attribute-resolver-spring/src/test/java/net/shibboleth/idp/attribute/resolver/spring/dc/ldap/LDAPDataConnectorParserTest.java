@@ -202,7 +202,7 @@ public class LDAPDataConnectorParserTest {
         final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         assertNotNull(credentialConfig);
 
-        final ProviderConfig providerConfig = connFactory.getProvider().getProviderConfig();
+        final ProviderConfig<?> providerConfig = connFactory.getProvider().getProviderConfig();
         assertNotNull(providerConfig);
         assertTrue(providerConfig.getProperties().isEmpty());
 
@@ -217,7 +217,7 @@ public class LDAPDataConnectorParserTest {
         assertTrue(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
-        final ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
+        final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
         assertNotNull(searchBuilder);
 
         final StringAttributeValueMappingStrategy mappingStrategy = (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
@@ -277,7 +277,7 @@ public class LDAPDataConnectorParserTest {
         final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         assertNotNull(credentialConfig);
 
-        final ProviderConfig providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
+        final ProviderConfig<?> providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
         assertNotNull(providerConfig);
         assertTrue(providerConfig.getProperties().isEmpty());
 
@@ -292,7 +292,7 @@ public class LDAPDataConnectorParserTest {
         assertTrue(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
-        final ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
+        final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
         assertNotNull(searchBuilder);
 
         final StringAttributeValueMappingStrategy mappingStrategy = (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
@@ -496,7 +496,7 @@ public class LDAPDataConnectorParserTest {
         final Map<String, Object> providerProps = new HashMap<>();
         providerProps.put("name1", "value1");
         providerProps.put("name2", "value2");
-        final ProviderConfig providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
+        final ProviderConfig<?> providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
         assertNotNull(providerConfig);
         assertEquals(providerProps, providerConfig.getProperties());
 
@@ -511,7 +511,7 @@ public class LDAPDataConnectorParserTest {
         assertTrue(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
-        final ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
+        final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
         assertNotNull(searchBuilder);
 
         final StringAttributeValueMappingStrategy mappingStrategy = (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();

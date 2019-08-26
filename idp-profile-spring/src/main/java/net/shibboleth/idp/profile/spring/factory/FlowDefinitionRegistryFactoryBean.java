@@ -110,7 +110,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     public void setFlowLocations(@Nonnull @NonnullElements final Map<String,String> locationMap) {
         Constraint.isNotNull(locationMap, "Flow mappings cannot be null");
         
-        flowLocations = new LinkedHashMap(locationMap.size());
+        flowLocations = new LinkedHashMap<>(locationMap.size());
         for (final Map.Entry<String,String> entry : locationMap.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {
                 flowLocations.put(entry.getKey(), entry.getValue());
@@ -128,7 +128,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     public void setFlowLocationPatterns(@Nonnull final Map<String,String> patternMap) {
         Constraint.isNotNull(patternMap, "Pattern mappings cannot be null");
         
-        flowLocationPatterns = new LinkedHashMap(patternMap.size());
+        flowLocationPatterns = new LinkedHashMap<>(patternMap.size());
         for (final Map.Entry<String,String> entry : patternMap.entrySet()) {
             if (entry.getKey() != null && (basePath != null || entry.getValue() != null)) {
                 flowLocationPatterns.put(entry.getKey(), entry.getValue());
@@ -182,7 +182,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      */
     private void registerFlowLocations(@Nonnull final DefaultFlowRegistry flowRegistry) {
         for (final Map.Entry<String,String> location : flowLocations.entrySet()) {
-            final LocalAttributeMap<Object> attributes = new LocalAttributeMap<Object>();
+            final LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
             updateFlowAttributes(attributes);
             final FlowDefinitionResource resource =
                     flowResourceFactory.createResource(basePath, location.getValue(), attributes, location.getKey());
@@ -197,7 +197,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      */
     private void registerFlowLocationPatterns(@Nonnull final DefaultFlowRegistry flowRegistry) {
         for (final Map.Entry<String,String> pattern : flowLocationPatterns.entrySet()) {
-            final LocalAttributeMap<Object> attributes = new LocalAttributeMap<Object>();
+            final LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
             updateFlowAttributes(attributes);
             final Collection<FlowDefinitionResource> resources;
             try {

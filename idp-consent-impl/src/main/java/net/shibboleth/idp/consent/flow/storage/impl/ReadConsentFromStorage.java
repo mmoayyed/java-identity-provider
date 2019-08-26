@@ -49,7 +49,7 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
         final String key = getStorageKey();
 
         try {
-            final StorageRecord storageRecord = getStorageService().read(context, key);
+            final StorageRecord<Map<String,Consent>> storageRecord = getStorageService().read(context, key);
             log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                     context, key);
 
@@ -58,8 +58,7 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
                 return;
             }
 
-            final Map<String, Consent> consents =
-                    (Map<String, Consent>) storageRecord.getValue(getStorageSerializer(), context, key);
+            final Map<String,Consent> consents = storageRecord.getValue(getStorageSerializer(), context, key);
 
             getConsentContext().getPreviousConsents().putAll(consents);
 

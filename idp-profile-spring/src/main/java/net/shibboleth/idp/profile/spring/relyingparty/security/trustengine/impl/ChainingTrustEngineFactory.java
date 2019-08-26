@@ -34,7 +34,7 @@ import org.opensaml.security.trust.impl.ChainingTrustEngine;
  * unsupported engines out. A warning has been issued at point of parse so no further logging is required.
  */
 public class ChainingTrustEngineFactory extends
-        AbstractComponentAwareFactoryBean<ChainingTrustEngine> {
+        AbstractComponentAwareFactoryBean<ChainingTrustEngine<?>> {
 
     /** The unfiltered list of putative trust engines. */
     private final List<Object> engines;
@@ -54,12 +54,12 @@ public class ChainingTrustEngineFactory extends
     }
 
     /** {@inheritDoc} */
-    @Override protected ChainingTrustEngine doCreateInstance() throws Exception {
-        final List<TrustEngine> list = new ArrayList<>(engines.size());
+    @Override protected ChainingTrustEngine<?> doCreateInstance() throws Exception {
+        final List<TrustEngine<?>> list = new ArrayList<>(engines.size());
 
         for (final Object engine : engines) {
             if (engine instanceof TrustEngine) {
-                list.add((TrustEngine) engine);
+                list.add((TrustEngine<?>) engine);
 
             }
         }

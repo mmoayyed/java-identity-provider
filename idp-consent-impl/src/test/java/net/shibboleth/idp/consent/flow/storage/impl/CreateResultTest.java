@@ -44,16 +44,16 @@ import org.testng.annotations.Test;
 public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
     protected CreateResult buildAction(@Nonnull final String key) throws Exception {
-        final CreateResult action = new CreateResult();
-        action.setStorageContextLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant("context"));
-        action.setStorageKeyLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant(key));
-        action.setStorageIndexKeyLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant("_index"));
-        action.initialize();
-        return action;
+        final CreateResult action1 = new CreateResult();
+        action1.setStorageContextLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant("context"));
+        action1.setStorageKeyLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant(key));
+        action1.setStorageIndexKeyLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant("_index"));
+        action1.initialize();
+        return action1;
     }
 
     protected Map<String, Consent> readConsentFromStorage(@Nonnull final String key) throws Exception {
-        final StorageRecord record = getMemoryStorageService().read("context", key);
+        final StorageRecord<?> record = getMemoryStorageService().read("context", key);
         Assert.assertNotNull(record);
         final ConsentSerializer serializer = new ConsentSerializer();
 
@@ -76,7 +76,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         Assert.assertNotNull(pic);
         Assert.assertEquals(pic.getResults().size(), 0);
 
-        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
         Assert.assertNull(record);
     }
 
@@ -110,7 +110,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         testCreateResult();
 
-        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
         Assert.assertEquals(record.getValue(),
                 "[{\"id\":101,\"v\":\"value1\",\"appr\":false},{\"id\":102,\"v\":\"value2\",\"appr\":false}]");
     }
@@ -144,7 +144,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         testUpdateResult();
 
-        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
         Assert.assertEquals(record.getValue(),
                 "[{\"id\":101,\"v\":\"value1\",\"appr\":false},{\"id\":102,\"v\":\"value2\",\"appr\":false}]");
     }

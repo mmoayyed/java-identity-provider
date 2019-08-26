@@ -57,7 +57,7 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
                         ((Response) response).getStatus() != null
                                 ? ((Response) response).getStatus().getStatusCode() : null;
                 if (sc != null && sc.getStatusCode() != null) {
-                    final Collection<String> values = new ArrayList(1);
+                    final Collection<String> values = new ArrayList<>(1);
                     do {
                         sc = sc.getStatusCode();
                         if (sc.getValue() != null) {

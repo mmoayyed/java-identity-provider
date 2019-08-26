@@ -89,7 +89,7 @@ public class X509AuthServlet extends HttpServlet {
             log.debug("Looking up TrustEngine bean: {}", param);
             final Object bean = springContext.getBean(param);
             if (bean instanceof TrustEngine) {
-                trustEngine = (TrustEngine) bean;
+                trustEngine = (TrustEngine<? super X509Credential>) bean;
             } else {
                 throw new ServletException("Bean " + param + " was missing, or not a TrustManager");
             }

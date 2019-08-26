@@ -110,11 +110,10 @@ public class SubjectDataConnector extends AbstractDataConnector {
         if (sc == null || sc.getSubjects().isEmpty()) {
             if (noResultIsError) {
                 throw new ResolutionException("No Subjects available to obtain attributes");
-            } else {
-                log.debug("{} Obtained no attributes from Subjects for principal '{}'", getLogPrefix(),
-                        resolutionContext.getPrincipal());
-                return Collections.emptyMap();
             }
+            log.debug("{} Obtained no attributes from Subjects for principal '{}'", getLogPrefix(),
+                    resolutionContext.getPrincipal());
+            return Collections.emptyMap();
         }
         
         final Map<String,IdPAttribute> results = new HashMap<>();
@@ -128,11 +127,10 @@ public class SubjectDataConnector extends AbstractDataConnector {
         if (results.isEmpty()) {
             if (noResultIsError) {
                 throw new ResolutionException("No IdPAttributePrincipal objects found");
-            } else {
-                log.debug("{} Obtained no attributes from Subjects for principal '{}'", getLogPrefix(),
-                        resolutionContext.getPrincipal());
-                return Collections.emptyMap();
             }
+            log.debug("{} Obtained no attributes from Subjects for principal '{}'", getLogPrefix(),
+                    resolutionContext.getPrincipal());
+            return Collections.emptyMap();
         }
         
         log.debug("{} Extracted {} IdPAttribute(s)", getLogPrefix(), results.size());

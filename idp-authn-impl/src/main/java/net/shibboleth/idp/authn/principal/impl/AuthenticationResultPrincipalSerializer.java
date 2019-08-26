@@ -29,6 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -80,57 +81,51 @@ public class AuthenticationResultPrincipalSerializer extends AbstractPrincipalSe
     }
     
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull final Principal principal) {
         return principal instanceof AuthenticationResultPrincipal;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         final StringWriter sink = new StringWriter(128);
-        final JsonGenerator gen = getJsonGenerator(sink);
-        gen.writeStartObject();   
-        
-        final AuthenticationResult result = ((AuthenticationResultPrincipal) principal).getAuthenticationResult();
-        
-        gen.write(PRINCIPAL_NAME_FIELD, resultSerializer.serialize(result));
-        
-        gen.writeEnd();
-        gen.close();
+        try (final JsonGenerator gen = getJsonGenerator(sink)) {
+            gen.writeStartObject();   
+            
+            final AuthenticationResult result = ((AuthenticationResultPrincipal) principal).getAuthenticationResult();
+            
+            gen.write(PRINCIPAL_NAME_FIELD, resultSerializer.serialize(result));
+            
+            gen.writeEnd();
+        }
         return sink.toString();
     }
         
     /** {@inheritDoc} */
-    @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
         return JSON_PATTERN.matcher(value).matches();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public AuthenticationResultPrincipal deserialize(@Nonnull @NotEmpty final String value)
             throws IOException {
-        final JsonReader reader = getJsonReader(new StringReader(value));
-        JsonStructure st = null;
-        try {
-            st = reader.read();
-        } finally {
-            reader.close();
-        }
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing AuthenticationResultPrincipal");
-        }
-        final JsonObject obj = (JsonObject) st;
-        final JsonValue str = obj.get(PRINCIPAL_NAME_FIELD);
-        if (str != null && str instanceof JsonString) {
-            return new AuthenticationResultPrincipal(
-                    resultSerializer.deserialize(1, "context", "key", ((JsonString) str).getString(), null));
-        } else {
-            log.warn("Skipping non-string principal value");
-        }
         
-        return null;
+        try (final JsonReader reader = getJsonReader(new StringReader(value))) {
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing AuthenticationResultPrincipal");
+            }
+            final JsonObject obj = (JsonObject) st;
+            final JsonValue str = obj.get(PRINCIPAL_NAME_FIELD);
+            if (str != null && str instanceof JsonString) {
+                return new AuthenticationResultPrincipal(
+                        resultSerializer.deserialize(1, "context", "key", ((JsonString) str).getString(), null));
+            }
+            log.warn("Skipping non-string principal value");
+            
+            return null;
+        } catch (final JsonException e) {
+            throw new IOException("Found invalid data structure while parsing AuthenticationResultPrincipal", e);
+        }
     }
 
     /**

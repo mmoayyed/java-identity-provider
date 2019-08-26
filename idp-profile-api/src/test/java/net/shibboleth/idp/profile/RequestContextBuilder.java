@@ -286,7 +286,7 @@ public class RequestContextBuilder {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(buildServletExternalContext());
 
-        final MutableAttributeMap scope = context.getConversationScope();
+        final MutableAttributeMap<Object> scope = context.getConversationScope();
         scope.put(ProfileRequestContext.BINDING_KEY, buildProfileRequestContext());
 
         return context;

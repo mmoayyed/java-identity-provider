@@ -59,9 +59,8 @@ public abstract class BasePolicyRuleParser extends BaseFilterParser {
     @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return getNativeBeanClass();
-        } else {
-            return MatcherFromPolicy.class;
         }
+        return MatcherFromPolicy.class;
     }
 
     /**

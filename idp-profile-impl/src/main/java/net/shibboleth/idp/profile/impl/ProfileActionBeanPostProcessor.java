@@ -47,8 +47,7 @@ public class ProfileActionBeanPostProcessor implements BeanPostProcessor {
                         + beanName, e);
             }
             return wrapper;
-        } else {
-            return bean;
         }
+        return bean;
     }
 }

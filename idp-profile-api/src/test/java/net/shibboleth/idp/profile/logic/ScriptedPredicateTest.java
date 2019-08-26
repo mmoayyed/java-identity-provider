@@ -69,8 +69,7 @@ public class ScriptedPredicateTest {
     }
     @Test public void inlineBean() throws ScriptException {
 
-        GenericApplicationContext ctx = new GenericApplicationContext();
-        try {
+        try (final GenericApplicationContext ctx = new GenericApplicationContext()) {
             SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
@@ -83,15 +82,12 @@ public class ScriptedPredicateTest {
             Assert.assertTrue(rule.test(withChild));
 
             Assert.assertFalse(rule.test(noChild));
-        } finally {
-            ctx.close();
         }
     }
 
     @Test public void resourceBean() throws ScriptException {
 
-        GenericApplicationContext ctx = new GenericApplicationContext();
-        try {
+        try (final GenericApplicationContext ctx = new GenericApplicationContext()) {
             SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
@@ -104,8 +100,6 @@ public class ScriptedPredicateTest {
             Assert.assertTrue(rule.test(withChild));
 
             Assert.assertFalse(rule.test(noChild));
-        } finally {
-            ctx.close();
         }
     }
 

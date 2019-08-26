@@ -50,7 +50,7 @@ public class UpdateCounter extends AbstractConsentStorageAction {
             final String context = getStorageContext();
             final String key = getStorageKey();
 
-            final StorageRecord storageRecord = getStorageService().read(context, key);
+            final StorageRecord<?> storageRecord = getStorageService().read(context, key);
             log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                     context, key);
 
