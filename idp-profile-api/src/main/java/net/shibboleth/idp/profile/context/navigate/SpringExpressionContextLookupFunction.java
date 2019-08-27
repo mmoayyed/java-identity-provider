@@ -34,17 +34,11 @@ import org.slf4j.LoggerFactory;
  * which calls out to a Spring Expression.
  * 
  * @param <T> the specific type of context
+ * @param <U> output type
  * @since 3.3.0
  */
-public class SpringExpressionContextLookupFunction<T extends BaseContext>
-    implements ContextDataLookupFunction<T, Object> {
-
-    /**
-     * The object that does the work.
-     * In Future versions this should be replaced with inheritance.
-     */
-    @Deprecated
-    private final SpringExpressionFunction<T, Object> embeddedObject;
+public class SpringExpressionContextLookupFunction<T extends BaseContext,U> extends SpringExpressionFunction<T,U>
+        implements ContextDataLookupFunction<T,U> {
 
     /**
      * Constructor.
@@ -54,8 +48,9 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      */
     public SpringExpressionContextLookupFunction(@Nonnull @ParameterName(name="inClass") final Class<T> inClass,
             @Nonnull @NotEmpty @ParameterName(name="expression") final String expression) {
-        embeddedObject = new SpringExpressionFunction<>(expression);
-        embeddedObject.setInputType(Constraint.isNotNull(inClass, "Supplied inputClass cannot be null"));
+        super(expression);
+        setInputType(Constraint.isNotNull(inClass, "Supplied inputClass cannot be null"));
+        
         if(!BaseContext.class.isAssignableFrom(inClass)) {
             LoggerFactory.getLogger(SpringExpressionContextLookupFunction.class).
                 warn("InClass {} is not derived from {}", inClass, BaseContext.class);
@@ -71,41 +66,9 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      */
     public SpringExpressionContextLookupFunction(@Nonnull @ParameterName(name="inClass") final Class<T> inClass,
             @Nonnull @NotEmpty @ParameterName(name="expression") final String expression, 
-            @ParameterName(name="outputType") @Nullable final Class outputType) {
+            @ParameterName(name="outputType") @Nullable final Class<U> outputType) {
         this(inClass, expression);
-        embeddedObject.setOutputType(outputType);
-    }
-
-    /**
-     * Return the custom (externally provided) object.
-     * 
-     * @return the custom object
-     */
-    @Nullable public Object getCustomObject() {
-        return embeddedObject.getCustomObject();
-    }
-
-    /**
-     * Set the custom (externally provided) object.
-     * 
-     * @param object the custom object
-     */
-    @Nullable public void setCustomObject(final Object object) {
-        embeddedObject.setCustomObject(object);
-    }
-
-    /**
-     * Set whether to hide exceptions in expression execution (default is false).
-     * 
-     * @param flag flag to set
-     */
-    public void setHideExceptions(final boolean flag) {
-        embeddedObject.setHideExceptions(flag);
-    }
-
-    /** {@inheritDoc} */
-    @Nullable public Object apply(@Nullable final T context) {
-        return embeddedObject.apply(context);
+        setOutputType(outputType);
     }
 
 }

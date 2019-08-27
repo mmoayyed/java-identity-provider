@@ -28,9 +28,39 @@ public class SpringExpressionContextLookupFunctionTest {
 
     
     @Test public void simpleTest() {
-        SpringExpressionContextLookupFunction<ProfileRequestContext> func =
+        SpringExpressionContextLookupFunction<ProfileRequestContext,Integer> func =
                 new SpringExpressionContextLookupFunction<>(ProfileRequestContext.class, "99", Integer.class);
-        Assert.assertEquals(func.apply(null), 99);
+        Assert.assertEquals(func.apply(null), Integer.valueOf(99));
     }
     
+    @Test public void customTest() {
+        SpringExpressionContextLookupFunction<ProfileRequestContext,Integer> func =
+                new SpringExpressionContextLookupFunction<>(ProfileRequestContext.class, "#custom + 1", Integer.class);
+        func.setCustomObject(Integer.valueOf(99));
+        Assert.assertEquals(func.apply(null), Integer.valueOf(100));
+    }    
+    
+    @Test public void invalidOutputTest() {
+        SpringExpressionContextLookupFunction<ProfileRequestContext,Integer> func =
+                new SpringExpressionContextLookupFunction<>(ProfileRequestContext.class, "'foo'", Integer.class);
+        func.setReturnOnError(-1);
+        Assert.assertEquals(func.apply(null), Integer.valueOf(-1));
+    }
+    
+    @Test public void exceptionTest() {
+        SpringExpressionContextLookupFunction<ProfileRequestContext,Integer> func =
+                new SpringExpressionContextLookupFunction<>(ProfileRequestContext.class, "1/0", Integer.class);
+        func.setReturnOnError(-1);
+
+        try {
+            func.apply(null);
+            Assert.fail("Expression should have raised exception");
+        } catch (final Exception e) {
+            
+        }
+        
+        func.setHideExceptions(true);
+        Assert.assertEquals(func.apply(null), Integer.valueOf(-1));
+    }
+
 }
