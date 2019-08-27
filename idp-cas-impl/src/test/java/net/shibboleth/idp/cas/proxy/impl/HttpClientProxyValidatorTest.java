@@ -162,8 +162,8 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
 
         final int status;
 
-        public ConfigurableStatusHandler(final int status) {
-            this.status = status;
+        public ConfigurableStatusHandler(final int s) {
+            status = s;
         }
 
         @Override
@@ -182,7 +182,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
 
     private ProfileRequestContext buildProfileRequestContext(final String serviceUrl) {
         final ProfileRequestContext prc = new ProfileRequestContext();
-        final ProtocolContext protoCtx = new ProtocolContext();
+        final ProtocolContext<?,?> protoCtx = new ProtocolContext<>();
         prc.addSubcontext(protoCtx);
         protoCtx.addSubcontext(new ServiceContext(new Service(serviceUrl, "unknown", true, false)));
         return prc;

@@ -40,9 +40,13 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
  *     <li>{@link ProtocolError#IllegalState IllegalState}</li>
  * </ul>
  *
+ * @param <RequestType> request
+ * @param <ResponseType> response
+ *
  * @author Marvin S. Addison
  */
-public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
+public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
+        extends AbstractCASProtocolAction<RequestType,ResponseType> {
 
     /** CAS service. */
     @Nullable private Service service;

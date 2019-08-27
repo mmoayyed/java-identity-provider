@@ -46,10 +46,14 @@ import org.slf4j.LoggerFactory;
  * If the service granted access to indicates participation in SLO via {@link Service#singleLogoutParticipant},
  * then a {@link CASSPSession} is created to track the SP session in order that it may receive SLO messages upon
  * a request to the CAS <code>/logout</code> URI.
+ * 
+ * @param <RequestType> request
+ * @param <ResponseType> response
  *
  * @author Marvin S. Addison
  */
-public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolAction {
+public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
+        extends AbstractCASProtocolAction<RequestType,ResponseType> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(UpdateIdPSessionWithSPSessionAction.class);

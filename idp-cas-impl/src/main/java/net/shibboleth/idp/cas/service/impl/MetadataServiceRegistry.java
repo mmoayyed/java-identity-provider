@@ -116,9 +116,8 @@ public class MetadataServiceRegistry implements ServiceRegistry {
             final RoleDescriptor role = metadataResolver.resolveSingle(criteria(serviceURL));
             if (role instanceof SPSSODescriptor) {
                 return create(serviceURL, (SPSSODescriptor) role);
-            } else {
-                throw new ResolverException("No compatible role resolved");
             }
+            throw new ResolverException("No compatible role resolved");
         } catch (final ResolverException e) {
             log.warn("Metadata resolution failed for {}", serviceURL, e);
         }

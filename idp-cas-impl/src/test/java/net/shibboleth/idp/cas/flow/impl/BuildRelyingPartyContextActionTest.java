@@ -33,7 +33,7 @@ import org.opensaml.profile.action.EventException;
 public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
 
     @Autowired
-    private BuildRelyingPartyContextAction action;
+    private BuildRelyingPartyContextAction<?,?> action;
 
     @Test
     public void testExecuteFromServiceTicketRequest() throws EventException {

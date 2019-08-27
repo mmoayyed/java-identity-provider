@@ -43,10 +43,14 @@ import org.slf4j.LoggerFactory;
  * Creates the {@link RelyingPartyContext} as a child of the {@link ProfileRequestContext}. The component queries
  * a configured list of {@link ServiceRegistry} until a result is found, otherwise the relying party is treated as
  * unverified.
+ * 
+ * @param <RequestType> request
+ * @param <ResponseType> response
  *
  * @author Marvin S. Addison
  */
-public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
+public class BuildRelyingPartyContextAction<RequestType,ResponseType>
+        extends AbstractCASProtocolAction<RequestType,ResponseType> {
 
     /** Name of group to which unverified services belong. */
     @Nonnull @NotEmpty public static final String UNVERIFIED_GROUP = "unverified";

@@ -132,7 +132,7 @@ public class PrepareTicketValidationResponseAction extends
             throw new ComponentInitializationException("AttributeTranscoderRegistry cannot be null");
         }
         
-        final AttributeTranscoder transcoder = new CASStringAttributeTranscoder();
+        final AttributeTranscoder<?> transcoder = new CASStringAttributeTranscoder();
         transcoder.initialize();
         defaultTranscodingRule = new TranscodingRule(
                 Collections.singletonMap(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder));

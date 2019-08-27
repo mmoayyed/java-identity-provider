@@ -38,9 +38,13 @@ import org.slf4j.LoggerFactory;
  *     <li>{@link ProtocolError#ProxyNotAuthorized ProxyNotAuthorized}</li>
  * </ul>
  *
+ * @param <RequestType> request
+ * @param <ResponseType> response
+ *
  * @author Marvin S. Addison
  */
-public class CheckProxyAuthorizationAction extends AbstractCASProtocolAction {
+public class CheckProxyAuthorizationAction<RequestType,ResponseType>
+        extends AbstractCASProtocolAction<RequestType,ResponseType> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CheckProxyAuthorizationAction.class);

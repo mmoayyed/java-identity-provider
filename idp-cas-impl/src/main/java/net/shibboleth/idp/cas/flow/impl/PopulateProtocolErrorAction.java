@@ -39,8 +39,11 @@ import net.shibboleth.idp.profile.ActionSupport;
  * Populates error information needed for protocol error messages.
  *
  * @author Marvin S. Addison
+ * 
+ * @param <RequestType> request
  */
-public class PopulateProtocolErrorAction extends AbstractCASProtocolAction {
+public class PopulateProtocolErrorAction<RequestType>
+        extends AbstractCASProtocolAction<RequestType,AbstractProtocolResponse> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateProtocolErrorAction.class);

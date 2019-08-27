@@ -178,6 +178,13 @@ public class HttpClientProxyValidator implements ProxyValidator {
         }
     }
 
+    /**
+     * Install TLS trust criteria.
+     * 
+     * @param context client context
+     * @param requestUri URI to obtain hostname
+     * @param service CAS service
+     */
     private static void setCASTLSTrustEngineCriteria(
             final HttpClientContext context, final URI requestUri, final Service service) {
         final String entityID;
@@ -194,4 +201,5 @@ public class HttpClientProxyValidator implements ProxyValidator {
                 new TrustedNamesCriterion(Collections.singleton(requestUri.getHost())));
         context.setAttribute(CONTEXT_KEY_CRITERIA_SET, criteria);
     }
+
 }

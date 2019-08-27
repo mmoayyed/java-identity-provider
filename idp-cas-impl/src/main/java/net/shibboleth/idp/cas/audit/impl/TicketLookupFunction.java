@@ -60,7 +60,7 @@ public class TicketLookupFunction implements Function<ProfileRequestContext, Str
      * {@inheritDoc}
      */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        final ProtocolContext protocolContext = protocolContextFunction.apply(input);
+        final ProtocolContext<?,?> protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
         }

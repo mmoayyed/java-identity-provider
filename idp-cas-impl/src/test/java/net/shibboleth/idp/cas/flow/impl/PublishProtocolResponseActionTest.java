@@ -35,7 +35,7 @@ public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testPublishRequest() throws Exception {
-        final PublishProtocolMessageAction action = new PublishProtocolMessageAction(true);
+        final PublishProtocolMessageAction<?,?> action = new PublishProtocolMessageAction<>(true);
         action.initialize();
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
@@ -49,7 +49,7 @@ public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testPublishResponse() throws Exception {
-        final PublishProtocolMessageAction action = new PublishProtocolMessageAction(false);
+        final PublishProtocolMessageAction<?,?> action = new PublishProtocolMessageAction<>(false);
         action.initialize();
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))

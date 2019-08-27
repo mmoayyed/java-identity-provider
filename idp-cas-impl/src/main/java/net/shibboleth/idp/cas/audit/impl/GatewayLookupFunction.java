@@ -54,7 +54,7 @@ public class GatewayLookupFunction implements Function<ProfileRequestContext,Boo
 
     /** {@inheritDoc} */
     @Nullable public Boolean apply(@Nullable final ProfileRequestContext input) {
-        final ProtocolContext protocolContext = protocolContextFunction.apply(input);
+        final ProtocolContext<?,?> protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
         }

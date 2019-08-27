@@ -34,7 +34,7 @@ import static org.testng.Assert.*;
 public class CheckProxyAuthorizationActionTest extends AbstractFlowActionTest {
 
     @Autowired
-    private CheckProxyAuthorizationAction action;
+    private CheckProxyAuthorizationAction<?,?> action;
 
     @Test
     public void testProxyAuthorizationSuccess() throws Exception {

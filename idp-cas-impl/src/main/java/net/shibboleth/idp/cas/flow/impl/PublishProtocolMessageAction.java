@@ -33,9 +33,13 @@ import net.shibboleth.idp.profile.ActionSupport;
  * converted to variable case, e.g. <code>TicketValidationResponse</code> is accessible as
  * <code>flowScope.ticketValidationResponse</code>.
  *
+ * @param <RequestType> request
+ * @param <ResponseType> response
+ *
  * @author Marvin S. Addison
  */
-public class PublishProtocolMessageAction extends AbstractCASProtocolAction {
+public class PublishProtocolMessageAction<RequestType,ResponseType>
+        extends AbstractCASProtocolAction<RequestType,ResponseType> {
 
     /** Request/response flag. */
     private boolean requestFlag;

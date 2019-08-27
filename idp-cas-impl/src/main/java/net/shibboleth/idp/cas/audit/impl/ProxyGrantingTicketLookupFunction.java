@@ -34,6 +34,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * @author Marvin S. Addison
  */
 public class ProxyGrantingTicketLookupFunction implements Function<ProfileRequestContext,String> {
+    
     /** Lookup strategy for protocol context. */
     @Nonnull private final Function<ProfileRequestContext,ProtocolContext> protocolContextFunction;
 
@@ -58,7 +59,7 @@ public class ProxyGrantingTicketLookupFunction implements Function<ProfileReques
      * {@inheritDoc}
      */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        final ProtocolContext protocolContext = protocolContextFunction.apply(input);
+        final ProtocolContext<?,?> protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
         }

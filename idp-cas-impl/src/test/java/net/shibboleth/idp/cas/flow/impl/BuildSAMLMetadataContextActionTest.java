@@ -39,7 +39,7 @@ import static org.testng.Assert.*;
 public class BuildSAMLMetadataContextActionTest extends AbstractFlowActionTest {
 
     @Autowired
-    private BuildSAMLMetadataContextAction action;
+    private BuildSAMLMetadataContextAction<?,?> action;
 
     private Function<ProfileRequestContext, SAMLMetadataContext> mdLookupFunction =
             new SAMLMetadataContextLookupFunction();
