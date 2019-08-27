@@ -57,7 +57,7 @@
 
     <bean id="proxyValidator"
           class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator"
-          c:client-ref="proxyHttpClient"
+          c:client="#{getObject('shibboleth.CASProxyValidatorHttpClient') ?: getObject('proxyHttpClient')}"
           c:parameters-ref="proxyHttpSecurity" />
 
     <bean id="shibboleth.DefaultCASProxyValidateIdPSessionPredicate" parent="shibboleth.Conditions.FALSE" />
