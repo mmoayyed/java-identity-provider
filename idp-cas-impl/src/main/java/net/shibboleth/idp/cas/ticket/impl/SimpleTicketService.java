@@ -47,6 +47,7 @@ public class SimpleTicketService extends AbstractTicketService {
         super(service);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nonnull
     public ServiceTicket createServiceTicket(
@@ -66,6 +67,7 @@ public class SimpleTicketService extends AbstractTicketService {
         return st;
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nullable
     public ServiceTicket removeServiceTicket(@Nonnull final String id) {
@@ -73,8 +75,9 @@ public class SimpleTicketService extends AbstractTicketService {
         return delete(id, ServiceTicket.class);
     }
 
-    @Nonnull
+    /** {@inheritDoc} */
     @Override
+    @Nonnull
     public ProxyTicket createProxyTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
@@ -91,8 +94,9 @@ public class SimpleTicketService extends AbstractTicketService {
         return pt;
     }
 
-    @Nullable
+    /** {@inheritDoc} */
     @Override
+    @Nullable
     public ProxyTicket removeProxyTicket(final @Nonnull String id) {
         return delete(id, ProxyTicket.class);
     }

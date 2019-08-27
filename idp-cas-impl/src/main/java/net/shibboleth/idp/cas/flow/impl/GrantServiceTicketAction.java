@@ -34,7 +34,7 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
@@ -76,7 +76,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     @Nonnull private final Function<ProfileRequestContext, String> principalLookupFunction;
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketService casTicketService;
 
     /** Profile config. */
     @Nullable private LoginConfiguration loginConfig;
@@ -98,8 +98,8 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      *
      * @param ticketService Ticket service component.
      */
-    public GrantServiceTicketAction(@Nonnull final TicketServiceEx ticketService) {
-        ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+    public GrantServiceTicketAction(@Nonnull final TicketService ticketService) {
+        casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         
         configLookupFunction = new ConfigLookupFunction<>(LoginConfiguration.class);
         sessionContextFunction = new ChildContextLookup<>(SessionContext.class);
@@ -170,7 +170,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     getPrincipalName(profileRequestContext),
                     authnResult.getAuthenticationInstant(),
                     authnResult.getAuthenticationFlowId());
-            ticket = ticketServiceEx.createServiceTicket(
+            ticket = casTicketService.createServiceTicket(
                     securityConfig.getIdGenerator().generateIdentifier(),
                     Instant.now().plus(loginConfig.getTicketValidityPeriod(profileRequestContext)),
                     request.getService(),

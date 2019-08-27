@@ -25,7 +25,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -61,15 +61,15 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeProxyAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketService casTicketService;
 
     /**
      * Constructor.
      *
      * @param ticketService ticket service
      */
-    public InitializeProxyAction(@Nonnull final TicketServiceEx ticketService) {
-        ticketServiceEx = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
+    public InitializeProxyAction(@Nonnull final TicketService ticketService) {
+        casTicketService = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
     }
 
     @Override
@@ -98,7 +98,7 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
         if (result == null) {
             try {
                 log.debug("{} Fetching proxy-granting ticket {}", getLogPrefix(), proxyTicketRequest.getPgt());
-                final ProxyGrantingTicket pgt = ticketServiceEx.fetchProxyGrantingTicket(proxyTicketRequest.getPgt());
+                final ProxyGrantingTicket pgt = casTicketService.fetchProxyGrantingTicket(proxyTicketRequest.getPgt());
                 if (pgt == null) {
                     return ProtocolError.TicketExpired.event(this);
                 }

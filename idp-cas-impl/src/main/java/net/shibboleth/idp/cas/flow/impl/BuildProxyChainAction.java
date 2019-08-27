@@ -26,7 +26,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -53,7 +53,7 @@ public class BuildProxyChainAction
     @Nonnull private final Logger log = LoggerFactory.getLogger(BuildProxyChainAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketService casTicketService;
     
     /** Response. */
     @Nullable private TicketValidationResponse response;
@@ -64,10 +64,10 @@ public class BuildProxyChainAction
     /**
      * Constructor.
      *
-     * @param ticketService Ticket service component.
+     * @param ticketService ticket service component.
      */
-    public BuildProxyChainAction(@Nonnull final TicketServiceEx ticketService) {
-        ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+    public BuildProxyChainAction(@Nonnull final TicketService ticketService) {
+        casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
     
     @Override
@@ -98,7 +98,7 @@ public class BuildProxyChainAction
         ProxyGrantingTicket pgt;
         String pgtId = pt.getPgtId();
         do {
-            pgt = ticketServiceEx.fetchProxyGrantingTicket(pgtId);
+            pgt = casTicketService.fetchProxyGrantingTicket(pgtId);
             if (pgt == null) {
                 log.debug("{} PGT {} not found", getLogPrefix(), pgtId);
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.BrokenProxyChain.event(this));

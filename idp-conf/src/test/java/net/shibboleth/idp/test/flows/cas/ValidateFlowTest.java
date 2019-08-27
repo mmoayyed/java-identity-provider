@@ -20,7 +20,7 @@ package net.shibboleth.idp.test.flows.cas;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
@@ -55,7 +55,7 @@ public class ValidateFlowTest extends AbstractFlowTest {
 
     @Autowired
     @Qualifier("shibboleth.CASTicketService")
-    private TicketServiceEx ticketService;
+    private TicketService ticketService;
 
     @Autowired
     private SessionResolver sessionResolver;

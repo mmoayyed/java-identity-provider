@@ -23,7 +23,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
@@ -74,7 +74,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testTicketRetrievalError() throws Exception {
-        final TicketServiceEx throwingTicketService = mock(TicketServiceEx.class);
+        final TicketService throwingTicketService = mock(TicketService.class);
         when(throwingTicketService.removeServiceTicket(any(String.class))).thenThrow(new RuntimeException("Broken"));
         final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "ST-12345"), null)
@@ -123,7 +123,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
-    private static ValidateTicketAction newAction(final TicketServiceEx service) {
+    private static ValidateTicketAction newAction(final TicketService service) {
         final ValidateTicketAction action = new ValidateTicketAction(service);
         try {
             action.initialize();

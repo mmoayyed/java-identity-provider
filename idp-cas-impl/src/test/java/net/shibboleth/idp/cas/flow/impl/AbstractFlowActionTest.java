@@ -25,7 +25,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.session.IdPSession;
@@ -64,7 +64,7 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     protected static final String TEST_PRINCIPAL_NAME = "omega";
 
     @Autowired
-    protected TicketServiceEx ticketService;
+    protected TicketService ticketService;
 
     private TicketIdentifierGenerationStrategy serviceTicketGenerator =
             new TicketIdentifierGenerationStrategy("ST", 25);

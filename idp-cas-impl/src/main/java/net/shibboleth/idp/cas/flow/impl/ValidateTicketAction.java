@@ -31,7 +31,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -64,7 +64,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
     @Nonnull private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction;
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketService casTicketService;
 
     /** Profile config. */
     @Nullable private ValidateConfiguration validateConfig;
@@ -77,8 +77,8 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
      *
      * @param ticketService ticket service component
      */
-    public ValidateTicketAction(@Nonnull final TicketServiceEx ticketService) {
-        ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+    public ValidateTicketAction(@Nonnull final TicketService ticketService) {
+        casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
 
@@ -112,9 +112,9 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             final String ticketId = request.getTicket();
             log.debug("Attempting to validate {}", ticketId);
             if (ticketId.startsWith(LoginConfiguration.DEFAULT_TICKET_PREFIX)) {
-                ticket = ticketServiceEx.removeServiceTicket(request.getTicket());
+                ticket = casTicketService.removeServiceTicket(request.getTicket());
             } else if (ticketId.startsWith(ProxyConfiguration.DEFAULT_TICKET_PREFIX)) {
-                ticket = ticketServiceEx.removeProxyTicket(ticketId);
+                ticket = casTicketService.removeProxyTicket(ticketId);
             } else {
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.InvalidTicketFormat.event(this));
                 return;

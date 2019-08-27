@@ -31,7 +31,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.session.IdPSession;
@@ -69,7 +69,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
     @Nonnull private final ConfigLookupFunction<ProxyConfiguration> configLookupFunction;
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketServiceEx casTicketService;
+    @Nonnull private final TicketService casTicketService;
 
     /** Looks up IdP sessions. */
     @Nonnull private final SessionResolver sessionResolver;
@@ -95,7 +95,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      * @param ticketService Ticket service component.
      * @param resolver session resolver
      */
-    public GrantProxyTicketAction(@Nonnull final TicketServiceEx ticketService,
+    public GrantProxyTicketAction(@Nonnull final TicketService ticketService,
             @Nonnull final SessionResolver resolver) {
         casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");

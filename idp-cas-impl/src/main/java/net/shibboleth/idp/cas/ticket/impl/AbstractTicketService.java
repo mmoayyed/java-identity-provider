@@ -32,7 +32,7 @@ import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyGrantingTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ServiceTicketSerializer;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 3.3.0
  */
-public abstract class AbstractTicketService implements TicketServiceEx {
+public abstract class AbstractTicketService implements TicketService {
 
     /** Map of ticket classes to context names. */
     private static final Map<Class<? extends Ticket>, String> CONTEXT_CLASS_MAP = new HashMap<>();
@@ -91,17 +91,6 @@ public abstract class AbstractTicketService implements TicketServiceEx {
      */
     public AbstractTicketService(@Nonnull final StorageService service) {
         this.storageService = Constraint.isNotNull(service, "StorageService cannot be null.");
-    }
-
-    @Override
-    @Nonnull
-    public ServiceTicket createServiceTicket(
-            @Nonnull final String id,
-            @Nonnull final Instant expiry,
-            @Nonnull final String sessionId,
-            @Nonnull final String service,
-            final boolean renew) {
-        throw new UnsupportedOperationException("This version of createServiceTicket is not supported");
     }
 
     @Override

@@ -43,7 +43,7 @@ import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -75,7 +75,7 @@ public class ValidateProxyCallbackAction
     @Nonnull private final ProxyValidator proxyValidator;
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketServiceEx ticketServiceEx;
+    @Nonnull private final TicketService casTicketService;
 
     /** Profile config. */
     @Nullable private ValidateConfiguration validateConfig;
@@ -99,9 +99,9 @@ public class ValidateProxyCallbackAction
      * @param ticketService Ticket service component.
      */
     public ValidateProxyCallbackAction(@Nonnull final ProxyValidator validator,
-            @Nonnull final TicketServiceEx ticketService) {
+            @Nonnull final TicketService ticketService) {
         proxyValidator = Constraint.isNotNull(validator, "ProxyValidator cannot be null");
-        ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+        casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
         
         configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
@@ -161,9 +161,9 @@ public class ValidateProxyCallbackAction
             final Instant expiration =
                     Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
             if (ticket instanceof ServiceTicket) {
-                ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
+                casTicketService.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
             } else {
-                ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ProxyTicket) ticket);
+                casTicketService.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ProxyTicket) ticket);
             }
             response.setPgtIou(proxyIds.getPgtIou());
         } catch (final Exception e) {

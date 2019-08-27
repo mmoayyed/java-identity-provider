@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.session.IdPSession;
@@ -55,7 +55,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
 
     @Autowired
     @Qualifier("shibboleth.CASTicketService")
-    private TicketServiceEx ticketService;
+    private TicketService ticketService;
 
     @Autowired
     private SessionManager sessionManager;

@@ -27,14 +27,13 @@ import javax.annotation.Nullable;
  *
  * @author Marvin S. Addison
  */
-@Deprecated
 public interface TicketService {
     /**
      * Creates and stores a ticket for the given service.
      *
      * @param id ID of ticket to create.
      * @param expiry Expiration date of service ticket.
-     * @param sessionId ID of IdP session in which ticket was created.
+     * @param state Additional state to be stored with the ticket.
      * @param service Service for which ticket is granted.
      * @param renew True to indicate the ticket was generated in response to a forced authentication, false otherwise.
      *
@@ -44,8 +43,8 @@ public interface TicketService {
     ServiceTicket createServiceTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
-            @Nonnull String sessionId,
             @Nonnull String service,
+            @Nonnull TicketState state,
             boolean renew);
 
     /**

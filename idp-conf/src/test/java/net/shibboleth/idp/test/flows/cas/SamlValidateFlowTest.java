@@ -19,7 +19,7 @@ package net.shibboleth.idp.test.flows.cas;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
@@ -64,7 +64,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
 
     @Autowired
     @Qualifier("shibboleth.CASTicketService")
-    private TicketServiceEx ticketService;
+    private TicketService ticketService;
 
     @Autowired
     private SessionManager sessionManager;
