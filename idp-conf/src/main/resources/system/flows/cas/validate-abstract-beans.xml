@@ -34,7 +34,7 @@
 
     <bean id="ValidateProxyCallback"
           class="net.shibboleth.idp.cas.flow.impl.ValidateProxyCallbackAction" scope="prototype"
-          c:proxyAuthenticator="#{getObject('shibboleth.CASProxyAuthenticator') ?: getObject('shibboleth.DefaultCASProxyAuthenticator')}"
+          c:validator="#{getObject('shibboleth.CASProxyAuthenticator') ?: getObject('shibboleth.DefaultCASProxyAuthenticator')}"
           c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="PrepareTicketValidationResponse"

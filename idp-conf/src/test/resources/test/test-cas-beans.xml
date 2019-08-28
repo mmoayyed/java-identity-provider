@@ -53,7 +53,7 @@
         </property>
     </bean>
 
-    <bean id="proxyValidator"
+    <bean id="shibboleth.CASProxyAuthenticator"
           class="net.shibboleth.idp.test.flows.cas.TestProxyValidator" />
 
     <bean id="shibboleth.CASProxyValidateIdPSessionPredicate"

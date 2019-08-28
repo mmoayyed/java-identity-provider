@@ -55,7 +55,7 @@
         </property>
     </bean>
 
-    <bean id="proxyValidator"
+    <bean id="shibboleth.DefaultCASProxyAuthenticator"
           class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator"
           c:client="#{getObject('shibboleth.CASProxyValidatorHttpClient') ?: getObject('proxyHttpClient')}"
           c:parameters-ref="proxyHttpSecurity" />
