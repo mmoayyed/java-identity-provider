@@ -29,13 +29,9 @@
         </property>
     </bean>
 
+    <!-- Remove in V5. -->
     <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization"
-          lazy-init="true" factory-method="c14LegacyPrincipalConnectorFactory">
-        <constructor-arg  name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 
-                c:service-ref="shibboleth.AttributeResolverService"/>
-        </constructor-arg>
-    </bean>
+        factory-method="c14LegacyPrincipalConnectorFactory" />
 
     <bean id="shibboleth.AbstractSAML1C14NFlowBean" abstract="true"
             class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">

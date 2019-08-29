@@ -17,45 +17,32 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.function.Predicate;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * Action to fail if asked to perform C14N ..
+ * 
+ * @deprecated
  */
 public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LegacyCanonicalization.class);
     
-    /**
-     * Constructor.
-     * 
-     * @param resolverService the service which will implement {@link LegacyPrincipalDecoder}.
-     */
-    public LegacyCanonicalization(@Nonnull @ParameterName(name="resolverService") 
-                        final ReloadableService<AttributeResolver> resolverService) {
-        
-    }
-    
-//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
@@ -65,42 +52,17 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
         
         return false;
     }
-//CheckStyle: ReturnCount ON
     
-    /** Factory used to generate a specific Connector. 
-     * @param activationCondition - the activationCondition
+    /** Factory used to generate a disabled flow descriptor for backward compatibility.
+     * 
      * @return an appropriate FlowDescriptor 
      */
-    public static NameIDCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory(
-                final @ParameterName(name="activationCondition") Predicate<ProfileRequestContext> activationCondition) {
+    public static NameIDCanonicalizationFlowDescriptor c14LegacyPrincipalConnectorFactory() {
+        // V4 deprecation, remove this class in V5.
         DeprecationSupport.warn(ObjectType.BEAN, "c14n/LegacyPrincipalConnector", "c14n/subject-c14n.xml", "<remove>");
         final NameIDCanonicalizationFlowDescriptor result = new NameIDCanonicalizationFlowDescriptor();
-        result.setActivationCondition(activationCondition);
+        result.setActivationCondition(Predicates.alwaysFalse());
         return result;
-    }
-
-    /**
-     * A predicate that determines if this action can run or not.  This can never run.
-     */
-    public static class ActivationCondition implements Predicate<ProfileRequestContext> {
-
-        /**
-         * Constructor.
-         * 
-         * @param service the service we need to interrogate.
-         */
-        public ActivationCondition(final @ParameterName(name="service") ReloadableService<AttributeResolver> service) {
-            
-        }
-
-        /**
-         * {@inheritDoc}
-         * 
-         * <p>Never run this</p>
-         */
-        public boolean test(@Nullable final ProfileRequestContext input) {
-            return false;
-        }
     }
     
 }

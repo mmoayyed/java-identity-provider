@@ -51,13 +51,6 @@
     -->
     <util:list id="shibboleth.SAMLSubjectCanonicalizationFlows">
 
-        <!--
-        This is installed to support the old mechanism of using PrincipalConnectors in the attribute resolver
-        to map SAML Subjects back into principals. If you don't use those (or this is a new install) you can
-        remove this.
-        -->
-        <ref bean="c14n/LegacyPrincipalConnector" />
-        
         <!-- The next four are for handling transient IDs (in-storage and stateless variants). -->
         <ref bean="c14n/SAML2Transient" />
         <ref bean="c14n/SAML2CryptoTransient" />
