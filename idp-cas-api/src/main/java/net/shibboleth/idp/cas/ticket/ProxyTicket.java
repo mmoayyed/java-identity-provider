@@ -20,11 +20,8 @@ package net.shibboleth.idp.cas.ticket;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * CAS proxy ticket.
@@ -36,30 +33,6 @@ public class ProxyTicket extends Ticket {
     /** Proxy-granting ticket ID used to create ticket. */
     @Nonnull
     private final String pgTicketId;
-
-    /**
-     * Deprecated.
-     *
-     * @param id Ticket ID.
-     * @param sessionId This parameter is ignored.
-     * @param service Service that requested the ticket.
-     * @param expiration Expiration instant.
-     * @param pgtId Proxy-granting ticket ID used to create ticket.
-     *
-     * @see Ticket#Ticket(String, String, String, Instant)
-     */
-    @Deprecated
-    public ProxyTicket(
-            @Nonnull final String id,
-            @Nullable final String sessionId,
-            @Nonnull final String service,
-            @Nonnull final Instant expiration,
-            @Nonnull final String pgtId) {
-        super(id, sessionId, service, expiration);
-        pgTicketId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "ProxyTicket constructor with sessionID", 
-                null, "TicketState#setSessionId(String)");
-    }
 
     /**
      * Creates a new authenticated ticket with an identifier, service, and expiration date.
@@ -91,4 +64,5 @@ public class ProxyTicket extends Ticket {
     protected Ticket newInstance(final String newId) {
         return new ProxyTicket(newId, getService(), getExpirationInstant(), pgTicketId);
     }
+
 }

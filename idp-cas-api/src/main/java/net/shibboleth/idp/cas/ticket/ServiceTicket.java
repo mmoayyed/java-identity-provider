@@ -20,10 +20,6 @@ package net.shibboleth.idp.cas.ticket;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * CAS service ticket.
@@ -34,30 +30,6 @@ public class ServiceTicket extends Ticket {
 
     /** Forced authentication flag. */
     private final boolean forceAuthn;
-
-    /**
-     * Deprecated.
-     *
-     * @param id Ticket ID.
-     * @param sessionId This parameter is ignored.
-     * @param service Service that requested the ticket.
-     * @param expiration Expiration instant.
-     * @param renew True if ticket was issued from forced authentication, false otherwise.
-     *
-     * @see Ticket#Ticket(String, String, String, Instant)
-     */
-    @Deprecated
-    public ServiceTicket(
-            @Nonnull final String id,
-            @Nullable final String sessionId,
-            @Nonnull final String service,
-            @Nonnull final Instant expiration,
-            final boolean renew) {
-        super(id, sessionId, service, expiration);
-        forceAuthn = renew;
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "ServiceTicket constructor with sessionID", 
-                null, "TicketState#setSessionId(String)");
-    }
 
     /**
      * Creates a new authenticated ticket with an identifier, service, and expiration date.
@@ -85,8 +57,10 @@ public class ServiceTicket extends Ticket {
         return forceAuthn;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Ticket newInstance(final String newId) {
         return new ServiceTicket(newId, getService(), getExpirationInstant(), forceAuthn);
     }
+
 }

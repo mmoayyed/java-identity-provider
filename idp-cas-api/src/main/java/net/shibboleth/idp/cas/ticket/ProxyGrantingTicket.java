@@ -22,8 +22,6 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -36,30 +34,6 @@ public class ProxyGrantingTicket extends Ticket {
     /** The ID of the parent proxy-granting ticket. */
     @Nullable
     private String parentPgTicketId;
-
-    /**
-     * Deprecated.
-     *
-     * @param id Ticket ID.
-     * @param sessionId This parameter is ignored.
-     * @param service Service that requested the ticket.
-     * @param expiration Expiration instant.
-     * @param parentId ID of parent proxy-granting ticket or null if this is first proxy in chain.
-     *
-     * @see Ticket#Ticket(String, String, String, Instant)
-     */
-    @Deprecated
-    public ProxyGrantingTicket(
-            @Nonnull final String id,
-            @Nullable final String sessionId,
-            @Nonnull final String service,
-            @Nonnull final Instant expiration,
-            @Nullable final String parentId) {
-        super(id, sessionId, service, expiration);
-        parentPgTicketId = StringSupport.trimOrNull(parentId);
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "ProxyGrantingTicket constructor with sessionID", 
-                null, "TicketState#setSessionId(String)");
-    }
 
     /**
      * Creates a proxy-granting ticket with the given values.
@@ -100,4 +74,5 @@ public class ProxyGrantingTicket extends Ticket {
     protected Ticket newInstance(final String newId) {
         return new ProxyGrantingTicket(newId, getService(), getExpirationInstant(), parentPgTicketId);
     }
+
 }
