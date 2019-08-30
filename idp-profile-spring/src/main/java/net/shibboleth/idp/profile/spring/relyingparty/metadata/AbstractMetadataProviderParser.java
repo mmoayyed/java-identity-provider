@@ -33,7 +33,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -41,10 +40,8 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 /**
  * Parser for the MetadataProviderType in the <code>urn:mace:shibboleth:2.0:metadata</code> namespace.
  * 
- * This also handles the ambivalence of where the &lt;MetadataProvider&gt; can be found. If it is found inside a
- * &lt;RelyingPartyGroup&gt; or a &lt;ChainingMetadataPRovider&gt; then we just emit a MetadataResolver of the correct
- * type and the outer parsers will deal with the rest. If we are the top most element then we need to summon up a
- * {@link RelyingPartyMetadataProvider} and inject what we would usually create into that.
+ *  If we are the top most element then we need to summon up a
+ * {@link MetadataProviderContainer} and inject what we would usually create into that.
  */
 public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanDefinitionParser {
 
@@ -89,7 +86,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
     /**
      * Is this the element at the top of the file? Yes, if it has no parent. In
-     * this situation we need to wrap the element in a {@link RelyingPartyMetadataProvider}.
+     * this situation we need to wrap the element in a {@link MetadataProviderContainer}.
      * 
      * @param element the element.
      * @return whether it is the outmost element.
@@ -113,9 +110,9 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     protected abstract Class<? extends MetadataResolver> getNativeBeanClass(Element element);
 
     /** {@inheritDoc} */
-    @Override protected final Class<? extends MetadataResolver> getBeanClass(final Element element) {
+    @Override protected final Class<?> getBeanClass(final Element element) {
         if (isTopMost(element)) {
-            return RelyingPartyMetadataProvider.class;
+            return MetadataProviderContainer.class;
         }
         return getNativeBeanClass(element);
     }

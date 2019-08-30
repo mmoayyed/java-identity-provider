@@ -19,14 +19,13 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
 
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  *
@@ -37,8 +36,7 @@ public class EmptyChainService extends AbstractMetadataParserTest {
         final ReloadableService<RefreshableMetadataResolver> service = getBean(ReloadableService.class, "empty-chain-svc.xml");
         final ServiceableComponent<RefreshableMetadataResolver> comp = service.getServiceableComponent();
         try {
-            final RelyingPartyMetadataProvider rpmp = (RelyingPartyMetadataProvider) comp.getComponent();
-            final ChainingMetadataResolver chain = (ChainingMetadataResolver) rpmp.getEmbeddedResolver();
+            final ChainingMetadataResolver chain = (ChainingMetadataResolver) comp.getComponent();
             Assert.assertTrue(chain.getResolvers().isEmpty());
             
         } finally {

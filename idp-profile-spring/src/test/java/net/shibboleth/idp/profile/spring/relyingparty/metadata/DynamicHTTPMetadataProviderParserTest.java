@@ -25,10 +25,6 @@ import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.core.xml.persist.XMLObjectLoadSaveManager;
@@ -44,6 +40,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
@@ -134,8 +133,8 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         final ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
                 "dynamicPersistentCacheDirectory.xml", "beans.xml", "httpClient.xml");
         
-        final RelyingPartyMetadataProvider rpProvider = 
-                appContext.getBean("dynamicPersistentCacheParamsDirectory", RelyingPartyMetadataProvider.class);
+        final MetadataProviderContainer rpProvider = 
+                appContext.getBean("dynamicPersistentCacheParamsDirectory", MetadataProviderContainer.class);
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = 
                 FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         Assert.assertNotNull(resolver);
@@ -163,8 +162,8 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         final ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
                 "dynamicPersistentCacheBean.xml", "beans.xml", "httpClient.xml");
         
-        final RelyingPartyMetadataProvider rpProvider = 
-                appContext.getBean("dynamicPersistentCacheParamsBean", RelyingPartyMetadataProvider.class);
+        final MetadataProviderContainer rpProvider = 
+                appContext.getBean("dynamicPersistentCacheParamsBean", MetadataProviderContainer.class);
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = 
                 FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         Assert.assertNotNull(resolver);

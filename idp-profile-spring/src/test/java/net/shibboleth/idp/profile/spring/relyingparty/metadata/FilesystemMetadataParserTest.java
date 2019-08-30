@@ -28,8 +28,6 @@ import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-
 public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void entity() throws Exception {
@@ -98,8 +96,8 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         ApplicationContext appContext = getApplicationContext("filesystemResolverContext",
                 "filePredicatesOptions.xml", "beans.xml");
         
-        RelyingPartyMetadataProvider rpProvider = 
-                appContext.getBean("filePredicatesOptions", RelyingPartyMetadataProvider.class);
+        MetadataProviderContainer rpProvider = 
+                appContext.getBean("filePredicatesOptions", MetadataProviderContainer.class);
         FilesystemMetadataResolver resolver = 
                 FilesystemMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         
@@ -116,8 +114,8 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         ApplicationContext appContext = getApplicationContext("filesystemResolverContext",
                 "fileBadRVPO.xml", "beans.xml");
         
-        RelyingPartyMetadataProvider rpProvider = 
-                appContext.getBean("BadRVPO", RelyingPartyMetadataProvider.class);
+        MetadataProviderContainer rpProvider = 
+                appContext.getBean("BadRVPO", MetadataProviderContainer.class);
         FilesystemMetadataResolver resolver = 
                 FilesystemMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         

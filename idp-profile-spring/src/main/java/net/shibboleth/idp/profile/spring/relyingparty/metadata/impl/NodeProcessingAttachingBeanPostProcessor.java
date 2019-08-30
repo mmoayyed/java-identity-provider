@@ -34,7 +34,6 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.idp.saml.metadata.impl.ScopesNodeProcessor;
 import net.shibboleth.idp.saml.metadata.impl.UIInfoNodeProcessor;
@@ -70,8 +69,7 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
     // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
-        if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver
-                || bean instanceof RelyingPartyMetadataProvider) {
+        if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver) {
             // Do not attach to beans which just include other ones.
             return bean;
         }

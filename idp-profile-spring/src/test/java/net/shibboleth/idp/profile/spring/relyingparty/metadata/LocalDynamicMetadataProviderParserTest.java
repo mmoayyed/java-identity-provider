@@ -38,7 +38,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.codec.StringDigester;
 import net.shibboleth.utilities.java.support.codec.StringDigester.OutputFormat;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -116,7 +115,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         XMLObjectLoadSaveManager<XMLObject> sourceManager = 
                 appContext.getBean("metadata.LocalDynamicSourceManager", XMLObjectLoadSaveManager.class);
 
-        RelyingPartyMetadataProvider rpProvider = appContext.getBean("localDynamicWithManagerAndGenerator", RelyingPartyMetadataProvider.class);
+        MetadataProviderContainer rpProvider = appContext.getBean("localDynamicWithManagerAndGenerator", MetadataProviderContainer.class);
         LocalDynamicMetadataResolver resolver = (LocalDynamicMetadataResolver) rpProvider.getEmbeddedResolver(); 
         
         CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(entityID));

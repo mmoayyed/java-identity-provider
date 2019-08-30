@@ -40,7 +40,6 @@ import org.testng.annotations.BeforeSuite;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 /**
@@ -155,7 +154,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
             return result;
         }
 
-        final RelyingPartyMetadataProvider rpProvider = context.getBean(RelyingPartyMetadataProvider.class);
+        final MetadataProviderContainer rpProvider = context.getBean(MetadataProviderContainer.class);
 
         return claz.cast(rpProvider.getEmbeddedResolver());
     }

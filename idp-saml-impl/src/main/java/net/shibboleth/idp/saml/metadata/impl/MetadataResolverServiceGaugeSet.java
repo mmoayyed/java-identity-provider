@@ -40,7 +40,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 import net.shibboleth.idp.metrics.ReloadableServiceGaugeSet;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -219,17 +218,10 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
     @Nonnull @NonnullElements private Iterable<MetadataResolver> getMetadataResolvers(
             @Nonnull final MetadataResolver rootResolver) {
         
-        MetadataResolver root = rootResolver;
-        
-        // Step down into wrapping component.
-        if (root instanceof RelyingPartyMetadataProvider) {
-            root = ((RelyingPartyMetadataProvider) root).getEmbeddedResolver();
+        if (rootResolver instanceof ChainingMetadataResolver) {
+            return getAllChildren((ChainingMetadataResolver) rootResolver);
         }
-        
-        if (root instanceof ChainingMetadataResolver) {
-            return getAllChildren((ChainingMetadataResolver) root);
-        }
-        return Collections.singletonList(root);
+        return Collections.singletonList(rootResolver);
     }
 
 }
