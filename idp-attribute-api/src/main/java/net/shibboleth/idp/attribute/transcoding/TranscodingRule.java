@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.idp.attribute.IdPAttribute;
 
 /**
  * Wrapper around a {@link Map} representing a rule for transcoding, used to
@@ -171,7 +172,7 @@ public class TranscodingRule {
     }
     
     /**
-     * Process any properties that start with {@link AttributeTranscoderRegistry.PROP_DISPLAY_NAME} and
+     * Process any properties that start with {@link AttributeTranscoderRegistry#PROP_DISPLAY_NAME} and
      * create a Locale map around them.
      */
     private void processDisplayNames() {
@@ -201,7 +202,7 @@ public class TranscodingRule {
     }
 
     /**
-     * Process any properties that start with {@link AttributeTranscoderRegistry.PROP_DESCRIPTION} and
+     * Process any properties that start with {@link AttributeTranscoderRegistry#PROP_DESCRIPTION} and
      * create a Locale map around them.
      */
     private void processDescriptions() {

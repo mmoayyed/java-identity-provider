@@ -27,6 +27,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.net.UrlEscapers;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

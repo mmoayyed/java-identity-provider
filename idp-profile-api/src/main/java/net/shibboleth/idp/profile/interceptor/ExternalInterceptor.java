@@ -125,7 +125,7 @@ public class ExternalInterceptor {
     /**
      * Get the {@link ProfileRequestContext} associated with a request.
      * 
-     * @param key   the value returned by {@link #startExternalAuthentication(HttpServletRequest)}
+     * @param key   the value returned by {@link #startExternalInterceptor(HttpServletRequest)}
      * @param request servlet request
      * 
      * @return the profile request context

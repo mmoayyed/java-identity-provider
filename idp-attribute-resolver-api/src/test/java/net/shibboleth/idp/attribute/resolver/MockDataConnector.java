@@ -57,14 +57,6 @@ public class MockDataConnector extends AbstractDataConnector {
         values = connectorValues;
     }
 
-    /**
-     * Constructor.
-     *
-     * @param id
-     * @param connectorValues
-     * @param newHashSet
-     * @throws ComponentInitializationException 
-     */
     public MockDataConnector(String id, 
             Map<String, IdPAttribute> connectorValues, 
             Set<ResolverAttributeDefinitionDependency> attrDepends, 
