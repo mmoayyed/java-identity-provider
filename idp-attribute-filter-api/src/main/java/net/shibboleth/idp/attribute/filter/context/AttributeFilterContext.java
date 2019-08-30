@@ -28,15 +28,21 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProxiedRequesterContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 
@@ -431,6 +437,33 @@ public final class AttributeFilterContext extends BaseContext {
             proxiedRequesterContext = proxiedRequesterContextLookupStrategy.apply(this);
         }
         return proxiedRequesterContext;
+    }
+
+    /**
+     * Helper method to invoke an AttributeFilter service using this context.
+     * 
+     * @param attributeFilterService the service to invoke
+     * 
+     * @since 4.0.0
+     */
+    public void filterAttributes(@Nonnull final ReloadableService<AttributeFilter> attributeFilterService) {
+
+        final Logger log = LoggerFactory.getLogger(AttributeFilterContext.class);
+        ServiceableComponent<AttributeFilter> component = null;
+        try {
+            component = attributeFilterService.getServiceableComponent();
+            if (null == component) {
+                log.error("Error filtering attributes: Invalid Attribute filter configuration");
+            } else {
+                component.getComponent().filterAttributes(this);
+            }
+        } catch (final AttributeFilterException e) {
+            log.error("Error filtering attributes", e);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
+        }
     }
 
 }
