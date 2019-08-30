@@ -72,9 +72,6 @@
         <property name="deprecatedProperties">
             <map>
                 <entry key="idp.httpclient.useTrustEngineTLSSocketFactory" value="idp.httpclient.useSecurityEnhancedTLSSocketFactory" />
-                <entry key="idp.authn.resolveAttribute">
-                    <null/>
-                </entry>
                 <entry key="idp.nameid.saml2.legacyGenerator">
                     <null/>
                 </entry>
@@ -91,6 +88,7 @@
         <property name="deadProperties">
             <list>
                 <value>idp.authn.flows.initial</value>
+                <value>idp.authn.resolveAttribute</value>
                 <value>idp.nameid.saml1.legacyGenerator</value>
                 <value>idp.nameid.saml2.legacyGenerator</value>
             </list>

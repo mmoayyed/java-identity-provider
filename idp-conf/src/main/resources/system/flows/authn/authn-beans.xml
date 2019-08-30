@@ -49,32 +49,6 @@
         class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype"
         p:replaceExistingContext="%{idp.authn.overrideRequestedAuthnContext:false}" />
 
-    <bean id="ResolveAttributes"
-            class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
-            c:resolverService-ref="shibboleth.AttributeResolverService"
-            p:activationCondition="#{ '%{idp.authn.resolveAttribute:null}' != 'null' }"
-            p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}">
-        <property name="attributesToResolve">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{ '%{idp.authn.resolveAttribute:null}'.trim() }" />
-        </property>
-        <property name="principalNameLookupStrategy">
-            <bean parent="shibboleth.Functions.Compose"
-                c:g-ref="shibboleth.PrincipalNameLookup.Session"
-                c:f-ref="shibboleth.ChildLookup.SessionContext" />
-        </property>
-        <property name="attributeContextCreationStrategy">
-            <bean parent="shibboleth.Functions.Compose"
-                c:g-ref="shibboleth.ChildLookupOrCreate.AttributeContext"
-                c:f-ref="shibboleth.ChildLookup.AuthenticationContext" />
-        </property>
-    </bean>
-
-    <bean id="FilterFlowsByAttribute"
-        class="net.shibboleth.idp.authn.impl.FilterFlowsByAttribute" scope="prototype"
-        p:activationCondition="#{ '%{idp.authn.resolveAttribute:null}' != 'null' }"
-        p:attributeId="#{ T(org.springframework.util.StringUtils).commaDelimitedListToStringArray('%{idp.authn.resolveAttribute:null}'.trim())[0] }"
-        p:filterActiveResults="%{idp.authn.filterActiveResultsByAttribute:true}" />
-
     <bean id="FilterFlowsByForcedAuthn"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
     
