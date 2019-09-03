@@ -31,11 +31,9 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-/**
- *
- */
 @SuppressWarnings("unchecked")
 public class MetadataFailFastTest extends AbstractFailFastTest {
+    private static int uniquifier;
 
     @Test public void workingInline() throws IOException {
         
@@ -45,11 +43,11 @@ public class MetadataFailFastTest extends AbstractFailFastTest {
         final MetadataResolver resolver = service.getServiceableComponent().getComponent();
         assertNotNull(resolver);
     }
-    
+
     private void nonWorkingInline(final Boolean failFast) throws IOException {
         nonWorkingMetadata(failFast, propertySource("ServiceConfiguration", makePath("inLineMetadataBad.xml")));
     }
-    
+
     private void nonWorkingMetadata(final Boolean failFast,
                                     final MockPropertySource propertySource) throws IOException {
         final String beanPath;
@@ -73,7 +71,7 @@ public class MetadataFailFastTest extends AbstractFailFastTest {
     @Test public void nonWorkingInlineFailFast() throws IOException {
         nonWorkingInline(true);
     }
-    
+
     @Test public void nonWorkingInline() throws IOException {
         nonWorkingInline(false);
     }
@@ -98,11 +96,11 @@ public class MetadataFailFastTest extends AbstractFailFastTest {
                 new Pair<>("File", makePath("metadataFileBad.xml")));
         nonWorkingMetadata(failFast, propertySource(prop));
     }
-    
+
     @Test public void badFileFailFast() throws IOException {
         badFile(true);
     }
-    
+
     @Test public void badFile() throws IOException {
         badFile(false);
     }
@@ -110,7 +108,6 @@ public class MetadataFailFastTest extends AbstractFailFastTest {
     @Test public void badFileDefault() throws IOException {
         badFile(null);
     }
-    
 
     private void nonExistingFile(final Boolean failFast) throws IOException {
         final List<Pair<String, String>> prop = List.of(new Pair<>("ServiceConfiguration", makePath("fileMetadata.xml")),
@@ -121,7 +118,7 @@ public class MetadataFailFastTest extends AbstractFailFastTest {
     @Test public void notThereFileFailFast() throws IOException {
         nonExistingFile(true);
     }
-    
+
     @Test public void notThereFile() throws IOException {
         nonExistingFile(false);
     }
@@ -129,5 +126,57 @@ public class MetadataFailFastTest extends AbstractFailFastTest {
     @Test public void notThereFileDefault() throws IOException {
         nonExistingFile(null);
     }
-    
+
+    @Test public void workingHttp() throws IOException {
+        final List<Pair<String, String>> prop = List.of(
+                new Pair<>("ServiceConfiguration", makePath("httpMetadata.xml")),
+                new Pair<>("Backing", makeTempPath("workingHttpTmp" + uniquifier++ + ".xml")),
+                new Pair<>("metadataURL", makeURLPath("metadataFileGood.xml")));
+
+        final Object bean = getBean(propertySource(prop), "metadataBeansDefaultFF.xml");
+        final ReloadableService<MetadataResolver > service = (ReloadableService<MetadataResolver>) bean;
+        assertNotNull(service);
+        final MetadataResolver resolver = service.getServiceableComponent().getComponent();
+        assertNotNull(resolver);
+    }
+
+    private void badHttp(final Boolean failFast) throws IOException {
+        final List<Pair<String, String>> prop = List.of(
+                new Pair<>("ServiceConfiguration", makePath("httpMetadata.xml")),
+                new Pair<>("Backing", makeTempPath("badHttpTmp" + uniquifier++ + ".xml")),
+                new Pair<>("metadataURL", makeURLPath("metadataFileBad.xml")));
+        nonWorkingMetadata(failFast, propertySource(prop));
+    }
+
+    @Test public void badHttpFailFast() throws IOException {
+        badHttp(true);
+    }
+
+    @Test public void badHttp() throws IOException {
+        badHttp(false);
+    }
+
+    @Test public void badHttpDefault() throws IOException {
+        badHttp(null);
+    }
+
+    private void nonExistingHttp(final Boolean failFast) throws IOException {
+        final List<Pair<String, String>> prop = List.of(
+                new Pair<>("ServiceConfiguration", makePath("httpMetadata.xml")),
+                new Pair<>("Backing", makeTempPath("badHttpTmp" + uniquifier++ + ".xml")),
+                new Pair<>("metadataURL", makeURLPath("ItsNotThere.xml")));
+        nonWorkingMetadata(failFast, propertySource(prop));
+    }
+
+    @Test public void notThereHttpFailFast() throws IOException {
+        nonExistingHttp(true);
+    }
+
+    @Test public void notThereHttp() throws IOException {
+        nonExistingHttp(false);
+    }
+
+    @Test public void notThereHttpDefault() throws IOException {
+        nonExistingHttp(null);
+    }
 }

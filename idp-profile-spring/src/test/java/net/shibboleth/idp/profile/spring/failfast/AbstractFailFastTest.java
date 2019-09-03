@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -38,7 +37,7 @@ import org.testng.annotations.BeforeSuite;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
@@ -47,7 +46,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
 
     private static final String PATH = "/net/shibboleth/idp/profile/spring/failfast/";
-    
+
     static private String workspaceDirName;
 
     static List<GenericApplicationContext> contexts;
@@ -65,9 +64,8 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
         contexts = new ArrayList<>();
     }
 
-
     @SuppressWarnings("resource")
-    @AfterSuite public void tearDownContexts() {
+    @AfterSuite public void afterSuite() {
         final Iterator<GenericApplicationContext> contextIterator = contexts.iterator(); 
         while (contextIterator.hasNext()) {
             final GenericApplicationContext context;
@@ -100,7 +98,7 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
         
         return context;
     }
-    
+
     protected ApplicationContext getApplicationContext(final String contextName, final String... files) throws IOException {
         return getApplicationContext(contextName, null, files);
     }
@@ -108,6 +106,7 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
     protected Object getBean(final MockPropertySource propSource, final String... files) throws IOException {
         return getBean(propSource, true, files);
     }
+
     protected Object getBean(final MockPropertySource propSource, Boolean failFast, final String... files) throws IOException {
         @SuppressWarnings("rawtypes") final Class<ReloadableService> claz = ReloadableService.class;
         
@@ -126,17 +125,17 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
             return null;
         }
     }
-    
+
     protected Object getBean(final String... files) throws IOException {
         return getBean(null, files);
     }
-        
+
     protected MockPropertySource propertySource(final String name, final String value) {
         MockPropertySource propSource = new MockPropertySource("localProperties");
         propSource.setProperty(name, value);
         return propSource;
     }
-    
+
     protected MockPropertySource propertySource(final Collection<Pair<String,String>> values) {
         MockPropertySource propSource = new MockPropertySource("localProperties");
         for (final Pair<String, String> value: values) {
@@ -144,12 +143,18 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
         }
         return propSource;
     }
-    static public CriteriaSet criteriaFor(final String entityId) {
-        final EntityIdCriterion criterion = new EntityIdCriterion(entityId);
-        return new CriteriaSet(criterion);
-    }
 
     protected String makePath(final String filePart) {
         return workspaceDirName +  filePart;
+    }
+
+    protected String makeTempPath(final String filePart) {
+        return workspaceDirName +  filePart;
+    }
+
+    protected String makeURLPath(final String filePart) {
+        return RepositorySupport.buildHTTPResourceURL("java-identity-provider", 
+                "idp-profile-spring/src/test/resources" + PATH + filePart,
+                false);
     }
 }
