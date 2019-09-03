@@ -172,18 +172,6 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             return;
         }
         
-        // Check if permitted.
-        final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext != null && rpContext.getProfileConfig() != null
-                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-            if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
-                    profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
-                log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
-                return;
-            }
-        }
-
         final List<Principal> principals = new ArrayList<>();
         
         if (!requestedCtx.getAuthnContextClassRefs().isEmpty()) {
@@ -213,6 +201,18 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             return;
         }
 
+        // Check if permitted.
+        final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpContext != null && rpContext.getProfileConfig() != null
+                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
+            if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
+                    profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
+                log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+                return;
+            }
+        }
+        
         final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
         if (requestedCtx.getComparison() != null) {
             rpCtx.setOperator(requestedCtx.getComparison().toString());

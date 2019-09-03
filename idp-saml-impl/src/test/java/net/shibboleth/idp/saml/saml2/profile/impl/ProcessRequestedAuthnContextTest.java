@@ -114,6 +114,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         final RequestedAuthnContext rac = racBuilder.buildObject();
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
+        ref.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
         
         ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setDisallowedFeatures(
@@ -121,6 +122,22 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
+        Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class));
+    }
+
+    @Test public void testDisallowedButIgnored() {
+        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final RequestedAuthnContext rac = racBuilder.buildObject();
+        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
+        final AuthnContextClassRef ref = classBuilder.buildObject();
+        ref.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        rac.getAuthnContextClassRefs().add(ref);
+        
+        ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setDisallowedFeatures(
+                BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class));
     }
     
