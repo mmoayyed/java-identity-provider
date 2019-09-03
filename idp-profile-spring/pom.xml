@@ -143,6 +143,7 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-api</artifactId>
@@ -150,7 +151,14 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-filter-spring</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>net.shibboleth.ext</groupId>
             <artifactId>spring-extensions</artifactId>

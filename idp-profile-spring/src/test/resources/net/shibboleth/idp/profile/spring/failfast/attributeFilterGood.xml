@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeFilterPolicyGroup id="PolicyExample3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
+
+    <AttributeFilterPolicy id="MostBasicExample">
+        <PolicyRequirementRule xsi:type="ANY"/>
+        
+        <AttributeRule attributeID="email">
+            <PermitValueRule xsi:type="ANY"/>
+        </AttributeRule>
+    </AttributeFilterPolicy>
+    
+</AttributeFilterPolicyGroup>
