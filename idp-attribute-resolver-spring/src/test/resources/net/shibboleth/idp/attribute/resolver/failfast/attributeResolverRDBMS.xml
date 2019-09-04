@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <AttributeDefinition id="Uid" xsi:type="Simple">
+        <InputDataConnector ref="dataConnector" attributeNames="uid" />
+    </AttributeDefinition>
+    
+    <DataConnector id="dataConnector" xsi:type="RelationalDatabase"
+        noResultIsError="true"
+        multipleResultsIsError="true"
+        readOnlyConnection="false"
+        noRetryDelay="PT5M">
+      <SimpleManagedConnection
+        jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
+        jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore"
+        jdbcUserName="%{jdbcUserName:SA}"
+        jdbcPassword=""/>
+        <QueryTemplate><![CDATA[SELECT * FROM people WHERE userid='%s']]></QueryTemplate>
+        <Column columnName="homephone" attributeID="phonenumber" />
+        <ResultCache expireAfterAccess="PT10S"/>
+    </DataConnector>
+    
+</AttributeResolver>

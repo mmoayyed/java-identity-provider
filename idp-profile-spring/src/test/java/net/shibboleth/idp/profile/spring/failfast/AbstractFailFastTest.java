@@ -26,12 +26,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
@@ -45,9 +47,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
  */
 public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
 
-    private static final String PATH = "/net/shibboleth/idp/profile/spring/failfast/";
-
-    static private String workspaceDirName;
+    private String workspaceDirName;
 
     static List<GenericApplicationContext> contexts;
 
@@ -56,12 +56,23 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
             contexts.add(context);
         }        
     }
-    
+
+    protected String getPath() {
+        return "/net/shibboleth/idp/profile/spring/failfast/";
+    }
+
+    protected String getWorkspaceDirName() {
+        return workspaceDirName;
+    }
+
     @BeforeSuite public void beforeSuite() throws IOException {
-        final ClassPathResource resource =
-                new ClassPathResource(PATH);
-        workspaceDirName = resource.getFile().getAbsolutePath() + "/";
         contexts = new ArrayList<>();
+    }
+
+    @BeforeClass public void beforeClass() throws IOException {
+        final ClassPathResource resource =
+                new ClassPathResource(getPath());
+        workspaceDirName = resource.getFile().getAbsolutePath() + "/";
     }
 
     @SuppressWarnings("resource")
@@ -81,7 +92,7 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            resources[i] = new ClassPathResource(PATH + files[i]);
+            resources[i] = new ClassPathResource(getPath() + files[i]);
         }
 
         final ApplicationContextBuilder builder = new ApplicationContextBuilder();
@@ -122,6 +133,7 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
             final ApplicationContext context = getApplicationContext(claz.getCanonicalName(), propSource, files);
             return SpringSupport.getBean(context, claz);
         } catch (Exception e) {
+            LoggerFactory.getLogger(AbstractFailFastTest.class).debug("GetAppContext failed",e);
             return null;
         }
     }
@@ -145,16 +157,16 @@ public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
     }
 
     protected String makePath(final String filePart) {
-        return workspaceDirName +  filePart;
+        return getWorkspaceDirName()  +  filePart;
     }
 
     protected String makeTempPath(final String filePart) {
-        return workspaceDirName +  filePart;
+        return getWorkspaceDirName()  +  filePart;
     }
 
     protected String makeURLPath(final String filePart) {
         return RepositorySupport.buildHTTPResourceURL("java-identity-provider", 
-                "idp-profile-spring/src/test/resources" + PATH + filePart,
+                "idp-profile-spring/src/test/resources" + getPath() + filePart,
                 false);
     }
 }

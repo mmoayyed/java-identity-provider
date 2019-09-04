@@ -61,9 +61,9 @@ import net.shibboleth.idp.testing.DatabaseTestingSupport;
 /** Test for {@link RDBMSDataConnectorParser}. */
 public class RDBMSDataConnectorParserTest {
 
-    private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsStore.sql";
+    public static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsStore.sql";
 
-    private static final String DATA_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsData.sql";
+    public static final String DATA_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsData.sql";
 
     private DataSource datasource;
 
