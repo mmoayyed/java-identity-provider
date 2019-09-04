@@ -24,6 +24,8 @@ import com.codahale.metrics.RatioGauge;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +45,18 @@ public class CoreGaugeSet implements MetricSet, MetricFilter {
     public CoreGaugeSet() {
         gauges = new HashMap<>();
         
+        gauges.put(
+                "host.name",
+                new Gauge<String>() {
+                    public String getValue() {
+                        try {
+                            return InetAddress.getLocalHost().getHostName();
+                        } catch (final UnknownHostException e) {
+                            return null;
+                        }
+                    }
+                });
+
         gauges.put(
                 "os.name",
                 new Gauge<String>() {
