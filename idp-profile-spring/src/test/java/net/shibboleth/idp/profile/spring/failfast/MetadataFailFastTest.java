@@ -25,12 +25,14 @@ import java.util.List;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.mock.env.MockPropertySource;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+@Ignore
 @SuppressWarnings("unchecked")
 public class MetadataFailFastTest extends AbstractFailFastTest {
     private static int uniquifier;

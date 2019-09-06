@@ -9,7 +9,7 @@
     </AttributeDefinition>
     
     <DataConnector id="dataConnector" xsi:type="LDAPDirectory"
-        ldapURL="ldap://localhost:%{port:10389}"
+        ldapURL="ldap://localhost:%{port:20389}"
         principal="cn=Directory Manager"
         principalCredential="password">
         <FilterTemplate>

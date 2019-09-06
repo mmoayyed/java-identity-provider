@@ -35,6 +35,7 @@ import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Ignore;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -45,6 +46,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 /**
  * Base class for testing metadata providers.
  */
+@Ignore
 public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
 
     private String workspaceDirName;

@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -45,6 +46,7 @@ import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+@Ignore
 @SuppressWarnings("unchecked")
 public class AttributeResolverFailFastTest extends AbstractFailFastTest {
     
@@ -55,7 +57,7 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
     private InMemoryDirectoryServer directoryServer;
     private DataSource datasource;
 
-    @BeforeTest public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
+    @BeforeTest(enabled = false) public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
         //
         // LDAP
         //
@@ -68,7 +70,7 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
                         "changeit".toCharArray()), new TrustStoreTrustManager(
                         "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.keystore",
                         "changeit".toCharArray(), "JKS", false));
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, 10389,
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, 20389,
                 sslUtil.createSSLSocketFactory()));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
@@ -84,7 +86,7 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
 
     }
     
-    @AfterTest public void teardownDirectoryServer() {
+    @AfterTest(enabled = false) public void teardownDirectoryServer() {
         directoryServer.shutDown(true);
         System.clearProperty("org.ldaptive.provider");
     }
