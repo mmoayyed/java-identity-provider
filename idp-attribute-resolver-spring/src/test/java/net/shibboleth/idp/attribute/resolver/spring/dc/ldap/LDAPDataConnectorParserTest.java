@@ -36,7 +36,9 @@ import java.util.Map;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.DerefAliases;
 import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchScope;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -148,6 +150,8 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         assertNotNull(attrs);
+        assertEquals(2, attrs.size());
+        assertEquals(attrs.get("employeeNumber").getValues().get(0).getNativeValue(), "C2J20hMNp7NlUwQ+");
         assertNotNull(attrs.get("entryDN"));
     }
     
@@ -308,6 +312,74 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         assertNotNull(attrs);
+        assertNotNull(attrs.get("entryDN"));
+    }
+
+    @Test public void v2JndiConfig() throws Exception {
+        final LDAPDataConnector dataConnector =
+          getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-jndi.xml"});
+        assertNotNull(dataConnector);
+        assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
+        final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
+        assertNotNull(connFactory);
+
+        final ConnectionConfig connConfig = connFactory.getConnectionConfig();
+        assertNotNull(connConfig);
+        assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
+        assertEquals(false, connConfig.getUseSSL());
+        assertEquals(true, connConfig.getUseStartTLS());
+        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        assertEquals("cn=Directory Manager", connInitializer.getBindDn());
+        assertEquals("password", connInitializer.getBindCredential().getString());
+        assertEquals(2000, connConfig.getConnectTimeout());
+        assertEquals(4000, connConfig.getResponseTimeout());
+
+        final SslConfig sslConfig = connFactory.getConnectionConfig().getSslConfig();
+        assertNotNull(sslConfig);
+        final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
+        assertNotNull(credentialConfig);
+
+        final ProviderConfig providerConfig = connFactory.getProvider().getProviderConfig();
+        assertNotNull(providerConfig);
+        assertEquals("value1", providerConfig.getProperties().get("name1"));
+        assertEquals("finding", providerConfig.getProperties().get("java.naming.ldap.derefAliases"));
+        assertEquals("jpegPhoto employeeNumber", providerConfig.getProperties().get("java.naming.ldap.attributes.binary"));
+
+        final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
+        assertNotNull(searchExecutor);
+        assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
+        assertNull(searchExecutor.getSearchFilter());
+        assertEquals(7000, searchExecutor.getTimeLimit());
+        assertEquals(SearchScope.SUBTREE, searchExecutor.getSearchScope());
+        assertEquals(DerefAliases.FINDING, searchExecutor.getDerefAliases());
+        assertEquals(new String[] {"jpegPhoto", "employeeNumber"}, searchExecutor.getBinaryAttributes());
+
+        final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
+        assertNotNull(validator);
+        assertTrue(validator.isThrowValidateError());
+        assertNotNull(validator.getConnectionFactory());
+
+        final ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
+        assertNotNull(searchBuilder);
+
+        final StringAttributeValueMappingStrategy mappingStrategy =(StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
+        assertNotNull(mappingStrategy);
+        assertTrue(mappingStrategy.isNoResultAnError());
+        assertTrue(mappingStrategy.isMultipleResultsAnError());
+
+        assertNull(dataConnector.getResultsCache());
+
+        dataConnector.initialize();
+        final AttributeResolutionContext context =
+          TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+            TestSources.SP_ENTITY_ID);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        assertNotNull(attrs);
+        assertEquals(5, attrs.size());
+        assertNotNull(attrs.get("cn"));
+        assertNotNull(attrs.get("sn"));
+        assertNotNull(attrs.get("jpegPhoto"));
+        assertEquals(attrs.get("employeeNumber").getValues().get(0).getNativeValue(), "C2J20hMNp7NlUwQ+");
         assertNotNull(attrs.get("entryDN"));
     }
 

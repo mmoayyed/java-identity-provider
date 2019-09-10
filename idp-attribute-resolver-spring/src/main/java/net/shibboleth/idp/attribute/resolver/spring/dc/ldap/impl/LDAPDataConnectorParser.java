@@ -29,6 +29,7 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.DerefAliases;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -181,7 +182,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
         }
 
-        final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
+        final BeanDefinition searchExecutor = v2Parser.createSearchExecutor(props);
         builder.addPropertyValue("searchExecutor", searchExecutor);
 
         final String mappingStrategyID = AttributeSupport.getAttributeValue(config, new QName("mappingStrategyRef"));
@@ -450,13 +451,16 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
         /**
          * Creates a new search executor bean definition from a v2 XML configuration.
-         * 
+         *
+         * @param props ldap properties
+         *
          * @return search executor bean definition
          */
         // CheckStyle: CyclomaticComplexity OFF
-        @Nonnull public BeanDefinition createSearchExecutor() {
+        @Nonnull public BeanDefinition createSearchExecutor(final ManagedMap<String, String> props) {
             final String baseDn = AttributeSupport.getAttributeValue(configElement, new QName("baseDN"));
             final String searchScope = AttributeSupport.getAttributeValue(configElement, new QName("searchScope"));
+            final String derefAliases = AttributeSupport.getAttributeValue(configElement, new QName("derefAliases"));
             final String searchTimeLimit =
                     AttributeSupport.getAttributeValue(configElement, new QName("searchTimeLimit"));
             final String maxResultSize = AttributeSupport.getAttributeValue(configElement, new QName("maxResultSize"));
@@ -470,6 +474,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             if (searchScope != null) {
                 searchExecutor.addPropertyValue("searchScope", searchScope);
+            }
+            if (derefAliases != null) {
+                searchExecutor.addPropertyValue("derefAliases", derefAliases);
+            } else if (props.containsKey("java.naming.ldap.derefAliases")) {
+                searchExecutor.addPropertyValue(
+                  "derefAliases", props.get("java.naming.ldap.derefAliases").toUpperCase());
             }
             if (searchTimeLimit != null) {
                 final BeanDefinitionBuilder duration =
@@ -505,6 +515,27 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                         BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildStringList");
                 returnAttrs.addConstructorArgValue(ElementSupport.getElementContentAsString(returnAttrsElement));
                 searchExecutor.addPropertyValue("returnAttributes", returnAttrs.getBeanDefinition());
+            }
+
+            final List<Element> binaryAttrsElements = ElementSupport.getChildElementsByTagNameNS(configElement,
+              AttributeResolverNamespaceHandler.NAMESPACE, "BinaryAttributes");
+
+            if (!binaryAttrsElements.isEmpty()) {
+                if (binaryAttrsElements.size() > 1) {
+                    log.warn("{} Only one <BinaryAttributes> element can be specified; "+
+                      "only the first has been consulted.", getLogPrefix());
+                }
+                final Element binaryAttrsElement = binaryAttrsElements.get(0);
+
+                final BeanDefinitionBuilder binaryAttrs =
+                  BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildStringList");
+                binaryAttrs.addConstructorArgValue(ElementSupport.getElementContentAsString(binaryAttrsElement));
+                searchExecutor.addPropertyValue("binaryAttributes", binaryAttrs.getBeanDefinition());
+            } else if (props.containsKey("java.naming.ldap.attributes.binary")) {
+                final BeanDefinitionBuilder binaryAttrs =
+                  BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildStringList");
+                binaryAttrs.addConstructorArgValue(props.get("java.naming.ldap.attributes.binary"));
+                searchExecutor.addPropertyValue("binaryAttributes", binaryAttrs.getBeanDefinition());
             }
 
             return searchExecutor.getBeanDefinition();

@@ -751,6 +751,13 @@
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="BinaryAttributes" type="resolver:string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                A space separated list of attributes whose values should be encoded.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element name="LDAPProperty" type="resolver:PropertyType">
                         <annotation>
                             <documentation>
@@ -829,6 +836,14 @@
                         <documentation>
                             The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE.
                             Default value is SUBTREE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="derefAliases" type="resolver:DerefAliasesType">
+                    <annotation>
+                        <documentation>
+                            The LDAP alias dereference behavior. Acceptable values are NEVER, SEARCHING, FINDING, ALWAYS.
+                            Default value is NEVER.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1543,6 +1558,18 @@
             <enumeration value="SUBTREE"/>
             <enumeration value="ONELEVEL"/>
             <enumeration value="OBJECT"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="DerefAliasesType">
+        <annotation>
+            <documentation>How to dereference aliases.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="NEVER"/>
+            <enumeration value="SEARCHING"/>
+            <enumeration value="FINDING"/>
+            <enumeration value="ALWAYS"/>
         </restriction>
     </simpleType>
 
