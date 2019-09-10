@@ -81,23 +81,28 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
         //
         // RDBMS
         //
-        datasource = DatabaseTestingSupport.GetMockDataSource(RDBMSDataConnectorParserTest.INIT_FILE, "RDBMSDataConnectorStore");
+        datasource = DatabaseTestingSupport.GetMockDataSource(getPath() + "RdbmsStore.sql", "RDBMSDataConnectorStore");
         DatabaseTestingSupport.InitializeDataSourceFromFile(RDBMSDataConnectorParserTest.DATA_FILE, datasource);
 
     }
     
-    @AfterTest(enabled = false) public void teardownDirectoryServer() {
-        directoryServer.shutDown(true);
+    @AfterTest public void teardownDirectoryServer() {
+        if (directoryServer != null) {
+            directoryServer.shutDown(true);
+        }
         System.clearProperty("org.ldaptive.provider");
     }
-    
-   public void workingAttributeResolver(String file) throws IOException {
-        
-        final Object bean = getBean(propertySource("ServiceConfiguration", makePath(file)), "attributeResolverBeansDefaultFF.xml");
-        final ReloadableService<AttributeResolver > service = (ReloadableService<AttributeResolver>) bean;
-        assertNotNull(service);
-        final AttributeResolver resolver = service.getServiceableComponent().getComponent();
-        assertNotNull(resolver);
+
+    public void workingAttributeResolver(final String file, final MockPropertySource props) throws IOException {
+       final Object bean = getBean(props, "attributeResolverBeansDefaultFF.xml");
+       final ReloadableService<AttributeResolver > service = (ReloadableService<AttributeResolver>) bean;
+       assertNotNull(service);
+       final AttributeResolver resolver = service.getServiceableComponent().getComponent();
+       assertNotNull(resolver);
+    }
+
+    public void workingAttributeResolver(String file) throws IOException {
+       workingAttributeResolver(file, propertySource("ServiceConfiguration", makePath(file)));
     }
 
     @Test public void workingAttributeResolver() throws IOException {
@@ -180,4 +185,34 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
     @Test public void failingRDBMSResolverNoFF() throws IOException {
         failingRDBMSResolver(false);
     }
+
+    @Test public void workingStoredResolver() throws IOException {
+        workingAttributeResolver("attributeResolverStored.xml");
+    }
+
+    @Test public void workingFailingStoredResolver() throws IOException {
+        final MockPropertySource props = propertySource("jdbcUserName", "SAD");
+        props.setProperty("dcfailfast", "false");
+        propertySource("ServiceConfiguration", makePath("attributeResolverStored.xml"));
+        workingAttributeResolver("attributeResolverStored.xml");
+    }
+
+    private void  failingStoredResolver(final Boolean failFastService) throws IOException {
+        final MockPropertySource props = propertySource("jdbcUserName", "SAD");
+        props.setProperty("dcfailfast", "true");
+        badResolver(props, failFastService, "attributeResolverStored.xml");
+    }
+
+    @Test public void failingStoredFF() throws IOException {
+        failingStoredResolver(true);
+    }
+
+    @Test public void failingStoredNoFF() throws IOException {
+        failingStoredResolver(false);
+    }
+
+    @Test public void failingStoredDefaultFF() throws IOException {
+        failingStoredResolver(false);
+    }
+
 }
