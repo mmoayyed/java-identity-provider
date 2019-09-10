@@ -27,6 +27,7 @@
     </listener>
     
     <!-- Filters and filter mappings -->
+    
     <!-- Try and force I18N, probably won't help much. -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -38,6 +39,15 @@
         <init-param>
             <param-name>forceEncoding</param-name>
             <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <!-- Automates SameSite handling until Java API catches up. -->
+    <filter>
+        <filter-name>SameSiteCookieFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>shibboleth.SameSiteCookieFilter</param-value>
         </init-param>
     </filter>
     <!-- Lets us lump repeated Set-Cookie headers into one, something containers rarely support. -->
@@ -64,6 +74,11 @@
         <filter-name>SLF4JMDCServletFilter</filter-name>
         <filter-class>net.shibboleth.idp.log.SLF4JMDCServletFilter</filter-class>
     </filter>
+    
+    <filter-mapping>
+        <filter-name>SameSiteCookieFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>CookieBufferingFilter</filter-name>
         <url-pattern>/profile/admin/*</url-pattern>

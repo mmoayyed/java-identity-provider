@@ -177,6 +177,10 @@
         class="net.shibboleth.utilities.java.support.net.DynamicResponseHeaderFilter"
         p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
         p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
+        
+    <bean id="shibboleth.SameSiteCookieFilter"
+        class="net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter"
+        p:defaultValue="None" />
 
     <bean id="shibboleth.BuilderFactory" factory-method="getBuilderFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
