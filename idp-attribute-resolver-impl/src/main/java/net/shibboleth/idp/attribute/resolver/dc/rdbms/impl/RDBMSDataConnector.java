@@ -104,6 +104,7 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
         if (defaultValidator) {
             final DataSourceValidator validator = new DataSourceValidator();
             validator.setDataSource(dataSource);
+            validator.setThrowValidateError(isFailFast());
             validator.initialize();
             super.setValidator(validator);
         }
@@ -116,7 +117,9 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             getValidator().validate();
         } catch (final ValidationException e) {
             log.error("{} Invalid connector configuration", getLogPrefix(), e);
-            throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
+            if (isFailFast()) {
+                throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
+            }
         }
     }
 

@@ -971,7 +971,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
-
+                <attribute name="failFast" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -1114,6 +1120,13 @@
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failFast" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Whether to fail if the store cannot be verified at startup (defaults to false).
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1281,6 +1294,13 @@
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failFast" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Whether to fail if the store cannot be verified at startup (defaults to false).
                         </documentation>
                     </annotation>
                 </attribute>

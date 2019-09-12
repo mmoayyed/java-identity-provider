@@ -45,7 +45,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
     @Nonnull private ConnectionFactory connectionFactory;
     
     /** Whether validate should throw, default value is <code>true</code>. */
-    private boolean throwOnValidateError = true;
+    private boolean throwOnValidateError;
        
     /**
      * Constructor.  
@@ -81,21 +81,13 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
         return connectionFactory;
     }
 
-    /**
-     * Sets whether {@link #validate()} should throw or log errors.
-     *
-     * @param what whether {@link #validate()} should throw or log errors
-     */
+    /** {@inheritDoc} */
     public void setThrowValidateError(final boolean what) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         throwOnValidateError = what;
     }
 
-    /**
-     * Returns whether {@link #validate()} should throw or log errors.
-     *
-     * @return whether {@link #validate()} should throw or log errors
-     */
+    /** {@inheritDoc} */
     public boolean isThrowValidateError() {
         return throwOnValidateError;
     }
@@ -107,14 +99,14 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
             connection = connectionFactory.getConnection();
             if (connection == null) {
                 log.error("Unable to retrieve connections from configured connection factory");
-                if (throwOnValidateError) {
+                if (isThrowValidateError()) {
                     throw new LdapException("Unable to retrieve connection from connection factory");
                 }
             }
             connection.open();
         } catch (final LdapException e) {
             log.error("Connection factory validation failed", e);
-            if (throwOnValidateError) {
+            if (isThrowValidateError()) {
                 throw new ValidationException(e);
             }
         } finally {

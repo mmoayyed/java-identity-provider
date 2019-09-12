@@ -21,9 +21,23 @@ package net.shibboleth.idp.attribute.resolver.dc;
 public interface Validator {
 
     /**
-     * Determines whether a data connector is valid and ready for use.
+     * Probe the data connector and conditionally fails if it is not valid and ready for use.
      * 
-     * @throws ValidationException thrown if validation fails
+     * @throws ValidationException thrown if validation fails and {@link #isThrowValidateError()} is true
      */
     void validate() throws ValidationException;
+    
+    /**
+     * Sets whether {@link #validate()} should throw or log errors.
+     *
+     * @param what whether {@link #validate()} should throw or log errors
+     */
+    public void setThrowValidateError(final boolean what);
+
+    /**
+     * Returns whether {@link #validate()} should throw or log errors.
+     *
+     * @return whether {@link #validate()} should throw or log errors
+     */
+    public boolean isThrowValidateError();
 }

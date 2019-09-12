@@ -47,7 +47,7 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
     @NonnullAfterInit private DataSource dataSource;
 
     /** Whether validate should throw, default value is <code>true</code>. */
-    private boolean throwOnValidateError = true;
+    private boolean throwOnValidateError;
 
     /**
      * Constructor.
@@ -86,22 +86,14 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
         return dataSource;
     }
 
-    /**
-     * Sets whether {@link #validate()} should throw or log errors.
-     *
-     * @param value whether {@link #validate()} should throw or log errors
-     */
+    /** {@inheritDoc} */
     public void setThrowValidateError(final boolean value) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         throwOnValidateError = value;
     }
 
 
-    /**
-     * Returns whether {@link #validate()} should throw or log errors.
-     *
-     * @return whether {@link #validate()} should throw or log errors
-     */
+    /** {@inheritDoc} */
     public boolean isThrowValidateError() {
         return throwOnValidateError;
     }
@@ -115,7 +107,7 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
             connection = dataSource.getConnection();
             if (connection == null) {
                 log.error("Unable to retrieve connections from configured data source");
-                if (throwOnValidateError) {
+                if (isThrowValidateError()) {
                     throw new ValidationException("Unable to retrieve connections from configured data source");
                 }
             }
@@ -126,7 +118,7 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
             } else {
                 log.error("Datasource validation failed", e);
             }
-            if (throwOnValidateError) {
+            if (isThrowValidateError()) {
                 throw new ValidationException("Invalid connector configuration", e);
             }
         } finally {

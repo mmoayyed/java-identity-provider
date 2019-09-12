@@ -67,6 +67,9 @@ public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2
 
     /** Query result cache. */
     @Nullable private Cache<String,Map<String,IdPAttribute>> resultsCache;
+    
+    /** Does DataConnector fail fast.*/
+    private boolean failFast;
 
     /**
      * Gets the builder used to create executable searches.
@@ -218,5 +221,18 @@ public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2
             throw new ComponentInitializationException(getLogPrefix() + " No mapping strategy was configured");
         }
     }
-    
+
+    /** Does the data connector fails fast.
+     * @return Returns whether the data connector fails fast.
+     */
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    /** Whether the data connector fails fast.
+     * @param what what to set
+     */
+    public void setFailFast(final boolean what) {
+        failFast = what;
+    }
 }

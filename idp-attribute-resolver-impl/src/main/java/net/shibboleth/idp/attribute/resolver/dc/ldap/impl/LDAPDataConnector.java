@@ -139,6 +139,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             validator.setConnectionFactory(connectionFactory);
             super.setValidator(validator);
         }
+        getValidator().setThrowValidateError(isFailFast());
         if (defaultMappingStrategy) {
             super.setMappingStrategy(new StringAttributeValueMappingStrategy());
         }
@@ -148,7 +149,10 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             getValidator().validate();
         } catch (final ValidationException e) {
             log.error("{} Invalid connector configuration", getLogPrefix(), e);
-            throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
+            if (isFailFast()) {
+                // Should always follow this leg.
+                throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
+            }
         }
         policeForJVMTrust();
     }

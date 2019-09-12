@@ -11,6 +11,7 @@
     <DataConnector id="dataConnector" xsi:type="RelationalDatabase"
         noResultIsError="true"
         multipleResultsIsError="true"
+        failFast="true"
         readOnlyConnection="false"
         noRetryDelay="PT5M">
       <SimpleManagedConnection

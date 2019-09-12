@@ -83,6 +83,11 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * Which attributes to export.
      */
     @Nonnull @NotEmpty public static final String ATTR_EXPORT_NAMES = "exportAttributes";
+    
+    /**
+     * Failfast LDAP, Realtional, Stored.
+     */
+    @Nonnull @NotEmpty public static final String ATTR_FAIL_FAST = "failFast";
 
     /** Failover data connector attribute name. */
     @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
@@ -151,6 +156,13 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             builder.addPropertyValue("exportAttributes",
                     SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, ATTR_EXPORT_NAMES)));
         }
+
+        if (config.hasAttributeNS(null, ATTR_FAIL_FAST)) {
+            // LDAP, Relational & HTTP only, limited in the schema
+            builder.addPropertyValue("failFast", 
+                    StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FAIL_FAST)));
+        }
+
 
         if (isNative(config)) {
             // parse the configuration into a beanfactory and inject the resources as well

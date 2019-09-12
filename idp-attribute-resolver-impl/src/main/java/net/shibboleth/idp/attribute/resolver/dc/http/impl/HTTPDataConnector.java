@@ -61,6 +61,13 @@ public class HTTPDataConnector extends AbstractSearchDataConnector<HTTPSearch,HT
         setValidator(new Validator() {
             public void validate() throws ValidationException {
             }
+
+            public void setThrowValidateError(final boolean what) {
+            }
+
+            public boolean isThrowValidateError() {
+                return false;
+            }
         });
     }
 

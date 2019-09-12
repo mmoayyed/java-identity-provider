@@ -21,6 +21,9 @@ import javax.annotation.Nullable;
 
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+
 /** Used to determine whether a Data Connector initialized properly and continues to be fit for use. */
 public class NonFailFastValidator implements Validator {
 
@@ -38,7 +41,13 @@ public class NonFailFastValidator implements Validator {
      * @param validator validator to run but trap exceptions from
      */
     public NonFailFastValidator(@Nullable final Validator validator) {
+        // V4 deprecation.  Remove the class in V5
+        DeprecationSupport.warnOnce(ObjectType.CLASS, "NonFailFastValidator", null, 
+                "failFast on the dataConnector or p:throwValidateError on the contained Validator");
         embeddedValidator = validator;
+        if (embeddedValidator != null) {
+            embeddedValidator.setThrowValidateError(false);
+        }
     }
     
     /** {@inheritDoc} */
@@ -52,6 +61,16 @@ public class NonFailFastValidator implements Validator {
                         "Non-fail-fast validator trapped an error from its embedded validator", e);
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    public void setThrowValidateError(final boolean what) {
+        LoggerFactory.getLogger(NonFailFastValidator.class).error("setThrowValidateError ignored");
+    }
+
+    /** {@inheritDoc} */
+    public boolean isThrowValidateError() {
+        return false;
     }
     
 }
