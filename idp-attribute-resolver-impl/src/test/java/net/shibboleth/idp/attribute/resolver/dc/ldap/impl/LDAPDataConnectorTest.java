@@ -145,6 +145,7 @@ public class LDAPDataConnectorTest {
         } catch (final ComponentInitializationException e) {
             // OK
         }
+        connector.setFailFast(true);
 
         final SearchExecutor searchExecutor = new SearchExecutor();
         searchExecutor.setBaseDn(TEST_BASE_DN);
@@ -201,6 +202,7 @@ public class LDAPDataConnectorTest {
         connector.setConnectionFactory(connectionFactory);
         connector.setSearchExecutor(new SearchExecutor());
         connector.setExecutableSearchBuilder(newParameterizedExecutableSearchFilterBuilder("(uid={principalName})"));
+        connector.setFailFast(true);
 
         try {
             connector.initialize();
@@ -209,7 +211,7 @@ public class LDAPDataConnectorTest {
             // OK
         }
 
-        connector.setValidator(newConnectionFactoryValidator(connectionFactory, false));
+        connector.setFailFast(false);
         connector.initialize();
     }
 
@@ -564,14 +566,12 @@ public class LDAPDataConnectorTest {
         
         validator.setConnectionFactory(connectionFactory);
         validator.setThrowValidateError(throwValidateError);
-        validator.initialize();
         return validator;
     }
 
     public static ConnectionFactoryValidator newConnectionFactoryValidator(final ConnectionFactory connectionFactory) throws ComponentInitializationException {
         final ConnectionFactoryValidator validator = new ConnectionFactoryValidator();
         validator.setConnectionFactory(connectionFactory);
-        validator.initialize();
         return validator;
     }
 }
