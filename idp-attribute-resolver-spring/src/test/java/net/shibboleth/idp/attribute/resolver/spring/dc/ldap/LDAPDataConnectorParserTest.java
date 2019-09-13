@@ -218,7 +218,7 @@ public class LDAPDataConnectorParserTest {
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
-        assertTrue(validator.isThrowValidateError());
+        assertFalse(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
         final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
@@ -293,7 +293,7 @@ public class LDAPDataConnectorParserTest {
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
-        assertTrue(validator.isThrowValidateError());
+        assertFalse(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
         final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
@@ -339,7 +339,7 @@ public class LDAPDataConnectorParserTest {
         final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         assertNotNull(credentialConfig);
 
-        final ProviderConfig providerConfig = connFactory.getProvider().getProviderConfig();
+        final ProviderConfig<?> providerConfig = connFactory.getProvider().getProviderConfig();
         assertNotNull(providerConfig);
         assertEquals("value1", providerConfig.getProperties().get("name1"));
         assertEquals("finding", providerConfig.getProperties().get("java.naming.ldap.derefAliases"));
@@ -356,10 +356,10 @@ public class LDAPDataConnectorParserTest {
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
-        assertTrue(validator.isThrowValidateError());
+        assertFalse(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
-        final ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
+        final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
         assertNotNull(searchBuilder);
 
         final StringAttributeValueMappingStrategy mappingStrategy =(StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
@@ -580,7 +580,7 @@ public class LDAPDataConnectorParserTest {
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
-        assertTrue(validator.isThrowValidateError());
+        assertFalse(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
         final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
