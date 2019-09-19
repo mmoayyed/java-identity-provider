@@ -23,6 +23,9 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.action.EventIds;
 
+import net.shibboleth.idp.profile.interceptor.ExternalInterceptor;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
 /**
  * A context representing the state of an externalized interceptor flow.
  * 
@@ -33,15 +36,32 @@ import org.opensaml.profile.action.EventIds;
  */
 public final class ExternalInterceptorContext extends BaseContext {
     
+    /** Implementation object. */
+    @Nonnull private final ExternalInterceptor externalInterceptor; 
+    
     /** Value of flowExecutionUrl on branching from flow. */
     @Nullable private String flowExecutionUrl;
 
     /** Event to signal. */
     @Nullable private String eventId;
     
-    /** Constructor. */
-    public ExternalInterceptorContext() {
+    /**
+     * Constructor.
+     * 
+     * @param interceptor implementation object
+     */
+    public ExternalInterceptorContext(@Nonnull final ExternalInterceptor interceptor) {
+        externalInterceptor = Constraint.isNotNull(interceptor, "ExternalInterceptor cannot be null");
         eventId = EventIds.PROCEED_EVENT_ID;
+    }
+    
+    /**
+     * Get the {@link ExternalInterceptor} installed in the context.
+     * 
+     * @return the interceptor implementation
+     */
+    @Nonnull public ExternalInterceptor getExternalInterceptor() {
+        return externalInterceptor;
     }
     
     /**

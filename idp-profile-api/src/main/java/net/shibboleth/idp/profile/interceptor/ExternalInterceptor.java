@@ -24,9 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+import org.springframework.webflow.executor.FlowExecutorImpl;
 
 import com.google.common.net.UrlEscapers;
 
+import net.shibboleth.idp.profile.context.ExternalInterceptorContext;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -35,8 +43,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * @since 4.0.0
  */
-public class ExternalInterceptor {
+public abstract class ExternalInterceptor {
 
+    /** Parameter supplied to locate the SWF object needed in the session. */
+    @Nonnull @NotEmpty public static final String SWF_KEY = "net.shibboleth.idp.flowExecutor";
+    
     /** Parameter supplied to identify the per-conversation structure in the session. */
     @Nonnull @NotEmpty public static final String CONVERSATION_KEY = "conversation";
 
@@ -82,18 +93,16 @@ public class ExternalInterceptor {
      */
     @Nonnull @NotEmpty public static String startExternalInterceptor(@Nonnull final HttpServletRequest request)
             throws ExternalInterceptorException {
-        final String conv = request.getParameter(CONVERSATION_KEY);
-        if (conv == null || conv.isEmpty()) {
+        final String key = request.getParameter(CONVERSATION_KEY);
+        if (key == null || key.isEmpty()) {
             throw new ExternalInterceptorException("No conversation key found in request");
         }
         
-        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + conv);
-        if (obj == null || !(obj instanceof ExternalInterceptor)) {
-            throw new ExternalInterceptorException("No conversation state found in session for key (" + conv + ")");
-        }
+        final ProfileRequestContext profileRequestContext = getProfileRequestContext(key, request);
+        final ExternalInterceptorContext extContext = getExternalInterceptorContext(profileRequestContext);
+        extContext.getExternalInterceptor().doStart(request, profileRequestContext, extContext);
         
-        ((ExternalInterceptor) obj).doStart(request);
-        return conv;
+        return key;
     }
     
     /**
@@ -112,14 +121,9 @@ public class ExternalInterceptor {
             @Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
             throws ExternalInterceptorException, IOException {
         
-        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + key);
-        if (obj == null || !(obj instanceof ExternalInterceptor)) {
-            throw new ExternalInterceptorException("No conversation state found in session for key (" + key + ")");
-        }
-        
-        request.getSession().removeAttribute(CONVERSATION_KEY + key);
-        
-        ((ExternalInterceptor) obj).doFinish(request, response);
+        final ProfileRequestContext profileRequestContext = getProfileRequestContext(key, request);
+        final ExternalInterceptorContext extContext = getExternalInterceptorContext(profileRequestContext);
+        extContext.getExternalInterceptor().doFinish(request, response, profileRequestContext, extContext);
     }
 
     /**
@@ -133,13 +137,56 @@ public class ExternalInterceptor {
      */
     @Nonnull public static ProfileRequestContext getProfileRequestContext(@Nonnull @NotEmpty final String key,
             @Nonnull final HttpServletRequest request) throws ExternalInterceptorException {
+
+        final Object obj = request.getServletContext().getAttribute(SWF_KEY);
+        if (!(obj instanceof FlowExecutorImpl)) {
+            throw new ExternalInterceptorException("No FlowExecutor available in servlet context");
+        }
+
+        try {
+            final FlowExecutionRepository repo = ((FlowExecutorImpl) obj).getExecutionRepository();
+            ExternalContextHolder.setExternalContext(
+                    new ServletExternalContext(request.getServletContext(), request, null));
+            
+            final FlowExecution execution = repo.getFlowExecution(repo.parseFlowExecutionKey(key));
+            final Object prc = execution.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
+            if (!(prc instanceof ProfileRequestContext)) {
+                throw new ExternalInterceptorException(
+                        "ProfileRequestContext not available in webflow conversation scope");
+            }
+            
+            return (ProfileRequestContext) prc;
+        } catch (final FlowExecutionRepositoryException e) {
+            throw new ExternalInterceptorException("Error retrieving flow conversation", e);
+        } finally {
+            ExternalContextHolder.setExternalContext(null);
+        }
+    }
+    
+    /**
+     * Utility method to access the {@link ExternalInterceptorContext}.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return the {@link ExternalInterceptorContext} to operate on
+     * 
+     * @throws ExternalInterceptorException if the context is missing
+     */
+    @Nonnull private static ExternalInterceptorContext getExternalInterceptorContext(
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ExternalInterceptorException {
         
-        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + key);
-        if (obj == null || !(obj instanceof ExternalInterceptor)) {
-            throw new ExternalInterceptorException("No conversation state found in session");
+        final ProfileInterceptorContext piContext =
+                profileRequestContext.getSubcontext(ProfileInterceptorContext.class);
+        if (piContext == null) {
+            throw new ExternalInterceptorException("No ProfileInterceptorContext found");
         }
         
-        return ((ExternalInterceptor) obj).getProfileRequestContext(request);
+        final ExternalInterceptorContext extContext = piContext.getSubcontext(ExternalInterceptorContext.class);
+        if (extContext == null) {
+            throw new ExternalInterceptorException("No ExternalInterceptorContext found");
+        }
+        
+        return extContext;
     }
     
     /**
@@ -147,11 +194,15 @@ public class ExternalInterceptor {
      * the servlet session and exposing it as request attributes.
      * 
      * @param request servlet request
+     * @param profileRequestContext profile request context
+     * @param externalInterceptorContext external interceptor context
      * 
      * @throws ExternalInterceptorException if an error occurs
      */
-    protected void doStart(@Nonnull final HttpServletRequest request) throws ExternalInterceptorException {
-        throw new ExternalInterceptorException("Not implemented");
+    protected void doStart(@Nonnull final HttpServletRequest request,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalInterceptorContext externalInterceptorContext) throws ExternalInterceptorException {
+        request.setAttribute(ProfileRequestContext.BINDING_KEY, profileRequestContext);
     }
 
     /**
@@ -161,26 +212,15 @@ public class ExternalInterceptor {
      * 
      * @param request servlet request
      * @param response servlet response
+     * @param profileRequestContext profile request context
+     * @param externalInterceptorContext external interceptor context
      * 
      * @throws ExternalInterceptorException if an error occurs
      * @throws IOException if the redirect cannot be issued
      */
-    protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
-            throws ExternalInterceptorException, IOException {
-        throw new ExternalInterceptorException("Not implemented");
-    }
-    
-    /**
-     * Get the {@link ProfileRequestContext} associated with a request.
-     * 
-     * @param request servlet request
-     * 
-     * @return the profile request context
-     * @throws ExternalInterceptorException if an error occurs
-     */
-    @Nonnull protected ProfileRequestContext getProfileRequestContext(@Nonnull final HttpServletRequest request)
-            throws ExternalInterceptorException {
-        throw new ExternalInterceptorException("Not implemented");
-    }
-    
+    protected abstract void doFinish(@Nonnull final HttpServletRequest request,
+            @Nonnull final HttpServletResponse response, @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalInterceptorContext externalInterceptorContext)
+                    throws ExternalInterceptorException, IOException;
+
 }

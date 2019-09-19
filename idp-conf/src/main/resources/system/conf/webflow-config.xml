@@ -204,4 +204,13 @@
     <bean id="profileRequestContextFlowExecutionListener"
           class="net.shibboleth.idp.profile.support.ProfileRequestContextFlowExecutionListener" />
 
+    <!-- Expose the FlowExecutor for access via servlet context outside the webflows. -->
+	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
+	   <property name="attributes">
+	       <map>
+	           <entry key="net.shibboleth.idp.flowExecutor" value-ref="flowExecutor"/>
+	       </map>
+	   </property>
+	</bean>
+
 </beans>

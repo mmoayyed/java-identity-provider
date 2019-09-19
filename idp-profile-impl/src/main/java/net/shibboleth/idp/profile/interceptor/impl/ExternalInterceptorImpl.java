@@ -24,14 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.context.ExternalInterceptorContext;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ExternalInterceptor;
 import net.shibboleth.idp.profile.interceptor.ExternalInterceptorException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Implementation of the {@link ExternalInterceptor} API that handles moving information in and out
@@ -41,57 +37,19 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  */
 public class ExternalInterceptorImpl extends ExternalInterceptor {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ExternalInterceptorImpl.class);
-    
-    /** State of request to pull from. */
-    @Nonnull private final ProfileRequestContext profileRequestContext;
-
-    /**
-     * Constructor.
-     * 
-     * @param input profile request context to expose
-     */
-    public ExternalInterceptorImpl(@Nonnull final ProfileRequestContext input) {
-        profileRequestContext = Constraint.isNotNull(input, "ProfileRequestContext cannot be null");
-    }
-
     /** {@inheritDoc} */
     @Override
-    protected void doStart(@Nonnull final HttpServletRequest request) {
-        request.setAttribute(ProfileRequestContext.BINDING_KEY, profileRequestContext);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
-            throws IOException, ExternalInterceptorException {
-        final ProfileInterceptorContext piContext =
-                profileRequestContext.getSubcontext(ProfileInterceptorContext.class);
-        if (piContext == null) {
-            throw new ExternalInterceptorException("No ProfileInterceptorContext found");
-        }
-        
-        final ExternalInterceptorContext extContext = piContext.getSubcontext(ExternalInterceptorContext.class);
-        if (extContext == null) {
-            throw new ExternalInterceptorException("No ExternalInterceptorContext found");
-        } else if (extContext.getFlowExecutionUrl() == null) {
-            throw new ExternalInterceptorException("No flow execution URL found to return control");
-        }
+    protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalInterceptorContext externalContext)
+                    throws IOException, ExternalInterceptorException {
         
         final Object attr = request.getAttribute(EVENT_KEY);
         if (attr != null && attr instanceof String) {
-            extContext.setEventId((String) attr);
+            externalContext.setEventId((String) attr);
         }
                 
-        response.sendRedirect(extContext.getFlowExecutionUrl());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected ProfileRequestContext getProfileRequestContext(@Nonnull final HttpServletRequest request)
-            throws ExternalInterceptorException {
-        return profileRequestContext;
+        response.sendRedirect(externalContext.getFlowExecutionUrl());
     }
     
 }
