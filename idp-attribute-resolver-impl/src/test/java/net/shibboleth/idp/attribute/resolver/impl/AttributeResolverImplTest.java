@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -42,6 +43,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -55,6 +57,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependen
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -238,7 +241,36 @@ public class AttributeResolverImplTest {
         resolver.resolveAttributes(context);
 
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        assertNull(context.getSubcontext(AttributeContext.class));
     }
+
+    @Test public void resolvePreRequestAttribute() throws Exception {
+        final IdPAttribute attribute = new IdPAttribute("ad1");
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+
+        final IdPAttribute attribute2 = new IdPAttribute("ad2");
+        attribute2.setValues(Collections.singletonList(new StringAttributeValue("value2")));
+
+        final LazySet<AttributeDefinition> definitions = new LazySet<>();
+        definitions.add(new MockAttributeDefinition("ad1", attribute));
+        definitions.add(new PreDefinedCheckingMockAttributeDefinition("ad2", attribute2, "ad1"));
+        for (AttributeDefinition defn:definitions) {
+            defn.initialize();
+        }
+
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
+        resolver.setPreRequestedAttributes(List.of("ad1"));
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        assertEquals(context.getResolvedIdPAttributes().size(), 2);
+        assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
+        assertEquals(context.getResolvedIdPAttributes().get("ad2"), attribute2);
+        assertNull(context.getSubcontext(AttributeContext.class));
+    }
+
 
     /** Test that a simple resolve returns the expected results. */
     @Test public void resolveFails() throws Exception {
@@ -896,5 +928,26 @@ public class AttributeResolverImplTest {
         result.setAttributeDefinitions(definitions);
         result.setDataConnectors(connectors);
         return result;
+    }
+
+    private static class PreDefinedCheckingMockAttributeDefinition extends MockAttributeDefinition {
+        private final String preResolvedName;
+
+        public PreDefinedCheckingMockAttributeDefinition(String id, IdPAttribute value, String preName)
+                throws ComponentInitializationException {
+            super(id, value);
+            preResolvedName = preName;
+        }
+
+        @Override
+        @Nullable protected IdPAttribute doAttributeDefinitionResolve(
+                @Nonnull final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+            AttributeContext context = resolutionContext.getSubcontext(AttributeContext.class);
+            assertNotNull(context);
+            assertEquals(context.getIdPAttributes().size(), 1);
+            assertTrue(context.getIdPAttributes().containsKey(preResolvedName));
+            return super.doAttributeDefinitionResolve(resolutionContext, workContext);
+        }
     }
 }

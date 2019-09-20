@@ -47,6 +47,7 @@ import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -90,8 +91,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /** Data connectors defined for this resolver. */
     @NonnullAfterInit private Map<String, DataConnector> dataConnectors;
 
-    /** cache for the log prefix - to save multiple recalculations. */
+    /** Cache for the log prefix - to save multiple recalculations. */
     @NonnullAfterInit private String logPrefix;
+
+    /** PreRequestedAttributes, resolved first and made available for late-comers. */
+    @NonnullAfterInit private List<String> preRequestedAttributes;
   
     /** Whether to strip null attribute values. */
     private boolean stripNulls;
@@ -126,6 +130,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             checkedDefinitions = Collections.emptyMap();
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
+    }
+
+    /** Sets the Attributes to be resolved "first" for this resolver.
+     * @param attrs what to set.
+     */
+    public void setPreRequestedAttributes(final List<String> attrs) {
+        preRequestedAttributes = Collections.unmodifiableList(attrs);
     }
 
     /**
@@ -212,6 +223,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes for the subject
      */
+    // CheckStyle: CyclomaticComplexity OFF
     @Override public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -221,10 +233,19 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
+        AttributeContext attributeContext = null;
 
         final boolean timerStarted = startTimer(resolutionContext);
         try {
             log.debug("{} Initiating attribute resolution", logPrefix);
+
+            if (!preRequestedAttributes.isEmpty()) {
+                log.debug("Resolving pre-requested Attributes");
+                for (final String attributeId : preRequestedAttributes) {
+                    resolveAttributeDefinition(attributeId, resolutionContext);
+                }
+                attributeContext = finalizePreResolvedAttributes(resolutionContext);
+            }
 
             boolean hasExportingDataConnector = false;
 
@@ -256,12 +277,15 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                     resolutionContext.getResolvedIdPAttributes().keySet());
         } finally {
             resolutionContext.removeSubcontext(workContext);
-
+            if (attributeContext != null) {
+                resolutionContext.removeSubcontext(attributeContext);
+            }
             if (timerStarted) {
                 stopTimer(resolutionContext);
             }
         }
     }
+    // CheckStyle: CyclomaticComplexity ON
 
     /**
      * Gets the list of attributes, identified by IDs, that should be resolved. If the
@@ -477,9 +501,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * Helper function to collect suitably resolved attributes.
      * @param resolvedAttributes bucket to collect attributes into
      * @param workContext context to extract attributes from
+     * @param includeDependencyOnly whether we include dependencyOnly attributes
      */
     private void collectResolvedAttributes(final Map<String, IdPAttribute> resolvedAttributes,
-            final AttributeResolverWorkContext workContext) {
+            final AttributeResolverWorkContext workContext, final boolean includeDependencyOnly) {
 
         for (final ResolvedAttributeDefinition definition : workContext.getResolvedIdPAttributeDefinitions().values()) {
             final IdPAttribute resolvedAttribute = definition.getResolvedAttribute();
@@ -491,7 +516,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             }
 
             // Remove dependency-only attributes.
-            if (definition.isDependencyOnly()) {
+            if (definition.isDependencyOnly() && !includeDependencyOnly) {
                 log.debug("{} Removing result of attribute definition '{}', is marked as dependency only", logPrefix,
                         definition.getId());
                 continue;
@@ -584,11 +609,41 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         final Map<String, IdPAttribute> resolvedAttributes = new LazyMap<>();
 
-        collectResolvedAttributes(resolvedAttributes, workContext);
+        collectResolvedAttributes(resolvedAttributes, workContext, false) ;
 
         collectExportingDataConnectors(resolvedAttributes, workContext);
 
         resolutionContext.setResolvedIdPAttributes(resolvedAttributes.values());
+    }
+
+    /**
+     * Collects the set of pre resolved attributes and places them in an {@link AttributeContext} which inserted
+     * as a child of the  {@link AttributeResolutionContext} and also returned.
+     * <p>
+     * Values are also de-duplicated here.
+     * </p>
+     *
+     * @param resolutionContext current resolution context
+     * @return a populated Attribute Context, or nothing
+     */
+    @Nullable protected AttributeContext finalizePreResolvedAttributes(@Nonnull
+            final AttributeResolutionContext resolutionContext) {
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
+
+        final Map<String, IdPAttribute> resolvedAttributes = new LazyMap<>();
+
+        collectResolvedAttributes(resolvedAttributes, workContext, true);
+
+        if (resolvedAttributes.isEmpty()) {
+            return null;
+        }
+
+        final AttributeContext context =  resolutionContext.getSubcontext(AttributeContext.class, true);
+        log.debug("Pre-resolved Attributes: {}", resolvedAttributes.keySet());
+        context.setIdPAttributes(resolvedAttributes.values());
+        return context;
     }
 
     /** {@inheritDoc} */
@@ -605,6 +660,16 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             throw new ComponentInitializationException("No Data Connectors provided");
         }
 
+        if (null == preRequestedAttributes) {
+            preRequestedAttributes = Collections.emptyList();
+        } else {
+            for (final String requested : preRequestedAttributes) {
+                if (!attributeDefinitions.containsKey(requested)) {
+                    throw new ComponentInitializationException("Definition for prerequested attribute '"
+                            + requested + "' not present");
+                }
+            }
+        }
 
         final HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
         for (final DataConnector plugin : dataConnectors.values()) {
