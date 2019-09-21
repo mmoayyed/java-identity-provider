@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -134,8 +135,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 new TranscodingRule(rule1_2),
                 new TranscodingRule(rule2_1),
                 new TranscodingRule(rule3_1)));
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
-        
         action = new AddAttributeStatementToAssertion();
         action.setTranscoderRegistry(new MockReloadableService<>(registry));
     }
@@ -197,6 +198,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
         
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.setApplicationContext(new MockApplicationContext());
         localregistry.initialize();
         
         action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
@@ -233,6 +235,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
         
         localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.setApplicationContext(new MockApplicationContext());
         localregistry.initialize();
         
         action.setTranscoderRegistry(new MockReloadableService<>(localregistry));

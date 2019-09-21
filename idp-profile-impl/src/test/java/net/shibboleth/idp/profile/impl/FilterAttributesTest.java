@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -65,6 +66,7 @@ public class FilterAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
+        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -81,6 +83,7 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
+        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
         
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -118,6 +121,7 @@ public class FilterAttributesTest {
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
+        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -177,6 +181,7 @@ public class FilterAttributesTest {
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
+        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -236,6 +241,7 @@ public class FilterAttributesTest {
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
+        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);

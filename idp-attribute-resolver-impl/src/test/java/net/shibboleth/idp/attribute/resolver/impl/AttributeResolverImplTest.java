@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -927,6 +928,7 @@ public class AttributeResolverImplTest {
         result.setId(resolverId);
         result.setAttributeDefinitions(definitions);
         result.setDataConnectors(connectors);
+        result.setApplicationContext(new MockApplicationContext());
         return result;
     }
 

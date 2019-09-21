@@ -39,6 +39,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -102,7 +103,7 @@ public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         ruleset1.put(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME, ATTR_FRIENDLYNAME);
         
         registry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(ruleset1)));
-        
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
     }
     

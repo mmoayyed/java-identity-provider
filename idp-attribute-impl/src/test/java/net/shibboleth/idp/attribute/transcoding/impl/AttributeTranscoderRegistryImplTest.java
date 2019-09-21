@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -94,7 +95,7 @@ public class AttributeTranscoderRegistryImplTest {
                 new TranscodingRule(ruleset2),
                 new TranscodingRule(ruleset3),
                 new TranscodingRule(ruleset4)));
-        
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
         
         assertEquals(registry.getDisplayNames(new IdPAttribute("foo")).size(), 2);

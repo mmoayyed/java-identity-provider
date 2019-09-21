@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -123,6 +124,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         policy.initialize();
         
         final AttributeFilterImpl filter = new AttributeFilterImpl("test", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         filter.initialize();
         
         return new MockReloadableService<>(filter);

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -79,6 +80,7 @@ public class AttributeFilterImplTest {
         AttributeFilterPolicy policy3 = new AttributeFilterPolicy("policy3", PolicyRequirementRule.MATCHES_NONE, null);
 
         AttributeFilterImpl filter = new AttributeFilterImpl("engine", Arrays.asList(policy1, policy1, policy2));
+        filter.setApplicationContext(new MockApplicationContext());
         policy1.initialize();
         policy2.initialize();
         filter.initialize();
@@ -93,6 +95,7 @@ public class AttributeFilterImplTest {
         Assert.assertFalse(policy3.isInitialized());
 
         filter = new AttributeFilterImpl("engine", Arrays.asList(policy1, policy2));
+        filter.setApplicationContext(new MockApplicationContext());
         filter.initialize();
 
         Assert.assertEquals(filter.getFilterPolicies().size(), 2);
@@ -135,6 +138,7 @@ public class AttributeFilterImplTest {
         filterContext.getPrefilteredIdPAttributes().put(attribute2.getId(), attribute2);
 
         final AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         attribute1Policy.initialize();
         policy.initialize();
         ComponentSupport.initialize(filter);
@@ -169,6 +173,7 @@ public class AttributeFilterImplTest {
         attribute1Policy.initialize();
         policy.initialize();
         AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         filter.initialize();
 
         filter.filterAttributes(filterContext);
@@ -201,6 +206,7 @@ public class AttributeFilterImplTest {
         attribute2Policy.initialize();
         policy.initialize();
         AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         filter.initialize();
 
         filter.filterAttributes(filterContext);
@@ -226,7 +232,8 @@ public class AttributeFilterImplTest {
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         attribute1Policy.initialize();
         policy.initialize();
         ComponentSupport.initialize(filter);
@@ -263,6 +270,7 @@ public class AttributeFilterImplTest {
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         denyPolicy.initialize();
         allowPolicy.initialize();
         policy.initialize();
@@ -293,7 +301,8 @@ public class AttributeFilterImplTest {
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         policy.initialize();
         ComponentSupport.initialize(filter);
 
@@ -324,7 +333,8 @@ public class AttributeFilterImplTest {
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
         allowPolicy.initialize();
         denyPolicy.initialize();
         policy.initialize();
@@ -352,6 +362,8 @@ public class AttributeFilterImplTest {
         Assert.assertFalse(matcher.isDestroyed());
 
         AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        filter.setApplicationContext(new MockApplicationContext());
+
         policy.initialize();
         matcher.initialize();
         policyRule.initialize();

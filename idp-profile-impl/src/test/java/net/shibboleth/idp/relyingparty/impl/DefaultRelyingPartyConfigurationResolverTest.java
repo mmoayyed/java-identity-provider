@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -93,6 +94,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         resolver.setId("test");
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
+        resolver.setApplicationContext(new MockApplicationContext());
         resolver.initialize();
         
         final Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
@@ -127,6 +129,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         resolver.setId("test");
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
+        resolver.setApplicationContext(new MockApplicationContext());
         resolver.initialize();
         
         final Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
@@ -182,6 +185,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         resolver.setRelyingPartyConfigurations(rpConfigs);
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
+        resolver.setApplicationContext(new MockApplicationContext());
         resolver.initialize();
 
         Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);

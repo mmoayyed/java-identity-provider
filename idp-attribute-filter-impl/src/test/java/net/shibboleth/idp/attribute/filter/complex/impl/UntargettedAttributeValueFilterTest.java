@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
@@ -89,8 +90,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", PolicyRequirementRule.MATCHES_ALL,
                         Collections.singleton(attributeValueFilterPolicy));
-
-        final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
+        engine.setApplicationContext(new MockApplicationContext());
 
         ComponentSupport.initialize(attributeValueFilterPolicy);
         ComponentSupport.initialize(policy);
@@ -144,7 +145,8 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", rule,  Collections.singleton(attributeValueFilterPolicy));
 
-        final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
+        engine.setApplicationContext(new MockApplicationContext());
 
         ComponentSupport.initialize(attributeValueFilterPolicy);
         ComponentSupport.initialize(policy);

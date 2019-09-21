@@ -159,7 +159,12 @@
 			<artifactId>opensaml-storage-impl</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+        <dependency>
+            <groupId>net.shibboleth.ext</groupId>
+            <artifactId>spring-extensions</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>

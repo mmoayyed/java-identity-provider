@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -104,7 +105,7 @@ public class SAML2ScopedStringAttributeTranscoderTest extends OpenSAMLInitBaseTe
         ruleset1.put(SAML2ScopedStringAttributeTranscoder.PROP_SCOPE_TYPE, "inline");
         
         registry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(ruleset1)));
-        
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
     }
     

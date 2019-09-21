@@ -29,6 +29,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -71,7 +72,7 @@ public class CASStringAttributeTranscoderTest {
         ruleset1.put(CASAttributeTranscoder.PROP_NAME, ATTR_NAME);
         
         registry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(ruleset1)));
-        
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
     }
     

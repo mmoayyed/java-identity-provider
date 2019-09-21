@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 import java.util.Arrays;
 import java.util.Collections;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
@@ -70,6 +71,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         final AttributeTranscoderRegistryImpl registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
         registry.setNamingRegistry(Collections.singletonMap(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction()));
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
         
         final NodeProcessingMetadataFilter filter = new NodeProcessingMetadataFilter();

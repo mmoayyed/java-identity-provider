@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -76,7 +77,7 @@ public class CASScopedStringAttributeTranscoderTest {
         ruleset1.put(CASScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER, DELIMITER);
         
         registry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(ruleset1)));
-        
+        registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
     }
     
