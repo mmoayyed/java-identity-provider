@@ -83,6 +83,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
             chain.initialize();
             final MetadataProviderContainer result = new MetadataProviderContainer();
             result.setEmbeddedResolver(chain);
+            result.setApplicationContext(appContext);
             result.initialize();
             return result;
         } catch (final ResolverException | ComponentInitializationException e) {
