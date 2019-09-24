@@ -390,6 +390,46 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
     }
     
+    @Test public void preResolve() throws ResolutionException {
+        final GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
+
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
+                "net/shibboleth/idp/attribute/resolver/spring/attribute-resolver-preresolve.xml"));
+        context.refresh();
+
+        final AttributeResolver resolver = BaseAttributeDefinitionParserTest.getResolver(context);
+        AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER", "issuer", "recipient");
+
+        resolver.resolveAttributes(resolutionContext);
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 2);
+        final IdPAttribute pre =  resolutionContext.getResolvedIdPAttributes().get("pre");
+        /* 
+         * pre:
+         * if (null == resolutionContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext", false))
+         *      pre.addValue("preValueOnly");
+         * else
+            pre.addValue("postValueOnly") 
+         *
+         * it is preresolved so...
+         */
+        assertEquals(pre.getValues().size(), 1);
+        assertEquals(pre.getValues().get(0).getDisplayValue(), "preValueOnly");
+        final IdPAttribute postOnly =  resolutionContext.getResolvedIdPAttributes().get("postOnly");
+        /*
+         * PostOnly:
+         *  ac = resolutionContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext", false);
+         *  postOnly.getValues().addAll(ac.getIdPAttributes().get("preOnly").getValues());
+         */
+        assertEquals(postOnly.getValues().size(), 1);
+        assertEquals(postOnly.getValues().get(0).getDisplayValue(), "preOnly");
+    }
+
     @Test public void selectiveNavigate() throws ResolutionException {
         final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);

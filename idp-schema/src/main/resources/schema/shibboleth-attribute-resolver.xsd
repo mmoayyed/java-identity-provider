@@ -61,6 +61,16 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="preRequested" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that indicates whether this attribute definition and
+                            its dependencies are to be resolved in a "first pass", prior to the
+                            main resolution.  These attributes will be populated into a child
+                            context so as to be available to activationConditions.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

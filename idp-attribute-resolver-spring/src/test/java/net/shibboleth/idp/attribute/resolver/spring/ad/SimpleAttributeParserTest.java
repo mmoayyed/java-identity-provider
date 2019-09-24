@@ -52,7 +52,8 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
                 getAttributeDefn("resolver/simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
 
         assertEquals(attrDef.getId(), "simpleUnpopulated");
-        assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
+        assertFalse(attrDef.isDependencyOnly());
+        assertFalse(attrDef.isPreRequested());
         assertEquals(attrDef.getAttributeDependencies().size(), 1);
         
         assertTrue(pendingTeardownContext.getBeansOfType(Collection.class).isEmpty());
@@ -65,7 +66,8 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         attrDef.initialize();
 
         assertEquals(attrDef.getId(), "simplePopulated");
-        assertTrue(attrDef.isDependencyOnly(), "isDependencyOnly");
+        assertTrue(attrDef.isDependencyOnly());
+        assertTrue(attrDef.isPreRequested());
 
         Set<ResolverAttributeDefinitionDependency> adDeps = attrDef.getAttributeDependencies();
         assertEquals(adDeps.size(), 2, "getAttributeDependencies");
@@ -87,6 +89,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         assertEquals(attrDef.getId(), "simplePopulated2");
         assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
+        assertFalse(attrDef.isPreRequested());
 
         final Set<ResolverAttributeDefinitionDependency> attrDeps = attrDef.getAttributeDependencies();
         assertEquals(attrDeps.size(), 1, "getAttributeDependencies");

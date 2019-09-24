@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <!-- ========================================== -->
+    <!--      Attribute Definitions                 -->
+    <!-- ========================================== -->
+
+    <AttributeDefinition xsi:type="ScriptedAttribute" id="preOnly" dependencyOnly="true" preRequested="true">
+        <Script>
+        if (null == resolutionContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext", false)) preOnly.addValue("preOnly");
+        
+        </Script>
+    </AttributeDefinition>
+    
+    <AttributeDefinition xsi:type="ScriptedAttribute" id="pre"  preRequested="true">
+        <Script>
+        if (null == resolutionContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext", false))
+            pre.addValue("preValueOnly");
+        else
+            pre.addValue("postValueOnly") 
+        </Script>
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="ScriptedAttribute" id="postOnly" >
+        <Script>
+        ac = resolutionContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext", false);
+        postOnly.getValues().addAll(ac.getIdPAttributes().get("preOnly").getValues());
+        </Script>
+        <InputAttributeDefinition ref="preOnly"/>
+    </AttributeDefinition>
+
+
+</AttributeResolver>

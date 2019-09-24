@@ -60,6 +60,11 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             log.debug("{} Setting dependencyOnly {}", getLogPrefix(), dependencyOnly);
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
+        if (config.hasAttributeNS(null, "preRequested")) {
+            final String preRequested = StringSupport.trimOrNull(config.getAttributeNS(null, "preRequested"));
+            log.debug("{} Setting preRequested {}", getLogPrefix(), preRequested);
+            builder.addPropertyValue("preRequested", preRequested);
+        }
     }
 
     /**
