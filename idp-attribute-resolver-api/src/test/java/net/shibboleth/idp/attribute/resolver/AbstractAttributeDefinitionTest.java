@@ -44,25 +44,28 @@ public class AbstractAttributeDefinitionTest {
 
         Assert.assertEquals(definition.getId(), "foo");
         Assert.assertFalse(definition.isDependencyOnly());
+        Assert.assertFalse(definition.isPreRequested());
     }
 
     /** Tests setting and retrieving the dependency only option. */
     @Test
-    public void dependencyOnly() {
+    public void booleanTests() {
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         Assert.assertFalse(definition.isDependencyOnly());
 
+        Assert.assertFalse(definition.isDependencyOnly());
         definition.setDependencyOnly(true);
         Assert.assertTrue(definition.isDependencyOnly());
 
-        definition.setDependencyOnly(true);
-        Assert.assertTrue(definition.isDependencyOnly());
+        Assert.assertFalse(definition.isPreRequested());
+        definition.setPreRequested(true);
+        Assert.assertTrue(definition.isPreRequested());
 
         definition.setDependencyOnly(false);
         Assert.assertFalse(definition.isDependencyOnly());
 
-        definition.setDependencyOnly(false);
-        Assert.assertFalse(definition.isDependencyOnly());
+        definition.setPreRequested(false);
+        Assert.assertFalse(definition.isPreRequested());
     }
 
     /** Test resolve an attribute. */

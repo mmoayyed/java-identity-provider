@@ -33,4 +33,10 @@ public interface AttributeDefinition extends ResolverPlugin<IdPAttribute> {
      */
     boolean isDependencyOnly();
 
+    /**
+     * Gets whether this attribute definition has to be resolved prior in a first pass (in order to prime
+     * contexts which can be used in the "main pass").
+     * @return true if this is a definition to be done "first"
+     */
+    boolean isPreRequested();
 }
