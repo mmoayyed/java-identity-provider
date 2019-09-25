@@ -1452,6 +1452,13 @@
                 <attribute name="failFast" type="resolver:string">
                     <annotation>
                         <documentation>
+			  Deprecated, use failFastInitialize
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failFastInitialize" type="resolver:string">
+                    <annotation>
+                        <documentation>
                             Whether to fail if the store cannot be verified at startup (defaults to false).
                         </documentation>
                     </annotation>

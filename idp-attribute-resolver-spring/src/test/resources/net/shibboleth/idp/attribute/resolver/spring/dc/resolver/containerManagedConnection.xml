@@ -1,7 +1,7 @@
 <DataConnector id="stored" xsi:type="StoredId" 
     xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	
-    failFast="false"
+    failFastInitialize="false"
     queryTimeout="PT5S"
     transactionRetries="5"
     retryableErrors="25000 25001"

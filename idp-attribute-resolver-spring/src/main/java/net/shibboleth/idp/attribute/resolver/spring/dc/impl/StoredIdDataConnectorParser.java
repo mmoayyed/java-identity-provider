@@ -23,6 +23,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -84,8 +86,15 @@ public class StoredIdDataConnectorParser extends ComputedIdDataConnectorParser {
         }
 
         if (config.hasAttributeNS(null, "failFast")) {
+            // V4 Deprecation
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "failFast",
+                    parserContext.getReaderContext().getResource().getDescription(), "failFastInitialize");
             builder.addPropertyValue("verifyDatabase",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "failFast")));
+        }
+        if (config.hasAttributeNS(null, "failFastInitialize")) {
+            builder.addPropertyValue("verifyDatabase",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "failFastInitialize")));
         }
 
         if (config.hasAttributeNS(null, "retryableErrors")) {
