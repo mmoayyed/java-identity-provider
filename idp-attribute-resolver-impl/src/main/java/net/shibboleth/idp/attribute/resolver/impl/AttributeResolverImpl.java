@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -131,6 +130,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             checkedDefinitions = Collections.emptyMap();
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
+    }
+
+    /** Sets the Attributes to be resolved "first" for this resolver.
+     * @param attrs what to set.
+     */
+    public void setPreRequestedAttributes(final List<String> attrs) {
+        preRequestedAttributes = Collections.unmodifiableList(attrs);
     }
 
     /**
@@ -655,10 +661,16 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             throw new ComponentInitializationException("No Data Connectors provided");
         }
 
-        preRequestedAttributes = attributeDefinitions.entrySet().stream().
-                filter(e -> e.getValue().isPreRequested()).
-                map(Entry::getKey).
-                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+        if (null == preRequestedAttributes) {
+            preRequestedAttributes = Collections.emptyList();
+        } else {
+            for (final String requested : preRequestedAttributes) {
+                if (!attributeDefinitions.containsKey(requested)) {
+                    throw new ComponentInitializationException("Definition for prerequested attribute '"
+                            + requested + "' not present");
+                }
+            }
+        }
 
         final HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
         for (final DataConnector plugin : dataConnectors.values()) {

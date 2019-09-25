@@ -46,9 +46,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
 
-    /** Whether this attribute definition is to be pre-resolved. */
-    private boolean preRequested;
-
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
 
@@ -74,21 +71,6 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         dependencyOnly = isDependencyOnly;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isPreRequested() {
-        return preRequested;
-    }
-
-    /** Sets whether this definition (and its dependencies) are to be pre-resolved.
-     * @param value what to set
-     */
-    public void setPreRequested(final boolean value) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        preRequested = value;
     }
 
     /** {@inheritDoc} */

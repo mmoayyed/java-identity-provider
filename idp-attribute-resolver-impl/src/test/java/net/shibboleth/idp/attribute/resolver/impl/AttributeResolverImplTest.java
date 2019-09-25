@@ -253,16 +253,14 @@ public class AttributeResolverImplTest {
         attribute2.setValues(Collections.singletonList(new StringAttributeValue("value2")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        final AbstractAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
-        ad1.setPreRequested(true);
-        definitions.add(ad1);
+        definitions.add(new MockAttributeDefinition("ad1", attribute));
         definitions.add(new PreDefinedCheckingMockAttributeDefinition("ad2", attribute2, "ad1"));
-
         for (AttributeDefinition defn:definitions) {
             defn.initialize();
         }
 
         final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", definitions, null);
+        resolver.setPreRequestedAttributes(List.of("ad1"));
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
