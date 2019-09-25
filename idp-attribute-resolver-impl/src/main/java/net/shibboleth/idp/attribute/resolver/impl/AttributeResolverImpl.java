@@ -238,8 +238,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 for (final String attributeId : preRequestedAttributes) {
                     resolveAttributeDefinition(attributeId, resolutionContext);
                 }
-                attributeContext = finalizePreResolvedAttributes(resolutionContext);
+                finalizePreResolvedAttributes(resolutionContext);
             }
+            attributeContext = resolutionContext.getSubcontext(AttributeContext.class, true);
 
             boolean hasExportingDataConnector = false;
 
@@ -620,7 +621,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param resolutionContext current resolution context
      * @return a populated Attribute Context, or nothing
      */
-    @Nullable protected AttributeContext finalizePreResolvedAttributes(@Nonnull
+    @Nullable protected void  finalizePreResolvedAttributes(@Nonnull
             final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
         final AttributeResolverWorkContext workContext =
@@ -631,14 +632,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         collectResolvedAttributes(resolvedAttributes, workContext, true);
 
         if (resolvedAttributes.isEmpty()) {
-            return null;
+            return;
         }
 
-        final AttributeContext context =  resolutionContext.getSubcontext(AttributeContext.class, true);
+        final AttributeContext context = resolutionContext.getSubcontext(AttributeContext.class, true);
         log.debug("Pre-resolved Attributes: {}", resolvedAttributes.keySet());
         context.setIdPAttributes(resolvedAttributes.values());
         context.setUnfilteredIdPAttributes(resolvedAttributes.values());
-        return context;
     }
 
     /** {@inheritDoc} */
