@@ -64,7 +64,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         action.initialize();
     }
 
-    @Test public void testPrincipalName() {
+    @Test(enabled=false) public void testPrincipalName() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
         eac.setPrincipalName("jdoe");
@@ -82,7 +82,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         Assert.assertTrue(ac.getAuthenticationResult().getSubject().getPrincipals(IdPAttributePrincipal.class).isEmpty());
     }
     
-    @Test public void testAuthnAuthorities() {
+    @Test(enabled=false) public void testAuthnAuthorities() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
         eac.setPrincipalName("jdoe");
