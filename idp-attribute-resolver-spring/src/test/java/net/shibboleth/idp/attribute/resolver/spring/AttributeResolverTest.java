@@ -430,6 +430,30 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         assertEquals(postOnly.getValues().get(0).getDisplayValue(), "preOnly");
     }
 
+    @Test public void preResolve2() throws ResolutionException {
+        final GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
+
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
+                "net/shibboleth/idp/attribute/resolver/spring/attribute-resolver-preresolve2.xml"),
+                new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/predicates.xml"));
+        context.refresh();
+
+        final AttributeResolver resolver = BaseAttributeDefinitionParserTest.getResolver(context);
+        AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER", "issuer", "recipient");
+
+        resolver.resolveAttributes(resolutionContext);
+        assertEquals(resolutionContext.getResolvedIdPAttributes().size(), 1);
+        final IdPAttribute pre =  resolutionContext.getResolvedIdPAttributes().get("EPE");
+        assertEquals(pre.getValues().size(), 1);
+        assertEquals(pre.getValues().get(0).getDisplayValue(), "urn:org:example:attribute");
+    }
+
     @Test public void selectiveNavigate() throws ResolutionException {
         final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);

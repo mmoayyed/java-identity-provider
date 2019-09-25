@@ -23,6 +23,31 @@
         c:candidates-ref="issuers" />
 
     <util:list id="recipients">
-    <value>https://example.org/sp</value>
+        <value>https://example.org/sp</value>
     </util:list>
+
+    <bean class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate" id="byAttr" >
+        <property name="attributeValueMap">
+            <map>
+                <entry key="EPA1">
+                    <list>
+                        <value>*</value>
+                    </list>
+                </entry>
+            </map>
+        </property>
+        <property name="attributeContextLookupStrategy">
+            <bean id="shibboleth.Functions.Compose"
+                    class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean id="shibboleth.ChildLookupOrCreate.AttributeContext"
+                        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                        c:type="#{ T(net.shibboleth.idp.attribute.context.AttributeContext) }"/>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup" c:type="#{ T(net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext) }" />
+                </constructor-arg>
+            </bean>
+        </property>
+     </bean>
 </beans>
