@@ -284,9 +284,11 @@ public class IdPPropertiesApplicationContextInitializer
     /**
      * Whether we fail immediately if the config is bogus. Defaults to true. Controlled by the value of the
      * {@link #FAILFAST_PROPERTY}.
+     * <b>This functionality is reserved for use in tests </b> where is is usually used to allow
+     * tests to be run in the presence of partial configuration.
      * 
      * @param applicationContext the application context
-     * @return whether we fail immediately if the config is bogus
+     * @return whether we fail immediately if the config is faulty or incomplete.
      */
     public boolean isFailFast(@Nonnull final ConfigurableApplicationContext applicationContext) {
         Constraint.isNotNull(applicationContext, "Application context cannot be null");
