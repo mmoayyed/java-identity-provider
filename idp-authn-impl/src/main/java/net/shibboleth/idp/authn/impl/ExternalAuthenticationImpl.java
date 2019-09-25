@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -51,38 +49,24 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
  * of request attributes.
  */
 public class ExternalAuthenticationImpl extends ExternalAuthentication {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ExternalAuthenticationImpl.class);
     
     /** Lookup function for relying party context. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
-    /** State of request to pull from. */
-    @Nonnull private final ProfileRequestContext profileRequestContext;
-    
     /** Track whether we were invoked from within another login flow. */
     private final boolean extendedFlow;
 
-    /**
-     * Constructor.
-     * 
-     * @param input profile request context to expose
-     */
-    public ExternalAuthenticationImpl(@Nonnull final ProfileRequestContext input) {
-        profileRequestContext = Constraint.isNotNull(input, "ProfileRequestContext cannot be null");
-        extendedFlow = false;
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+    /** Constructor. */
+    public ExternalAuthenticationImpl() {
+        this(false);
     }
 
     /**
      * Constructor.
      * 
-     * @param input profile request context to expose
      * @param extended called as extended flow from another login flow
      */
-    public ExternalAuthenticationImpl(@Nonnull final ProfileRequestContext input, final boolean extended) {
-        profileRequestContext = Constraint.isNotNull(input, "ProfileRequestContext cannot be null");
+    public ExternalAuthenticationImpl(final boolean extended) {
         extendedFlow = extended;
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
@@ -100,7 +84,12 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
 
     /** {@inheritDoc} */
     @Override
-    protected void doStart(@Nonnull final HttpServletRequest request) throws ExternalAuthenticationException {
+    protected void doStart(@Nonnull final HttpServletRequest request,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalAuthenticationContext externalAuthenticationContext)
+                    throws ExternalAuthenticationException {
+        super.doStart(request, profileRequestContext, externalAuthenticationContext);
+        
         final AuthenticationContext authnContext = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (authnContext == null) {
             throw new ExternalAuthenticationException("No AuthenticationContext found");
@@ -108,7 +97,6 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
             throw new ExternalAuthenticationException("No attempted authentication flow set");
         }
         
-        request.setAttribute(ProfileRequestContext.BINDING_KEY, profileRequestContext);
         request.setAttribute(EXTENDED_FLOW_PARAM, extendedFlow);
         
         request.setAttribute(PASSIVE_AUTHN_PARAM, authnContext.isPassive());
@@ -123,18 +111,12 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
  // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
-    protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
-            throws ExternalAuthenticationException, IOException {
-        final AuthenticationContext authnContext = profileRequestContext.getSubcontext(AuthenticationContext.class);
-        if (authnContext == null) {
-            throw new ExternalAuthenticationException("No AuthenticationContext found");
-        }
+    protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalAuthenticationContext extContext)
+                    throws ExternalAuthenticationException, IOException {
         
-        final ExternalAuthenticationContext extContext =
-                authnContext.getSubcontext(ExternalAuthenticationContext.class);
-        if (extContext == null) {
-            throw new ExternalAuthenticationException("No ExternalAuthenticationContext found");
-        } else if (extContext.getFlowExecutionUrl() == null) {
+        if (extContext.getFlowExecutionUrl() == null) {
             throw new ExternalAuthenticationException("No flow execution URL found to return control");
         }
         
@@ -199,20 +181,12 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         attr = request.getAttribute(REVOKECONSENT_KEY);
         if (attr != null && attr instanceof Boolean && ((Boolean) attr).booleanValue()) {
             final ConsentManagementContext consentCtx =
-                    getProfileRequestContext(request).getSubcontext(ConsentManagementContext.class, true);
+                    profileRequestContext.getSubcontext(ConsentManagementContext.class, true);
             consentCtx.setRevokeConsent(true);
         }
         
         response.sendRedirect(extContext.getFlowExecutionUrl());
     }
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
-
-    /** {@inheritDoc} */
-    @Override
-    protected ProfileRequestContext getProfileRequestContext(@Nonnull final HttpServletRequest request)
-            throws ExternalAuthenticationException {
-        return profileRequestContext;
-    }
-    
-    
+        
 }

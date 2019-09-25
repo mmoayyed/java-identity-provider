@@ -26,6 +26,7 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
@@ -43,12 +44,16 @@ import org.testng.annotations.Test;
 /** {@link ValidateExternalAuthentication} unit test. */
 public class ValidateExternalAuthenticationTest extends BaseAuthenticationContextTest {
     
+    private ExternalAuthentication ext;
+    
     private ValidateExternalAuthentication action;
     
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
         
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        
+        ext = new ExternalAuthenticationImpl();
 
         action = new ValidateExternalAuthentication();
         action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
@@ -69,7 +74,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testNoCredentials() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
@@ -77,7 +82,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testPrincipalName() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipalName("foo");
         
         final Event event = action.execute(src);
@@ -90,7 +96,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
     
     @Test public void testPrincipal() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipal(new TestPrincipal("foo"));
         
         final Event event = action.execute(src);
@@ -103,7 +110,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testSubject() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         final Subject subject = new Subject();
         eac.setSubject(subject);
         subject.getPrincipals().add(new TestPrincipal("foo"));
@@ -118,7 +126,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testAuthnInstant() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipalName("foo");
         final Instant ts = Instant.now().minusSeconds(3600);
         eac.setAuthnInstant(ts);
@@ -133,7 +142,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testAuthnAuthorities() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipalName("foo");
         eac.getAuthenticatingAuthorities().addAll(Arrays.asList("foo", "bar", "baz"));
         eac.setPreviousResult(true);
@@ -150,7 +160,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testException() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setAuthnException(new LoginException("foo"));
         
         final Event event = action.execute(src);
@@ -162,7 +173,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testError() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac =
+                (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setAuthnError("foo");
         
         final Event event = action.execute(src);

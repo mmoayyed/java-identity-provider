@@ -24,17 +24,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.repository.FlowExecutionRepository;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+import org.springframework.webflow.executor.FlowExecutorImpl;
 
+import com.google.common.base.Strings;
 import com.google.common.net.UrlEscapers;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** Public interface supporting external authentication outside the webflow engine. */
-public class ExternalAuthentication {
+public abstract class ExternalAuthentication {
 
-    /** Parameter supplied to identify the per-conversation structure in the session. */
+    /** Parameter supplied to locate the SWF object needed in the servlet context. */
+    @Nonnull @NotEmpty public static final String SWF_KEY = "net.shibboleth.idp.flowExecutor";
+
+    /** Parameter supplied to identify the per-conversation parameter. */
     @Nonnull @NotEmpty public static final String CONVERSATION_KEY = "conversation";
     
     /** Request attribute to which user's principal should be bound. */
@@ -144,18 +156,16 @@ public class ExternalAuthentication {
      */
     @Nonnull @NotEmpty public static String startExternalAuthentication(@Nonnull final HttpServletRequest request)
             throws ExternalAuthenticationException {
-        final String conv = request.getParameter(CONVERSATION_KEY);
-        if (conv == null || conv.isEmpty()) {
+        final String key = request.getParameter(CONVERSATION_KEY);
+        if (Strings.isNullOrEmpty(key)) {
             throw new ExternalAuthenticationException("No conversation key found in request");
         }
+
+        final ProfileRequestContext profileRequestContext = getProfileRequestContext(key, request);
+        final ExternalAuthenticationContext extContext = getExternalAuthenticationContext(profileRequestContext);
+        extContext.getExternalAuthentication().doStart(request, profileRequestContext, extContext);
         
-        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + conv);
-        if (obj == null || !(obj instanceof ExternalAuthentication)) {
-            throw new ExternalAuthenticationException("No conversation state found in session for key (" + conv + ")");
-        }
-        
-        ((ExternalAuthentication) obj).doStart(request);
-        return conv;
+        return key;
     }
     
     /**
@@ -174,14 +184,9 @@ public class ExternalAuthentication {
             @Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
             throws ExternalAuthenticationException, IOException {
         
-        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + key);
-        if (obj == null || !(obj instanceof ExternalAuthentication)) {
-            throw new ExternalAuthenticationException("No conversation state found in session for key (" + key + ")");
-        }
-        
-        request.getSession().removeAttribute(CONVERSATION_KEY + key);
-        
-        ((ExternalAuthentication) obj).doFinish(request, response);
+        final ProfileRequestContext profileRequestContext = getProfileRequestContext(key, request);
+        final ExternalAuthenticationContext extContext = getExternalAuthenticationContext(profileRequestContext);
+        extContext.getExternalAuthentication().doFinish(request, response, profileRequestContext, extContext);
     }
 
     /**
@@ -196,12 +201,59 @@ public class ExternalAuthentication {
     @Nonnull public static ProfileRequestContext getProfileRequestContext(@Nonnull @NotEmpty final String key,
             @Nonnull final HttpServletRequest request) throws ExternalAuthenticationException {
         
-        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + key);
-        if (obj == null || !(obj instanceof ExternalAuthentication)) {
-            throw new ExternalAuthenticationException("No conversation state found in session");
+        final Object obj = request.getServletContext().getAttribute(SWF_KEY);
+        if (!(obj instanceof FlowExecutorImpl)) {
+            // This is a testing hook for injecting the PRC directly.
+            if (obj instanceof ProfileRequestContext) {
+                return (ProfileRequestContext) obj;
+            }
+            throw new ExternalAuthenticationException("No FlowExecutor available in servlet context");
+        }
+
+        try {
+            final FlowExecutionRepository repo = ((FlowExecutorImpl) obj).getExecutionRepository();
+            ExternalContextHolder.setExternalContext(
+                    new ServletExternalContext(request.getServletContext(), request, null));
+            
+            final FlowExecution execution = repo.getFlowExecution(repo.parseFlowExecutionKey(key));
+            final Object prc = execution.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
+            if (!(prc instanceof ProfileRequestContext)) {
+                throw new ExternalAuthenticationException(
+                        "ProfileRequestContext not available in webflow conversation scope");
+            }
+            
+            return (ProfileRequestContext) prc;
+        } catch (final FlowExecutionRepositoryException e) {
+            throw new ExternalAuthenticationException("Error retrieving flow conversation", e);
+        } finally {
+            ExternalContextHolder.setExternalContext(null);
+        }
+    }
+    
+    /**
+     * Utility method to access the {@link ExternalAuthenticationContext}.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return the {@link ExternalAuthenticationContext} to operate on
+     * 
+     * @throws ExternalAuthenticationException if the context is missing
+     */
+    @Nonnull private static ExternalAuthenticationContext getExternalAuthenticationContext(
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ExternalAuthenticationException {
+        
+        final AuthenticationContext authContext = profileRequestContext.getSubcontext(AuthenticationContext.class);
+        if (authContext == null) {
+            throw new ExternalAuthenticationException("No AuthenticationContext found");
         }
         
-        return ((ExternalAuthentication) obj).getProfileRequestContext(request);
+        
+        final ExternalAuthenticationContext extContext = authContext.getSubcontext(ExternalAuthenticationContext.class);
+        if (extContext == null) {
+            throw new ExternalAuthenticationException("No ExternalInterceptorContext found");
+        }
+        
+        return extContext;
     }
     
     /**
@@ -209,11 +261,17 @@ public class ExternalAuthentication {
      * the servlet session and exposing it as request attributes.
      * 
      * @param request servlet request
+     * @param profileRequestContext current profile request context
+     * @param externalAuthenticationContext external authentication context
      * 
      * @throws ExternalAuthenticationException if an error occurs
      */
-    protected void doStart(@Nonnull final HttpServletRequest request) throws ExternalAuthenticationException {
-        throw new ExternalAuthenticationException("Not implemented");
+    protected void doStart(@Nonnull final HttpServletRequest request,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalAuthenticationContext externalAuthenticationContext)
+                    throws ExternalAuthenticationException {
+        
+        request.setAttribute(ProfileRequestContext.BINDING_KEY, profileRequestContext);
     }
 
     /**
@@ -223,26 +281,15 @@ public class ExternalAuthentication {
      * 
      * @param request servlet request
      * @param response servlet response
+     * @param profileRequestContext current profile request context
+     * @param externalAuthenticationContext external authentication context
      * 
      * @throws ExternalAuthenticationException if an error occurs
      * @throws IOException if the redirect cannot be issued
      */
-    protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
-            throws ExternalAuthenticationException, IOException {
-        throw new ExternalAuthenticationException("Not implemented");
-    }
-    
-    /**
-     * Get the {@link ProfileRequestContext} associated with a request.
-     * 
-     * @param request servlet request
-     * 
-     * @return the profile request context
-     * @throws ExternalAuthenticationException if an error occurs
-     */
-    @Nonnull protected ProfileRequestContext getProfileRequestContext(@Nonnull final HttpServletRequest request)
-            throws ExternalAuthenticationException {
-        throw new ExternalAuthenticationException("Not implemented");
-    }
+    protected abstract void doFinish(@Nonnull final HttpServletRequest request,
+            @Nonnull final HttpServletResponse response, @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ExternalAuthenticationContext externalAuthenticationContext)
+            throws ExternalAuthenticationException, IOException;
     
 }

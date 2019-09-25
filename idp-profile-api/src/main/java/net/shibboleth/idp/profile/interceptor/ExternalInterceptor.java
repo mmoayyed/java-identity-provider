@@ -31,6 +31,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 
+import com.google.common.base.Strings;
 import com.google.common.net.UrlEscapers;
 
 import net.shibboleth.idp.profile.context.ExternalInterceptorContext;
@@ -45,10 +46,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  */
 public abstract class ExternalInterceptor {
 
-    /** Parameter supplied to locate the SWF object needed in the session. */
+    /** Parameter supplied to locate the SWF object needed in the servlet context. */
     @Nonnull @NotEmpty public static final String SWF_KEY = "net.shibboleth.idp.flowExecutor";
     
-    /** Parameter supplied to identify the per-conversation structure in the session. */
+    /** Parameter supplied to identify the per-conversation parameter. */
     @Nonnull @NotEmpty public static final String CONVERSATION_KEY = "conversation";
 
     /** Request attribute to which an event ID may be bound. */
@@ -94,7 +95,7 @@ public abstract class ExternalInterceptor {
     @Nonnull @NotEmpty public static String startExternalInterceptor(@Nonnull final HttpServletRequest request)
             throws ExternalInterceptorException {
         final String key = request.getParameter(CONVERSATION_KEY);
-        if (key == null || key.isEmpty()) {
+        if (Strings.isNullOrEmpty(key)) {
             throw new ExternalInterceptorException("No conversation key found in request");
         }
         

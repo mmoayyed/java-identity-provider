@@ -28,8 +28,10 @@ import javax.security.auth.Subject;
 
 import org.opensaml.messaging.context.BaseContext;
 
+import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A context representing the state of an externalized authentication attempt,
@@ -39,6 +41,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
  * @added Before dispatching control to an external login flow
  */
 public final class ExternalAuthenticationContext extends BaseContext {
+    
+    /** Implementation object. */
+    @Nonnull private final ExternalAuthentication externalAuthentication; 
     
     /** Value of flowExecutionUrl on branching from flow. */
     @Nullable private String flowExecutionUrl;
@@ -70,9 +75,25 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /** Flag indicating this "new" result is really "old". */
     private boolean previousResult;
     
-    /** Constructor. */
-    public ExternalAuthenticationContext() {
+    /**
+     * Constructor.
+     * 
+     * @param authentication implementation object
+     */
+    public ExternalAuthenticationContext(@Nonnull final ExternalAuthentication authentication) {
+        externalAuthentication = Constraint.isNotNull(authentication, "ExternalAuthentication cannot be null");
         authenticatingAuthorities = new ArrayList<>();
+    }
+    
+    /**
+     * Get the {@link ExternalAuthentication} object installed in the context.
+     * 
+     * @return the external authentication implementation
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public ExternalAuthentication getExternalAuthentication() {
+        return externalAuthentication;
     }
     
     /**
