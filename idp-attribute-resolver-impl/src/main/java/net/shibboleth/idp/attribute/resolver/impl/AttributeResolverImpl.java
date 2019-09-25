@@ -637,6 +637,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final AttributeContext context =  resolutionContext.getSubcontext(AttributeContext.class, true);
         log.debug("Pre-resolved Attributes: {}", resolvedAttributes.keySet());
         context.setIdPAttributes(resolvedAttributes.values());
+        context.setUnfilteredIdPAttributes(resolvedAttributes.values());
         return context;
     }
 
