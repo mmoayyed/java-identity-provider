@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -98,6 +99,7 @@ public class RDBMSDataConnectorParserTest {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-simple.xml");
         assertNotNull(dataConnector);
+        assertTrue(dataConnector.isFailFastInitialize());
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
         assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
@@ -109,6 +111,7 @@ public class RDBMSDataConnectorParserTest {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2.xml");
         assertNotNull(dataConnector);
+        assertFalse(dataConnector.isFailFastInitialize());
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
         assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
@@ -122,6 +125,7 @@ public class RDBMSDataConnectorParserTest {
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
         assertNotNull(dataConnector);
+        assertFalse(dataConnector.isFailFastInitialize());
         doTest(dataConnector);
         final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
         assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);

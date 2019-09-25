@@ -140,7 +140,7 @@ public class RDBMSDataConnectorTest {
 
         final ExecutableSearchBuilder<ExecutableStatement> statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
-        connector.setFailFast(true);
+        connector.setFailFastInitialize(true);
         try {
             connector.initialize();
             fail("Invalid datasource");
@@ -178,7 +178,7 @@ public class RDBMSDataConnectorTest {
         final ExecutableSearchBuilder<ExecutableStatement> statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         connector.setDataSource(new JDBCDataSource());
-        connector.setFailFast(true);
+        connector.setFailFastInitialize(true);
         try {
             connector.initialize();
             fail("No failfast");

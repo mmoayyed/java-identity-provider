@@ -981,10 +981,10 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="failFast" type="resolver:string">
+                <attribute name="failFastInitialize" type="resolver:string">
                     <annotation>
                         <documentation>
-                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                            Whether to fail if the LDAP server cannot be verified at startup (defaults to false).
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1133,10 +1133,10 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="failFast" type="resolver:string">
+                <attribute name="failFastInitialize" type="resolver:string">
                     <annotation>
                         <documentation>
-                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                            Whether to fail if the DataConnector cannot be verified at startup (defaults to false).
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1307,10 +1307,11 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="failFast" type="resolver:string">
+                <attribute name="failFastInitialize" type="resolver:string">
                     <annotation>
                         <documentation>
-                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                            Whether to fail if the HTTP server cannot be verified at startup (defaults to false).
+                            No verification takes place currently.
                         </documentation>
                     </annotation>
                 </attribute>

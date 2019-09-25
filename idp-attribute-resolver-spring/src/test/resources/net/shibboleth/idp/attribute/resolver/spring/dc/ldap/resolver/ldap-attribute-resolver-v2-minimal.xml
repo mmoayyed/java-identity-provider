@@ -6,6 +6,7 @@
     <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
         ldapURL="ldap://localhost:10389"
         principal="cn=Directory Manager"
+        failFastInitialize="true"
         principalCredential="password">
         <FilterTemplate>
             <![CDATA[

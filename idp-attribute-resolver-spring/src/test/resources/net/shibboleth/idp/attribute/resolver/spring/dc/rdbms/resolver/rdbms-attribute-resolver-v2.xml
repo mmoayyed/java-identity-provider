@@ -5,6 +5,7 @@
 
     <DataConnector id="myDatabase" xsi:type="RelationalDatabase"
         noResultIsError="true"
+        failFastInitialize="false"
         multipleResultsIsError="true"
         noRetryDelay="PT5M">
 

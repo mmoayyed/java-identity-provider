@@ -87,7 +87,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /**
      * Failfast LDAP, Realtional, Stored.
      */
-    @Nonnull @NotEmpty public static final String ATTR_FAIL_FAST = "failFast";
+    @Nonnull @NotEmpty public static final String ATTR_FAIL_FAST = "failFastInitialize";
 
     /** Failover data connector attribute name. */
     @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
@@ -159,7 +159,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
 
         if (config.hasAttributeNS(null, ATTR_FAIL_FAST)) {
             // LDAP, Relational & HTTP only, limited in the schema
-            builder.addPropertyValue("failFast", 
+            builder.addPropertyValue("failFastInitialize", 
                     StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FAIL_FAST)));
         }
 

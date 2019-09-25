@@ -138,6 +138,7 @@ public class LDAPDataConnectorParserTest {
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2.xml"});
         assertNotNull(dataConnector);
+        assertFalse(dataConnector.isFailFastInitialize());
         doTest(dataConnector);
         final StringAttributeValueMappingStrategy mappingStrategy =
                 (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
@@ -186,6 +187,7 @@ public class LDAPDataConnectorParserTest {
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-minimal.xml"});
         assertNotNull(dataConnector);
+        assertTrue(dataConnector.isFailFastInitialize());
         assertEquals(Duration.ZERO, dataConnector.getNoRetryDelay());
         final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
         assertNotNull(connFactory);
@@ -218,7 +220,7 @@ public class LDAPDataConnectorParserTest {
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
-        assertFalse(validator.isThrowValidateError());
+        assertTrue(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
         final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
@@ -244,6 +246,7 @@ public class LDAPDataConnectorParserTest {
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-minimal-pool.xml"});
         assertNotNull(dataConnector);
+        assertFalse(dataConnector.isFailFastInitialize());
         assertEquals(Duration.ZERO, dataConnector.getNoRetryDelay());
         final PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
         assertNotNull(connFactory);

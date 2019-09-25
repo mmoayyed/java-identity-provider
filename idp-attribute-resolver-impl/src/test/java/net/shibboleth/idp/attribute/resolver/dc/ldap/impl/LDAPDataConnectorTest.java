@@ -145,7 +145,7 @@ public class LDAPDataConnectorTest {
         } catch (final ComponentInitializationException e) {
             // OK
         }
-        connector.setFailFast(true);
+        connector.setFailFastInitialize(true);
 
         final SearchExecutor searchExecutor = new SearchExecutor();
         searchExecutor.setBaseDn(TEST_BASE_DN);
@@ -202,7 +202,7 @@ public class LDAPDataConnectorTest {
         connector.setConnectionFactory(connectionFactory);
         connector.setSearchExecutor(new SearchExecutor());
         connector.setExecutableSearchBuilder(newParameterizedExecutableSearchFilterBuilder("(uid={principalName})"));
-        connector.setFailFast(true);
+        connector.setFailFastInitialize(true);
 
         try {
             connector.initialize();
@@ -211,7 +211,7 @@ public class LDAPDataConnectorTest {
             // OK
         }
 
-        connector.setFailFast(false);
+        connector.setFailFastInitialize(false);
         connector.initialize();
     }
 

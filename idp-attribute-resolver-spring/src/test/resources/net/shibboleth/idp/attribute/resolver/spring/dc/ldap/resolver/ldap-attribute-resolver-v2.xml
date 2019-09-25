@@ -8,6 +8,7 @@
         baseDN="ou=people,dc=shibboleth,dc=net" 
         principal="cn=Directory Manager"
         principalCredential="password"
+        failFastInitialize="false"
         useStartTLS="true"
         searchTimeLimit="PT7S"
         noResultIsError="true"
