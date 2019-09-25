@@ -29,7 +29,6 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.DerefAliases;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -66,6 +65,8 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -456,7 +457,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          *
          * @return search executor bean definition
          */
-        // CheckStyle: CyclomaticComplexity OFF
+        // CheckStyle: CyclomaticComplexity|MethodLength OFF
         @Nonnull public BeanDefinition createSearchExecutor(final ManagedMap<String, String> props) {
             final String baseDn = AttributeSupport.getAttributeValue(configElement, new QName("baseDN"));
             final String searchScope = AttributeSupport.getAttributeValue(configElement, new QName("searchScope"));
@@ -540,6 +541,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             return searchExecutor.getBeanDefinition();
         }
+        // CheckStyle: CyclomaticComplexity|MethodLength ON
 
         /** Get the Pool configuration &lt;ConnectionPool&gt; element contents, warning if there is more than one.
          * @return the &lt;ConnectionPool&gt; or null if there isn't one.
@@ -621,6 +623,9 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String failFastInitialize =
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("failFastInitialize"));
             if (failFastInitialize != null) {
+                // V4 Deprecations
+                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "failfastInitialize (on a ConnectionPool element)", 
+                        null, "failfastInitialize (on a DataConnector)");
                 pool.addPropertyValue("failFastInitialize", failFastInitialize);
             }
             pool.setInitMethodName("initialize");
