@@ -165,6 +165,10 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         Connection conn = null;
         try {
             conn = connectionFactory.getConnection();
+            if (conn == null) {
+                log.debug("{} No connection to probe", getLogPrefix());
+                return;
+            }
             final ConnectionConfig connConfig = conn.getConnectionConfig();
             if (connConfig.getUseStartTLS() ||
                     connConfig.getUseSSL() ||
@@ -182,7 +186,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                 }
             }
         } catch (final GeneralSecurityException | LdapException e) {
-            throw new ComponentInitializationException(getLogPrefix() + " Failed to inspect SLL implementation", e);
+            log.debug("{} Failed to inspect SLL implementation", getLogPrefix(), e);
         } finally {
             if (conn != null) {
                 try {
