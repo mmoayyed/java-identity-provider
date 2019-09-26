@@ -36,6 +36,7 @@ import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.Attribu
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.authn.impl.BaseAuthenticationContextTest;
+import net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl;
 import net.shibboleth.idp.authn.impl.ValidateExternalAuthentication;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -64,9 +65,10 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         action.initialize();
     }
 
-    @Test(enabled=false) public void testPrincipalName() {
+    @Test public void testPrincipalName() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac = (ExternalAuthenticationContext) ac.addSubcontext(
+                new ExternalAuthenticationContext(new ExternalAuthenticationImpl()), true);
         eac.setPrincipalName("jdoe");
         
         final IdPAttribute mail = new IdPAttribute("mail");
@@ -82,9 +84,10 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         Assert.assertTrue(ac.getAuthenticationResult().getSubject().getPrincipals(IdPAttributePrincipal.class).isEmpty());
     }
     
-    @Test(enabled=false) public void testAuthnAuthorities() {
+    @Test public void testAuthnAuthorities() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
+        final ExternalAuthenticationContext eac = (ExternalAuthenticationContext) ac.addSubcontext(
+                new ExternalAuthenticationContext(new ExternalAuthenticationImpl()), true);
         eac.setPrincipalName("jdoe");
         eac.getAuthenticatingAuthorities().addAll(Arrays.asList("foo", "bar", "baz"));
 
