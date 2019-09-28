@@ -87,8 +87,7 @@
             blockWaitTime="%{idp.pool.LDAP.blockWaitTime:PT3S}"
             validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
             validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
-            expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"
-            failFastInitialize="%{idp.pool.LDAP.failFastInitialize:false}" />
+            expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
     </DataConnector>
 
 </AttributeResolver>

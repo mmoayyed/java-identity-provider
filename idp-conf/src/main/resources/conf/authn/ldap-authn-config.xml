@@ -54,7 +54,7 @@
         p:poolConfig-ref="poolConfig"
         p:pruneStrategy-ref="pruneStrategy"
         p:validator-ref="searchValidator"
-        p:failFastInitialize="%{idp.pool.LDAP.failFastInitialize:false}" />
+        p:failFastInitialize="false" />
     <bean id="poolConfig" class="org.ldaptive.pool.PoolConfig"
         p:minPoolSize="%{idp.pool.LDAP.minSize:3}"
         p:maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
