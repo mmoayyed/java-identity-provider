@@ -18,14 +18,11 @@
 package net.shibboleth.idp.installer.impl;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Jar;
-import org.apache.tools.ant.types.FileSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +41,6 @@ public final class BuildWar {
     /** Log. */
     public static final Logger LOG = LoggerFactory.getLogger(BuildWar.class);
     
-    /** And psuedo project as parent. */
-    private static final Project ANT_PROJECT = new Project();
-
     /** private Constructor. */
     private BuildWar() {}
 
@@ -71,7 +65,7 @@ public final class BuildWar {
             LOG.warn("Deleting {} failed", webAppTmp.toAbsolutePath(), e);
         }
         final Path distWebApp =  target.resolve("dist").resolve("webapp");
-        final Copy initial = getCopyTask(distWebApp, webAppTmp);
+        final Copy initial = InstallerSupport.getCopyTask(distWebApp, webAppTmp);
         initial.setPreserveLastModified(true);
         initial.setFailOnError(true);
         initial.setVerbose(LOG.isDebugEnabled());
@@ -79,7 +73,7 @@ public final class BuildWar {
         initial.execute();
         
         final Path editWebApp = target.resolve("edit-webapp"); 
-        final Copy overlay = getCopyTask(editWebApp, webAppTmp);
+        final Copy overlay = InstallerSupport.getCopyTask(editWebApp, webAppTmp);
         overlay.setOverwrite(true);
         overlay.setPreserveLastModified(true);
         overlay.setFailOnError(true);
@@ -91,7 +85,7 @@ public final class BuildWar {
         final Jar jarTask = new Jar();
         jarTask.setDestFile(warFile.toFile());
         jarTask.setBasedir(webAppTmp.toFile());
-        jarTask.setProject(ANT_PROJECT);
+        jarTask.setProject(InstallerSupport.ANT_PROJECT);
         LOG.info("Creating war file {}", warFile);
         jarTask.execute();
         try {
@@ -101,23 +95,6 @@ public final class BuildWar {
         }
     }
     
-    /** Copy files.  We use ant rather than {@link Files#copy(Path, Path, java.nio.file.CopyOption...)}
-     * because the latter has issues with the Windows ReadOnly Attribute, and the former is tried
-     * and tested technology.
-     * @param from where to copy from
-     * @param to where to copy to
-     * @return a partially populated {@link Copy} task 
-     */
-    private static Copy getCopyTask(final Path from, final Path to) {
-        final Copy result = new Copy();
-        result.setTodir(to.toFile());
-        final FileSet fromSet = new FileSet();
-        fromSet.setDir(from.toFile());
-        result.addFileset(fromSet);
-        result.setProject(ANT_PROJECT);
-        return result;
-    }
-
     /** Program entry to build war. Calls {@link #buildWar(InstallerProperties)}.
      * @param args input
      */
