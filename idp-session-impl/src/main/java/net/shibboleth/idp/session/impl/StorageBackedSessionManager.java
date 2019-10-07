@@ -23,6 +23,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiPredicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -139,8 +141,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** Indicates whether to secondary-index SPSessions. */
     private boolean secondaryServiceIndex;
 
-    /** Indicates whether sessions are bound to client addresses. */
-    private boolean consistentAddress;
+    /** Indicates how bound session addresses and client addresses are compared. */
+    @Nonnull private BiPredicate<String,String> consistentAddressCondition;
 
     /** Manages creation of cookies. */
     @NonnullAfterInit private CookieManager cookieManager;
@@ -175,7 +177,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         sessionSlop = Duration.ZERO;
         serializer = new StorageBackedIdPSessionSerializer(this, null);
         flowDescriptorMap = new HashMap<>();
-        consistentAddress = true;
+        consistentAddressCondition =
+                DefaultConsistentAddressConditionFactory.getDefaultConsistentAddressCondition(true);
         cookieName = DEFAULT_COOKIE_NAME;
         storageServiceThreshold = 1024 * 1024;
     }
@@ -311,23 +314,40 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Get whether sessions are bound to client addresses.
+     * Get condition to evaluate bound session and client addresses for consistency.
      * 
-     * @return true iff sessions should be bound to client addresses
+     * @return condition
+     * 
+     * @since 4.0.0
      */
-    public boolean isConsistentAddress() {
-        return consistentAddress;
+    @Nonnull public BiPredicate<String,String> getConsistentAddressCondition() {
+        return consistentAddressCondition;
     }
 
     /**
-     * Set whether sessions are bound to client addresses.
+     * Set whether sessions are bound to client addresses either via disabling the comparison
+     * or testing simple equality.
      * 
      * @param flag flag to set
      */
     public void setConsistentAddress(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        consistentAddress = flag;
+        consistentAddressCondition =
+                DefaultConsistentAddressConditionFactory.getDefaultConsistentAddressCondition(flag);
+    }
+    
+    /**
+     * Set condition to evaluate bound session and client addresses for consistency.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setConsistentAddressCondition(@Nonnull final BiPredicate<String,String> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        consistentAddressCondition = Constraint.isNotNull(condition, "Consistent address condition cannot be null");
     }
 
     /**
@@ -497,15 +517,13 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        String remoteAddr = null;
-        if (consistentAddress) {
-            if (httpRequest == null) {
-                throw new SessionException("No HttpServletRequest available, can't bind to client address");
-            }
-            remoteAddr = StringSupport.trimOrNull(httpRequest.getRemoteAddr());
-            if (remoteAddr == null) {
-                throw new SessionException("No client address to bind");
-            }
+        if (httpRequest == null) {
+            throw new SessionException("No HttpServletRequest available, can't bind to client address");
+        }
+        
+        final String remoteAddr = StringSupport.trimOrNull(httpRequest.getRemoteAddr());
+        if (remoteAddr == null) {
+            throw new SessionException("No client address to bind");
         }
 
         final String sessionId = idGenerator.generateIdentifier(false);
@@ -515,9 +533,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         final StorageBackedIdPSession newSession =
                 new StorageBackedIdPSession(this, sessionId, principalName, Instant.now());
-        if (remoteAddr != null) {
-            newSession.doBindToAddress(remoteAddr);
-        }
+        newSession.doBindToAddress(remoteAddr);
 
         try {
             if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
@@ -884,4 +900,29 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         return builder.build();
     }
+    
+    /**
+     * Simplifies Spring wiring of a true/false condition for the consistentAddress feature.
+     * 
+     * @since 4.0.0
+     */
+    public static class DefaultConsistentAddressConditionFactory {
+        
+        /**
+         * Returns a suitable {@link BiPredicate} to satisfy a simple true/false value for the
+         * consistentAddress feature.
+         * 
+         * @param flag true/false value for the feature
+         * 
+         * @return a {@link BiPredicate} that satisfies the input
+         */
+        @Nonnull public static BiPredicate<String,String> getDefaultConsistentAddressCondition(final boolean flag) {
+            if (flag) {
+                return (A,B) -> Objects.equals(A,B);
+            }
+            
+            return (A,B) -> true;
+        }
+    }
+
 }

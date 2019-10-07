@@ -160,6 +160,33 @@ public abstract class AbstractIdPSession implements IdPSession {
         lastActivityInstant = Constraint.isNotNull(instant, "Last activity instant cannot be null");
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
+        final AddressFamily family = getAddressFamily(address);
+        if (family == AddressFamily.UNKNOWN) {
+            log.warn("Address {} is of unknown type", address);
+            return false;
+        }
+        final String bound = getAddress(family);
+        if (bound != null) {
+            if (!bound.equals(address)) {
+                log.warn("Client address is {} but session {} already bound to {}", address, id, bound);
+                return false;
+            }
+        } else {
+            log.info("Session {} not yet locked to a {} address, locking it to {}", id, family, address);
+            try {
+                bindToAddress(address);
+            } catch (final SessionException e) {
+                log.error("Unable to bind session {} to address {}", id, address);
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     /**
      * Get an address to which this session is bound.
      * 
@@ -211,6 +238,12 @@ public abstract class AbstractIdPSession implements IdPSession {
             default:
                 log.warn("Unsupported address form {}", address);
         }
+    }
+
+    /** {@inheritDoc} */
+    public boolean checkTimeout() throws SessionException {
+        setLastActivityInstant(Instant.now());
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -347,39 +380,6 @@ public abstract class AbstractIdPSession implements IdPSession {
             return true;
         }
         return spSessions.remove(spSession.getId(), Optional.absent());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
-        final AddressFamily family = getAddressFamily(address);
-        if (family == AddressFamily.UNKNOWN) {
-            log.warn("Address {} is of unknown type", address);
-            return false;
-        }
-        final String bound = getAddress(family);
-        if (bound != null) {
-            if (!bound.equals(address)) {
-                log.warn("Client address is {} but session {} already bound to {}", address, id, bound);
-                return false;
-            }
-        } else {
-            log.info("Session {} not yet locked to a {} address, locking it to {}", id, family, address);
-            try {
-                bindToAddress(address);
-            } catch (final SessionException e) {
-                log.error("Unable to bind session {} to address {}", id, address);
-                return false;
-            }
-        }
-        
-        return true;
-    }
-    
-    /** {@inheritDoc} */
-    public boolean checkTimeout() throws SessionException {
-        setLastActivityInstant(Instant.now());
-        return true;
     }
 
     /** {@inheritDoc} */

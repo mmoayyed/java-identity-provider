@@ -103,15 +103,35 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     /** {@inheritDoc} */
     @Override
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
-        return sessionManager.isConsistentAddress() ? super.checkAddress(address) : true;
+
+        final AddressFamily family = getAddressFamily(address);
+        if (family == AddressFamily.UNKNOWN) {
+            log.warn("Address {} is of unknown type", address);
+            return false;
+        }
+        
+        final String bound = getAddress(family);
+        if (bound != null) {
+            if (!sessionManager.getConsistentAddressCondition().test(bound, address)) {
+                log.warn("Client address {} invalid for session {} bound to {}", address, getId(), bound);
+                return false;
+            }
+        } else {
+            log.info("Session {} not yet locked to a {} address, locking it to {}", getId(), family, address);
+            try {
+                bindToAddress(address);
+            } catch (final SessionException e) {
+                log.error("Unable to bind session {} to address {}", getId(), address);
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     /** {@inheritDoc} */
     @Override
     public void bindToAddress(@Nonnull @NotEmpty final String address) throws SessionException {
-        if (!sessionManager.isConsistentAddress()) {
-            return;
-        }
         
         // Update ourselves and then attempt to write back.
         super.bindToAddress(address);

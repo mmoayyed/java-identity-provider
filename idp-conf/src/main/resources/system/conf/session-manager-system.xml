@@ -66,7 +66,8 @@
             p:authenticationFlowDescriptors-ref="shibboleth.AvailableAuthenticationFlows"
             p:cookieManager-ref="shibboleth.CookieManager"
             p:storageService-ref="#{'%{idp.session.StorageService:shibboleth.ClientSessionStorageService}'.trim()}"
-            p:consistentAddress="%{idp.session.consistentAddress:true}"
+            p:consistentAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:}'.trim()) ?:
+                T(net.shibboleth.idp.session.impl.StorageBackedSessionManager.DefaultConsistentAddressConditionFactory).getDefaultConsistentAddressCondition(%{idp.session.consistentAddress:true})}"
             p:sessionTimeout="%{idp.session.timeout:PT60M}"
             p:sessionSlop="%{idp.session.slop:PT0S}"
             p:maskStorageFailure="%{idp.session.maskStorageFailure:false}"
