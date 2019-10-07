@@ -114,6 +114,9 @@ public class InstallerProperties extends AbstractInitializableComponent {
     /** The sealer alias to use.  */
     public static final String SEALER_ALIAS = "idp.sealer.alias";
 
+    /** The sealer alias to use.  */
+    public static final String KEY_SIZE = "idp.keysize";
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InstallerProperties.class);
 
@@ -160,6 +163,12 @@ public class InstallerProperties extends AbstractInitializableComponent {
 
     /** Sealer Alias. */
     private String sealerAlias;
+
+    /** Key Size. (for signing, encryption and backchannel). */
+    private int keySize;
+
+    /** Whether the properties file exists.*/
+    private boolean idpPropertiesPresent;
 
     /**
      * Constructor.
@@ -214,6 +223,13 @@ public class InstallerProperties extends AbstractInitializableComponent {
             srcDir = Path.of(value);
             log.debug("Source directory {}", srcDir.toAbsolutePath());
         }
+
+        if (!installerProperties.contains(KEY_SIZE)) {
+            keySize = 3072;
+        } else {
+            keySize = Integer.parseInt(installerProperties.getProperty(KEY_SIZE));
+        }
+        idpPropertiesPresent = Files.exists(getTargetDir().resolve("conf").resolve("idp.properties"));
     }
 
     /** Lookup a property.  If it isn't defined then ask the user (if we are allowed)
@@ -474,5 +490,18 @@ public class InstallerProperties extends AbstractInitializableComponent {
             sealerAlias = "secret";
         }
         return sealerAlias;
+    }
+
+    /** Get the key size for signing, encryption and backchannel.
+     * @return the keysize, default is 3072 */
+    public int getKeySize() {
+        return keySize;
+    }
+
+    /** Was idp.properties present in the target file when we started the install?
+     * @return if it was.
+     */
+    public boolean isIdPPropertiesPresent() {
+        return idpPropertiesPresent;
     }
 }
