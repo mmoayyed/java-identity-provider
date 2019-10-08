@@ -117,7 +117,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 return false;
             }
         } else {
-            log.info("Session {} not yet locked to a {} address, locking it to {}", getId(), family, address);
+            log.info("Session {} not yet bound to a {} address, binding to {}", getId(), family, address);
             try {
                 bindToAddress(address);
             } catch (final SessionException e) {

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.session.impl;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
@@ -70,9 +69,6 @@ public class ProcessLogout extends AbstractProfileAction {
     /** Session resolver. */
     @NonnullAfterInit private SessionResolver sessionResolver;
 
-    /** Condition to determine whether to enforce address binding on the session. */
-    @Nonnull private Predicate<ProfileRequestContext> checkAddressCondition;
-
     /** Creation/lookup function for SubjectContext. */
     @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextCreationStrategy;
 
@@ -87,27 +83,11 @@ public class ProcessLogout extends AbstractProfileAction {
     
     /** Constructor. */
     public ProcessLogout() {
-        checkAddressCondition = Predicates.alwaysTrue();
         subjectContextCreationStrategy = new ChildContextLookup<>(SubjectContext.class, true);
         sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);
         
         sessionResolverCriteriaStrategy = prc -> new CriteriaSet(new HttpServletRequestCriterion());
-    }
-    
-    /**
-     * Set condition to determine whether to perform address binding check before use of session.
-     * 
-     * <p>Defaults to true insofar as the decision is then delegated back to the resolver.</p>
-     * 
-     * @param condition condition to apply
-     * 
-     * @since 3.4.0
-     */
-    public void setCheckAddressCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        checkAddressCondition = Constraint.isNotNull(condition, "Address checking condition cannot be null");
     }
     
     /**
@@ -195,24 +175,20 @@ public class ProcessLogout extends AbstractProfileAction {
                 return;
             }
             
-            if (checkAddressCondition.test(profileRequestContext)) {
-                final HttpServletRequest request = getHttpServletRequest();
-                if (request != null && request.getRemoteAddr() != null) {
-                    try {
-                        if (!session.checkAddress(request.getRemoteAddr())) {
-                            return;
-                        }
-                    } catch (final SessionException e) {
-                        log.error("{} Error binding session to client address", getLogPrefix(), e);
-                        ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            final HttpServletRequest request = getHttpServletRequest();
+            if (request != null && request.getRemoteAddr() != null) {
+                try {
+                    if (!session.checkAddress(request.getRemoteAddr())) {
                         return;
-                    } 
-                } else {
-                    log.info("{} No servlet request or client address available, skipping address check for sessions",
-                            getLogPrefix());
-                }
+                    }
+                } catch (final SessionException e) {
+                    log.error("{} Error binding session to client address", getLogPrefix(), e);
+                    ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+                    return;
+                } 
             } else {
-                log.debug("{} Bypassing address check for session {}", getLogPrefix(), session.getId());
+                log.info("{} No servlet request or client address available, skipping address check for sessions",
+                        getLogPrefix());
             }
 
             final SubjectContext subjectCtx = subjectContextCreationStrategy.apply(profileRequestContext);

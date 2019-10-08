@@ -47,8 +47,7 @@
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:sessionResolver-ref="shibboleth.SessionManager"
-        p:checkAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:null}'.trim()) ?: %{idp.session.consistentAddress:true}}" />
+        p:sessionResolver-ref="shibboleth.SessionManager" />
     
     <bean id="DestroySessions"
         class="net.shibboleth.idp.session.impl.DestroySessions" scope="prototype"
