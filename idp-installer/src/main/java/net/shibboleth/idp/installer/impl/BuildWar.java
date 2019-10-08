@@ -36,49 +36,55 @@ import org.slf4j.LoggerFactory;
  * <li>Deletes webapp.tmp</li>
  * </ul>
  */
-public final class BuildWar {
+public class BuildWar {
 
     /** Log. */
-    public static final Logger LOG = LoggerFactory.getLogger(BuildWar.class);
-    
-    /** private Constructor. */
-    private BuildWar() {}
+    private final Logger log = LoggerFactory.getLogger(BuildWar.class);
+
+    /** Properties for the job. */
+    private final InstallerProperties installerProps;
+
+    /** Constructor.
+     * @param props The environment for the work.
+     */
+    public BuildWar(final InstallerProperties props) {
+        installerProps = props;
+    }
 
     /** Method to do the work of building the war.
-     * @param installerProps The environment for the work.
      * @throws BuildException if unexpected badness occurs.
      */
-    public static void buildWar(final InstallerProperties installerProps) throws BuildException {
+    public void execute() throws BuildException {
         final Path target = installerProps.getTargetDir();
         final Path warFile = target.resolve("war").resolve("idp.war");
 
-        LOG.info("Rebuilding {}", warFile.toAbsolutePath());
+        log.info("Rebuilding {}", warFile.toAbsolutePath());
         try {
             DeletingVisitor.deleteTree(target.resolve("webpapp"));
         } catch (final IOException e) {
-            LOG.warn("Deleting {} failed", target.resolve("webpapp").toAbsolutePath(), e);
+            log.warn("Deleting {} failed", target.resolve("webpapp").toAbsolutePath(), e);
         }
         final Path webAppTmp =target.resolve("webpapp.tmp");
         try {
             DeletingVisitor.deleteTree(webAppTmp);
         } catch (final IOException e) {
-            LOG.warn("Deleting {} failed", webAppTmp.toAbsolutePath(), e);
+            log.warn("Deleting {} failed", webAppTmp.toAbsolutePath(), e);
         }
         final Path distWebApp =  target.resolve("dist").resolve("webapp");
         final Copy initial = InstallerSupport.getCopyTask(distWebApp, webAppTmp);
         initial.setPreserveLastModified(true);
         initial.setFailOnError(true);
-        initial.setVerbose(LOG.isDebugEnabled());
-        LOG.info("Initial populate from {} to {}", distWebApp, webAppTmp);
+        initial.setVerbose(log.isDebugEnabled());
+        log.info("Initial populate from {} to {}", distWebApp, webAppTmp);
         initial.execute();
-        
-        final Path editWebApp = target.resolve("edit-webapp"); 
+
+        final Path editWebApp = target.resolve("edit-webapp");
         final Copy overlay = InstallerSupport.getCopyTask(editWebApp, webAppTmp);
         overlay.setOverwrite(true);
         overlay.setPreserveLastModified(true);
         overlay.setFailOnError(true);
-        overlay.setVerbose(LOG.isDebugEnabled());
-        LOG.info("Overlay from {} to {}", editWebApp, webAppTmp);
+        overlay.setVerbose(log.isDebugEnabled());
+        log.info("Overlay from {} to {}", editWebApp, webAppTmp);
         overlay.execute();
 
         warFile.toFile().delete();
@@ -86,26 +92,12 @@ public final class BuildWar {
         jarTask.setDestFile(warFile.toFile());
         jarTask.setBasedir(webAppTmp.toFile());
         jarTask.setProject(InstallerSupport.ANT_PROJECT);
-        LOG.info("Creating war file {}", warFile);
+        log.info("Creating war file {}", warFile);
         jarTask.execute();
         try {
             DeletingVisitor.deleteTree(webAppTmp);
         } catch (final IOException e) {
-            LOG.warn("Deleting {} failed", webAppTmp, e);
-        }
-    }
-    
-    /** Program entry to build war. Calls {@link #buildWar(InstallerProperties)}.
-     * @param args input
-     */
-    public static void main(final String[] args) {
-        try {
-            LOG.error("Starting build");
-            final InstallerProperties ip = new InstallerProperties(true);
-            ip.initialize();
-            buildWar(ip);
-        } catch (final Throwable e) {
-            LOG.error("Build WebApp failed", e);
+            log.warn("Deleting {} failed", webAppTmp, e);
         }
     }
 }
