@@ -98,7 +98,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
             log.error("Corrupt install {} is not a directory", what);
             throw new BuildException("Corrupt install - not a directory");
         } else {
-            log.debug("Deleteing {} ", what);
+            log.debug("Deleting {} ", what);
             InstallerSupport.deleteTree(what);
         }
     }

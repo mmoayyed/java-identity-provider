@@ -61,7 +61,7 @@ public final class InstallerSupport {
                 Files.createDirectories(dir);
                 log.debug("Created directory {}", dir);
             } catch (final IOException e) {
-                log.error("Could no create {}", dir, e);
+                log.error("Could not create {}", dir, e);
                throw new BuildException(e);
             }
         }
