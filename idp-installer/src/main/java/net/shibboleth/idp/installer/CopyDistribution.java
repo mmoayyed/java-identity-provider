@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,7 +34,9 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
- * Copy the distribution to its final location.
+ * Copy the distribution to the final location.  Prior to doing so
+ * take a backup of the old distribution. "The final location" means
+ * the dist, doc and system subdirectories.
  */
 public final class CopyDistribution extends AbstractInitializableComponent {
 
@@ -54,7 +56,8 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         installerProps = props;
     }
 
-    /** Copy the distribution from the dstribution to its new location.
+    /** Copy the distribution from the dstribution to their new locations, having
+     * first taken a backup.
      * @throws BuildException if badness occurs
      */
     public void execute() throws BuildException {
@@ -62,18 +65,6 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         deleteOld();
         copyDist();
         copyBinDocSystem();
-    }
-
-    /** Helper for the {@link #backupOld(InstallerProperties)} method.
-     * @param from where from
-     * @param to where to.
-     * @throws BuildException if badness occurs
-     */
-    private void backup(final Path from, final Path to) throws BuildException {
-        log.debug("Backing up From {} to {}", from, to);
-        final Copy copy = InstallerSupport.getCopyTask(from, to);
-        copy.setFailOnError(false);
-        copy.execute();
     }
 
     /** Copy bin, edit-webapp, dist and doc to old-date-time.
@@ -88,7 +79,19 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         backup(installerProps.getTargetDir().resolve("system"), backup.resolve("system"));
     }
 
-    /** Helper for the delete {@link #deleteOld(InstallerProperties)} method.
+    /** Helper for the {@link #backupOld(InstallerProperties)} method.
+     * @param from where from
+     * @param to where to.
+     * @throws BuildException if badness occurs
+     */
+    private void backup(final Path from, final Path to) throws BuildException {
+        log.debug("Backing up From {} to {}", from, to);
+        final Copy copy = InstallerSupport.getCopyTask(from, to);
+        copy.setFailOnError(false);
+        copy.execute();
+    }
+
+    /** Helper for the {@link #deleteOld(InstallerProperties)} method.
      * @param what what to delete
      */
     private void delete(final Path what) {
@@ -119,8 +122,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         delete(system);
     }
 
-
-    /** Helper for the delete {@link #copyDist(InstallerProperties)} and
+    /** Helper for the {@link #copyDist(InstallerProperties)} and
      *  {@link #copyBinDocSystem(InstallerProperties)} methods.
      * @param srcDist the source distribution.
      * @param dist the dist directory

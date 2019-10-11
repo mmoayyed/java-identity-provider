@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +33,9 @@ import org.apache.tools.ant.types.selectors.PresentSelector.FilePresence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** General common names and helper functions for the installer. */
+/** General common names and helper functions for the Installer. 
+ * This is not intended for general use.
+ */
 public final class InstallerSupport {
 
     /** The name of the file and the property with the current V4 installation value.*/
@@ -136,7 +138,7 @@ public final class InstallerSupport {
      * @param where where
      * @throws BuildException if badness occurrs
      */
-    public static void deleteTree(final Path where) throws BuildException {
+    protected static void deleteTree(final Path where) throws BuildException {
         if (!Files.exists(where)) {
             log.debug("Directory {} does not exist. Skipping delete.", where);
             return;
@@ -156,7 +158,7 @@ public final class InstallerSupport {
      * @param destFile where to
      * @return the jar task
      */
-    public static Jar createJarTask(final Path baseDir, final Path destFile) {
+    protected static Jar createJarTask(final Path baseDir, final Path destFile) {
         final Jar jarTask = new Jar();
         jarTask.setBasedir(baseDir.toFile());
         jarTask.setDestFile(destFile.toFile());

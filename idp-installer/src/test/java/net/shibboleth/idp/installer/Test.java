@@ -15,20 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.installer.impl.BuildWar;
-import net.shibboleth.idp.installer.impl.CopyDistribution;
-import net.shibboleth.idp.installer.impl.InstallerProperties;
-import net.shibboleth.idp.installer.impl.V4Install;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

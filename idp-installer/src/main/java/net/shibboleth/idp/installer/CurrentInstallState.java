@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -93,7 +93,7 @@ final class CurrentInstallState extends AbstractInitializableComponent {
 
     /** What is the installer version.
      * @return "3" for a V3 install, null for a new install or the value we write during last install.
-     * @throws BuildException if we find an inconsiostency
+     * @throws BuildException if we find an inconsistency
      */
     @Nullable protected String getInstalledVersion() {
         return oldVersion;

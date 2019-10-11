@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.installer.impl.PropertiesWithComments;
+import net.shibboleth.idp.installer.PropertiesWithComments;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.tools.ant.BuildException;

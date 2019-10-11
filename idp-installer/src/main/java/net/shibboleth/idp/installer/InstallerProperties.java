@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -234,10 +234,12 @@ public class InstallerProperties extends AbstractInitializableComponent {
         }
     }
 
-    /** Lookup a property.  If it isn't defined then ask the user (if we are allowed)
+    /** Lookup a property.  If it isn't defined then ask the user (if we are allowed).
+     * This is used by most (but all) getters that redirect through a property
      * @param propertyName the property to lookup.
      * @param prompt what to say to the user
-     * @param defaultSupplier how to get the default value
+     * @param defaultSupplier how to get the default value.  Using a Supplier allows this
+     * to be a reasonably heavyweight operation. 
      * @throws BuildException of anything goes wrong
      * @return the value
      */
@@ -263,7 +265,9 @@ public class InstallerProperties extends AbstractInitializableComponent {
         return value;
     }
 
-    /** Lookup a property.  If it isn't defined then ask the user (if we are allowed)
+    /** Lookup a property.  If it isn't defined then ask the user (if we are allowed) via
+     * a no-echo interface.
+     * Note that this does not work within a debugger.
      * @param propertyName the property to lookup.
      * @param prompt what to say to the user
      * @throws BuildException of anything goes wrong
@@ -284,8 +288,8 @@ public class InstallerProperties extends AbstractInitializableComponent {
         return request.getInput();
     }
 
-
-    /** Get where we are installing/updating/building the war.
+    /** Get where we are installing/updating/building the war.  This is slightly
+     * complicated because the default depends on what we are doing.
      * @return the target directory
      * @throws BuildException if something goes awry.
      */
@@ -314,7 +318,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
         return srcDir;
     }
 
-
     /** Get the host name for this install. Defaults to information pulled from the network.
      * @return the host name.*/
     @Nonnull public String getEntityID() {
@@ -323,7 +326,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
         }
         return entityID;
     }
-
 
     /** Is this address named? Helper method for {@link #bestHostName()}
      * @return true unless the name is the canonical name...

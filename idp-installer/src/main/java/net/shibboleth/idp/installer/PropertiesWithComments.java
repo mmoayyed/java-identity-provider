@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -90,7 +90,7 @@ public final class PropertiesWithComments {
      * @param isComment whether this is a comment or not.
      * @throws IOException when badness happens.
      */
-    protected void addCommentedProperty(@Nonnull @NotEmpty final String line, final boolean isComment)
+    private void addCommentedProperty(@Nonnull @NotEmpty final String line, final boolean isComment)
             throws IOException {
         final Properties parser = new Properties();
         final String modifiedLine;
@@ -259,7 +259,7 @@ public final class PropertiesWithComments {
      * It may be a commented property from a line like this "#prop=value" or a property prop=value.
      * 
      */
-    protected class CommentedProperty {
+    private class CommentedProperty {
 
         /** The property name. */
         private final String property;

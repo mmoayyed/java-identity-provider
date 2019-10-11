@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.impl;
+package net.shibboleth.idp.installer;
 
 import java.nio.file.Path;
 
@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
  * <li>Deletes webapp.tmp</li>
  * </ul>
  */
-public class BuildWar extends AbstractInitializableComponent {
+public final class BuildWar extends AbstractInitializableComponent {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(BuildWar.class);
@@ -64,6 +64,7 @@ public class BuildWar extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final Path target = installerProps.getTargetDir();
         final Path warFile = target.resolve("war").resolve("idp.war");
 
