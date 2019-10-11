@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.installer.impl;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import org.apache.tools.ant.BuildException;
@@ -69,17 +68,9 @@ public class BuildWar extends AbstractInitializableComponent {
         final Path warFile = target.resolve("war").resolve("idp.war");
 
         log.info("Rebuilding {}, Version", warFile.toAbsolutePath(), currentState.getInstalledVersion());
-        try {
-            DeletingVisitor.deleteTree(target.resolve("webpapp"));
-        } catch (final IOException e) {
-            log.warn("Deleting {} failed", target.resolve("webpapp").toAbsolutePath(), e);
-        }
+        InstallerSupport.deleteTree(target.resolve("webpapp"));
         final Path webAppTmp =target.resolve("webpapp.tmp");
-        try {
-            DeletingVisitor.deleteTree(webAppTmp);
-        } catch (final IOException e) {
-            log.warn("Deleting {} failed", webAppTmp.toAbsolutePath(), e);
-        }
+        InstallerSupport.deleteTree(webAppTmp);
         final Path distWebApp =  target.resolve("dist").resolve("webapp");
         final Copy initial = InstallerSupport.getCopyTask(distWebApp, webAppTmp);
         initial.setPreserveLastModified(true);
@@ -98,16 +89,9 @@ public class BuildWar extends AbstractInitializableComponent {
         overlay.execute();
 
         warFile.toFile().delete();
-        final Jar jarTask = new Jar();
-        jarTask.setDestFile(warFile.toFile());
-        jarTask.setBasedir(webAppTmp.toFile());
-        jarTask.setProject(InstallerSupport.ANT_PROJECT);
+        final Jar jarTask = InstallerSupport.createJarTask(webAppTmp, warFile);
         log.info("Creating war file {}", warFile);
         jarTask.execute();
-        try {
-            DeletingVisitor.deleteTree(webAppTmp);
-        } catch (final IOException e) {
-            log.warn("Deleting {} failed", webAppTmp, e);
-        }
+        InstallerSupport.deleteTree(webAppTmp);
     }
 }

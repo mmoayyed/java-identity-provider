@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import java.io.IOException;
-import java.nio.file.Path;
+import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Copy;
-import org.apache.tools.ant.types.FileSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.impl.BuildWar;
+import net.shibboleth.idp.installer.impl.CopyDistribution;
+import net.shibboleth.idp.installer.impl.InstallerProperties;
+import net.shibboleth.idp.installer.impl.V4Install;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -37,25 +38,36 @@ public class Test {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(Test.class);
-
-    private static Copy getCopyTask(final Path from, final Path to) {
-        final Copy result = new Copy();
-        result.setTodir(to.toFile());
-        final FileSet fromSet = new FileSet();
-        fromSet.setDir(from.toFile());
-        result.addFileset(fromSet);
-        return result;
-    }
-    
+   
     /**
      * @param args
      * @throws IOException 
      * @throws ComponentInitializationException 
      */
     public static void main(String[] args) throws IOException, ComponentInitializationException {
-        Copy tsk = getCopyTask(Path.of("C:\\Users\\rdw\\Downloads"), Path.of("C:\\Users\\rdw\\Desktop\\fofofo"));
-        tsk.setProject(new Project());
-        tsk.execute();
+
+        
+        System.setProperty(InstallerProperties.TARGET_DIR,"H:\\Downloads\\v4test");
+        System.setProperty(InstallerProperties.SOURCE_DIR,
+                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT");
+        System.setProperty(InstallerProperties.ANT_BASE_DIR,
+                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT\\bin");
+        System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
+        System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
+        final InstallerProperties ip = new InstallerProperties(false);
+        ip.initialize();
+        final CurrentInstallState is = new CurrentInstallState(ip);
+        is.initialize();
+        
+        final CopyDistribution dist = new CopyDistribution(ip, is);
+        dist.execute();
+        
+        final V4Install inst = new V4Install(ip, is);
+        inst.execute();
+        
+        final BuildWar bw = new BuildWar(ip, is);
+        bw.execute();
+        
     }
 
 }

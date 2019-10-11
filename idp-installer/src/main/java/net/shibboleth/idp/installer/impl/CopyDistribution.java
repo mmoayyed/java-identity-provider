@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.installer.impl;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -100,11 +99,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
             throw new BuildException("Corrupt install - not a directory");
         } else {
             log.debug("Deleteing {} ", what);
-            try {
-                DeletingVisitor.deleteTree(what);
-            } catch (final IOException e) {
-                log.warn("Deleting {} failed", what, e);
-            }
+            InstallerSupport.deleteTree(what);
         }
     }
 
