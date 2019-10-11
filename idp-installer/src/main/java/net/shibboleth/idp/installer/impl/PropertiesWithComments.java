@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -34,15 +34,13 @@ import java.util.Properties;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A package which is similar to Properties, but allows comments to be preserved. We use the Properties package to parse
  * the non-comment lines.
  */
-@Deprecated public class PropertiesWithComments {
+public class PropertiesWithComments {
 
     /**
      * The contents.
@@ -54,6 +52,15 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
     /** The properties bit. */
     private Map<String, CommentedProperty> properties;
+
+    /** Name Replacement info. */
+    private final Properties nameReplacement = new Properties();
+
+    /** Have we loaded data?.
+     *
+     * We cannot load the replacement names after the file load.
+     * */
+    private boolean loadedData;
 
     /**
      * Add a property, either as a key/value pair or as a key/comment pair.
@@ -75,15 +82,38 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
         parser.load(new ByteArrayInputStream(modifiedLine.getBytes()));
         if (!parser.isEmpty()) {
-            final String propName = StringSupport.trimOrNull(parser.stringPropertyNames().iterator().next());
+            String propName = StringSupport.trimOrNull(parser.stringPropertyNames().iterator().next());
             if (propName != null) {
+                
+                String outputLine = line;
+                final String value = parser.getProperty(propName);
+                
+                final String newPropName = StringSupport.trimOrNull(nameReplacement.getProperty(propName));
+
+                if (newPropName != null && !newPropName.isEmpty()) {
+                    // Change the line
+                    if (isComment) {
+                        if (newPropName.contains(propName)) {
+                            // We can only replace once
+                            outputLine = outputLine.replace(propName, newPropName);
+                        } else {
+                            while (outputLine.contains(propName)) {
+                                outputLine = outputLine.replace(propName, newPropName);
+                            }
+                        }
+                    }
+                    // and the property name
+                    propName = newPropName;
+                }
+                
+                
                 final CommentedProperty commentedProperty;
 
                 if (isComment) {
-                    commentedProperty = new CommentedProperty(propName, line, true);
+                    commentedProperty = new CommentedProperty(propName, outputLine, true);
 
                 } else {
-                    commentedProperty = new CommentedProperty(propName, parser.getProperty(propName), false);
+                    commentedProperty = new CommentedProperty(propName, value, false);
 
                 }
                 properties.put(propName, commentedProperty);
@@ -93,7 +123,18 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
             contents.add(line);
         }
         parser.clear();
-
+    }
+    
+    /** Read the name replacement data. 
+    * 
+    * @param input what to read
+    * @throws IOException if readline fails
+    */
+    public void loadNameReplacement(final InputStream input) throws IOException {
+        if (loadedData) {
+            throw new IOException("Cannot load name replacement after the data");
+        }
+        nameReplacement.load(input);
     }
 
     /**
@@ -103,7 +144,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
      * @throws IOException if readline fails
      */
     public void load(final InputStream input) throws IOException {
-        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null , ".impl");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         contents = new ArrayList<>();
         properties = new HashMap<>();
@@ -126,6 +166,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
             }
             s = reader.readLine();
         }
+        loadedData = true;
     }
 
     /**
@@ -232,7 +273,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
                 writer.write(value);
             } else {
                 writer.write(property);
-                writer.write("= ");
+                writer.write("=");
                 writer.write(value);
             }
         }
