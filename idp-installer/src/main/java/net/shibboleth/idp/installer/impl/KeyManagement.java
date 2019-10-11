@@ -21,57 +21,82 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 
 /**
  * Create (if needs be) all the keys needed by an install.
  */
-public class KeyManagement {
+final class KeyManagement extends AbstractInitializableComponent {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(KeyManagement.class);
 
     /** Properties for the job. */
-    private final InstallerProperties installerProps;
+    @Nonnull private final InstallerProperties installerProps;
+
+    /** Current Install. */
+    @Nonnull private final CurrentInstallState currentState;
+    
+    /** Did we create idp-signing.*?*/
+    private boolean createdSigning;
+
+    /** Did we create idp-encryption.*?*/
+    private boolean createdEncryption;
+
+    /** Did we create idp-backchannel.*?*/
+    private boolean createdBackchannel;
+
+    /** Did we create sealer.*?*/
+    private boolean createdSealer;
 
     /** Constructor.
-     * @param props The environment for the work.
+     * @param props The properties to drive the installs. 
+     * @param installState - about where we installing into.
      */
-    public KeyManagement(final InstallerProperties props) {
+    protected KeyManagement(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
         installerProps = props;
+        currentState = installState;
     }
 
     /** Create any keys that are needed.
      * @throws BuildException if badness occurs
      */
-    public void execute() throws BuildException {
-        generateKey("idp-signing");
-        generateKey("idp-encryption");
+    protected void execute() throws BuildException {
+        createdSigning = generateKey("idp-signing");
+        createdEncryption = generateKey("idp-encryption");
         generateKeyStore();
         generateSealer();
     }
 
     /** Helper method for {@link #manageKeys(InstallerProperties)} to generate a crt and key file.
      * @param fileBase the partial file name
+     * @return true iff the file pair was created
      * @throws BuildException if badness occurrs.
      */
-    private void generateKey(final String fileBase) throws BuildException {
+    private boolean generateKey(final String fileBase) throws BuildException {
         final Path credentials = installerProps.getTargetDir().resolve("credentials");
         final Path key = credentials.resolve(fileBase+".key");
         final Path crt = credentials.resolve(fileBase+".crt");
 
         if (Files.exists(key) && Files.exists(crt)) {
-            if (!installerProps.isIdPPropertiesPresent()) {
+            if (!currentState.isIdPPropertiesPresent()) {
                 log.error("key files {} and {} exist but idp.properties does not", key, crt);
                 throw new BuildException("Invalid key file configuration");
             }
             log.debug("keys files {} and {} exist.  Not generating", key, crt);
-        } else if (installerProps.isIdPPropertiesPresent()) {
+            return false;
+        } else if (currentState.isIdPPropertiesPresent()) {
             log.error("idp.properties exists but key files {} and/or {} do not", key, crt);
             throw new BuildException("Invalid key file configuration");
         } else if (Files.exists(key) || Files.exists(crt)) {
@@ -93,6 +118,8 @@ public class KeyManagement {
                 throw new BuildException("Error Building Self Signed Cert", e);
             }
         }
+        log.debug("... Done");
+        return true;
     }
 
     /** Helper method for {@link #manageKeys(InstallerProperties)} to generate the backchannel keystore.
@@ -104,12 +131,12 @@ public class KeyManagement {
         final Path crt = credentials.resolve("idp-backchannel.crt");
 
         if (Files.exists(keyStore) && Files.exists(crt)) {
-            if (!installerProps.isIdPPropertiesPresent()) {
+            if (!currentState.isIdPPropertiesPresent()) {
                 log.error("Key store files {} and {} exist but idp.properties does not", keyStore, crt);
                 throw new BuildException("Invalid key file configuration");
             }
             log.debug("Keys store files {} and {} exist.  Not generating", keyStore, crt);
-        } else if (installerProps.isIdPPropertiesPresent()) {
+        } else if (currentState.isIdPPropertiesPresent()) {
             log.error("idp.properties exists but key store files {} and/or {} do not", keyStore, crt);
             throw new BuildException("Invalid key file configuration");
         } else if (Files.exists(keyStore) || Files.exists(crt)) {
@@ -131,6 +158,7 @@ public class KeyManagement {
                   log.error("Error building backchannel ketsyore files", e);
                   throw new BuildException("Error Building Backchannel Key Store", e);
               }
+            createdBackchannel = true;
           }
     }
 
@@ -143,12 +171,12 @@ public class KeyManagement {
         final Path versionFile = credentials.resolve("sealer.kver");
 
         if (Files.exists(sealer)  && Files.exists(versionFile)) {
-            if (!installerProps.isIdPPropertiesPresent()) {
+            if (!currentState.isIdPPropertiesPresent()) {
                 log.error("Cookie encryption files {} and {} exist but idp.properties does not", sealer, versionFile);
                 throw new BuildException("Invalid Cookie encryption  file configuration");
             }
             log.debug("Cookie encryption files {} and {} exists.  Not generating.", sealer, versionFile);
-        } else if (installerProps.isIdPPropertiesPresent()) {
+        } else if (currentState.isIdPPropertiesPresent()) {
             log.error("idp.properties exists but cookie encryption files {} do not", sealer, versionFile);
             throw new BuildException("Invalid key file configuration");
         } else if (Files.exists(sealer) || Files.exists(versionFile)) {
@@ -168,6 +196,35 @@ public class KeyManagement {
                 log.error("Error building cookie encryption files", e);
                 throw new BuildException("Error Building Cookie Encryption", e);
             }
+            createdSealer = true;
         }
+    }
+
+    /** Did we create idp-signing.*?
+     * @return whether we did
+     */
+    public boolean isCreatedSigning() {
+        return createdSigning;
+    }
+
+    /** Did we create idp-encryption.*?
+     * @return whether we did
+     */
+    public boolean isCreatedEncryption() {
+        return createdEncryption;
+    }
+
+    /** Did we create idp-backchannel.*?
+     * @return whether we did
+     */
+    public boolean isCreatedBackchannel() {
+        return createdBackchannel;
+    }
+
+    /** Did we create sealer.*?
+     * @return whether we did
+     */
+    public boolean isCreatedSealer() {
+        return createdSealer;
     }
 }

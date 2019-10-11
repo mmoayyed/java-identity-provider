@@ -40,6 +40,9 @@ public final class InstallerSupport {
     /** The name of the file and the property with the current V4 installation value.*/
     public static final String VERSION_NAME = "idp.installed.version";
 
+    /** The name of the file and the property with the previous installation value.*/
+    public static final String PREVIOUS_VERSION_NAME = "idp.previous.installed.version";
+
     /** A psuedo ant-project as parent. */
     public static final Project ANT_PROJECT = new Project();
 
@@ -53,7 +56,7 @@ public final class InstallerSupport {
     protected static void createDirectory(final Path dir) throws BuildException{
         if (!Files.exists(dir)) {
             try {
-                Files.createDirectory(dir);
+                Files.createDirectories(dir);
                 LOG.debug("Created directory {}", dir);
             } catch (final IOException e) {
                 LOG.error("Could no create {}", dir, e);
@@ -108,7 +111,7 @@ public final class InstallerSupport {
         copy.addFileset(fromSet);
         copy.setProject(ANT_PROJECT);
         copy.execute();
-        LOG.debug("Copied not-previously existing files from {} to {}", from, to);
+        LOG.debug("Copied not-previously-existing files from {} to {}", from, to);
 
     }
 

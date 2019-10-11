@@ -26,6 +26,9 @@ import org.apache.tools.ant.taskdefs.Jar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+
 /** Code to build the war file during an install or on request.<p/>
  * This code<ul>
  * <li>Deletes any old detritus</li>
@@ -36,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * <li>Deletes webapp.tmp</li>
  * </ul>
  */
-public class BuildWar {
+public class BuildWar extends AbstractInitializableComponent {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(BuildWar.class);
@@ -44,11 +47,18 @@ public class BuildWar {
     /** Properties for the job. */
     private final InstallerProperties installerProps;
 
+    /** Current Install. */
+    private final CurrentInstallState currentState;
+
     /** Constructor.
      * @param props The environment for the work.
+     * @param installState  Where we are right now.
      */
-    public BuildWar(final InstallerProperties props) {
+    public BuildWar(final InstallerProperties props, final CurrentInstallState installState) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
         installerProps = props;
+        currentState = installState;
     }
 
     /** Method to do the work of building the war.
@@ -58,7 +68,7 @@ public class BuildWar {
         final Path target = installerProps.getTargetDir();
         final Path warFile = target.resolve("war").resolve("idp.war");
 
-        log.info("Rebuilding {}", warFile.toAbsolutePath());
+        log.info("Rebuilding {}, Version", warFile.toAbsolutePath(), currentState.getInstalledVersion());
         try {
             DeletingVisitor.deleteTree(target.resolve("webpapp"));
         } catch (final IOException e) {

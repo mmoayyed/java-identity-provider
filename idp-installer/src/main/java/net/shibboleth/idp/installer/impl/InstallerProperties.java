@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
+import org.apache.tools.ant.launch.Launcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,12 +68,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
  *            services.merge.properties: The name of a property file to merge with services.properties</li>
  *       <li> if idp.is.V2 is set, then this file should contain a line setting
  *            idp.service.relyingparty.resources=shibboleth.LegacyRelyingPartyResolverResources</li></ul>
- * <li> nameid.merge.properties: The name of a property file to merge with saml-nameid.properties.
- *             If idp.is.V2 is set, then this file should contain lines enabling legacy nameid generation
  * <li> idp.property.file: The name of a property file to fill in some or all of the above.
               This file is deleted after processing.</li>
  * <li> idp.no.tidy: Do not delete the two above files (debug only)</li>
- * <li> idp.jetty.config: Copy jetty configuration from distribution (Unsupported)</li>
  * <li> ldap.merge.properties:  The name of a property file to merge with ldap.properties</li>
  * <li> idp.conf.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).</li>
  * <li> idp.conf.credentials.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).</li>
@@ -82,10 +80,16 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 public class InstallerProperties extends AbstractInitializableComponent {
 
     /** The base directory, inherited and shared with ant. */
-    public static final String ANT_BASE_DIR = "ant.home";
+    public static final String ANT_BASE_DIR = Launcher.ANTHOME_PROPERTY;
 
     /** The name of a property file to fill in some or all of the above. This file is deleted after processing. */
     public static final String PROPERTY_SOURCE_FILE = "idp.property.file";
+
+    /** The name of a property file to merge with idp.properties. */
+    public static final String IDP_PROPERTIES_MERGE = "idp.merge.properties";
+
+    /** The name of a property file to merge with ldap.properties. */
+    public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
 
     /** Where to install to.  Default is basedir */
     public static final String TARGET_DIR = "idp.target.dir";
@@ -114,8 +118,11 @@ public class InstallerProperties extends AbstractInitializableComponent {
     /** The sealer alias to use.  */
     public static final String SEALER_ALIAS = "idp.sealer.alias";
 
-    /** The sealer alias to use.  */
+    /** The the key size to generate.  */
     public static final String KEY_SIZE = "idp.keysize";
+
+    /** Whether to tidy up after ourselves. */
+    public static final String NO_TIDY = "idp.no.tidy";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InstallerProperties.class);
@@ -125,9 +132,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
 
     /** The properties driving the install. */
     @NonnullAfterInit private Properties installerProperties;
-
-    /** The file specified in the system file idp.property.file (if present). */
-    @Nullable private File idpPropertyFile;
 
     /** The target Directory. */
     private Path targetDir;
@@ -143,11 +147,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
 
     /** The entity ID. */
     private String entityID;
-
-    /** Old Version. */
-    private String oldVersion;
-    /** Have done the work aroun the old version ?*/
-    private boolean oldVersionDefinitive;
 
     /** Hostname. */
     private String hostname;
@@ -167,8 +166,8 @@ public class InstallerProperties extends AbstractInitializableComponent {
     /** Key Size. (for signing, encryption and backchannel). */
     private int keySize;
 
-    /** Whether the properties file exists.*/
-    private boolean idpPropertiesPresent;
+    /** whether to tidy up. */
+    private boolean tidy = true;
 
     /**
      * Constructor.
@@ -195,6 +194,7 @@ public class InstallerProperties extends AbstractInitializableComponent {
             throw new ComponentInitializationException(ANT_BASE_DIR + " must exist");
         }
         log.debug("base dir {}", baseDir);
+        tidy = installerProperties.get(NO_TIDY) == null;
 
         if (installerProperties.containsKey(PROPERTY_SOURCE_FILE)) {
             final Path file = baseDir.resolve(installerProperties.getProperty(PROPERTY_SOURCE_FILE));
@@ -204,14 +204,17 @@ public class InstallerProperties extends AbstractInitializableComponent {
             }
             log.debug("Loading properties from {}", file.toAbsolutePath());
 
-            idpPropertyFile = file.toFile();
+            /** The file specified in the system file idp.property.file (if present). */
+            final File idpPropertyFile = file.toFile();
             try {
                 installerProperties.load(new FileInputStream(idpPropertyFile));
             } catch (final IOException e) {
                 log.error("Could not load {}", file.toAbsolutePath(), e);
                 throw new ComponentInitializationException(e);
             }
-            idpPropertyFile.deleteOnExit();
+            if (tidy) {
+                idpPropertyFile.deleteOnExit();
+            }
         }
 
         String value = installerProperties.getProperty(NO_PROMPT);
@@ -219,7 +222,7 @@ public class InstallerProperties extends AbstractInitializableComponent {
 
         if (needSourceDir) {
             value = getValue(SOURCE_DIR, "Source (Distribution) Directory (press <enter> to accept default):",
-                    () -> antBase);
+                    () -> baseDir.toString());
             srcDir = Path.of(value);
             log.debug("Source directory {}", srcDir.toAbsolutePath());
         }
@@ -229,7 +232,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
         } else {
             keySize = Integer.parseInt(installerProperties.getProperty(KEY_SIZE));
         }
-        idpPropertiesPresent = Files.exists(getTargetDir().resolve("conf").resolve("idp.properties"));
     }
 
     /** Lookup a property.  If it isn't defined then ask the user (if we are allowed)
@@ -312,43 +314,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
         return srcDir;
     }
 
-    /** What is the installer version.
-     * @return "3" for a V3 install, null for a new install or the value we write during last install.
-     */
-    @Nullable public String getInstallerVersion() {
-        if (oldVersionDefinitive) {
-            return oldVersion;
-        }
-        oldVersionDefinitive = true;
-        final Path conf = getTargetDir().resolve("conf");
-        if (!Files.exists(conf.resolve("relying-party.xml"))) {
-            // No relying party, no install
-            oldVersion = null;
-            return null;
-        }
-        if (!Files.exists(conf.resolve("idp.properties"))) {
-            throw new BuildException("V2 Installation detected");
-        }
-
-        final Path currentInstall = getTargetDir().resolve("dist").resolve(InstallerSupport.VERSION_NAME);
-        if (!Files.exists(currentInstall)) {
-            oldVersion= "3";
-            return oldVersion;
-        }
-        final Properties vers = new Properties(1);
-        try {
-            vers.load(new FileInputStream(currentInstall.toFile()));
-        } catch (final IOException e) {
-            log.error("Could not load {}", currentInstall.toAbsolutePath(), e);
-            throw new BuildException(e);
-        }
-        oldVersion = vers.getProperty(InstallerSupport.VERSION_NAME);
-        if (null == oldVersion) {
-            throw new BuildException("File " + InstallerSupport.VERSION_NAME +
-                    " did not contain property " + InstallerSupport.VERSION_NAME);
-        }
-        return oldVersion;
-    }
 
     /** Get the host name for this install. Defaults to information pulled from the network.
      * @return the host name.*/
@@ -498,10 +463,38 @@ public class InstallerProperties extends AbstractInitializableComponent {
         return keySize;
     }
 
-    /** Was idp.properties present in the target file when we started the install?
-     * @return if it was.
+    /** Get the property file as a File, or null if it doesn't exist.
+     * Also delete it at the end if we are deleting.
+     * @param propName the name to lookup;
+     * @return null if the property is not provided a {@link File} otherwise
+     * @throws BuildException if the property is supplied but the file doesn't exist.
      */
-    public boolean isIdPPropertiesPresent() {
-        return idpPropertiesPresent;
+    private File getMergePropertiesFile(final String propName) throws BuildException {
+        final String propValue = installerProperties.getProperty(propName);
+        if (propValue == null) {
+            return null;
+        }
+        final Path path = baseDir.resolve(propValue);
+        if (!Files.exists(path)) {
+            log.error("Could not find specified property file {}", path );
+            throw new BuildException("Property file not found");
+        }
+        return path.toFile();
+    }
+
+    /** Get the file pointed to by {@link #IDP_PROPERTIES_MERGE}.
+     * @return the file or null if it wasn't specified
+     * @throws BuildException if the property is supplied but the file doesn't exist.
+     */
+    public File getIdPMergePropertiesFile() throws BuildException {
+        return getMergePropertiesFile(IDP_PROPERTIES_MERGE);
+    }
+
+    /** Get the file pointed to by {@link #LDAP_PROPERTIES_MERGE}.
+     * @return the file or null if it wasn't specified
+     * @throws BuildException if the property is supplied but the file doesn't exist.
+     */
+    public File getLDAPMergePropertiesFile() throws BuildException {
+        return getMergePropertiesFile(LDAP_PROPERTIES_MERGE);
     }
 }

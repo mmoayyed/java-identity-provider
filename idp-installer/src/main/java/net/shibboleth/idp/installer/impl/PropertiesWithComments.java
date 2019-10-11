@@ -40,7 +40,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * A package which is similar to Properties, but allows comments to be preserved. We use the Properties package to parse
  * the non-comment lines.
  */
-public class PropertiesWithComments {
+public final class PropertiesWithComments {
 
     /**
      * The contents.
@@ -54,13 +54,34 @@ public class PropertiesWithComments {
     private Map<String, CommentedProperty> properties;
 
     /** Name Replacement info. */
-    private final Properties nameReplacement = new Properties();
+    private final Properties nameReplacement;
 
     /** Have we loaded data?.
      *
      * We cannot load the replacement names after the file load.
      * */
     private boolean loadedData;
+
+    /** Legacy Constructor. */
+    public PropertiesWithComments() {
+        nameReplacement = new Properties();
+    }
+
+    /** Constructor.
+     * @param replacements what to set.
+     */
+    public PropertiesWithComments(final Properties replacements) {
+        nameReplacement = replacements;
+    }
+
+    /** Constructor.
+     * @param input what to set.
+     * @throws IOException id the stream could not be loaded
+     */
+    public PropertiesWithComments(final InputStream input) throws IOException {
+        nameReplacement = new Properties();
+        nameReplacement.load(input);
+    }
 
     /**
      * Add a property, either as a key/value pair or as a key/comment pair.
@@ -188,6 +209,18 @@ public class PropertiesWithComments {
                 writer.newLine();
             }
             writer.flush();
+        }
+    }
+
+    /** Perform a mass replacement from the supplied {@link Properties}.
+     * @param replacements what to replace.
+     */
+    public void replaceProperties(final Properties replacements) {
+        for (final Object propName:replacements.keySet()) {
+            if (propName instanceof String) {
+                final String name = (String) propName;
+                replaceProperty(name, replacements.getProperty(name));
+            }
         }
     }
 

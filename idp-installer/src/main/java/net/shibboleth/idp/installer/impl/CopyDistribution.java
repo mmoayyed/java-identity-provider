@@ -20,41 +20,49 @@ package net.shibboleth.idp.installer.impl;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
+
+import javax.annotation.Nonnull;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+
 /**
  * Copy the distribution to its final location.
  */
-public final class CopyDistributions {
+public final class CopyDistribution extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(CopyDistributions.class);
+    private final Logger log = LoggerFactory.getLogger(CopyDistribution.class);
 
     /** Properties for the job. */
-    private final InstallerProperties installerProps;
+    @Nonnull private final InstallerProperties installerProps;
 
     /** Constructor.
      * @param props The environment for the work.
+     * @param installState  Where we are right now.
      */
-    public CopyDistributions(final InstallerProperties props) {
+    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
         installerProps = props;
     }
 
     /** Copy the distribution from the dstribution to its new location.
-     * @param ip what drives the install.
      * @throws BuildException if badness occurs
      */
-    public void execute(final InstallerProperties ip) throws BuildException {
+    public void execute() throws BuildException {
         backupOld();
         deleteOld();
         copyDist();
         copyBinDocSystem();
-        createUserFolders();
     }
 
     /** Helper for the {@link #backupOld(InstallerProperties)} method.
@@ -73,7 +81,8 @@ public final class CopyDistributions {
      * @throws BuildException if badness occurs
      */
     protected void backupOld() throws BuildException {
-        final Path backup = installerProps.getTargetDir().resolve("Old-" + Instant.now().toString());
+        final SimpleDateFormat fmt = new SimpleDateFormat("'old-'yyyy-MM-dd-HH-mm-ss");
+        final Path backup = installerProps.getTargetDir().resolve(fmt.format(Date.from(Instant.now())));
         InstallerSupport.createDirectory(backup);
         backup(installerProps.getTargetDir().resolve("edit-webapp"), backup.resolve("edit-webapp"));
         backup(installerProps.getTargetDir().resolve("doc"), backup.resolve("doc"));
@@ -85,9 +94,10 @@ public final class CopyDistributions {
      */
     private void delete(final Path what) {
         if (!Files.exists(what)) {
-            log.debug("{} doesn't exist, ignoring", what);
-        } else if (Files.isDirectory(what)) {
-            throw new BuildException("Corrupt install " + what + " is not a directory");
+            log.debug("{} doesn't exist, nothing to delete", what);
+        } else if (!Files.isDirectory(what)) {
+            log.error("Corrupt install {} is not a directory", what);
+            throw new BuildException("Corrupt install - not a directory");
         } else {
             log.debug("Deleteing {} ", what);
             try {
@@ -108,7 +118,7 @@ public final class CopyDistributions {
         delete(installerProps.getTargetDir().resolve("doc"));
         final Path system = installerProps.getTargetDir().resolve("system");
         if (Files.exists(system)) {
-            log.debug("Clearing  {} readonly (id Windows)", system);
+            log.debug("Clearing  {} readonly (if Windows)", system);
             InstallerSupport.setReadOnly(system, false);
         }
         delete(system);
@@ -136,7 +146,7 @@ public final class CopyDistributions {
     protected void copyDist() {
         final Path dist = installerProps.getTargetDir().resolve("dist");
         InstallerSupport.createDirectory(dist);
-        final Path src = installerProps.getSourceDir().resolve("dist");
+        final Path src = installerProps.getSourceDir();
         if (!Files.exists(src)) {
             log.error("Source distribution {} not found", src);
             throw new BuildException("Source distribution not found");
@@ -155,21 +165,5 @@ public final class CopyDistributions {
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin");
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "system");
-    }
-
-    /** Create (if they do not exist) the user editable folders, suitable for
-     * later population during update or install.
-     * @throws BuildException if badness occurs
-     */
-    protected void createUserFolders() {
-        final Path target = installerProps.getTargetDir();
-        InstallerSupport.createDirectory(target.resolve("conf"));
-        InstallerSupport.createDirectory(target.resolve("credentials"));
-        InstallerSupport.createDirectory(target.resolve("flows"));
-        InstallerSupport.createDirectory(target.resolve("logs"));
-        InstallerSupport.createDirectory(target.resolve("messages"));
-        InstallerSupport.createDirectory(target.resolve("metadata"));
-        InstallerSupport.createDirectory(target.resolve("views"));
-        InstallerSupport.createDirectory(target.resolve("war"));
     }
 }
