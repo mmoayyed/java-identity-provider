@@ -57,7 +57,7 @@ public final class InstallerSupport {
      * @param dir what to create
      * @throws BuildException if bad ness occurs
      */
-    protected static void createDirectory(final Path dir) throws BuildException{
+    public static void createDirectory(final Path dir) throws BuildException{
         if (!Files.exists(dir)) {
             try {
                 Files.createDirectories(dir);
@@ -76,7 +76,7 @@ public final class InstallerSupport {
      * @param to where to copy to
      * @return a partially populated {@link Copy} task
      */
-    protected static Copy getCopyTask(final Path from, final Path to) {
+    public static Copy getCopyTask(final Path from, final Path to) {
         final Copy result = new Copy();
         result.setTodir(to.toFile());
         final FileSet fromSet = new FileSet();
@@ -101,7 +101,7 @@ public final class InstallerSupport {
         </code>
      *
      */
-    protected static void copyDirIfNotPresent(final Path from, final Path to) throws BuildException {
+    public static void copyDirIfNotPresent(final Path from, final Path to) throws BuildException {
         createDirectory(to);
         final Copy copy = new Copy();
         copy.setTodir(to.toFile());
@@ -123,7 +123,7 @@ public final class InstallerSupport {
      * @param directory where
      * @param readOnly what to set it as
      */
-    protected static void setReadOnly(final Path directory, final boolean readOnly) {
+    public static void setReadOnly(final Path directory, final boolean readOnly) {
         final Attrib attrib = new Attrib();
         attrib.setReadonly(readOnly);
         final FileSet where = new FileSet();
@@ -138,7 +138,7 @@ public final class InstallerSupport {
      * @param where where
      * @throws BuildException if badness occurrs
      */
-    protected static void deleteTree(final Path where) throws BuildException {
+    public static void deleteTree(final Path where) throws BuildException {
         if (!Files.exists(where)) {
             log.debug("Directory {} does not exist. Skipping delete.", where);
             return;
@@ -158,12 +158,11 @@ public final class InstallerSupport {
      * @param destFile where to
      * @return the jar task
      */
-    protected static Jar createJarTask(final Path baseDir, final Path destFile) {
+    public static Jar createJarTask(final Path baseDir, final Path destFile) {
         final Jar jarTask = new Jar();
         jarTask.setBasedir(baseDir.toFile());
         jarTask.setDestFile(destFile.toFile());
         jarTask.setProject(InstallerSupport.ANT_PROJECT);
         return jarTask;
     }
-    
 }

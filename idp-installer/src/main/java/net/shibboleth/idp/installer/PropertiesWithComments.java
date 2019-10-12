@@ -67,22 +67,6 @@ public final class PropertiesWithComments {
         nameReplacement = new Properties();
     }
 
-    /** Constructor.
-     * @param replacements what to set.
-     */
-    public PropertiesWithComments(final Properties replacements) {
-        nameReplacement = replacements;
-    }
-
-    /** Constructor.
-     * @param input what to set.
-     * @throws IOException id the stream could not be loaded
-     */
-    public PropertiesWithComments(final InputStream input) throws IOException {
-        nameReplacement = new Properties();
-        nameReplacement.load(input);
-    }
-
     /**
      * Add a property, either as a key/value pair or as a key/comment pair.
      * 
@@ -259,7 +243,7 @@ public final class PropertiesWithComments {
      * It may be a commented property from a line like this "#prop=value" or a property prop=value.
      * 
      */
-    private class CommentedProperty {
+    private static class CommentedProperty {
 
         /** The property name. */
         private final String property;
