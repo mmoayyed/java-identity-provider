@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * code to tode over durig testing.
+ * Entry point to run the main classes.
  */
 public final class AntRun {
     
@@ -51,7 +51,7 @@ public final class AntRun {
             log.error("Parameter must be \"install\", \"install-nocopy\" or \"build-war\" was \"{}\"", args[0]);
             return;
         }
-        final InstallerProperties ip = new InstallerProperties(!copyInstall);
+        final InstallerProperties ip = new InstallerPropertiesImpl(!copyInstall);
         ip.initialize();
         final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();

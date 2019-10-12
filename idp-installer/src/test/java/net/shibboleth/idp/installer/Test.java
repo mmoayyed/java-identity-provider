@@ -42,14 +42,14 @@ public class Test {
     public static void main(String[] args) throws IOException, ComponentInitializationException {
 
         
-        System.setProperty(InstallerProperties.TARGET_DIR,"H:\\Downloads\\v4test");
-        System.setProperty(InstallerProperties.SOURCE_DIR,
+        System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\v4test");
+        System.setProperty(InstallerPropertiesImpl.SOURCE_DIR,
                 "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT");
-        System.setProperty(InstallerProperties.ANT_BASE_DIR,
+        System.setProperty(InstallerPropertiesImpl.ANT_BASE_DIR,
                 "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT\\bin");
-        System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
-        System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
-        final InstallerProperties ip = new InstallerProperties(false);
+        System.setProperty(InstallerPropertiesImpl.KEY_STORE_PASSWORD, "p1");
+        System.setProperty(InstallerPropertiesImpl.SEALER_PASSWORD, "p1");
+        final InstallerProperties ip = new InstallerPropertiesImpl(false);
         ip.initialize();
         final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();
