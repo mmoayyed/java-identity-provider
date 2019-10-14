@@ -25,17 +25,17 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Entry point to run the main classes.
  */
-public final class AntRun {
-    
+public final class Installer {
+
     /** hidden  Constructor. */
-    private AntRun() {}
+    private Installer() {}
 
     /** simulate the ant tasks.
      * @param args what
-     * @throws ComponentInitializationException 
+     * @throws ComponentInitializationException
      */
     public static void main(final String[] args) throws ComponentInitializationException {
-        final Logger log = LoggerFactory.getLogger(AntRun.class);
+        final Logger log = LoggerFactory.getLogger(Installer.class);
         if (args.length !=1) {
             log.error("One Parameter only {}", (Object[]) args);
             return;
@@ -60,15 +60,15 @@ public final class AntRun {
             final CopyDistribution dist = new CopyDistribution(ip, is);
             dist.execute();
         }
-        
+
         if (doInstall) {
             final V4Install inst = new V4Install(ip, is);
             inst.execute();
         }
-        
+
         final BuildWar bw = new BuildWar(ip, is);
         bw.execute();
-        
+
     }
 
 }

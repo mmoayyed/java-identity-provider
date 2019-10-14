@@ -18,9 +18,7 @@
 package net.shibboleth.idp.installer.ant.impl;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +32,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 
 /**
@@ -51,23 +49,11 @@ public class MetadataGeneratorTask extends Task {
     /** Where idp.home is. */
     @Nullable private String idpHome;
 
-    /** Ant level override for the encryption certificate. */
-    @Nullable private File encryptionCert;
-
-    /** Ant level override for the signing certificate. */
-    @Nullable private File signingCert;
-
     /** Ant level override for the back channel certificate. */
     @Nullable private File backchannelCert;
 
-    /** Ant level override for the entity ID. */
-    @Nullable private String entityID;
-
     /** Ant level override for the DNS name. */
     @Nullable private String dnsName;
-
-    /** Ant level override for the scope. */
-    @Nullable private String scope;
 
     /**
      * Whether to comment out the SAML2 AA port.
@@ -108,24 +94,6 @@ public class MetadataGeneratorTask extends Task {
     }
 
     /**
-     * Set the encryption Certificate file. Overrides the Spring definition.
-     * 
-     * @param file what to set.
-     */
-    public void setEncryptionCert(final File file) {
-        encryptionCert = file;
-    }
-
-    /**
-     * Set the signing Certificate file. Overrides the Spring definition.
-     * 
-     * @param file what to set.
-     */
-    public void setSigningCert(final File file) {
-        signingCert = file;
-    }
-
-    /**
      * Set the Backchannel Certificate file.
      * 
      * @param file what to set.
@@ -135,30 +103,12 @@ public class MetadataGeneratorTask extends Task {
     }
 
     /**
-     * Sets the entityID. Overrides the Spring definition.
-     * 
-     * @param id what to set.
-     */
-    public void setEntityID(final String id) {
-        entityID = id;
-    }
-
-    /**
      * Sets the dns name.
      * 
      * @param name what to set.
      */
     public void setDnsName(final String name) {
         dnsName = name;
-    }
-
-    /**
-     * Sets the scope. Overrides the Spring definition.
-     * 
-     * @param value what to set.
-     */
-    public void setScope(final String value) {
-        scope = value;
     }
 
     /**
@@ -198,12 +148,11 @@ public class MetadataGeneratorTask extends Task {
     }
 
     /** {@inheritDoc} */
-    // Checkstyle: CyclomaticComplexity OFF
     @Override public void execute() {
         try {
-            final MetadataGeneratorParameters parameters;
+            final MetadataGeneratorParametersImpl parameters;
 
-            final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
+            final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator-ant.xml");
 
             final GenericApplicationContext context = new ApplicationContextBuilder()
                     .setName(MetadataGeneratorTask.class.getName())
@@ -211,51 +160,16 @@ public class MetadataGeneratorTask extends Task {
                     .setContextInitializer(new Initializer())
                     .build();
             
-            parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
+            parameters = context.getBean("IdPConfiguration", MetadataGeneratorParametersImpl.class);
 
-            if (encryptionCert != null) {
-                parameters.setEncryptionCert(encryptionCert);
-            }
-            if (signingCert != null) {
-                parameters.setSigningCert(signingCert);
-            }
-            if (backchannelCert != null) {
-                parameters.setBackchannelCert(backchannelCert);
-            }
+            parameters.setBackchannelCert(backchannelCert);
+            parameters.setDnsName(dnsName);
+            parameters.initialize();
 
-            final MetadataGenerator generator = new MetadataGenerator(outputFile);
-            final List<List<String>> signing = new ArrayList<>(2);
-            List<String> value = parameters.getBackchannelCert();
-            // IDP-1233 Note that MetadataGenerator.WriteKeyDescriptors() assumes that the order is backchannel, signing
-            if (null != value) {
-                signing.add(value);
-            }
-            value = parameters.getSigningCert();
-            if (null != value) {
-                signing.add(value);
-            }
-            generator.setSigningCerts(signing);
-            value = parameters.getEncryptionCert();
-            if (null != value) {
-                generator.setEncryptionCerts(Collections.singletonList(value));
-            }
-            if (dnsName != null) {
-                generator.setDNSName(dnsName);
-            } else {
-                generator.setDNSName(parameters.getDnsName());
-            }
-            if (entityID != null) {
-                generator.setEntityID(entityID);
-            } else {
-                generator.setEntityID(parameters.getEntityID());
-            }
-            if (scope != null) {
-                generator.setScope(scope);
-            } else {
-                generator.setScope(parameters.getScope());
-            }
-            generator.setSAML2AttributeQueryCommented(isSAML2AttributeQueryCommented());
-            generator.setSAML2LogoutCommented(isSAML2LogoutCommented());
+            final MetadataGeneratorImpl generator = new MetadataGeneratorImpl();
+            generator.setParameters(parameters);
+            generator.setOutput(outputFile);
+            generator.initialize();
             generator.generate();
 
         } catch (final Exception e) {

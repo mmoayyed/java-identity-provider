@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -32,6 +33,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.tools.ant.BuildException;
 import org.opensaml.core.xml.LangBearing;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.reqattr.RequestedAttributes;
@@ -55,9 +57,13 @@ import org.opensaml.xmlsec.signature.support.SignatureConstants;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.shibboleth.idp.installer.MetadataGenerator;
+import net.shibboleth.idp.installer.MetadataGeneratorParameters;
 import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
@@ -66,8 +72,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
  * This class gathers information which it then uses to generate IdP Metadata. Loosely based on the SP metadata
  * generator, and the V2 metadata.
  */
-// Checkstyle: HideUtilityClassConstructor OFF
-public class MetadataGenerator {
+public class MetadataGeneratorImpl extends AbstractInitializableComponent implements MetadataGenerator {
 
     /**
      * The end points we understand.
@@ -121,21 +126,6 @@ public class MetadataGenerator {
     private EnumSet<Endpoints> endpoints;
 
     /**
-     * The EntityID.
-     */
-    private String entityID;
-
-    /**
-     * The Dns Name.
-     */
-    private String dnsName;
-
-    /**
-     * The Scope.
-     */
-    private String scope;
-
-    /**
      * Whether to comment out the SAML2 AA endpoint.
      */
     private boolean saml2AttributeQueryCommented = true;
@@ -146,121 +136,38 @@ public class MetadataGenerator {
     private boolean saml2LogoutCommented = true;
 
     /**
-     * The signing certificates.
+     * Where to write to - as {@link BufferedWriter}.
      */
-    private List<List<String>> signingCerts;
+    @Nonnull private BufferedWriter writer;
 
     /**
-     * The encryption certificates.
+     * Where to write to - as {@link File}.
      */
-    private List<List<String>> encryptionCerts;
+    private File output;
 
-    /**
-     * Where to write to.
-     */
-    private final BufferedWriter writer;
+    /** The parameters. */
+    private MetadataGeneratorParameters params;
 
-    /**
-     * Constructor.
-     * 
-     * @param file file to output to.
-     * @throws FileNotFoundException if the file cannot be found.
-     */
-    public MetadataGenerator(@Nonnull final File file) throws FileNotFoundException {
-        final File nonnullFile = Constraint.isNotNull(file, "provided file must be nonnull");
-        final FileOutputStream outStream = new FileOutputStream(nonnullFile);
-        writer = new BufferedWriter(new OutputStreamWriter(outStream));
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        try {
+            final FileOutputStream outStream;
+            outStream = new FileOutputStream(output);
+            writer = new BufferedWriter(new OutputStreamWriter(outStream));
+        } catch (final FileNotFoundException e) {
+            throw new ComponentInitializationException(e);
+        }
         endpoints = EnumSet.allOf(Endpoints.class);
     }
 
-    /**
-     * Get the entityID.
-     * 
-     * @return Returns the entityID.
-     */
-    public String getEntityID() {
-        return entityID;
+    /** {@inheritDoc} */
+    public void setOutput(@Nonnull final File file) {
+        output = Constraint.isNotNull(file, "provided file must be nonnull");
     }
 
-    /**
-     * Set the entityID.
-     * 
-     * @param id what to set.
-     */
-    public void setEntityID(final String id) {
-        entityID = id;
-    }
-
-    /**
-     * Get the Scope.
-     * 
-     * @return Returns the Scope.
-     */
-    public String getScope() {
-        return scope;
-    }
-
-    /**
-     * Set the Scope.
-     * 
-     * @param id what to set.
-     */
-    public void setScope(final String id) {
-        scope = id;
-    }
-
-    /**
-     * Get the DNSName.
-     * 
-     * @return Returns the DNSName.
-     */
-    public String getDNSName() {
-        return dnsName;
-    }
-
-    /**
-     * Set the DNSName.
-     * 
-     * @param id what to set.
-     */
-    public void setDNSName(final String id) {
-        dnsName = id;
-    }
-
-    /**
-     * Get the signingCerts.
-     * 
-     * @return Returns the signingCerts.
-     */
-    public List<List<String>> getSigningCerts() {
-        return signingCerts;
-    }
-
-    /**
-     * Set the signingCerts.
-     * 
-     * @param certs what to set.
-     */
-    public void setSigningCerts(final List<List<String>> certs) {
-        signingCerts = certs;
-    }
-
-    /**
-     * Get the encryptionCerts.
-     * 
-     * @return Returns the signingCerts.
-     */
-    public List<List<String>> getEncryptionCerts() {
-        return encryptionCerts;
-    }
-
-    /**
-     * Set the encryptionCerts.
-     * 
-     * @param certs what to set.
-     */
-    public void setEncryptionCerts(final List<List<String>> certs) {
-        encryptionCerts = certs;
+    /** {@inheritDoc} */
+    public void setParameters(@Nonnull final MetadataGeneratorParameters what) {
+        params = Constraint.isNotNull(what, "provided params must be nonnull");
     }
 
     /**
@@ -272,7 +179,7 @@ public class MetadataGenerator {
 
     /**
      * Get the Endpoints.
-     * 
+     *
      * @return Returns the Endpoints
      */
     public EnumSet<Endpoints> getEndpoints() {
@@ -281,7 +188,7 @@ public class MetadataGenerator {
 
     /**
      * Set the Endpoints.
-     * 
+     *
      * @param points what to set.
      */
     public void setEndpoints(@Nonnull final EnumSet<Endpoints> points) {
@@ -290,7 +197,7 @@ public class MetadataGenerator {
 
     /**
      * Returns whether to comment the SAML2 AA endpoint.
-     * 
+     *
      * @return whether to comment the SAML2 AA endpoint
      */
     public boolean isSAML2AttributeQueryCommented() {
@@ -299,7 +206,7 @@ public class MetadataGenerator {
 
     /**
      * Sets whether to comment the SAML2 AA endpoint.
-     * 
+     *
      * @param asComment whether to comment or not.
      */
     public void setSAML2AttributeQueryCommented(final boolean asComment) {
@@ -308,7 +215,7 @@ public class MetadataGenerator {
 
     /**
      * Returns whether to comment the SAML2 Logout endpoints.
-     * 
+     *
      * @return whether to comment the SAML2 Logout endpoints
      */
     public boolean isSAML2LogoutCommented() {
@@ -317,56 +224,56 @@ public class MetadataGenerator {
 
     /**
      * Sets whether to comment the SAML2 Logout endpoints.
-     * 
+     *
      * @param asComment whether to comment or not
      */
     public void setSAML2LogoutCommented(final boolean asComment) {
         saml2LogoutCommented = asComment;
     }
 
-    /**
-     * Generate the metadata.
-     * 
-     * @throws IOException if we have a failure.
-     */
-    public void generate() throws IOException {
-        writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        writer.newLine();
-        writeComments();
-        writer.write("<");
-        writer.write(EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
-        writer.write(' ');
-        writeNameSpace(null, SAMLConstants.SAML20MD_NS);
-        writeNameSpace(SignatureConstants.XMLSIG_PREFIX, SignatureConstants.XMLSIG_NS);
-        writeNameSpace(ExtensionsConstants.SHIB_MDEXT10_PREFIX, ExtensionsConstants.SHIB_MDEXT10_NS);
-        writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
-        writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
-        writeNameSpace(SAMLConstants.SAML20PREQ_ATTRR_PREFIX, SAMLConstants.SAML20PREQ_ATTR_NS);
+    /** {@inheritDoc} */
+    public void generate() throws BuildException {
+        try {
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.newLine();
+            writeComments();
+            writer.write("<");
+            writer.write(EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(' ');
+            writeNameSpace(null, SAMLConstants.SAML20MD_NS);
+            writeNameSpace(SignatureConstants.XMLSIG_PREFIX, SignatureConstants.XMLSIG_NS);
+            writeNameSpace(ExtensionsConstants.SHIB_MDEXT10_PREFIX, ExtensionsConstants.SHIB_MDEXT10_NS);
+            writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
+            writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
+            writeNameSpace(SAMLConstants.SAML20PREQ_ATTRR_PREFIX, SAMLConstants.SAML20PREQ_ATTR_NS);
 
-        writer.write(" validUntil=\"" + DOMTypeSupport.instantToString(Instant.now()) + "\"");
-        
-        writer.write(" entityID=\"");
-        writer.write(getEntityID());
-        writer.write("\">");
-        writer.newLine();
-        writer.newLine();
-        
-        
+            writer.write(" validUntil=\"" + DOMTypeSupport.instantToString(Instant.now()) + "\"");
 
-        writeIDPSSO();
-        writer.newLine();
-        writer.newLine();
-        writeAttributeAuthorityDescriptor();
-        writer.newLine();
-        writer.write("</EntityDescriptor>");
-        writer.newLine();
-        writer.flush();
-        writer.close();
+            writer.write(" entityID=\"");
+            writer.write(params.getEntityID());
+            writer.write("\">");
+            writer.newLine();
+            writer.newLine();
+
+
+
+            writeIDPSSO();
+            writer.newLine();
+            writer.newLine();
+            writeAttributeAuthorityDescriptor();
+            writer.newLine();
+            writer.write("</EntityDescriptor>");
+            writer.newLine();
+            writer.flush();
+            writer.close();
+        } catch (final IOException e) {
+            throw new BuildException(e);
+        }
     }
 
     /**
      * Add appropriate comments to metadata header.
-     * 
+     *
      * @throws IOException if badness occurs in the writer
      */
     protected void writeComments() throws IOException {
@@ -385,7 +292,7 @@ public class MetadataGenerator {
 
     /**
      * Writeout a prefix/namespace pair.
-     * 
+     *
      * @param prefix the prefix, or null
      * @param name the namespace
      * @throws IOException if badness happens
@@ -403,7 +310,7 @@ public class MetadataGenerator {
 
     /**
      * Write the &lt;IDPSSODescriptor&gt;.
-     * 
+     *
      * @throws IOException if badness happens
      */
     protected void writeIDPSSO() throws IOException {
@@ -436,7 +343,7 @@ public class MetadataGenerator {
             writer.write("        -->");
             writer.newLine();
         }
-        
+
         writer.newLine();
         for (final Endpoints endpoint : SSO_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
@@ -452,7 +359,7 @@ public class MetadataGenerator {
 
     /**
      * Write the &lt;AttributeAuthorityDescriptor&gt;.
-     * 
+     *
      * @throws IOException if badness happens
      */
     private void writeAttributeAuthorityDescriptor() throws IOException {
@@ -483,7 +390,7 @@ public class MetadataGenerator {
 
     /**
      * Write out an role descriptor.
-     * 
+     *
      * @param name the name
      * @param protocols the supported protocols
      * @throws IOException when badness happebns
@@ -506,7 +413,7 @@ public class MetadataGenerator {
 
     /**
      * Write the open &lt;Extensions&gt; elements.
-     * 
+     *
      * @throws IOException if badness happens
      */
     protected void openExtensions() throws IOException {
@@ -519,7 +426,7 @@ public class MetadataGenerator {
 
     /**
      * Write out the close &lt;\Extensions&gt; Element.
-     * 
+     *
      * @throws IOException if badness happens
      */
     protected void closeExtensions() throws IOException {
@@ -531,33 +438,19 @@ public class MetadataGenerator {
     }
 
     /**
-     * Write out any &lt;Extensions&gt;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
-     * 
-     * @deprecated use {@link #openExtensions()} and {@link #closeExtensions()}
-     * @throws IOException if badness happens
-     */
-    @Deprecated protected void writeExtensions() throws IOException {
-
-        openExtensions();
-        writeScope();
-        writeMDUI();
-        closeExtensions();
-    }
-
-    /**
      * Write out the &lt;shibmd:Scope&gt; element.
-     * 
+     *
      * @throws IOException if badness happens
      */
     protected void writeScope() throws IOException {
-        if (null == getScope() || getScope().isEmpty()) {
+        if (null == params.getScope() || params.getScope().isEmpty()) {
             return;
         }
 
         writer.write("            <");
         writeNameSpaceQualified(ExtensionsConstants.SHIB_MDEXT10_PREFIX, Scope.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write(" regexp=\"false\">");
-        writer.write(getScope());
+        writer.write(params.getScope());
         writer.write("</");
         writeNameSpaceQualified(ExtensionsConstants.SHIB_MDEXT10_PREFIX, Scope.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
@@ -566,7 +459,7 @@ public class MetadataGenerator {
 
     /**
      * Write out the &lt;mdui:UIINFO&gt; element and children.
-     * 
+     *
      * @throws IOException if badness happens
      */
     protected void writeMDUI() throws IOException {
@@ -588,7 +481,7 @@ public class MetadataGenerator {
         writeLangAttribute("en");
         writer.write('>');
         writer.write("A Name for the IdP at ");
-        writer.write(getDNSName());
+        writer.write(params.getDnsName());
         writer.write("</");
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, DisplayName.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
@@ -601,7 +494,7 @@ public class MetadataGenerator {
         writeLangAttribute("en");
         writer.write('>');
         writer.write("Enter a description of your IdP at ");
-        writer.write(getDNSName());
+        writer.write(params.getDnsName());
         writer.write("</");
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Description.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
@@ -612,7 +505,7 @@ public class MetadataGenerator {
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Logo.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write(" height=\"80\" width=\"80\">");
         writer.write("https://");
-        writer.write(getDNSName());
+        writer.write(params.getDnsName());
         writer.write("/Path/To/Logo.png");
         writer.write("</");
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Logo.DEFAULT_ELEMENT_LOCAL_NAME);
@@ -630,7 +523,7 @@ public class MetadataGenerator {
 
     /**
      * Write the language attribute.
-     * 
+     *
      * @param language which languages
      * @throws IOException if badness happens
      */
@@ -643,22 +536,27 @@ public class MetadataGenerator {
 
     /**
      * Write out any &lt;KeyDescriptor&gt;Elements.
-     * 
+     *
      * @throws IOException if badness happens
      */
     protected void writeKeyDescriptors() throws IOException {
-        if (getSigningCerts().size() == 2) {
+        final List<List<String>> signing = new ArrayList<>(2);
+        if (params.getBackchannelCert() != null && !params.getBackchannelCert().isEmpty()) {
             writer.write("        <!-- First signing certificate is BackChannel, the Second is FrontChannel -->");
             writer.newLine();
+            signing.add(params.getBackchannelCert());
         }
-        writeKeyDescriptors(getSigningCerts(), "signing");
-        writeKeyDescriptors(getEncryptionCerts(), "encryption");
+        if (params.getSigningCert() != null && !params.getSigningCert().isEmpty()) {
+            signing.add(params.getSigningCert());
+        }
+        writeKeyDescriptors(signing, "signing");
+        writeKeyDescriptors(Collections.singletonList(params.getEncryptionCert()), "encryption");
         writer.newLine();
     }
 
     /**
      * Write out &lt;KeyDescriptor&gt;Elements. of a specific type
-     * 
+     *
      * @param certs the certificates
      * @param use the type - signing or encryption
      * @throws IOException if badness happens
@@ -714,7 +612,7 @@ public class MetadataGenerator {
 
     /**
      * Output the SAML for a single endpoint.
-     * 
+     *
      * @param endpoint the type
      * @throws IOException if badness happens.
      */
@@ -728,7 +626,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML1_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML1/SOAP/ArtifactResolution\"");
                 writer.write(" index=\"1\"/>");
                 writer.newLine();
@@ -741,7 +639,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/ArtifactResolution\"");
                 writer.write(" index=\"2\"/>");
                 writer.newLine();
@@ -754,7 +652,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/SAML2/Redirect/SLO\"/>");
                 writer.newLine();
                 break;
@@ -766,7 +664,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_POST_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/SAML2/POST/SLO\"/>");
                 writer.newLine();
                 break;
@@ -778,7 +676,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/SAML2/POST-SimpleSign/SLO\"/>");
                 writer.newLine();
                 break;
@@ -790,7 +688,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/SLO\"/>");
                 writer.newLine();
                 break;
@@ -801,7 +699,7 @@ public class MetadataGenerator {
                 writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"urn:mace:shibboleth:1.0:profiles:AuthnRequest\"");
                 writer.write(" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/Shibboleth/SSO\"/>");
                 writer.newLine();
                 break;
@@ -816,7 +714,7 @@ public class MetadataGenerator {
                 writeNameSpaceQualified(SAMLConstants.SAML20PREQ_ATTRR_PREFIX,
                         RequestedAttributes.SUPPORTS_REQUESTED_ATTRIBUTES_LOCAL_NAME);
                 writer.write("=\"true\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/SAML2/POST/SSO\"/>");
                 writer.newLine();
                 break;
@@ -831,7 +729,7 @@ public class MetadataGenerator {
                 writeNameSpaceQualified(SAMLConstants.SAML20PREQ_ATTRR_PREFIX,
                         RequestedAttributes.SUPPORTS_REQUESTED_ATTRIBUTES_LOCAL_NAME);
                 writer.write("=\"true\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/SAML2/POST-SimpleSign/SSO\"/>");
                 writer.newLine();
                 break;
@@ -846,7 +744,7 @@ public class MetadataGenerator {
                 writeNameSpaceQualified(SAMLConstants.SAML20PREQ_ATTRR_PREFIX,
                         RequestedAttributes.SUPPORTS_REQUESTED_ATTRIBUTES_LOCAL_NAME);
                 writer.write("=\"true\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write("/idp/profile/SAML2/Redirect/SSO\"/>");
                 writer.newLine();
                 break;
@@ -858,7 +756,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML1_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML1/SOAP/AttributeQuery\"/>");
                 writer.newLine();
                 break;
@@ -873,7 +771,7 @@ public class MetadataGenerator {
                 writer.write(" Binding=\"");
                 writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
-                writer.write(getDNSName());
+                writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/AttributeQuery\"/>");
                 if (isSAML2AttributeQueryCommented()) {
                     writer.write(" -->");
@@ -892,7 +790,7 @@ public class MetadataGenerator {
 
     /**
      * Write a namespace:identifier pair.
-     * 
+     *
      * @param nameSpace the namespace
      * @param what the identifier
      * @throws IOException if badness happens

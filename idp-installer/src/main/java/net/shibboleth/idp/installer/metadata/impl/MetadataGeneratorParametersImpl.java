@@ -28,10 +28,15 @@ import javax.annotation.Nullable;
 
 import org.springframework.core.io.Resource;
 
+import net.shibboleth.idp.installer.MetadataGeneratorParameters;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
 /**
- * POJO to collect parameters from the metadata configuration (partially via spring).
+ * Implementation of {@link MetadataGeneratorParameters}.
  */
-public class MetadataGeneratorParameters {
+public class MetadataGeneratorParametersImpl extends AbstractInitializableComponent
+    implements MetadataGeneratorParameters {
 
     /**
      * The file with the certificate the IDP uses to encrypt.
@@ -39,14 +44,29 @@ public class MetadataGeneratorParameters {
     private File encryptionCert;
 
     /**
+     * The strings with the encryption cert in them (to allow for multiline output).
+     */
+    private List<String> encryptionCerts;
+
+    /**
      * The file with the certificate that TLS uses to 'sign'.
      */
     private File backChannelCert;
 
     /**
+     * The strings with the back channel cert in them (to allow for multiline output).
+     */
+    private List<String> backChannelCerts;
+
+    /**
      * The file with the certificate the IDP uses to sign.
      */
     private File signingCert;
+
+    /**
+     * The strings with the signing certs in them (to allow for multiline output).
+     */
+    private List<String> signingCerts;
 
     /** The entityID. */
     private String entityID;
@@ -56,30 +76,26 @@ public class MetadataGeneratorParameters {
 
     /** The scope. */
     private String scope;
-    
-    /**
-     * Get the string representation of the encryption cert.
-     * 
-     * @return Returns the encryptionCert.
-     * @throws IOException if badness occurrs
-     */
-    @Nullable public List<String> getEncryptionCert() throws IOException {
-        return getCertificateContents(encryptionCert);
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        try {
+            encryptionCerts = getCertificateContents(encryptionCert);
+            signingCerts = getCertificateContents(signingCert);
+            backChannelCerts = getCertificateContents(backChannelCert);
+        } catch (final IOException e) {
+            throw new ComponentInitializationException(e);
+        }
+    }
+
+    /**  {@inheritDoc} */
+    @Nullable public List<String> getEncryptionCert() {
+        return encryptionCerts;
     }
 
     /**
      * Set the encryption Certificate file.
-     * 
-     * @param file what to set.
-     */
-    public void setEncryptionCert(final File file) {
-
-        encryptionCert = file;
-    }
-
-    /**
-     * Set the encryption Certificate file.
-     * 
+     *
      * @param resource what to set.
      */
     public void setEncryptionCertResource(final Resource resource) {
@@ -91,34 +107,17 @@ public class MetadataGeneratorParameters {
         }
     }
 
-    /**
-     * Get the string representation of the signing cert.
-     * 
-     * @return Returns the encryptionCert.
-     * @throws IOException if badness occurrs
-     */
-    @Nullable public List<String> getSigningCert() throws IOException {
-        return getCertificateContents(signingCert);
+    /**  {@inheritDoc} */
+    @Nullable public List<String> getSigningCert() {
+        return signingCerts;
     }
 
     /**
      * Set the signing Certificate file.
-     * 
-     * @param file what to set.
-     */
-    public void setSigningCert(final File file) {
-
-        signingCert = file;
-    }
-
-    /**
-     * Set the signing Certificate file.
-     * 
+     *
      * @param resource what to set.
      */
     public void setSigningCertResource(final Resource resource) {
-
-
         try {
             signingCert = resource.getFile();
         } catch (final IOException e) {
@@ -126,29 +125,37 @@ public class MetadataGeneratorParameters {
         }
     }
 
-    /**
-     * Get the string representation of the back channel cert.
-     * 
-     * @return Returns the encryptionCert.
-     * @throws IOException if badness occurrs
-     */
-    @Nullable public List<String> getBackchannelCert() throws IOException {
-        return getCertificateContents(backChannelCert);
+    /**  {@inheritDoc} */
+    @Nullable public List<String> getBackchannelCert() {
+        return backChannelCerts;
     }
 
     /**
      * Set the Backchannel Certificate file.
-     * 
+     *
      * @param file what to set.
      */
     public void setBackchannelCert(final File file) {
-
         backChannelCert = file;
     }
+    
+    /**
+     * Set the Backchannel Certificate.
+     *
+     * @param resource what to set.
+     */
+    public void setBackchannelCertResource(final Resource resource) {
+        try {
+            backChannelCert = resource.getFile();
+        } catch (final IOException e) {
+            backChannelCert = null;
+        } 
+    }
+
 
     /**
      * Open the file and return the contents and a list of lines.
-     * 
+     *
      * @param file the file
      * @return the contents
      * @throws IOException if badness occurrs.
@@ -180,58 +187,45 @@ public class MetadataGeneratorParameters {
         }
     }
 
-    /**
-     * Returns the entityID.
-     * 
-     * @return the entityID.
-     */
+    /**  {@inheritDoc} */
     public String getEntityID() {
         return entityID;
     }
 
     /**
      * Sets the entityID.
-     * 
+     *
      * @param id what to set.
      */
     public void setEntityID(final String id) {
         entityID = id;
     }
 
-    /**
-     * Returns the dnsName.
-     * 
-     * @return the dnsname.
-     */
+    /**  {@inheritDoc} */
     public String getDnsName() {
         return dnsName;
     }
 
     /**
      * Sets the dns name.
-     * 
+     *
      * @param name what to set.
      */
     public void setDnsName(final String name) {
         dnsName = name;
     }
 
-    /**
-     * Returns the scope.
-     * 
-     * @return the scope.
-     */
+    /**  {@inheritDoc} */
     public String getScope() {
         return scope;
     }
 
     /**
      * Sets the scope.
-     * 
+     *
      * @param value what to set.
      */
     public void setScope(final String value) {
         scope = value;
     }
-
 }
