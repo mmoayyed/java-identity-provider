@@ -25,8 +25,9 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.taskdefs.Jar;
-import org.apache.tools.ant.taskdefs.optional.windows.Attrib;
+import org.apache.tools.ant.taskdefs.condition.Os;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.PresentSelector;
 import org.apache.tools.ant.types.selectors.PresentSelector.FilePresence;
@@ -89,7 +90,7 @@ public final class InstallerSupport {
     /** Populate a with all the missing files.
      * @param from where to go from
      * @param to where to go to
-     * @throws BuildException if basness occurrs
+     * @throws BuildException if badness occurrs
      * Based on (for instance the following ant<code>
         &lt;!-- flows: copy from dist if not already present --&gt;
         &lt;mkdir dir="${idp.target.dir}/flows" /&gt;
@@ -122,16 +123,31 @@ public final class InstallerSupport {
     /** On Windows sets the readOnly attribute recursively.
      * @param directory where
      * @param readOnly what to set it as
+     * @throws BuildException if badness occurrs
      */
-    public static void setReadOnly(final Path directory, final boolean readOnly) {
-        final Attrib attrib = new Attrib();
-        attrib.setReadonly(readOnly);
-        final FileSet where = new FileSet();
-        where.setDir(directory.toFile());
-        where.setIncludes("**/**");
-        attrib.addFileset(where);
-        attrib.setProject(ANT_PROJECT);
-        attrib.execute();
+    public static void setReadOnly(final Path directory, final boolean readOnly) throws BuildException {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            log.debug("Not windows. Not [re]setting readonly bit");
+            return;
+        }
+        final String line; 
+        if (readOnly) {
+            line = "cmd /c attrib /s +r *";
+        } else { 
+            line = "cmd /c attrib /s -r *";
+        }
+        final String[] command = line.split(" ");
+
+        final Execute exec = new Execute();
+        exec.setCommandline(command);
+        exec.setWorkingDirectory(directory.toFile());
+        exec.setAntRun(ANT_PROJECT);
+        try {
+            exec.execute();
+        } catch (final IOException e) {
+            log.warn("{} failed: ", line, e);
+            throw new BuildException(e);
+        }
     }
 
     /** Delete the tree.

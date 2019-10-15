@@ -322,6 +322,8 @@ public class V4Install extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void reprotect() throws BuildException {
+        InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("dist"), true);
+        InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("system"), true);
         log.warn("Reprotect Implementation still pending");
     }
 
