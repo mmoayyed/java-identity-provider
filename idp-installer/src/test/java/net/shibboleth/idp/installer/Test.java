@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -41,7 +42,6 @@ public class Test {
      */
     public static void main(String[] args) throws IOException, ComponentInitializationException {
 
-        
         System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\v4test");
         System.setProperty(InstallerPropertiesImpl.SOURCE_DIR,
                 "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT");
@@ -49,20 +49,25 @@ public class Test {
                 "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT\\bin");
         System.setProperty(InstallerPropertiesImpl.KEY_STORE_PASSWORD, "p1");
         System.setProperty(InstallerPropertiesImpl.SEALER_PASSWORD, "p1");
+        System.setProperty(InstallerPropertiesImpl.HOST_NAME, "machine.org.uk");
+
         final InstallerProperties ip = new InstallerPropertiesImpl(false);
         ip.initialize();
         final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();
-        
+
         final CopyDistribution dist = new CopyDistribution(ip, is);
+        dist.initialize();
         dist.execute();
-        
+
         final V4Install inst = new V4Install(ip, is);
+        inst.setMetadataGenerator(new MetadataGeneratorImpl());
+        inst.initialize();
         inst.execute();
-        
+
         final BuildWar bw = new BuildWar(ip, is);
+        bw.initialize();
         bw.execute();
-        
     }
 
 }

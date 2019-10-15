@@ -34,9 +34,18 @@ import org.apache.tools.ant.taskdefs.Copy;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.installer.ant.impl.MetadataGeneratorTask;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
@@ -54,6 +63,12 @@ public class V4Install extends AbstractInitializableComponent {
     /** Current Install. */
     @Nonnull private final CurrentInstallState currentState;
 
+    /** Key Manager. */
+    @Nonnull private final KeyManagement keyManager;
+
+    /** What will generate metadata? */
+    private MetadataGenerator metadataGenerator;
+
     /** Constructor.
      * @param props The properties to drive the installs.
      * @param installState The current install.
@@ -63,24 +78,43 @@ public class V4Install extends AbstractInitializableComponent {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
         installerProps = props;
         currentState = installState;
+        keyManager = new KeyManagement(installerProps, currentState);
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        keyManager.initialize();
+        if (metadataGenerator != null) {
+            log.warn("No metadata generator configured");
+        }
     }
 
     /** Method to do the work. It assumes that the distribution has been copied.
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         handleVersioning();
-        // To keep the UI order the same as the V3 Installer
-        //installerProps.getEntityID();
-        //installerProps.getScope();
+
         createUserDirectories();
-        final KeyManagement keys = new KeyManagement(installerProps, currentState);
-        keys.execute();
-        populatePropertyFiles(keys.isCreatedSealer());
+        keyManager.execute();
+        populatePropertyFiles(keyManager.isCreatedSealer());
         handleEditWebApp();
         populateUserDirectories();
         generateMetadata();
         reprotect();
+    }
+
+    /** Set the {@link MetadataGenerator}.
+     * @param what what to set.  This need not have been initialized yet
+     * {@link MetadataGenerator#setOutput(File)} and
+     * {@link MetadataGenerator#setParameters(MetadataGeneratorParameters)} are called
+     * prior to initialization.
+     */
+    public void setMetadataGenerator(final MetadataGenerator what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        metadataGenerator = what;
     }
 
     /** Report the to be installed and (if there is one) current versions. 
@@ -251,12 +285,37 @@ public class V4Install extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void generateMetadata() throws BuildException {
+        if (metadataGenerator == null) {
+            log.warn("No Metadata Generator registered");
+            return;
+        }
+
         final Path parentDir = installerProps.getTargetDir().resolve("metadata");
         final Path metadataFile = parentDir.resolve("idp-metadata");
         if (Files.exists(metadataFile)) {
+            log.debug("Metadata file {} exists", metadataFile.toString());
             return;
         }
-        log.warn("Metadata Implementation still pending");        
+        final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
+        final GenericApplicationContext context = new ApplicationContextBuilder()
+                .setName(MetadataGeneratorTask.class.getName())
+                .setServiceConfigurations(Collections.singletonList(resource))
+                .setContextInitializer(new Initializer())
+                .build();
+
+        final MetadataGeneratorParameters parameters = context.getBean("IdPConfiguration",
+                MetadataGeneratorParameters.class);
+
+        log.info("Creating Metadata to {}", metadataFile);
+        log.debug("Parameters {}", parameters);
+        metadataGenerator.setOutput(metadataFile.toFile());
+        metadataGenerator.setParameters(parameters);
+        try {
+            metadataGenerator.initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new BuildException(e);
+        }
+        metadataGenerator.generate();
     }
 
     /** Set the protection on the files.
@@ -269,10 +328,7 @@ public class V4Install extends AbstractInitializableComponent {
     /**
      * Create (if needs be) all the keys needed by an install.
      */
-    private static class KeyManagement extends AbstractInitializableComponent {
-
-        /** Log. */
-        private final Logger log = LoggerFactory.getLogger(KeyManagement.class);
+    private class KeyManagement extends AbstractInitializableComponent {
 
         /** Properties for the job. */
         @Nonnull private final InstallerProperties installerProps;
@@ -308,6 +364,7 @@ public class V4Install extends AbstractInitializableComponent {
          * @throws BuildException if badness occurs
          */
         protected void execute() throws BuildException {
+            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
             createdSigning = generateKey("idp-signing");
             createdEncryption = generateKey("idp-encryption");
             generateKeyStore();
@@ -465,6 +522,34 @@ public class V4Install extends AbstractInitializableComponent {
          */
         public boolean isCreatedSealer() {
             return createdSealer;
+        }
+    }
+
+    /**
+     * An {@link ApplicationContextInitializer} which knows about our idp.home and
+     * also injects properties for the backchannel certificate and hostname.
+     */
+    private class Initializer extends IdPPropertiesApplicationContextInitializer {
+
+        /** {@inheritDoc} */
+        @Override @Nonnull public String selectSearchLocation(
+                @Nonnull final ConfigurableApplicationContext applicationContext) {
+            return installerProps.getTargetDir().toString();
+        }
+
+        /** {@inheritDoc} */
+        @Override @Nonnull public String getSearchLocation() {
+            return installerProps.getTargetDir().toString();
+        }
+
+        /** {@inheritDoc} */
+        public void initialize(final ConfigurableApplicationContext applicationContext) {
+            final Properties props = new Properties(2);
+            props.setProperty("idp.backchannel.cert",
+                    installerProps.getTargetDir().resolve("credentials").resolve("idp-backchannel.crt").toString());
+            props.setProperty("idp.dnsname", installerProps.getHostName());
+            appendPropertySource(applicationContext, "internal", props);
+            super.initialize(applicationContext);
         }
     }
 }

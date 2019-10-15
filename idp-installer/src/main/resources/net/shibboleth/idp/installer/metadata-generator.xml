@@ -5,7 +5,10 @@
 	xmlns:c="http://www.springframework.org/schema/c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
 	<bean
 		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
 		p:placeholderPrefix="%{" p:placeholderSuffix="}" />
@@ -13,7 +16,10 @@
     <context:property-placeholder />
 
 	<bean id="IdPConfiguration"
-		class="net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters"
-		p:encryptionCertResource="%{idp.encryption.cert}" p:signingCertResource="%{idp.signing.cert}"
+		class="net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl"
+		p:encryptionCertResource="%{idp.encryption.cert}"
+        p:signingCertResource="%{idp.signing.cert}"
+        p:backchannelCertResource="%{idp.backchannel.cert}"
+        p:dnsName="%{idp.dnsname}"
 		p:entityID="%{idp.entityID}" p:scope="%{idp.scope}" />
 </beans>

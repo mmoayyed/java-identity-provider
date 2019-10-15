@@ -147,6 +147,7 @@ public final class InstallerSupport {
             log.error("Directory to be delete {} was a file");
             throw new BuildException("Wanted a directory, found a file");
         }
+        log.debug("Deleting tree {}", where);
         final Delete delete = new Delete();
         delete.setDir(where.toFile());
         delete.setFailOnError(false);
