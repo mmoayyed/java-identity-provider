@@ -64,6 +64,7 @@ import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
@@ -162,11 +163,13 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
 
     /** {@inheritDoc} */
     public void setOutput(@Nonnull final File file) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         output = Constraint.isNotNull(file, "provided file must be nonnull");
     }
 
     /** {@inheritDoc} */
     public void setParameters(@Nonnull final MetadataGeneratorParameters what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         params = Constraint.isNotNull(what, "provided params must be nonnull");
     }
 
@@ -233,6 +236,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
 
     /** {@inheritDoc} */
     public void generate() throws BuildException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         try {
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.newLine();

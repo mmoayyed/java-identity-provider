@@ -36,7 +36,7 @@ public interface MetadataGenerator extends InitializableComponent {
     public void setOutput(@Nonnull File file);
 
     /** Set a description of the IdP.
-     * @param what what to set.
+     * @param what what to set.  This component does not have to be initialized.
      */
     public void setParameters(@Nonnull final MetadataGeneratorParameters what);
 
