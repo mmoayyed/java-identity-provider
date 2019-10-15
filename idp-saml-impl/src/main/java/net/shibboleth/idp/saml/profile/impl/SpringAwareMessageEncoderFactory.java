@@ -17,41 +17,45 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.saml.binding.BindingDescriptor;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.messaging.encoder.MessageEncoder;
-import org.opensaml.profile.action.MessageEncoderFactory;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 
 /**
- * A factory that returns the correct {@link MessageEncoder} to use based on an underlying {@link BindingDescriptor}.
+ * A function that returns the correct {@link MessageEncoder} to use based on an underlying {@link BindingDescriptor}.
  */
-@ThreadSafeAfterInit
-public class SpringAwareMessageEncoderFactory extends AbstractInitializableComponent implements MessageEncoderFactory {
+public class SpringAwareMessageEncoderFactory
+        implements Function<ProfileRequestContext,MessageEncoder>, ApplicationContextAware {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SpringAwareMessageEncoderFactory.class);
     
+    /** Application context injected by surroundings. */
+    @Nullable private ApplicationContext applicationContext;
+    
     /** {@inheritDoc} */
-    @Override
-    @Nullable public MessageEncoder getMessageEncoder(@Nonnull final ProfileRequestContext profileRequestContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+    public void setApplicationContext(@Nullable final ApplicationContext context) {
+        applicationContext = context;
+    }
+    
+    /** {@inheritDoc} */
+    @Nullable public MessageEncoder apply(@Nullable final ProfileRequestContext profileRequestContext) {
         
-        final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
-        if (springContext == null || springContext.getRequestContext() == null) {
-            log.warn("No Spring request context, unable to lookup message encoder bean");
+        if (applicationContext == null) {
+            log.warn("No Spring ApplicationContext set");
             return null;
         } else if (profileRequestContext.getOutboundMessageContext() == null) {
             log.warn("No outbound message context, unable to lookup message encoder");
@@ -70,9 +74,9 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
         
         final BindingDescriptor descriptor = (BindingDescriptor) bindingContext.getBindingDescriptor();
         if (descriptor.getEncoderBeanId() != null) {
+            
             try {
-                return springContext.getRequestContext().getActiveFlow().getApplicationContext().getBean(
-                        descriptor.getEncoderBeanId(), MessageEncoder.class);
+                return applicationContext.getBean(descriptor.getEncoderBeanId(), MessageEncoder.class);
             } catch (final BeansException e) {
                 log.warn("Error instantiating message encoder from bean ID {}", descriptor.getEncoderBeanId(), e);
             }
@@ -81,5 +85,5 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
         log.warn("Failed to find a message encoder based on binding URI: {}", bindingContext.getBindingUri());
         return null;
     }
-
+    
 }
