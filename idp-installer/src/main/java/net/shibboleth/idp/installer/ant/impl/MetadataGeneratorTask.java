@@ -167,6 +167,8 @@ public class MetadataGeneratorTask extends Task {
             parameters.initialize();
 
             final MetadataGeneratorImpl generator = new MetadataGeneratorImpl();
+            generator.setSAML2AttributeQueryCommented(saml2AttributeQueryCommented);
+            generator.setSAML2LogoutCommented(saml2LogoutCommented);
             generator.setParameters(parameters);
             generator.setOutput(outputFile);
             generator.initialize();

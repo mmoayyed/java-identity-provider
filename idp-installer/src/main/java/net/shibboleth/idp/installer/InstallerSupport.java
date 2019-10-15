@@ -130,10 +130,10 @@ public final class InstallerSupport {
             log.debug("Not windows. Not [re]setting readonly bit");
             return;
         }
-        final String line; 
+        final String line;
         if (readOnly) {
             line = "cmd /c attrib /s +r *";
-        } else { 
+        } else {
             line = "cmd /c attrib /s -r *";
         }
         final String[] command = line.split(" ");
