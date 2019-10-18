@@ -117,7 +117,7 @@
         <CustomAction Id="SetDefaultInstallDir" Property="DefaultInstallDir" Value="[WindowsVolume]opt\shibboleth-idp\" />
 
         <!-- Ant actions -->
-        <CustomAction Id="SetIdpAnt" Property="QtIdpAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\bin\lib\*;[INSTALLDIR]\dist\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
+        <CustomAction Id="SetIdpAnt" Property="QtIdpAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\bin\lib\*;[INSTALLDIR]\dist\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; -Didp.property.file=idp.install.properties -Dant.home=&quot;[JAVA_IDP_HOME]\bin&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\bin\build.xml&quot; install-nocopy" />
         <CustomAction Id="RunIdpAnt" Directory="ProgramFilesFolder" ExeCommand="[QtIdpAnt]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtIdpAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
