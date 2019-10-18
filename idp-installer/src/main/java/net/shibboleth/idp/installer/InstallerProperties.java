@@ -37,6 +37,30 @@ public interface InstallerProperties extends InitializableComponent {
      */
     @Nonnull public Path getTargetDir() throws BuildException;
 
+    /** Does the user want us to *not* tidy up.
+     * @return do we not tidy up?*/
+    public boolean isNoTidy();
+
+    /** Mode to set all files in conf.
+    * @return the mode
+    */
+    @Nonnull public String getConfFileMode();
+
+    /** Mode to set on key files in credentials.
+    * @return the mode
+    */
+    @Nonnull public String getCredentialsKeyFileMode();
+
+    /** Group to set on all files in credentials and conf.
+    * @return the mode or null if none to be set
+    */
+    @Nullable public String getConfCredentialsGroup();
+
+    /** Do we set the mode?
+    * @return do we the mode
+    */
+    @Nonnull public boolean isSetGroupAndMode();
+
     /** Where is the install coming from?
      * @return the source directory
      */

@@ -121,6 +121,18 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** The the key size to generate.  */
     public static final String KEY_SIZE = "idp.keysize";
 
+    /** Mode to set on conf files. */
+    public static final String MODE_CONF = "idp.conf.filemode";
+
+    /** Mode to set on credential *key files. */
+    public static final String MODE_CREDENTIAL_KEYS = "idp.conf.credentials.filemode";
+
+    /** Group to set on conf & *ALL* credential files. */
+    public static final String GROUP_CONF_CREDENTIALS = "idp.conf.group";
+
+    /** Do we do any chgrp/chmod work? */
+    public static final String PERFORM_SET_MODE = "idp.conf.setmode";
+
     /** Whether to tidy up after ourselves. */
     public static final String NO_TIDY = "idp.no.tidy";
 
@@ -172,6 +184,15 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** whether to tidy up. */
     private boolean tidy = true;
 
+    /** whether to tidy up. */
+    private boolean setGroupAndMode = true;
+
+    /** conf all file mode. */
+    private String confFileMode;
+
+    /** credentials key file mode. */
+    private String credentialsKeyFileMode;
+
     /**
      * Constructor.
      * @param copiedDistribution Has the distribution been copied? If no we don't need the source dir.
@@ -181,6 +202,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc} */
+    // CheckStyle: CyclomaticComplexity OFF
     protected void doInitialize() throws ComponentInitializationException {
         installerProperties = new Properties(System.getProperties());
         final String antBase = installerProperties.getProperty(ANT_BASE_DIR);
@@ -197,7 +219,12 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             throw new ComponentInitializationException(ANT_BASE_DIR + " must exist");
         }
         log.debug("base dir {}", baseDir);
-        tidy = installerProperties.get(NO_TIDY) == null;
+        final String noTidy = installerProperties.getProperty(NO_TIDY);
+        tidy = noTidy == null;
+        final String setModeString = installerProperties.getProperty(PERFORM_SET_MODE);
+        if (setModeString != null) {
+            setGroupAndMode = Boolean.valueOf(setModeString);
+        }
 
         if (installerProperties.containsKey(PROPERTY_SOURCE_FILE)) {
             final Path file = baseDir.resolve(installerProperties.getProperty(PROPERTY_SOURCE_FILE));
@@ -215,7 +242,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
                 log.error("Could not load {}", file.toAbsolutePath(), e);
                 throw new ComponentInitializationException(e);
             }
-            if (tidy) {
+            if (!isNoTidy()) {
                 idpPropertyFile.deleteOnExit();
             }
         }
@@ -236,6 +263,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             keySize = Integer.parseInt(installerProperties.getProperty(KEY_SIZE));
         }
     }
+    // CheckStyle: CyclomaticComplexity ON
 
     /** Lookup a property.  If it isn't defined then ask the user (if we are allowed).
      * This is used by most (but all) getters that redirect through a property
@@ -327,6 +355,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return entityID;
     }
 
+    /** {@inheritDoc} */
+    public boolean isNoTidy() {
+        return !tidy;
+    }
+
     /** Is this address named? Helper method for {@link #bestHostName()}
      * @return true unless the name is the canonical name...
      * @param addr what to look at
@@ -398,6 +431,33 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return hostname;
     }
 
+    /** {@inheritDoc} */
+    @Override @Nonnull public String getConfFileMode() {
+        if (confFileMode ==null) {
+            confFileMode = installerProperties.getProperty(MODE_CONF, "600");
+        }
+        return confFileMode;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull public String getCredentialsKeyFileMode() {
+        if (credentialsKeyFileMode == null) {
+            credentialsKeyFileMode = installerProperties.getProperty(MODE_CREDENTIAL_KEYS, "600");
+        }
+        return credentialsKeyFileMode;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nullable public String getConfCredentialsGroup() {
+        return installerProperties.getProperty(GROUP_CONF_CREDENTIALS);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isSetGroupAndMode() {
+        return setGroupAndMode;
+    }
+
     /** Evaluate the default scope value.
      * @return everything after the first '.' in {@link #getHostName()}
      */
@@ -411,7 +471,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}. */
-    @Nonnull public String getScope() {
+    @Override @Nonnull public String getScope() {
         if (scope == null) {
             scope = getValue(SCOPE, "Attribute Scope:", () -> defaultScope());
         }
@@ -419,12 +479,12 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}. */
-    @Nonnull public String getSubjectAltName() {
+    @Override @Nonnull public String getSubjectAltName() {
         return "https://" + getHostName() + "/idp/shibboleth";
     }
 
     /** {@inheritDoc}. */
-    @Nonnull public String getKeyStorePassword() {
+    @Override  @Nonnull public String getKeyStorePassword() {
         if (keyStorePassword == null) {
             keyStorePassword = getPassword(KEY_STORE_PASSWORD, "Backchannel PKCS12 Password:");
         }
@@ -432,7 +492,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}. */
-    @Nonnull public String getSealerPassword() {
+    @Override @Nonnull public String getSealerPassword() {
         if (sealerPassword == null) {
             sealerPassword = getPassword(SEALER_PASSWORD, "Cookie Encryption Key Password:");
         }
@@ -451,7 +511,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}. default is {@value #DEFAULT_KEY_SIZE}. */
-    public int getKeySize() {
+    @Override public int getKeySize() {
         return keySize;
     }
 
@@ -475,12 +535,12 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}.  Default to the file pointed to by {@value #IDP_PROPERTIES_MERGE}. */
-    public File getIdPMergePropertiesFile() throws BuildException {
+    @Override public File getIdPMergePropertiesFile() throws BuildException {
         return getMergePropertiesFile(IDP_PROPERTIES_MERGE);
     }
 
     /** {@inheritDoc}.  Default to the file pointed to by {@value #LDAP_PROPERTIES_MERGE}. */
-    public File getLDAPMergePropertiesFile() throws BuildException {
+    @Override public File getLDAPMergePropertiesFile() throws BuildException {
         return getMergePropertiesFile(LDAP_PROPERTIES_MERGE);
     }
 }

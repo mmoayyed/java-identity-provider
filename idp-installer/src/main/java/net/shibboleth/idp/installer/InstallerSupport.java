@@ -23,11 +23,13 @@ import java.nio.file.Path;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Chmod;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.taskdefs.Jar;
 import org.apache.tools.ant.taskdefs.condition.Os;
+import org.apache.tools.ant.taskdefs.optional.unix.Chgrp;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.PresentSelector;
 import org.apache.tools.ant.types.selectors.PresentSelector.FilePresence;
@@ -84,6 +86,7 @@ public final class InstallerSupport {
         fromSet.setDir(from.toFile());
         result.addFileset(fromSet);
         result.setProject(ANT_PROJECT);
+        result.setVerbose(log.isDebugEnabled());
         return result;
     }
 
@@ -115,6 +118,7 @@ public final class InstallerSupport {
         fromSet.addPresent(present);
         copy.addFileset(fromSet);
         copy.setProject(ANT_PROJECT);
+        copy.setVerbose(log.isDebugEnabled());
         copy.execute();
         log.debug("Copied not-previously-existing files from {} to {}", from, to);
 
@@ -150,6 +154,50 @@ public final class InstallerSupport {
         }
     }
 
+    /** On Non Windows sets the file mode.
+     * @param directory where
+     * @param permissions what to set
+     * @param includes what to include
+     * @throws BuildException if badness occurrs
+     */
+    public static void setMode(final Path directory, final String permissions, final String includes)
+            throws BuildException {
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            log.debug("Windows. Not sdoing chmod");
+            return;
+        }
+        final Chmod chmod = new Chmod();
+        chmod.setProject(ANT_PROJECT);
+        chmod.setPerm(permissions);
+        chmod.setDir(directory.toFile());
+        chmod.setIncludes(includes);
+        chmod.setVerbose(log.isDebugEnabled());
+        chmod.execute();
+    }
+
+    /** On Non Windows sets the files (only) group.
+     * @param directory where
+     * @param group what to set
+     * @param includes what to include
+     * @throws BuildException if badness occurrs
+     */
+    public static void setGroup(final Path directory, final String group, final String includes)
+            throws BuildException {
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            log.debug("Windows. Not sdoing chmod");
+            return;
+        }
+        final Chgrp chgrp = new Chgrp();
+        chgrp.setProject(ANT_PROJECT);
+        chgrp.setVerbose(log.isDebugEnabled());
+        chgrp.setGroup(group);
+        final FileSet fileSet = new FileSet();
+        fileSet.setDir(directory.toFile());
+        fileSet.setIncludes(includes);
+        chgrp.addFileset(fileSet);
+        chgrp.execute();
+    }
+
     /** Delete the tree.
      * @param where where
      * @throws BuildException if badness occurrs
@@ -167,6 +215,7 @@ public final class InstallerSupport {
         final Delete delete = new Delete();
         delete.setDir(where.toFile());
         delete.setFailOnError(false);
+        delete.setVerbose(log.isDebugEnabled());
         delete.execute();
     }
     
