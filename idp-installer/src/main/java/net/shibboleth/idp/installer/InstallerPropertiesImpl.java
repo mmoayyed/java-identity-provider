@@ -226,8 +226,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             setGroupAndMode = Boolean.valueOf(setModeString);
         }
 
-        if (installerProperties.containsKey(PROPERTY_SOURCE_FILE)) {
-            final Path file = baseDir.resolve(installerProperties.getProperty(PROPERTY_SOURCE_FILE));
+        final String propertyFile = installerProperties.getProperty(PROPERTY_SOURCE_FILE);
+        if (propertyFile != null) {
+            final Path file = baseDir.resolve(propertyFile);
             if (!Files.exists(file)) {
                 log.error("Property file {} did not exist", file.toAbsolutePath());
                 throw new ComponentInitializationException(file + " must exist");

@@ -142,7 +142,8 @@ public class V4Install extends AbstractInitializableComponent {
                     installerProps.getTargetDir().resolve("dist").resolve(InstallerSupport.VERSION_NAME).toFile());
             vers.store(out, "Version file written at " + Instant.now());
         } catch (final IOException e) {
-            throw new BuildException("Couldn't write versiining information", e);
+            log.error("Couldn't write version file", e);
+            throw new BuildException("Couldn't write versioning information", e);
         }
     }
 

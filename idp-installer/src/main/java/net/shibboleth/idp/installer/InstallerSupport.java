@@ -114,7 +114,7 @@ public final class InstallerSupport {
         fromSet.setIncludes("**/**");
         final PresentSelector present = new PresentSelector();
         present.setPresent((FilePresence) FilePresence.getInstance(FilePresence.class, "srconly"));
-        present.setTargetdir(from.toFile());
+        present.setTargetdir(to.toFile());
         fromSet.addPresent(present);
         copy.addFileset(fromSet);
         copy.setProject(ANT_PROJECT);
@@ -163,7 +163,7 @@ public final class InstallerSupport {
     public static void setMode(final Path directory, final String permissions, final String includes)
             throws BuildException {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            log.debug("Windows. Not sdoing chmod");
+            log.debug("Windows. Not performing chmod");
             return;
         }
         final Chmod chmod = new Chmod();
@@ -184,7 +184,7 @@ public final class InstallerSupport {
     public static void setGroup(final Path directory, final String group, final String includes)
             throws BuildException {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            log.debug("Windows. Not sdoing chmod");
+            log.debug("Windows. Not performing chown");
             return;
         }
         final Chgrp chgrp = new Chgrp();
