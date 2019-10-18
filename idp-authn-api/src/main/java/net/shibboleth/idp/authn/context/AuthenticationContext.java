@@ -79,6 +79,9 @@ public final class AuthenticationContext extends BaseContext {
     
     /** Allowed time since an {@link AuthenticationResult} was created that it can be reused for this request. */
     @Nullable private Duration maxAge;
+    
+    /** Name of a proxied authentication source to use. */
+    @Nullable private String authenticatingAuthority;
 
     /** Lookup strategy for a fixed event to return from validators for testing. */
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
@@ -363,6 +366,36 @@ public final class AuthenticationContext extends BaseContext {
     }
     
     /**
+     * Gets the identifier or location, depending on protocol, of an authentication system to use
+     * as a proxied source of authentication.
+     * 
+     * @return identifier/location of proxy authentication source
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public String getAuthenticatingAuthority() {
+        return authenticatingAuthority;
+    }
+
+    /**
+     * Sets the identifier or location, depending on protocol, of an authentication system to use
+     * as a proxied source of authentication.
+     * 
+     * <p>Used to track the result of a hardcoded or discovery-driven determination of a
+     * third party authentication source.</p>
+     * 
+     * @param authority identifier/location of proxy authentication source
+     * 
+     * @return this context
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public AuthenticationContext setAuthenticatingAuthority(@Nullable final String authority) {
+        authenticatingAuthority = StringSupport.trimOrNull(authority);
+        return this;
+    }
+    
+    /**
      * Get optional lookup strategy to return a fixed event to return from credential validation
      * to exercise error and warning logic.
      * 
@@ -535,10 +568,9 @@ public final class AuthenticationContext extends BaseContext {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             return rpCtx.isAcceptable(component);
-        } else {
-            // No requirements so anything is acceptable.
-            return true;
         }
+        // No requirements so anything is acceptable.
+        return true;
     }
         
     /**
@@ -554,10 +586,9 @@ public final class AuthenticationContext extends BaseContext {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             return rpCtx.isAcceptable(principals);
-        } else {
-            // No requirements so anything is acceptable.
-            return true;
         }
+        // No requirements so anything is acceptable.
+        return true;
     }
 
     /**
@@ -574,10 +605,9 @@ public final class AuthenticationContext extends BaseContext {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             return rpCtx.isAcceptable(principal);
-        } else {
-            // No requirements so anything is acceptable.
-            return true;
         }
+        // No requirements so anything is acceptable.
+        return true;
     }
 
     /**

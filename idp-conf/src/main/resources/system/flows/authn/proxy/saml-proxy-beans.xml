@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <bean id="shibboleth.authn.SAML.externalAuthnPath" class="java.lang.String"
+        c:_0="servletRelative:%{idp.authn.saml.externalAuthnPath:/Authn/SAML2/POST/SSO}" />
+
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="shibboleth.authn.SAML.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+        c:target-ref="shibboleth.authn.SAML.externalAuthnPath" />
+
+<!--     <import resource="../../../../conf/authn/proxy/saml-proxy-config.xml" /> -->
+    
+    <!-- Parent beans for indirecting into nested PRC. -->
+    
+    <bean id="NestedWebFlowMessageHandlerAdaptor" abstract="true"
+        class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+
+    <bean id="NestedWebFlowProfileActionAdaptor" abstract="true"
+        class="net.shibboleth.idp.profile.impl.WebFlowProfileActionAdaptor" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+        
+    <bean id="ParentAuthenticiationContextLookup" class="org.opensaml.messaging.context.navigate.ParentContextLookup"
+        c:type="net.shibboleth.idp.authn.context.AuthenticationContext" />
+    
+
+    <!-- Action beans. -->
+
+    <!-- Explicitly wrapped by a non-nested action adaptor. -->
+    <bean id="InitializeProxyProfileRequestContext"
+        class="net.shibboleth.idp.authn.proxy.impl.InitializeProxyProfileRequestContext"
+        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
+        p:loggingId="%{idp.service.logging.saml2sso:SSO}"
+        p:browserProfile="true" />
+
+    <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
+
+    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
+    <import resource="../../../conf/audit-system.xml" />
+
+    <bean id="PrepareInboundMessageContext"
+            class="net.shibboleth.idp.saml.session.impl.PrepareInboundMessageContext" scope="prototype"
+            p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext">
+        <property name="relyingPartyLookupStrategy">
+           <bean parent="shibboleth.Functions.Compose" c:f-ref="ParentAuthenticiationContextLookup">
+               <constructor-arg name="g">
+                   <bean parent="shibboleth.Functions.Expression" c:expression="#input.getAuthenticatingAuthority()" />
+               </constructor-arg>
+           </bean>
+        </property>
+    </bean>
+
+    <bean id="SAMLProtocolAndRole" parent="NestedWebFlowMessageHandlerAdaptor" c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
+                p:protocol-ref="shibboleth.MetadataLookup.Protocol"
+                p:role-ref="shibboleth.MetadataLookup.Role" />
+        </constructor-arg>
+    </bean>
+    
+    <util:constant id="shibboleth.MetadataLookup.Protocol"
+        static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+
+    <util:constant id="shibboleth.MetadataLookup.Role"
+        static-field="org.opensaml.saml.saml2.metadata.IDPSSODescriptor.DEFAULT_ELEMENT_NAME" />
+    
+    <bean id="SAMLMetadataLookup" parent="NestedWebFlowMessageHandlerAdaptor" c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
+                <property name="roleDescriptorResolver">
+                    <bean class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
+                        c:mdResolver-ref="shibboleth.MetadataResolver" />
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="InitializeRelyingPartyContextFromSAMLPeer"
+        class="net.shibboleth.idp.saml.profile.impl.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+
+    <bean id="SelectRelyingPartyConfiguration"
+        class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+
+    <bean id="PostLookupPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostLookupAuditExtractors') ?: getObject('shibboleth.DefaultPostLookupAuditExtractors')}" />
+
+    <bean id="SelectProfileConfiguration"
+        class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+
+    <bean id="InitializeOutboundMessageContext"
+        class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContext" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+
+    <bean id="InitializeMessageChannelSecurityContext" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity"
+                p:confidentialityActive="false" p:integrityActive="false" />
+        </constructor-arg>
+    </bean>
+
+    <util:constant id="shibboleth.EndpointType"
+        static-field="org.opensaml.saml.saml2.metadata.SingleSignOnService.DEFAULT_ELEMENT_NAME" />
+
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+        c:_0-ref="shibboleth.OutgoingSAML2SSORequestBindings" />
+
+    <bean id="PopulateBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.profile.impl.PopulateBindingAndEndpointContexts" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:endpointType-ref="shibboleth.EndpointType"
+        p:bindingDescriptorsLookupStrategy-ref="shibboleth.OutgoingBindingsLookupStrategy"
+        p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}" />
+
+    <bean id="PopulateRequestSignatureSigningParameters" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters"
+                    p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
+                    p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
+                    p:noResultIsError="false">
+                <property name="activationCondition">
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate" />
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="AddAuthnRequest"
+            class="net.shibboleth.idp.saml.saml2.profile.impl.AddAuthnRequest" scope="prototype"
+            p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+            p:overwriteExisting="true"
+            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+    </bean>
+
+    <bean id="PostRequestPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostRequestAuditExtractors') ?: getObject('shibboleth.DefaultPostRequestAuditExtractors')}" />
+
+    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
+    <!-- These beans are stashed into the context tree to be picked up and run outside SWF by the SAML controller. -->
+    
+    <bean id="PreEncodeMessageHandler" class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <list>
+                <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
+                <bean class="org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler" scope="prototype"/>
+                <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" scope="prototype"
+                        p:signErrorResponses="%{idp.errors.signed:true}">
+                    <property name="activationCondition">
+                        <bean parent="shibboleth.Conditions.NOT">
+                            <constructor-arg>
+                                <bean class="org.opensaml.saml.common.messaging.logic.SignatureCapableBindingPredicate" />
+                            </constructor-arg>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="messageEncoderFactory" class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory" />
+
+    <bean id="EncodeMessage" class="org.opensaml.profile.action.impl.EncodeMessage" scope="prototype"
+        p:messageEncoderFactory-ref="messageEncoderFactory"
+        p:messageHandler="#{getObject('shibboleth.BindingSpecificMessageHandler')}" />
+
+    <!-- This is mostly a placeholder in case we get forced to support other bindings at some point. -->
+
+    <bean id="messageDecoderFactory" class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageDecoderFactory">
+        <property name="beanMappings">
+            <map>
+                <entry key="POST" value="SAMLAuthnPostDecoder" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="SAMLAuthnPostDecoder"
+        class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder" scope="prototype" init-method=""
+        p:parserPool-ref="shibboleth.ParserPool"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:bindingDescriptor-ref="shibboleth.Binding.SAML2POST" />
+
+    <bean id="ValidateSAMLAuthentication"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.ValidateSAMLAuthentication" scope="prototype"
+        p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+
+</beans>

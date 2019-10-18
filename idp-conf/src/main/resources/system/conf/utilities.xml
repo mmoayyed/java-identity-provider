@@ -146,6 +146,9 @@
         c:type="#{ T(net.shibboleth.idp.ui.context.RelyingPartyUIContext) }"
         c:createContext="true" />
 
+    <bean id="shibboleth.ChildLookup.ProfileRequestContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.profile.context.ProfileRequestContext) }" />
     <bean id="shibboleth.ChildLookup.AttributeContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.attribute.context.AttributeContext) }" />
@@ -190,6 +193,18 @@
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext) }"
         c:createContext="true" />
+
+    <!-- Wiring for proxy login flows to locate nested PRC. -->
+    <bean id="shibboleth.ChildLookup.ProxyProfileRequestContext" parent="shibboleth.Functions.Compose">
+        <constructor-arg>
+            <bean parent="shibboleth.Functions.Compose" c:g-ref="shibboleth.ChildLookup.ProfileRequestContext"
+                c:f-ref="shibboleth.ChildLookup.AuthenticationContext" />
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup" />
+        </constructor-arg>
+    </bean>
+
 
     <bean id="shibboleth.ResponderIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />

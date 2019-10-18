@@ -57,7 +57,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     /** Predicate used to determine if the generated request should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signRequestsPredicate;
 
-    /** Predicate used to determine if the generated response should be signed. Default returns true. */
+    /** Predicate used to determine if the generated response should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signResponsesPredicate;
 
     /** Predicate used to determine if the generated assertion should be signed. Default returns false. */

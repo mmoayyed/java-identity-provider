@@ -134,6 +134,11 @@
             </property>
         </bean>
 
+        <bean id="authn/Proxy" parent="shibboleth.AuthenticationFlow"
+                p:nonBrowserSupported="false"
+                p:passiveAuthenticationSupported="true"
+                p:forcedAuthenticationSupported="true" />
+
     </util:list>
 
     <!--

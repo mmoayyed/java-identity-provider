@@ -82,7 +82,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @return ID to use when responding
      */
     @Nonnull @NotEmpty public String getResponderId(@Nullable final ProfileRequestContext profileRequestContext) {
-        return Constraint.isNotNull(responderIdLookupStrategy.apply(profileRequestContext),
+        return Constraint.isNotEmpty(responderIdLookupStrategy.apply(profileRequestContext),
                 "ResponderId cannot be null");
     }
 

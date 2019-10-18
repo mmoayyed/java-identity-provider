@@ -12,7 +12,7 @@
         <evaluate expression="SAMLProtocolAndRole" />
         <evaluate expression="SAMLMetadataLookup" />
 
-        <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
+        <evaluate expression="InitializeRelyingPartyContextFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
 
         <evaluate expression="PostLookupPopulateAuditContext" />

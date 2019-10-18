@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -83,6 +84,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Lookup function to supply maximum delegation chain length. */
     @Nonnull private Function<ProfileRequestContext,Long> maximumTokenDelegationChainLengthLookupStrategy;
 
+    /** Lookup function for requested AC operator. */
+    @Nonnull private Function<ProfileRequestContext,String> authnContextComparisonLookupStrategy;
+    
     /** Lookup function to supply default authentication methods. */
     @Nonnull private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
             defaultAuthenticationContextsLookupStrategy;
@@ -119,6 +123,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         allowDelegationPredicate = Predicates.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
+        authnContextComparisonLookupStrategy = FunctionSupport.constant(null);
         defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(null);
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
     }
@@ -356,6 +361,51 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
             @Nonnull final Function<ProfileRequestContext,Long> strategy) {
         maximumTokenDelegationChainLengthLookupStrategy =
                 Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
+    /**
+     * Get the comparison operator to use when issuing SAML requests containing requested context classes.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return comparison value or null
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public AuthnContextComparisonTypeEnumeration getAuthnContextComparison(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        
+        final String comparison = authnContextComparisonLookupStrategy.apply(profileRequestContext);
+        if (comparison != null) {
+            return AuthnContextComparisonTypeEnumeration.valueOf(comparison.toUpperCase());
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Set the comparison operator to use when issuing SAML requests containing requested context classes.
+     * 
+     * @param comparison comparison value or null
+     * 
+     * @since 4.0.0
+     */
+    public void setAuthnContextComparison(@Nullable final AuthnContextComparisonTypeEnumeration comparison) {
+        authnContextComparisonLookupStrategy =
+                FunctionSupport.constant(comparison != null ? comparison.toString() : null);
+    }
+
+    /**
+     * Set a lookup strategy for the comparison operator to use when issuing SAML requests containing
+     * requested context classes.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setAuthnContextComparisonLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,String> strategy) {
+        authnContextComparisonLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */

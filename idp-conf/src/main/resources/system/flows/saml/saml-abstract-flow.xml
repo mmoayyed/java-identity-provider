@@ -20,7 +20,7 @@
         <evaluate expression="SAMLPopulateAttributeConsumingService" />
         <evaluate expression="MapRequestedAttributesInAttributeConsumingService" />
 
-        <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
+        <evaluate expression="InitializeRelyingPartyContextFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
 
         <evaluate expression="PostLookupPopulateAuditContext" />

@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.session.impl;
+package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.session.SAML2SPSession;
-import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -32,69 +36,64 @@ import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifie
 
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.core.xml.io.MarshallingException;
-import org.opensaml.core.xml.io.UnmarshallingException;
-import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
-import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.SessionIndex;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Action that creates a {@link LogoutRequest} based on an {@link SAML2SPSession} in a
- * {@link LogoutPropagationContext} and sets it as the message returned by
+ * Action that creates an {@link AuthnRequest} and sets it as the message returned by
  * {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
  * <p>If an issuer value is returned via a lookup strategy, then it's set as the Issuer of the message.</p>
+ * 
+ * <p>Various other values are derived from the active configuration. The outbound relay state is also
+ * set to the flow execution key.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#MESSAGE_PROC_ERROR}
+ * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * 
  * @post ProfileRequestContext.getOutboundMessageContext().getMessage() != null
  */
-public class AddLogoutRequest extends AbstractProfileAction {
+public class AddAuthnRequest extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    @Nonnull private Logger log = LoggerFactory.getLogger(AddLogoutRequest.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(AddAuthnRequest.class);
     
     /** Overwrite an existing message? */
     private boolean overwriteExisting;
 
-    /** Include SessionIndex in the request? */
-    private boolean includeSessionIndex;
-
     /** Strategy used to locate the {@link IdentifierGenerationStrategy} to use. */
     @Nonnull private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
 
+    /** Strategy used to obtain the relay state token to provide. */
+    @Nonnull private Function<ProfileRequestContext,String> relayStateLookupStrategy;
+    
     /** Strategy used to obtain the response issuer value. */
     @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
-
-    /** Logout propagation context lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext,LogoutPropagationContext> logoutPropContextLookupStrategy;
     
     /** The generator to use. */
     @Nullable private IdentifierGenerationStrategy idGenerator;
-
-    /** The {@link SAML2SPSession} to base the inbound context on. */
-    @Nullable private SAML2SPSession saml2Session;
+    
+    /** Applicable profile configuration. */
+    @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
 
     /** EntityID to populate into Issuer element. */
     @Nullable private String issuerId;
     
     /** Constructor. */
-    public AddLogoutRequest() {
+    public AddAuthnRequest() {
         // Default strategy is a 16-byte secure random source.
         idGeneratorLookupStrategy = new Function<>() {
             public IdentifierGenerationStrategy apply(final ProfileRequestContext input) {
@@ -102,8 +101,8 @@ public class AddLogoutRequest extends AbstractProfileAction {
             }
         };
         
-        logoutPropContextLookupStrategy = new ChildContextLookup<>(LogoutPropagationContext.class);
-        includeSessionIndex = true;
+        // Fool the parent class into looking above instead of below the PRC for the context.
+        setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));
     }
     
     /**
@@ -118,17 +117,6 @@ public class AddLogoutRequest extends AbstractProfileAction {
     }
 
     /**
-     * Set whether to include a SessionIndex in the request.
-     * 
-     * @param flag flag to set
-     */
-    public void setIncludeSessionIndex(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        includeSessionIndex = flag;
-    }
-
-    /**
      * Set the strategy used to locate the {@link IdentifierGenerationStrategy} to use.
      * 
      * @param strategy lookup strategy
@@ -139,6 +127,17 @@ public class AddLogoutRequest extends AbstractProfileAction {
 
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the strategy used to obtain the RelayState value to supply for flow restoration.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelayStateLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        relayStateLookupStrategy = Constraint.isNotNull(strategy, "RelayState lookup srategy cannot be null");
     }
 
     /**
@@ -152,25 +151,24 @@ public class AddLogoutRequest extends AbstractProfileAction {
         issuerLookupStrategy = strategy;
     }
 
-    /**
-     * Set the logout propagation context lookup strategy.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setLogoutPropagationContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,LogoutPropagationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        logoutPropContextLookupStrategy =
-                Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
-    }
-
-// Checkstyle: CyclomaticComplexity OFF 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
 
-        if (!super.doPreExecute(profileRequestContext)) {
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
+        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
+        if (rpCtx != null && rpCtx.getConfiguration() != null &&
+                rpCtx.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
+            profileConfiguration = (BrowserSSOProfileConfiguration) rpCtx.getProfileConfig();
+        }
+        if (profileConfiguration == null) {
+            log.error("{} BrowserSSOProfileConfiguration not found", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
         
@@ -196,53 +194,33 @@ public class AddLogoutRequest extends AbstractProfileAction {
             issuerId = issuerLookupStrategy.apply(profileRequestContext);
         }
 
-        final LogoutPropagationContext logoutPropCtx = logoutPropContextLookupStrategy.apply(profileRequestContext);
-        if (logoutPropCtx == null) {
-            log.debug("{} No logout propagation context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        } else if (logoutPropCtx.getSession() == null || !(logoutPropCtx.getSession() instanceof SAML2SPSession)) {
-            log.debug("{} Logout propgation context did not contain a SAML2SPSession", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        saml2Session = (SAML2SPSession) logoutPropCtx.getSession();
-        if (saml2Session.getId() == null) {
-            log.debug("{} SAML2SPSession in logout propagation context did not contain a service ID", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
         outboundMessageCtx.setMessage(null);
         
         return true;
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
 
+        log.debug("{} Building AuthnRequest for upstream IdP ({})", getLogPrefix(),
+                authenticationContext.getAuthenticatingAuthority());
+        
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
-        final SAMLObjectBuilder<LogoutRequest> requestBuilder =
-                (SAMLObjectBuilder<LogoutRequest>) bf.<LogoutRequest>getBuilderOrThrow(
-                        LogoutRequest.DEFAULT_ELEMENT_NAME);
+        final SAMLObjectBuilder<AuthnRequest> requestBuilder =
+                (SAMLObjectBuilder<AuthnRequest>) bf.<AuthnRequest>getBuilderOrThrow(
+                        AuthnRequest.DEFAULT_ELEMENT_NAME);
+        final SAMLObjectBuilder<NameIDPolicy> nipBuilder =
+                (SAMLObjectBuilder<NameIDPolicy>) bf.<NameIDPolicy>getBuilderOrThrow(
+                        NameIDPolicy.DEFAULT_ELEMENT_NAME);
 
-        final LogoutRequest object = requestBuilder.buildObject();
+        final AuthnRequest object = requestBuilder.buildObject();
         
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);
-
-        try {
-            final NameID nameId = XMLObjectSupport.cloneXMLObject(saml2Session.getNameID());
-            object.setNameID(nameId);
-        } catch (final MarshallingException|UnmarshallingException e) {
-            log.error("{} Error cloning NameID for use in LogoutRequest for {}", getLogPrefix(),
-                    saml2Session.getId(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
-            return;
-        }
 
         if (issuerId != null) {
             log.debug("{} Setting Issuer to {}", getLogPrefix(), issuerId);
@@ -255,17 +233,31 @@ public class AddLogoutRequest extends AbstractProfileAction {
             log.debug("{} No issuer value available, leaving Issuer unset", getLogPrefix());
         }
         
-        if (includeSessionIndex) {
-            final SAMLObjectBuilder<SessionIndex> indexBuilder =
-                    (SAMLObjectBuilder<SessionIndex>) bf.<SessionIndex>getBuilderOrThrow(
-                            SessionIndex.DEFAULT_ELEMENT_NAME);
-            final SessionIndex index = indexBuilder.buildObject();
-            index.setSessionIndex(saml2Session.getSessionIndex());
-            object.getSessionIndexes().add(index);
+        // ForceAuthn may come from request or config.
+        if (authenticationContext.isForceAuthn() || profileConfiguration.isForceAuthn(profileRequestContext)) {
+            log.debug("{} Setting ForceAuthn for SAML AuthnRequest", getLogPrefix());
+            object.setForceAuthn(true);
         }
+        
+        // Only set passive based on request.
+        if (authenticationContext.isPassive()) {
+            log.debug("{} Setting IsPassive for SAML AuthnRequest", getLogPrefix());
+            object.setIsPassive(true);
+        }
+        
+        final NameIDPolicy nip = nipBuilder.buildObject();
+        nip.setAllowCreate(true);
+        
+        // TODO: use metadata for NameID Formats too?
+        final List<String> formats = profileConfiguration.getNameIDFormatPrecedence(profileRequestContext);
+        if (!formats.isEmpty()) {
+            log.debug("{} Setting NameIDPolicy Format to '{}' for SAML AuthnRequest", getLogPrefix(), formats.get(0));
+            nip.setFormat(formats.get(0));
+        }
+        
+        object.setNameIDPolicy(nip);
         
         profileRequestContext.getOutboundMessageContext().setMessage(object);
     }
-// Checkstyle: CyclomaticComplexity ON
     
 }

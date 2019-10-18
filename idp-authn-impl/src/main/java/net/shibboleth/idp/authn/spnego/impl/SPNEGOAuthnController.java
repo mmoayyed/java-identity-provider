@@ -42,6 +42,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,8 @@ import org.springframework.web.servlet.ModelAndView;
  * {@link ExternalAuthentication#finishExternalAuthentication(String, HttpServletRequest, HttpServletResponse)} and
  * returning null. On unrecoverable errors, an exception is thrown.
  */
+@Controller
+@RequestMapping(value="%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}")
 public class SPNEGOAuthnController {
     
     /** Event ID indicating that SPNEGO is not supported by the client or is not available for other reasons. */

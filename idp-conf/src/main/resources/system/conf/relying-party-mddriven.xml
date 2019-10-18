@@ -392,6 +392,9 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="authnContextComparisonLookupStrategy">
+            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="authnContextComparison" />
+        </property>
         <property name="defaultAuthenticationMethodsLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="defaultAuthenticationMethods"
                 p:propertyType="#{T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal)}" />

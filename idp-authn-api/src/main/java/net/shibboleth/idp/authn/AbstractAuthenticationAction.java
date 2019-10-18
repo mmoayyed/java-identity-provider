@@ -64,7 +64,8 @@ public abstract class AbstractAuthenticationAction
      * 
      * @param strategy  lookup strategy function for {@link AuthenticationContext}.
      */
-    public void setLookupStrategy(@Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
+    public void setAuthenticationContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,AuthenticationContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");

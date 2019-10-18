@@ -33,7 +33,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  */
 @ThreadSafe
 public class WebFlowProfileActionAdaptor extends AbstractProfileAction {
-
+    
     /** A POJO bean being adapted.  */
     @Nonnull private final ProfileAction action;
     
@@ -48,7 +48,7 @@ public class WebFlowProfileActionAdaptor extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public void execute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    public void execute(@Nonnull final ProfileRequestContext profileRequestContext) {
         action.execute(profileRequestContext);
     }
 

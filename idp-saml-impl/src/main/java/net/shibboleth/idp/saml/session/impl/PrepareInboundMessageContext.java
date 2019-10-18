@@ -39,15 +39,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Action that adds an inbound {@link MessageContext} and a {@link SAMLPeerEntityContext} to the
- * {@link ProfileRequestContext} based on the identity of the relying party bound to a {@link SAML2SPSession}
- * found in a {@link LogoutPropagationContext}.  
+ * {@link ProfileRequestContext} based on the identity of a relying party, by default from a
+ * {@link SAML2SPSession} found in a {@link LogoutPropagationContext}.  
  * 
- * <p>This action mocks up a minimal amount of machinery on the inbound message side to drive a
+ * <p>This action primarily mocks up a minimal amount of machinery on the inbound message side to drive a
  * SAML 2 Logout Propagation flow, which needs to issue a logout request message for the {@link SAML2SPSession}
  * it's given.</p>
  * 
- * <p>It's named generically so that if we need to expand it to support something beyond SAML 2 (some kind of
- * hack for SAML 1?) we can do that.
+ * <p>It has some generic capability to allow it to be used for some other outbound messaging cases, such as
+ * SAML 2 SSO proxying.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
@@ -56,12 +56,15 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PrepareInboundMessageContext.class);
-
+    
     /** Logout propagation context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,LogoutPropagationContext> logoutPropContextLookupStrategy;
 
-    /** The {@link SAML2SPSession} to base the inbound context on. */
-    @Nullable private SAML2SPSession saml2Session;
+    /** Optional circumvention of usual method to identify the relying party name. */
+    @Nullable private Function<ProfileRequestContext,String> relyingPartyLookupStrategy;
+    
+    /** The relying party name to base the inbound context on. */
+    @Nullable private String relyingPartyId;
 
     /** Constructor. */
     public PrepareInboundMessageContext() {
@@ -80,12 +83,33 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
         logoutPropContextLookupStrategy =
                 Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set an optional lookup strategy to identify the relying party name, as a substitute for the session/logout
+     * assumptions made by the action otherwise.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setRelyingPartyLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        relyingPartyLookupStrategy = strategy;
+    }
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
+        }
+        
+        if (relyingPartyLookupStrategy != null) {
+            relyingPartyId = relyingPartyLookupStrategy.apply(profileRequestContext);
+            if (relyingPartyId != null) {
+                return true;
+            }
         }
         
         final LogoutPropagationContext logoutPropCtx = logoutPropContextLookupStrategy.apply(profileRequestContext);
@@ -99,8 +123,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
             return false;
         }
         
-        saml2Session = (SAML2SPSession) logoutPropCtx.getSession();
-
+        relyingPartyId = ((SAML2SPSession) logoutPropCtx.getSession()).getId();
         return true;
     }
 
@@ -111,9 +134,9 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
         profileRequestContext.setInboundMessageContext(msgCtx);
 
         final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
-        peerContext.setEntityId(saml2Session.getId());
+        peerContext.setEntityId(relyingPartyId);
 
-        log.debug("{} Initialized inbound message context for logout of {}", getLogPrefix(), saml2Session.getId());
+        log.debug("{} Initialized inbound context for message to {}", getLogPrefix(), relyingPartyId);
     }
     
 }
