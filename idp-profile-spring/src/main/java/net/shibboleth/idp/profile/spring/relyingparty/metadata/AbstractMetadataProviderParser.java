@@ -205,6 +205,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
                     builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
                 }
             }
+        } else {
+            log.warn("MetadataFilter is not valid for {}", CHAINING_PROVIDER_ELEMENT_NAME.getLocalPart());
         }
     }
 
