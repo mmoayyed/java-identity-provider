@@ -20,6 +20,7 @@ package net.shibboleth.idp.installer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -53,7 +54,7 @@ public final class Installer {
         }
         final InstallerProperties ip = new InstallerPropertiesImpl(!copyInstall);
         ip.initialize();
-        final CurrentInstallState is = new CurrentInstallState(ip);
+        final CurrentInstallState is = new CurrentInstallStateImpl(ip);
         is.initialize();
 
         if (copyInstall) {

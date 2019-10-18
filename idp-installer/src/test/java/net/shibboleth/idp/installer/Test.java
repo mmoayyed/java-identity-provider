@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -53,7 +54,7 @@ public class Test {
 
         final InstallerProperties ip = new InstallerPropertiesImpl(false);
         ip.initialize();
-        final CurrentInstallState is = new CurrentInstallState(ip);
+        final CurrentInstallStateImpl is = new CurrentInstallStateImpl(ip);
         is.initialize();
 
         final CopyDistribution dist = new CopyDistribution(ip, is);
