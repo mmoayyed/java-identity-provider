@@ -15,12 +15,17 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
+import net.shibboleth.idp.installer.BuildWar;
+import net.shibboleth.idp.installer.CopyDistribution;
+import net.shibboleth.idp.installer.CurrentInstallState;
+import net.shibboleth.idp.installer.InstallerProperties;
+import net.shibboleth.idp.installer.InstallerPropertiesImpl;
+import net.shibboleth.idp.installer.V4Install;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
@@ -33,7 +38,7 @@ public final class Installer {
 
     /** simulate the ant tasks.
      * @param args what
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException if badness occurrs
      */
     public static void main(final String[] args) throws ComponentInitializationException {
         final Logger log = LoggerFactory.getLogger(Installer.class);
