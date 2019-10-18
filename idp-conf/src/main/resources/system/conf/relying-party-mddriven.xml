@@ -384,6 +384,14 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="checkAddressPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="checkAddress" />
+                </constructor-arg>
+                <constructor-arg value="true" />
+            </bean>
+        </property>
         <property name="skipEndpointValidationWhenSignedPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -407,6 +415,9 @@
         </property>
         <property name="maximumSPSessionLifetimeLookupStrategy">
             <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="maximumSPSessionLifetime" />
+        </property>
+        <property name="maximumTimeSinceAuthnLookupStrategy">
+            <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="maximumTimeSinceAuthn" />
         </property>
         <property name="allowDelegationPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">

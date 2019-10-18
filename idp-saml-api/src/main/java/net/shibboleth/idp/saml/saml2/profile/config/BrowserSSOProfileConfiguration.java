@@ -69,12 +69,18 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
 
     /** Whether to mandate forced authentication for the request. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
-    
+
+    /** Whether to compare client and assertion addresses on inbound SSO. */
+    @Nonnull private Predicate<ProfileRequestContext> checkAddressPredicate;
+
     /** Whether the response endpoint should be validated if the request is signed. */
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
     /** Lookup function to supply maximum session lifetime. */
     @Nonnull private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
+
+    /** Lookup function to supply maximum time since inbound AuthnInstant. */
+    @Nonnull private Function<ProfileRequestContext,Duration> maximumTimeSinceAuthnLookupStrategy;
 
     /** 
      * The predicate used to determine if produced assertions may be delegated.
@@ -117,8 +123,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         resolveAttributesPredicate = Predicates.alwaysTrue();
         includeAttributeStatementPredicate = Predicates.alwaysTrue();
         forceAuthnPredicate = Predicates.alwaysFalse();
+        checkAddressPredicate = Predicates.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
+        maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(null);
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
         allowDelegationPredicate = Predicates.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
@@ -214,6 +222,44 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
+
+    /**
+     * Get whether the client's address must match the address in an inbound {@link SubjectLocality}
+     * element during inbound SSO.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return whether to compare addresses
+     * 
+     * @since 4.0.0
+     */
+    public boolean isCheckAddress(@Nullable final ProfileRequestContext profileRequestContext) {
+        return checkAddressPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Set whether the client's address must match the address in an inbound {@link SubjectLocality}
+     * element during inbound SSO.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setCheckAddress(final boolean flag) {
+        checkAddressPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
+    /**
+     * Set a condition to determine whether the client's address must match the address in an inbound
+     * {@link SubjectLocality} element during inbound SSO.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setCheckAddressPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        checkAddressPredicate = Constraint.isNotNull(condition, "Address checking predicate cannot be null");
+    }
     
     /**
      * Get condition to determine whether the response endpoint should be validated if the request is signed.
@@ -289,6 +335,52 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setMaximumSPSessionLifetimeLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Duration> strategy) {
         maximumSPSessionLifetimeLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
+    /**
+     * Get the maximum amount of time allowed to have elapsed since an incoming AuthnInstant.
+     * 
+     * <p>A null or 0 is interpreted as an unlimited amount.</p>
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return max time since inbound AuthnInstant
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public Duration getMaximumTimeSinceAuthn(@Nullable final ProfileRequestContext profileRequestContext) {
+        final Duration amount = maximumTimeSinceAuthnLookupStrategy.apply(profileRequestContext);
+        Constraint.isFalse(amount != null && amount.isNegative(),
+                "Maximum time since authentication must be greater than or equal to 0");
+        return amount;
+    }
+
+    /**
+     * Set the maximum amount of time allowed to have elapsed since an incoming AuthnInstant.
+     * 
+     * <p>A null or 0 is interpreted as an unlimited amount.</p>
+     * 
+     * @param amount max time to allow
+     * 
+     * @since 4.0.0
+     */
+    public void setMaximumTimeSinceAuthn(@Nullable final Duration amount) {
+        Constraint.isFalse(amount != null && amount.isNegative(),
+                "Maximum time since authentication must be greater than or equal to 0");
+        
+        maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(amount);
+    }
+    
+    /**
+     * Set a lookup strategy for the maximum amount of time allowed to have elapsed since an incoming AuthnInstant.
+     * 
+     * @param strategy  lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setMaximumTimeSinceAuthnLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Duration> strategy) {
+        maximumTimeSinceAuthnLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
     /**
