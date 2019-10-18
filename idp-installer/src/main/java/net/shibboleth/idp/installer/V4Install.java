@@ -42,7 +42,6 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
-import net.shibboleth.idp.installer.ant.impl.MetadataGeneratorTask;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -299,7 +298,7 @@ public class V4Install extends AbstractInitializableComponent {
         }
         final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
         final GenericApplicationContext context = new ApplicationContextBuilder()
-                .setName(MetadataGeneratorTask.class.getName())
+                .setName(V4Install.class.getName())
                 .setServiceConfigurations(Collections.singletonList(resource))
                 .setContextInitializer(new Initializer())
                 .build();
