@@ -28,9 +28,7 @@
             <documentation>
                 A metadata provider that composes other metadata providers. During a lookup operation member providers
                 are searched in the order they listed in this providers configuration until one provides a response to
-                the lookup. That response is then returned, no subsequent member providers are inspected. Note, that
-                metadata filters and the require valid metadata flag expressed on this configuration overrides those
-                settings on member providers.
+                the lookup. That response is then returned, no subsequent member providers are inspected.
             </documentation>
         </annotation>
         <complexContent>

@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -46,20 +47,23 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanDefinitionParser {
 
     /** Namespace for Security. */
-    public static final String SECURITY_NAMESPACE = "urn:mace:shibboleth:2.0:security";
+    @Nonnull @NotEmpty public static final String SECURITY_NAMESPACE = "urn:mace:shibboleth:2.0:security";
+    
     /** Namespace for Metadata. */
-    public static final String METADATA_NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
+    @Nonnull @NotEmpty public static final String METADATA_NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
     
     /** MetadataFilter Element name. */
-    public static final QName METADATA_FILTER_ELEMENT_NAME = new QName(METADATA_NAMESPACE, "MetadataFilter");
+    @Nonnull public static final QName METADATA_FILTER_ELEMENT_NAME = new QName(METADATA_NAMESPACE, "MetadataFilter");
+    
     /** ChainingMetadataProviderElement name. */
-    public static final QName CHAINING_PROVIDER_ELEMENT_NAME = 
+    @Nonnull public static final QName CHAINING_PROVIDER_ELEMENT_NAME = 
             new QName(METADATA_NAMESPACE, "ChainingMetadataProvider");
+    
     /** RelyingPartyGroup Element name. */
-    public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(SECURITY_NAMESPACE, "TrustEngine");
+    @Nonnull public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(SECURITY_NAMESPACE, "TrustEngine");
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractMetadataProviderParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractMetadataProviderParser.class);
 
     /**
      * Handle attributes which are inappropriate for specific implementations. The chaining metadata provider cannot
@@ -75,13 +79,22 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
         if (!element.hasAttributeNS(null, attribute)) {
             return false;
-        }
-
-        if (CHAINING_PROVIDER_ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element))) {
+        } else if (isChaining(element)) {
             log.warn("{} is not valid for {}", attribute, CHAINING_PROVIDER_ELEMENT_NAME.getLocalPart());
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Is this a chaining resolver?
+     * 
+     * @param element root element of resolver
+     * 
+     * @return whether the type is Chaining
+     */
+    private boolean isChaining(@Nonnull final Element element) {
+        return CHAINING_PROVIDER_ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element));
     }
 
     /**
@@ -174,21 +187,23 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
         processPredicateOptions(element, parserContext, builder);
 
-        final List<Element> filters =
-                ElementSupport.getChildElements(element, METADATA_FILTER_ELEMENT_NAME);
-
-        if (null != filters) {
-            if (filters.size() == 1) {
-                // Install directly.
-                builder.addPropertyValue("metadataFilter",
-                        SpringSupport.parseCustomElement(filters.get(0), parserContext, builder, false));
-            } else if (filters.size() > 1) {
-                // Wrap in a chaining filter.
-                final BeanDefinitionBuilder chainBuilder =
-                        BeanDefinitionBuilder.genericBeanDefinition(MetadataFilterChain.class);
-                chainBuilder.addPropertyValue("filters", SpringSupport.parseCustomElements(filters, parserContext,
-                        chainBuilder));
-                builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
+        if (!isChaining(element)) {
+            final List<Element> filters =
+                    ElementSupport.getChildElements(element, METADATA_FILTER_ELEMENT_NAME);
+    
+            if (null != filters) {
+                if (filters.size() == 1) {
+                    // Install directly.
+                    builder.addPropertyValue("metadataFilter",
+                            SpringSupport.parseCustomElement(filters.get(0), parserContext, builder, false));
+                } else if (filters.size() > 1) {
+                    // Wrap in a chaining filter.
+                    final BeanDefinitionBuilder chainBuilder =
+                            BeanDefinitionBuilder.genericBeanDefinition(MetadataFilterChain.class);
+                    chainBuilder.addPropertyValue("filters", SpringSupport.parseCustomElements(filters, parserContext,
+                            chainBuilder));
+                    builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
+                }
             }
         }
     }
