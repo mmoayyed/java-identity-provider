@@ -31,7 +31,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.NameIDFormatFilter;
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolverTest;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
@@ -49,8 +48,6 @@ public class ByReferenceMetadataFilterTest extends XMLObjectBaseTestCase impleme
     
     private FilesystemMetadataResolver metadataProvider;
     
-    private File mdFile;
-    
     private ByReferenceMetadataFilter refFilter;
     
     private NameIDFormatFilter nameIDFilter;
@@ -60,9 +57,9 @@ public class ByReferenceMetadataFilterTest extends XMLObjectBaseTestCase impleme
     @BeforeMethod
     protected void setUp() throws URISyntaxException, ResolverException {
 
-        URL mdURL = FilesystemMetadataResolverTest.class
-                .getResource("/org/opensaml/saml/saml2/metadata/InCommon-metadata.xml");
-        mdFile = new File(mdURL.toURI());
+        final URL mdURL = ByReferenceMetadataFilterTest.class
+                .getResource("/net/shibboleth/idp/saml/impl/metadata/InCommon-metadata.xml");
+        final File mdFile = new File(mdURL.toURI());
 
         metadataProvider = new FilesystemMetadataResolver(mdFile);
         metadataProvider.setParserPool(parserPool);
