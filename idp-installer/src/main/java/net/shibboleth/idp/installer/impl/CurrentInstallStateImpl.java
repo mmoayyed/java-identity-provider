@@ -73,7 +73,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
         final Path currentInstall = targetDir.resolve("dist").resolve(InstallerSupport.VERSION_NAME);
         if (!Files.exists(currentInstall)) {
-            oldVersion= "3";
+            oldVersion= V3_VERSION;
             return;
         }
         final Properties vers = new Properties(1);

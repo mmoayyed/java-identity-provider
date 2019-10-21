@@ -26,8 +26,11 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
 /** Tells the installers about the current install state. */
 public interface CurrentInstallState extends InitializableComponent {
 
+    /** What to return if this is V3. */
+    static final String V3_VERSION = "3";
+
     /** What is the installer version.
-     * @return "3" for a V3 install, null for a new install or the value we write during last install.
+     * @return {@value #V3_VERSION} for a V3 install, null for a new install or the value we wrote during last install.
      * @throws BuildException if we find an inconsistency
      */
     @Nullable String getInstalledVersion() throws BuildException;

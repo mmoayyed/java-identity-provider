@@ -183,7 +183,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @param sealerCreated have we just created a sealer
      * @throws BuildException if badness occurs
      */
-    // CheckStyle: CyclomaticComplexity OFF
+    // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
         final Path conf = installerProps.getTargetDir().resolve("conf");
         final Path dstConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
@@ -219,6 +219,7 @@ public class V4Install extends AbstractInitializableComponent {
 
         final File ldapMergeFile = installerProps.getLDAPMergePropertiesFile();
         if (ldapMergeFile != null && !currentState.isLDAPPropertiesPresent() ) {
+            log.debug("Merging {} with ldap.properties", ldapMergePath);
             try {
                 final Path target = conf.resolve("ldap.properties");
                 if (Files.exists(target)) {
@@ -239,8 +240,31 @@ public class V4Install extends AbstractInitializableComponent {
                 throw new BuildException("Failed to generate ldap.properties", e);
             }
         }
+
+        if (CurrentInstallState.V3_VERSION.equals(currentState.getInstalledVersion())) {
+            log.debug("Detected a V3 to V4 update.  Editing services.properties");
+            final Path servicesProps = conf.resolve("services.properties");
+            if (!Files.exists(servicesProps)) {
+                log.warn("Previous Version V3 but no services.properties?");
+            } else {
+                try {
+                    // Handle services.properties for a 3->4 upgrade.
+                    final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
+                    final File servicesPropsFile = servicesProps.toFile();
+                    propertiesToReWrite.load(new FileInputStream(servicesPropsFile));
+                    propertiesToReWrite.addComment(
+                            "idp.service.attribute.registry.resources modified during v3 upgrade "
+                            + Instant.now().toString());
+                    propertiesToReWrite.replaceProperty("idp.service.attribute.registry.resources",
+                            "shibboleth.LegacyAttributeRegistryResources");
+                    propertiesToReWrite.store(new FileOutputStream(servicesPropsFile));
+                } catch (final IOException e) {
+                    throw new BuildException("Failed to update services.properties", e);
+                }            
+            }
+        }
     }
-    // CheckStyle: CyclomaticComplexity ON
+    // CheckStyle: CyclomaticComplexity|MethodLength ON
 
     /** Create and populate (if it does not exist) edit-webapp.
      * @throws BuildException if badness occurs
