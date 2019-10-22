@@ -86,7 +86,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     private void backup(final Path from, final Path to) throws BuildException {
-        log.debug("Backing up From {} to {}", from, to);
+        log.debug("Backing up from {} to {}", from, to);
         final Copy copy = InstallerSupport.getCopyTask(from, to);
         copy.setFailOnError(false);
         copy.execute();
@@ -99,7 +99,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         if (!Files.exists(what)) {
             log.debug("{} doesn't exist, nothing to delete", what);
         } else if (!Files.isDirectory(what)) {
-            log.error("Corrupt install {} is not a directory", what);
+            log.error("Corrupt install: {} is not a directory", what);
             throw new BuildException("Corrupt install - not a directory");
         } else {
             log.debug("Deleting {} ", what);
@@ -117,7 +117,6 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         delete(installerProps.getTargetDir().resolve("doc"));
         final Path system = installerProps.getTargetDir().resolve("system");
         if (Files.exists(system)) {
-            log.debug("Clearing  {} readonly (if Windows)", system);
             InstallerSupport.setReadOnly(system, false);
         }
         delete(system);
@@ -146,7 +145,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         InstallerSupport.createDirectory(dist);
         final Path src = installerProps.getSourceDir();
         if (!Files.exists(src)) {
-            log.error("Source distribution {} not found", src);
+            log.error("Source distribution {} not found.", src);
             throw new BuildException("Source distribution not found");
         }
         distCopy(src, dist, "conf");

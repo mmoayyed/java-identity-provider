@@ -68,7 +68,7 @@ public final class BuildWar extends AbstractInitializableComponent {
         final Path target = installerProps.getTargetDir();
         final Path warFile = target.resolve("war").resolve("idp.war");
 
-        log.info("Rebuilding {}, Version", warFile.toAbsolutePath(), currentState.getInstalledVersion());
+        log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), currentState.getInstalledVersion());
         InstallerSupport.deleteTree(target.resolve("webpapp"));
         final Path webAppTmp =target.resolve("webpapp.tmp");
         InstallerSupport.deleteTree(webAppTmp);

@@ -130,6 +130,11 @@ public final class InstallerSupport {
      * @throws BuildException if badness occurrs
      */
     public static void setReadOnly(final Path directory, final boolean readOnly) throws BuildException {
+        if (readOnly) {
+            log.debug("Setting readonly bits on {}", directory);
+        } else {
+            log.debug("Clearing readonly bits on {}", directory);
+        }
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             log.debug("Not windows. Not [re]setting readonly bit");
             return;
@@ -162,6 +167,7 @@ public final class InstallerSupport {
      */
     public static void setMode(final Path directory, final String permissions, final String includes)
             throws BuildException {
+        log.debug("Performing chmod {} on {} including {}", permissions, directory, includes);
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             log.debug("Windows. Not performing chmod");
             return;
@@ -183,6 +189,7 @@ public final class InstallerSupport {
      */
     public static void setGroup(final Path directory, final String group, final String includes)
             throws BuildException {
+        log.debug("Performing chgrp {} on {} including {}", group, directory, includes);
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             log.debug("Windows. Not performing chown");
             return;
@@ -208,7 +215,7 @@ public final class InstallerSupport {
             return;
         }
         if (!Files.isDirectory(where) ) {
-            log.error("Directory to be delete {} was a file");
+            log.error("Directory to be deleted ({}) was a file");
             throw new BuildException("Wanted a directory, found a file");
         }
         log.debug("Deleting tree {}", where);

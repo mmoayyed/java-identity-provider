@@ -85,7 +85,7 @@ public class V4Install extends AbstractInitializableComponent {
         super.doInitialize();
         keyManager.initialize();
         if (metadataGenerator != null) {
-            log.warn("No metadata generator configured");
+            log.warn("No MetadataGenerator configured");
         }
     }
 
@@ -310,7 +310,6 @@ public class V4Install extends AbstractInitializableComponent {
      */
     protected void generateMetadata() throws BuildException {
         if (metadataGenerator == null) {
-            log.warn("No Metadata Generator registered");
             return;
         }
 
