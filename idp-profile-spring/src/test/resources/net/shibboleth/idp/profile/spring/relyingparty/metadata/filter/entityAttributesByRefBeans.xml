@@ -10,5 +10,7 @@
     default-init-method="initialize" default-destroy-method="destroy" default-lazy-init="true">
     
     <bean id="predicate.AlwaysFalse" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
+    
+    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ByReferenceFilterBeanPostProcessor" />
                 
 </beans>
