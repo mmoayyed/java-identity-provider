@@ -82,4 +82,4 @@ if $cygwin; then
   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
 fi
-$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -q -f "${ANT_HOME}/build.xml" "$@"
+$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -f "${ANT_HOME}/build.xml" "$@"
