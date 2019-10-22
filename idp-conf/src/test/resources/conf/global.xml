@@ -68,4 +68,10 @@
         <constructor-arg value="/metadata/example-sp123-metadata.xml"/>
     </bean>
       
+    <util:list id="testbed.MetadataResolverResources">
+        <value>%{idp.home}/conf/metadata-providers.xml</value>
+        <value>%{idp.home}/conf/metadata-filters.xml</value>
+        <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
+    </util:list>
+    
 </beans>

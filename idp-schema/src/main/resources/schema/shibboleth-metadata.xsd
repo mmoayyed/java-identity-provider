@@ -1254,6 +1254,32 @@
         </complexContent>
     </complexType>
 
+    <complexType name="ByReference">
+        <annotation>
+            <documentation>
+                A metadata filter that associates filters declared "out of band" with specific
+                MetadataProvider instances.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <sequence>
+                    <element name="MetadataFilters" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>A set of filters applied to a specific provider by name.</documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded" />
+                            </sequence>
+                            <attribute name="providerRef" type="shibmd:string" use="required" />
+                        </complexType>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="MetadataFilterType" abstract="true"/>
     
     <element name="MetadataNodeProcessor" type="shibmd:MetadataNodeProcessorType">

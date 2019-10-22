@@ -32,6 +32,7 @@ import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNamePro
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.Ordered;
 
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
@@ -51,7 +52,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
  * depend on group information.
  * </p>
  */
-public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcessor {
+public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcessor, Ordered {
 
     /** The registry of decoding rules. */
     @Nullable private final ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
@@ -66,6 +67,11 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
         transcoderRegistry = service;
     }
 
+    /** {@inheritDoc} */
+    public int getOrder() {
+        return LOWEST_PRECEDENCE;
+    }
+    
     // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override public Object postProcessBeforeInitialization(final Object bean, final String beanName) {

@@ -51,7 +51,9 @@ public class TestEnvironmentApplicationContextInitializer
         mock.setProperty("idp.storage.htmlLocalStorage", "false");
         mock.setProperty("idp.session.trackSPSessions", "false");
         mock.setProperty("idp.session.secondaryServiceIndex", "false");
+        mock.setProperty("idp.service.metadata.resources", "testbed.MetadataResolverResources");
         applicationContext.getEnvironment().getPropertySources().addFirst(mock);
         log.info("Prepending properties '{}'", mock.getSource());
     }
+    
 }

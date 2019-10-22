@@ -187,11 +187,10 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
         processPredicateOptions(element, parserContext, builder);
 
-        if (!isChaining(element)) {
-            final List<Element> filters =
-                    ElementSupport.getChildElements(element, METADATA_FILTER_ELEMENT_NAME);
-    
-            if (null != filters) {
+        final List<Element> filters =
+                ElementSupport.getChildElements(element, METADATA_FILTER_ELEMENT_NAME);
+        if (null != filters && !filters.isEmpty()) {
+            if (!isChaining(element)) {
                 if (filters.size() == 1) {
                     // Install directly.
                     builder.addPropertyValue("metadataFilter",
@@ -204,9 +203,9 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
                             chainBuilder));
                     builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
                 }
+            } else {
+                log.warn("MetadataFilter is not valid for {}", CHAINING_PROVIDER_ELEMENT_NAME.getLocalPart());
             }
-        } else {
-            log.warn("MetadataFilter is not valid for {}", CHAINING_PROVIDER_ELEMENT_NAME.getLocalPart());
         }
     }
 

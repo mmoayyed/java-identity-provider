@@ -43,21 +43,6 @@
             <RetainedRole>md:SPSSODescriptor</RetainedRole>
         </MetadataFilter>
         
-        <MetadataFilter xsi:type="EntityAttributes">
-            <saml:Attribute Name="https://sp.example.org/tagname">
-                <saml:AttributeValue>foo</saml:AttributeValue>
-            </saml:Attribute>
-            <saml:Attribute Name="https://sp.example.org/tagname2">
-                <saml:AttributeValue>foo</saml:AttributeValue>
-                <saml:AttributeValue>bar</saml:AttributeValue>
-            </saml:Attribute>
-            <saml:Attribute Name="http://shibboleth.net/ns/profiles/saml1/sso/browser/includeAttributeStatement"
-                    NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                <saml:AttributeValue>1</saml:AttributeValue>
-            </saml:Attribute>
-            <Entity>https://sp.example.org</Entity>
-        </MetadataFilter>
-        
         <MetadataFilter xsi:type="Algorithm">
             <md:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#rsa-oaep">
                 <MGF xmlns="http://www.w3.org/2009/xmlenc11#"
@@ -70,4 +55,13 @@
     </MetadataProvider>
 
     <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="exampleMetadata-sp123"/>
+
+    <!--
+    <MetadataProvider id="ICMDQ" xsi:type="DynamicHTTPMetadataProvider"
+            minCacheDuration="PT5M" maxCacheDuration="PT24H" maxIdleEntityData="PT1H">
+        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P14D" />
+        <MetadataQueryProtocol>https://mdq.incommon.org/</MetadataQueryProtocol>
+    </MetadataProvider>
+    -->
+
 </MetadataProvider>

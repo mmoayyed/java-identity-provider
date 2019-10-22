@@ -101,18 +101,12 @@
             p:serviceConfigurations-ref="#{'%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}'.trim()}"
             p:failFast="%{idp.service.metadata.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.metadata.checkInterval:PT0S}"
-            p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
+            p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer"
+            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor">
         <constructor-arg name="claz" value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
         </constructor-arg>
-        <property name="beanPostProcessors">
-            <list>
-                <ref bean="shibboleth.IdentifiableBeanPostProcessor" />
-                <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
-                    c:service-ref="shibboleth.AttributeRegistryService" />
-            </list>
-        </property>
     </bean>
 
     <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"

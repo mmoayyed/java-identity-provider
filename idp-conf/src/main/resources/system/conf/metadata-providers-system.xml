@@ -12,7 +12,12 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Beans internal to metadata configuration but not for user manipulation. -->
+    <!-- BeanPostProcessors that auto-install MetadataFilters for internal use. -->
+    
+    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ByReferenceFilterBeanPostProcessor" />
+    
+    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
+        c:service-ref="shibboleth.AttributeRegistryService" />
     
     <!-- Signature Validation Criteria  -->
     
