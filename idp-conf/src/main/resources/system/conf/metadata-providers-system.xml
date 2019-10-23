@@ -14,7 +14,8 @@
 
     <!-- BeanPostProcessors that auto-install MetadataFilters for internal use. -->
     
-    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ByReferenceFilterBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ByReferenceFilterBeanPostProcessor"
+        p:enabled="%{idp.service.metadata.enableByReferenceFilters:true}" />
     
     <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
         c:service-ref="shibboleth.AttributeRegistryService" />

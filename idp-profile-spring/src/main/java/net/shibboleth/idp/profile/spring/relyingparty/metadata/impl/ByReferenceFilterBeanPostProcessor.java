@@ -36,12 +36,31 @@ import net.shibboleth.idp.saml.metadata.impl.ByReferenceMetadataFilterBridge;
 /**
  * A {@link BeanPostProcessor} for {@link MetadataResolver} beans that ensures a {@link ByReferenceMetadataFilterBridge}
  * is attached.
+ * 
+ * @since 4.0.0
  */
 public class ByReferenceFilterBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware, Ordered {
 
+    /** Whether to enable the processor. */
+    private boolean enabled;
+    
     /** Spring context. */
     @Nullable private ApplicationContext applicationContext;
 
+    /** Constructor. */
+    public ByReferenceFilterBeanPostProcessor() {
+        enabled = true;
+    }
+    
+    /**
+     * Set whether to enable the processor.
+     * 
+     * @param flag flag to set
+     */
+    public void setEnabled(final boolean flag) {
+        enabled = flag;
+    }
+    
     /** {@inheritDoc} */
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
@@ -54,8 +73,9 @@ public class ByReferenceFilterBeanPostProcessor implements BeanPostProcessor, Ap
 
     /** {@inheritDoc} */
     @Override public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
-        if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver) {
-            // Do not attach to beans which just include other ones.
+        
+        // Do not attach to beans which just include other ones.
+        if (!enabled || !(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver) {
             return bean;
         }
 
