@@ -5,5 +5,5 @@
 # As an example, a default SAML 2 rule for eduPersonPrincipalName would be:
 
 #id=eduPersonPrincipalName
-#transcoderBean=SAML2ScopedStringTranscoder
-#name=urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+#transcoder=SAML2ScopedStringTranscoder
+#saml2.name=urn:oid:1.3.6.1.4.1.5923.1.1.1.6
