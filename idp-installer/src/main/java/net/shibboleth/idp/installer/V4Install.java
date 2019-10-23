@@ -194,16 +194,20 @@ public class V4Install extends AbstractInitializableComponent {
                 if (Files.exists(target)) {
                     throw new BuildException("Internal error - idp.properties");
                 }
-                final File mergeFile = installerProps.getIdPMergePropertiesFile();
+                final Path mergePath = installerProps.getIdPMergeProperties();
                 final Path source = dstConf.resolve("idp.properties");
                 if (!Files.exists(source)) {
                     throw new BuildException("missing idp.properties in dist");
                 }
                 final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
                 final Properties replacements;
-                if (mergeFile != null) {
-                    log.debug("Creating {} from {} and {}", target, source, mergeFile);
+                if (mergePath != null) {
+                    log.debug("Creating {} from {} and {}", target, source, mergePath);
                     replacements = new Properties();
+                    final File mergeFile = mergePath.toFile();
+                    if (!installerProps.isNoTidy()) {
+                        mergeFile.deleteOnExit();
+                    }
                     replacements.load(new FileInputStream(mergeFile));
                 } else {
                     replacements = getIdPReplacements(sealerCreated);
@@ -217,8 +221,8 @@ public class V4Install extends AbstractInitializableComponent {
             }
         }
 
-        final File ldapMergeFile = installerProps.getLDAPMergePropertiesFile();
-        if (ldapMergeFile != null && !currentState.isLDAPPropertiesPresent() ) {
+        final Path ldapMergePath = installerProps.getLDAPMergeProperties();
+        if (ldapMergePath != null && !currentState.isLDAPPropertiesPresent() ) {
             log.debug("Merging {} with ldap.properties", ldapMergePath);
             try {
                 final Path target = conf.resolve("ldap.properties");
@@ -229,10 +233,14 @@ public class V4Install extends AbstractInitializableComponent {
                 if (!Files.exists(source)) {
                     throw new BuildException("missing ldap.properties in dist");
                 }
-                log.debug("Creating {} from {} and {}", target, source, ldapMergeFile);
+                log.debug("Creating {} from {} and {}", target, source, ldapMergePath);
                 final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
                 final Properties replacements = new Properties();
-                replacements.load(new FileInputStream(ldapMergeFile));
+                final File mergeFile = ldapMergePath.toFile();
+                if (!installerProps.isNoTidy()) {
+                    mergeFile.deleteOnExit();
+                }
+                replacements.load(new FileInputStream(mergeFile));
                 propertiesToReWrite.load(new FileInputStream(source.toFile()));
                 propertiesToReWrite.replaceProperties(replacements);
                 propertiesToReWrite.store(new FileOutputStream(target.toFile()));
@@ -274,21 +282,28 @@ public class V4Install extends AbstractInitializableComponent {
         if (Files.exists(editWebApp)) {
             return;
         }
-        InstallerSupport.createDirectory(editWebApp);
-        final Path css = editWebApp.resolve("css");
-        InstallerSupport.createDirectory(css);
-        final Path images = editWebApp.resolve("images");
-        InstallerSupport.createDirectory(images);
-        InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF"));
-        InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("lib"));
-        InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("classes"));
-        final Path distEditWebApp =  installerProps.getTargetDir().resolve("dist").resolve("webapp");
-        final Copy cssCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("css"), css);
-        cssCopy.setFailOnError(false);
-        cssCopy.execute();
-        final Copy imagesCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("images"), images);
-        imagesCopy.setFailOnError(false);
-        imagesCopy.execute();       
+        final Path suppliedInput = installerProps.getInitialEditWeb();
+        if (suppliedInput != null) {
+            final Copy copy = InstallerSupport.getCopyTask(suppliedInput, editWebApp);
+            copy.setFailOnError(false);
+            copy.execute();
+        } else {
+            InstallerSupport.createDirectory(editWebApp);
+            final Path css = editWebApp.resolve("css");
+            InstallerSupport.createDirectory(css);
+            final Path images = editWebApp.resolve("images");
+            InstallerSupport.createDirectory(images);
+            InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF"));
+            InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("lib"));
+            InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("classes"));
+            final Path distEditWebApp =  installerProps.getTargetDir().resolve("dist").resolve("webapp");
+            final Copy cssCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("css"), css);
+            cssCopy.setFailOnError(false);
+            cssCopy.execute();
+            final Copy imagesCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("images"), images);
+            imagesCopy.setFailOnError(false);
+            imagesCopy.execute();
+        }
     }
 
     /** Create and populate (if they not exist) the "user visible" folders.
@@ -298,6 +313,10 @@ public class V4Install extends AbstractInitializableComponent {
     protected void populateUserDirectories() throws BuildException {
         final Path targetBase = installerProps.getTargetDir();
         final Path distBase = targetBase.resolve("dist");
+        final Path preConfPath = installerProps.getConfPreOverlay();
+        if (preConfPath != null) {
+            InstallerSupport.copyDirIfNotPresent(preConfPath, targetBase.resolve("conf"));
+        }
         InstallerSupport.copyDirIfNotPresent(distBase.resolve("conf"), targetBase.resolve("conf"));
         InstallerSupport.copyDirIfNotPresent(distBase.resolve("flows"), targetBase.resolve("flows"));
         InstallerSupport.copyDirIfNotPresent(distBase.resolve("views"), targetBase.resolve("views"));

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.installer;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
@@ -110,12 +109,26 @@ public interface InstallerProperties extends InitializableComponent {
      * @return the file or null if it none required.
      * @throws BuildException if badness happens
      */
-    @Nullable public File getIdPMergePropertiesFile() throws BuildException;
+    @Nullable public Path getIdPMergeProperties() throws BuildException;
 
     /** Get the a file to merge with ldap.properties or null.
      *
-     * @return the file or null if it none required.
+     * @return the path or null if it none required.
      * @throws BuildException  if badness happens
      */
-    public File getLDAPMergePropertiesFile() throws BuildException;
+    @Nullable public Path getLDAPMergeProperties() throws BuildException;
+
+    /** Get a directory to use to "pre-overlay" the conf directory.
+     * Files will be copied from here if they don't already exist in conf,
+     * <b>before</b> the files are copied from the distribution.
+     * @return the path or null if non specified.
+     * @throws BuildException  if badness happens
+     */
+    @Nullable public Path getConfPreOverlay() throws BuildException;
+
+    /** Get a path to use to do the initial edit-webapp populate.
+     * @return the path or null if non specified.
+     * @throws BuildException  if badness happens
+     */
+    @Nullable public Path getInitialEditWeb() throws BuildException;
 }

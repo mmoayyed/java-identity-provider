@@ -45,38 +45,7 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-/** Class implement {@link InstallerProperties} with properties/UI driven values.
- *
- * Mostly it interrogates the system environment for properties, but will load a file if one
- * is supplied (via a property name).<p/>Property names :
- * <ul>
- * <li> idp.src.dir (update only):  Where to install from.  Default is basedir. Not used for build-war</li>
- * <li> idp.target.dir (all): where to install to.  Default is basedir for build war /opt/shibboleth-idp otherwise.</li>
- * <li> idp.host.name: If we are creating certificates</li>
- * <li> idp.uri.subject.alt.name: If we are creating certificates.  Defaulted</li>
- * <li> idp.sealer.password:</li>
- * <li> idp.sealer.alias:</li>
- * <li> idp.keystore.password:</li>
- * <li> idp.keysize: to change from the the default of 3072</li>
- * <li> idp.scope: The scope to assert.  If present this should also be present in idp.merge.properties</li>
- * <li> idp.merge.properties: The name of a property file to merge with idp.properties.  This file is only
- *    used when doing the initial create of idp.properties, and is deleted after processing</li>
- * <ul><li> if idp.noprompt is set, then this file should contain a line setting idp.entityID. </li>
- *       <li> if idp.sealer.password is set, then this file should contain a line setting
- *            idp.sealer.storePassword and idp.sealer.keyPassword</li>
- *       <li> if idp.scope is present, then this file should contain a line setting idp.scope
- *            services.merge.properties: The name of a property file to merge with services.properties</li>
- *       <li> if idp.is.V2 is set, then this file should contain a line setting
- *            idp.service.relyingparty.resources=shibboleth.LegacyRelyingPartyResolverResources</li></ul>
- * <li> idp.property.file: The name of a property file to fill in some or all of the above.
-              This file is deleted after processing.</li>
- * <li> idp.no.tidy: Do not delete the two above files (debug only)</li>
- * <li> ldap.merge.properties:  The name of a property file to merge with ldap.properties</li>
- * <li> idp.conf.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).</li>
- * <li> idp.conf.credentials.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).</li>
- * <li> idp.noprompt will cause a failure rather than a prompt.</li>
- * </ul>
- */
+/** Class implement {@link InstallerProperties} with properties/UI driven values. */
 public class InstallerPropertiesImpl extends AbstractInitializableComponent implements InstallerProperties {
 
     /** The base directory, inherited and shared with ant. */
@@ -90,6 +59,12 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** The name of a property file to merge with ldap.properties. */
     public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
+
+    /** The name of a directory to overlay "under" the distribution conf. */
+    public static final String CONF_PRE_OVERLAY = "idp.conf.preoverlay";
+
+    /** The name of a directory to use to populate the initial webapp. */
+    public static final String INITIAL_EDIT_WEBAPP = "idp.initial.edit-webapp";
 
     /** Where to install to.  Default is basedir */
     public static final String TARGET_DIR = "idp.target.dir";
@@ -516,32 +491,75 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return keySize;
     }
 
-    /** Get the property file as a File, or null if it doesn't exist.
-     * Also delete it at the end if we are deleting.
+    /** Get the directory specified as the property as a File, or null if it doesn't exist.
      * @param propName the name to lookup;
      * @return null if the property is not provided a {@link File} otherwise
      * @throws BuildException if the property is supplied but the file doesn't exist.
      */
-    protected File getMergePropertiesFile(final String propName) throws BuildException {
+    protected Path getMergeDir(final String propName) throws BuildException {
+        return getMergePath(propName, true);
+    }
+
+    /** Get the file specified as the property as a File, or null if it doesn't exist.
+     * @param propName the name to lookup;
+     * @return null if the property is not provided a {@link File} otherwise
+     * @throws BuildException if the property is supplied but the file doesn't exist.
+     */
+    protected Path getMergeFile(final String propName) throws BuildException {
+        return getMergePath(propName, false);
+    }
+
+    /** Get the {@link Path} specified as the property as a File, or null if it doesn't exist.
+     * Police for type if required
+     * @param propName the name to lookup;
+     * @param mustBeDir if null do not policy.  Otherwise policy according to value
+     * @return null if the property is not provided a {@link File} otherwise
+     * @throws BuildException if the property is supplied but the file doesn't exist.
+     */
+    private Path getMergePath(final String propName, final Boolean mustBeDir) throws BuildException {
         final String propValue = installerProperties.getProperty(propName);
         if (propValue == null) {
             return null;
         }
-        final Path path = baseDir.resolve(propValue);
-        if (!Files.exists(path)) {
-            log.error("Could not find specified property file {}", path );
+        final Path result = baseDir.resolve(propValue);
+        log.debug("Property '{}' had value '{}' returning path '{}'", propName, propValue, result);
+        if (!Files.exists(result)) {
+            log.error("Could not find specified file specified by property {} ({})", propName, result );
             throw new BuildException("Property file not found");
         }
-        return path.toFile();
+        if (mustBeDir != null) {
+            if (mustBeDir) {
+                if (!Files.isDirectory(result)) {
+                    log.error("Path '{}' supplied by property '{}' was not a directory", result, propName);
+                    throw new BuildException("No a directory");
+                }
+            } else {
+                if (!Files.isDirectory(result)) {
+                    log.error("Path '{}' supplied by property '{}' was not a file", result, propName);
+                    throw new BuildException("No a file");
+                }                
+            }
+        }
+        return result;
     }
 
-    /** {@inheritDoc}.  Default to the file pointed to by {@value #IDP_PROPERTIES_MERGE}. */
-    @Override public File getIdPMergePropertiesFile() throws BuildException {
-        return getMergePropertiesFile(IDP_PROPERTIES_MERGE);
+    /** {@inheritDoc}. */
+    @Override public Path getIdPMergeProperties() throws BuildException {
+        return getMergeFile(IDP_PROPERTIES_MERGE);
     }
 
-    /** {@inheritDoc}.  Default to the file pointed to by {@value #LDAP_PROPERTIES_MERGE}. */
-    @Override public File getLDAPMergePropertiesFile() throws BuildException {
-        return getMergePropertiesFile(LDAP_PROPERTIES_MERGE);
+    /** {@inheritDoc}. */
+    @Override public Path getLDAPMergeProperties() throws BuildException {
+        return getMergeFile(LDAP_PROPERTIES_MERGE);
+    }
+
+    /** {@inheritDoc}. */
+    @Override public Path getConfPreOverlay() throws BuildException {
+        return getMergeFile(CONF_PRE_OVERLAY);
+    }
+
+    /** {@inheritDoc}. */
+    @Override public Path getInitialEditWeb() throws BuildException {
+        return getMergeFile(INITIAL_EDIT_WEBAPP);
     }
 }
