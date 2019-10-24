@@ -80,7 +80,7 @@ public class ScriptedPredicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
+    public static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript(engineName, is);
@@ -96,7 +96,7 @@ public class ScriptedPredicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate resourceScript(final Resource resource) throws ScriptException, IOException {
+    public static ScriptedPredicate resourceScript(final Resource resource) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -108,7 +108,7 @@ public class ScriptedPredicate
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String engineName,
+    public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
         return new ScriptedPredicate(script, "Inline");
@@ -121,7 +121,7 @@ public class ScriptedPredicate
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedPredicate(script, "Inline");
     }
