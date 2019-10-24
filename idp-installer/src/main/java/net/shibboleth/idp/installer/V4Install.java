@@ -340,7 +340,7 @@ public class V4Install extends AbstractInitializableComponent {
         }
         final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
         final GenericApplicationContext context = new ApplicationContextBuilder()
-                .setName(V4Install.class.getName())
+                .setName(MetadataGenerator.class.getName())
                 .setServiceConfigurations(Collections.singletonList(resource))
                 .setContextInitializer(new Initializer())
                 .build();

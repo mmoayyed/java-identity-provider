@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <antlib>
+    <taskdef name="selfsignedcert" classname="net.shibboleth.idp.installer.ant.impl.SelfSignedCertificateGeneratorTask"/>
+    <taskdef name="mergeproperties" classname="net.shibboleth.idp.installer.ant.impl.MergePropertiesTask"/>
+    <taskdef name="rewriteproperties" classname="net.shibboleth.idp.installer.ant.impl.RewritePropertiesTask"/>
     <taskdef name="v4install" classname="net.shibboleth.idp.installer.ant.impl.V4InstallTask"/>
 </antlib>
