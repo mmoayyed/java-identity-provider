@@ -33,7 +33,6 @@
 
                 <!-- Jetty? -->
                 <Control Id="UpdateJetty" Type="CheckBox" X="25" Y="80" Height="17" Width="60" CheckBoxPropertyRef="INSTALL_JETTY" CheckBoxValue="TRUE" Text="Install Jetty"/>
-                <Control Id="InstallJWarn" Type="Text" X="85" Y="83" Height="17" Width="80" Text="{\JettyWarning_Font}Requires Java 1.8" />
 
                 <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
