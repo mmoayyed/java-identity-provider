@@ -67,7 +67,7 @@ public class AbstractSecurityParserTest {
     }
 
     protected <T> T getBean(final String name, final Class<T> claz, final String... files) throws IOException{
-        final Resource[] resources = new Resource[files.length + 1];
+        final Resource[] resources = new Resource[files.length];
         
         for (int i = 0; i < files.length; i++) {
             resources[i] = new ClassPathResource(PATH + files[i]);
