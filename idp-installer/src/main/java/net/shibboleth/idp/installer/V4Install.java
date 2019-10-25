@@ -134,11 +134,14 @@ public class V4Install extends AbstractInitializableComponent {
             log.info("Update from version {} to version {}", installedVersion, currentVersion);
         }
         try {
+            final Path versFile = installerProps.getTargetDir().resolve("dist").resolve(InstallerSupport.VERSION_NAME);
+            if (Files.exists(versFile) ) {
+                InstallerSupport.setReadOnly(versFile, false);
+            }
             final Properties vers = new Properties();
             vers.setProperty(InstallerSupport.VERSION_NAME, currentVersion);
             vers.setProperty(InstallerSupport.PREVIOUS_VERSION_NAME, installedVersion==null?"":installedVersion);
-            final OutputStream out = new FileOutputStream(
-                    installerProps.getTargetDir().resolve("dist").resolve(InstallerSupport.VERSION_NAME).toFile());
+            final OutputStream out = new FileOutputStream(versFile.toFile());
             vers.store(out, "Version file written at " + Instant.now());
         } catch (final IOException e) {
             log.error("Couldn't write version file", e);

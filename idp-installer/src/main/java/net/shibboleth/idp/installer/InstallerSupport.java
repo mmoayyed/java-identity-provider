@@ -58,7 +58,7 @@ public final class InstallerSupport {
 
     /** Method to create a directory and log same.
      * @param dir what to create
-     * @throws BuildException if bad ness occurs
+     * @throws BuildException if badness occurs
      */
     public static void createDirectory(final Path dir) throws BuildException{
         if (!Files.exists(dir)) {
@@ -124,20 +124,46 @@ public final class InstallerSupport {
 
     }
 
-    /** On Windows sets the readOnly attribute recursively.
+    /** On Windows sets the readOnly attribute on a file.
+     * @param file where
+     * @param readOnly what to set it as
+     * @throws BuildException if badness occurs
+     */
+    private static void setReadOnlyFile(final Path file, final boolean readOnly) throws BuildException {
+        if (readOnly) {
+            log.debug("Setting readonly bits on file {}", file);
+        } else {
+            log.debug("Clearing readonly bits on file {}", file);
+        }
+        final String line;
+        if (readOnly) {
+            line = "cmd /c attrib +r \"" + file.toString() + "\"";
+        } else {
+            line = "cmd /c attrib -r \"" + file.toString() + "\"";
+        }
+        final String[] command = line.split(" ");
+
+        final Execute exec = new Execute();
+        exec.setCommandline(command);
+        exec.setAntRun(ANT_PROJECT);
+        try {
+            exec.execute();
+        } catch (final IOException e) {
+            log.warn("{} failed: ", line, e);
+            throw new BuildException(e);
+        }
+    }
+
+    /** On Windows sets the readOnly attribute recursively on a directory.
      * @param directory where
      * @param readOnly what to set it as
-     * @throws BuildException if badness occurrs
+     * @throws BuildException if badness occurs
      */
-    public static void setReadOnly(final Path directory, final boolean readOnly) throws BuildException {
+    public static void setReadOnlyDir(final Path directory, final boolean readOnly) throws BuildException {
         if (readOnly) {
-            log.debug("Setting readonly bits on {}", directory);
+            log.debug("Recursively setting readonly bits on directory {}", directory);
         } else {
-            log.debug("Clearing readonly bits on {}", directory);
-        }
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            log.debug("Not windows. Not [re]setting readonly bit");
-            return;
+            log.debug("Recursively clearing readonly bits on directory {}", directory);
         }
         final String line;
         if (readOnly) {
@@ -159,11 +185,28 @@ public final class InstallerSupport {
         }
     }
 
+    /** On Windows sets the readOnly attribute on a file or recursively on a directory.
+     * @param path where
+     * @param readOnly what to set it as
+     * @throws BuildException if badness occurs
+     */
+    public static void setReadOnly(final Path path, final boolean readOnly) throws BuildException {
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            log.debug("Not windows. Not [re]setting readonly bit");
+            return;
+        }
+        if (Files.isDirectory(path)) {
+            setReadOnlyDir(path, readOnly);
+        } else {
+            setReadOnlyFile(path, readOnly);
+        }
+    }
+
     /** On Non Windows sets the file mode.
      * @param directory where
      * @param permissions what to set
      * @param includes what to include
-     * @throws BuildException if badness occurrs
+     * @throws BuildException if badness occurs
      */
     public static void setMode(final Path directory, final String permissions, final String includes)
             throws BuildException {
@@ -185,7 +228,7 @@ public final class InstallerSupport {
      * @param directory where
      * @param group what to set
      * @param includes what to include
-     * @throws BuildException if badness occurrs
+     * @throws BuildException if badness occurs
      */
     public static void setGroup(final Path directory, final String group, final String includes)
             throws BuildException {
@@ -207,7 +250,7 @@ public final class InstallerSupport {
 
     /** Delete the tree.
      * @param where where
-     * @throws BuildException if badness occurrs
+     * @throws BuildException if badness occurs
      */
     public static void deleteTree(final Path where) throws BuildException {
         if (!Files.exists(where)) {
