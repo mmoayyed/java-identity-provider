@@ -263,9 +263,12 @@ public final class InstallerSupport {
         }
         log.debug("Deleting tree {}", where);
         final Delete delete = new Delete();
+        delete.setProject(ANT_PROJECT);
         delete.setDir(where.toFile());
         delete.setFailOnError(false);
-        delete.setVerbose(log.isDebugEnabled());
+        // Logic for setVerbose is inverted
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=63887
+        delete.setVerbose(!log.isDebugEnabled());
         delete.execute();
     }
     
