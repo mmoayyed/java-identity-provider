@@ -46,6 +46,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 
@@ -95,6 +96,7 @@ public class V4Install extends AbstractInitializableComponent {
     public void execute() throws BuildException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         handleVersioning();
+        checkPreConditions();
 
         createUserDirectories();
         keyManager.execute();
@@ -114,6 +116,33 @@ public class V4Install extends AbstractInitializableComponent {
     public void setMetadataGenerator(final MetadataGenerator what) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         metadataGenerator = what;
+    }
+    
+    /** Check for any preconditions to the install. 
+     * @throws BuildException if one is broken.
+     */
+    protected void checkPreConditions() throws BuildException {
+        final Properties props = currentState.getCurrentlyInstalledProperties();
+        if (props != null) {
+            String value =StringSupport.trimOrNull(props.getProperty("idp.service.relyingparty.resources"));
+            if ("shibboleth.RelyingPartyResolverResources".equals(value)) {
+                log.error("Install failed: system will not work after V4 upgrade");
+                log.error("idp.service.relyingparty.resources is set to shibboleth.RelyingPartyResolverResources");
+                throw new BuildException("Install failed: system will not work after V4 upgrade");
+            }
+            value = StringSupport.trimOrNull(props.getProperty("idp.nameid.saml1.legacyGenerator"));
+            if ("shibboleth.LegacySAML1NameIdentifierGenerator".equals(value)) {
+                log.error("Install failed: system will not work after V4 upgrade");
+                log.error("idp.nameid.saml1.legacyGenerator is set to shibboleth.LegacySAML1NameIdentifierGenerator");
+                throw new BuildException("Install failed: system will not work after V4 upgrade");
+            }
+            value = StringSupport.trimOrNull(props.getProperty("idp.nameid.saml2.legacyGenerator"));
+            if ("shibboleth.LegacySAML2NameIDGenerator".equals(value)) {
+                log.error("Install failed: system will not work after V4 upgrade");
+                log.error("idp.nameid.saml2.legacyGenerator is set to shibboleth.LegacySAML2NameIDGenerator");
+                throw new BuildException("Install failed: system will not work after V4 upgrade");                
+            }
+        }
     }
 
     /** Report the to be installed and (if there is one) current versions. 

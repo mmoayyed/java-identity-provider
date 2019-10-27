@@ -17,8 +17,10 @@
 
 package net.shibboleth.idp.installer.impl;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -32,8 +34,10 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.installer.CurrentInstallState;
 import net.shibboleth.idp.installer.InstallerProperties;
 import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Tells the installers about the current install state. */
 public final class CurrentInstallStateImpl extends AbstractInitializableComponent implements CurrentInstallState {
@@ -52,6 +56,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
     /** Old Version. */
     private String oldVersion;
+    
+    /** Previous props. */
+    private Properties props;
 
     /** Constructor.
      * @param installerProps the installer situation.
@@ -95,12 +102,49 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         }
     }
 
+    /** Populate {{@link #props} from idp.properties and other files pointed to by
+     * {@value IdPPropertiesApplicationContextInitializer#IDP_ADDITIONAL_PROPERTY}.
+     */
+    private void setupPreviousProps() {
+        if (!isIdPPropertiesPresent()) {
+            return ;
+        }
+        props = new Properties();
+        try {
+            final File idpPropsFile = targetDir.resolve("conf").resolve("idp.properties").toFile();
+            final InputStream idpPropsStream = new FileInputStream(idpPropsFile);
+            props.load(idpPropsStream);
+        } catch (final IOException e) {
+            log.error("Error loading idp.properties", e);
+            return;
+        }
+        final String additionalSources =
+                props.getProperty(IdPPropertiesApplicationContextInitializer.IDP_ADDITIONAL_PROPERTY);
+        if (additionalSources != null) {
+            final String[] sources = additionalSources.split(",");
+            for (final String source : sources) {
+                final String trimmedSource = StringSupport.trimOrNull(source);
+                if (trimmedSource == null) {
+                    continue;
+                }
+                final Path path = Path.of(targetDir + trimmedSource);
+                try {
+                    final InputStream stream = new FileInputStream(path.toFile());
+                    props.load(stream);
+                } catch (final IOException e) {
+                    log.error("Error loading {}", path, e);
+                }
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         idpPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("idp.properties"));
         ldapPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("ldap.properties"));
         findPreviousVersion();
+        setupPreviousProps();
     }
 
     /** {@inheritDoc} */
@@ -116,5 +160,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     public boolean isLDAPPropertiesPresent() {
         return ldapPropertiesPresent;
+    }
+
+    /** {@inheritDoc} */
+    @Nullable public Properties getCurrentlyInstalledProperties() {
+        return props;
     }
 }

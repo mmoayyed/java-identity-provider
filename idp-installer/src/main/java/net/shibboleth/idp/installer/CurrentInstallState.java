@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.installer;
 
+import java.util.Properties;
+
 import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** Tells the installers about the current install state. */
@@ -44,4 +47,11 @@ public interface CurrentInstallState extends InitializableComponent {
      * @return if it was.
      */
     boolean isLDAPPropertiesPresent();
+ 
+    /** Get the properties associated with the current configuration.
+     * This comes idp.properties and anything it points to via
+     * {@value IdPPropertiesApplicationContextInitializer#IDP_ADDITIONAL_PROPERTY}.
+     * @return the properties, or null if this is a new install.
+     */
+    @Nullable Properties getCurrentlyInstalledProperties();
 }
