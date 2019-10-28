@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -24,7 +25,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.collections.Lists;
 
 /** Unit test for {@link AttributeResolutionContext}. */
 
@@ -50,7 +50,7 @@ public class AttributeResolverContextTest {
         Assert.assertEquals(context.getResolvedIdPAttributes().size(), 1);
         Assert.assertSame(context.getResolvedIdPAttributes().values().iterator().next(), attr);
                 
-        context.setRequestedIdPAttributeNames(Lists.newArrayList("Foo", null, "bar"));
+        context.setRequestedIdPAttributeNames(Arrays.asList("Foo", "bar"));
         Assert.assertEquals(context.getRequestedIdPAttributeNames().size(), 2);
         Assert.assertTrue(context.getRequestedIdPAttributeNames().contains("Foo"));
         Assert.assertTrue(context.getRequestedIdPAttributeNames().contains("bar"));
