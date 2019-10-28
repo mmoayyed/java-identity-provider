@@ -54,12 +54,6 @@
         <value>%{idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
 
-    <!-- This set of resources supports a legacy 2.x relying-party.xml file. -->
-    <util:list id="shibboleth.LegacyRelyingPartyResolverResources">
-        <value>%{idp.home}/conf/relying-party.xml</value>
-        <value>%{idp.home}/system/conf/legacy-relying-party-defaults.xml</value>
-    </util:list>
-
     <util:list id="shibboleth.MetadataResolverResources">
         <value>%{idp.home}/conf/metadata-providers.xml</value>
         <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
