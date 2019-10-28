@@ -125,7 +125,7 @@ public class V4Install extends AbstractInitializableComponent {
         final Properties props = currentState.getCurrentlyInstalledProperties();
         if (props != null) {
             String value =StringSupport.trimOrNull(props.getProperty("idp.service.relyingparty.resources"));
-            if ("shibboleth.RelyingPartyResolverResources".equals(value)) {
+            if ("shibboleth.LegacyRelyingPartyResolverResources".equals(value)) {
                 log.error("Install failed: system will not work after V4 upgrade");
                 log.error("idp.service.relyingparty.resources is set to shibboleth.RelyingPartyResolverResources");
                 throw new BuildException("Install failed: system will not work after V4 upgrade");
