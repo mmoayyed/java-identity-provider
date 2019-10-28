@@ -111,13 +111,6 @@ public class AuthenticationFlowDescriptorTest {
         descriptor.getSupportedPrincipals().add(baz);
         Assert.assertEquals(descriptor.getSupportedPrincipals(UsernamePrincipal.class).size(), 3);
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(baz));
-        
-        try {
-            descriptor.getSupportedPrincipals().add(null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            
-        }
     }
     
     /** Tests handling of active/inactive checks. */
