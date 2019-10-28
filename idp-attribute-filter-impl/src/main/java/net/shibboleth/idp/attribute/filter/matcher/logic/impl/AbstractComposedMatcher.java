@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -29,15 +29,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
 
 /**
  * Base class for {@link Matcher} implementations that are compositions of two or more other
@@ -55,13 +53,12 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
      */
     public void setSubsidiaries(@Nullable @NullableElements final Collection<Matcher> composedMatchers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        final ArrayList<Matcher> checkedMatchers = new ArrayList<>();
-
+        
         if (composedMatchers != null) {
-            CollectionSupport.addIf(checkedMatchers, composedMatchers, Predicates.notNull());
+            matchers = List.copyOf(Collections2.filter(composedMatchers, Predicates.notNull()));
+        } else {
+            matchers = Collections.emptyList();
         }
-
-        matchers = ImmutableList.copyOf(Iterables.filter(checkedMatchers, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */

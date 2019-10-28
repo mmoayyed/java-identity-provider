@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.context;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +31,6 @@ import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -43,8 +41,6 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.filter.AttributeFilter} interface. */
 @NotThreadSafe
@@ -160,13 +156,16 @@ public final class AttributeFilterContext extends BaseContext {
      */
     @Nonnull public AttributeFilterContext setPrefilteredIdPAttributes(
             @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
-        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
-        prefilteredAttributes = new HashMap<>(checkedAttributes.size());
-
-        for (final IdPAttribute attribute : checkedAttributes) {
-            prefilteredAttributes.put(attribute.getId(), attribute);
+        if (attributes != null) {
+            prefilteredAttributes = new HashMap<>(attributes.size());
+            for (final IdPAttribute attribute : attributes) {
+                if (attribute != null) {
+                    prefilteredAttributes.put(attribute.getId(), attribute);
+                }
+            }
+        } else {
+            prefilteredAttributes = new HashMap<>();
         }
         
         return this;
@@ -185,16 +184,24 @@ public final class AttributeFilterContext extends BaseContext {
      * Sets the attributes that have been filtered.
      * 
      * @param attributes attributes that have been filtered
+     * 
+     * @return this context
      */
-    public void setFilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
-        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
-
-        filteredAttributes = new HashMap<>(checkedAttributes.size());
-
-        for (final IdPAttribute attribute : checkedAttributes) {
-            filteredAttributes.put(attribute.getId(), attribute);
+    @Nonnull public AttributeFilterContext setFilteredIdPAttributes(
+            @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+        
+        if (attributes != null) {
+            filteredAttributes = new HashMap<>(attributes.size());
+            for (final IdPAttribute attribute : attributes) {
+                if (attribute != null) {
+                    filteredAttributes.put(attribute.getId(), attribute);
+                }
+            }
+        } else {
+            filteredAttributes = new HashMap<>();
         }
+        
+        return this;
     }
     
     /**

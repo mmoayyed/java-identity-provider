@@ -62,10 +62,8 @@ import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a
@@ -463,11 +461,12 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     public void setAuthenticationFlowDescriptors(
             @Nonnull @NonnullElements final Iterable<AuthenticationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(flows, "Flow collection cannot be null");
 
         flowDescriptorMap.clear();
-        for (final AuthenticationFlowDescriptor desc : Iterables.filter(flows, Predicates.notNull())) {
-            flowDescriptorMap.put(desc.getId(), desc);
+        for (final AuthenticationFlowDescriptor desc : Constraint.isNotNull(flows, "Flow collection cannot be null")) {
+            if (desc != null) { 
+                flowDescriptorMap.put(desc.getId(), desc);
+            }
         }
     }
 

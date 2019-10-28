@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.admin.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -27,9 +26,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -83,7 +79,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (langs != null) {
-            fallbackLanguages = new ArrayList<>(Collections2.filter(langs, Predicates.notNull()));
+            fallbackLanguages = List.copyOf(langs);
         } else {
             fallbackLanguages = null;
         }

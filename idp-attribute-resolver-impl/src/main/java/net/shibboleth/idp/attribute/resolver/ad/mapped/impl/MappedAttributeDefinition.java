@@ -50,8 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
 
 /**
  * Implementation of Mapped Attributes. <br/>
@@ -93,7 +92,11 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        valueMaps = ImmutableSet.copyOf(Iterables.filter(mappings, Predicates.notNull()));
+        if (mappings != null) {
+            valueMaps = Set.copyOf(Collections2.filter(mappings, Predicates.notNull()));
+        } else {
+            valueMaps = Collections.emptySet();
+        }
     }
 
     /**

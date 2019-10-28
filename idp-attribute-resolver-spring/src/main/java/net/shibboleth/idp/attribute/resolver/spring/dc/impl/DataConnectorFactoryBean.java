@@ -21,7 +21,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -45,11 +44,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /**
  * A factory bean to collect the parameterization that goes onto a {@link AbstractDataConnector}.
@@ -135,8 +129,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * @param theResources the resources to look at
      */
     public void setResources(@Nonnull @NonnullElements final List<Resource> theResources) {
-        resources =
-                ImmutableList.<Resource> builder().addAll(Iterables.filter(theResources, Predicates.notNull())).build();
+        resources = List.copyOf(Constraint.isNotNull(theResources, "Resources cannot be null"));
     }
 
     /**
@@ -173,7 +166,8 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      */
     public void setBeanFactoryPostProcessors(@Nonnull @NonnullElements 
             final List<BeanFactoryPostProcessor> processors) {
-        factoryPostProcessors = new ArrayList<>(Collections2.filter(processors, Predicates.notNull()));
+        factoryPostProcessors = List.copyOf(
+                Constraint.isNotNull(processors, "BeanFactoryPostProcessors cannot be null"));
     }
 
     /**
@@ -191,7 +185,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * @param processors bean post processors to apply
      */
     public void setBeanPostProcessors(@Nonnull @NonnullElements final List<BeanPostProcessor> processors) {
-        postProcessors = new ArrayList<>(Collections2.filter(processors, Predicates.notNull()));
+        postProcessors = List.copyOf(Constraint.isNotNull(processors, "BeanPostProcessors cannot be null"));
     }
 
     /**

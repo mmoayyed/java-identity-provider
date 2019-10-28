@@ -20,10 +20,10 @@ package net.shibboleth.idp.admin.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,9 +43,6 @@ import org.opensaml.security.crypto.KeySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Action that creates private key objects and injects them into existing
@@ -87,8 +84,8 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
     public void setCredentials(@Nullable @NonnullElements final Collection<MutableCredential> creds) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (creds != null && !creds.isEmpty()) {
-            credentials = new ArrayList<>(Collections2.filter(creds, Predicates.notNull()));
+        if (creds != null) {
+            credentials = List.copyOf(creds);
         } else {
             credentials = Collections.emptyList();
         }
@@ -102,8 +99,8 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
     public void setKeyResources(@Nullable @NonnullElements final Collection<Resource> keys) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (keys != null && !keys.isEmpty()) {
-            keyResources = new ArrayList<>(Collections2.filter(keys, Predicates.notNull()));
+        if (keys != null) {
+            keyResources = List.copyOf(keys);
         } else {
             keyResources = Collections.emptyList();
         }

@@ -17,15 +17,11 @@
 
 package net.shibboleth.idp.session.logic;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
 import net.shibboleth.idp.session.SPSession;
@@ -39,7 +35,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class LogoutPropagationFlowDescriptorSelector implements Function<SPSession,LogoutPropagationFlowDescriptor> {
 
     /** List of available flows. */
-    private final List<LogoutPropagationFlowDescriptor> availableFlows;
+    @Nonnull @NonnullElements private final List<LogoutPropagationFlowDescriptor> availableFlows;
 
     /**
      * Constructor.
@@ -48,9 +44,7 @@ public class LogoutPropagationFlowDescriptorSelector implements Function<SPSessi
      */
     public LogoutPropagationFlowDescriptorSelector(
             @Nonnull @NonnullElements @ParameterName(name="flows") final List<LogoutPropagationFlowDescriptor> flows) {
-        Constraint.isNotNull(flows, "Flows cannot be null");
-
-        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flows cannot be null"));
     }
 
     /** {@inheritDoc} */

@@ -40,12 +40,10 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -94,10 +92,8 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
      * 
      * @param statuses successful codes
      */
-    public void setAcceptStatuses(@Nonnull final Collection<Integer> statuses) {
-        Constraint.isNotNull(statuses, "Statuses cannot be null");
-        
-        acceptStatuses = new HashSet<>(Collections2.filter(statuses, Predicates.notNull()));
+    public void setAcceptStatuses(@Nonnull @NonnullElements final Collection<Integer> statuses) {
+        acceptStatuses = Set.copyOf(Constraint.isNotNull(statuses, "Statuses cannot be null"));
     }
 
     /**
@@ -105,10 +101,9 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
      * 
      * @param types types to allow
      */
-    public void setAcceptTypes(@Nonnull final Collection<String> types) {
-        Constraint.isNotNull(types, "Types cannot be null");
-        
-        acceptTypes = new HashSet<>(StringSupport.normalizeStringCollection(types));
+    public void setAcceptTypes(@Nonnull @NonnullElements final Collection<String> types) {
+        acceptTypes = Set.copyOf(StringSupport.normalizeStringCollection(
+                Constraint.isNotNull(types, "Types cannot be null")));
     }
     
     /**

@@ -31,8 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -90,7 +89,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
         final ArrayList<AttributeRule> checkedPolicies = new ArrayList<>();
         CollectionSupport.addIf(checkedPolicies, attributeRules, Predicates.notNull());
         if (null != attributeRules) {
-            valuePolicies = ImmutableList.copyOf(Iterables.filter(attributeRules, Predicates.notNull()));
+            valuePolicies = List.copyOf(Collections2.filter(attributeRules, Predicates.notNull()));
         } else {
             valuePolicies = Collections.emptyList();
         }

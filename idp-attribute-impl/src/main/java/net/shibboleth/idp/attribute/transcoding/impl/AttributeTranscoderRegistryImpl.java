@@ -49,9 +49,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
@@ -126,14 +124,11 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
      */
     public void setTranscoderRegistry(@Nonnull @NonnullElements final Collection<TranscodingRule> mappings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(mappings, "Mappings cannot be null");
         
        transcodingRegistry.clear();
-
-        if (mappings == null) {
-            return;
-        }
         
-        for (final TranscodingRule mapping : Collections2.filter(mappings, Predicates.notNull())) {
+        for (final TranscodingRule mapping : mappings) {
             
             final String internalId = StringSupport.trimOrNull(mapping.get(PROP_ID, String.class));
             if (internalId != null) {

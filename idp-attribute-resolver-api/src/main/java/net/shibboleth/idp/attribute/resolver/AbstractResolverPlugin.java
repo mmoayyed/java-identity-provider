@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -170,9 +169,11 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final HashSet<ResolverAttributeDefinitionDependency> checkedDeps = new HashSet<>();
-        CollectionSupport.addIf(checkedDeps, dependencies, Predicates.notNull());
-        attributeDependencies = Collections.unmodifiableSet(checkedDeps);
+        if (dependencies != null) {
+            attributeDependencies = Set.copyOf(Collections2.filter(dependencies, Predicates.notNull()));
+        } else {
+            attributeDependencies = Collections.emptySet(); 
+        }
     }
     
     /**
@@ -185,9 +186,11 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final HashSet<ResolverDataConnectorDependency> checkedDeps = new HashSet<>();
-        CollectionSupport.addIf(checkedDeps, dependencies, Predicates.notNull());
-        dataConnectorDependencies = Collections.unmodifiableSet(checkedDeps);
+        if (dependencies != null) {
+            dataConnectorDependencies = Set.copyOf(Collections2.filter(dependencies, Predicates.notNull()));
+        } else {
+            dataConnectorDependencies = Collections.emptySet();
+        }
     }
 
 

@@ -32,8 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -89,7 +88,11 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      */
     public void setSourceValues(@Nullable @NullableElements final Collection<SourceValue> newValues) {
 
-        sourceValues = ImmutableSet.copyOf(Iterables.filter(newValues, Predicates.notNull()));
+        if (newValues != null) {
+            sourceValues = Set.copyOf(Collections2.filter(newValues, Predicates.notNull()));
+        } else {
+            sourceValues = Collections.emptySet();
+        }
     }
 
     /**

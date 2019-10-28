@@ -228,7 +228,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
                 // TODO: not sure what the right answer is here
                 log.debug("{} The peer's metadata did not contain requested attribute information"
                         + ", returning all the input values", getLogPrefix());
-                return ImmutableSet.copyOf(attribute.getValues());
+                return Set.copyOf(attribute.getValues());
             }
             log.debug("{} The peer's metadata did not contain requested attribute information"
                     + ", returning no values", getLogPrefix());

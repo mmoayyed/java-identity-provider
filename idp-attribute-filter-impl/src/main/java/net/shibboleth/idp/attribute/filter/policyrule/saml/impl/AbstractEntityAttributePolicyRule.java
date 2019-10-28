@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,8 +59,6 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 
 /**
@@ -281,9 +280,8 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
                         new Object[] {getLogPrefix(), name, getAttributeName(), getNameFormat(),});
                 
                 valueAccumulator.addAll(
-                        Collections2.filter(
-                                Collections2.transform(entityAttribute.getAttributeValues(), this::getStringValue),
-                                Predicates.notNull()));
+                        entityAttribute.getAttributeValues().stream().filter(v -> v != null).map(
+                                this::getStringValue).collect(Collectors.toList()));
             }
         }
     }

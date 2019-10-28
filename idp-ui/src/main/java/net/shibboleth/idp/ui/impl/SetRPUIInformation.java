@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.ui.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -40,9 +39,6 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
@@ -51,6 +47,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Action to populate the {@link ProfileRequestContext} with a {@link RelyingPartyUIContext}. The contents are populated
@@ -149,11 +146,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (langs != null) {
-            fallbackLanguages = new ArrayList<>(Collections2.filter(langs, Predicates.notNull()));
-        } else {
-            fallbackLanguages = null;
-        }
+        fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 
     /**

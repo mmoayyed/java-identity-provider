@@ -21,7 +21,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -56,7 +55,6 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * A descriptor for an administrative flow.
@@ -201,7 +199,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      */
     public void setDisplayNames(@Nonnull @NonnullElements final Collection<LangBearingString> displayNames) {
         uiInfo.getDisplayNames().clear();
-        for (final LangBearingString s : Collections2.filter(displayNames, Predicates.notNull())) {
+        for (final LangBearingString s : displayNames) {
             final DisplayName displayName =
                     ((SAMLObjectBuilder<DisplayName>) builderFactory.<DisplayName>getBuilderOrThrow(
                             DisplayName.DEFAULT_ELEMENT_NAME)).buildObject();
@@ -218,7 +216,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      */
     public void setDescriptions(@Nonnull @NonnullElements final Collection<LangBearingString> descriptions) {
         uiInfo.getDescriptions().clear();
-        for (final LangBearingString s : Collections2.filter(descriptions, Predicates.notNull())) {
+        for (final LangBearingString s : descriptions) {
             final Description desc =
                     ((SAMLObjectBuilder<Description>) builderFactory.<Description>getBuilderOrThrow(
                             Description.DEFAULT_ELEMENT_NAME)).buildObject();
@@ -236,7 +234,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      */
     public void setLogos(@Nonnull @NonnullElements final Collection<Logo> logos) {
         uiInfo.getLogos().clear();
-        for (final Logo src : Collections2.filter(logos, Predicates.notNull())) {
+        for (final Logo src : logos) {
             final org.opensaml.saml.ext.saml2mdui.Logo logo =
                     ((SAMLObjectBuilder<org.opensaml.saml.ext.saml2mdui.Logo>) 
                             builderFactory.<org.opensaml.saml.ext.saml2mdui.Logo>getBuilderOrThrow(
@@ -256,7 +254,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      */
     public void setInformationURLs(@Nonnull @NonnullElements final Collection<LangBearingString> urls) {
         uiInfo.getInformationURLs().clear();
-        for (final LangBearingString s : Collections2.filter(urls, Predicates.notNull())) {
+        for (final LangBearingString s : urls) {
             final InformationURL url =
                     ((SAMLObjectBuilder<InformationURL>) builderFactory.<InformationURL>getBuilderOrThrow(
                             InformationURL.DEFAULT_ELEMENT_NAME)).buildObject();
@@ -273,7 +271,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      */
     public void setPrivacyStatementURLs(@Nonnull @NonnullElements final Collection<LangBearingString> urls) {
         uiInfo.getPrivacyStatementURLs().clear();
-        for (final LangBearingString s : Collections2.filter(urls, Predicates.notNull())) {
+        for (final LangBearingString s : urls) {
             final PrivacyStatementURL url =
                     ((SAMLObjectBuilder<PrivacyStatementURL>) builderFactory.<PrivacyStatementURL>getBuilderOrThrow(
                             PrivacyStatementURL.DEFAULT_ELEMENT_NAME)).buildObject();
@@ -350,8 +348,11 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(
-                defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext));
+        final Collection<Principal> methods = defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext);
+        if (methods != null) {
+            return List.copyOf(methods);
+        }
+        return Collections.emptyList();
     }
     
     /**
@@ -362,8 +363,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     public void setDefaultAuthenticationMethods(@Nullable @NonnullElements final Collection<Principal> methods) {
 
         if (methods != null) {
-            defaultAuthenticationMethodsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(Collections2.filter(methods, Predicates.notNull())));
+            defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(List.copyOf(methods));
         } else {
             defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -382,7 +382,11 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableSet(authenticationFlowsLookupStrategy.apply(profileRequestContext));
+        final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return Set.copyOf(flows);
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -394,7 +398,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
 
         if (flows != null) {
             authenticationFlowsLookupStrategy =
-                    FunctionSupport.constant(new HashSet<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(Set.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }

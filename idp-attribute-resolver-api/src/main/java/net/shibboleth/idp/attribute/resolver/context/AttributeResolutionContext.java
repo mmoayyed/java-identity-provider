@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.context;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,10 +44,6 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 import org.opensaml.messaging.context.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
@@ -83,8 +79,8 @@ public final class AttributeResolutionContext extends BaseContext {
     /** Constructor. */
     public AttributeResolutionContext() {
         allowCachedResults = true;
-        requestedAttributeNames = new HashSet<>();
-        resolvedAttributes = new HashMap<>();
+        requestedAttributeNames = Collections.emptySet();
+        resolvedAttributes = Collections.emptyMap();
     }
     
     /**
@@ -282,10 +278,8 @@ public final class AttributeResolutionContext extends BaseContext {
      */
     @Nullable public AttributeResolutionContext setRequestedIdPAttributeNames(
             @Nonnull @NonnullElements final Collection<String> names) {
-        Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null");
-
-        requestedAttributeNames.clear();
-        requestedAttributeNames.addAll(Collections2.filter(names, Predicates.notNull()));
+        requestedAttributeNames = Set.copyOf(
+                Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null"));
         
         return this;
     }
@@ -296,7 +290,7 @@ public final class AttributeResolutionContext extends BaseContext {
      * @return set of resolved attributes
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String, IdPAttribute> getResolvedIdPAttributes() {
-        return ImmutableMap.copyOf(resolvedAttributes);
+        return resolvedAttributes;
     }
 
     /**
@@ -308,15 +302,18 @@ public final class AttributeResolutionContext extends BaseContext {
      */
     @Nullable public AttributeResolutionContext setResolvedIdPAttributes(
             @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        resolvedAttributes = new HashMap<>();
-
+        
+        final Map<String,IdPAttribute> copy = new HashMap<>();
+        
         if (attributes != null) {
             for (final IdPAttribute attribute : attributes) {
                 if (attribute != null) {
-                    resolvedAttributes.put(attribute.getId(), attribute);
+                    copy.put(attribute.getId(), attribute);
                 }
             }
         }
+        
+        resolvedAttributes = Map.copyOf(copy);
         
         return this;
     }

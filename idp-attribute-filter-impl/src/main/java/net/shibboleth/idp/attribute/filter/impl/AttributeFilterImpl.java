@@ -51,8 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 /** Service that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
@@ -62,10 +60,10 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeFilterImpl.class);
 
     /** Filter policies used by this engine. */
-    private final List<AttributeFilterPolicy> filterPolicies;
+    @Nonnull @NonnullElements private final List<AttributeFilterPolicy> filterPolicies;
 
     /** Log prefix. */
-    private String logPrefix;
+    @Nullable private String logPrefix;
 
     /** Strategy to get the {@link MetricContext} for timing. */
     @Nonnull private Function<AttributeFilterContext,MetricContext> metricContextLookupStrategy;
@@ -82,7 +80,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
 
         final ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
-        filterPolicies = ImmutableList.copyOf(Iterables.filter(checkedPolicies, Predicates.notNull()));
+        filterPolicies = List.copyOf(checkedPolicies);
         
         metricContextLookupStrategy = new ChildContextLookup<>(MetricContext.class).compose(new RootContextLookup<>());
     }

@@ -33,8 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -100,7 +98,6 @@ public class TranscodingRuleLoader {
         
         rules = maps
                 .stream()
-                .filter(Predicates.notNull())
                 .map(m -> {
                     return new TranscodingRule(m);
                     })

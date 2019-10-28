@@ -18,10 +18,10 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.security.KeyException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,9 +38,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Action that sets keystore and key passwords for one or more DataSealer KeyStrategy
@@ -83,8 +80,8 @@ public class UnlockDataSealers extends AbstractProfileAction {
     public void setKeyStrategies(@Nullable @NonnullElements final Collection<BasicKeystoreKeyStrategy> strategies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (strategies != null && !strategies.isEmpty()) {
-            keyStrategies = new ArrayList<>(Collections2.filter(strategies, Predicates.notNull()));
+        if (strategies != null) {
+            keyStrategies = List.copyOf(strategies);
         } else {
             keyStrategies = Collections.emptyList();
         }
