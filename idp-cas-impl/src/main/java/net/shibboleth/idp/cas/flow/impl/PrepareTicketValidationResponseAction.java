@@ -61,9 +61,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 /**
  * Prepares {@link TicketValidationResponse} for use in CAS protocol response views. Possible outcomes:
  * <ul>
@@ -215,7 +212,7 @@ public class PrepareTicketValidationResponseAction extends
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
                 return;
             }
-            for (final IdPAttribute attribute : Collections2.filter(inputAttributes, Predicates.notNull())) {
+            for (final IdPAttribute attribute : inputAttributes) {
                 encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
             }
         } finally {

@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.principal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -29,8 +30,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Principal that wraps a set of proxied authentication authorities.
@@ -55,7 +54,7 @@ public class ProxyAuthenticationPrincipal implements Principal {
     public ProxyAuthenticationPrincipal(@Nonnull @NonnullElements final Collection<String> proxiedAuthorities) {
         Constraint.isNotNull(proxiedAuthorities, "Proxied authority collection cannot be null");
         
-        authorities = new ArrayList<>(Collections2.filter(proxiedAuthorities, Predicates.notNull()));
+        authorities = new ArrayList<>(List.copyOf(proxiedAuthorities));
     }
 
     /** {@inheritDoc} */

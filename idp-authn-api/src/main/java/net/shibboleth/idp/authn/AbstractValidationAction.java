@@ -20,7 +20,8 @@ package net.shibboleth.idp.authn;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -55,11 +56,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -168,7 +165,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @return classified error message map
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,Collection<String>> getClassifiedErrors() {
-        return ImmutableMap.copyOf(classifiedMessages);
+        // For now this is using the older wrapper approach to guarding a live map to maintain the map insertion order.
+        return Collections.unmodifiableMap(classifiedMessages);
     }
     
     /**
@@ -180,12 +178,11 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(messages, "Map of classified messages cannot be null");
         
-        classifiedMessages = new HashMap<>();
+        classifiedMessages = new LinkedHashMap<>();
         for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
             if (entry.getKey() != null && !entry.getKey().isEmpty()
                     && entry.getValue() != null && !entry.getValue().isEmpty()) {
-                classifiedMessages.put(entry.getKey(),
-                        ImmutableList.copyOf(Collections2.filter(entry.getValue(), Predicates.notNull())));
+                classifiedMessages.put(entry.getKey(), List.copyOf(entry.getValue()));
             }
         }
     }
@@ -254,7 +251,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         getSubject().getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {
-            getSubject().getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+            getSubject().getPrincipals().addAll(Set.copyOf(principals));
         }
     }
  

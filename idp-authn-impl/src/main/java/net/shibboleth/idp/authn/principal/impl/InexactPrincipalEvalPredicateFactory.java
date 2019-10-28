@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.principal.impl;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,9 +33,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -83,7 +82,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         
         for (final Map.Entry<String,Collection<String>> e : rules.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey()) && e.getValue() != null) {
-                matchingRules.putAll(e.getKey(), Collections2.filter(e.getValue(), Predicates.notNull()));
+                matchingRules.putAll(e.getKey(), List.copyOf(e.getValue()));
             }
         }
     }

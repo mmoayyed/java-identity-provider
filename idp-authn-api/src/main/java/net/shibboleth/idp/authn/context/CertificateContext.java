@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.context;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,9 +30,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Context that carries a {@link Certificate} to be validated.
@@ -93,7 +91,7 @@ public final class CertificateContext extends BaseContext {
         Constraint.isNotNull(certs, "Intermediate certificate collection cannot be null");
         
         intermediates.clear();
-        intermediates.addAll(Collections2.filter(certs, Predicates.notNull()));
+        intermediates.addAll(List.copyOf(certs));
         
         return this;
     }

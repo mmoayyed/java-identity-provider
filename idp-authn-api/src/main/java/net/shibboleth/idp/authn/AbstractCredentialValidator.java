@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * An abstract {@link CredentialValidator} that handles some common behavior.
@@ -105,8 +104,8 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        if (principals != null && !principals.isEmpty()) {
-            final Collection<Principal> copy = Collections2.filter(principals, Predicates.notNull());
+        if (principals != null) {
+            final Collection<Principal> copy = Set.copyOf(principals);
             if (!copy.isEmpty()) {
                 customPrincipals = new Subject();
                 customPrincipals.getPrincipals().addAll(copy);

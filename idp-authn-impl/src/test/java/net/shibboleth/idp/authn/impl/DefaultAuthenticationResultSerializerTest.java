@@ -37,7 +37,6 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
-import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -164,7 +163,7 @@ public class DefaultAuthenticationResultSerializerTest {
         final PasswordPrincipalSerializer pwSerializer = new PasswordPrincipalSerializer();
         pwSerializer.setDataSealer(sealer);
         pwSerializer.initialize();
-        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(pwSerializer));
+        serializer.setPrincipalSerializers(Collections.singletonList(pwSerializer));
         serializer.initialize();
         
         final AuthenticationResult result = createResult("test", new Subject());
@@ -205,7 +204,7 @@ public class DefaultAuthenticationResultSerializerTest {
 
     @Test public void testLdap() throws Exception {
         final LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
-        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(lpSerializer));
+        serializer.setPrincipalSerializers(Collections.singletonList(lpSerializer));
         serializer.initialize();
         
         final AuthenticationResult result = createResult("test", new Subject());
@@ -238,7 +237,7 @@ public class DefaultAuthenticationResultSerializerTest {
 
     @Test public void testIdPAttribute() throws Exception {
         final IdPAttributePrincipalSerializer attrSerializer = new IdPAttributePrincipalSerializer();
-        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(attrSerializer));
+        serializer.setPrincipalSerializers(Collections.singletonList(attrSerializer));
         serializer.initialize();
         
         final AuthenticationResult result = createResult("test", new Subject());
@@ -271,7 +270,7 @@ public class DefaultAuthenticationResultSerializerTest {
 
     @Test public void testProxyAuthentication() throws Exception {
         final ProxyAuthenticationPrincipalSerializer proxySerializer = new ProxyAuthenticationPrincipalSerializer();
-        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(proxySerializer));
+        serializer.setPrincipalSerializers(Collections.singletonList(proxySerializer));
         serializer.initialize();
         
         final AuthenticationResult result = createResult("test", new Subject());

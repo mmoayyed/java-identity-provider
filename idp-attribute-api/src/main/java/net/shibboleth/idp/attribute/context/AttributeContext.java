@@ -35,8 +35,6 @@ import org.opensaml.messaging.context.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * A {@link BaseContext} that tracks a set of attributes. Usually the tracked attributes are about a particular user and
  * associated with a particular service request.
@@ -86,7 +84,7 @@ public final class AttributeContext extends BaseContext {
             }
         }
 
-        attributes = ImmutableMap.copyOf(checkedAttributes);
+        attributes = Map.copyOf(checkedAttributes);
     }
     
     
@@ -124,6 +122,6 @@ public final class AttributeContext extends BaseContext {
             }
         }
 
-        unfilteredAttributes = ImmutableMap.copyOf(checkedAttributes);
+        unfilteredAttributes = Map.copyOf(checkedAttributes);
     }
 }

@@ -18,10 +18,8 @@
 package net.shibboleth.idp.authn.config;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -32,8 +30,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
@@ -72,7 +68,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
      */
     public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
             @Nonnull @NonnullElements final List<Principal> methods) {
-        this(id, methods, Collections.<String>emptySet(), Collections.<String>emptyList());
+        this(id, methods, Collections.emptySet(), Collections.emptyList());
     }
 
     /**
@@ -97,7 +93,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return ImmutableList.copyOf(defaultAuthenticationMethods);
+        return defaultAuthenticationMethods;
     }
     
     /**
@@ -106,15 +102,13 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
      * @param methods   default authentication methods to use
      */
     public void setDefaultAuthenticationMethods(@Nonnull @NonnullElements final List<Principal> methods) {
-        Constraint.isNotNull(methods, "List of methods cannot be null");
-        
-        defaultAuthenticationMethods = new ArrayList<>(Collections2.filter(methods, Predicates.notNull()));
+        defaultAuthenticationMethods = List.copyOf(Constraint.isNotNull(methods, "List of methods cannot be null"));
     }
     
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return ImmutableList.copyOf(nameIDFormatPrecedence);
+        return nameIDFormatPrecedence;
     }
 
     /**
@@ -125,7 +119,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
-        nameIDFormatPrecedence = new ArrayList<>(StringSupport.normalizeStringCollection(formats));
+        nameIDFormatPrecedence = List.copyOf(StringSupport.normalizeStringCollection(formats));
     }
 
     /** {@inheritDoc} */
@@ -142,7 +136,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        authenticationFlows = new HashSet<>(StringSupport.normalizeStringCollection(flows));
+        authenticationFlows = Set.copyOf(StringSupport.normalizeStringCollection(flows));
     }
 
     /** {@inheritDoc} */
@@ -159,7 +153,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        postAuthenticationFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+        postAuthenticationFlows = List.copyOf(StringSupport.normalizeStringCollection(flows));
     }
 
     /** {@inheritDoc} */

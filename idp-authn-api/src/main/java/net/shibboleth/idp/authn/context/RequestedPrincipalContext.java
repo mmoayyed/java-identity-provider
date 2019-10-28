@@ -40,10 +40,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-
 /**
  * A context that holds information about an authentication request's
  * requirement for a specific custom {@link Principal}.
@@ -151,9 +147,8 @@ public final class RequestedPrincipalContext extends BaseContext {
      */
     @Nonnull public RequestedPrincipalContext setRequestedPrincipals(
             @Nonnull @NonnullElements final List<Principal> principals) {
-        Constraint.isNotNull(principals, "Principal list cannot be null");
         
-        requestedPrincipals = ImmutableList.copyOf(Collections2.filter(principals, Predicates.notNull()));
+        requestedPrincipals = List.copyOf(Constraint.isNotNull(principals, "Principal list cannot be null"));
         return this;
     }
     

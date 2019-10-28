@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -33,9 +33,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * An action that populates a {@link SubjectCanonicalizationContext} with the
@@ -66,9 +63,8 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
     public void setAvailableFlows(
             @Nonnull @NonnullElements final Collection<SubjectCanonicalizationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(flows, "Flow collection cannot be null");
         
-        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
         
     /** {@inheritDoc} */

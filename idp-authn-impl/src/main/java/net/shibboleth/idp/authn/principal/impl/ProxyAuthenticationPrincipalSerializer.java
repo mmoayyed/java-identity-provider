@@ -43,9 +43,6 @@ import javax.json.stream.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -83,10 +80,7 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         
         final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-        for (final String aa : Collections2.filter(((ProxyAuthenticationPrincipal) principal).getAuthorities(),
-                Predicates.notNull())) {
-            arrayBuilder.add(aa);
-        }
+        ((ProxyAuthenticationPrincipal) principal).getAuthorities().forEach(arrayBuilder::add);
 
         final StringWriter sink = new StringWriter(32);
         

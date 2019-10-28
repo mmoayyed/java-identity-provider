@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -48,8 +47,6 @@ import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
@@ -106,9 +103,8 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      */
     public void setSubjectAltNameTypes(@Nonnull @NonnullElements final List<Integer> types) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(types, "Type list cannot be null");
         
-        subjectAltNameTypes = new ArrayList<>(Collections2.filter(types, Predicates.notNull()));
+        subjectAltNameTypes = List.copyOf(Constraint.isNotNull(types, "Type list cannot be null"));
     }
 
     /**
@@ -118,9 +114,9 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      */
     public void setObjectIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(ids, "OID list cannot be null");
         
-        objectIds = new ArrayList<>(StringSupport.normalizeStringCollection(ids));
+        objectIds = List.copyOf(StringSupport.normalizeStringCollection(
+                Constraint.isNotNull(ids, "OID list cannot be null")));
     }
     
     /** {@inheritDoc} */

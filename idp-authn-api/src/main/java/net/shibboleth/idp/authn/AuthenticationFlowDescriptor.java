@@ -48,7 +48,6 @@ import org.opensaml.storage.StorageSerializer;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * A descriptor for an authentication flow.
@@ -286,7 +285,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @return a live collection of supported principals
      */
     @Nonnull @NonnullElements public Collection<Principal> getSupportedPrincipals() {
-        return Collections2.filter(supportedPrincipals.getPrincipals(), Predicates.notNull());
+        return supportedPrincipals.getPrincipals();
     }
 
     /**
@@ -300,7 +299,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         Constraint.isNotNull(principals, "Principal collection cannot be null.");
 
         supportedPrincipals.getPrincipals().clear();
-        supportedPrincipals.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+        supportedPrincipals.getPrincipals().addAll(Set.copyOf(principals));
     }
 
     /**

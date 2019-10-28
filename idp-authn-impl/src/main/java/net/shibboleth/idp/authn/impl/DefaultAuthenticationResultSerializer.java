@@ -22,10 +22,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -52,13 +52,11 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Handles serialization of results, delegating handling of {@link Principal} objects to one or more
@@ -122,7 +120,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             @Nonnull @NonnullElements final Collection<PrincipalSerializer<String>> serializers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        principalSerializers = new ArrayList<>(Collections2.filter(serializers, Predicates.notNull()));
+        principalSerializers = List.copyOf(Constraint.isNotNull(serializers, "Serializers cannot be null"));
     }
 
     /**

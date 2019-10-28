@@ -35,9 +35,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 /**
  * Wrapper for use of Duo.
  * 
@@ -151,7 +148,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
         supportedPrincipals.getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {
-            supportedPrincipals.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+            supportedPrincipals.getPrincipals().addAll(Set.copyOf(principals));
         }
     }
 

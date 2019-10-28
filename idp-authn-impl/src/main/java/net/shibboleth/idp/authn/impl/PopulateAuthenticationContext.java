@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -38,9 +38,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
@@ -89,9 +86,8 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(flows, "Flow collection cannot be null");
         
-        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
 
     /**
@@ -103,9 +99,8 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setPotentialFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(flows, "Flow collection cannot be null");
         
-        potentialFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+        potentialFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     
     /**

@@ -44,9 +44,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 /**
  * An action that processes a list of {@link CredentialValidator} objects to produce an {@link AuthenticationResult}.
  *  
@@ -111,9 +108,8 @@ public class ValidateCredentials extends AbstractValidationAction implements War
      */
     public void setValidators(@Nonnull @NonnullElements final List<CredentialValidator> validators) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(validators, "Validators list cannot be null");
         
-        credentialValidators = new ArrayList<>(Collections2.filter(validators, Predicates.notNull()));
+        credentialValidators = List.copyOf(Constraint.isNotNull(validators, "Validators list cannot be null"));
     }
     
     /**

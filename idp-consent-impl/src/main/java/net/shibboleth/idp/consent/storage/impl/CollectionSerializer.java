@@ -44,9 +44,6 @@ import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 /**
  * Serializes a {@link Collection} of strings. <code>Null</code> elements and non-string values are ignored.
  */
@@ -74,14 +71,14 @@ public class CollectionSerializer extends AbstractInitializableComponent impleme
     @Nonnull @NotEmpty public String serialize(@Nonnull final Collection<String> instance) throws IOException {
         Constraint.isNotNull(instance, "Storage indexes cannot be null");
 
-        final Collection<String> filteredInstance = Collections2.filter(instance, Predicates.notNull());
-
         final StringWriter sink = new StringWriter(128);
         
         try (final JsonGenerator gen = generatorFactory.createGenerator(sink)) {
             gen.writeStartArray();
-            for (final String element : filteredInstance) {
-                gen.write(element);
+            for (final String element : instance) {
+                if (element != null) {
+                    gen.write(element);
+                }
             }
             gen.writeEnd();
         }

@@ -47,8 +47,6 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * A context representing the state of an authentication attempt, this is the primary
@@ -653,7 +651,7 @@ public final class AuthenticationContext extends BaseContext {
         final Constructor<? extends Principal> ctor = claz.getConstructor(String.class);
         
         final List<Principal> prins = new ArrayList<>(principals.size());
-        for (final String prin : Collections2.filter(principals, Predicates.notNull())) {
+        for (final String prin : principals) {
             prins.add(ctor.newInstance(prin));
         }
         

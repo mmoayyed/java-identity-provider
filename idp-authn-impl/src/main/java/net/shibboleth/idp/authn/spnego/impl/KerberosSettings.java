@@ -17,14 +17,11 @@
 
 package net.shibboleth.idp.authn.spnego.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -105,9 +102,8 @@ public class KerberosSettings extends AbstractInitializableComponent {
      */
     public void setRealms(@Nonnull @NonnullElements final Collection<KerberosRealmSettings> realms) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(realms, "The realms collection cannot be null");
         
-        realmSettings = new ArrayList<>(Collections2.filter(realms, Predicates.notNull()));
+        realmSettings = List.copyOf(Constraint.isNotNull(realms, "The realms collection cannot be null"));
     }
 
     /**

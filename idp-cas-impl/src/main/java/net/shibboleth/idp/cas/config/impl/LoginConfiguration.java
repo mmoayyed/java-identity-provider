@@ -20,7 +20,7 @@ package net.shibboleth.idp.cas.config.impl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
@@ -93,8 +92,12 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(
-                defaultAuthenticationContextsLookupStrategy.apply(profileRequestContext));
+        final Collection<AuthnContextClassRefPrincipal> methods =
+                defaultAuthenticationContextsLookupStrategy.apply(profileRequestContext);
+        if (methods != null) {
+            return List.copyOf(methods);
+        }
+        return Collections.emptyList();
     }
         
     /**
@@ -105,8 +108,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     public void setDefaultAuthenticationMethods(
             @Nullable @NonnullElements final Collection<AuthnContextClassRefPrincipal> contexts) {
         if (contexts != null) {
-            defaultAuthenticationContextsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(Collections2.filter(contexts, Predicates.notNull())));
+            defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(List.copyOf(contexts));
         } else {
             defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -125,7 +127,12 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableSet(authenticationFlowsLookupStrategy.apply(profileRequestContext));
+        
+        final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return Set.copyOf(flows);
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -136,7 +143,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
             authenticationFlowsLookupStrategy =
-                    FunctionSupport.constant(new HashSet<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(Set.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -185,7 +192,12 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext));
+        
+        final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
+        if (formats != null) {
+            return List.copyOf(formats);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -197,7 +209,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
         nameIDFormatPrecedenceLookupStrategy =
-                FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(formats)));
+                FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(formats)));
     }
 
     /**

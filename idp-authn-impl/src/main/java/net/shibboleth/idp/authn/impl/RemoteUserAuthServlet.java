@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,9 +48,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 
 /**
  * Extracts authentication information from the request and returns it via the IdP's external authentication
@@ -129,7 +128,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * @param attributes    list of request attributes to check
      */
     public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
-        checkAttributes = new ArrayList<>(Collections2.filter(attributes, Predicates.notNull()));
+        checkAttributes = List.copyOf(attributes);
     }
 
     /**
@@ -138,7 +137,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * @param headers list of request headers to check
      */
     public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
-        checkHeaders = new ArrayList<>(Collections2.filter(headers, Predicates.notNull()));
+        checkHeaders = List.copyOf(headers);
     }
     
     /**

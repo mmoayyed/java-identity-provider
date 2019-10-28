@@ -18,10 +18,10 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -46,9 +46,7 @@ import net.shibboleth.utilities.java.support.net.IPRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 
 /**
  * An action that ensures that a user-agent address found within a {@link UserAgentContext}
@@ -97,7 +95,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         mappings = new HashMap<>(newMappings.size());
         for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey())) {
-                mappings.put(e.getKey(), new ArrayList<>(Collections2.filter(e.getValue(), Predicates.notNull())));
+                mappings.put(e.getKey(), List.copyOf(e.getValue()));
             }
         }
     }
