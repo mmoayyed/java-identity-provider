@@ -22,7 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -145,9 +145,11 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         if (principalSerializers.isEmpty()) {
             final PrincipalSerializer<String> ups = new UsernamePrincipalSerializer();
             ups.initialize();
-            principalSerializers = Arrays.asList(ups, authnResultPrincipalSerializer);
+            principalSerializers = List.of(ups, authnResultPrincipalSerializer);
         } else {
-            principalSerializers.add(authnResultPrincipalSerializer);
+            final List<PrincipalSerializer<String>> copy = new ArrayList<>(principalSerializers);
+            copy.add(authnResultPrincipalSerializer);
+            principalSerializers = List.copyOf(copy);
         }
 
     }
