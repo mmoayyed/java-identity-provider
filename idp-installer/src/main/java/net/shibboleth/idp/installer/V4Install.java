@@ -124,23 +124,11 @@ public class V4Install extends AbstractInitializableComponent {
     protected void checkPreConditions() throws BuildException {
         final Properties props = currentState.getCurrentlyInstalledProperties();
         if (props != null) {
-            String value =StringSupport.trimOrNull(props.getProperty("idp.service.relyingparty.resources"));
+            final String value = StringSupport.trimOrNull(props.getProperty("idp.service.relyingparty.resources"));
             if ("shibboleth.LegacyRelyingPartyResolverResources".equals(value)) {
                 log.error("Install failed: system will not work after V4 upgrade");
                 log.error("idp.service.relyingparty.resources is set to shibboleth.RelyingPartyResolverResources");
                 throw new BuildException("Install failed: system will not work after V4 upgrade");
-            }
-            value = StringSupport.trimOrNull(props.getProperty("idp.nameid.saml1.legacyGenerator"));
-            if ("shibboleth.LegacySAML1NameIdentifierGenerator".equals(value)) {
-                log.error("Install failed: system will not work after V4 upgrade");
-                log.error("idp.nameid.saml1.legacyGenerator is set to shibboleth.LegacySAML1NameIdentifierGenerator");
-                throw new BuildException("Install failed: system will not work after V4 upgrade");
-            }
-            value = StringSupport.trimOrNull(props.getProperty("idp.nameid.saml2.legacyGenerator"));
-            if ("shibboleth.LegacySAML2NameIDGenerator".equals(value)) {
-                log.error("Install failed: system will not work after V4 upgrade");
-                log.error("idp.nameid.saml2.legacyGenerator is set to shibboleth.LegacySAML2NameIDGenerator");
-                throw new BuildException("Install failed: system will not work after V4 upgrade");                
             }
         }
     }
