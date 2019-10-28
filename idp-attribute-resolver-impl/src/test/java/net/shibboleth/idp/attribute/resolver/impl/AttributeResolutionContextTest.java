@@ -62,13 +62,7 @@ public class AttributeResolutionContextTest {
         assertNotNull(context.getRequestedIdPAttributeNames());
         assertTrue(context.getRequestedIdPAttributeNames().isEmpty());
 
-        attributes.add(null);
-        context.setRequestedIdPAttributeNames(attributes);
-        assertNotNull(context.getRequestedIdPAttributeNames());
-        assertTrue(context.getRequestedIdPAttributeNames().isEmpty());
-
         attributes.add("foo");
-        attributes.add(null);
         attributes.add("bar");
         context.setRequestedIdPAttributeNames(attributes);
         assertNotNull(context.getRequestedIdPAttributeNames());
