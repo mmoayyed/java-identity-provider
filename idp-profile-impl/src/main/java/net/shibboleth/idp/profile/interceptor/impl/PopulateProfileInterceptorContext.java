@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -40,8 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
 /**
@@ -77,9 +75,8 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<ProfileInterceptorFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(flows, "Flow collection cannot be null");
 
-        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     
     /**

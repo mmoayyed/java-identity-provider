@@ -21,7 +21,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -136,8 +135,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         if (trimmed.isEmpty()) {
             ignoredContexts = Collections.emptySet();
         } else {
-            ignoredContexts = new HashSet<>(trimmed.size());
-            ignoredContexts.addAll(trimmed);
+            ignoredContexts = Set.copyOf(trimmed);
         }
     }
     

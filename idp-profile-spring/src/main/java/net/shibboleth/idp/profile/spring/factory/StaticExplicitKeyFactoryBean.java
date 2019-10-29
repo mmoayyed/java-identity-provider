@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.cryptacular.EncodingException;
@@ -42,9 +43,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.Resource;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
@@ -55,8 +53,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
  */
 public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryBean<ExplicitKeyTrustEngine> {
 
-    /** log. */
-    private Logger log = LoggerFactory.getLogger(StaticExplicitKeyFactoryBean.class);
+    /** Class logger. */
+    @Nonnull private Logger log = LoggerFactory.getLogger(StaticExplicitKeyFactoryBean.class);
 
     /** The resources to be turned into keys. */
     private List<Resource> keyResources;
@@ -66,8 +64,8 @@ public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryB
 
     /** Constructor. */
     public StaticExplicitKeyFactoryBean() {
-        keyResources = Collections.<Resource>emptyList();
-        certificateResources = Collections.<Resource>emptyList();
+        keyResources = Collections.emptyList();
+        certificateResources = Collections.emptyList();
     }
     
     /**
@@ -76,7 +74,7 @@ public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryB
      * @param keys the resources
      */
     public void setPublicKeys(@Nullable final List<Resource> keys) {
-        keyResources = keys != null ? keys : Collections.<Resource>emptyList();
+        keyResources = keys != null ? keys : Collections.emptyList();
     }
     
     /**
@@ -85,7 +83,7 @@ public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryB
      * @param certs the resources
      */
     public void setCertificates(@Nullable final List<Resource> certs) {
-        certificateResources = certs != null ? certs : Collections.<Resource>emptyList();
+        certificateResources = certs != null ? certs : Collections.emptyList();
     }
 
     /**
@@ -109,9 +107,15 @@ public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryB
         for (final Resource f : certificateResources) {
             try(final InputStream is = f.getInputStream()) {
                 final Collection<X509Certificate> raw = X509Support.decodeCertificates(is);
-                for (final X509Certificate x : Collections2.filter(raw, Predicates.notNull())) {
-                    credentials.add(new BasicX509Credential(x));
+                if (raw != null) {
+                    raw.forEach(x -> {
+                        if (x != null) {
+                            credentials.add(new BasicX509Credential(x));
+                            }
+                        }
+                    );
                 }
+                
             } catch (final CertificateException | IOException e) {
                 log.error("Could not decode certificate from {}", f.getDescription(), e);
                 throw new FatalBeanException("Could not decode certificate from: " + f.getDescription(), e);

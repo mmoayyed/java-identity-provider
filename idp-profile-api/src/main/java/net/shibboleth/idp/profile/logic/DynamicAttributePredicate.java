@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ListMultimap;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -39,6 +37,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -73,7 +72,7 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
         attributeFunctionMap.clear();
         for (final Map.Entry<String,Collection<Function<ProfileRequestContext,String>>> entry : map.entrySet()) {
             final String attributeId = StringSupport.trimOrNull(entry.getKey());
-            attributeFunctionMap.putAll(attributeId, Collections2.filter(entry.getValue(), Predicates.notNull()));
+            attributeFunctionMap.putAll(attributeId, List.copyOf(entry.getValue()));
         }
     }
 

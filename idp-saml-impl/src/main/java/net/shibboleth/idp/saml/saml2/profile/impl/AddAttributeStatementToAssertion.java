@@ -48,9 +48,6 @@ import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 /**
  * Action that builds an {@link AttributeStatement} and adds it to an {@link Assertion} returned by a lookup
  * strategy, by default in the {@link ProfileRequestContext#getOutboundMessageContext()}.
@@ -144,8 +141,8 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
             if (component == null) {
                 throw new AttributeEncodingException("Attribute transoding service unavailable");
             }
-            for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
-                if (!attribute.getValues().isEmpty()) {
+            for (final IdPAttribute attribute : attributes) {
+                if (attributes != null && !attribute.getValues().isEmpty()) {
                     encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
                 }
             }

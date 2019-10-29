@@ -26,14 +26,12 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.security.x509.PKIXValidationInformation;
 import org.opensaml.security.x509.X509Support;
 import org.opensaml.security.x509.impl.BasicPKIXValidationInformation;
 import org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine;
@@ -43,8 +41,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.Resource;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -135,7 +131,7 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
      */
     public void setTrustedNames(@Nullable @NonnullElements final Collection<String> names) {
         if (names != null) {
-            trustedNames = new HashSet<>(Collections2.filter(names, Predicates.notNull()));
+            trustedNames = Set.copyOf(names);
         } else {
             trustedNames = null;
         }
@@ -192,8 +188,7 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
                 new BasicPKIXValidationInformation(getCertificates(), getCRLs(), verifyDepth);
         
         final StaticPKIXValidationInformationResolver resolver =
-                new StaticPKIXValidationInformationResolver(
-                        Collections.<PKIXValidationInformation>singletonList(info), trustedNames, checkNames);
+                new StaticPKIXValidationInformationResolver(Collections.singletonList(info), trustedNames, checkNames);
         
         if (checkNames) {
             return new PKIXX509CredentialTrustEngine(resolver);

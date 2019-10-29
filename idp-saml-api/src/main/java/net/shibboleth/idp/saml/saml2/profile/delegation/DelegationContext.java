@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -29,9 +28,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.security.credential.Credential;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 /**
  * Context which holds data relevant to the issuance of a delegated {@link org.opensaml.saml.saml2.core.Assertion}.
  */
@@ -41,13 +37,13 @@ public class DelegationContext extends BaseContext {
     private boolean issuingDelegatedAssertion;
     
     /** Status of whether the relying party has requested issuance of a delegated assertion token. */
-    private DelegationRequest delegationRequested;
+    @Nonnull private DelegationRequest delegationRequested;
     
     /**
      * The relying party credentials which will be included in the assertion's
      * {@link org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType}.
      */
-    private List<Credential> subjectConfirmationCredentials;
+    @Nullable @NonnullElements private List<Credential> subjectConfirmationCredentials;
     
     
     /** Constructor. */
@@ -87,7 +83,7 @@ public class DelegationContext extends BaseContext {
      * 
      * @param requested the delegation request status
      */
-    public void setDelegationRequested(final DelegationRequest requested) {
+    public void setDelegationRequested(@Nonnull final DelegationRequest requested) {
         delegationRequested = Constraint.isNotNull(requested, "DelegationRequest was null");
     }
 
@@ -107,12 +103,11 @@ public class DelegationContext extends BaseContext {
      * 
      * @param credentials the confirmation credentials
      */
-    public void setSubjectConfirmationCredentials(
-            @Nullable @NonnullElements final List<Credential> credentials) {
+    public void setSubjectConfirmationCredentials(@Nullable @NonnullElements final List<Credential> credentials) {
         if (credentials == null) {
             subjectConfirmationCredentials = null;
         } else {
-            subjectConfirmationCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
+            subjectConfirmationCredentials = List.copyOf(credentials);
         }
     }
 

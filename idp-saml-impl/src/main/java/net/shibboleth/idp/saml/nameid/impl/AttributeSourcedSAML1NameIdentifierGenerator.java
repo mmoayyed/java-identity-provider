@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +51,6 @@ import org.opensaml.saml.saml1.profile.AbstractSAML1NameIdentifierGenerator;
 import org.opensaml.saml.saml1.profile.SAML1ObjectSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Generator for {@link NameIdentifier} objects based on {@link IdPAttribute} data.
@@ -120,9 +116,8 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(ids, "Attribute ID collection cannot be null");
 
-        attributeSourceIds = new ArrayList<>(Collections2.filter(ids, Predicates.notNull()));
+        attributeSourceIds = List.copyOf(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 
     /**

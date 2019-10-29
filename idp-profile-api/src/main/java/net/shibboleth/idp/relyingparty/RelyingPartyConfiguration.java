@@ -18,7 +18,9 @@
 package net.shibboleth.idp.relyingparty;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,7 +33,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -45,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /** The configuration that applies to a given relying party. */
 public class RelyingPartyConfiguration extends AbstractIdentifiableInitializableComponent implements
@@ -152,7 +152,12 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,ProfileConfiguration> getProfileConfigurations(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableMap(profileConfigurationsLookupStrategy.apply(profileRequestContext));
+        
+        final Map<String,ProfileConfiguration> map = profileConfigurationsLookupStrategy.apply(profileRequestContext);
+        if (map != null) {
+            return Map.copyOf(map);
+        }
+        return Collections.emptyMap();
     }
 
     /**
@@ -188,13 +193,13 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
             profileConfigurationsLookupStrategy = FunctionSupport.constant(null);
         } else {
             final HashMap<String,ProfileConfiguration> map = new HashMap<>();
-            for (final ProfileConfiguration config : Collections2.filter(configs, Predicates.notNull())) {
+            for (final ProfileConfiguration config : List.copyOf(configs)) {
                 final String trimmedId =
                         Constraint.isNotNull(StringSupport.trimOrNull(config.getId()),
                                 "ID of profile configuration class " + config.getClass().getName() + " cannot be null");
                 map.put(trimmedId, config);
             }
-            profileConfigurationsLookupStrategy = FunctionSupport.constant(map);
+            profileConfigurationsLookupStrategy = FunctionSupport.constant(Map.copyOf(map));
         }
     }
 

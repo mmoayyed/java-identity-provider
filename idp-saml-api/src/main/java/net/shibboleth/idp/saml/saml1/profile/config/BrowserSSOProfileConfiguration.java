@@ -18,9 +18,8 @@
 package net.shibboleth.idp.saml.saml1.profile.config;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -32,7 +31,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
@@ -40,7 +38,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -186,8 +183,12 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(
-                defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext));
+        final Collection<AuthenticationMethodPrincipal> methods =
+                defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext);
+        if (methods != null) {
+            return List.copyOf(methods);
+        }
+        return Collections.emptyList();
     }
     
     /**
@@ -199,8 +200,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
             @Nullable @NonnullElements final Collection<AuthenticationMethodPrincipal> methods) {
 
         if (methods != null) {
-            defaultAuthenticationMethodsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(Collections2.filter(methods, Predicates.notNull())));
+            defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(List.copyOf(methods));
         } else {
             defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -221,7 +221,12 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableSet(authenticationFlowsLookupStrategy.apply(profileRequestContext));
+        
+        final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return Set.copyOf(flows);
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -232,7 +237,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
             authenticationFlowsLookupStrategy =
-                    FunctionSupport.constant(new HashSet<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(Set.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -253,7 +258,11 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(postAuthenticationFlowsLookupStrategy.apply(profileRequestContext));
+        final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return List.copyOf(flows);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -264,7 +273,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
             postAuthenticationFlowsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -285,7 +294,11 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext));
+        final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
+        if (formats != null) {
+            return List.copyOf(formats);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -297,7 +310,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
         nameIDFormatPrecedenceLookupStrategy =
-                FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(formats)));
+                FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(formats)));
     }
 
     /**

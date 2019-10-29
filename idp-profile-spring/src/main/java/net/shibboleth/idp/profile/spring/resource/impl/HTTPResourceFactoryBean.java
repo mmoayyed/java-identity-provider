@@ -53,9 +53,6 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.ext.spring.resource.FileBackedHTTPResource;
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -99,8 +96,8 @@ public class HTTPResourceFactoryBean extends AbstractFactoryBean<HTTPResource> {
 
     /** Constructor. */
     public HTTPResourceFactoryBean() {
-        keyResources = Collections.<Resource>emptyList();
-        certificateResources = Collections.<Resource>emptyList();
+        keyResources = Collections.emptyList();
+        certificateResources = Collections.emptyList();
     }
 
     /**
@@ -145,7 +142,7 @@ public class HTTPResourceFactoryBean extends AbstractFactoryBean<HTTPResource> {
      * @param keys the resources
      */
     public void setPublicKeys(@Nullable final List<Resource> keys) {
-        keyResources = keys != null ? keys : Collections.<Resource>emptyList();
+        keyResources = keys != null ? keys : Collections.emptyList();
     }
     
     /**
@@ -154,7 +151,7 @@ public class HTTPResourceFactoryBean extends AbstractFactoryBean<HTTPResource> {
      * @param certs the resources
      */
     public void setCertificates(@Nullable final List<Resource> certs) {
-        certificateResources = certs != null ? certs : Collections.<Resource>emptyList();
+        certificateResources = certs != null ? certs : Collections.emptyList();
     }
     
     /**
@@ -197,8 +194,12 @@ public class HTTPResourceFactoryBean extends AbstractFactoryBean<HTTPResource> {
         for (final Resource f : certificateResources) {
             try(final InputStream is = f.getInputStream()) {
                 final Collection<X509Certificate> raw = X509Support.decodeCertificates(is);
-                for (final X509Certificate x : Collections2.filter(raw, Predicates.notNull())) {
-                    credentials.add(new BasicX509Credential(x));
+                if (raw != null) {
+                    raw.forEach(x -> {
+                        if (x != null) {
+                            credentials.add(new BasicX509Credential(x));
+                        }
+                    });
                 }
             } catch (final CertificateException | IOException e) {
                 log.error("Could not decode certificate from {}", f.getDescription(), e);

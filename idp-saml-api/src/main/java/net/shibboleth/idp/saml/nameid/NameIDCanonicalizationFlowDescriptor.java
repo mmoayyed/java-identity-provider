@@ -19,17 +19,16 @@ package net.shibboleth.idp.saml.nameid;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Predicates;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A class used to describe flow descriptors for {@link net.shibboleth.idp.saml.authn.principal.NameIDPrincipal} and
@@ -39,7 +38,7 @@ import com.google.common.base.Predicates;
 public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizationFlowDescriptor {
 
     /** Store Set of acceptable formats. */
-    @Nonnull private Set<String> formats;
+    @Nonnull @NonnullElements private Set<String> formats;
 
     /** Constructor. */
     public NameIDCanonicalizationFlowDescriptor() {
@@ -51,7 +50,7 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
      * 
      * @return Returns the formats. Never empty after initialization.
      */
-    @Nonnull @NonnullElements public Collection<String> getFormats() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Collection<String> getFormats() {
         return formats;
     }
 
@@ -60,11 +59,9 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
      * 
      * @param theFormats The formats to set.
      */
-    public void setFormats(@Nonnull final Collection<String> theFormats) {
-        Constraint.isNotNull(theFormats, "Format collection cannot be null");
-        
-        formats = new HashSet<>(theFormats.size());
-        CollectionSupport.addIf(formats, theFormats, Predicates.notNull());
+    public void setFormats(@Nonnull @NonnullElements final Collection<String> theFormats) {
+        formats = Set.copyOf(StringSupport.normalizeStringCollection(
+                Constraint.isNotNull(theFormats, "Format collection cannot be null")));
     }
     
 }
