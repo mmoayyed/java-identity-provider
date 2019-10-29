@@ -301,15 +301,13 @@ public final class AttributeResolutionContext extends BaseContext {
      * @return this context
      */
     @Nullable public AttributeResolutionContext setResolvedIdPAttributes(
-            @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+            @Nullable final Collection<IdPAttribute> attributes) {
         
-        final Map<String,IdPAttribute> copy = new HashMap<>();
+        final Map<String,IdPAttribute> copy = new HashMap<>(attributes.size());
         
         if (attributes != null) {
             for (final IdPAttribute attribute : attributes) {
-                if (attribute != null) {
-                    copy.put(attribute.getId(), attribute);
-                }
+                copy.put(attribute.getId(), Constraint.isNotNull(attribute, "Resolved Attributes Cannot be null"));
             }
         }
         
