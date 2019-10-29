@@ -31,6 +31,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
@@ -44,14 +51,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
 
 /** Service implementation of the {@link AttributeTranscoderRegistry} interface. */
 @ThreadSafe
@@ -191,7 +190,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         
         log.trace("Using rules for effective type {}", effectiveType.getName());
         
-        return ImmutableList.copyOf(propertyCollections.get(effectiveType));
+        return List.copyOf(propertyCollections.get(effectiveType));
     }
 
     /** {@inheritDoc} */
@@ -211,11 +210,11 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         final Function<?,String> namingFunction = namingFunctionRegistry.get(effectiveType);
         
         // Don't know if we can work around this cast or not.
-        final String id = ((Function<? super T,String>) namingFunction).apply(from);
+        @SuppressWarnings("unchecked") final String id = ((Function<? super T,String>) namingFunction).apply(from);
         if (id != null) {
             final Multimap<Class<?>,TranscodingRule> propertyCollections = transcodingRegistry.get(id);
             
-            return propertyCollections != null ? ImmutableList.copyOf(propertyCollections.get(effectiveType))
+            return propertyCollections != null ? List.copyOf(propertyCollections.get(effectiveType))
                     : Collections.emptyList();
         }
         log.warn("Object of type {} did not have a canonical name", from.getClass().getName());
@@ -322,6 +321,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
      * 
      * @return a predicate to install under the ruleset's {@link #PROP_CONDITION}
      */
+    @SuppressWarnings("unchecked")
     @Nullable private Predicate<ProfileRequestContext> buildActivationCondition(
             @Nonnull final Map<String,Object> ruleset) {
         
