@@ -23,8 +23,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -58,7 +56,7 @@ public abstract class AbstractMappingStrategy<T> implements MappingStrategy<T> {
      * @return a map of result field names to alternate field names
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,String> getResultRenamingMap() {
-        return ImmutableMap.copyOf(resultRenamingMap);
+        return Map.copyOf(resultRenamingMap);
     }
     
     /**

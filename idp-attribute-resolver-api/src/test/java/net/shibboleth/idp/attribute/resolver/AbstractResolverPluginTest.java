@@ -106,13 +106,6 @@ public class AbstractResolverPluginTest {
         Assert.assertNotNull(plugin.getDataConnectorDependencies());
         Assert.assertTrue(plugin.getDataConnectorDependencies().isEmpty());
 
-        plugin.setAttributeDependencies(Collections.<ResolverAttributeDefinitionDependency>singleton(null));
-        plugin.setDataConnectorDependencies(Collections.<ResolverDataConnectorDependency>singleton(null));
-        Assert.assertNotNull(plugin.getAttributeDependencies());
-        Assert.assertTrue(plugin.getAttributeDependencies().isEmpty());
-        Assert.assertNotNull(plugin.getDataConnectorDependencies());
-        Assert.assertTrue(plugin.getDataConnectorDependencies().isEmpty());
-
         final ResolverAttributeDefinitionDependency dep1 = new ResolverAttributeDefinitionDependency("foo");
         final ResolverAttributeDefinitionDependency dep2 = new ResolverAttributeDefinitionDependency("foo2");
 

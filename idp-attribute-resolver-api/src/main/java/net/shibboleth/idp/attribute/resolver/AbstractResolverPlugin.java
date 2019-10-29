@@ -35,13 +35,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -164,13 +162,12 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @param dependencies unmodifiable list of dependencies for this plugin
      */
-    public void setAttributeDependencies(@Nullable @NullableElements
-            final Set<ResolverAttributeDefinitionDependency> dependencies) {
+    public void setAttributeDependencies(@Nullable final Set<ResolverAttributeDefinitionDependency> dependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (dependencies != null) {
-            attributeDependencies = Set.copyOf(Collections2.filter(dependencies, Predicates.notNull()));
+            attributeDependencies = Set.copyOf(dependencies);
         } else {
             attributeDependencies = Collections.emptySet(); 
         }
@@ -181,13 +178,12 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @param dependencies unmodifiable list of dependencies for this plugin
      */
-    public void setDataConnectorDependencies(@Nullable @NullableElements
-            final Set<ResolverDataConnectorDependency> dependencies) {
+    public void setDataConnectorDependencies(@Nullable final Set<ResolverDataConnectorDependency> dependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (dependencies != null) {
-            dataConnectorDependencies = Set.copyOf(Collections2.filter(dependencies, Predicates.notNull()));
+            dataConnectorDependencies = Set.copyOf(dependencies);
         } else {
             dataConnectorDependencies = Collections.emptySet();
         }
