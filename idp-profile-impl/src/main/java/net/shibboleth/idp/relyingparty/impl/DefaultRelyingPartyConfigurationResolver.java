@@ -19,10 +19,8 @@ package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -41,18 +39,12 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -79,9 +71,6 @@ public class DefaultRelyingPartyConfigurationResolver
 
     /** The predicate which decides if this request is "verified". */
     @NonnullAfterInit private Predicate<ProfileRequestContext> verificationPredicate;
-
-    /** The map from profile ID to {@link SecurityConfiguration}. */
-    @Nonnull @NonnullElements private Map<String,SecurityConfiguration> securityConfigurationMap;
     
     /** A global default security configuration. */
     @Nullable private SecurityConfiguration defaultSecurityConfiguration;
@@ -96,7 +85,6 @@ public class DefaultRelyingPartyConfigurationResolver
     public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
         verificationPredicate = new VerifiedProfilePredicate();
-        securityConfigurationMap = Collections.emptyMap();
         signingCredentials = Collections.emptyList();
         encryptionCredentials = Collections.emptyList();
     }
@@ -108,7 +96,7 @@ public class DefaultRelyingPartyConfigurationResolver
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<RelyingPartyConfiguration>
             getRelyingPartyConfigurations() {
-        return ImmutableList.copyOf(rpConfigurations);
+        return rpConfigurations;
     }
 
     /**
@@ -118,9 +106,8 @@ public class DefaultRelyingPartyConfigurationResolver
      */
     public void setRelyingPartyConfigurations(@Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null");
 
-        rpConfigurations = new ArrayList<>(Collections2.filter(configs, Predicates.notNull()));
+        rpConfigurations = List.copyOf(Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null"));
     }
 
     /**
@@ -183,36 +170,6 @@ public class DefaultRelyingPartyConfigurationResolver
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         verificationPredicate = Constraint.isNotNull(predicate, "Verification predicate cannot be null");
-    }
-
-    /**
-     * Get the map we use to look up default security configurations.
-     * 
-     * @return Returns the Map.
-     */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,SecurityConfiguration>
-            getSecurityConfigurationMap() {
-        return ImmutableMap.copyOf(securityConfigurationMap);
-    }
-
-    /**
-     * Set the map we use to look up default configuration.
-     * 
-     * @param map what to set.
-     */
-    public void setSecurityConfigurationMap(@Nonnull @NonnullElements final Map<String,SecurityConfiguration> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(map, "SecurityConfiguration map cannot be null");
-        
-        securityConfigurationMap = new HashMap<>(map.size());
-        for (final Map.Entry<String,SecurityConfiguration> entry : map.entrySet()) {
-            if (entry.getValue() != null) {
-                final String trimmed = StringSupport.trimOrNull(entry.getKey());
-                if (trimmed != null) {
-                    securityConfigurationMap.put(trimmed, entry.getValue());
-                }
-            }
-        }
     }
     
     /**
@@ -317,8 +274,7 @@ public class DefaultRelyingPartyConfigurationResolver
     /** {@inheritDoc} */
     @Override
     @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId) {
-        final SecurityConfiguration config = securityConfigurationMap.get(profileId);
-        return config != null ? config : defaultSecurityConfiguration;
+        return defaultSecurityConfiguration;
     }
     
     /**
@@ -327,7 +283,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @return the list of signing credentials
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Credential> getSigningCredentials() {
-        return ImmutableList.copyOf(signingCredentials);
+        return signingCredentials;
     }
     
     /**
@@ -335,12 +291,12 @@ public class DefaultRelyingPartyConfigurationResolver
      * 
      * @param credentials the list of signing credentials, may be null
      */
-    public void setSigningCredentials(@Nullable final List<Credential> credentials) {
-        if (credentials == null) {
+    public void setSigningCredentials(@Nullable @NonnullElements final List<Credential> credentials) {
+        if (credentials != null) {
+            signingCredentials = List.copyOf(credentials);
+        } else {
             signingCredentials = Collections.emptyList();
-            return;
         }
-        signingCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
     }
 
     /**
@@ -349,7 +305,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @return the list of encryption credentials
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Credential> getEncryptionCredentials() {
-        return ImmutableList.copyOf(encryptionCredentials);
+        return encryptionCredentials;
     }
     
     /**
@@ -357,12 +313,12 @@ public class DefaultRelyingPartyConfigurationResolver
      * 
      * @param credentials the list of encryption credentials, may be null
      */
-    public void setEncryptionCredentials(@Nullable final List<Credential> credentials) {
-        if (credentials == null) {
+    public void setEncryptionCredentials(@Nullable @NonnullElements final List<Credential> credentials) {
+        if (credentials != null) {
+            encryptionCredentials = List.copyOf(credentials);
+        } else {
             encryptionCredentials = Collections.emptyList();
-            return;
         }
-        encryptionCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */
