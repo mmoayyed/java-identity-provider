@@ -46,11 +46,8 @@ public class AttributeContextTest {
     @Test public void attributeContext() {
         AttributeContext context = new AttributeContext();
         
-        context.setIdPAttributes(Arrays.asList((IdPAttribute)null, null));
-        contextAttributes(context, 0);
-
-        context.setIdPAttributes(Arrays.asList(new IdPAttribute("foo"), null));
-        contextAttributes(context, 1);
+        context.setIdPAttributes(Arrays.asList(new IdPAttribute("foo"), new IdPAttribute("bar")));
+        contextAttributes(context, 2);
         
         context.setIdPAttributes(null);
         contextAttributes(context, 0);

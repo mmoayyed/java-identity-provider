@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -36,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -66,6 +67,29 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     /** Logger - static. */
     @Nonnull private static final Logger LOG = LoggerFactory.getLogger(IdPAttribute.class);
     
+    /** Helper Function for map manipulation. */
+    @Nonnull private static Function<Entry<Locale, String>, Entry<Locale, String>> filterEntry =
+            new Function<>() {
+        public Entry<Locale, String> apply(final Entry<Locale, String> t) {
+            return new Entry<>() {
+                private String val = Constraint.isNotNull(StringSupport.trimOrNull(t.getValue()),
+                        "Values must not be null");
+                private Locale key = Constraint.isNotNull(t.getKey(), "Key must not be null");
+                public Locale getKey() {
+                    return key;
+                }
+
+                public String getValue() {
+                    return val;
+                }
+
+                public String setValue(final String value) {
+                    throw new ConstraintViolationException("Unmodifable map modified");
+                }
+            };
+        };
+    };
+
     /** ID of this attribute. */
     @Nonnull private final String id;
 
@@ -77,7 +101,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /** Values for this attribute. */
     @Nonnull private List<IdPAttributeValue> values;
-    
+
     /**
      * Constructor.
      * 
@@ -146,22 +170,18 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param inputMap the input map.
      * @return the unmodifiable, non null-containing output.
      */
-    @Nonnull @NonnullElements @Unmodifiable private Map<Locale, String> checkedNamesFrom(
-            @Nullable @NullableElements final Map<Locale, String> inputMap) {
+    @SuppressWarnings("unchecked")
+    @Nonnull @Unmodifiable private Map<Locale, String> checkedNamesFrom(@Nonnull final Map<Locale, String> inputMap) {
         
-        final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
-
-        if (inputMap != null) {
-            for (final Entry<Locale,String> entry : inputMap.entrySet()) {
-                if (entry.getKey() != null) {
-                    final String trimmedName = StringSupport.trimOrNull(entry.getValue());
-                    if (trimmedName != null) {
-                        builder.put(entry.getKey(), trimmedName);
-                    }
-                }
-            }
+        if (inputMap.isEmpty()) {
+            return Collections.emptyMap();
         }
-        return builder.build();
+        return Map.ofEntries((Entry<Locale, String>[])
+                inputMap.
+                entrySet().
+                stream().
+                map(filterEntry).
+                toArray(Map.Entry[]::new));
     }
 
     /**
@@ -169,8 +189,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newNames the new names for this attribute
      */
-    public void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> newNames) {
-        displayNames = checkedNamesFrom(newNames);
+    public void setDisplayNames(@Nonnull final Map<Locale, String> newNames) {
+        displayNames = checkedNamesFrom(
+                Constraint.isNotNull(newNames, "Display Names should not be null"));
     }
 
     /**
@@ -187,8 +208,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newDescriptions the new descriptions for this attribute
      */
-    public void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> newDescriptions) {
-        displayDescriptions = checkedNamesFrom(newDescriptions);
+    public void setDisplayDescriptions(@Nonnull final Map<Locale, String> newDescriptions) {
+        displayDescriptions = checkedNamesFrom(
+                Constraint.isNotNull(newDescriptions, "Display Descriptions should not be null"));
     }
 
     /**

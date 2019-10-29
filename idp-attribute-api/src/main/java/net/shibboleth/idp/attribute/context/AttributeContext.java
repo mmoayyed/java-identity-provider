@@ -26,14 +26,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-
 import org.opensaml.messaging.context.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A {@link BaseContext} that tracks a set of attributes. Usually the tracked attributes are about a particular user and
@@ -71,17 +71,15 @@ public final class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> newAttributes) {
-        if (newAttributes == null) {
+    public void setIdPAttributes(@Nullable final Collection<IdPAttribute> newAttributes) {
+        if (newAttributes == null || newAttributes.isEmpty()) {
             attributes = Collections.emptyMap();
             return;
         }
 
-        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>();
+        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>(newAttributes.size());
         for (final IdPAttribute attribute : newAttributes) {
-            if (attribute != null) {
-                checkedAttributes.put(attribute.getId(), attribute);
-            }
+            checkedAttributes.put(attribute.getId(), Constraint.isNotNull(attribute, "Cannot set null attributes"));
         }
 
         attributes = Map.copyOf(checkedAttributes);
@@ -106,20 +104,18 @@ public final class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setUnfilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> newAttributes) {
+    public void setUnfilteredIdPAttributes(@Nullable final Collection<IdPAttribute> newAttributes) {
         if (null != unfilteredAttributes) {
             log.error("Unfiltered attributes have already been set in this flow.");
         }
-        if (newAttributes == null) {
+        if (newAttributes == null || newAttributes.isEmpty()) {
             unfilteredAttributes = Collections.emptyMap();
             return;
         }
 
-        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>();
+        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>(newAttributes.size());
         for (final IdPAttribute attribute : newAttributes) {
-            if (attribute != null) {
-                checkedAttributes.put(attribute.getId(), attribute);
-            }
+            checkedAttributes.put(attribute.getId(), Constraint.isNotNull(attribute, "non null Attribute"));
         }
 
         unfilteredAttributes = Map.copyOf(checkedAttributes);

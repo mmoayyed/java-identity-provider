@@ -95,23 +95,13 @@ public class AttributeTest {
         Locale enbr = new Locale("en", "br");
 
         IdPAttribute attrib = new IdPAttribute("foo");
-        attrib.setDisplayNames(null);
+        attrib.setDisplayNames(Collections.EMPTY_MAP);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
         attrib.setDisplayNames(Collections.emptyMap());
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
         Map<Locale, String> displayNames = new HashMap<>();
-        displayNames.put(null, "wibble");
-        attrib.setDisplayNames(displayNames);
-        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
-
-        displayNames.clear();
-        displayNames.put(en, null);
-        attrib.setDisplayNames(displayNames);
-        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
-
-        displayNames.clear();
         // test adding one entry
         displayNames.put(en, " english ");
         attrib.setDisplayNames(displayNames);
@@ -161,24 +151,18 @@ public class AttributeTest {
         Locale enbr = new Locale("en", "br");
 
         IdPAttribute attrib = new IdPAttribute("foo");
-        attrib.setDisplayDescriptions(null);
+        attrib.setDisplayDescriptions(Collections.EMPTY_MAP);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
         attrib.setDisplayNames(Collections.emptyMap());
         Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
 
         Map<Locale, String> displayDescriptions = new HashMap<>();
-        displayDescriptions.put(null, "wibble");
+        displayDescriptions.clear();
         attrib.setDisplayDescriptions(displayDescriptions);
         Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
 
         displayDescriptions.clear();
-        displayDescriptions.put(en, null);
-        attrib.setDisplayDescriptions(displayDescriptions);
-        Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
-
-        displayDescriptions.clear();
-        // test adding one entry
         displayDescriptions.put(en, " english ");
         attrib.setDisplayDescriptions(displayDescriptions);
         

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute;
 
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 import com.google.common.collect.Multimap;
 
 /**
