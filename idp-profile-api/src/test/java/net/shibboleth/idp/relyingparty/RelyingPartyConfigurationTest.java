@@ -57,7 +57,6 @@ public class RelyingPartyConfigurationTest {
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
         profileConfigs.add(new MockProfileConfiguration("foo"));
-        profileConfigs.add(null);
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
         config = new RelyingPartyConfiguration();
