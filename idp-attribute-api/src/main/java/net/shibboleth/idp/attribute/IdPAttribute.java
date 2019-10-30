@@ -171,13 +171,10 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @return the unmodifiable, non null-containing output.
      */
     @SuppressWarnings("unchecked")
-    @Nonnull @Unmodifiable private Map<Locale, String> checkedNamesFrom(@Nonnull final Map<Locale, String> inputMap) {
+    @Nonnull @Unmodifiable private final Map<Locale, String> checkedNamesFrom(@Nonnull @NonnullElements
+            final Map<Locale, String> inputMap) {
         
-        if (inputMap.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        return Map.ofEntries((Entry<Locale, String>[])
-                inputMap.
+        return Map.ofEntries(inputMap.
                 entrySet().
                 stream().
                 map(filterEntry).
@@ -189,7 +186,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newNames the new names for this attribute
      */
-    public void setDisplayNames(@Nonnull final Map<Locale, String> newNames) {
+    public void setDisplayNames(@Nonnull @NonnullElements final Map<Locale, String> newNames) {
         displayNames = checkedNamesFrom(
                 Constraint.isNotNull(newNames, "Display Names should not be null"));
     }
@@ -208,7 +205,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param newDescriptions the new descriptions for this attribute
      */
-    public void setDisplayDescriptions(@Nonnull final Map<Locale, String> newDescriptions) {
+    public void setDisplayDescriptions(@Nonnull @NonnullElements final Map<Locale, String> newDescriptions) {
         displayDescriptions = checkedNamesFrom(
                 Constraint.isNotNull(newDescriptions, "Display Descriptions should not be null"));
     }

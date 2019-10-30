@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,18 +72,14 @@ public final class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setIdPAttributes(@Nullable final Collection<IdPAttribute> newAttributes) {
-        if (newAttributes == null || newAttributes.isEmpty()) {
-            attributes = Collections.emptyMap();
-            return;
-        }
+    public void setIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> newAttributes) {
+        Constraint.isNotNull(newAttributes, "Attributes inserted into AttributeContext should not be null");
 
-        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>(newAttributes.size());
-        for (final IdPAttribute attribute : newAttributes) {
-            checkedAttributes.put(attribute.getId(), Constraint.isNotNull(attribute, "Cannot set null attributes"));
-        }
-
-        attributes = Map.copyOf(checkedAttributes);
+        attributes = newAttributes.
+                stream().
+                collect(Collectors.collectingAndThen(
+                            Collectors.toMap(IdPAttribute::getId, a -> a),
+                            Collections::unmodifiableMap));
     }
     
     
@@ -104,20 +101,16 @@ public final class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setUnfilteredIdPAttributes(@Nullable final Collection<IdPAttribute> newAttributes) {
+    public void setUnfilteredIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> newAttributes) {
+        Constraint.isNotNull(newAttributes, "Attributes inserted into AttributeContext should not be null");
         if (null != unfilteredAttributes) {
             log.error("Unfiltered attributes have already been set in this flow.");
         }
-        if (newAttributes == null || newAttributes.isEmpty()) {
-            unfilteredAttributes = Collections.emptyMap();
-            return;
-        }
-
-        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>(newAttributes.size());
-        for (final IdPAttribute attribute : newAttributes) {
-            checkedAttributes.put(attribute.getId(), Constraint.isNotNull(attribute, "non null Attribute"));
-        }
-
-        unfilteredAttributes = Map.copyOf(checkedAttributes);
+        
+        unfilteredAttributes = newAttributes.
+                stream().
+                collect(Collectors.collectingAndThen(
+                            Collectors.toMap(IdPAttribute::getId, a -> a),
+                            Collections::unmodifiableMap));
     }
 }

@@ -162,15 +162,13 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @param dependencies unmodifiable list of dependencies for this plugin
      */
-    public void setAttributeDependencies(@Nullable final Set<ResolverAttributeDefinitionDependency> dependencies) {
+    public void setAttributeDependencies(@Nonnull @NonnullElements
+            final Set<ResolverAttributeDefinitionDependency> dependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        Constraint.isNotNull(dependencies, "Attribute Dependencies cannot be null");
 
-        if (dependencies != null) {
-            attributeDependencies = Set.copyOf(dependencies);
-        } else {
-            attributeDependencies = Collections.emptySet(); 
-        }
+        attributeDependencies = Set.copyOf(dependencies);
     }
     
     /**
@@ -178,15 +176,13 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @param dependencies unmodifiable list of dependencies for this plugin
      */
-    public void setDataConnectorDependencies(@Nullable final Set<ResolverDataConnectorDependency> dependencies) {
+    public void setDataConnectorDependencies(@Nonnull @NonnullElements
+            final Set<ResolverDataConnectorDependency> dependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        Constraint.isNotNull(dependencies, "DataConnector Dependencies cannot be null");
 
-        if (dependencies != null) {
-            dataConnectorDependencies = Set.copyOf(dependencies);
-        } else {
-            dataConnectorDependencies = Collections.emptySet();
-        }
+        dataConnectorDependencies = Set.copyOf(dependencies);
     }
 
 

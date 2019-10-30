@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,8 +63,8 @@ public class MockDataConnector extends AbstractDataConnector {
             Set<ResolverAttributeDefinitionDependency> attrDepends, 
             Set<ResolverDataConnectorDependency> dcDepends
             ) throws ComponentInitializationException {
-        setAttributeDependencies(attrDepends);
-        setDataConnectorDependencies(dcDepends);
+        setAttributeDependencies(attrDepends == null? Collections.emptySet() : attrDepends);
+        setDataConnectorDependencies(dcDepends == null? Collections.emptySet() : dcDepends);
         setId(id);
         values = connectorValues;
         initialize();

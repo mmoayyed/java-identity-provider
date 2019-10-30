@@ -19,13 +19,17 @@ package net.shibboleth.idp.attribute.resolver.context;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+
+import org.opensaml.messaging.context.BaseContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -34,16 +38,11 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.messaging.context.BaseContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
@@ -301,18 +300,14 @@ public final class AttributeResolutionContext extends BaseContext {
      * @return this context
      */
     @Nullable public AttributeResolutionContext setResolvedIdPAttributes(
-            @Nullable final Collection<IdPAttribute> attributes) {
+            @Nonnull @NonnullElements final Collection<IdPAttribute> attributes) {
         
-        final Map<String,IdPAttribute> copy = new HashMap<>(attributes.size());
-        
-        if (attributes != null) {
-            for (final IdPAttribute attribute : attributes) {
-                copy.put(attribute.getId(), Constraint.isNotNull(attribute, "Resolved Attributes Cannot be null"));
-            }
-        }
-        
-        resolvedAttributes = Map.copyOf(copy);
-        
+        Constraint.isNotNull(attributes, "Null attribute set cannot be inserted into a context");
+        resolvedAttributes = attributes.
+                stream().
+                collect(Collectors.collectingAndThen(
+                            Collectors.toMap(IdPAttribute::getId, a -> a),
+                            Collections::unmodifiableMap));
         return this;
     }
 

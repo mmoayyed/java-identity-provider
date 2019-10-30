@@ -92,8 +92,6 @@ public class AbstractResolverPluginTest {
     @Test public void dependencies() {
         MockBaseAttributeResolver plugin = new MockBaseAttributeResolver("foo", "bar");
 
-        plugin.setAttributeDependencies(null);
-        plugin.setDataConnectorDependencies(null);
         Assert.assertNotNull(plugin.getAttributeDependencies());
         Assert.assertTrue(plugin.getAttributeDependencies().isEmpty());
         Assert.assertNotNull(plugin.getDataConnectorDependencies());

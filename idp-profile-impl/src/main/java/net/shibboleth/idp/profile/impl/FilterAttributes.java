@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -383,7 +384,7 @@ public class FilterAttributes extends AbstractProfileAction {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             if (maskFailures) {
                 log.warn("Filter error masked, clearing resolved attributes");
-                attributeContext.setIdPAttributes(null);
+                attributeContext.setIdPAttributes(Collections.emptySet());
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             }

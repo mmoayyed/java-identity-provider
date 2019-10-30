@@ -96,7 +96,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
                 
         Constraint.isNotNull(headers, "Map of headers cannot be null");
         
-         headerList = headers.
+        headerList = headers.
                 entrySet().
                 stream().
                 map(e-> new Pair<>(
