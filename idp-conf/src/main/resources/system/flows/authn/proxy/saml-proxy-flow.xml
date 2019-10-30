@@ -45,6 +45,7 @@
     </view-state>
     
     <action-state id="ProcessResponse">
+        <evaluate expression="ContinueSAMLAuthentication" />
         <evaluate expression="ValidateSAMLAuthentication" />
         <evaluate expression="'proceed'" />
         

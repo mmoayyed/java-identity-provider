@@ -213,9 +213,19 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:bindingDescriptor-ref="shibboleth.Binding.SAML2POST" />
 
+    <bean id="ContinueSAMLAuthentication"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.ContinueSAMLAuthentication" scope="prototype"
+        p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+
     <bean id="ValidateSAMLAuthentication"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ValidateSAMLAuthentication" scope="prototype"
         p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"
-        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:responderLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple"
+        p:requesterLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+        p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
+        p:attributeFilter-ref="shibboleth.AttributeFilterService"
+        p:metadataResolver-ref="shibboleth.MetadataResolver" />
 
 </beans>

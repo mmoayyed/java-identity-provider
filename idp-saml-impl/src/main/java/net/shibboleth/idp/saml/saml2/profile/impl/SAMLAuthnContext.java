@@ -26,12 +26,13 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.handler.MessageHandler;
 import org.opensaml.profile.action.ProfileAction;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Subject;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Manages state for the webflow -> external -> webflow transitions
- * during proxied SAML authentication.
+ * Manages state during proxied SAML authentication.
  * 
  * @since 4.0.0
  */
@@ -45,6 +46,12 @@ public class SAMLAuthnContext extends BaseContext {
 
     /** The function to use to obtain a decoder. */
     @Nonnull private Function<String,MessageDecoder> decoderFactory;
+    
+    /** Subject of assertion used to authenticate. */
+    @Nullable private Subject subject;
+    
+    /** Authentication statement. */
+    @Nullable private AuthnStatement authnStatement;
     
     /**
      * Constructor.
@@ -98,4 +105,48 @@ public class SAMLAuthnContext extends BaseContext {
         return this;
     }
     
+    /**
+     * Get the SAML {@link Subject} from the authentication.
+     * 
+     * @return SAML {@link Subject}
+     */
+    @Nullable public Subject getSubject() {
+        return subject;
+    }
+ 
+    /**
+     * Set the SAML {@link Subject} from the authentication.
+     * 
+     * @param sub the SAML {@link Subject}
+     * 
+     * @return this context
+     */
+    @Nonnull public SAMLAuthnContext setSubject(@Nullable final Subject sub) {
+        subject = sub;
+        
+        return this;
+    }
+    
+    /**
+     * Get the SAML {@link AuthnStatement} from the authentication.
+     * 
+     * @return SAML {@link AuthnStatement}
+     */
+    @Nullable public AuthnStatement getAuthnStatement() {
+        return authnStatement;
+    }
+ 
+    /**
+     * Set the SAML {@link AuthnStatement} from the authentication.
+     * 
+     * @param statement the SAML {@link AuthnStatement}
+     * 
+     * @return this context
+     */
+    @Nonnull public SAMLAuthnContext setAuthnStatement(@Nullable final AuthnStatement statement) {
+        authnStatement = statement;
+        
+        return this;
+    }
+
 }

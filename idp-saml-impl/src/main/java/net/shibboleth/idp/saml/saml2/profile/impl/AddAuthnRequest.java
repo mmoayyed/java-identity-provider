@@ -80,7 +80,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     /** Strategy used to obtain the relay state token to provide. */
     @Nonnull private Function<ProfileRequestContext,String> relayStateLookupStrategy;
     
-    /** Strategy used to obtain the response issuer value. */
+    /** Strategy used to obtain the request issuer value. */
     @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
     
     /** The generator to use. */
