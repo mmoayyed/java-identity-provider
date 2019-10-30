@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.context;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,13 +27,10 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A {@link BaseContext} that tracks a set of attributes. Usually the tracked attributes are about a particular user and
@@ -44,18 +40,15 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public final class AttributeContext extends BaseContext {
 
     /** The attributes tracked by this context. */
-    @Nonnull private Map<String, IdPAttribute> attributes;
+    @Nonnull private Map<String,IdPAttribute> attributes;
     
     /** The attributes tracked by this context prior to filtering. */
-    @Nullable private Map<String, IdPAttribute> unfilteredAttributes;
-    
-    /** Log. */
-    private final Logger log;
+    @Nullable private Map<String,IdPAttribute> unfilteredAttributes;
     
     /** Constructor. */
     public AttributeContext() {
+        unfilteredAttributes = Collections.emptyMap();
         attributes = Collections.emptyMap();
-        log = LoggerFactory.getLogger(AttributeContext.class);
     }
 
     /**
@@ -72,14 +65,17 @@ public final class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> newAttributes) {
-        Constraint.isNotNull(newAttributes, "Attributes inserted into AttributeContext should not be null");
-
-        attributes = newAttributes.
-                stream().
-                collect(Collectors.collectingAndThen(
-                            Collectors.toMap(IdPAttribute::getId, a -> a),
-                            Collections::unmodifiableMap));
+    public void setIdPAttributes(@Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
+        
+        if (newAttributes != null) {
+            attributes = newAttributes.
+                    stream().
+                    collect(Collectors.collectingAndThen(
+                                Collectors.toMap(IdPAttribute::getId, a -> a),
+                                Collections::unmodifiableMap));
+        } else {
+            attributes = Collections.emptyMap();
+        }
     }
     
     
@@ -89,10 +85,6 @@ public final class AttributeContext extends BaseContext {
      * @return the collection of attributes indexed by attribute ID
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getUnfilteredIdPAttributes() {
-        if (null == unfilteredAttributes) {
-            log.error("No Attributes have been set in this flow.");
-            return Collections.emptyMap();
-        }
         return unfilteredAttributes;
     }
 
@@ -101,16 +93,16 @@ public final class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setUnfilteredIdPAttributes(@Nonnull @NonnullElements final Collection<IdPAttribute> newAttributes) {
-        Constraint.isNotNull(newAttributes, "Attributes inserted into AttributeContext should not be null");
+    public void setUnfilteredIdPAttributes(@Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
         if (null != unfilteredAttributes) {
-            log.error("Unfiltered attributes have already been set in this flow.");
+            unfilteredAttributes = newAttributes.
+                    stream().
+                    collect(Collectors.collectingAndThen(
+                                Collectors.toMap(IdPAttribute::getId, a -> a),
+                                Collections::unmodifiableMap));
+        } else {
+            unfilteredAttributes = Collections.emptyMap();
         }
-        
-        unfilteredAttributes = newAttributes.
-                stream().
-                collect(Collectors.collectingAndThen(
-                            Collectors.toMap(IdPAttribute::getId, a -> a),
-                            Collections::unmodifiableMap));
     }
+    
 }
