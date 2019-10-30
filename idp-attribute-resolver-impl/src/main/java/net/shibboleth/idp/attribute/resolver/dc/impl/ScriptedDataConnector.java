@@ -205,6 +205,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
          * @return script result
          * @throws ResolutionException if the script fails
          */
+        @SuppressWarnings("unchecked")
         @Nullable protected Map<String,IdPAttribute> execute(
                 @Nonnull final AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {

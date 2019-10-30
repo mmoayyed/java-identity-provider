@@ -24,8 +24,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Strings;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
@@ -34,6 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Engine to mine values from {@link IdPAttributePrincipal}s. */
 public class IdPAttributePrincipalValuesFunction extends AbstractInitializableComponent implements
@@ -48,9 +47,8 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
      * @param attrName the attribute name to read values from
      */
     public void setAttributeName(@Nonnull @NotEmpty final String attrName) {
-        Constraint.isFalse(Strings.isNullOrEmpty(attrName), "Attribute Name cannot be null or empty");
-        
-        attributeName = attrName;
+        attributeName = Constraint.isNotNull(StringSupport.trimOrNull(attrName),
+                "Attribute Name cannot be null or empty");
     }
 
     /** {@inheritDoc} */

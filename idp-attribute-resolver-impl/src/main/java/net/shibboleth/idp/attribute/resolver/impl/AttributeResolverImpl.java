@@ -42,8 +42,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -62,7 +60,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
@@ -112,25 +109,21 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /** Sets the attribute definitions for this resolver.
      * @param definitions attribute definitions loaded in to this resolver
      */
-    public void setAttributeDefinitions(@Nullable @NullableElements final Collection<AttributeDefinition> definitions) {
+    public void setAttributeDefinitions(@Nonnull @NonnullElements final Collection<AttributeDefinition> definitions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(definitions, "Attribute Defintions should be non-null");
         
-        final Map<String, AttributeDefinition> checkedDefinitions;
-        if (definitions != null) {
-            checkedDefinitions = new HashMap<>(definitions.size());
-            for (final AttributeDefinition definition : definitions) {
-                if (definition != null) {
-                    if (checkedDefinitions.containsKey(definition.getId())) {
-                        throw new IllegalArgumentException(logPrefix + " Duplicate Attribute Definition with id '"
-                                + definition.getId() + "'");
-                    }
-                    checkedDefinitions.put(definition.getId(), definition);
+        final Map<String, AttributeDefinition> checkedDefinitions = new HashMap<>(definitions.size());
+        for (final AttributeDefinition definition : definitions) {
+            if (definition != null) {
+                if (checkedDefinitions.containsKey(definition.getId())) {
+                    throw new IllegalArgumentException(logPrefix + " Duplicate Attribute Definition with id '"
+                            + definition.getId() + "'");
                 }
+                checkedDefinitions.put(definition.getId(), definition);
             }
-        } else {
-            checkedDefinitions = Collections.emptyMap();
         }
-        attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
+        attributeDefinitions = Map.copyOf(checkedDefinitions);
     }
 
     /**
@@ -146,25 +139,21 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /** Sets the data connectors for this resolver.
      * @param connectors data connectors loaded in to this resolver
      */
-    public void setDataConnectors( @Nullable @NullableElements final Collection<DataConnector> connectors){
+    public void setDataConnectors(@Nonnull @NonnullElements  final Collection<DataConnector> connectors){
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(connectors, "Attribute Defintions should be non-null");
         
-        final Map<String, DataConnector> checkedConnectors;
-        if (connectors != null) {
-            checkedConnectors = new HashMap<>(connectors.size());
-            for (final DataConnector connector : connectors) {
-                if (connector != null) {
-                    if (checkedConnectors.containsKey(connector.getId())) {
-                        throw new IllegalArgumentException(logPrefix + " Duplicate Data Connector Definition with id '"
-                                + connector.getId() + "'");
-                    }
-                    checkedConnectors.put(connector.getId(), connector);
+        final Map<String, DataConnector> checkedConnectors = new HashMap<>(connectors.size());
+        for (final DataConnector connector : connectors) {
+            if (connector != null) {
+                if (checkedConnectors.containsKey(connector.getId())) {
+                    throw new IllegalArgumentException(logPrefix + " Duplicate Data Connector Definition with id '"
+                            + connector.getId() + "'");
                 }
+                checkedConnectors.put(connector.getId(), connector);
             }
-        } else {
-            checkedConnectors = Collections.emptyMap();
         }
-        dataConnectors = ImmutableMap.copyOf(checkedConnectors);
+        dataConnectors = Map.copyOf(checkedConnectors);
     }
 
     /**
@@ -619,10 +608,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * </p>
      *
      * @param resolutionContext current resolution context
-     * @return a populated Attribute Context, or nothing
      */
-    @Nullable protected void  finalizePreResolvedAttributes(@Nonnull
-            final AttributeResolutionContext resolutionContext) {
+     protected void finalizePreResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);

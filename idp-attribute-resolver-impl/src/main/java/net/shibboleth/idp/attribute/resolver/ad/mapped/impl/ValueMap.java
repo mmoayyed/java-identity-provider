@@ -31,13 +31,9 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -86,13 +82,9 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      *
      * @param newValues functions used to map an input value to an output value
      */
-    public void setSourceValues(@Nullable @NullableElements final Collection<SourceValue> newValues) {
+    public void setSourceValues(@Nullable final Collection<SourceValue> newValues) {
 
-        if (newValues != null) {
-            sourceValues = Set.copyOf(Collections2.filter(newValues, Predicates.notNull()));
-        } else {
-            sourceValues = Collections.emptySet();
-        }
+        sourceValues = newValues != null ? Set.copyOf(newValues) : Collections.emptySet();
     }
 
     /**

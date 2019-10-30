@@ -18,6 +18,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -29,8 +30,6 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -63,7 +62,7 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "failure"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
-                        final Builder<String,Instant> mapBuilder = ImmutableMap.<String,Instant>builder();
+                        final Map<String,Instant> mapBuilder = new HashMap<>();
                         final ServiceableComponent<AttributeResolver> component =
                                 getService().getServiceableComponent();
                         if (component != null) {
@@ -89,7 +88,7 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
                                 component.unpinComponent();
                             }
                         }
-                        return mapBuilder.build();
+                        return Map.copyOf(mapBuilder);
                     }
                 });
 // Checkstyle: AnonInnerLength ON

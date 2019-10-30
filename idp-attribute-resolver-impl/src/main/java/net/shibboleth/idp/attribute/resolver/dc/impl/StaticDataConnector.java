@@ -18,12 +18,16 @@
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
@@ -31,14 +35,10 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that just returns a static collection of
@@ -51,7 +51,7 @@ public class StaticDataConnector extends AbstractDataConnector {
     @Nonnull private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
-    private Map<String, IdPAttribute> attributes;
+    private @NonnullAfterInit @NonnullElements Map<String, IdPAttribute> attributes;
 
     /**
      * Get the static values returned by this connector.
@@ -67,24 +67,18 @@ public class StaticDataConnector extends AbstractDataConnector {
      * 
      * @param newValues static values returned by this connector
      */
-    public void setValues(@Nullable @NullableElements final Collection<IdPAttribute> newValues) {
+    public void setValues(@Nonnull @NonnullElements final Collection<IdPAttribute> newValues) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        if (null == newValues) {
-            attributes = null;
-            return;
-        }
+        Constraint.isNotNull(newValues, "Values must not be null");
 
-        final Map<String, IdPAttribute> map = new HashMap<>(newValues.size());
-        for (final IdPAttribute attr : newValues) {
-            if (null == attr) {
-                continue;
-            }
-            map.put(attr.getId(), attr);
-        }
-
-        attributes = ImmutableMap.copyOf(map);
+        attributes = newValues.
+                stream().
+                map(e -> Constraint.isNotNull(e, "non null Attribute in connector")).
+                collect(Collectors.collectingAndThen(
+                            Collectors.toMap(IdPAttribute::getId, i -> i),
+                            Collections::unmodifiableMap));
     }
 
     /** {@inheritDoc} */

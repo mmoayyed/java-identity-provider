@@ -124,6 +124,7 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
     }
     
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     public Map<String,IdPAttribute> handleResponse(final HttpResponse response) throws IOException {
         
         log.debug("{} Handling HTTP response", getLogPrefix());

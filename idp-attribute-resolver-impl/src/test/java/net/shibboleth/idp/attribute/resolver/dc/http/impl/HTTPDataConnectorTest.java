@@ -81,8 +81,11 @@ public class HTTPDataConnectorTest {
         builder.setTemplateText(TEST_URL);
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.setHttpClientSecurityParameters(params);
+        builder.setHeaders(Collections.singletonMap("Accept", "test/html"));
         builder.initialize();
+        
         connector.setExecutableSearchBuilder(builder);
+        
         
         final ScriptedResponseMappingStrategy mapping =
                 ScriptedResponseMappingStrategy.resourceScript(

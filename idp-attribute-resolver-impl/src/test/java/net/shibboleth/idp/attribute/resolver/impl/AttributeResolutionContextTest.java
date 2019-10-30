@@ -79,7 +79,6 @@ public class AttributeResolutionContextTest {
     @Test public void setResolvedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
-        context.setResolvedIdPAttributes(null);
         assertNotNull(context.getResolvedIdPAttributes());
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
 
@@ -88,13 +87,7 @@ public class AttributeResolutionContextTest {
         assertNotNull(context.getResolvedIdPAttributes());
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
 
-        attributes.add(null);
-        context.setResolvedIdPAttributes(attributes);
-        assertNotNull(context.getResolvedIdPAttributes());
-        assertTrue(context.getResolvedIdPAttributes().isEmpty());
-
         attributes.add(new IdPAttribute("foo"));
-        attributes.add(null);
         attributes.add(new IdPAttribute("bar"));
         context.setResolvedIdPAttributes(attributes);
         assertNotNull(context.getResolvedIdPAttributes());

@@ -54,8 +54,6 @@ public class StaticDataConnectorTest {
         connector.setId("Static");
 
         assertNull(connector.getAttributes());
-        connector.setValues(null);
-        assertNull(connector.getAttributes());
 
         try {
             connector.initialize();
@@ -68,12 +66,7 @@ public class StaticDataConnectorTest {
         connector.setValues(input);
         assertNotNull(connector.getAttributes());
 
-        input.add(null);
-        connector.setValues(input);
-        assertNotNull(connector.getAttributes());        
-
         input.add(attribute);
-        input.add(null);
         input.add(new IdPAttribute("thingy"));
         
         connector.setValues(input);
@@ -97,7 +90,6 @@ public class StaticDataConnectorTest {
         connector.setId("Static");
 
         List<IdPAttribute> input = new ArrayList<>();
-        input.add(null);
         connector.setValues(input);
         
         try {

@@ -208,9 +208,8 @@ public class MappedAttributeTest {
     @Test public void defaultCase() throws Exception {
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
-                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
-                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
-                                ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), 
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
 
         final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);

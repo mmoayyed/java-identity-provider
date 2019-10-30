@@ -19,9 +19,9 @@ package net.shibboleth.idp.attribute.resolver.dc.http.impl;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +34,6 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -45,6 +43,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -65,14 +64,14 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
         ExecutableSearchBuilder<HTTPSearch> {
     
     /** Map of headers to set. */
-    @Nonnull @NonnullElements private Map<String,String> headerMap;
+    @Nonnull @NonnullElements @Unmodifiable private List<Pair<String,String>> headerList;
     
     /** HTTP client security parameters. */
     @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
     
     /** Constructor. */
     public AbstractHTTPSearchBuilder() {
-        headerMap = Collections.emptyMap();
+        headerList = Collections.emptyList();
     }
     
     /**
@@ -80,8 +79,8 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
      * 
      * @return map of headers
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,String> getHeaders() {
-        return ImmutableMap.copyOf(headerMap);
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Pair<String,String>> getHeaders() {
+        return headerList;
     }
     
     /**
@@ -96,15 +95,14 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
                 
         Constraint.isNotNull(headers, "Map of headers cannot be null");
-        headerMap = new HashMap<>(headers.size());
         
-        for (final Map.Entry<String,String> entry : headers.entrySet()) {
-            final String key = StringSupport.trimOrNull(entry.getKey());
-            final String value = StringSupport.trimOrNull(entry.getValue());
-            if (key != null && value != null) {
-                headerMap.put(key, value);
-            }
-        }
+         headerList = headers.
+                entrySet().
+                stream().
+                map(e-> new Pair<>(
+                        Constraint.isNotNull(StringSupport.trimOrNull(e.getKey()), "header name  must be non null"),
+                        Constraint.isNotNull(StringSupport.trimOrNull(e.getValue()), "header value must be non null"))).
+                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
     
     /**
@@ -142,8 +140,8 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
         
         final HttpUriRequest request = getHttpRequest(resolutionContext, dependencyAttributes);
         
-        for (final Map.Entry<String,String> entry : headerMap.entrySet()) {
-            request.setHeader(entry.getKey(), entry.getValue());
+        for (final Pair<String,String> entry : headerList) {
+            request.setHeader(entry.getFirst(), entry.getSecond());
         }
 
 // Checkstyle: AnonInnerLength OFF

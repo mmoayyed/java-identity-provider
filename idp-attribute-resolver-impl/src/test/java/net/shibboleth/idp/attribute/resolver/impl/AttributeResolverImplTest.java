@@ -44,10 +44,10 @@ import org.testng.annotations.Test;
 import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
-import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -62,7 +62,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -924,12 +923,13 @@ public class AttributeResolverImplTest {
     }
 
     public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
-            @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
-            @Nullable @NullableElements final Collection<DataConnector> connectors) {
+            @Nullable final Collection<AttributeDefinition> definitions,
+            @Nullable final Collection<DataConnector> connectors) {
         final AttributeResolverImpl result = new AttributeResolverImpl();
         result.setId(resolverId);
-        result.setAttributeDefinitions(definitions);
-        result.setDataConnectors(connectors);
+        
+        result.setAttributeDefinitions(definitions == null ? Collections.EMPTY_LIST : definitions);
+        result.setDataConnectors(connectors == null ? Collections.EMPTY_LIST : connectors);
         result.setApplicationContext(new MockApplicationContext());
         return result;
     }

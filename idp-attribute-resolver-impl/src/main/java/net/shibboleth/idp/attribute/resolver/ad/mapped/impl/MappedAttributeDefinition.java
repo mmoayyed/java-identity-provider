@@ -27,6 +27,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -38,19 +43,11 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 
 /**
  * Implementation of Mapped Attributes. <br/>
@@ -88,15 +85,11 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param mappings functions used to map an input value to an output value
      */
-    public void setValueMaps(@Nullable @NullableElements final Collection<ValueMap> mappings) {
+    public void setValueMaps(@Nullable final Collection<ValueMap> mappings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        if (mappings != null) {
-            valueMaps = Set.copyOf(Collections2.filter(mappings, Predicates.notNull()));
-        } else {
-            valueMaps = Collections.emptySet();
-        }
+        valueMaps = mappings != null ? Set.copyOf(mappings) : Collections.emptySet();
     }
 
     /**
