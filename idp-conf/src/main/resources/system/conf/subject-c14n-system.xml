@@ -75,6 +75,20 @@
             </bean>
         </property>
     </bean>
+
+    <bean id="c14n/SAML2ProxyTransform" parent="shibboleth.AbstractSAML2C14NFlowBean"
+            p:formats-ref="shibboleth.ProxyNameTransformFormats">
+        <property name="activationCondition">
+            <bean parent="shibboleth.Conditions.AND">
+                <constructor-arg>
+                    <list>
+                        <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
+                        <ref bean="shibboleth.ProxyNameTransformPredicate" />
+                    </list>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
                
     <bean id="c14n/SAML1Transform" parent="shibboleth.AbstractSAML1C14NFlowBean"
             p:formats-ref="shibboleth.NameTransformFormats"> 

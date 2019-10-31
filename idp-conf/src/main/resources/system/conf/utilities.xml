@@ -82,6 +82,28 @@
         class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
         c:objectStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty" />
 
+    <!-- Parent bean for building predicates acting over a candidate c14n Subject based on proxy authn. -->
+    <bean id="shibboleth.Conditions.ProxyAuthentication" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean parent="shibboleth.Functions.Compose">
+                <constructor-arg name="g">
+                    <bean class="net.shibboleth.idp.authn.context.navigate.ProxyAuthenticationLookupFunction" />
+                </constructor-arg>
+                <constructor-arg name="f">
+		            <bean parent="shibboleth.Functions.Compose">
+		                <constructor-arg name="g">
+		                    <bean class="net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction" />
+		                </constructor-arg>
+		                <constructor-arg name="f">
+		                    <ref bean="shibboleth.ChildLookup.SubjectCanonicalizationContext" />
+		                </constructor-arg>
+		            </bean>
+		        </constructor-arg>
+		    </bean>
+        </constructor-arg>
+    </bean>
+
     <!-- Parent bean for building custom predicates that act on the principal name of the Subject. -->
     <bean id="shibboleth.Conditions.SubjectName" abstract="true"
             class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">

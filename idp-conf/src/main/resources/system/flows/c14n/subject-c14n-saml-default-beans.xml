@@ -48,6 +48,14 @@
         </property>
     </bean>
 
+    <bean id="Shibboleth.C14N.SAML2ProxyTransform"
+            class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype">
+        <property name="decoder">
+            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder"
+                p:transforms-ref="shibboleth.ProxyNameTransforms" />
+        </property>
+    </bean>
+
     <bean id="Shibboleth.C14N.SAML1Transient"
             class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization" scope="prototype">
         <property name="decoder">

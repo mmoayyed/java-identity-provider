@@ -110,6 +110,7 @@
                 <entry key="c14n/SAML2CryptoTransient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
                 <entry key="c14n/SAML2Persistent" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
                 <entry key="c14n/SAML2Transform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2ProxyTransform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
                 <entry key="c14n/SAML1Transient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
                 <entry key="c14n/SAML1CryptoTransient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
                 <entry key="c14n/SAML1Transform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
