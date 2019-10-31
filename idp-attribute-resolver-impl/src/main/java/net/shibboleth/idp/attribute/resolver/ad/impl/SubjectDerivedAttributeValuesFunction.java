@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Function which returns {@link IdPAttributeValue}s derived from the {@link java.security.Principal}s
- * associated with the request.  The precise values are determined by an injected {@link Function}.
+ * associated with the request. The precise values are determined by an injected {@link Function}.
  */
 public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableInitializableComponent implements
         Function<ProfileRequestContext,List<IdPAttributeValue>> {
@@ -101,6 +101,11 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
     /** {@inheritDoc} */
     @Nullable public List<IdPAttributeValue> apply(@Nullable final ProfileRequestContext prc) {
         final SubjectContext cs = scLookupStrategy.apply(prc);
+        if (cs == null) {
+            log.debug("{} No SubjectContext returned from lookup strategy, no attribute resolved", getLogPrefix());
+            return null;
+        }
+        
         final List<IdPAttributeValue> results = new ArrayList<>();
 
         for (final Subject subject : cs.getSubjects()) {
@@ -126,7 +131,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * @return a  consistent log prefix
      */
     private String getLogPrefix() {
-        return "SubjectDerivedAttributeDefinition" + getId();
+        return "SubjectDerivedAttributeDefinition " + getId();
     }
     
 }
