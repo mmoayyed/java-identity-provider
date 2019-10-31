@@ -47,6 +47,9 @@
     <action-state id="ProcessResponse">
         <evaluate expression="ContinueSAMLAuthentication" />
         <evaluate expression="ValidateSAMLAuthentication" />
+        <evaluate expression="PostAssertionPopulateAuditContext" />
+        <evaluate expression="PostResponsePopulateAuditContext" />
+        <evaluate expression="WriteAuditLog" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="proceed" />

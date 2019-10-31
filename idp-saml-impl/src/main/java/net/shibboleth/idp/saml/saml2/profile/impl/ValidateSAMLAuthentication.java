@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -41,7 +40,8 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -95,22 +95,18 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     /** Service used to get the engine used to filter attributes. */
     @Nullable private ReloadableService<AttributeFilter> attributeFilterService;
 
-    /** Strategy used to obtain our identity. */
-    @Nullable private Function<ProfileRequestContext,String> recipientIdLookupStrategy;
-    
     /** Optional supplemental metadata source for filtering. */
     @Nullable private MetadataResolver metadataResolver;
     
     /** Context containing the result to validate. */
     @Nullable private SAMLAuthnContext samlAuthnContext;
     
-    /** Free-standing context for externally supplied inbound attributes. */
+    /** Context for externally supplied inbound attributes. */
     @Nullable private AttributeContext attributeContext;
         
     /** Constructor. */
     public ValidateSAMLAuthentication() {
         setMetricName(DEFAULT_METRIC_NAME);
-        recipientIdLookupStrategy = new ResponderIdLookupFunction();
     }
 
     /**
@@ -145,17 +141,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         metadataResolver = resolver;
-    }
-    
-    /**
-     * Set the strategy used to locate the attribute recipient value to use.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRecipientIdLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        recipientIdLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
@@ -210,17 +195,25 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         
+        if (samlAuthnContext.getSubject() != null && samlAuthnContext.getSubject().getNameID() != null) {
+            subject.getPrincipals().add(new NameIDPrincipal(samlAuthnContext.getSubject().getNameID()));
+        }
+        
+        final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
+        proxied.getAuthorities().add(
+                ((Assertion) samlAuthnContext.getAuthnStatement().getParent()).getIssuer().getValue());
+        
         final Collection<AuthenticatingAuthority> authorities =
                 samlAuthnContext.getAuthnStatement().getAuthnContext().getAuthenticatingAuthorities();
         if (!authorities.isEmpty()) {
-            final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal(
-                    authorities
-                        .stream()
-                        .filter(aa -> !Strings.isNullOrEmpty(aa.getURI()))
-                        .map(AuthenticatingAuthority::getURI)
-                        .collect(Collectors.toUnmodifiableList()));
-            subject.getPrincipals().add(proxied);
+            proxied.getAuthorities().addAll(
+                authorities
+                    .stream()
+                    .filter(aa -> !Strings.isNullOrEmpty(aa.getURI()))
+                    .map(AuthenticatingAuthority::getURI)
+                    .collect(Collectors.toUnmodifiableList()));
         }
+        subject.getPrincipals().add(proxied);
         
         if (attributeContext != null && !attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
@@ -274,8 +267,11 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         log.debug("{} Incoming SAML Attributes mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
         
         if (!mapped.isEmpty()) {
-            attributeContext = new AttributeContext();
+            attributeContext = profileRequestContext
+                    .getSubcontext(RelyingPartyContext.class)
+                    .getSubcontext(AttributeContext.class, true);
             attributeContext.setUnfilteredIdPAttributes(mapped.values());
+            attributeContext.setIdPAttributes(null);
             filterAttributes(profileRequestContext);
         }
     }
@@ -318,12 +314,12 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     private void filterAttributes(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (attributeFilterService == null) {
             log.warn("{} No AttributeFilter service provided", getLogPrefix());
-            attributeContext.setIdPAttributes(null);
             return;
         }
         
         
-        final AttributeFilterContext filterContext = samlAuthnContext.getSubcontext(AttributeFilterContext.class, true);
+        final AttributeFilterContext filterContext =
+                profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
         
         populateFilterContext(profileRequestContext, filterContext);
         
@@ -334,7 +330,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             if (null == component) {
                 log.error("{} Error while filtering inbound attributes: Invalid Attribute Filter configuration",
                         getLogPrefix());
-                attributeContext.setIdPAttributes(null);
             } else {
                 final AttributeFilter filter = component.getComponent();
                 filter.filterAttributes(filterContext);
@@ -343,7 +338,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             }
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
-            attributeContext.setIdPAttributes(null);
         } finally {
             if (null != component) {
                 component.unpinComponent();
@@ -368,9 +362,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                     new SAMLMetadataContextLookupFunction().compose(
                             new RecursiveTypedParentContextLookup<>(ProfileRequestContext.class)))
             .setProxiedRequesterContextLookupStrategy(null)
-            .setAttributeIssuerID(
-                    ((Assertion) samlAuthnContext.getAuthnStatement().getParent()).getIssuer().getValue())
-            .setAttributeRecipientID(recipientIdLookupStrategy.apply(profileRequestContext));
+            .setAttributeIssuerID(getResponderLookupStrategy().apply(profileRequestContext))
+            .setAttributeRecipientID(getRequesterLookupStrategy().apply(profileRequestContext));
     }
 
 }

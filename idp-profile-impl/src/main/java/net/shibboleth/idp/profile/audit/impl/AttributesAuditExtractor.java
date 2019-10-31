@@ -83,7 +83,6 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         
         if (activationCondition != null && !activationCondition.test(input)) {

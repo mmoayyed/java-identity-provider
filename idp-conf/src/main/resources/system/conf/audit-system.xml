@@ -461,6 +461,98 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.DefaultPostInboundAssertionAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ASSERTION_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AssertionIDAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ASSERTION_ISSUE_INSTANT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AssertionInstantAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.AUTHN_INSTANT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AuthnInstantAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SESSION_INDEX"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SessionIndexAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.AUTHN_CONTEXT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AuthnContextAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
         
     <bean id="shibboleth.DefaultPostResponseAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
@@ -664,6 +756,114 @@
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.SAMLObject"
                                 c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.DefaultPostInboundResponseAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.RESPONSE_BINDING"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLBindingContextBindingFunction"
+                                p:useShortName="%{idp.audit.shortenBindings:false}" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.ChildLookup.SAMLBindingContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.RESPONSE_ID"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageInfoContextIDFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.RESPONSE_ISSUE_INSTANT"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageInfoContextIssueInstantFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IN_RESPONSE_TO"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.InResponseToAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.STATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.StatusCodeAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SUBSTATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SubStatusCodeAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.STATUS_MESSAGE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.StatusMessageAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
                         </constructor-arg>
                     </bean>
                 </entry>

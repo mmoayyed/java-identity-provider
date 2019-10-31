@@ -206,6 +206,17 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         
         resultCachingPredicate = predicate;
     }
+    
+    /**
+     * Get the strategy used to locate the requester ID for canonicalization.
+     * 
+     * @return lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public Function<ProfileRequestContext,String> getRequesterLookupStrategy() {
+        return requesterLookupStrategy;
+    }
 
     /**
      * Set the strategy used to locate the requester ID for canonicalization.
@@ -216,6 +227,17 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         requesterLookupStrategy = strategy;
+    }
+    
+    /**
+     * Get the strategy used to locate the responder ID for canonicalization.
+     * 
+     * @return lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public Function<ProfileRequestContext,String> getResponderLookupStrategy() {
+        return responderLookupStrategy;
     }
 
     /**
@@ -363,7 +385,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         if (responderLookupStrategy != null) {
             c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
         }
-        profileRequestContext.addSubcontext(c14n, true);
+        authenticationContext.getParent().addSubcontext(c14n, true);
     }
     
     /**

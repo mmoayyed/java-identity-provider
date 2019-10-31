@@ -218,6 +218,14 @@
         p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"
         p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
 
+    <bean id="PostAssertionPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostInboundAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostInboundAssertionAuditExtractors')}" />
+
+    <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
+        p:fieldExtractors="#{getObject('shibboleth.PostInboundResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostInboundResponseAuditExtractors')}" />
+
     <bean id="ValidateSAMLAuthentication"
         class="net.shibboleth.idp.saml.saml2.profile.impl.ValidateSAMLAuthentication" scope="prototype"
         p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"

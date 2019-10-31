@@ -26,7 +26,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -66,9 +65,9 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
     public InitializeProxyProfileRequestContext() {
         
         // Defaults to PRC -> AuthenticationContext -> PRC
-        profileRequestContextCreationStrategy =
-                new ChildContextLookup<>(ProfileRequestContext.class, true).compose(
-                        new ChildContextLookup<>(AuthenticationContext.class));
+        profileRequestContextCreationStrategy = input ->
+            (ProfileRequestContext) input.getSubcontext(AuthenticationContext.class).addSubcontext(
+                    new ProfileRequestContext(), true);
     }
     
     /**
