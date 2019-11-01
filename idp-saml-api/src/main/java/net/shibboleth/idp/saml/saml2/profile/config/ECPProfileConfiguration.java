@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -72,7 +71,12 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getLocalEvents(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableSet(localEventsLookupStrategy.apply(profileRequestContext));
+        
+        final Set<String> events = localEventsLookupStrategy.apply(profileRequestContext);
+        if (events != null) {
+            return Set.copyOf(events);
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -86,7 +90,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
 
         if (events != null && !events.isEmpty()) {
             localEventsLookupStrategy = FunctionSupport.constant(
-                    new HashSet<>(StringSupport.normalizeStringCollection(events)));
+                    Set.copyOf(StringSupport.normalizeStringCollection(events)));
         } else {
             localEventsLookupStrategy = FunctionSupport.constant(null);
         }

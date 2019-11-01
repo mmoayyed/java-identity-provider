@@ -18,6 +18,9 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -30,7 +33,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -114,9 +116,13 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getProxyAudiences(
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getProxyAudiences(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(proxyAudiencesLookupStrategy.apply(profileRequestContext));
+        final Collection<String> audiences = proxyAudiencesLookupStrategy.apply(profileRequestContext);
+        if (audiences != null) {
+            return Set.copyOf(audiences);
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -128,7 +134,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         if (audiences == null || audiences.isEmpty()) {
             proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
         } else {
-            proxyAudiencesLookupStrategy = FunctionSupport.constant(StringSupport.normalizeStringCollection(audiences));
+            proxyAudiencesLookupStrategy = FunctionSupport.constant(
+                    List.copyOf(StringSupport.normalizeStringCollection(audiences)));
         }
     }
 

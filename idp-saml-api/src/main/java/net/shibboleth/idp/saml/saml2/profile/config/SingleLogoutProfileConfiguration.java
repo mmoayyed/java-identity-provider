@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -34,7 +36,6 @@ import com.google.common.base.Predicates;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -165,7 +166,11 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      */
     @Nonnull @NonnullElements @NotLive public Collection<String> getQualifiedNameIDFormats(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext));
+        final Collection<String> formats = qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext);
+        if (formats != null) {
+            return List.copyOf(formats);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -186,7 +191,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
             qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(null);
         } else {
             qualifiedNameIDFormatsLookupStrategy =
-                    FunctionSupport.constant(StringSupport.normalizeStringCollection(formats));
+                    FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(formats)));
         }
     }
 

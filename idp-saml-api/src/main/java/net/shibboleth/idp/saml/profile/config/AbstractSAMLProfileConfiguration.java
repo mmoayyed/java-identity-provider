@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.profile.config;
 
 import java.time.Duration;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -235,7 +234,12 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableSet(assertionAudiencesLookupStrategy.apply(profileRequestContext));
+        
+        final Collection<String> audiences = assertionAudiencesLookupStrategy.apply(profileRequestContext);
+        if (audiences != null) {
+            return Set.copyOf(audiences);
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -249,14 +253,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
         if (audiences == null || audiences.isEmpty()) {
             assertionAudiencesLookupStrategy = FunctionSupport.constant(null);
         } else {
-            final Set<String> assertionAudiences = new HashSet<>();
-            for (final String audience : audiences) {
-                final String trimmedAudience = StringSupport.trimOrNull(audience);
-                if (trimmedAudience != null) {
-                    assertionAudiences.add(trimmedAudience);
-                }
-            }
-            assertionAudiencesLookupStrategy = FunctionSupport.constant(assertionAudiences);
+            assertionAudiencesLookupStrategy = FunctionSupport.constant(
+                    Set.copyOf(StringSupport.normalizeStringCollection(audiences)));
         }
     }
 

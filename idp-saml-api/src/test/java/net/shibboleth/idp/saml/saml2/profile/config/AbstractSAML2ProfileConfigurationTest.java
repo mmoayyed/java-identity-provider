@@ -112,7 +112,6 @@ public class AbstractSAML2ProfileConfigurationTest {
 
         final ArrayList<String> audiences = new ArrayList<>();
         audiences.add("foo");
-        audiences.add("foo");
         audiences.add("bar");
 
         config.setProxyAudiences(audiences);
@@ -131,7 +130,6 @@ public class AbstractSAML2ProfileConfigurationTest {
         final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
 
         final ArrayList<String> audiences = new ArrayList<>();
-        audiences.add("foo");
         audiences.add("foo");
         audiences.add("bar");
 

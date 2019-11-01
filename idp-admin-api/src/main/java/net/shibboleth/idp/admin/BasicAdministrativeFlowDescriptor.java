@@ -18,7 +18,6 @@
 package net.shibboleth.idp.admin;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +36,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.LangBearingString;
@@ -417,7 +415,11 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(postAuthenticationFlowsLookupStrategy.apply(profileRequestContext));
+        final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return List.copyOf(flows);
+        }
+        return Collections.emptyList();
     }
     
     /**
@@ -429,7 +431,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
 
         if (flows != null) {
             postAuthenticationFlowsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
