@@ -634,12 +634,22 @@
                         </documentation>
                     </annotation>
                 </attribute>
-
                 <attribute name="principalAttributeName" type="resolver:string">
                     <annotation>
                         <documentation>
 	                        The id of the IdPAttribute contained within a IdPAttributePrincipal to look for.
 	                        Mutually exclusive with attributeValueEngineRef.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="forCanonicalization" type="boolean">
+                    <annotation>
+                        <documentation>
+                            If true, the source Subject is assumed to be undergoing C14N rather than the
+                            usual post-authentication source. Defaults to false.
+                            
+                            This attribute is evaluated during parsing, so cannot be a property expression,
+                            only a literal boolean value.
                         </documentation>
                     </annotation>
                 </attribute>

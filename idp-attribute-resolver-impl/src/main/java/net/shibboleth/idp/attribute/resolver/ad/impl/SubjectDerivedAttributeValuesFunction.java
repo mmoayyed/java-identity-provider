@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -59,6 +61,9 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      */
     @NonnullAfterInit private Function<Principal,List<IdPAttributeValue>> attributeValuesFunction;
 
+    /** Strategy used to locate the {@link Subject} to use. */
+    @Nullable private Function<ProfileRequestContext,Subject> subjectLookupStrategy;
+
     /** Constructor. */
     public SubjectDerivedAttributeValuesFunction() {
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
@@ -89,6 +94,20 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
         attributeValuesFunction = Constraint.isNotNull(strategy, "Attribute value lookup strategy cannot be null");
     }
 
+    /**
+     * Sets the strategy used to locate a {@link Subject} associated with a given
+     * {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}.
+     * 
+     * @param strategy strategy used to locate a {@link Subject} associated with a given
+     *            {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
+     */
+    public void setSubjectLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Subject> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        subjectLookupStrategy = strategy;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -100,15 +119,28 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
 
     /** {@inheritDoc} */
     @Nullable public List<IdPAttributeValue> apply(@Nullable final ProfileRequestContext prc) {
-        final SubjectContext cs = scLookupStrategy.apply(prc);
-        if (cs == null) {
-            log.debug("{} No SubjectContext returned from lookup strategy, no attribute resolved", getLogPrefix());
-            return null;
+        
+        Collection<Subject> subjects = Collections.emptyList();
+        
+        if (subjectLookupStrategy != null) {
+            final Subject subject = subjectLookupStrategy.apply(prc);
+            if (subject == null) {
+                log.debug("{} No Subject returned from lookup, no attribute resolved", getLogPrefix());
+                return null;
+            }
+            subjects = Collections.singletonList(subject);
+        } else {
+            final SubjectContext cs = scLookupStrategy.apply(prc);
+            if (cs == null || cs.getSubjects().isEmpty()) {
+                log.debug("{} No Subjects returned from SubjectContext lookup, no attribute resolved", getLogPrefix());
+                return null;
+            }
+            subjects = cs.getSubjects();
         }
         
         final List<IdPAttributeValue> results = new ArrayList<>();
 
-        for (final Subject subject : cs.getSubjects()) {
+        for (final Subject subject : subjects) {
             for (final Principal principal : subject.getPrincipals()) {
                 final List<IdPAttributeValue> values = attributeValuesFunction.apply(principal);
                 if ((null != values) && !values.isEmpty()) {

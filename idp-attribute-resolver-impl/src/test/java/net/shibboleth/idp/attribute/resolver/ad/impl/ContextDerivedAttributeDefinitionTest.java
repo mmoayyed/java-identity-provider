@@ -41,6 +41,7 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /** Test for {@link SubjectDerivedAttributeValuesFunction}. */
 public class ContextDerivedAttributeDefinitionTest {
@@ -49,6 +50,28 @@ public class ContextDerivedAttributeDefinitionTest {
     private static final String SIMPLE_VALUE = "simple";
     
 
+    @Test public void noSubjectContext() throws ComponentInitializationException, ResolutionException {
+
+        final SubjectDerivedAttributeValuesFunction ctxValueFunction = new SubjectDerivedAttributeValuesFunction();
+        ctxValueFunction.setId("pDaD");
+        final IdPAttributePrincipalValuesFunction fn = new IdPAttributePrincipalValuesFunction();
+        fn.setAttributeName("wibble");
+        fn.doInitialize();
+        ctxValueFunction.setAttributeValuesFunction(fn);
+        
+        final ContextDerivedAttributeDefinition defn = new ContextDerivedAttributeDefinition();
+        defn.setAttributeValuesFunction(ctxValueFunction);
+        defn.setId("pDAD");
+        defn.initialize();
+
+        final AttributeResolutionContext ctx =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);        
+        
+        final IdPAttribute result = defn.resolve(ctx);
+        assertNull(result);
+    }
+    
     @Test public void simpleValue() throws ComponentInitializationException, ResolutionException {
         final List<IdPAttributeValue> list = new ArrayList<>(2);
         list.add(new StringAttributeValue(SIMPLE_VALUE));
@@ -86,6 +109,43 @@ public class ContextDerivedAttributeDefinitionTest {
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
+    
+    @Test public void simpleValueViaSubject() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue> list = new ArrayList<>(2);
+        list.add(new StringAttributeValue(SIMPLE_VALUE));
+        list.add(new StringAttributeValue(SIMPLE_VALUE + "2"));
+        
+        final IdPAttribute attr = new IdPAttribute("wibble");
+        attr.setValues(list);
+
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new IdPAttributePrincipal(attr));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
+        
+        final SubjectDerivedAttributeValuesFunction ctxValueFunction = new SubjectDerivedAttributeValuesFunction();
+        ctxValueFunction.setId("pDaD");
+        ctxValueFunction.setSubjectLookupStrategy(FunctionSupport.constant(subject));
+        final IdPAttributePrincipalValuesFunction fn = new IdPAttributePrincipalValuesFunction();
+        fn.setAttributeName("wibble");
+        fn.doInitialize();
+        ctxValueFunction.setAttributeValuesFunction(fn);
+        
+        final ContextDerivedAttributeDefinition defn = new ContextDerivedAttributeDefinition();
+        defn.setAttributeValuesFunction(ctxValueFunction);
+        defn.setId("pDAD");
+        defn.initialize();
+
+        final AttributeResolutionContext ctx =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);        
+        
+        final List<IdPAttributeValue> foo = defn.resolve(ctx).getValues();
+        
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+    }
+    
     
     @Test public void empty() throws ComponentInitializationException, ResolutionException {
         final List<IdPAttributeValue> list = Collections.emptyList();

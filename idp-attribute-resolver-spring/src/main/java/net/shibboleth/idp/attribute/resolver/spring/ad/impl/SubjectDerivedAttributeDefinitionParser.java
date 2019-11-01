@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -32,7 +33,10 @@ import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValues
 import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
 public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
@@ -63,10 +67,19 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "principalAttributeName"));
         final String functionRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValuesFunctionRef"));
 
+        final Boolean c14n = AttributeSupport.getAttributeValueAsBoolean(
+                config.getAttributeNodeNS(null, "forCanonicalization"));
+        
         final BeanDefinitionBuilder contextFunctionBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(SubjectDerivedAttributeValuesFunction.class);
         contextFunctionBuilder.addPropertyValue("id", getDefinitionId());
 
+        if (c14n != null && c14n.booleanValue()) {
+            contextFunctionBuilder.addPropertyValue("subjectLookupStrategy",
+                    new SubjectCanonicalizationContextSubjectLookupFunction().compose(
+                            new ChildContextLookup<>(SubjectCanonicalizationContext.class)));
+        }
+        
         if (null != attributeName) {
             if (null != functionRef) {
                 log.warn("{} only one of \"principalAttributeName\" or \"attributeValuesFunctionRef\""
