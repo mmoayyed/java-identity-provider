@@ -70,9 +70,7 @@ public final class AttributeContext extends BaseContext {
         if (newAttributes != null) {
             attributes = newAttributes.
                     stream().
-                    collect(Collectors.collectingAndThen(
-                                Collectors.toMap(IdPAttribute::getId, a -> a),
-                                Collections::unmodifiableMap));
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a));
         } else {
             attributes = Collections.emptyMap();
         }
@@ -97,9 +95,7 @@ public final class AttributeContext extends BaseContext {
         if (null != unfilteredAttributes) {
             unfilteredAttributes = newAttributes.
                     stream().
-                    collect(Collectors.collectingAndThen(
-                                Collectors.toMap(IdPAttribute::getId, a -> a),
-                                Collections::unmodifiableMap));
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a));
         } else {
             unfilteredAttributes = Collections.emptyMap();
         }

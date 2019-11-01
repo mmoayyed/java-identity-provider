@@ -76,9 +76,7 @@ public class StaticDataConnector extends AbstractDataConnector {
         attributes = newValues.
                 stream().
                 map(e -> Constraint.isNotNull(e, "non null Attribute in connector")).
-                collect(Collectors.collectingAndThen(
-                            Collectors.toMap(IdPAttribute::getId, i -> i),
-                            Collections::unmodifiableMap));
+                collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, i -> i));
     }
 
     /** {@inheritDoc} */

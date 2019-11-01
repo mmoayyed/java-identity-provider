@@ -200,7 +200,7 @@ public final class RelyingPartyUIContext extends BaseContext {
                 stream().
                 filter(e -> e != null).
                 map(s -> new LanguageRange(s)).
-                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                collect(Collectors.toUnmodifiableList());
         return this;
     }
 
@@ -241,7 +241,7 @@ public final class RelyingPartyUIContext extends BaseContext {
                 stream().
                 filter(s -> s != null).
                 map(s -> new LanguageRange(s)).
-                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                collect(Collectors.toUnmodifiableList());
         return this;
     }
 

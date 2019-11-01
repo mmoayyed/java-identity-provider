@@ -305,9 +305,7 @@ public final class AttributeResolutionContext extends BaseContext {
         Constraint.isNotNull(attributes, "Null attribute set cannot be inserted into a context");
         resolvedAttributes = attributes.
                 stream().
-                collect(Collectors.collectingAndThen(
-                            Collectors.toMap(IdPAttribute::getId, a -> a),
-                            Collections::unmodifiableMap));
+                collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a));
         return this;
     }
 

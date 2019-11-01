@@ -228,7 +228,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         if (newValues != null) {
             values = newValues.stream().
                      map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).
-                     collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                     collect(Collectors.toUnmodifiableList());
         } else {
             values = Collections.emptyList();
         }

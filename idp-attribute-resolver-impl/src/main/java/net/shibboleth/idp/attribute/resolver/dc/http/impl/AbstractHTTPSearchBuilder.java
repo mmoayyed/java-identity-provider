@@ -102,7 +102,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
                 map(e-> new Pair<>(
                         Constraint.isNotNull(StringSupport.trimOrNull(e.getKey()), "header name  must be non null"),
                         Constraint.isNotNull(StringSupport.trimOrNull(e.getValue()), "header value must be non null"))).
-                collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                collect(Collectors.toUnmodifiableList());
     }
     
     /**

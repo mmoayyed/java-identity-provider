@@ -64,7 +64,7 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
                     stream().
                     filter(e -> e != null).
                     map(s -> new LanguageRange(s)).
-                    collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                    collect(Collectors.toUnmodifiableList());
         }
     }
 
