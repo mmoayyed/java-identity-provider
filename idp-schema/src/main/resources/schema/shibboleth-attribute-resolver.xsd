@@ -642,14 +642,11 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="forCanonicalization" type="boolean">
+                <attribute name="forCanonicalization" type="resolver:string">
                     <annotation>
                         <documentation>
                             If true, the source Subject is assumed to be undergoing C14N rather than the
                             usual post-authentication source. Defaults to false.
-                            
-                            This attribute is evaluated during parsing, so cannot be a property expression,
-                            only a literal boolean value.
                         </documentation>
                     </annotation>
                 </attribute>

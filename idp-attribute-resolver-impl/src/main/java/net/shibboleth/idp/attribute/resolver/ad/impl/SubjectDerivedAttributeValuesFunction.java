@@ -29,7 +29,9 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -51,6 +53,9 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
 
+    /** Flag denoting whether plugin is being used for subject c14n or standard usage. */
+    private boolean forCanonicalization;
+    
     /** Strategy used to locate the {@link SubjectContext} to use. */
     @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
 
@@ -67,6 +72,18 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
     /** Constructor. */
     public SubjectDerivedAttributeValuesFunction() {
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+    }
+    
+    /**
+     * Sets whether the definition is being used during Subject Canonicalization, causing
+     * auto-installation of an alternate Subject lookup strategy.
+     * 
+     * @param flag flag to set
+     */
+    public void setForCanonicalization(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        forCanonicalization = flag;
     }
 
     /**
@@ -114,6 +131,13 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
         
         if (attributeValuesFunction == null) {
             throw new ComponentInitializationException("Attribute value lookup strategy cannot be null");
+        }
+        
+        if (forCanonicalization && subjectLookupStrategy == null) {
+            log.debug("{} Marked for use during canonicalication, auto-installing Subject lookup strategy",
+                    getLogPrefix());
+            subjectLookupStrategy = new SubjectCanonicalizationContextSubjectLookupFunction().compose(
+                    new ChildContextLookup<>(SubjectCanonicalizationContext.class));
         }
     }
 
