@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.shibboleth.idp.saml.saml2.profile.config.AbstractSAML2ProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -110,7 +112,7 @@ public class AbstractSAML2ProfileConfigurationTest {
         Assert.assertNotNull(config.getProxyAudiences(null));
         Assert.assertTrue(config.getProxyAudiences(null).isEmpty());
 
-        final ArrayList<String> audiences = new ArrayList<>();
+        final Set<String> audiences = new HashSet<>();
         audiences.add("foo");
         audiences.add("bar");
 
@@ -129,7 +131,7 @@ public class AbstractSAML2ProfileConfigurationTest {
     @Test public void testIndirectProxyAudiences() {
         final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
 
-        final ArrayList<String> audiences = new ArrayList<>();
+        final Set<String> audiences = new HashSet<>();
         audiences.add("foo");
         audiences.add("bar");
 
