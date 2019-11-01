@@ -65,9 +65,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
     public InitializeProxyProfileRequestContext() {
         
         // Defaults to PRC -> AuthenticationContext -> PRC
-        profileRequestContextCreationStrategy = input ->
-            (ProfileRequestContext) input.getSubcontext(AuthenticationContext.class).addSubcontext(
-                    new ProfileRequestContext(), true);
+        profileRequestContextCreationStrategy = new DefaultPRCCreationStrategy();
     }
     
     /**
@@ -134,6 +132,26 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
         }
         
         prc.setBrowserProfile(browserProfile);
+    }
+    
+    /**
+     * Default strategy that nests the new PRC below the AC.
+     */
+    private class DefaultPRCCreationStrategy implements Function<ProfileRequestContext,ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        @Nullable public ProfileRequestContext apply(@Nullable final ProfileRequestContext input) {
+            
+            if (input != null) {
+                final AuthenticationContext ac = input.getSubcontext(AuthenticationContext.class);
+                if (ac != null) {
+                    return (ProfileRequestContext) ac.addSubcontext(new ProfileRequestContext(), true);
+                }
+            }
+            
+            return null;
+        }
+        
     }
     
 }
