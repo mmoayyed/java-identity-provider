@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,7 +65,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     private boolean exportAllAttributes;
 
     /** Which named attributes do we release?. */
-    @Nonnull @NonnullElements private Collection<String> exportAttributes;
+    @Nonnull @NonnullElements @Unmodifiable private Collection<String> exportAttributes;
 
     /** Constructor. */
     public AbstractDataConnector() {
@@ -151,12 +151,10 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      *
      * @param what the list
      */
-    public void setExportAttributes(@Nonnull final Collection<String> what) {
+    public void setExportAttributes(@Nonnull @NonnullElements final Collection<String> what) {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        exportAttributes = what.stream().map(StringSupport::trimOrNull).
-                filter(e -> e != null).
-                collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+        exportAttributes = Set.copyOf(what);
     }
 
     /**

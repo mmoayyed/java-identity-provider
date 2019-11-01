@@ -96,7 +96,7 @@ public class AbstractDataConnectorTest {
         assertTrue(connector.getExportAttributes().isEmpty());
         connector.setExportAllAttributes(true);
         assertTrue(connector.isExportAllAttributes());
-        connector.setExportAttributes(List.of("", "foo", "bar", "foo"));
+        connector.setExportAttributes(List.of("bar", "foo", "bar", "foo"));
         assertEquals(connector.getExportAttributes().size(), 2);
     }
 

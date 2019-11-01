@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AbstractResolverPluginFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +149,8 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * @param what the list
      */
     public void setExportAttributes(@Nonnull final Collection<String> what) {
-        exportAttributes = what;
+        // Future-proofing trimming
+        exportAttributes = what.stream().map(StringSupport::trimOrNull).collect(Collectors.toSet());
     }
 
    /**
