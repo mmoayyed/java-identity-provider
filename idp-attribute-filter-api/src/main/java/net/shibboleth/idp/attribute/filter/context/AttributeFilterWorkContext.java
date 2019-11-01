@@ -28,16 +28,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.opensaml.messaging.context.BaseContext;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.BaseContext;
 
 /**
  * A context which carries and collects information through the attribute filtering process, and coordinates data
@@ -82,7 +81,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @param attributeValues values for the attribute that are permitted to be released
      */
     public void addPermittedIdPAttributeValues(@Nonnull @NotEmpty final String attributeId,
-            @Nullable @NullableElements final Collection<IdPAttributeValue> attributeValues) {
+            @Nullable @NonnullElements final Collection<IdPAttributeValue> attributeValues) {
         final AttributeFilterContext parent = (AttributeFilterContext) getParent();
         final Map<String, IdPAttribute> prefilteredAttributes = parent.getPrefilteredIdPAttributes();
         final String trimmedAttributeId =
@@ -101,15 +100,14 @@ public final class AttributeFilterWorkContext extends BaseContext {
         }
 
         for (final IdPAttributeValue value : attributeValues) {
-            if (value != null) {
-                if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
-                    throw new IllegalArgumentException("permitted value is not a current value of attribute "
-                            + trimmedAttributeId);
-                }
+            Constraint.isNotNull(value, "non null value cannot be added to permitted list");
+            if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
+                throw new IllegalArgumentException("permitted value is not a current value of attribute "
+                        + trimmedAttributeId);
+            }
 
-                if (!permittedAttributeValues.contains(value)) {
-                    permittedAttributeValues.add(value);
-                }
+            if (!permittedAttributeValues.contains(value)) {
+                permittedAttributeValues.add(value);
             }
         }
     }
@@ -133,7 +131,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @param attributeValues values for the attribute that are not permitted to be released
      */
     public void addDeniedIdPAttributeValues(@Nonnull @NotEmpty final String attributeId,
-            @Nullable @NullableElements final Collection<IdPAttributeValue> attributeValues) {
+            @Nullable @NonnullElements final Collection<IdPAttributeValue> attributeValues) {
         final AttributeFilterContext parent = (AttributeFilterContext) getParent();
         final Map<String, IdPAttribute> prefilteredAttributes = parent.getPrefilteredIdPAttributes();
         final String trimmedAttributeId =
@@ -152,15 +150,14 @@ public final class AttributeFilterWorkContext extends BaseContext {
         }
 
         for (final IdPAttributeValue value : attributeValues) {
-            if (value != null) {
-                if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
-                    throw new IllegalArgumentException("denied value is not a current value of attribute "
-                            + trimmedAttributeId);
-                }
+            Constraint.isNotNull(value, "non null value cannot be added to denied list");
+            if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
+                throw new IllegalArgumentException("denied value is not a current value of attribute "
+                        + trimmedAttributeId);
+            }
 
-                if (!deniedAttributeValues.contains(value)) {
-                    deniedAttributeValues.add(value);
-                }
+            if (!deniedAttributeValues.contains(value)) {
+                deniedAttributeValues.add(value);
             }
         }
     }

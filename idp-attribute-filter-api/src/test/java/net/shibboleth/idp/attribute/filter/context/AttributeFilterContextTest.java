@@ -66,31 +66,6 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute3"), attribute3);
 
-        context.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 3);
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute2"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute2"), attribute2);
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute3"), attribute3);
-
-        context.getPrefilteredIdPAttributes().remove("attribute2");
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 2);
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute1"), attribute1);
-        Assert.assertFalse(context.getPrefilteredIdPAttributes().containsKey("attribute2"));
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute3"), attribute3);
-
-
-        context.getPrefilteredIdPAttributes().remove(null);
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 2);
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute3"), attribute3);
-
         context.setPrefilteredIdPAttributes(null);
         Assert.assertNotNull(context.getPrefilteredIdPAttributes());
         Assert.assertTrue(context.getPrefilteredIdPAttributes().isEmpty());
@@ -114,30 +89,6 @@ public class AttributeFilterContextTest {
         Assert.assertFalse(context.getFilteredIdPAttributes().containsKey("attribute1"));
         Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute2"));
         Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute2"), attribute2);
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute3"), attribute3);
-
-        context.getFilteredIdPAttributes().put(attribute1.getId(), attribute1);
-        Assert.assertEquals(context.getFilteredIdPAttributes().size(), 3);
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute2"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute2"), attribute2);
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute3"), attribute3);
-
-        context.getFilteredIdPAttributes().remove("attribute2");
-        Assert.assertEquals(context.getFilteredIdPAttributes().size(), 2);
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute1"), attribute1);
-        Assert.assertFalse(context.getFilteredIdPAttributes().containsKey("attribute2"));
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute3"), attribute3);
-
-        context.getFilteredIdPAttributes().remove(null);
-        Assert.assertEquals(context.getFilteredIdPAttributes().size(), 2);
-        Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute1"), attribute1);
         Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute3"), attribute3);
 

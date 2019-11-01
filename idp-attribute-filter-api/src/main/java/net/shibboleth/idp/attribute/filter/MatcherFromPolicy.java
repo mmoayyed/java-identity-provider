@@ -26,8 +26,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -84,7 +82,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
             return Collections.emptySet();
         } else {
             log.debug("{} The rule returned TRUE, all values returned", getLogPrefix());
-            return ImmutableSet.copyOf(attribute.getValues());
+            return Set.copyOf(attribute.getValues());
         }
     }
     

@@ -18,22 +18,15 @@
 package net.shibboleth.idp.attribute.filter.context;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.filter.AttributeFilter;
-import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProxiedRequesterContext;
@@ -41,6 +34,16 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.filter.AttributeFilter} interface. */
 @NotThreadSafe
@@ -143,7 +146,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes to be filtered
      */
-    @Nonnull @NonnullElements public Map<String,IdPAttribute> getPrefilteredIdPAttributes() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,IdPAttribute> getPrefilteredIdPAttributes() {
         return prefilteredAttributes;
     }
 
@@ -155,17 +158,14 @@ public final class AttributeFilterContext extends BaseContext {
      * @return this context;
      */
     @Nonnull public AttributeFilterContext setPrefilteredIdPAttributes(
-            @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
+            @Nullable @NonnullElements final Collection<IdPAttribute> attributes) {
 
         if (attributes != null) {
-            prefilteredAttributes = new HashMap<>(attributes.size());
-            for (final IdPAttribute attribute : attributes) {
-                if (attribute != null) {
-                    prefilteredAttributes.put(attribute.getId(), attribute);
-                }
-            }
+            prefilteredAttributes = attributes.
+                    stream().
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, e -> e));
         } else {
-            prefilteredAttributes = new HashMap<>();
+            prefilteredAttributes = Collections.emptyMap();
         }
         
         return this;
@@ -176,7 +176,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return attributes left after the filtering process has run
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getFilteredIdPAttributes() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String, IdPAttribute> getFilteredIdPAttributes() {
         return filteredAttributes;
     }
 
@@ -188,17 +188,14 @@ public final class AttributeFilterContext extends BaseContext {
      * @return this context
      */
     @Nonnull public AttributeFilterContext setFilteredIdPAttributes(
-            @Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        
+            @Nullable @NonnullElements final Collection<IdPAttribute> attributes) {
+
         if (attributes != null) {
-            filteredAttributes = new HashMap<>(attributes.size());
-            for (final IdPAttribute attribute : attributes) {
-                if (attribute != null) {
-                    filteredAttributes.put(attribute.getId(), attribute);
-                }
-            }
+            filteredAttributes = attributes.
+                    stream().
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, e -> e));
         } else {
-            filteredAttributes = new HashMap<>();
+            filteredAttributes = Collections.emptyMap();
         }
         
         return this;

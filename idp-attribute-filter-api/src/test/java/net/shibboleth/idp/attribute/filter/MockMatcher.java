@@ -23,8 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -88,7 +86,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
         }
 
         if (matchingValues == null) {
-            return ImmutableSet.copyOf(attribute.getValues());
+            return Set.copyOf(attribute.getValues());
         }
 
         LinkedHashSet<IdPAttributeValue> values = new LinkedHashSet<>();

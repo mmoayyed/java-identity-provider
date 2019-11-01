@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -30,18 +29,13 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -56,7 +50,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * policies run this collection will contain the final result.
  */
 @ThreadSafe
-public class AttributeFilterPolicy extends AbstractIdentifiedInitializableComponent implements
+public final class AttributeFilterPolicy extends AbstractIdentifiedInitializableComponent implements
         UnmodifiableComponent {
 
     /** Class logger. */
@@ -80,16 +74,14 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
      */
     public AttributeFilterPolicy(@Nonnull @NotEmpty @ParameterName(name="policyId") final String policyId,
             @Nonnull final @ParameterName(name="requirementRule") PolicyRequirementRule requirementRule,
-            @Nullable @NullableElements final @ParameterName(name="attributeRules") 
+            @Nullable @NonnullElements final @ParameterName(name="attributeRules")
     Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
         rule = Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
-        final ArrayList<AttributeRule> checkedPolicies = new ArrayList<>();
-        CollectionSupport.addIf(checkedPolicies, attributeRules, Predicates.notNull());
         if (null != attributeRules) {
-            valuePolicies = List.copyOf(Collections2.filter(attributeRules, Predicates.notNull()));
+            valuePolicies = List.copyOf(attributeRules);
         } else {
             valuePolicies = Collections.emptyList();
         }

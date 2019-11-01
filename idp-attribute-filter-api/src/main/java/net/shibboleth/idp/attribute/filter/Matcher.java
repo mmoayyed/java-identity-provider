@@ -24,8 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import com.google.common.collect.ImmutableSet;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -43,7 +41,7 @@ public interface Matcher extends IdentifiedComponent {
         /** {@inheritDoc} */
         @Override public Set<IdPAttributeValue> getMatchingValues(@Nonnull final IdPAttribute attribute,
                 @Nonnull final AttributeFilterContext filterContext) {
-            return ImmutableSet.copyOf(attribute.getValues());
+            return Set.copyOf(attribute.getValues());
         }
 
         @Override @Nullable public String getId() {
