@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.profile.config;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
@@ -105,7 +104,11 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
         @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(inboundFlowsLookupStrategy.apply(profileRequestContext));
+        final List<String> flows = inboundFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return List.copyOf(flows);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -116,7 +119,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     public void setInboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
             inboundFlowsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             inboundFlowsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -137,7 +140,11 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return CollectionSupport.buildImmutableList(outboundFlowsLookupStrategy.apply(profileRequestContext));
+        final List<String> flows = outboundFlowsLookupStrategy.apply(profileRequestContext);
+        if (flows != null) {
+            return List.copyOf(flows);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -148,7 +155,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     public void setOutboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
             outboundFlowsLookupStrategy =
-                    FunctionSupport.constant(new ArrayList<>(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
         } else {
             outboundFlowsLookupStrategy = FunctionSupport.constant(null);
         }
