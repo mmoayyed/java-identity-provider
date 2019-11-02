@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,12 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.RootContextLookup;
+import org.opensaml.profile.context.MetricContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -37,20 +42,10 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.RootContextLookup;
-import org.opensaml.profile.context.MetricContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 /** Service that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
@@ -75,12 +70,10 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @param policies filter policies used by this engine
      */
     public AttributeFilterImpl(@Nonnull @NotEmpty final String engineId,
-            @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
+            @Nullable @NonnullElements final Collection<AttributeFilterPolicy> policies) {
         setId(engineId);
 
-        final ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<>();
-        CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
-        filterPolicies = List.copyOf(checkedPolicies);
+        filterPolicies = List.copyOf(policies);
         
         metricContextLookupStrategy = new ChildContextLookup<>(MetricContext.class).compose(new RootContextLookup<>());
     }

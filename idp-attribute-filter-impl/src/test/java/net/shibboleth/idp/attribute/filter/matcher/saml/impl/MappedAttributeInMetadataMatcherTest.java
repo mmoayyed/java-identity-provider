@@ -94,7 +94,9 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         if (null != attributeId) {
             final Multimap<String, IdPAttribute> multimap = ArrayListMultimap.create();
-            multimap.put(attributeId, attribute);
+            if (attribute != null) {
+                multimap.put(attributeId, attribute);
+            }
             setRequestedAttributesInContext(context, multimap);
         }
         return context;
@@ -192,7 +194,6 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
                 makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         AttributeFilterContext context = makeContext("attr", null);
-
         Set<IdPAttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
         assertTrue(result.isEmpty());
     }

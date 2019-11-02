@@ -30,6 +30,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -37,6 +39,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.MockValuePredicateMatcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -156,7 +159,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
     
-    static public AndMatcher newAndMatcher(final Collection<Matcher> what) {
+    static public AndMatcher newAndMatcher(final @Nonnull @NonnullElements Collection<Matcher> what) {
         final AndMatcher matcher = new AndMatcher();
         matcher.setSubsidiaries(what);
         return matcher;

@@ -46,7 +46,7 @@ public class AttributeFilterImplTest {
 
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() throws Exception {
-        AttributeFilter filter = new AttributeFilterImpl("engine", null);
+        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.EMPTY_LIST);
         Assert.assertNotNull(filter.getFilterPolicies());
         Assert.assertTrue(filter.getFilterPolicies().isEmpty());
         Assert.assertEquals(filter.getId(), "engine");

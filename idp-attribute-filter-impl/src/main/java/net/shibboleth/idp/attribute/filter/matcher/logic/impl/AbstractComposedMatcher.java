@@ -27,15 +27,11 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Base class for {@link Matcher} implementations that are compositions of two or more other
@@ -51,11 +47,11 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
      * Called "subsidiaries" to allow easier parsing.
      * @param composedMatchers the matchers to be composed.
      */
-    public void setSubsidiaries(@Nullable @NullableElements final Collection<Matcher> composedMatchers) {
+    public void setSubsidiaries(@Nullable @NonnullElements final Collection<Matcher> composedMatchers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (composedMatchers != null) {
-            matchers = List.copyOf(Collections2.filter(composedMatchers, Predicates.notNull()));
+            matchers = List.copyOf(composedMatchers);
         } else {
             matchers = Collections.emptyList();
         }

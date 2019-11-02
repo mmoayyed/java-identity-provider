@@ -40,8 +40,6 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
  * Base class for rules operating on the RPI extension in metadata.
  */
@@ -62,7 +60,7 @@ public abstract class AbstractRegistrationAuthorityPolicyRule extends AbstractPo
      * @return the issuers
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<String> getRegistrars() {
-        return ImmutableSet.copyOf(registrars);
+        return Set.copyOf(registrars);
     }
 
     /**

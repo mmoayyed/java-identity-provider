@@ -24,19 +24,16 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.MoreObjects;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Base class for {@link PolicyRequirementRule} implementations that are compositions of other
@@ -52,11 +49,11 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
      * Called "subsidiaries" to allow easier parsing.
      * @param theRules the rules to be composed.
      */
-    public void setSubsidiaries(@Nullable @NullableElements final Collection<PolicyRequirementRule> theRules) {
+    public void setSubsidiaries(@Nullable @NonnullElements final Collection<PolicyRequirementRule> theRules) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (theRules != null) {
-            rules = List.copyOf(Collections2.filter(theRules, Predicates.notNull()));
+            rules = List.copyOf(theRules);
         } else {
             rules = Collections.emptyList();
         }

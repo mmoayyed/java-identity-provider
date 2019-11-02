@@ -65,7 +65,7 @@ public class FilterAttributesTest {
     @Test public void testNoAttributeContext() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
+        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.EMPTY_LIST);
         engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
@@ -82,7 +82,7 @@ public class FilterAttributesTest {
 
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", null);
+        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.EMPTY_LIST);
         engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
         

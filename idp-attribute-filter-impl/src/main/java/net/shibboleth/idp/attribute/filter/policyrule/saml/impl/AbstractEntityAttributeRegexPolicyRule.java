@@ -28,8 +28,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import com.google.common.collect.Iterables;
-
 /**
  * Matcher functor that checks entity attribute values via matching against a regular expression.
  */
@@ -67,7 +65,7 @@ public abstract class AbstractEntityAttributeRegexPolicyRule extends AbstractEnt
     /** {@inheritDoc} */
     @Override protected boolean entityAttributeValueMatches(
             @Nonnull @NotEmpty @NonnullElements final Set<String> entityAttributeValues) {
-        return Iterables.any(entityAttributeValues, v -> valueRegex.matcher(v).matches());
+        return entityAttributeValues.stream().anyMatch(v -> valueRegex.matcher(v).matches());
     }
 
 }

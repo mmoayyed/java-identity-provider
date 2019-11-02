@@ -65,10 +65,9 @@ public class AbstractComposedMatcherTest {
         for (int i = 0; i < 2; i++) {
             firstList.add(new TestMatcher());
         }
-        firstList.add(null);
         matcher = new ComposedMatcher(firstList);
 
-        assertEquals(firstList.size() - 1, matcher.getComposedMatchers().size());
+        assertEquals(firstList.size(), matcher.getComposedMatchers().size());
 
         thrown = false;
         try {
@@ -90,22 +89,18 @@ public class AbstractComposedMatcherTest {
 
         final List<Matcher> list = new ArrayList<>();
 
-        for (int i = 0; i < 30; i++) {
-            list.add(null);
-        }
-
         matcher = new ComposedMatcher(list);
         assertTrue(matcher.getComposedMatchers().isEmpty(), "Add List<null> - no matchers");
 
-        list.set(2, new TestMatcher());
-        list.set(3, new TestMatcher());
-        list.set(7, new TestMatcher());
-        list.set(11, new TestMatcher());
-        list.set(13, new TestMatcher());
-        list.set(17, new TestMatcher());
-        list.set(19, new TestMatcher());
-        list.set(23, new TestMatcher());
-        list.set(29, new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
         assertTrue(matcher.getComposedMatchers().isEmpty(), "Change to input list - no matchers");
 
         matcher = new ComposedMatcher(list);

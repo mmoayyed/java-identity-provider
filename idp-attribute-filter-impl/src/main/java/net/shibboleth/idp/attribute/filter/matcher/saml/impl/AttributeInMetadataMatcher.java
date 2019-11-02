@@ -20,26 +20,14 @@ package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.attribute.AttributesMapContainer;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.filter.Matcher;
-import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
@@ -57,10 +45,22 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+
+import net.shibboleth.idp.attribute.AttributesMapContainer;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.IdPRequestedAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 
 /**
@@ -188,7 +188,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             if (matchIfMetadataSilent) {
                 log.debug("{} The peer's metadata did not contain requested attribute information"
                         + ", returning all the input values", getLogPrefix());
-                return ImmutableSet.copyOf(attribute.getValues());
+                return Set.copyOf(attribute.getValues());
             }
             log.debug("{} The peer's metadata did not contain requested attribute information"
                     + ", returning no values", getLogPrefix());
@@ -250,8 +250,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
 
         final Set<IdPAttributeValue> values = new LinkedHashSet<>();
 
-        for (final IdPAttribute requestedAttribute
-                : Collections2.filter(requestedAttributeList, Predicates.notNull())) {
+        for (final IdPAttribute requestedAttribute : List.copyOf(requestedAttributeList)) {
 
             if (requestedAttribute instanceof IdPRequestedAttribute
                     && !((IdPRequestedAttribute) requestedAttribute).getIsRequired() && onlyIfRequired) {
@@ -326,18 +325,12 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
 
         if (null == requestedValues || requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
-            return ImmutableSet.copyOf(attribute.getValues());
-        }
-
-        final ImmutableSet.Builder<IdPAttributeValue> builder = ImmutableSet.builder();
-
-        for (final IdPAttributeValue attributeValue : attribute.getValues()) {
-            if (requestedValues.contains(attributeValue)) {
-                builder.add(attributeValue);
-            }
+            return Set.copyOf(attribute.getValues());
         }
         
-        final ImmutableSet<IdPAttributeValue> result = builder.build();
+        final Set<IdPAttributeValue> result = attribute.getValues().stream().
+                filter(v -> requestedValues.contains(v)).collect(Collectors.toUnmodifiableSet());
+
         log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attribute.getId(), result);
         return result;
     }
@@ -351,21 +344,23 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * 
      * @return the result of the filter
      */
-    @Nonnull private Set<IdPAttributeValue> filterValues(@Nonnull final String attributeToLog,
-            @Nullable final IdPAttribute attribute, @Nonnull @NonnullElements final List<XMLObject> requestedValues) {
+    @Nonnull @Unmodifiable @NonnullElements private Set<IdPAttributeValue> filterValues(
+            @Nonnull final String attributeToLog,
+            @Nullable final IdPAttribute attribute, 
+            @Nonnull @NonnullElements final List<XMLObject> requestedValues) {
 
         if (requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attributeToLog);
-            return ImmutableSet.copyOf(attribute.getValues());
+            return Set.copyOf(attribute.getValues());
         }
 
-        final ImmutableSet.Builder<IdPAttributeValue> builder = ImmutableSet.builder();
-
+        final Set<IdPAttributeValue> result = new HashSet<>(attribute.getValues().size()); 
+                
         for (final IdPAttributeValue attributeValue : attribute.getValues()) {
             if (attributeValue instanceof StringAttributeValue) {
                 for (final XMLObject xmlObj : requestedValues) {
                     if (match(xmlObj, ((StringAttributeValue) attributeValue).getValue())) {
-                        builder.add(attributeValue);
+                        result.add(attributeValue);
                     }
                 }
             } else {
@@ -374,9 +369,8 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             }
         }
         
-        final ImmutableSet<IdPAttributeValue> result = builder.build();
         log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attributeToLog, result);
-        return result;
+        return Set.copyOf(result);
     }
 
 // Checkstyle: CyclomaticComplexity OFF

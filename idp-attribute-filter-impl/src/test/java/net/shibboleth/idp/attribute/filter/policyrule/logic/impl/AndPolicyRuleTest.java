@@ -33,10 +33,8 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 
 /** {@link AndPolicyRule} unit test. */
 public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
@@ -104,8 +102,7 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
     }
     
-    public static AndPolicyRule newAndPolicyRule(@Nullable @NullableElements 
-            final Collection<PolicyRequirementRule> composedRules) {
+    public static AndPolicyRule newAndPolicyRule(@Nullable final Collection<PolicyRequirementRule> composedRules) {
         final AndPolicyRule  rule = new AndPolicyRule();
         rule.setSubsidiaries(composedRules);
         return rule;

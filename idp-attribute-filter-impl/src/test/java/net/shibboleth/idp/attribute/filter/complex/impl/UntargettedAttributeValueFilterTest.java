@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeRule;

@@ -64,10 +64,9 @@ public class AbstractComposedPolicyRuleTest {
         for (int i = 0; i < 2;i++) {
             firstList.add(new TestMatcher());
         }
-        firstList.add(null);
         rule = new ComposedPolicyRule(firstList);
         
-        assertEquals(firstList.size()-1, rule.getComposedRules().size());
+        assertEquals(firstList.size(), rule.getComposedRules().size());
         
         thrown = false;
         try {
@@ -92,22 +91,18 @@ public class AbstractComposedPolicyRuleTest {
         
         final List<PolicyRequirementRule> list = new ArrayList<>();
         
-        for (int i = 0; i < 30; i++) {
-            list.add(null);
-        }
-        
         rule = new ComposedPolicyRule(list);
         assertTrue(rule.getComposedRules().isEmpty(), "Add List<null> - no matchers");
         
-        list.set(2, new TestMatcher());
-        list.set(3, new TestMatcher());
-        list.set(7, new TestMatcher());
-        list.set(11, new TestMatcher());
-        list.set(13, new TestMatcher());
-        list.set(17, new TestMatcher());
-        list.set(19, new TestMatcher());
-        list.set(23, new TestMatcher());
-        list.set(29, new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
+        list.add(new TestMatcher());
         assertTrue(rule.getComposedRules().isEmpty(), "Change to input list - no matchers");
 
         rule = new ComposedPolicyRule(list);
