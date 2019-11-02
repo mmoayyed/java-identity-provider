@@ -40,6 +40,10 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -217,6 +221,29 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         assertEquals(result.size(), 1);
         assertTrue(result.contains(DataSources.STRING_VALUE));
     }
+    
+    @Test public void noName() throws ComponentInitializationException {
+
+        final IdPAttribute attr =
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+
+        final AttributeFilterContext context = makeContext(null);
+        setRequestedAttributesInContext(context, Collections.EMPTY_SET);
+        
+        final AttributeConsumingService acs = context.getRequesterMetadataContext().
+                getSubcontext(AttributeConsumingServiceContext.class).getAttributeConsumingService();
+        
+        Multimap<String,IdPAttribute> value =  HashMultimap.create();
+        value.put("attr", attr);
+        acs.getObjectMetadata().put(new AttributesMapContainer(value));
+        
+
+        final Set<IdPAttributeValue> result =
+                makeMatcher("test", false, true, null, Attribute.BASIC).getMatchingValues(attr, context);
+        assertEquals(result.size(), 2);
+        assertTrue(result.contains(DataSources.STRING_VALUE));
+    }
+
     
     @Test public void multiValues() throws ComponentInitializationException {
 
