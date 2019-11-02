@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.AttributeException;
 
 /** Indicates that an error has occurred during an attribute filtering process. */
 @ThreadSafe
-public class AttributeFilterException extends AttributeException {
+public final class AttributeFilterException extends AttributeException {
 
     /** Serial version UID. */
     private static final long serialVersionUID = 2699384174240632113L;

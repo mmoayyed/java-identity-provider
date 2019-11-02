@@ -40,7 +40,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
  * 
  * If the rule is true then we return all values, else we return none. If the rule fails we return null.
  */
-public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, IdentifiedComponent,
+public final class MatcherFromPolicy extends BaseBridgingClass implements Matcher, IdentifiedComponent,
         DestructableComponent {
 
     /** The rule we are shadowing. */

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * 
  * If the value of the supplied attribute matches then this is true, otherwise false.
  */
-public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequirementRule,
+public final class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequirementRule,
         IdentifiedComponent, DestructableComponent {
 
     /** The rule we are shadowing. */

@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 //Checkstyle: Javadoc ON
 @ThreadSafe
-public class AttributeRule extends AbstractIdentifiableInitializableComponent implements
+public final class AttributeRule extends AbstractIdentifiableInitializableComponent implements
         UnmodifiableComponent {
 
     /** Class logger. */
