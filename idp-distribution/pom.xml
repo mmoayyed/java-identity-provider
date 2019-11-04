@@ -127,9 +127,9 @@
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <!-- Unpack idp-war to assembly directory. -->
+                    <!-- Unpack idp-war-distribution to assembly directory. -->
                     <execution>
-                        <id>copy-idp-war</id>
+                        <id>copy-idp-war-distribution</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -138,7 +138,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>idp-war</artifactId>
+                                    <artifactId>idp-war-distribution</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
                                     <outputDirectory>${idp.assemblyDirectory}/webapp/</outputDirectory>
@@ -197,40 +197,6 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${idp.assemblyDirectory}/bin/lib/</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <!-- Copy logging dependencies to WEB-INF/lib directory. -->
-                    <execution>
-                        <id>copy-logging-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-classic</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-core</artifactId>
-                                </artifactItem>
-						        <!-- Support for JVM metrics, per IDP-1205. -->
-						        <artifactItem>
-						            <groupId>io.dropwizard.metrics</groupId>
-						            <artifactId>metrics-jvm</artifactId>
-						        </artifactItem>
-						        <artifactItem>
-						            <groupId>org.ldaptive</groupId>
-						            <artifactId>ldaptive-unboundid</artifactId>
-						        </artifactItem>
-						        <artifactItem>
-						            <groupId>com.unboundid</groupId>
-						            <artifactId>unboundid-ldapsdk</artifactId>
-						        </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${idp.assemblyDirectory}/webapp/WEB-INF/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

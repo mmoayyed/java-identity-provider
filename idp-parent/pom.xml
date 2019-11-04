@@ -54,6 +54,7 @@
 
         <module>../idp-consent-impl</module>
         <module>../idp-war</module>
+        <module>../idp-war-distribution</module>
         <module>../idp-installer</module>
         <module>../idp-conf</module>
         <module>../idp-distribution</module>
