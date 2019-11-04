@@ -33,7 +33,8 @@
           c:registries="#{getObject('shibboleth.CASServiceRegistries') ?: getObject('shibboleth.DefaultCASServiceRegistries')}" />
 
     <bean id="BuildSAMLMetadataContext" scope="prototype"
-          class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
+          class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction"
+          p:relyingPartyIdFromMetadata="%{idp.cas.relyingPartyIdFromMetadata:false}" />
 
     <bean id="PopulateInboundInterceptContext"
           class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"

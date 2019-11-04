@@ -25,6 +25,7 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -48,11 +49,28 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
         extends AbstractCASProtocolAction<RequestType,ResponseType> {
 
+    /** Whether to overwrite the relying party ID based on metadata. */
+    private boolean relyingPartyIdFromMetadata;
+    
     /** CAS service. */
     @Nullable private Service service;
     
     /** RelyingPartyContext. */
     @Nullable private RelyingPartyContext rpCtx;
+    
+    /**
+     * Sets whether the {@link RelyingPartyContext#getRelyingPartyId()} method should return an entityID
+     * established from SAML metadata instead of the service URL.
+     * 
+     * <p>Defaults to false for compatibility.<.p>
+     * 
+     * @param flag flag to set
+     */
+    public void setRelyingPartyIdFromMetadata(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        relyingPartyIdFromMetadata = flag;
+    }
     
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -85,6 +103,10 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
                 : new ServiceEntityDescriptor(service);
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(service.getRoleDescriptor());
+        
+        if (relyingPartyIdFromMetadata) {
+            rpCtx.setRelyingPartyId(entity.getEntityID());
+        }
         
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
     }
