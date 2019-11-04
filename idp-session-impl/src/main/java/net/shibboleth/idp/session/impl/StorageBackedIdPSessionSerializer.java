@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -45,8 +46,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 /**
  * A serializer for instances of {@link StorageBackedIdPSession} designed in conjunction with the
@@ -194,8 +193,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 if (flowIds != null) {
                     for (final JsonString flowId : flowIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a result not yet loaded.
-                        objectToPopulate.getAuthenticationResultMap().put(flowId.getString(),
-                                Optional.<AuthenticationResult> absent());
+                        objectToPopulate.getAuthenticationResultMap().put(flowId.getString(), Optional.empty());
                     }
                 }
             }
@@ -206,7 +204,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 if (svcIds != null) {
                     for (final JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a session not yet loaded.
-                        objectToPopulate.getSPSessionMap().put(svcId.getString(), Optional.<SPSession> absent());
+                        objectToPopulate.getSPSessionMap().put(svcId.getString(), Optional.empty());
                     }
                 }
             }

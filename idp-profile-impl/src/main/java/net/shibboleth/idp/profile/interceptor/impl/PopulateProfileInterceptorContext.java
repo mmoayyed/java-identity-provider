@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.interceptor.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -38,9 +39,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 
 /**
  * An profile interceptor action that populates a {@link ProfileInterceptorContext} with
@@ -112,11 +110,11 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
             for (final String id : activeFlows) {
                 final String flowId = ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + id;
                 final Optional<ProfileInterceptorFlowDescriptor> flow =
-                        Iterables.tryFind(availableFlows, fd -> fd.getId().equals(flowId));
+                        availableFlows.stream().filter(fd -> fd.getId().equals(flowId)).findFirst();
                 
                 if (flow.isPresent()) {
                     log.debug("{} Installing flow {} into interceptor context", getLogPrefix(), flowId);
-                    interceptorContext.getAvailableFlows().put(flow.get().getId(), flow.get());
+                    interceptorContext.getAvailableFlows().put(flow.orElseThrow().getId(), flow.orElseThrow());
                 } else {
                     log.error("{} Configured interceptor flow {} not available for use", getLogPrefix(), flowId);
                     ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -45,8 +46,6 @@ import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 /**
  * Implementation of {@link net.shibboleth.idp.session.IdPSession} for use with {@link StorageBackedSessionManager}.
@@ -169,11 +168,11 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         
         // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
-        final Iterator<Map.Entry<String, Optional<AuthenticationResult>>> entries =
+        final Iterator<Map.Entry<String,Optional<AuthenticationResult>>> entries =
                 getAuthenticationResultMap().entrySet().iterator();
         while (entries.hasNext()) {
-            final Map.Entry<String, Optional<AuthenticationResult>> entry = entries.next();
-            if (!entry.getValue().isPresent()) {
+            final Map.Entry<String,Optional<AuthenticationResult>> entry = entries.next();
+            if (entry.getValue().isEmpty()) {
                 try {
                     final AuthenticationResult result = loadAuthenticationResultFromStorage(entry.getKey());
                     if (result != null) {
@@ -341,7 +340,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     getSPSessionMap().entrySet().iterator();
             while (entries.hasNext()) {
                 final Map.Entry<String, Optional<SPSession>> entry = entries.next();
-                if (!entry.getValue().isPresent()) {
+                if (entry.getValue().isEmpty()) {
                     try {
                         final SPSession result = loadSPSessionFromStorage(entry.getKey());
                         if (result != null) {

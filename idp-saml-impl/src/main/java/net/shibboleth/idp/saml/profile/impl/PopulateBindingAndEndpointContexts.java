@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -67,9 +68,6 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 
 /**
  * Action that populates the outbound {@link SAMLBindingContext} and when appropriate the
@@ -441,10 +439,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
         
         final Optional<BindingDescriptor> bindingDescriptor =
-                Iterables.tryFind(bindingDescriptors, b -> b.getId().equals(bindingURI));
+                bindingDescriptors.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
 
         if (bindingDescriptor.isPresent()) {
-            bindingCtx.setBindingDescriptor(bindingDescriptor.get());
+            bindingCtx.setBindingDescriptor(bindingDescriptor.orElseThrow());
         } else {
             bindingCtx.setBindingUri(resolvedEndpoint.getBinding());
         }
@@ -485,15 +483,17 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                     profileRequestContext.getInboundMessageContext().getSubcontext(SAMLBindingContext.class);
             if (bindingCtx != null && bindingCtx.getBindingUri() != null) {
                 final Optional<BindingDescriptor> binding =
-                        Iterables.tryFind(bindingDescriptors, b -> b.getId().equals(bindingCtx.getBindingUri()));
-                if (binding.isPresent() && binding.get().isSynchronous()) {
+                        bindingDescriptors.stream().filter(
+                                b -> b.getId().equals(bindingCtx.getBindingUri())
+                                ).findFirst();
+                if (binding.isPresent() && binding.orElseThrow().isSynchronous()) {
                     log.debug("{} Handling request via synchronous binding, preparing outbound binding context for {}",
-                            getLogPrefix(), binding.get().getId());
+                            getLogPrefix(), binding.orElseThrow().getId());
                     
                     final SAMLBindingContext outboundCtx = bindingContextLookupStrategy.apply(profileRequestContext);
                     outboundCtx.setRelayState(SAMLBindingSupport.getRelayState(
                             profileRequestContext.getInboundMessageContext()));
-                    outboundCtx.setBindingDescriptor(binding.get());
+                    outboundCtx.setBindingDescriptor(binding.orElseThrow());
                     return true;
                 }
             }

@@ -20,9 +20,11 @@ package net.shibboleth.idp.session;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,8 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Abstract base for implementations of {@link IdPSession}, handles basic management of the
@@ -93,10 +93,10 @@ public abstract class AbstractIdPSession implements IdPSession {
     @Nullable private String ipV6Address;
         
     /** Tracks authentication results that have occurred during this session. */
-    @Nonnull private final ConcurrentMap<String, Optional<AuthenticationResult>> authenticationResults;
+    @Nonnull private final ConcurrentMap<String,Optional<AuthenticationResult>> authenticationResults;
 
     /** Tracks services which have been issued authentication tokens during this session. */
-    @Nonnull private final ConcurrentMap<String, Optional<SPSession>> spSessions;
+    @Nonnull private final ConcurrentMap<String,Optional<SPSession>> spSessions;
 
     /**
      * Constructor.
@@ -248,13 +248,18 @@ public abstract class AbstractIdPSession implements IdPSession {
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
-        return ImmutableSet.copyOf(Optional.presentInstances(authenticationResults.values()));
+        return Set.copyOf(
+                authenticationResults.values()
+                    .stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::orElseThrow)
+                    .collect(Collectors.toUnmodifiableSet()));
     }
 
     /** {@inheritDoc} */
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
         final Optional<AuthenticationResult> mapped = authenticationResults.get(StringSupport.trimOrNull(flowId));
-        return (mapped != null) ? mapped.orNull() : null;
+        return (mapped != null) ? mapped.orElse(null) : null;
     }
 
     /** {@inheritDoc} */
@@ -311,20 +316,25 @@ public abstract class AbstractIdPSession implements IdPSession {
         if (authenticationResults.remove(result.getAuthenticationFlowId(), Optional.of(result))) {
             return true;
         }
-        return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.absent());
+        return authenticationResults.remove(result.getAuthenticationFlowId(), Optional.empty());
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
-        return ImmutableSet.copyOf(Optional.presentInstances(spSessions.values()));
+        return Set.copyOf(
+                spSessions.values()
+                    .stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::orElseThrow)
+                    .collect(Collectors.toUnmodifiableSet()));
     }
 
     /** {@inheritDoc} */
     @Override
     @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId) {
         final Optional<SPSession> mapped = spSessions.get(StringSupport.trimOrNull(serviceId));
-        return (mapped != null) ? mapped.orNull() : null;
+        return (mapped != null) ? mapped.orElse(null) : null;
     }
 
     /** {@inheritDoc} */
@@ -379,7 +389,7 @@ public abstract class AbstractIdPSession implements IdPSession {
         if (spSessions.remove(spSession.getId(), Optional.of(spSession))) {
             return true;
         }
-        return spSessions.remove(spSession.getId(), Optional.absent());
+        return spSessions.remove(spSession.getId(), Optional.empty());
     }
 
     /** {@inheritDoc} */
