@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.PropertySource;
@@ -35,8 +36,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
@@ -359,7 +358,7 @@ public class HTTPDataConnectorParserTest {
         final Collection<String> defs = new ArrayList<>(Arrays.asList(beanDefinitions));
         defs.add("net/shibboleth/idp/attribute/resolver/spring/dc/http/spring-beans.xml");
 
-        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
+        builder.setServiceConfigurations(defs.stream().map(s -> loader.getResource(s)).collect(Collectors.toList()));
 
         if (propSource != null) {
             builder.setPropertySources(Collections.singletonList(propSource));

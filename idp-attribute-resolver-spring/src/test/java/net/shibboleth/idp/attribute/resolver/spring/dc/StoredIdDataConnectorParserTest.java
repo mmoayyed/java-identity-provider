@@ -23,12 +23,11 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
@@ -77,7 +76,12 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         
         final ApplicationContextBuilder builder = new ApplicationContextBuilder();
         builder.setName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
-        builder.setServiceConfigurations(Collections2.transform(Arrays.asList(beanDefinitions), s -> loader.getResource(s)));
+        
+        builder.setServiceConfigurations(
+                Arrays.asList(beanDefinitions).
+                stream().
+                map(s -> loader.getResource(s)).
+                collect(Collectors.toList()));
         
         final GenericApplicationContext context = builder.build();
 

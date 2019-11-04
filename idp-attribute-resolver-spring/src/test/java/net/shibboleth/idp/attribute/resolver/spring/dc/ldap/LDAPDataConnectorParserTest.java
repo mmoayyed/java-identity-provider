@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
@@ -60,7 +61,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Collections2;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -505,7 +505,7 @@ public class LDAPDataConnectorParserTest {
         final Collection<String> defs = new ArrayList<>(Arrays.asList(beanDefinitions));
         defs.add("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
 
-        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
+        builder.setServiceConfigurations(defs.stream().map(s -> loader.getResource(s)).collect(Collectors.toList()));
 
         if (properties != null) {
             builder.setPropertySources(Collections.singletonList(new ResourcePropertySource(properties)));

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.ext.spring.service.ReloadableSpringService;
@@ -36,8 +37,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Collections2;
 
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
@@ -106,7 +105,7 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         defs.add("net/shibboleth/idp/profile/spring/relyingparty/metadata/beans.xml");
         defs.add("net/shibboleth/idp/profile/spring/relyingparty/metadata/multipleResolvers.xml");
 
-        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
+        builder.setServiceConfigurations(defs.stream().map(s -> loader.getResource(s)).collect(Collectors.toList()));
 
         final GenericApplicationContext context = builder.build();
         

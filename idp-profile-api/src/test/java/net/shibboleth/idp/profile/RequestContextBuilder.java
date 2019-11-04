@@ -20,9 +20,11 @@ package net.shibboleth.idp.profile;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,9 +47,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Builder used to construct {@link RequestContext} used in {@link org.springframework.webflow.execution.Action}
@@ -439,8 +438,11 @@ public class RequestContextBuilder {
             relyingPartyProfileConfigurations = new ArrayList<>();
         }
         
-        final ArrayList<ProfileConfiguration> profileConfigs =
-                new ArrayList<>(Collections2.filter(relyingPartyProfileConfigurations, Predicates.notNull()));
+        final List<ProfileConfiguration> profileConfigs =
+                relyingPartyProfileConfigurations.
+                stream().
+                filter(e -> e!=null).
+                collect(Collectors.toList());
         if (profileConfigs.isEmpty()) {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }

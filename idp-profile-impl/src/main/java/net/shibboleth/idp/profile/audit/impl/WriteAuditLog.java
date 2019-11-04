@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import com.google.common.collect.ImmutableMap;
+//import com.google.common.collect.ImmutableMap;
 
 /**
  * Action that produces audit log entries based on an {@link AuditContext} and one or more formatting strings. 
@@ -111,7 +111,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @return map of formatting tokens
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,List<String>> getFormattingMap() {
-        return ImmutableMap.copyOf(formattingMap);
+        return Map.copyOf(formattingMap);
     }
     
 // Checkstyle: CyclomaticComplexity OFF

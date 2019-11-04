@@ -30,8 +30,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 /*
  * Licensed to the University Corporation for Advanced Internet Development, 
  * Inc. (UCAID) under one or more contributor license agreements.  See the 
@@ -150,7 +148,7 @@ public class PluginDependencySupportTest {
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         final ResolverDataConnectorDependency depend = new ResolverDataConnectorDependency("connector1");
-        depend.setAttributeNames(Lists.newArrayList(ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPA_ATTRIB_ID));
+        depend.setAttributeNames(List.of(ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPA_ATTRIB_ID));
 
         final List<IdPAttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,

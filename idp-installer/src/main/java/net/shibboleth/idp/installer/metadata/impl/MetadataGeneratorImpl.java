@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,8 +55,6 @@ import org.opensaml.xmlsec.signature.KeyInfo;
 import org.opensaml.xmlsec.signature.X509Certificate;
 import org.opensaml.xmlsec.signature.X509Data;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
-
-import com.google.common.collect.ImmutableSet;
 
 import net.shibboleth.idp.installer.MetadataGenerator;
 import net.shibboleth.idp.installer.MetadataGeneratorParameters;
@@ -93,32 +92,32 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
     /**
      * Those endpoints which require a backchannel.
      */
-    static final ImmutableSet<Endpoints> BACKCHANNEL_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(
+    static final Set<Endpoints> BACKCHANNEL_ENDPOINTS = Set.copyOf(EnumSet.of(
             Endpoints.SAML1Artifact, Endpoints.SAML2Artifact, Endpoints.SOAPSLO, Endpoints.SAML1Query,
             Endpoints.SAML2Query));
 
     /**
      * the Artifact endpoints.
      */
-    static final ImmutableSet<Endpoints> ARTIFACT_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.SAML1Artifact,
+    static final Set<Endpoints> ARTIFACT_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.SAML1Artifact,
             Endpoints.SAML2Artifact));
 
     /**
      * the SSO endpoints.
      */
-    static final ImmutableSet<Endpoints> SSO_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.ShibbolethSSO,
+    static final Set<Endpoints> SSO_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.ShibbolethSSO,
             Endpoints.POSTSSO, Endpoints.POSTSimpleSignSSO, Endpoints.RedirectSSO));
 
     /**
      * the SLO endpoints.
      */
-    static final ImmutableSet<Endpoints> SLO_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.RedirectSLO,
+    static final Set<Endpoints> SLO_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.RedirectSLO,
             Endpoints.POSTSLO, Endpoints.POSTSimpleSignSLO, Endpoints.SOAPSLO));
 
     /**
      * AttributeAuthority endpoints.
      */
-    static final ImmutableSet<Endpoints> AA_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.SAML1Query,
+    static final Set<Endpoints> AA_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.SAML1Query,
             Endpoints.SAML2Query));
 
     /**

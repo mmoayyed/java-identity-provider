@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.profile.config.navigate;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -68,7 +69,7 @@ public class AudienceRestrictionsLookupFunction extends AbstractRelyingPartyLook
             }
             
             if (id != null) {
-                return ImmutableList.of(rpc.getRelyingPartyId());
+                return List.of(rpc.getRelyingPartyId());
             }
         }
         

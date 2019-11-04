@@ -37,12 +37,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-
 /** {@link PopulateProfileInterceptorContext} unit test. */
 public class PopulateProfileInterceptorContextTest {
 
-    protected ImmutableList<ProfileInterceptorFlowDescriptor> interceptorFlows;
+    protected List<ProfileInterceptorFlowDescriptor> interceptorFlows;
 
     protected RequestContext src;
 
@@ -52,8 +50,7 @@ public class PopulateProfileInterceptorContextTest {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
-        interceptorFlows =
-                ImmutableList.of(new ProfileInterceptorFlowDescriptor(), new ProfileInterceptorFlowDescriptor(),
+        interceptorFlows = List.of(new ProfileInterceptorFlowDescriptor(), new ProfileInterceptorFlowDescriptor(),
                         new ProfileInterceptorFlowDescriptor());
         interceptorFlows.get(0).setId("intercept/test1");
         interceptorFlows.get(1).setId("intercept/test2");
@@ -74,7 +71,7 @@ public class PopulateProfileInterceptorContextTest {
         final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertNotNull(interceptorContext);
         final List<ProfileInterceptorFlowDescriptor> availableFlows =
-                ImmutableList.copyOf(interceptorContext.getAvailableFlows().values());
+                List.copyOf(interceptorContext.getAvailableFlows().values());
         Assert.assertEquals(availableFlows.size(), 3);
         Assert.assertEquals(availableFlows.get(0).getId(), "intercept/test1");
         Assert.assertEquals(availableFlows.get(1).getId(), "intercept/test2");

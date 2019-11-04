@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.context;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
+//import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 
 /**
@@ -74,7 +75,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
      * @return  immutable collection of RP contexts
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts() {
-        return ImmutableList.copyOf(relyingPartyIdMap.values());
+        return List.copyOf(relyingPartyIdMap.values());
     }
     
     /**
@@ -86,7 +87,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts(
             @Nonnull @NotEmpty final String label) {
-        return ImmutableList.copyOf(relyingPartyLabelMap.get(
+        return List.copyOf(relyingPartyLabelMap.get(
                 Constraint.isNotNull(StringSupport.trimOrNull(label), "Label cannot be null or empty")));
     }
     

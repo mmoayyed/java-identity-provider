@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -45,7 +46,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
@@ -171,7 +171,7 @@ public class RDBMSDataConnectorParserTest {
         final Collection<String> defs = new ArrayList<>(Arrays.asList(beanDefinitions));
         defs.add("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
 
-        builder.setServiceConfigurations(Collections2.transform(defs, s -> loader.getResource(s)));
+        builder.setServiceConfigurations(defs.stream().map(s -> loader.getResource(s)).collect(Collectors.toList()));
 
         if (properties != null) {
             builder.setPropertySources(Collections.singletonList(new ResourcePropertySource(properties)));

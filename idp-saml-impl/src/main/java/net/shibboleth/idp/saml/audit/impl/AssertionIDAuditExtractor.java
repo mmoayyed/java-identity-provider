@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,8 +29,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
-
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -63,7 +62,10 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                 final List<org.opensaml.saml.saml2.core.Assertion> assertions =
                         ((org.opensaml.saml.saml2.core.Response) message).getAssertions();
                 if (!assertions.isEmpty()) {
-                    return Collections2.transform(assertions, org.opensaml.saml.saml2.core.Assertion::getID);
+                    return assertions.
+                            stream().
+                            map(org.opensaml.saml.saml2.core.Assertion::getID).
+                            collect(Collectors.toList());
                 }
                 
             } else if (message instanceof org.opensaml.saml.saml1.core.Response) {
@@ -71,7 +73,10 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                 final List<org.opensaml.saml.saml1.core.Assertion> assertions =
                         ((org.opensaml.saml.saml1.core.Response) message).getAssertions();
                 if (!assertions.isEmpty()) {
-                    return Collections2.transform(assertions, org.opensaml.saml.saml1.core.Assertion::getID);
+                    return assertions.
+                            stream().
+                            map(org.opensaml.saml.saml1.core.Assertion::getID).
+                            collect(Collectors.toList());
                 }
                 
             } else if (message instanceof org.opensaml.saml.saml2.core.Assertion) {

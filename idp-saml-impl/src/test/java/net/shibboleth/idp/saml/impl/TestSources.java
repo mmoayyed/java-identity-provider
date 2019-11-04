@@ -32,8 +32,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -302,7 +300,7 @@ public final class TestSources {
                 map.put(attr.getId(), attr);
             }
 
-            attributes = ImmutableMap.copyOf(map);
+            attributes = Map.copyOf(map);
         }
 
         /** {@inheritDoc} */

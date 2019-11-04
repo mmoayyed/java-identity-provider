@@ -28,8 +28,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -78,7 +76,7 @@ public class MockStaticDataConnector extends AbstractDataConnector {
             map.put(attr.getId(), attr);
         }
         
-        attributes = ImmutableMap.copyOf(map);
+        attributes = Map.copyOf(map);
     }
 
     /** {@inheritDoc} */
