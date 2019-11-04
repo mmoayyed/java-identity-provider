@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.test.spring;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.servlet.ServletContextEvent;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -56,14 +59,16 @@ public class IdPPropertiesApplicationContextInitializerTest {
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
-    // TODO: test isn't working
-    @Test(enabled=false, expectedExceptions = ConstraintViolationException.class) public void testNotFound() {
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testNotFound() {
+        Assert.assertFalse(Files.exists(Paths.get("/opt", "shibboleth-idp", "conf", "idp.properties")),
+                "File /opt/shibboleth-idp/conf/idp.properties should not exist");
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
-    // TODO: test isn't working
-    @Test(enabled=false, expectedExceptions = {BeanDefinitionStoreException.class}) public void testNotFoundFalseFailFast() {
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void testNotFoundFalseFailFast() {
+        Assert.assertFalse(Files.exists(Paths.get("/opt", "shibboleth-idp", "conf", "idp.properties")),
+                "File /opt/shibboleth-idp/conf/idp.properties should not exist");
         sc.addInitParameter("idp.initializer.failFast", "false");
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
