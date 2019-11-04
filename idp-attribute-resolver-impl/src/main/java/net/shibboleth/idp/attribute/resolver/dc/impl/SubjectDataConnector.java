@@ -17,12 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
@@ -36,8 +38,11 @@ import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -45,6 +50,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} that extracts all
  * {@link IdPAttributePrincipal} objects from the {@link Subject} objects associated
  * with the request.
+ * 
+ * @since 4.0.0
  */
 @ThreadSafe
 public class SubjectDataConnector extends AbstractDataConnector {
@@ -52,8 +59,14 @@ public class SubjectDataConnector extends AbstractDataConnector {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SubjectDataConnector.class);
     
+    /** Flag denoting whether plugin is being used for subject c14n or standard usage. */
+    private boolean forCanonicalization;
+
     /** Strategy used to locate the {@link SubjectContext} to use. */
     @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
+    
+    /** Strategy used to locate the {@link Subject} to use. */
+    @Nullable private Function<ProfileRequestContext,Subject> subjectLookupStrategy;
     
     /** Controls handling of empty results. */
     private boolean noResultIsError;
@@ -61,6 +74,30 @@ public class SubjectDataConnector extends AbstractDataConnector {
     /** Constructor. */
     public SubjectDataConnector() {
         scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
+    }
+    
+    /**
+     * Gets whether the connector is being used during Subject Canonicalization, causing
+     * auto-installation of an alternate Subject lookup strategy.
+     * 
+     * @return whether connector is being used during c14n
+     */
+    public boolean isForCanonicalization() {
+        return forCanonicalization;
+    }
+    
+    /**
+     * Sets whether the connector is being used during Subject Canonicalization, causing
+     * auto-installation of an alternate Subject lookup strategy.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setForCanonicalization(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        forCanonicalization = flag;
     }
     
     /**
@@ -74,6 +111,19 @@ public class SubjectDataConnector extends AbstractDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Sets the strategy used to locate a {@link Subject} associated with a given
+     * {@link AttributeResolutionContext}.
+     * 
+     * @param strategy strategy used to locate a {@link Subject} associated with a given
+     *            {@link AttributeResolutionContext}
+     */
+    public void setSubjectLookupStrategy(@Nullable final Function<ProfileRequestContext,Subject> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        subjectLookupStrategy = strategy;
     }
     
     /**
@@ -97,6 +147,18 @@ public class SubjectDataConnector extends AbstractDataConnector {
         
         noResultIsError = flag;
     }
+    
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (forCanonicalization && subjectLookupStrategy == null) {
+            log.debug("{} Marked for use during canonicalication, auto-installing Subject lookup strategy",
+                    getLogPrefix());
+            subjectLookupStrategy = new SubjectCanonicalizationContextSubjectLookupFunction().compose(
+                    new ChildContextLookup<>(SubjectCanonicalizationContext.class));
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -106,19 +168,27 @@ public class SubjectDataConnector extends AbstractDataConnector {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        final SubjectContext sc = scLookupStrategy.compose(getProfileContextStrategy()).apply(resolutionContext);
-        if (sc == null || sc.getSubjects().isEmpty()) {
-            if (noResultIsError) {
-                throw new ResolutionException("No Subjects available to obtain attributes");
+        Collection<Subject> subjects = Collections.emptyList();
+        
+        if (subjectLookupStrategy != null) {
+            final Subject subject = subjectLookupStrategy.apply(getProfileContextStrategy().apply(resolutionContext));
+            if (subject == null) {
+                log.debug("{} No Subject returned from lookup, no attributes resolved", getLogPrefix());
+                return Collections.emptyMap();
             }
-            log.debug("{} Obtained no attributes from Subjects for principal '{}'", getLogPrefix(),
-                    resolutionContext.getPrincipal());
-            return Collections.emptyMap();
+            subjects = Collections.singletonList(subject);
+        } else {
+            final SubjectContext cs = scLookupStrategy.apply(getProfileContextStrategy().apply(resolutionContext));
+            if (cs == null || cs.getSubjects().isEmpty()) {
+                log.debug("{} No Subjects returned from SubjectContext lookup, no attributes resolved", getLogPrefix());
+                return Collections.emptyMap();
+            }
+            subjects = cs.getSubjects();
         }
         
         final Map<String,IdPAttribute> results = new HashMap<>();
         
-        for (final Subject subject : sc.getSubjects()) {
+        for (final Subject subject : subjects) {
             for (final IdPAttributePrincipal principal : subject.getPrincipals(IdPAttributePrincipal.class)) {
                 results.put(principal.getName(), principal.getAttribute());
             }

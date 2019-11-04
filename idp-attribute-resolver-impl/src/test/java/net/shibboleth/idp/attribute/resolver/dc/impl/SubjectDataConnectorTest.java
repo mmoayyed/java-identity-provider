@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
@@ -45,7 +46,6 @@ public class SubjectDataConnectorTest {
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
     
-
     @Test public void simpleValue() throws ComponentInitializationException, ResolutionException {
         final List<IdPAttributeValue> list = new ArrayList<>(2);
         list.add(new StringAttributeValue(SIMPLE_VALUE));
@@ -79,7 +79,41 @@ public class SubjectDataConnectorTest {
         assertTrue(copy.getValues().contains(new StringAttributeValue(SIMPLE_VALUE)));
         assertTrue(copy.getValues().contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
-    
+
+    @Test public void simpleValueViaC14N() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue> list = new ArrayList<>(2);
+        list.add(new StringAttributeValue(SIMPLE_VALUE));
+        list.add(new StringAttributeValue(SIMPLE_VALUE + "2"));
+        
+        final IdPAttribute attr = new IdPAttribute("wibble");
+        attr.setValues(list);
+
+        final SubjectDataConnector defn = new SubjectDataConnector();
+        defn.setId("pDAD");
+        defn.setForCanonicalization(true);
+        defn.initialize();
+
+        final AttributeResolutionContext ctx =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        final SubjectCanonicalizationContext sc = ctx.getParent().getSubcontext(SubjectCanonicalizationContext.class, true);
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new IdPAttributePrincipal(attr));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
+        sc.setSubject(subject);
+        
+        
+        final Map<String,IdPAttribute> results = defn.resolve(ctx);
+        
+        assertEquals(1, results.size());
+        
+        final IdPAttribute copy = results.get("wibble");
+        
+        assertEquals(copy.getValues().size(), 2);
+        assertTrue(copy.getValues().contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(copy.getValues().contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+    }
+
     @Test public void emptyOk() throws ComponentInitializationException, ResolutionException {
 
         final SubjectDataConnector defn = new SubjectDataConnector();

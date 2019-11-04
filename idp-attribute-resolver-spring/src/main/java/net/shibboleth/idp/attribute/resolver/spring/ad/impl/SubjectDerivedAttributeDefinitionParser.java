@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
@@ -62,16 +63,16 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
         super.doParse(config, parserContext, builder);
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "principalAttributeName"));
         final String functionRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValuesFunctionRef"));
-        final String c14n = StringSupport.trimOrNull(config.getAttributeNS(null, "forCanonicalization"));
         
         final BeanDefinitionBuilder contextFunctionBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(SubjectDerivedAttributeValuesFunction.class);
         contextFunctionBuilder.addPropertyValue("id", getDefinitionId());
 
-        if (c14n != null) {
-            contextFunctionBuilder.addPropertyValue("forCanonicalization", c14n);
+        if (config.hasAttributeNS(null, "forCanonicalization")) {
+            contextFunctionBuilder.addPropertyValue("forCanonicalization",
+                    SpringSupport.getStringValueAsBoolean(config.getAttributeNS(null, "forCanonicalization")));
         }
-        
+
         if (null != attributeName) {
             if (null != functionRef) {
                 log.warn("{} only one of \"principalAttributeName\" or \"attributeValuesFunctionRef\""

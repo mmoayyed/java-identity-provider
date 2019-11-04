@@ -1548,6 +1548,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="forCanonicalization" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            If true, the source Subject is assumed to be undergoing C14N rather than the
+                            usual post-authentication source. Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

@@ -46,8 +46,13 @@ public class SubjectDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         
         if (config.hasAttributeNS(null, "noResultIsError")) {
-            builder.addPropertyValue("noResultIsError", SpringSupport.getStringValueAsBoolean(
-                    config.getAttributeNS(null, "noResultIsError")));
+            builder.addPropertyValue("noResultIsError",
+                    SpringSupport.getStringValueAsBoolean(config.getAttributeNS(null, "noResultIsError")));
+        }
+        
+        if (config.hasAttributeNS(null, "forCanonicalization")) {
+            builder.addPropertyValue("forCanonicalization",
+                    SpringSupport.getStringValueAsBoolean(config.getAttributeNS(null, "forCanonicalization")));
         }
     }
 

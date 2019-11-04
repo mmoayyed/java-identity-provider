@@ -40,6 +40,7 @@ public class SubjectDataConnectorParserTest extends BaseAttributeDefinitionParse
         assertTrue(connector.getExportAttributes().contains("foo"));
         assertTrue(connector.getExportAttributes().contains("bar"));
         assertTrue(connector.isNoResultIsError());
+        assertTrue(connector.isForCanonicalization());
     }
     
     @Test(expectedExceptions = {BeanCreationException.class}) public void emptyNoResultIsError() {
