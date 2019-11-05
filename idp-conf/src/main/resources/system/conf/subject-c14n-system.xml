@@ -12,6 +12,10 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- Dummy beans expected to be redefined by imported resource. -->
+    <bean id="shibboleth.ProxyNameTransformPredicate" parent="shibboleth.Conditions.FALSE" />
+    <util:list id="shibboleth.ProxyNameTransformFormats" />
+
     <import resource="../../conf/c14n/subject-c14n.xml" />
 
     <bean id="shibboleth.PostLoginSubjectCanonicalizationFlow" abstract="true"
