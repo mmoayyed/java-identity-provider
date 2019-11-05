@@ -50,6 +50,7 @@
                 <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
                     p:dataSealer="#{(systemProperties.contains('idp.sealer.storeResource') or systemProperties.contains('idp.sealer.keyStrategy')) ? getObject('shibboleth.DataSealer') : null}" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer" />                    
+                <bean class="net.shibboleth.idp.saml.authn.principal.impl.NameIDPrincipalSerializer" />
             </list>
         </property>
     </bean>
@@ -111,6 +112,16 @@
                 <!-- Community-defined assurance profiles. -->
                 <entry key="http://id.incommon.org/assurance/silver" value="300" />
                 <entry key="http://id.incommon.org/assurance/bronze" value="301" />
+                
+                <!-- NameID Formats. -->
+                <entry key="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" value="400" />
+                <entry key="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" value="401" />
+                <entry key="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName" value="402" />
+                <entry key="urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName" value="403" />
+                <entry key="urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos" value="404" />
+                <entry key="urn:oasis:names:tc:SAML:2.0:nameid-format:entity" value="405" />
+                <entry key="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" value="406" />
+                <entry key="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" value="407" />
             </map>
         </property>
     </bean>
