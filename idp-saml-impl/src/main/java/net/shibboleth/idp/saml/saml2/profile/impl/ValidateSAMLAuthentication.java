@@ -47,6 +47,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -167,6 +168,13 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             return false;
         }
         
+        // TODO: Dummy code until we have something processing the results properly.
+        final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
+        Constraint.isTrue(response.getAssertions().size() == 1, "Wrong assertion count");
+        Constraint.isTrue(response.getAssertions().get(0).getAuthnStatements().size() == 1, "Wrong statement count");
+        authenticationContext.getSubcontext(SAMLAuthnContext.class)
+            .setSubject(response.getAssertions().get(0).getSubject())
+            .setAuthnStatement(response.getAssertions().get(0).getAuthnStatements().get(0));        
         return true;
     }
     
@@ -209,8 +217,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             proxied.getAuthorities().addAll(
                 authorities
                     .stream()
-                    .filter(aa -> !Strings.isNullOrEmpty(aa.getURI()))
                     .map(AuthenticatingAuthority::getURI)
+                    .filter(aa -> !Strings.isNullOrEmpty(aa))
                     .collect(Collectors.toUnmodifiableList()));
         }
         subject.getPrincipals().add(proxied);

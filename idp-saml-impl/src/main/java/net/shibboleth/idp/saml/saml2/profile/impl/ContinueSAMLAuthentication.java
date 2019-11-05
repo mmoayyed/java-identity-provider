@@ -24,7 +24,6 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -92,16 +91,17 @@ public class ContinueSAMLAuthentication extends AbstractAuthenticationAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
         }
         
-        // TODO: this is dummy code to be removed once we have legitimate processing in place.
         final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
-        if (StatusCode.SUCCESS.equals(response.getStatus().getStatusCode().getValue())) {
-            Constraint.isTrue(response.getAssertions().size() == 1, "Wrong assertion count");
-            Constraint.isTrue(response.getAssertions().get(0).getAuthnStatements().size() == 1, "Wrong statement count");
-            authenticationContext.getSubcontext(SAMLAuthnContext.class)
-                .setSubject(response.getAssertions().get(0).getSubject())
-                .setAuthnStatement(response.getAssertions().get(0).getAuthnStatements().get(0));
-        } else {
+        if (response.getStatus() == null || response.getStatus().getStatusCode() == null ||
+                response.getStatus().getStatusCode().getValue() == null) {
+            log.info("{} SAML response did not contain a StatusCode", getLogPrefix());
             authenticationContext.removeSubcontext(SAMLAuthnContext.class);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
+        } else if (!StatusCode.SUCCESS.equals(response.getStatus().getStatusCode().getValue())) {
+            log.info("{} SAML response contained error status: {}", getLogPrefix(),
+                    response.getStatus().getStatusCode().getValue());
+            authenticationContext.removeSubcontext(SAMLAuthnContext.class);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
         }
     }
     

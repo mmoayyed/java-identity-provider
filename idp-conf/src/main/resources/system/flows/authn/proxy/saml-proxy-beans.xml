@@ -218,6 +218,48 @@
         p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"
         p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext" />
 
+    <bean id="PopulateSignatureValidationParameters" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+		    <bean class="org.opensaml.profile.action.impl.PopulateSignatureValidationParameters"
+		        p:configurationLookupStrategy-ref="shibboleth.SignatureValidationConfigurationLookup"
+		        p:signatureValidationParametersResolver-ref="shibboleth.SignatureValidationParametersResolver" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="PopulateClientTLSValidationParameters" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="org.opensaml.profile.action.impl.PopulateClientTLSValidationParameters"
+		        p:configurationLookupStrategy-ref="shibboleth.ClientTLSValidationConfigurationLookup"
+		        p:clientTLSValidationParametersResolver-ref="shibboleth.ClientTLSValidationParametersResolver" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="PopulateDecryptionParameters" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+		    <bean class="org.opensaml.profile.action.impl.PopulateDecryptionParameters"
+		        p:configurationLookupStrategy-ref="shibboleth.DecryptionConfigurationLookup"
+		        p:decryptionParametersResolver-ref="shibboleth.DecryptionParametersResolver" />
+        </constructor-arg>
+    </bean>
+    
+    <bean id="DecryptAssertions" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="org.opensaml.saml.saml2.profile.impl.DecryptAssertions" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="DecryptNameIDs" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="DecryptAttributes" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="org.opensaml.saml.saml2.profile.impl.DecryptAttributes" />
+        </constructor-arg>
+    </bean>
+
     <bean id="PostAssertionPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
         p:fieldExtractors="#{getObject('shibboleth.PostInboundAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostInboundAssertionAuditExtractors')}" />
