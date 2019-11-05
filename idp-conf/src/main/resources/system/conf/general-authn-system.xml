@@ -50,7 +50,7 @@
                 <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
                     p:dataSealer="#{(systemProperties.contains('idp.sealer.storeResource') or systemProperties.contains('idp.sealer.keyStrategy')) ? getObject('shibboleth.DataSealer') : null}" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer" />                    
-                <bean class="net.shibboleth.idp.saml.authn.principal.impl.NameIDPrincipalSerializer" />
+                <bean class="net.shibboleth.idp.saml.authn.principal.impl.NameIDPrincipalSerializer" depends-on="shibboleth.OpenSAMLConfig" />
             </list>
         </property>
     </bean>
