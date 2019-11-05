@@ -66,6 +66,8 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
         
         final BeanDefinitionBuilder contextFunctionBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(SubjectDerivedAttributeValuesFunction.class);
+        contextFunctionBuilder.setInitMethodName("initialize");
+        contextFunctionBuilder.setDestroyMethodName("destroy");
         contextFunctionBuilder.addPropertyValue("id", getDefinitionId());
 
         if (config.hasAttributeNS(null, "forCanonicalization")) {

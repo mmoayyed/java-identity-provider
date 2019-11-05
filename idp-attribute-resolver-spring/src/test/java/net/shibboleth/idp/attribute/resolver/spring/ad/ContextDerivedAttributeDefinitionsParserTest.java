@@ -40,6 +40,7 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParse
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
@@ -53,7 +54,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
 
-    private AttributeResolutionContext getCtx(final String attributeName) {
+    private AttributeResolutionContext getCtx(final String attributeName, boolean c14n) {
         final List<IdPAttributeValue> list = new ArrayList<>(2);
         list.add(new StringAttributeValue(SIMPLE_VALUE));
         list.add(new StringAttributeValue(SIMPLE_VALUE + "2"));
@@ -63,12 +64,17 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
 
         final AttributeResolutionContext ctx = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                 TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
-        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
-        final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
-        authnResults.put("one", new AuthenticationResult("1", subject));
+
+        if (c14n) {
+            ctx.getParent().getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        } else {
+            final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+            final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
+            authnResults.put("one", new AuthenticationResult("1", subject));
+        }
 
         return ctx;
     }
@@ -77,7 +83,19 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
         final AttributeDefinition attrDef =
                 getAttributeDefn("resolver/subjectDerived.xml", ContextDerivedAttributeDefinition.class);
 
-        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("Whatever")).getValues();
+        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("Whatever", false)).getValues();
+
+        assertEquals(2, foo.size());
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+
+    }
+
+    @Test public void resolverSubjectViaC14N() throws ResolutionException {
+        final AttributeDefinition attrDef =
+                getAttributeDefn("resolver/subjectDerivedViaC14N.xml", ContextDerivedAttributeDefinition.class);
+
+        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("Whatever", true)).getValues();
 
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -89,7 +107,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
         final AttributeDefinition attrDef = getAttributeDefn("resolver/subjectDerivedComplex.xml", "contextDerivedBeans.xml",
                 ContextDerivedAttributeDefinition.class);
 
-        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
+        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("BeanWhatever", false)).getValues();
 
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -100,7 +118,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
         final AttributeDefinition attrDef = getAttributeDefn("resolver/contextDerived.xml", "contextDerivedBeans.xml",
                 ContextDerivedAttributeDefinition.class);
 
-        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
+        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("BeanWhatever", false)).getValues();
 
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -110,7 +128,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     @Test public void warn() throws ResolutionException {
         final AttributeDefinition attrDef =
                 getAttributeDefn("resolver/subjectDerivedWarn.xml", ContextDerivedAttributeDefinition.class);
-        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("Whatever")).getValues();
+        final List<IdPAttributeValue> foo = attrDef.resolve(getCtx("Whatever", false)).getValues();
 
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
