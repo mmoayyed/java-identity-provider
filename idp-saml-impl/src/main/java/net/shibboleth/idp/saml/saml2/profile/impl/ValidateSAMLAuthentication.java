@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -99,6 +101,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     /** Optional supplemental metadata source for filtering. */
     @Nullable private MetadataResolver metadataResolver;
     
+    /** Pluggable strategy function for generalized extraction of data. */
+    @Nullable private Function<ProfileRequestContext,Collection<IdPAttribute>> attributeExtractionStrategy;
+    
     /** Context containing the result to validate. */
     @Nullable private SAMLAuthnContext samlAuthnContext;
     
@@ -121,7 +126,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         transcoderRegistry = registry;
     }
     
-
     /**
      * Sets the filter service to use for inbound attributes.
      *
@@ -142,6 +146,19 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         metadataResolver = resolver;
+    }
+    
+    /**
+     * Sets the strategy function to invoke for generalized extraction of data into
+     * {@link IdPAttribute} objects for inclusion in the {@link AuthenticationResult}.
+     * 
+     * @param strategy extraction strategy
+     */
+    public void setAttributeExtractionStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<IdPAttribute>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        attributeExtractionStrategy = strategy;
     }
 
     /** {@inheritDoc} */
@@ -187,6 +204,25 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         if (transcoderRegistry != null) {
             processAttributes(profileRequestContext);
+        }
+        
+        if (attributeExtractionStrategy != null) {
+            log.debug("{} Applying custom extraction strategy function", getLogPrefix());
+            if (attributeContext == null) {
+                attributeContext = profileRequestContext
+                        .getSubcontext(RelyingPartyContext.class)
+                        .getSubcontext(AttributeContext.class, true);
+            }
+            final Collection<IdPAttribute> attributes = new ArrayList<>(attributeContext.getIdPAttributes().values());
+            final Collection<IdPAttribute> newAttributes = attributeExtractionStrategy.apply(profileRequestContext);
+            if (newAttributes != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Extracted attributes with custom strategy: {}", getLogPrefix(),
+                            newAttributes.stream().map(IdPAttribute::getId).collect(Collectors.toUnmodifiableList()));
+                }
+                attributes.addAll(newAttributes);
+                attributeContext.setIdPAttributes(attributes);
+            }
         }
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);

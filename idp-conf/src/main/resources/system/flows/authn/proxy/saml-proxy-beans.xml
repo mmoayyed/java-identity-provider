@@ -276,6 +276,7 @@
         p:requesterLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
         p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
         p:attributeFilter-ref="shibboleth.AttributeFilterService"
-        p:metadataResolver-ref="shibboleth.MetadataResolver" />
+        p:metadataResolver-ref="shibboleth.MetadataResolver"
+        p:attributeExtractionStrategy="#{getObject('shibboleth.authn.SAML.attributeExtractionStrategy')}" />
 
 </beans>
