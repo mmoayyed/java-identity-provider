@@ -52,7 +52,7 @@ public class AttributeRegistryServiceStrategy extends AbstractIdentifiableInitia
     @Nullable @NotEmpty private String namingRegistry;
     
     /**
-     * Set the name of the bean providing the {@link AttributeTranscoderRegistryImpl#setNamingRegistry()} value.
+     * Set the name of the bean providing the {@link AttributeTranscoderRegistryImpl#setNamingRegistry(Map)} value.
      * 
      * @param beanName name of bean of type {@link Map}
      */

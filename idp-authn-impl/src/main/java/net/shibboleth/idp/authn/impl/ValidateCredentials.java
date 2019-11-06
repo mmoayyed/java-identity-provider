@@ -28,6 +28,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AccountLockoutManager;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.CredentialValidator;
 import net.shibboleth.idp.authn.CredentialValidator.ErrorHandler;

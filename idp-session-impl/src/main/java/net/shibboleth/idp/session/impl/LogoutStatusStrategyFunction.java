@@ -29,6 +29,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.StatusCode;
 
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

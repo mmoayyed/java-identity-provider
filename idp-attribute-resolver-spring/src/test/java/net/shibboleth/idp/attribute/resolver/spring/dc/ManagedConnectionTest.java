@@ -45,9 +45,6 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-/**
- *
- */
 public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
 
     @Test(enabled=true) public void simple() throws ComponentInitializationException, NamingException {
@@ -245,7 +242,7 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
         /**
          * Constructor.
          *
-         * @param environment
+         * @param env
          */
         public MyDataSource(Hashtable<?, ?> env) {
             environment = env;

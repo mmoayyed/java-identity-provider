@@ -80,7 +80,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         backup(installerProps.getTargetDir().resolve("system"), backup.resolve("system"));
     }
 
-    /** Helper for the {@link #backupOld(InstallerProperties)} method.
+    /** Helper for the {@link #backupOld()} method.
      * @param from where from
      * @param to where to.
      * @throws BuildException if badness occurs
@@ -92,7 +92,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         copy.execute();
     }
 
-    /** Helper for the {@link #deleteOld(InstallerProperties)} method.
+    /** Helper for the {@link #deleteOld()} method.
      * @param what what to delete
      */
     private void delete(final Path what) {
@@ -122,8 +122,8 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         delete(system);
     }
 
-    /** Helper for the {@link #copyDist(InstallerProperties)} and
-     *  {@link #copyBinDocSystem(InstallerProperties)} methods.
+    /** Helper for the {@link #copyDist()} and
+     *  {@link #copyBinDocSystem()} methods.
      * @param srcDist the source distribution.
      * @param dist the dist directory
      * @param to the subfolder name

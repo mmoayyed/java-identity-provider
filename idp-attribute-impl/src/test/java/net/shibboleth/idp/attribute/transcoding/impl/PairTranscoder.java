@@ -92,7 +92,6 @@ public class PairTranscoder extends AbstractAttributeTranscoder<Pair> {
         return idattr;
     }
 
-    /** {@inheritDoc} */
     protected boolean canEncodeValue(IdPAttribute idpAttribute, IdPAttributeValue value) {
         return value instanceof StringAttributeValue;
     }

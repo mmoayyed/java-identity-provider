@@ -22,6 +22,10 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
@@ -29,11 +33,9 @@ import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
-/** A predicate implementation that forwards to {@link SAMLProfileConfiguration#getSignAssertions()}. */
+/** A predicate implementation that forwards to
+ * {@link SAMLProfileConfiguration#isSignAssertions(ProfileRequestContext)}.
+ * or follows {@link SPSSODescriptor#getWantAssertionsSigned()} if so configured.*/
 public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
 
     /** Whether to override the result based on the WantAssertionsSigned flag in SAML metadata. */

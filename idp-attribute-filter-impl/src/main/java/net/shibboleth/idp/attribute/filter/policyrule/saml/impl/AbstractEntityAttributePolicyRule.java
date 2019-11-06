@@ -68,7 +68,7 @@ import com.google.common.collect.Multimap;
  * including optimized handling of mapped attributes.
  * 
  * Classes wishing to implement Entity Attribute matchers implement {@link #getEntityMetadata(AttributeFilterContext)}
- * to navigate to the entity (probably recipient or issuer) and {@link #entityAttributeValueMatches(String)} to
+ * to navigate to the entity (probably recipient or issuer) and {@link #entityAttributeValueMatches(Set)} to
  * implement the comparison (probably string or regexp).
  */
 public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRule {

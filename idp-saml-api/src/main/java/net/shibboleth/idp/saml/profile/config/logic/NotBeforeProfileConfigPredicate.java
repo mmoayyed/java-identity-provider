@@ -27,7 +27,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A predicate that returns {@link SAMLProfileConfiguration#includeConditionsNotBefore()}
+ * A predicate that returns {@link SAMLProfileConfiguration#isIncludeConditionsNotBefore(ProfileRequestContext)}
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

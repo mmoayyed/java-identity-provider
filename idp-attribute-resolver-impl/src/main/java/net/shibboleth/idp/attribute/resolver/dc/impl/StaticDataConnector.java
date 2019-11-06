@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 

@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * A function that returns the effective audience restrictions to include in assertions,
  * based on combining a relying party's entityID with the result of 
- * {@link SAMLProfileConfiguration#getAdditionalAudiencesForAssertion()},
+ * {@link SAMLProfileConfiguration#getAdditionalAudiencesForAssertion(ProfileRequestContext)},
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

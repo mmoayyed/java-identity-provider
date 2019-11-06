@@ -57,7 +57,8 @@ import org.slf4j.LoggerFactory;
  * be used or created</p>
  * 
  * <p>A constructed {@link Assertion} will have its ID, IssueInstant, Issuer, and Version properties set.
- * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()}.</p>
+ * The issuer is based on
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId(ProfileRequestContext)}.</p>
  * 
  * <p>The {@link AuthenticationStatement} will have its authentication instant set, based on
  * {@link net.shibboleth.idp.authn.AuthenticationResult#getAuthenticationInstant()}

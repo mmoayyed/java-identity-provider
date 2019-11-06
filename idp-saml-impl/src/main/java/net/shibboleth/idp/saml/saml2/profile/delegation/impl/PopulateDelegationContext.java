@@ -81,8 +81,8 @@ import org.slf4j.LoggerFactory;
  * 
  * <li>
  * Determination is made whether issuance of a delegated token is allowed for the relying party,
- * based on the (legacy) static value {@link BrowserSSOProfileConfiguration#isAllowingDelegation()}
- * or the predicate {@link BrowserSSOProfileConfiguration#getAllowDelegation()}.
+ * based on the (predicate driven) {@link BrowserSSOProfileConfiguration#isAllowDelegation(ProfileRequestContext)}
+ * method.
  * </li>
  * 
  * <li>

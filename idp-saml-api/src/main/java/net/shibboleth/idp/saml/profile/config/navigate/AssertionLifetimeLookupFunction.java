@@ -29,7 +29,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns {@link SAMLProfileConfiguration#getAssertionLifetime()}
+ * A function that returns {@link SAMLProfileConfiguration#getAssertionLifetime(ProfileRequestContext)}
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

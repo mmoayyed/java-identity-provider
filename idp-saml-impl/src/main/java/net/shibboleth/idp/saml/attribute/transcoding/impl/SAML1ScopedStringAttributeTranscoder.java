@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeTranscoder} that supports {@link AttributeDesignator} and
+ * {@link net.shibboleth.idp.attribute.transcoding.AttributeTranscoder} that supports {@link AttributeDesignator} and
  * {@link ScopedStringAttributeValue} objects.
  */
 public class SAML1ScopedStringAttributeTranscoder extends AbstractSAML1AttributeTranscoder<ScopedStringAttributeValue> {

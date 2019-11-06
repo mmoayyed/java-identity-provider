@@ -102,7 +102,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** Mode to set on credential *key files. */
     public static final String MODE_CREDENTIAL_KEYS = "idp.conf.credentials.filemode";
 
-    /** Group to set on conf & *ALL* credential files. */
+    /** Group to set on files in the credential and conf directories. */
     public static final String GROUP_CONF_CREDENTIALS = "idp.conf.group";
 
     /** Do we do any chgrp/chmod work? */

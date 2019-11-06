@@ -154,8 +154,8 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * the NameQualifier and SPNameQualifier attributes is defined to allow default/implicit values
      * derived from the asserting and relying parties.
      * 
-     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType.PERSISTENT} and
-     * {@link org.opensaml.saml.saml2.core.NameIDType.TRANSIENT} Formats are defined in this manner. This
+     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType#PERSISTENT} and
+     * {@link org.opensaml.saml.saml2.core.NameIDType#TRANSIENT} Formats are defined in this manner. This
      * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>
      * 
      * @param profileRequestContext current profile request context
@@ -178,8 +178,8 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * the NameQualifier and SPNameQualifier attributes is defined to allow default/implicit values
      * derived from the asserting and relying parties.
      * 
-     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType.PERSISTENT} and
-     * {@link org.opensaml.saml.saml2.core.NameIDType.TRANSIENT} Formats are defined in this manner. This
+     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType#PERSISTENT} and
+     * {@link org.opensaml.saml.saml2.core.NameIDType#TRANSIENT} Formats are defined in this manner. This
      * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>
      * 
      * @param formats additional Formats for which defaulting of qualifiers is permissable

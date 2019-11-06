@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeTranscoder} that supports {@link Attribute} and
+ * {@link net.shibboleth.idp.attribute.transcoding.AttributeTranscoder} that supports {@link Attribute} and
  * {@link XMLObjectAttributeValue} objects.
  */
 public class SAML2XMLObjectAttributeTranscoder extends AbstractSAML2AttributeTranscoder<XMLObjectAttributeValue> {

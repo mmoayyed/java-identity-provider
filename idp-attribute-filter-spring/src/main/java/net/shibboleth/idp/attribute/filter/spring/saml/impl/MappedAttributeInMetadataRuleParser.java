@@ -33,7 +33,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Bean definition parser for {@link MappedAttributeInMetadataMatcher}.
+ * Bean definition parser for {@link AttributeInMetadataMatcher}.
  */
 public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 

@@ -68,16 +68,16 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
 
     /**
      * test the following policy.
-     * 
+     */
+    /* Javadoc whines.
      <code>
-      <AttributeFilterPolicy id="targettedValueInEPA">
+      AttributeFilterPolicy id="targettedValueInEPA">
           <PolicyRequirementRule xsi:type="basic:ANY" /> 
           <AttributeRule attributeID="eduPersonAffiliation">
               <PermitValueRule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/>
           </AttributeRule>
       <AttributeFilterPolicy/>
       </code> which should return all values of eduPersonAffiliation when uid has a "jsmith"
-     * 
      */
     @Test public void testTargettedPolicyRequirement() throws ComponentInitializationException, ResolutionException,
             AttributeFilterException {
@@ -126,7 +126,8 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
 
     /**
      * test the following policy.
-     * 
+     */
+    /*
      <code>
       <AttributeFilterPolicy id="targettedValueInEPA">
           <PolicyRequirementRule xsi:type="basic:ANY" /> 

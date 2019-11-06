@@ -62,7 +62,7 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
      * Sets whether the {@link RelyingPartyContext#getRelyingPartyId()} method should return an entityID
      * established from SAML metadata instead of the service URL.
      * 
-     * <p>Defaults to false for compatibility.<.p>
+     * <p>Defaults to false for compatibility.</p>
      * 
      * @param flag flag to set
      */

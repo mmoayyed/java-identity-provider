@@ -51,7 +51,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-/** Unit tests for {@link DelegatingCriteriaRelyingPartyConfigurationResolver. */
+/** Unit tests for {@link DelegatingCriteriaRelyingPartyConfigurationResolver}. */
 public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {
     
     private RelyingPartyConfiguration anonRP, defaultRP; 

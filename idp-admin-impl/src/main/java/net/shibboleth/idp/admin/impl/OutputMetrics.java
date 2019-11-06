@@ -89,7 +89,7 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Name of JSONP callback function, if any. */
     @Nullable private String jsonpCallbackName;
 
-    /** Formatting string for {@link DateTime} fields. */
+    /** Formatting string for {@link SimpleDateFormat} fields. */
     @Nullable private String dateTimeFormat;
 
     /** Map of custom metric groups to filters. */

@@ -207,7 +207,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     }
 
     /**
-     * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
+     * Set a lookup strategy for the {@link #getDefaultAuthenticationMethods(ProfileRequestContext)} method.
      *
      * @param strategy  lookup strategy
      * 

@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 
 /**
- * Bean definition parser for {@link DirectionPolicyRule} using {@link Direction.INBOUND}.
+ * Bean definition parser for {@link DirectionPolicyRule} using {@link Direction#INBOUND}.
  */
 public class InboundRuleParser extends BasePolicyRuleParser {
 

@@ -70,7 +70,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
     
     /**
      * Get an optional {@link BindingDescriptor} to inject into
-     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContextSAMLBindingContext} created.
+     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContext} created.
      * 
      * @return binding descriptor
      */
@@ -80,7 +80,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
     
     /**
      * Set an optional {@link BindingDescriptor} to inject into
-     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContextSAMLBindingContext} created.
+     * {@link org.opensaml.saml.common.messaging.context.SAMLBindingContext} created.
      * 
      * @param descriptor a binding descriptor
      */

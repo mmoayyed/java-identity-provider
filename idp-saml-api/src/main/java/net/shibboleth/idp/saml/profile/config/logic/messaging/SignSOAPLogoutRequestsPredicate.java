@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.logic.messaging.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 
 /** A predicate implementation that forwards to 
- * {@link SingleLogoutProfileConfiguration#getSignSOAPRequests()}. */
+ * {@link SingleLogoutProfileConfiguration#isSignSOAPRequests(MessageContext)}. */
 public class SignSOAPLogoutRequestsPredicate extends AbstractRelyingPartyPredicate {
     
     /** {@inheritDoc} */

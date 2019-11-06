@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * within the first {@link DelegationPolicy} element of that assertion's {@link Advice} element.</li>
  * <li>Otherwise the request is assumed to be the initial SSO request, so the value is determined by
  * the requesting SP's profile configuration value
- * {@link BrowserSSOProfileConfiguration#getMaximumTokenDelegationChainLength()}.</li>
+ * {@link BrowserSSOProfileConfiguration#getMaximumTokenDelegationChainLength(ProfileRequestContext)}.</li>
  * <li>If neither of these approaches produces a value, a default value is used 
  * {@link #DEFAULT_POLICY_MAX_CHAIN_LENGTH}</li>
  * </ol>

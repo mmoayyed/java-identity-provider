@@ -27,7 +27,7 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 
 /**
  * Decodes {@link NameIdentifier#getValue()}  via the base class (reversing the work done by
- * {@link net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition}).
+ * {@link TransientSAML1NameIdentifierGenerator}).
  */
 public class TransientNameIdentifierDecoder extends BaseTransientDecoder implements NameIdentifierDecoder {
 

@@ -61,7 +61,8 @@ import org.slf4j.LoggerFactory;
  * <li>
  * The length of the delegation chain as indicated in the inbound assertion token's {@link DelegationRestrictionType}
  * condition is evaluated against a policy maximum resolved via the strategy set by 
- * {@link #setPolicyMaxChainLengthStrategy(Function)}, or from {@link #DEFAULT_POLICY_MAX_CHAIN_LENGTH} if no value 
+ * {@link #setPolicyMaxChainLengthStrategy(Function)}, or from
+ * {@link BrowserSSOProfileConfiguration#DEFAULT_DELEGATION_CHAIN_LENGTH} if no value 
  * can otherwise be resolved. If the chain of {@link org.opensaml.saml.ext.saml2delrestrict.Delegate} 
  * child elements is greater than or equal to the resolved policy max chain length, the request is not allowed.
  * The default policy resolution strategy is to look at the first {@link DelegationPolicy} contained within the 

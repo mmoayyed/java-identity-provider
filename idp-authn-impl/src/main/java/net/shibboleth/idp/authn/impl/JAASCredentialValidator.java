@@ -30,6 +30,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.LanguageCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -299,7 +300,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * A callback handler that provides name and password data to a JAAS login process,
      * along with other miscellany.
      * 
-     * This handler supports {@link NameCallback}, {@link PasswordCallback}, and {@link LanguageCalback}.
+     * This handler supports {@link NameCallback}, {@link PasswordCallback}, and {@link LanguageCallback}.
      */
     protected class SimpleCallbackHandler implements CallbackHandler {
 

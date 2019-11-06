@@ -19,13 +19,14 @@ package net.shibboleth.idp.attribute.filter.policyrule.impl;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** General {@link PolicyRule} for testing the filtering direction. */
+/** General {@link PolicyRequirementRule} for testing the filtering direction. */
 public class DirectionPolicyRule extends AbstractPolicyRule {
 
     /** Direction to match for a positive evaluation. */

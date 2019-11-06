@@ -37,7 +37,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTrans
 import net.shibboleth.idp.saml.attribute.transcoding.SAMLEncoderSupport;
 
 /**
- * {@link net.shibboleth.idp.attribute.AttributeTranscoder} that supports {@link AttributeDesignator} and
+ * {@link net.shibboleth.idp.attribute.transcoding.AttributeTranscoder} that supports {@link AttributeDesignator} and
  * {@link StringAttributeValue} objects.
  */
 public class SAML1StringAttributeTranscoder extends AbstractSAML1AttributeTranscoder<StringAttributeValue> {

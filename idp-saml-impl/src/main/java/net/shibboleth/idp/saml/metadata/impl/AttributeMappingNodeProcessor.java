@@ -155,7 +155,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     }
 
     /**
-     * Look inside the {@link Extensions} for {@link EntityAttributes) and map them.
+     * Look inside the {@link Extensions} for {@link EntityAttributes} and map them.
      * 
      * @param registry the registry service
      * @param extensions the extensions block

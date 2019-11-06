@@ -26,7 +26,9 @@ import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-/** A predicate implementation that forwards to {@link SAMLProfileConfiguration#getSignRequests()}. */
+/** A predicate implementation that forwards to 
+ * {@link SAMLProfileConfiguration#isSignRequests(ProfileRequestContext)}.
+ */
 public class SignRequestsPredicate extends AbstractRelyingPartyPredicate {
     
     /** {@inheritDoc} */

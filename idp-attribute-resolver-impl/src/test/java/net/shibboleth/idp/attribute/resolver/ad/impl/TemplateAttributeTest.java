@@ -44,7 +44,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.impl.TemplateAttribute}. */
+/** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition}. */
 public class TemplateAttributeTest {
 
     /** The name. */

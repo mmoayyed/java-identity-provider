@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.logic.messaging.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 
 /** A predicate implementation that forwards to 
- * {@link SAMLArtifactConsumerProfileConfiguration#getClientTLSArtifactRequests()}. */
+ * {@link SAMLArtifactConsumerProfileConfiguration#isClientTLSArtifactRequests(MessageContext)}. */
 public class ClientTLSArtifactRequestsPredicate extends AbstractRelyingPartyPredicate {
     
     /** {@inheritDoc} */

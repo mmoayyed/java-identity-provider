@@ -40,7 +40,7 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
 
     /**
      * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a
-     * single <mdattr:EntityAttributes/> statement.
+     * single &lt;mdattr:EntityAttributes/&gt; statement.
      * 
      * @param xmlFileName the file within the test directory.
      * @return the att
