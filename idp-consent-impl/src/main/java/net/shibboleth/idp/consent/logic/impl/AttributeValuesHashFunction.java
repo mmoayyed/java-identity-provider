@@ -36,6 +36,7 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -92,7 +93,14 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                     }
                 } else if (value instanceof StringAttributeValue) {
                     objectOutputStream.writeObject(((StringAttributeValue)value).getValue());
-                
+                } else if (value instanceof EmptyAttributeValue) {
+                    // unique signature
+                    objectOutputStream.writeObject(Long.valueOf(42));
+                    if (EmptyAttributeValue.NULL.getValue().equals(value.getNativeValue())) {
+                        objectOutputStream.writeObject("NULLVALUE");
+                    } else {
+                        objectOutputStream.writeObject("EMPTY VALUE");
+                    }
                 } else if (value.getNativeValue() != null) {
                     objectOutputStream.writeObject(value.getNativeValue());
                 }

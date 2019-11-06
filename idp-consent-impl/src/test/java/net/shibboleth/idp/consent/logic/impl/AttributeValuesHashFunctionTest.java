@@ -17,17 +17,17 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
-import java.util.ArrayList;
+import static org.testng.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.List;
-
-import net.shibboleth.idp.attribute.EmptyAttributeValue;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 
 /** {@link AttributeValuesHashFunction} unit test. */
 public class AttributeValuesHashFunctionTest {
@@ -46,20 +46,19 @@ public class AttributeValuesHashFunctionTest {
         Assert.assertNull(function.apply(Collections.emptyList()));
     }
     
-    @Test(enabled = false) public void testNullValue() {
-        final List<IdPAttributeValue> values = new ArrayList<>();
-        values.add(EmptyAttributeValue.NULL);
-        Assert.assertNull(function.apply(values));
+    @Test(enabled = true) public void testNullValue() {
+        assertEquals(function.apply(List.of(EmptyAttributeValue.NULL)), "GO6W6gt/9+cYhDCPAJSdQnhYbNP07CvgEUNsjTHNWjM=");
+        assertEquals(function.apply(List.of(EmptyAttributeValue.ZERO_LENGTH)), "b3sJLxUOXzXC263DWVp0F/l5fxfxJxKuJYGpKCtjhaw=");
     }
 
     @Test public void testSingleValue() {
         final String hash = function.apply(ConsentTestingSupport.newAttributeMap().get("attribute1").getValues());
-        Assert.assertEquals(hash, "yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=");
+        assertEquals(hash, "yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=");
     }
 
     @Test public void testMultipleValues() {
         final String hash = function.apply(ConsentTestingSupport.newAttributeMap().get("attribute2").getValues());
-        Assert.assertEquals(hash, "xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=");
+        assertEquals(hash, "xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=");
     }
 
 }
