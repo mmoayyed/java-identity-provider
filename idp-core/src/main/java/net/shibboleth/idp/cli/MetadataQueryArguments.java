@@ -43,24 +43,34 @@ public class MetadataQueryArguments extends AbstractCommandLineArguments {
     /** SAML 2.0 protocol. */
     @Parameter(names = {"--saml2"}, description = "Query for SAML 2.0 role")
     private boolean saml2;
-    
+
+    /** CAS protocol. */
+    @Parameter(names = {"--cas"}, description = "Query for CAS role")
+    private boolean cas;
+
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     public void validate() {
-        if (saml1) {
-            if (saml2 || protocol != null) {
-                throw new IllegalArgumentException("The saml1, saml2, and protocol options are mutually exclusive");
+        try {
+            if (saml1) {
+                if (saml2 || cas || protocol != null) {
+                    throw new IllegalArgumentException();
+                }
+            } else if (saml2) {
+                if (cas || protocol != null) {
+                    throw new IllegalArgumentException();
+                }
+            } else if (cas) {
+                if (protocol != null) {
+                    throw new IllegalArgumentException();
+                }
             }
-        } else if (saml2) {
-            if (saml1 || protocol != null) {
-                throw new IllegalArgumentException("The saml1, saml2, and protocol options are mutually exclusive");
-            }
-        } else if (protocol != null) {
-            if (saml1 || saml2) {
-                throw new IllegalArgumentException("The saml1, saml2, and protocol options are mutually exclusive");
-            }
+        } catch (final IllegalArgumentException e) {
+            throw new IllegalArgumentException("The saml1, saml2, cas, and protocol options are mutually exclusive");
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override
@@ -82,6 +92,8 @@ public class MetadataQueryArguments extends AbstractCommandLineArguments {
                 builder.append("&saml1");
             } else if (saml2) {
                 builder.append("&saml2");
+            } else if (cas) {
+                builder.append("&cas");
             } else if (protocol != null) {
                 builder.append("&protocol=").append(URLEncoder.encode(protocol, "UTF-8"));
             }

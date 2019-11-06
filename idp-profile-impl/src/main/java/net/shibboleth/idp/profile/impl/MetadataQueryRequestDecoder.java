@@ -51,6 +51,9 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
     /** Name of the query parameter for the SAML 2 protocol: {@value} . */
     @Nonnull @NotEmpty public static final String SAML2_PARAM = "saml2";
 
+    /** Name of the query parameter for the CAS protocol: {@value} . */
+    @Nonnull @NotEmpty public static final String CAS_PARAM = "cas";
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataQueryRequestDecoder.class);
     
@@ -116,6 +119,8 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
             return SAMLConstants.SAML11P_NS;
         } else if (request.getParameter(SAML2_PARAM) != null) {
             return SAMLConstants.SAML20P_NS;
+        } else if (request.getParameter(CAS_PARAM) != null) {
+            return "https://www.apereo.org/cas/protocol";
         }
         
         return null;
