@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -35,14 +36,11 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
@@ -60,13 +58,13 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
 
     // CheckStyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue> input) {
+    @Nullable public String apply(@Nullable @NonnullElements final Collection<IdPAttributeValue> input) {
 
         if (input == null) {
             return null;
         }
 
-        final Collection<IdPAttributeValue> filteredInput = Collections2.filter(input, Predicates.notNull());
+        final Collection<IdPAttributeValue> filteredInput = List.copyOf(input);
 
         if (filteredInput.isEmpty()) {
             return null;

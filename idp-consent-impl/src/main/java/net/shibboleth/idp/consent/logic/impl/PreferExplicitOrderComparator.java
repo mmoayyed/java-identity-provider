@@ -20,21 +20,17 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Ordering;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Comparator which prefers to order strings according to the order in which they appear in a list, and which falls back
@@ -62,14 +58,13 @@ public class PreferExplicitOrderComparator implements Comparator<String> {
         if (order == null) {
             explicitOrder = Collections.emptyList();
         } else {
-            // trimmed
-            explicitOrder = Lists.transform(order, TrimOrNullStringFunction.INSTANCE::apply);
-
-            // non-null
-            explicitOrder = ImmutableList.copyOf(Iterables.filter(explicitOrder, Predicates.notNull()));
-
             // no duplicates
-            explicitOrder = ImmutableSet.copyOf(explicitOrder).asList();
+            explicitOrder = order.
+                    stream().
+                    map(StringSupport::trimOrNull).
+                    filter(e -> e != null).
+                    distinct().
+                    collect(Collectors.toUnmodifiableList()); 
 
             explicitOrdering = Ordering.explicit(explicitOrder);
         }

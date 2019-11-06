@@ -18,12 +18,11 @@
 package net.shibboleth.idp.consent.audit.impl;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.idp.consent.context.ConsentContext;
 
@@ -43,6 +42,6 @@ public class CurrentConsentIsApprovedAuditExtractorTest extends AbstractConsentA
 
     @Test public void testExtraction() {
         prc.getSubcontext(ConsentContext.class).getCurrentConsents().get("consent1").setApproved(true);
-        Assert.assertEquals(extractor.apply(prc), ImmutableList.of(true, false));
+        Assert.assertEquals(extractor.apply(prc), List.of(true, false));
     }
 }

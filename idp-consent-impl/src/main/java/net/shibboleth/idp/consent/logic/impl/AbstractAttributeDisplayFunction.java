@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method
@@ -62,6 +63,7 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         } else {
             defaultLanguageRange = defaultLanguages.
                     stream().
+                    map(StringSupport::trimOrNull).
                     filter(e -> e != null).
                     map(s -> new LanguageRange(s)).
                     collect(Collectors.toUnmodifiableList());

@@ -33,8 +33,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 /**
  * {@link AttributeDisplayNameFunction} and {@link AttributeDisplayDescriptionFunction} unit tests.
  */
@@ -81,7 +79,7 @@ public class AttributeDisplayNameDescriptionFunctionTest {
     }
 
     @Test public void testNameWithDefault() {
-        List<String> fallback = Lists.newArrayList("en", "fr", "de");
+        List<String> fallback = List.of("en", "fr", "de");
         
         Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), fallback);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
@@ -99,7 +97,7 @@ public class AttributeDisplayNameDescriptionFunctionTest {
     }
 
     @Test public void testDescWithDefault() {
-        List<String> fallback = Lists.newArrayList("en", "fr", "de");
+        List<String> fallback = List.of("en", "fr", "de");
         
         Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), fallback);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Description");
@@ -109,7 +107,10 @@ public class AttributeDisplayNameDescriptionFunctionTest {
     }
 
     @Test public void testNullFallbackLanguage() {
-        List<String> fallback = Lists.newArrayList(null, "fr");
+        List<String> fallback = new ArrayList<>(2);
+        fallback.add(null);
+        fallback.add("");
+        fallback.add("fr");
         
         Function<IdPAttribute, String> displayNameFunc = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), fallback);
         Assert.assertEquals(displayNameFunc.apply(testAttribute), "FR locale Name");

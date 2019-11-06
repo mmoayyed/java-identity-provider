@@ -20,9 +20,10 @@ package net.shibboleth.idp.consent.storage.impl;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,22 +41,20 @@ import javax.json.spi.JsonProvider;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
+import org.opensaml.storage.StorageSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.storage.StorageSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableBiMap;
 
 /**
  * Serializes {@link Consent}.
@@ -179,7 +178,8 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     @Nonnull @NotEmpty public String serialize(@Nonnull final Map<String, Consent> consents) throws IOException {
         Constraint.isNotNull(consents, "Consents cannot be null");
 
-        final Collection<Consent> filteredConsents = Collections2.filter(consents.values(), Predicates.notNull());
+        final List<Consent> filteredConsents = 
+                consents.values().stream().filter(e -> e != null).collect(Collectors.toList());
         Constraint.isNotEmpty(filteredConsents, "Consents cannot be empty");
 
         final StringWriter sink = new StringWriter(128);

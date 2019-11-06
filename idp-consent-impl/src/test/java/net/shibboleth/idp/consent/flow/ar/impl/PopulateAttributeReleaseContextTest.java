@@ -43,7 +43,6 @@ import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Ordering;
 
 /** {@link PopulateAttributeReleaseContext} unit test. */
@@ -57,7 +56,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
     @Test public void testObtainConsentForAllAttributes() throws Exception {
         action = new PopulateAttributeReleaseContext();
-        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(e -> true);
         action.initialize();
 
         final Event event = action.execute(src);
@@ -92,7 +91,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
 
         action = new PopulateAttributeReleaseContext();
-        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(e -> true);
         action.initialize();
 
         final Event event = action.execute(src);
@@ -112,7 +111,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
 
         action = new PopulateAttributeReleaseContext();
-        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(e -> true);
         ((PopulateAttributeReleaseContext) action)
                 .setAttributeIdComparator(new PreferExplicitOrderComparator(attributeOrder));
         action.initialize();
@@ -145,7 +144,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class).setIdPAttributes(attributes);
 
         action = new PopulateAttributeReleaseContext();
-        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(e->true);
         ((PopulateAttributeReleaseContext) action)
                 .setAttributeIdComparator(new PreferExplicitOrderComparator(attributeOrder));
         action.initialize();
@@ -163,7 +162,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         prc.getSubcontext(RelyingPartyContext.class).removeSubcontext(AttributeContext.class);
 
         action = new PopulateAttributeReleaseContext();
-        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(e -> true);
         action.initialize();
 
         final Event event = action.execute(src);

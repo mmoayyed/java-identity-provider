@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.audit.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +31,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.collect.Collections2;
 
 /**
  * {@link Function} that returns whether the current consents are approved from an {@link ConsentContext}.
@@ -62,7 +61,12 @@ public class CurrentConsentIsApprovedAuditExtractor implements Function<ProfileR
         
         final ConsentContext consentContext = consentContextLookupStrategy.apply(input);
         if (consentContext != null && !consentContext.getCurrentConsents().isEmpty()) {
-            return Collections2.transform(consentContext.getCurrentConsents().values(), Consent::isApproved);
+            return consentContext.
+                    getCurrentConsents().
+                    values().
+                    stream().
+                    map(Consent::isApproved).
+                    collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
