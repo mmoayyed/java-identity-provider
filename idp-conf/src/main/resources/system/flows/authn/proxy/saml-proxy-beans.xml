@@ -24,7 +24,7 @@
     <bean id="shibboleth.authn.SAML.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target-ref="shibboleth.authn.SAML.externalAuthnPath" />
 
-<!--     <import resource="../../../../conf/authn/proxy/saml-proxy-config.xml" /> -->
+    <import resource="../../../../conf/authn/proxy/saml-proxy-config.xml" />
     
     <!-- Parent beans for indirecting into nested PRC. -->
     
@@ -277,6 +277,9 @@
         p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
         p:attributeFilter-ref="shibboleth.AttributeFilterService"
         p:metadataResolver-ref="shibboleth.MetadataResolver"
+        p:proxiedAuthnInstant="#{getObject('shibboleth.authn.SAML.proxiedAuthnInstant') ?: true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.SAML.addDefaultPrincipals') ?: true}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.SAML.resultCachingPredicate')}"        
         p:attributeExtractionStrategy="#{getObject('shibboleth.authn.SAML.attributeExtractionStrategy')}" />
 
 </beans>

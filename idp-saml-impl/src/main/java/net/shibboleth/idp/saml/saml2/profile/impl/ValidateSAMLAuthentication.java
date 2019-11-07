@@ -104,6 +104,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     /** Pluggable strategy function for generalized extraction of data. */
     @Nullable private Function<ProfileRequestContext,Collection<IdPAttribute>> attributeExtractionStrategy;
     
+    /** Whether the authentication result's timestamp should be set based on the proxied value. */
+    private boolean proxiedAuthnInstant;
+    
     /** Context containing the result to validate. */
     @Nullable private SAMLAuthnContext samlAuthnContext;
     
@@ -113,6 +116,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     /** Constructor. */
     public ValidateSAMLAuthentication() {
         setMetricName(DEFAULT_METRIC_NAME);
+        proxiedAuthnInstant = true;
     }
 
     /**
@@ -159,6 +163,20 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         attributeExtractionStrategy = strategy;
+    }
+    
+    /**
+     * Sets whether the creation timestamp for the {@link AuthenticationResult} should be set to
+     * the proxied value from the SAML assertion.
+     * 
+     * <p>Defaults to "true"</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setProxiedAuthnInstant(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        proxiedAuthnInstant = flag;
     }
 
     /** {@inheritDoc} */
@@ -227,7 +245,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
-        if (authenticationContext.getAuthenticationResult() != null) {
+        if (proxiedAuthnInstant && authenticationContext.getAuthenticationResult() != null) {
+            log.debug("{} Resetting authentication time to proxied value: {}", getLogPrefix(),
+                    samlAuthnContext.getAuthnStatement().getAuthnInstant());
             if (samlAuthnContext.getAuthnStatement().getAuthnInstant() != null) {
                 authenticationContext.getAuthenticationResult().setAuthenticationInstant(
                         samlAuthnContext.getAuthnStatement().getAuthnInstant());
