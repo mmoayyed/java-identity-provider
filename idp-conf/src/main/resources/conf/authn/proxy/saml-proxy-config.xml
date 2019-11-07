@@ -13,7 +13,4 @@
        default-destroy-method="destroy">
 
 
-    <!-- Set FALSE to record current time instead of upstream value as time of authentication. -->
-    <util:constant id="shibboleth.authn.SAML.proxiedAuthnInstant" static-field="java.lang.Boolean.TRUE" />
- 
 </beans>

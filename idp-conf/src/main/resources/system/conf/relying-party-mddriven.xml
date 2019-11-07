@@ -400,6 +400,14 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="proxiedAuthnInstantPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="proxiedAuthnInstant" />
+                </constructor-arg>
+                <constructor-arg value="true" />
+            </bean>
+        </property>
         <property name="authnContextComparisonLookupStrategy">
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="authnContextComparison" />
         </property>

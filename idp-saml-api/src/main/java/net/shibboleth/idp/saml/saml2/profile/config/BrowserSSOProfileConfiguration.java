@@ -74,6 +74,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Whether the response endpoint should be validated if the request is signed. */
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
+    /** Whether authentication results should carry the proxied AuthnInstant. */
+    @Nonnull private Predicate<ProfileRequestContext> proxiedAuthnInstantPredicate;
+
     /** Lookup function to supply maximum session lifetime. */
     @Nonnull private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
 
@@ -123,6 +126,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         forceAuthnPredicate = Predicates.alwaysFalse();
         checkAddressPredicate = Predicates.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
+        proxiedAuthnInstantPredicate = Predicates.alwaysTrue();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
         maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(null);
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
@@ -293,6 +297,46 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setSkipEndpointValidationWhenSignedPredicate(
             @Nonnull final Predicate<ProfileRequestContext> condition) {
         skipEndpointValidationWhenSignedPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
+    }
+    
+    /**
+     * Gets whether authentication results produced by use of this profile should carry the proxied
+     * assertion's AuthnInstant, rather than the current time.
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return whether to proxy across the inbound AuthnInstant
+     * 
+     * @since 4.0.0
+     */
+    public boolean isProxiedAuthnInstant(@Nullable final ProfileRequestContext profileRequestContext) {
+        return proxiedAuthnInstantPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Sets whether authentication results produced by use of this profile should carry the proxied
+     * assertion's AuthnInstant, rather than the current time.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setProxiedAuthnInstant(final boolean flag) {
+        proxiedAuthnInstantPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
+    /**
+     * Sets condition to determine whether authentication results produced by use of this profile should
+     * carry the proxied assertion's AuthnInstant, rather than the current time.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setProxiedAuthnInstantPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        proxiedAuthnInstantPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
 
     /**

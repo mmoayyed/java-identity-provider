@@ -42,9 +42,11 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -53,6 +55,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -80,6 +83,8 @@ import com.google.common.collect.Multimap;
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
+ * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(SAMLAuthnContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext}.
@@ -100,23 +105,26 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
 
     /** Optional supplemental metadata source for filtering. */
     @Nullable private MetadataResolver metadataResolver;
-    
+
+    /** Strategy used to look up a {@link RelyingPartyContext} for configuration options. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+
     /** Pluggable strategy function for generalized extraction of data. */
     @Nullable private Function<ProfileRequestContext,Collection<IdPAttribute>> attributeExtractionStrategy;
-    
-    /** Whether the authentication result's timestamp should be set based on the proxied value. */
-    private boolean proxiedAuthnInstant;
     
     /** Context containing the result to validate. */
     @Nullable private SAMLAuthnContext samlAuthnContext;
     
+    /** Store off profile config. */
+    @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
+
     /** Context for externally supplied inbound attributes. */
     @Nullable private AttributeContext attributeContext;
         
     /** Constructor. */
     public ValidateSAMLAuthentication() {
         setMetricName(DEFAULT_METRIC_NAME);
-        proxiedAuthnInstant = true;
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
 
     /**
@@ -153,6 +161,19 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     }
     
     /**
+     * Set the strategy used to return the {@link RelyingPartyContext} for configuration options.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /**
      * Sets the strategy function to invoke for generalized extraction of data into
      * {@link IdPAttribute} objects for inclusion in the {@link AuthenticationResult}.
      * 
@@ -163,20 +184,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         attributeExtractionStrategy = strategy;
-    }
-    
-    /**
-     * Sets whether the creation timestamp for the {@link AuthenticationResult} should be set to
-     * the proxied value from the SAML assertion.
-     * 
-     * <p>Defaults to "true"</p>
-     * 
-     * @param flag flag to set
-     */
-    public void setProxiedAuthnInstant(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        proxiedAuthnInstant = flag;
     }
 
     /** {@inheritDoc} */
@@ -202,6 +209,26 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             recordFailure();
             return false;
         }
+
+        final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpContext == null) {
+            log.error("{} Unable to locate RelyingPartyContext", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            recordFailure();
+            return false;
+        } else if (rpContext.getProfileConfig() == null) {
+            log.error("{} Unable to locate profile configuration", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            recordFailure();
+            return false;
+        } else if (!(rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration)) {
+            log.error("{} Not a SAML 2 profile configuration", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            recordFailure();
+            return false;
+        }
+        
+        profileConfiguration = (BrowserSSOProfileConfiguration) rpContext.getProfileConfig();
         
         // TODO: Dummy code until we have something processing the results properly.
         final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
@@ -245,7 +272,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
-        if (proxiedAuthnInstant && authenticationContext.getAuthenticationResult() != null) {
+        if (authenticationContext.getAuthenticationResult() != null
+                && profileConfiguration.isProxiedAuthnInstant(profileRequestContext)) {
             log.debug("{} Resetting authentication time to proxied value: {}", getLogPrefix(),
                     samlAuthnContext.getAuthnStatement().getAuthnInstant());
             if (samlAuthnContext.getAuthnStatement().getAuthnInstant() != null) {
