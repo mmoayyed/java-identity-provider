@@ -98,8 +98,10 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                     objectOutputStream.writeObject(Long.valueOf(42));
                     if (EmptyAttributeValue.NULL.getValue().equals(value.getNativeValue())) {
                         objectOutputStream.writeObject("NULLVALUE");
-                    } else {
+                    } else if (EmptyAttributeValue.ZERO_LENGTH.getValue().equals(value.getNativeValue())) {
                         objectOutputStream.writeObject("EMPTY VALUE");
+                    } else {
+                        log.error("Internal error - impossible null attribute");
                     }
                 } else if (value.getNativeValue() != null) {
                     objectOutputStream.writeObject(value.getNativeValue());
