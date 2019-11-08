@@ -9,8 +9,10 @@
         </encoder>
     </appender>
 
+    <logger name="net.shibboleth.idp.consent" level="DEBUG" />
+
     <root>
-        <level value="warn" />
+        <level value="WARN" />
         <appender-ref ref="STDOUT" />
     </root>
     

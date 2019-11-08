@@ -36,6 +36,7 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -75,6 +76,10 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 
             for (final IdPAttributeValue value : filteredInput) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Considering value of '{}' with native value {}",
+                            value.getClass(), value.getNativeValue());
+                }
                 if (value instanceof ScopedStringAttributeValue) {
                     objectOutputStream.writeObject(((ScopedStringAttributeValue) value).getValue() + '@'
                             + ((ScopedStringAttributeValue) value).getScope());
@@ -96,15 +101,18 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                 } else if (value instanceof EmptyAttributeValue) {
                     // unique signature
                     objectOutputStream.writeObject(Long.valueOf(42));
-                    if (EmptyAttributeValue.NULL.getValue().equals(value.getNativeValue())) {
-                        objectOutputStream.writeObject("NULLVALUE");
-                    } else if (EmptyAttributeValue.ZERO_LENGTH.getValue().equals(value.getNativeValue())) {
-                        objectOutputStream.writeObject("EMPTY VALUE");
-                    } else {
+                    if (!EmptyAttributeValue.NULL.equals(value) &&
+                        !EmptyAttributeValue.ZERO_LENGTH.equals(value)) {
                         log.error("Internal error - impossible null attribute");
                     }
+                    objectOutputStream.writeObject(value.getNativeValue().toString());
+                } else if (value instanceof ByteAttributeValue) {
+                    objectOutputStream.writeObject(((ByteAttributeValue)value).getValue());
                 } else if (value.getNativeValue() != null) {
+                    log.debug("Unknown atribute value '{}' hashed as {}", value.getClass(), value.getNativeValue());
                     objectOutputStream.writeObject(value.getNativeValue());
+                } else {
+                    log.warn("Unknown attribute value '{}' with no value was not hashed", value.getClass());
                 }
             }
 

@@ -22,15 +22,23 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collections;
 import java.util.List;
 
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.schema.XSString;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 
 /** {@link AttributeValuesHashFunction} unit test. */
-public class AttributeValuesHashFunctionTest {
+public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
 
     private AttributeValuesHashFunction function;
 
@@ -45,13 +53,19 @@ public class AttributeValuesHashFunctionTest {
     @Test public void testEmptyInput() {
         Assert.assertNull(function.apply(Collections.emptyList()));
     }
-    
+
     @Test(enabled = true) public void testNullValue() {
-        assertEquals(function.apply(List.of(EmptyAttributeValue.NULL)), "GO6W6gt/9+cYhDCPAJSdQnhYbNP07CvgEUNsjTHNWjM=");
-        assertEquals(function.apply(List.of(EmptyAttributeValue.ZERO_LENGTH)), "b3sJLxUOXzXC263DWVp0F/l5fxfxJxKuJYGpKCtjhaw=");
+        // NOTE Any change is an ODS drift
+        assertEquals(function.apply(List.of(EmptyAttributeValue.NULL)), "QlRl6kTdT/0tD4h3xpwJn+hoFjZssUN15Bc6DO/CXws=");
+    }
+
+    @Test(enabled = true) public void testEmptyValue() {
+        // NOTE Any change is an ODS drift
+        assertEquals(function.apply(List.of(EmptyAttributeValue.ZERO_LENGTH)), "vwBWiidH5q5XZY3uEPcnJYeDTgqJnpV9WpmgWZS9wR4=");
     }
 
     @Test public void testSingleValue() {
+        // NOTE Any change is an ODS drift
         final String hash = function.apply(ConsentTestingSupport.newAttributeMap().get("attribute1").getValues());
         assertEquals(hash, "yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=");
     }
@@ -61,4 +75,47 @@ public class AttributeValuesHashFunctionTest {
         assertEquals(hash, "xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=");
     }
 
+    @Test public void testScoped() {
+        // NOTE Any change is an ODS drift
+        final IdPAttributeValue val = new ScopedStringAttributeValue("Value", "Scope");
+        assertEquals(function.apply(Collections.singletonList(val)), "WFoLzGdi3WmUjhWe3Q6uSyoHVZJXukDWeOUb7CyH5V8=");
+    }
+
+    @Test public void testByte() {
+        // NOTE Any change is an ODS drift
+        final byte[] theBytes = {1,2,3};
+        final IdPAttributeValue val = new ByteAttributeValue(theBytes);
+        assertEquals(function.apply(Collections.singletonList(val)), "saP1UTQcyQPZHOPI6tVhVWMKOmB3BDCTn/l5QFSsyX4=");
+    }
+
+    @Test public void testXML() {
+        // NOTE Any change is an ODS drift
+        final XMLObjectBuilder<XSString> builder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
+                        XSString.TYPE_NAME);
+        final XSString xmlString = builder.buildObject(XSString.TYPE_NAME);
+        xmlString.setValue("value");
+        final IdPAttributeValue val = new XMLObjectAttributeValue(xmlString);
+        assertEquals(function.apply(Collections.singletonList(val)), "c+NqWOijlvFBpla4r1q3F0RkpYZK7phCNe2gKb0r57o=");
+    }
+
+    private IdPAttributeValue testAV(Object type) {
+        return new IdPAttributeValue() {
+
+            public Object getNativeValue() {
+                return type;
+            }
+
+            public String getDisplayValue() {
+                return "Display";
+            }};
+    }
+
+    @Test public void unknownTypeValue() {
+        assertEquals(function.apply(Collections.singletonList(testAV("42"))), "Lt6BAjtq4qQJ6ADEZKf/s5XZxzBh6mShY/UCphriugY=");
+    }
+
+    @Test public void unknownTypeNoValue() {
+        assertEquals(function.apply(Collections.singletonList(testAV(null))), "xPtMT+sJsVtAtjNLzPrBBlfbY/yUsAQ7Ncxxc7Q5k70=");
+    }
 }
