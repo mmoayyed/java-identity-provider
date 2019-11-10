@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
  * Container for decoded attributes. This gives us a distinguished class to look for in the
  * {@link org.opensaml.core.xml.XMLObject#getObjectMetadata()}.
  */
-public class AttributesMapContainer implements Supplier<Multimap<String,IdPAttribute>> {
+public final class AttributesMapContainer implements Supplier<Multimap<String,IdPAttribute>> {
 
     /** The map we are encapsulating.*/
     private final Multimap<String,IdPAttribute> providedValue;

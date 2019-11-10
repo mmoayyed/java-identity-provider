@@ -32,7 +32,7 @@ import com.google.common.base.Objects;
 
 /** An attribute value with an associated scope. */
 @ThreadSafe
-public class ScopedStringAttributeValue extends StringAttributeValue {
+public final class ScopedStringAttributeValue extends StringAttributeValue {
 
     /** Scope of the attribute value. */
     private final String scope;

@@ -22,7 +22,7 @@ import net.shibboleth.utilities.java.support.annotation.ParameterName;
 /**
  * IdP Representation of the SAML2 RequestedAttribute.
  */
-public class IdPRequestedAttribute extends IdPAttribute {
+public final class IdPRequestedAttribute extends IdPAttribute {
 
     /** Is this attribute required. */
     private boolean isRequired;

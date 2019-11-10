@@ -45,7 +45,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
  * Wrapper around a {@link Map} representing a rule for transcoding, used to
  * detect and load the rules at runtime from a Spring context.
  */
-public class TranscodingRule {
+public final class TranscodingRule {
 
     /** Underlying map containing the rule. */
     @Nonnull @NonnullElements private final Map<String,Object> rule;

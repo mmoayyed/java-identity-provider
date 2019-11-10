@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * 
  * @since 4.0.0
  */
-public class PairwiseId {
+public final class PairwiseId {
 
     /** ID of the entity that issued that identifier. */
     @Nullable private String issuerEntityID;
