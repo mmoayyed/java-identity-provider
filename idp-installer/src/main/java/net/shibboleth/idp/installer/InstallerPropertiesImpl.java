@@ -26,6 +26,7 @@ import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -168,6 +169,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** credentials key file mode. */
     private String credentialsKeyFileMode;
 
+    /** Local overload of properties (to deal with nested calling). */
+    private Map<String, String> inheritedProperties = Collections.EMPTY_MAP;
+
     /**
      * Constructor.
      * @param copiedDistribution Has the distribution been copied? If no we don't need the source dir.
@@ -176,10 +180,22 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         needSourceDir = !copiedDistribution;
     }
 
+    /** Set any properties inherited from the base environment.
+     * @param props what to set
+     */
+    public void setInheritedProperties(final Map<String,String> props) {
+        inheritedProperties = props;
+    }
+
     /** {@inheritDoc} */
     // CheckStyle: CyclomaticComplexity OFF
     protected void doInitialize() throws ComponentInitializationException {
         installerProperties = new Properties(System.getProperties());
+
+        for (final Map.Entry<String,String> entry:inheritedProperties.entrySet()) {
+            installerProperties.setProperty(entry.getKey(), entry.getValue());
+        }
+
         final String antBase = installerProperties.getProperty(ANT_BASE_DIR);
         if (antBase == null) {
             throw new ComponentInitializationException(ANT_BASE_DIR + " must be specified");
@@ -233,10 +249,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             log.debug("Source directory {}", srcDir.toAbsolutePath());
         }
 
-        if (!installerProperties.contains(KEY_SIZE)) {
+        value = installerProperties.getProperty(KEY_SIZE);
+        if (value == null) {
             keySize = DEFAULT_KEY_SIZE;
         } else {
-            keySize = Integer.parseInt(installerProperties.getProperty(KEY_SIZE));
+            keySize = Integer.parseInt(value);
         }
     }
     // CheckStyle: CyclomaticComplexity ON

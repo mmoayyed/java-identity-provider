@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.installer.ant.impl;
 
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
 
 import org.apache.tools.ant.BuildException;
@@ -26,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.CopyDistribution;
-import net.shibboleth.idp.installer.InstallerProperties;
 import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.V4Install;
 import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
@@ -63,7 +65,18 @@ public class V4InstallTask extends Task {
             throw new BuildException("Invalid parameter to task");
         }
         try {
-            final InstallerProperties ip = new InstallerPropertiesImpl(!copyInstall);
+            final InstallerPropertiesImpl ip = new InstallerPropertiesImpl(!copyInstall);
+
+            // Grab the ant properties and plug in.  Note Java V2 to V11 conversion.
+            ip.setInheritedProperties(
+                    getProject().
+                    getProperties().
+                    entrySet().
+                    stream().
+                    filter(e -> System.getProperty(e.getKey()) == null).
+                    filter(e -> e.getValue() instanceof String).
+                    collect(Collectors.toUnmodifiableMap(Entry::getKey, e-> (String) e.getValue())));
+
             final CurrentInstallStateImpl is;
             ip.initialize();
             is = new CurrentInstallStateImpl(ip);

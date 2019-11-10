@@ -478,8 +478,8 @@ public class V4Install extends AbstractInitializableComponent {
               generator.setKeySize(installerProps.getKeySize());
               generator.setHostName(installerProps.getHostName());
               generator.setURISubjectAltNames(Collections.singletonList(installerProps.getSubjectAltName()));
-              log.info("Creating {}, CN = {} URI = {}", fileBase,
-                      installerProps.getHostName(), installerProps.getSubjectAltName());
+              log.info("Creating {}, CN = {} URI = {}, keySize={}", fileBase,
+                      installerProps.getHostName(), installerProps.getSubjectAltName(), installerProps.getKeySize());
               try {
                 generator.generate();
                 } catch (final Exception e) {
@@ -519,8 +519,8 @@ public class V4Install extends AbstractInitializableComponent {
                 generator.setHostName(installerProps.getHostName());
                 generator.setURISubjectAltNames(Collections.singletonList(installerProps.getSubjectAltName()));
                 generator.setKeystorePassword(installerProps.getKeyStorePassword());
-                log.info("Creating backchannel keystore, CN = {} URI = {}",
-                        installerProps.getHostName(), installerProps.getSubjectAltName());
+                log.info("Creating backchannel keystore, CN = {} URI = {}, keySize={}",
+                        installerProps.getHostName(), installerProps.getSubjectAltName(), installerProps.getKeySize());
                 try {
                   generator.generate();
                   } catch (final Exception e) {
@@ -558,8 +558,8 @@ public class V4Install extends AbstractInitializableComponent {
                 generator.setVersionFile(versionFile.toFile());
                 generator.setKeyAlias(installerProps.getSealerAlias());
                 generator.setKeystorePassword(installerProps.getSealerPassword());
-                log.info("Creating backchannel keystore, CN = {} URI = {}",
-                        installerProps.getHostName(), installerProps.getSubjectAltName());
+                log.info("Creating backchannel keystore, CN = {} URI = {}, keySize={}",
+                        installerProps.getHostName(), installerProps.getSubjectAltName(),installerProps.getKeySize());
                 try {
                     generator.changeKey();
                 } catch (final Exception e) {
