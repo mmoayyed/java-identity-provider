@@ -25,7 +25,7 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearch;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearch;
 
 /** A search filter that can be executed against an LDAP to fetch results. */
 public interface ExecutableSearchFilter extends ExecutableSearch {

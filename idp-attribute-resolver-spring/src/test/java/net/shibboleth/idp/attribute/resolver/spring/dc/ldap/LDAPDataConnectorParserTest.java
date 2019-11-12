@@ -75,7 +75,7 @@ import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;

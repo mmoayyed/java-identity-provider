@@ -36,6 +36,7 @@ import net.shibboleth.idp.attribute.resolver.MultipleResultAnErrorResolutionExce
 import net.shibboleth.idp.attribute.resolver.NoResultAnErrorResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.AbstractMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.ResultMappingStrategy;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;

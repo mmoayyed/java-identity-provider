@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the search filter to
+ * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder} that generates the search filter to
  * be executed by evaluating a parameterized filter string against the currently resolved attributes within a
  * {@link AttributeResolutionContext}.
  */

@@ -35,6 +35,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
+import net.shibboleth.idp.attribute.resolver.dc.http.HTTPResponseMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.http.HTTPSearch;
 import net.shibboleth.idp.attribute.resolver.dc.impl.AbstractSearchDataConnector;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

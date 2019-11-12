@@ -31,6 +31,8 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearch;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;

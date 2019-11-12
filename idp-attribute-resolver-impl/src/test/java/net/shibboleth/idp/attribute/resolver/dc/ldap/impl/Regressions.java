@@ -42,7 +42,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

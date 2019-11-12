@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder}. It generates the SQL statement to
+ * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder}. It generates the SQL statement to
  * be executed by invoking {@link String#format(String, Object...)} with
  * {@link AttributeResolutionContext#getPrincipal() }.
  */

@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the search filter to
+ * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder} that generates the search filter to
  * be executed by evaluating a {@link Template} against the currently resolved attributes within a
  * {@link AttributeResolutionContext}.
  */

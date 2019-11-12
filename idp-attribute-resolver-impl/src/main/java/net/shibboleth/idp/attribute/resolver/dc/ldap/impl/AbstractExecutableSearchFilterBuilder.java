@@ -29,7 +29,7 @@ import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 
 /**

@@ -52,7 +52,7 @@ import com.google.common.net.UrlEscapers;
 import com.google.common.xml.XmlEscapers;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates a
+ * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder} that generates a
  * request by evaluating {@link Template}s against the currently resolved attributes within an
  * {@link AttributeResolutionContext} to produce a URL and body, via GET or POST, and a configurable
  * cache key.

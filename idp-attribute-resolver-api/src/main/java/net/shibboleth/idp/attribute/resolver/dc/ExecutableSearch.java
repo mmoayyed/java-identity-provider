@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.http.impl;
+package net.shibboleth.idp.attribute.resolver.dc;
 
-import java.util.Map;
+import javax.annotation.Nullable;
 
-import org.apache.http.client.ResponseHandler;
+/** Should be implemented by objects used to search for attributes, that uniquely identify those search results. */
+public interface ExecutableSearch {
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
-
-/**
- * Strategy for processing an {@link org.apache.http.client.HttpClient} response into a map of 
- * {@link net.shibboleth.idp.attribute.IdPAttribute}s.
- */
-public interface HTTPResponseMappingStrategy extends MappingStrategy<Map<String,IdPAttribute>>,
-    ResponseHandler<Map<String,IdPAttribute>> {
-    
+    /**
+     * Gets a key that uniquely identifies this object and may be used as a key in a result cache.
+     * 
+     * <p>If a null is returned, no caching will be done.</p>
+     * 
+     * @return the result cache key
+     */
+    @Nullable public String getResultCacheKey();
 }

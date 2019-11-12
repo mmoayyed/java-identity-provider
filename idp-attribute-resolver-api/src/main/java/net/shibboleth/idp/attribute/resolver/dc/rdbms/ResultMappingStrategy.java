@@ -15,28 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
+package net.shibboleth.idp.attribute.resolver.dc.rdbms;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import javax.annotation.Nonnull;
+import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearch;
-
-/** A statement that can be executed against a database to fetch results. */
-public interface ExecutableStatement extends ExecutableSearch {
-
-    /**
-     * Executes the statement and returns the results. This method <strong>MUST NOT</strong> close the given
-     * {@link Connection}.
-     * 
-     * @param connection ready-to-use connection to the database
-     * 
-     * @return the result of the executed statement
-     * 
-     * @throws SQLException thrown if there is a problem executing the statement
-     */
-    @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException;
+/**
+ * Strategy for mapping from a {@link ResultSet} to a collection of {@link
+ * net.shibboleth.idp.attribute.IdPAttribute}s.
+ */
+public interface ResultMappingStrategy extends MappingStrategy<ResultSet> {
 }

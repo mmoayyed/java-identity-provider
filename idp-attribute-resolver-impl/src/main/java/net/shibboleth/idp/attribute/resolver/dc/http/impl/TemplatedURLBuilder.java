@@ -45,7 +45,7 @@ import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 
 /**
- * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the URL to
+ * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder} that generates the URL to
  * request by evaluating a {@link Template} against the currently resolved attributes within an
  * {@link AttributeResolutionContext}.
  */

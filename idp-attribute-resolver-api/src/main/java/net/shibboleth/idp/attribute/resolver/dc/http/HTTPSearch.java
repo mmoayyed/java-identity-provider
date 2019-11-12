@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.http.impl;
+package net.shibboleth.idp.attribute.resolver.dc.http;
 
 import java.io.IOException;
 import java.util.Map;
@@ -27,7 +27,7 @@ import org.apache.http.client.HttpClient;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearch;
+import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearch;
 
 /** An HTTP request that returns attribute data. */
 public interface HTTPSearch extends ExecutableSearch {
