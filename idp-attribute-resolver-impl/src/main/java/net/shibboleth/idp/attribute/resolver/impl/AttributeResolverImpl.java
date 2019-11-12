@@ -649,7 +649,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         final HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
         for (final DataConnector plugin : dataConnectors.values()) {
-            log.debug("{} Checking if data connector '{}' is has a circular dependency", logPrefix, plugin.getId());
+            log.debug("{} Checking if data connector '{}' has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
 
