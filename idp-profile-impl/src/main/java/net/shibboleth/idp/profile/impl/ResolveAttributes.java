@@ -113,8 +113,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
         
-        attributesLookupStrategy = FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                Collections.<String>emptyList());
+        attributesLookupStrategy = FunctionSupport.constant(Collections.emptyList());
         
         maskFailures = true;
         createResolutionContext = true;
