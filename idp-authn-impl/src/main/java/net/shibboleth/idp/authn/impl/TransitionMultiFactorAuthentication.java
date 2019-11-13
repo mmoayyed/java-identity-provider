@@ -100,6 +100,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
     /** A subordinate {@link MultiFactorAuthenticationContext}, if any. */
     @Nullable private MultiFactorAuthenticationContext mfaContext;
+    
+    /** Holds the last event processed by the system. */
+    @Nullable private String previousEvent;
 
     /** Constructor. */
     TransitionMultiFactorAuthentication() {
@@ -179,10 +182,13 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         // Swap MFA flow back into top-level context so that other components see only MFA flow.
         authenticationContext.setAttemptedFlow(mfaContext.getAuthenticationFlowDescriptor());
 
-        // Event transitions require normalizing empty/null events into "proceed".
-        final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
-        final String previousEvent = eventCtx != null && eventCtx.getEvent() != null
-                ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
+        // If the holding variable is already set, this is a recursive invocation.
+        if (previousEvent == null) {
+            // Event transitions require normalizing empty/null events into "proceed".
+            final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
+            previousEvent = eventCtx != null && eventCtx.getEvent() != null
+                    ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
+        }
 
         // Check for an authentication result and move it into the MFA context.
         final AuthenticationResult result = authenticationContext.getAuthenticationResult();
@@ -232,7 +238,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     }
 // Checkstyle: CyclomaticComplexity ON
 
-// Checkstyle: CyclomaticComplexity|ReturnCount OFF
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Respond to a signal to transition the MFA process to a new flow.
      * 
@@ -269,6 +275,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             if (flow.getReuseCondition().test(profileRequestContext)) {
                 log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
                 activeResult.setLastActivityInstantToNow();
+                previousEvent = EventIds.PROCEED_EVENT_ID;
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 doExecute(profileRequestContext, authenticationContext);
                 return;
@@ -279,19 +286,19 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
      
         if (validateLoginTransitions) {
             if (authenticationContext.isPassive() && !flow.isPassiveAuthenticationSupported()) {
-                log.error("{} Targeted login flow '{}' does not support passive authentication",
-                        getLogPrefix(), flowId);
+                log.error("{} Targeted login flow '{}' does not support passive authentication", getLogPrefix(),
+                        flowId);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_PASSIVE);
                 return;
             } else if ((authenticationContext.isForceAuthn() || authenticationContext.getMaxAge() != null)
                     && !flow.isForcedAuthenticationSupported()) {
-                log.error("{} Targeted login flow '{}' does not support forced re-authentication",
-                        getLogPrefix(), flowId);
+                log.error("{} Targeted login flow '{}' does not support forced re-authentication", getLogPrefix(),
+                        flowId);
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
                 return;
             } else if (!profileRequestContext.isBrowserProfile() && !flow.isNonBrowserSupported()) {
-                log.error("{} Targeted login flow '{}' does not support non-browser authentication",
-                        getLogPrefix(), flowId);
+                log.error("{} Targeted login flow '{}' does not support non-browser authentication", getLogPrefix(),
+                        flowId);
                 ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
                         AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
                 return;
@@ -302,6 +309,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         authenticationContext.setAttemptedFlow(flow);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
-// Checkstyle: CyclomaticComplexity|ReturnCount ON
+// Checkstyle: CyclomaticComplexity ON
     
 }
