@@ -17,22 +17,80 @@
 
 package net.shibboleth.idp.saml.profile.config.logic;
 
+import java.util.function.Function;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
+import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 
-/** A predicate implementation that forwards to 
- * {@link SAMLProfileConfiguration#isSignRequests(ProfileRequestContext)}.
+/**
+ * A predicate implementation that forwards to 
+ * {@link SAMLProfileConfiguration#isSignRequests(ProfileRequestContext)}
+ * or follows {@link IDPSSODescriptor#getWantAuthnRequestsSigned()} if so configured.
  */
 public class SignRequestsPredicate extends AbstractRelyingPartyPredicate {
     
+    /** Whether to override the result based on the WantAuthnRequestsSigned flag in SAML metadata. */
+    private boolean honorMetadata;
+    
+    /** Lookup strategy for {@link SAMLMetadataContext}. */
+    private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
+    
+    /** Constructor. */
+    public SignRequestsPredicate() {
+        metadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
+    }
+    
+    /**
+     * Set whether to override the result based on the WantAuthnRequestsSigned flag in SAML metadata.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setHonorMetadata(final boolean flag) {
+        honorMetadata = flag;
+    }
+
+    /**
+     * Set lookup strategy for {@link SAMLMetadataContext}.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setMetadataContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+        metadataContextLookupStrategy = Constraint.isNotNull(strategy,
+                "SAMLMetadataContext lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
+
+        if (honorMetadata) {
+            final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(input);
+            if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null
+                    && metadataCtx.getRoleDescriptor() instanceof IDPSSODescriptor) {
+                final Boolean flag = ((IDPSSODescriptor) metadataCtx.getRoleDescriptor()).getWantAuthnRequestsSigned();
+                if (flag != null && flag.booleanValue()) {
+                    return true;
+                }
+            }
+        }
+        
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();

@@ -142,7 +142,8 @@
                     p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
                     p:noResultIsError="false">
                 <property name="activationCondition">
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate" />
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate"
+                        p:honorMetadata="%{idp.signing.honorWantAuthnRequestsSigned:true}" />
                 </property>
             </bean>
         </constructor-arg>
