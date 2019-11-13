@@ -159,9 +159,13 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
                 for (final AuthenticationResult result : results) {
                     mfaCtx.getActiveResults().put(result.getAuthenticationFlowId(), result);
                 }
+                if (log.isDebugEnabled()) {
+                    log.debug("{} {} active result(s) extracted for possible reuse: {}", getLogPrefix(), results.size(),
+                            mfaCtx.getActiveResults().keySet());
+                }
+            } else {
+                log.debug("{} No active results extracted", getLogPrefix());
             }
-            log.debug("{} {} active result(s) extracted for possible reuse", getLogPrefix(),
-                    results != null ? results.size() : 0);
         } else {
             log.debug("{} No lookup strategy provided, no active results will be made available", getLogPrefix());
         }
