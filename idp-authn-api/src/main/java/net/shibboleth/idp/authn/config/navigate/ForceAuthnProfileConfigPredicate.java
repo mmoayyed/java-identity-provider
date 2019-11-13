@@ -27,10 +27,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * A predicate that evaluates a {@link ProfileRequestContext} and determines whether forced
- * authentication should be set.
- * 
- * <p>For SAML 1 and SAML 2 SSO profiles, the "forceAuthn" flag is the setting governing
- * this decision. For other profiles, false is returned.</p> 
+ * authentication should be set based on the associated {@link AuthenticationProfileConfiguration}.
  * 
  * @since 3.4.0
  */

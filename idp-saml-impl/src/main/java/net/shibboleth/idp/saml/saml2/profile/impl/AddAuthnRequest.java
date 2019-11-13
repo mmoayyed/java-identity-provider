@@ -233,8 +233,9 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             log.debug("{} No issuer value available, leaving Issuer unset", getLogPrefix());
         }
         
-        // ForceAuthn may come from request or config.
-        if (authenticationContext.isForceAuthn() || profileConfiguration.isForceAuthn(profileRequestContext)) {
+        // ForceAuthn comes from configuration, which by default will take into account the
+        // AuthenticationContext parent's state (but may be overridden by deployer).
+        if (profileConfiguration.isForceAuthn(profileRequestContext)) {
             log.debug("{} Setting ForceAuthn for SAML AuthnRequest", getLogPrefix());
             object.setForceAuthn(true);
         }

@@ -381,7 +381,9 @@
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
                 </constructor-arg>
-                <constructor-arg value="false" />
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.ProxyAwareForceAuthnPredicate" />
+                </constructor-arg>
             </bean>
         </property>
         <property name="checkAddressPredicate">
