@@ -75,11 +75,20 @@
         p:inboundInterceptorFlows="security-policy/saml-soap" />
 
     <bean id="SAML2.SSO" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
-        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml2-sso"
-        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
-        
+	        class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
+	        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
+	        p:inboundInterceptorFlows="security-policy/saml2-sso"
+	        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}">
+        <property name="defaultAuthenticationMethodsLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction"
+                p:mappings="#{getObject('shibboleth.PrincipalProxyRequestMappings')}" />        
+        </property>
+        <property name="authnContextTranslationStrategy">
+            <bean class="net.shibboleth.idp.saml.authn.principal.impl.MapDrivenAuthnContextTranslationStrategy"
+                p:mappings="#{getObject('shibboleth.PrincipalProxyResponseMappings')}" />
+        </property>
+    </bean>
+
     <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
         static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 

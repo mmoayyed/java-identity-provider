@@ -32,8 +32,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.logic.ProxyAwareForceAuthnPredicate;
-import net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction;
-import net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
+import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction;
+import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -44,6 +44,7 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
@@ -94,6 +95,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Lookup function to supply maximum delegation chain length. */
     @Nonnull private Function<ProfileRequestContext,Long> maximumTokenDelegationChainLengthLookupStrategy;
 
+    /** Lookup function to supply the strategy function for translating SAML 2.0 AuthnContext data. */
+    @Nonnull private Function<ProfileRequestContext,Function<AuthnContext,Collection<Principal>>>
+        authnContextTranslationStrategyLookupStrategy;
+    
     /** Lookup function for requested AC operator. */
     @Nonnull private Function<ProfileRequestContext,String> authnContextComparisonLookupStrategy;
     
@@ -136,6 +141,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         allowDelegationPredicate = Predicates.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
+        authnContextTranslationStrategyLookupStrategy = FunctionSupport.constant(null);
         authnContextComparisonLookupStrategy = new ProxyAwareAuthnContextComparisonLookupFunction();
         defaultAuthenticationContextsLookupStrategy = new ProxyAwareDefaultAuthenticationMethodsLookupFunction();
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
@@ -500,6 +506,47 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
                 Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
+    /**
+     * Get the function to use to translate an inbound proxied SAML 2.0 {@link AuthnContext} into the appropriate
+     * set of custom {@link Principal} objects to populate into the subject.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return translation function
+     * 
+     * @since 4.0.0
+     */
+    @Nullable public Function<AuthnContext,Collection<Principal>> getAuthnContextTranslationStrategy(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return authnContextTranslationStrategyLookupStrategy.apply(profileRequestContext);
+    }
+
+    /**
+     * Set the function to use to translate an inbound proxied SAML 2.0 {@link AuthnContext} into the appropriate
+     * set of custom {@link Principal} objects to populate into the subject.
+     * 
+     * @param strategy translation function
+     * 
+     * @since 4.0.0
+     */
+    public void setAuthnContextTranslationStrategy(@Nullable final Function<AuthnContext,Collection<Principal>> strategy) {
+        authnContextTranslationStrategyLookupStrategy = FunctionSupport.constant(strategy);
+    }
+
+    /**
+     * Set a lookup strategy for the function to use to translate an inbound proxied SAML 2.0 {@link AuthnContext}
+     * into the appropriate set of custom {@link Principal} objects to populate into the subject.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setAuthnContextTranslationStrategyLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Function<AuthnContext,Collection<Principal>>> strategy) {
+        authnContextTranslationStrategyLookupStrategy =
+                Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+
     /**
      * Get the comparison operator to use when issuing SAML requests containing requested context classes.
      * 

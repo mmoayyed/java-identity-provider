@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
@@ -44,6 +45,8 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -65,6 +68,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,6 +121,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     
     /** Store off profile config. */
     @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
+    
+    /** Incoming context translation function. */
+    @Nullable private Function<AuthnContext,Collection<Principal>> authnContextTranslator;
 
     /** Context for externally supplied inbound attributes. */
     @Nullable private AttributeContext attributeContext;
@@ -270,6 +277,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             }
         }
         
+        authnContextTranslator = profileConfiguration.getAuthnContextTranslationStrategy(profileRequestContext);
+        
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
         if (authenticationContext.getAuthenticationResult() != null
@@ -290,20 +299,33 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         if (samlAuthnContext.getSubject() != null && samlAuthnContext.getSubject().getNameID() != null) {
             subject.getPrincipals().add(new NameIDPrincipal(samlAuthnContext.getSubject().getNameID()));
         }
+
+        final AuthnContext authnContext = samlAuthnContext.getAuthnStatement().getAuthnContext();
+        
+        if (authnContextTranslator != null) {
+            final Collection<Principal> translated = authnContextTranslator.apply(authnContext);
+            if (translated != null) {
+                subject.getPrincipals().addAll(translated);
+            }
+        } else if (authnContext.getAuthnContextClassRef() != null) {
+            subject.getPrincipals().add(new AuthnContextClassRefPrincipal(
+                    authnContext.getAuthnContextClassRef().getAuthnContextClassRef()));
+        } else if (authnContext.getAuthnContextDeclRef() != null) {
+            subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(
+                    authnContext.getAuthnContextDeclRef().getAuthnContextDeclRef()));
+        }
         
         final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
         proxied.getAuthorities().add(
                 ((Assertion) samlAuthnContext.getAuthnStatement().getParent()).getIssuer().getValue());
         
-        final Collection<AuthenticatingAuthority> authorities =
-                samlAuthnContext.getAuthnStatement().getAuthnContext().getAuthenticatingAuthorities();
-        if (!authorities.isEmpty()) {
+        if (!authnContext.getAuthenticatingAuthorities().isEmpty()) {
             proxied.getAuthorities().addAll(
-                authorities
-                    .stream()
-                    .map(AuthenticatingAuthority::getURI)
-                    .filter(aa -> !Strings.isNullOrEmpty(aa))
-                    .collect(Collectors.toUnmodifiableList()));
+                    authnContext.getAuthenticatingAuthorities()
+                        .stream()
+                        .map(AuthenticatingAuthority::getURI)
+                        .filter(aa -> !Strings.isNullOrEmpty(aa))
+                        .collect(Collectors.toUnmodifiableList()));
         }
         subject.getPrincipals().add(proxied);
         

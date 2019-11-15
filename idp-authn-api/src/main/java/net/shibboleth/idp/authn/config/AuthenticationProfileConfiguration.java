@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.config;
 import java.security.Principal;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext);
-    
+        
     /**
      * Get the allowable authentication flows for this profile.
      * 

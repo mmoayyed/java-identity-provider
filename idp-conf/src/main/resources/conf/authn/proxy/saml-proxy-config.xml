@@ -13,4 +13,15 @@
        default-destroy-method="destroy">
 
 
+    <!--
+    Add authentication flow descriptor's supportedPrincipals collection to the
+    resulting Subject? This may be problematic if it happens without regard for
+    the information returned in the assertion from the IdP, so the default is
+    likely to lead to violations of intent.
+    
+    Usually this should be FALSE, and appropriate bidirectional mappings defined
+    via conf/authn/authn-comparison.xml to translate across the proxy boundary.
+    -->
+    <util:constant id="shibboleth.authn.SAML.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE"/>
+
 </beans>

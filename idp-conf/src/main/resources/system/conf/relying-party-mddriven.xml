@@ -410,10 +410,19 @@
                 <constructor-arg value="true" />
             </bean>
         </property>
+        <property name="authnContextTranslationStrategyLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="authnContextTranslationStrategy"
+                    p:propertyType="#{T(java.util.function.Function)}">
+                <property name="defaultValue">
+                    <bean class="net.shibboleth.idp.saml.authn.principal.impl.MapDrivenAuthnContextTranslationStrategy"
+                        p:mappings="#{getObject('shibboleth.PrincipalProxyResponseMappings')}" />
+                </property>
+            </bean>
+        </property>
         <property name="authnContextComparisonLookupStrategy">
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="authnContextComparison">
                 <property name="defaultValueStrategy">
-                    <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction" />
+                    <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction" />
                 </property>
             </bean>
         </property>
@@ -421,7 +430,8 @@
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="defaultAuthenticationMethods"
                     p:propertyType="#{T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal)}">
                 <property name="defaultValueStrategy">
-                    <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction" />
+		            <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction"
+		                p:mappings="#{getObject('shibboleth.PrincipalProxyRequestMappings')}" />        
                 </property>
             </bean>
         </property>

@@ -74,4 +74,52 @@
         <value>urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified</value>
     </util:list>
     
+    <!--
+    Mappings to transform custom Principals for proxied AuthnRequests.
+    Key is the input, value is a collection of possibly empty outputs.
+    Used by default to transform authentication type values from SP -> Proxied IdPs.
+    -->
+    <util:map id="shibboleth.PrincipalProxyRequestMappings">
+        <entry>
+            <key>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="https://sp.example.org/context" />
+            </key>
+            <list>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="https://proxy.example.org/context1" />
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="https://proxy.example.org/context2" />
+            </list>
+        </entry>
+        <entry>
+            <key>
+                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
+            </key>
+            <list>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:mace:osu.edu:shibboleth:ac:classes:basic" />
+            </list>
+        </entry>
+    </util:map>
+
+    <!--
+    Mappings to transform proxied Principals for inclusion in Subjects.
+    Key is the input, value is a collection of possibly empty outputs.
+    Used by default to transform values from Proxied IdP -> 
+    -->
+    <util:map id="shibboleth.PrincipalProxyResponseMappings">
+        <entry>
+            <key>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:mace:osu.edu:shibboleth:ac:classes:basic" />
+            </key>
+            <list>
+                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
+            </list>
+        </entry>
+    </util:map>
+    
 </beans>
