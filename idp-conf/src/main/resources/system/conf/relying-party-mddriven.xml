@@ -411,11 +411,19 @@
             </bean>
         </property>
         <property name="authnContextComparisonLookupStrategy">
-            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="authnContextComparison" />
+            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="authnContextComparison">
+                <property name="defaultValueStrategy">
+                    <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction" />
+                </property>
+            </bean>
         </property>
         <property name="defaultAuthenticationMethodsLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="defaultAuthenticationMethods"
-                p:propertyType="#{T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal)}" />
+                    p:propertyType="#{T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal)}">
+                <property name="defaultValueStrategy">
+                    <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction" />
+                </property>
+            </bean>
         </property>
         <property name="postAuthenticationFlowsLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="postAuthenticationFlows" />

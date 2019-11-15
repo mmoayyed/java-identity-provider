@@ -32,6 +32,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.logic.ProxyAwareForceAuthnPredicate;
+import net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction;
+import net.shibboleth.idp.saml.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -134,8 +136,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         allowDelegationPredicate = Predicates.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
-        authnContextComparisonLookupStrategy = FunctionSupport.constant(null);
-        defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(null);
+        authnContextComparisonLookupStrategy = new ProxyAwareAuthnContextComparisonLookupFunction();
+        defaultAuthenticationContextsLookupStrategy = new ProxyAwareDefaultAuthenticationMethodsLookupFunction();
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
     }
     

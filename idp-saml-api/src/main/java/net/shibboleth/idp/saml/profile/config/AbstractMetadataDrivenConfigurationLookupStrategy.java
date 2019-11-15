@@ -57,6 +57,7 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -107,7 +108,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     @NonnullAfterInit @NonnullElements private Collection<String> propertyAliases;
     
     /** Optional default to return in the absence of a property. */
-    @Nullable private T defaultValue;
+    @Nullable private Function<BaseContext,T> defaultValueStrategy;
     
     /** Strategy for obtaining metadata to check. */
     @Nullable private Function<BaseContext,EntityDescriptor> metadataLookupStrategy;
@@ -118,6 +119,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     /** Constructor. */
     public AbstractMetadataDrivenConfigurationLookupStrategy() {
         enableCaching = true;
+        defaultValueStrategy = FunctionSupport.constant(null);
     }
     
     /**
@@ -195,7 +197,20 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     public void setDefaultValue(@Nullable final T value) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        defaultValue = value;
+        defaultValueStrategy = FunctionSupport.constant(value);
+    }
+    
+    /**
+     * Sets a default value function to apply in the absence of an explicit property.
+     * 
+     * @param strategy default function to apply
+     * 
+     * @since 4.0.0
+     */
+    public void setDefaultValueStrategy(@Nonnull final Function<BaseContext,T> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        defaultValueStrategy = Constraint.isNotNull(strategy, "Default value strategy cannot be null");
     }
     
     /**
@@ -261,8 +276,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
             
         if (entity == null) {
-            log.debug("No metadata available for relying party, default returned for '{}'", propertyName);
-            return defaultValue;
+            log.debug("No metadata available for relying party, applying default strategy for '{}'", propertyName);
+            return defaultValueStrategy.apply(input);
         }
         
         if (profileIdLookupStrategy != null) {
@@ -300,11 +315,12 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
         
         if (ignoreUnmappedEntityAttributes) {
-            log.debug("No applicable mapped tag, default returned for '{}'", propertyName);
+            log.debug("No applicable mapped tag, applying default strategy for '{}'", propertyName);
+            final T ret = defaultValueStrategy.apply(input);
             if (enableCaching) {
-                cacheContext.getPropertyMap().put(propertyName, defaultValue);
+                cacheContext.getPropertyMap().put(propertyName, ret);
             }
-            return defaultValue;
+            return ret;
         }
         
         // Look for "primary" tag name based on profile/property.
@@ -331,11 +347,12 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             }
         }
         
-        log.debug("No applicable tag, default returned for '{}'", propertyName);
+        log.debug("No applicable tag, applying default strategy for '{}'", propertyName);
+        final T ret = defaultValueStrategy.apply(input);
         if (enableCaching) {
-            cacheContext.getPropertyMap().put(propertyName, defaultValue);
+            cacheContext.getPropertyMap().put(propertyName, ret);
         }
-        return defaultValue;
+        return ret;
     }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
     

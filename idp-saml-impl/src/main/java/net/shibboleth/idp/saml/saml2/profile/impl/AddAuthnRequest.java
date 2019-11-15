@@ -17,9 +17,11 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.security.Principal;
 import java.time.Instant;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +30,8 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -43,9 +47,11 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
+import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,6 +221,9 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         final SAMLObjectBuilder<NameIDPolicy> nipBuilder =
                 (SAMLObjectBuilder<NameIDPolicy>) bf.<NameIDPolicy>getBuilderOrThrow(
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
+        final SAMLObjectBuilder<RequestedAuthnContext> racBuilder =
+                (SAMLObjectBuilder<RequestedAuthnContext>) bf.<RequestedAuthnContext>getBuilderOrThrow(
+                        RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
 
         final AuthnRequest object = requestBuilder.buildObject();
         
@@ -257,8 +266,69 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         }
         
         object.setNameIDPolicy(nip);
+
+        final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext, racBuilder);
+        if (rac != null) {
+            final AuthnContextComparisonTypeEnumeration operator =
+                    profileConfiguration.getAuthnContextComparison(profileRequestContext);
+            if (operator != null) {
+                rac.setComparison(operator);
+            }
+            object.setRequestedAuthnContext(rac);
+        }
         
         profileRequestContext.getOutboundMessageContext().setMessage(object);
+    }
+    
+    /**
+     * Build a {@link RequestedAuthnContext} if warranted.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param builder object builder
+     * 
+     * @return the object to include in the request, or null
+     */
+    @Nullable private RequestedAuthnContext getRequestedAuthnContext(
+            @Nullable final ProfileRequestContext profileRequestContext,
+            @Nonnull final SAMLObjectBuilder<RequestedAuthnContext> builder) {
+        
+        // RequestedAuthnContext also based on profile configuration.
+        final List<Principal> principals = profileConfiguration.getDefaultAuthenticationMethods(profileRequestContext);
+        if (principals.isEmpty()) {
+            return null;
+        }
+        
+        // Check for class refs.
+        final List<AuthnContextClassRefPrincipal> classRefPrincipals = principals.stream()
+                .filter(AuthnContextClassRefPrincipal.class::isInstance)
+                .map(AuthnContextClassRefPrincipal.class::cast)
+                .collect(Collectors.toUnmodifiableList());
+        if (!classRefPrincipals.isEmpty()) {
+            final RequestedAuthnContext rac = builder.buildObject();
+            
+            rac.getAuthnContextClassRefs().addAll(
+                    classRefPrincipals.stream()
+                        .map(AuthnContextClassRefPrincipal::getAuthnContextClassRef)
+                        .collect(Collectors.toUnmodifiableList()));
+            return rac;
+        }
+        
+        // Check for decl refs.
+        final List<AuthnContextDeclRefPrincipal> declRefPrincipals = principals.stream()
+                .filter(AuthnContextDeclRefPrincipal.class::isInstance)
+                .map(AuthnContextDeclRefPrincipal.class::cast)
+                .collect(Collectors.toUnmodifiableList());
+        if (!declRefPrincipals.isEmpty()) {
+            final RequestedAuthnContext rac = builder.buildObject();
+            
+            rac.getAuthnContextDeclRefs().addAll(
+                    declRefPrincipals.stream()
+                        .map(AuthnContextDeclRefPrincipal::getAuthnContextDeclRef)
+                        .collect(Collectors.toUnmodifiableList()));
+            return rac;
+        }
+        
+        return null;
     }
     
 }
