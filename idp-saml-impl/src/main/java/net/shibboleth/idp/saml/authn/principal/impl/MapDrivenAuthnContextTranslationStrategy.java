@@ -24,11 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
@@ -41,6 +44,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
  * @since 4.0.0
  */
 public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnContext,Collection<Principal>> {
+    
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MapDrivenAuthnContextTranslationStrategy.class);
     
     /** Mappings to transform proxied Principals. */
     @Nonnull @NonnullElements private Map<Principal,Collection<Principal>> principalMappings;
@@ -71,15 +77,34 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
     @Nullable public Collection<Principal> apply(@Nullable final AuthnContext input) {
         
         if (input != null) {
-            if (input.getAuthnContextClassRef() != null) {
-                return principalMappings.get(new AuthnContextClassRefPrincipal(
-                        input.getAuthnContextClassRef().getAuthnContextClassRef()));
-            } else if (input.getAuthnContextDeclRef() != null) {
-                return principalMappings.get(new AuthnContextDeclRefPrincipal(
-                        input.getAuthnContextDeclRef().getAuthnContextDeclRef()));
+            final Principal principal;
+            
+            if (input.getAuthnContextClassRef() != null
+                    && input.getAuthnContextClassRef().getAuthnContextClassRef() != null) {
+                principal = new AuthnContextClassRefPrincipal(
+                        input.getAuthnContextClassRef().getAuthnContextClassRef());
+            } else if (input.getAuthnContextDeclRef() != null
+                    && input.getAuthnContextDeclRef().getAuthnContextDeclRef() != null) {
+                principal = new AuthnContextDeclRefPrincipal(input.getAuthnContextDeclRef().getAuthnContextDeclRef());
+            } else {
+                log.trace("Input AuthnContext did not contain a class or decl reference, returning nothing");
+                return null;
             }
+            
+            if (principalMappings.containsKey(principal)) {
+                final Collection<Principal> mapped = principalMappings.get(principal);
+                if (log.isTraceEnabled()) {
+                    log.trace("Mapped '{}' to ", principal.getName(),
+                            mapped.stream().map(Principal::getName).collect(Collectors.toUnmodifiableList()));
+                }
+                return mapped;
+            }
+
+            log.trace("Passing unmapped value '{}' through", principal.getName());
+            return Collections.singletonList(principal);
         }
         
+        log.trace("Input AuthnContext was null, returning nothing");
         return null;
     }
 

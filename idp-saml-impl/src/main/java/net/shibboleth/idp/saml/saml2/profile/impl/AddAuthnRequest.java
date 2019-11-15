@@ -272,6 +272,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             final AuthnContextComparisonTypeEnumeration operator =
                     profileConfiguration.getAuthnContextComparison(profileRequestContext);
             if (operator != null) {
+                log.debug("{} Setting RequestedAuthnContext comparison to {}", getLogPrefix(), operator);
                 rac.setComparison(operator);
             }
             object.setRequestedAuthnContext(rac);
@@ -310,6 +311,14 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
                     classRefPrincipals.stream()
                         .map(AuthnContextClassRefPrincipal::getAuthnContextClassRef)
                         .collect(Collectors.toUnmodifiableList()));
+            
+            if (log.isDebugEnabled()) {
+                log.debug("{} Setting RequestedAuthnContext class refs to {}", getLogPrefix(),
+                        classRefPrincipals.stream()
+                            .map(AuthnContextClassRefPrincipal::getName)
+                            .collect(Collectors.toUnmodifiableList()));
+            }
+            
             return rac;
         }
         
@@ -325,6 +334,14 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
                     declRefPrincipals.stream()
                         .map(AuthnContextDeclRefPrincipal::getAuthnContextDeclRef)
                         .collect(Collectors.toUnmodifiableList()));
+            
+            if (log.isDebugEnabled()) {
+                log.debug("{} Setting RequestedAuthnContext decl refs to {}", getLogPrefix(),
+                        declRefPrincipals.stream()
+                            .map(AuthnContextDeclRefPrincipal::getName)
+                            .collect(Collectors.toUnmodifiableList()));
+            }
+
             return rac;
         }
         

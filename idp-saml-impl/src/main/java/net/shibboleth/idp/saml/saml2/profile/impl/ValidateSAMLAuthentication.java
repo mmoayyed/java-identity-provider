@@ -306,11 +306,17 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             final Collection<Principal> translated = authnContextTranslator.apply(authnContext);
             if (translated != null) {
                 subject.getPrincipals().addAll(translated);
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Added translated AuthnContext Principals: {}", getLogPrefix(),
+                            translated.stream().map(Principal::getName).collect(Collectors.toUnmodifiableList()));
+                }
             }
-        } else if (authnContext.getAuthnContextClassRef() != null) {
+        } else if (authnContext.getAuthnContextClassRef() != null &&
+                authnContext.getAuthnContextClassRef().getAuthnContextClassRef() != null) {
             subject.getPrincipals().add(new AuthnContextClassRefPrincipal(
                     authnContext.getAuthnContextClassRef().getAuthnContextClassRef()));
-        } else if (authnContext.getAuthnContextDeclRef() != null) {
+        } else if (authnContext.getAuthnContextDeclRef() != null
+                && authnContext.getAuthnContextDeclRef().getAuthnContextDeclRef() != null) {
             subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(
                     authnContext.getAuthnContextDeclRef().getAuthnContextDeclRef()));
         }
