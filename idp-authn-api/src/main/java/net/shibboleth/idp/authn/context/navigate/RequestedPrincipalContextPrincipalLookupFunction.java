@@ -19,14 +19,13 @@ package net.shibboleth.idp.authn.context.navigate;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
-
-import com.google.common.collect.Collections2;
 
 /**
  * A function that returns {@link RequestedPrincipalContext#getRequestedPrincipals()} but
@@ -39,7 +38,10 @@ public class RequestedPrincipalContextPrincipalLookupFunction
     @Nullable public Collection<String> apply(@Nullable final RequestedPrincipalContext input) {
         
         if (input != null) {
-            return Collections2.transform(input.getRequestedPrincipals(), Principal::getName);
+            return input.getRequestedPrincipals()
+                    .stream()
+                    .map(Principal::getName)
+                    .collect(Collectors.toUnmodifiableList());
         }
         return null;
     }

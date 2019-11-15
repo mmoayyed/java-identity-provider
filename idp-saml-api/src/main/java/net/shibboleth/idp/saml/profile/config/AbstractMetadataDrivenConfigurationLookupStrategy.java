@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,8 +43,6 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -185,8 +184,10 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(aliases, "Alias collection cannot be null");
         
-        propertyAliases = Collections2.transform(StringSupport.normalizeStringCollection(aliases),
-                s -> s + (s.endsWith("/") ? propertyName : '/' + propertyName));
+        propertyAliases = StringSupport.normalizeStringCollection(aliases)
+                .stream()
+                .map(s -> s + (s.endsWith("/") ? propertyName : '/' + propertyName))
+                .collect(Collectors.toUnmodifiableList());
     }
     
     /**
