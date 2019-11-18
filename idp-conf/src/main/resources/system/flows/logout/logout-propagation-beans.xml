@@ -27,6 +27,9 @@
         p:loggingId="%{idp.service.logging.logout-propagation:LogoutPropagation}"
         p:browserProfile="true" />
 
+    <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
+
     <bean id="PopulateMetricContext"
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
