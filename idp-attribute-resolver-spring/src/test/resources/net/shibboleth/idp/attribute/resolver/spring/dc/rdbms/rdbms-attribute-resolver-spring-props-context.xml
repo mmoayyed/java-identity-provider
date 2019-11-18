@@ -15,7 +15,7 @@
         <constructor-arg value="%{cache.cacheBuilderSpec}" />
     </bean>
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilder" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.FormatExecutableStatementBuilder"
+    <bean class="net.shibboleth.idp.attribute.resolver.dc.rdbms.FormatExecutableStatementBuilder"
         p:query="SELECT * FROM people WHERE userid='%s'" />
     <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy"
         p:noResultAnError="true" p:multipleResultsAnError="true">

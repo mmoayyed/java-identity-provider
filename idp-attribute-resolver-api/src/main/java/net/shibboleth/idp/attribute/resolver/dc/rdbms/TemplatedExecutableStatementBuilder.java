@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
+package net.shibboleth.idp.attribute.resolver.dc.rdbms;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,8 +42,6 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder} that generates the SQL statement to
@@ -173,17 +171,14 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
     /**
      * Apply the context to the template. {@inheritDoc}
      */
-    @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
+    @Override
+    public final String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
 
-        if (isV2Compatibility()) {
-            final V2SAMLProfileRequestContext requestContext = new V2SAMLProfileRequestContext(resolutionContext, null);
-            log.trace("Adding v2 request context {}", requestContext);
-            context.put("requestContext", requestContext);
-        }
+        addExtraVelocityContext(context, resolutionContext);
 
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
@@ -209,6 +204,14 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
             log.error("Error running template", ex);
             throw new ResolutionException("Error running template", ex);
         }
+    }
+
+    /** Method to allow private additions to the velocity context.
+     * @param velocityContext where to add the information
+     * @param resolutionContext current resolution context
+     */
+    protected void addExtraVelocityContext(@Nonnull final VelocityContext velocityContext,
+            @Nonnull final AttributeResolutionContext resolutionContext) {
     }
 
     /** {@inheritDoc} */

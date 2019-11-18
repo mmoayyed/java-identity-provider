@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
+package net.shibboleth.idp.attribute.resolver.dc.rdbms;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.ExecutableStatement;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;

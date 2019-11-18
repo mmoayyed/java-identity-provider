@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
+package net.shibboleth.idp.attribute.resolver.dc.rdbms;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -35,7 +35,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.V2CompatibleTemplateExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
@@ -193,7 +193,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nonnull public BeanDefinition createTemplateBuilder() {
             final BeanDefinitionBuilder templateBuilder =
-                    BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
+                    BeanDefinitionBuilder.genericBeanDefinition(V2CompatibleTemplateExecutableStatementBuilder.class);
             templateBuilder.setInitMethodName("initialize");
             templateBuilder.setDestroyMethodName("destroy");
 
