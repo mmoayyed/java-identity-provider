@@ -141,7 +141,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         final AuthnContextClassRef ac =
                 (AuthnContextClassRef) builderFactory.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME).buildObject(
                         AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        ac.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        ac.setURI(AuthnContext.UNSPECIFIED_AUTHN_CTX);
         reqAC.getAuthnContextClassRefs().add(ac);
         authnRequest.setRequestedAuthnContext(reqAC);
         

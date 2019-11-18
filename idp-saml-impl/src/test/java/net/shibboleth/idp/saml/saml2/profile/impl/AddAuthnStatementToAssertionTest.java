@@ -156,7 +156,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
         Assert.assertNotNull(authnContext);
         Assert.assertNotNull(authnContext.getAuthnContextClassRef());
-        Assert.assertEquals(authnContext.getAuthnContextClassRef().getAuthnContextClassRef(), "Test");
+        Assert.assertEquals(authnContext.getAuthnContextClassRef().getURI(), "Test");
         Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
 
@@ -208,7 +208,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
         Assert.assertNotNull(authnContext);
         Assert.assertNotNull(authnContext.getAuthnContextClassRef());
-        Assert.assertEquals(authnContext.getAuthnContextClassRef().getAuthnContextClassRef(), "Bar");
+        Assert.assertEquals(authnContext.getAuthnContextClassRef().getURI(), "Bar");
         Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
     

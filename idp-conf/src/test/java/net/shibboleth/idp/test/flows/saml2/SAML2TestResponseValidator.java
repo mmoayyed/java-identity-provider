@@ -537,7 +537,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param authnContext the authn context
      */
     public void assertAuthnContextClassRef(@Nullable final AuthnContextClassRef authnContext) {
-        Assert.assertEquals(authnContext.getAuthnContextClassRef(), authnContextClassRef);
+        Assert.assertEquals(authnContext.getURI(), authnContextClassRef);
     }
 
     /**

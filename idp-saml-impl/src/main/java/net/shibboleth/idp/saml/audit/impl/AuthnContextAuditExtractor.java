@@ -68,9 +68,9 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
                         if (statement.getAuthnContext() != null) {
                             final AuthnContext ac = statement.getAuthnContext();
                             if (ac.getAuthnContextClassRef() != null) {
-                                return ac.getAuthnContextClassRef().getAuthnContextClassRef();
+                                return ac.getAuthnContextClassRef().getURI();
                             } else if (ac.getAuthnContextDeclRef() != null) {
-                                return ac.getAuthnContextDeclRef().getAuthnContextDeclRef();
+                                return ac.getAuthnContextDeclRef().getURI();
                             }
                         }
                     }

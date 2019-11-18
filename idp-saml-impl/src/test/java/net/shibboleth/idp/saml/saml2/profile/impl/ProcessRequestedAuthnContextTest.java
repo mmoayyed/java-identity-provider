@@ -114,7 +114,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         final RequestedAuthnContext rac = racBuilder.buildObject();
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
+        ref.setURI(AuthnContext.PASSWORD_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
         
         ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setDisallowedFeatures(
@@ -130,7 +130,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         final RequestedAuthnContext rac = racBuilder.buildObject();
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        ref.setURI(AuthnContext.UNSPECIFIED_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
         
         ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setDisallowedFeatures(
@@ -146,7 +146,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         final RequestedAuthnContext rac = racBuilder.buildObject();
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
+        ref.setURI(AuthnContext.PPT_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
 
         final Event event = action.execute(src);
@@ -164,10 +164,10 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         rac.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
         AuthnContextClassRef ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
+        ref.setURI(AuthnContext.PPT_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
         ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.KERBEROS_AUTHN_CTX);
+        ref.setURI(AuthnContext.KERBEROS_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
 
         final Event event = action.execute(src);
@@ -184,10 +184,10 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         rac.setComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
         AuthnContextDeclRef ref = declBuilder.buildObject();
-        ref.setAuthnContextDeclRef(AuthnContext.PPT_AUTHN_CTX);
+        ref.setURI(AuthnContext.PPT_AUTHN_CTX);
         rac.getAuthnContextDeclRefs().add(ref);
         ref = declBuilder.buildObject();
-        ref.setAuthnContextDeclRef(AuthnContext.KERBEROS_AUTHN_CTX);
+        ref.setURI(AuthnContext.KERBEROS_AUTHN_CTX);
         rac.getAuthnContextDeclRefs().add(ref);
 
         final Event event = action.execute(src);
@@ -203,7 +203,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         final RequestedAuthnContext rac = racBuilder.buildObject();
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        ref.setURI(AuthnContext.UNSPECIFIED_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
 
         final Event event = action.execute(src);
@@ -217,7 +217,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         final RequestedAuthnContext rac = racBuilder.buildObject();
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setRequestedAuthnContext(rac);
         final AuthnContextClassRef ref = classBuilder.buildObject();
-        ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
+        ref.setURI(AuthnContext.PPT_AUTHN_CTX);
         rac.getAuthnContextClassRefs().add(ref);
 
         action = new ProcessRequestedAuthnContext();

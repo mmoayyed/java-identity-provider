@@ -79,13 +79,10 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
         if (input != null) {
             final Principal principal;
             
-            if (input.getAuthnContextClassRef() != null
-                    && input.getAuthnContextClassRef().getAuthnContextClassRef() != null) {
-                principal = new AuthnContextClassRefPrincipal(
-                        input.getAuthnContextClassRef().getAuthnContextClassRef());
-            } else if (input.getAuthnContextDeclRef() != null
-                    && input.getAuthnContextDeclRef().getAuthnContextDeclRef() != null) {
-                principal = new AuthnContextDeclRefPrincipal(input.getAuthnContextDeclRef().getAuthnContextDeclRef());
+            if (input.getAuthnContextClassRef() != null && input.getAuthnContextClassRef().getURI() != null) {
+                principal = new AuthnContextClassRefPrincipal(input.getAuthnContextClassRef().getURI());
+            } else if (input.getAuthnContextDeclRef() != null && input.getAuthnContextDeclRef().getURI() != null) {
+                principal = new AuthnContextDeclRefPrincipal(input.getAuthnContextDeclRef().getURI());
             } else {
                 log.trace("Input AuthnContext did not contain a class or decl reference, returning nothing");
                 return null;

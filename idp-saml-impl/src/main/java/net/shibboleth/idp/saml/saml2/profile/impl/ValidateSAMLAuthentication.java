@@ -311,14 +311,20 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                             translated.stream().map(Principal::getName).collect(Collectors.toUnmodifiableList()));
                 }
             }
-        } else if (authnContext.getAuthnContextClassRef() != null &&
-                authnContext.getAuthnContextClassRef().getAuthnContextClassRef() != null) {
-            subject.getPrincipals().add(new AuthnContextClassRefPrincipal(
-                    authnContext.getAuthnContextClassRef().getAuthnContextClassRef()));
-        } else if (authnContext.getAuthnContextDeclRef() != null
-                && authnContext.getAuthnContextDeclRef().getAuthnContextDeclRef() != null) {
-            subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(
-                    authnContext.getAuthnContextDeclRef().getAuthnContextDeclRef()));
+        } else if (authnContext.getAuthnContextClassRef() != null) {
+            final String classRef = authnContext.getAuthnContextClassRef().getURI();
+            if (classRef != null) {
+                subject.getPrincipals().add(new AuthnContextClassRefPrincipal(classRef));
+                log.debug("{} Added AuthnContextClassRef from assertion: {}", getLogPrefix(), classRef);
+            }
+        } else if (authnContext.getAuthnContextDeclRef() != null) {
+            final String declRef = authnContext.getAuthnContextDeclRef().getURI();
+            if (declRef != null) {
+                subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(declRef));
+                log.debug("{} Added AuthnContextDeclRef from assertion: {}", getLogPrefix(), declRef);
+            }
+        } else {
+            log.warn("{} No AuthnContext information usable from assertion", getLogPrefix());
         }
         
         final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();

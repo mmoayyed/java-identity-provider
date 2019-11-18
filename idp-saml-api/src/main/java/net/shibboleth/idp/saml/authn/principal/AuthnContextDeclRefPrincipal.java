@@ -61,7 +61,7 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
         final AuthnContextDeclRef ref = (AuthnContextDeclRef) Constraint.isNotNull(
                 XMLObjectSupport.getBuilder(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME),
                     "No builder for AuthnContextDeclRef").buildObject(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME);
-        ref.setAuthnContextDeclRef(getName());
+        ref.setURI(getName());
         return ref;
     }
 

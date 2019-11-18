@@ -174,21 +174,21 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         
         if (!requestedCtx.getAuthnContextClassRefs().isEmpty()) {
             for (final AuthnContextClassRef ref : requestedCtx.getAuthnContextClassRefs()) {
-                if (ref.getAuthnContextClassRef() != null) {
-                    if (!ignoredContexts.contains(ref.getAuthnContextClassRef())) {
-                        principals.add(new AuthnContextClassRefPrincipal(ref.getAuthnContextClassRef()));
+                if (ref.getURI() != null) {
+                    if (!ignoredContexts.contains(ref.getURI())) {
+                        principals.add(new AuthnContextClassRefPrincipal(ref.getURI()));
                     } else {
-                        log.info("{} Ignoring AuthnContextClassRef: {}", getLogPrefix(), ref.getAuthnContextClassRef());
+                        log.info("{} Ignoring AuthnContextClassRef: {}", getLogPrefix(), ref.getURI());
                     }
                 }
             }
         } else if (!requestedCtx.getAuthnContextDeclRefs().isEmpty()) {
             for (final AuthnContextDeclRef ref : requestedCtx.getAuthnContextDeclRefs()) {
-                if (ref.getAuthnContextDeclRef() != null) {
-                    if (!ignoredContexts.contains(ref.getAuthnContextDeclRef())) {
-                        principals.add(new AuthnContextDeclRefPrincipal(ref.getAuthnContextDeclRef()));
+                if (ref.getURI() != null) {
+                    if (!ignoredContexts.contains(ref.getURI())) {
+                        principals.add(new AuthnContextDeclRefPrincipal(ref.getURI()));
                     } else {
-                        log.info("{} Ignoring AuthnContextDeclRef: {}", getLogPrefix(), ref.getAuthnContextDeclRef());
+                        log.info("{} Ignoring AuthnContextDeclRef: {}", getLogPrefix(), ref.getURI());
                     }
                 }
             }

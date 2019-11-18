@@ -42,7 +42,7 @@ public class AuthnContextClassRefPrincipalTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(principal.getName(), AuthnContext.KERBEROS_AUTHN_CTX);
 
         AuthnContextClassRef ref = buildXMLObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        ref.setAuthnContextClassRef(AuthnContext.KERBEROS_AUTHN_CTX);
+        ref.setURI(AuthnContext.KERBEROS_AUTHN_CTX);
         Element xml = getMarshaller(AuthnContextClassRef.DEFAULT_ELEMENT_NAME).marshall(ref);
         assertXMLEquals(xml.getOwnerDocument(), principal.getAuthnContextClassRef());
         

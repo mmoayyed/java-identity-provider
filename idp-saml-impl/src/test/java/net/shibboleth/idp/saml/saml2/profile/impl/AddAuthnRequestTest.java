@@ -200,8 +200,8 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(rac);
         assertEquals(rac.getComparison(), AuthnContextComparisonTypeEnumeration.EXACT);
         assertEquals(rac.getAuthnContextClassRefs().size(), 2);
-        assertEquals(rac.getAuthnContextClassRefs().get(0).getAuthnContextClassRef(), AuthnContext.KERBEROS_AUTHN_CTX);
-        assertEquals(rac.getAuthnContextClassRefs().get(1).getAuthnContextClassRef(), AuthnContext.X509_AUTHN_CTX);
+        assertEquals(rac.getAuthnContextClassRefs().get(0).getURI(), AuthnContext.KERBEROS_AUTHN_CTX);
+        assertEquals(rac.getAuthnContextClassRefs().get(1).getURI(), AuthnContext.X509_AUTHN_CTX);
 
         ((BrowserSSOProfileConfiguration) rpc.getProfileConfig()).setAuthnContextComparison(
                 AuthnContextComparisonTypeEnumeration.EXACT);
@@ -218,8 +218,8 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(rac);
         assertEquals(rac.getComparison(), AuthnContextComparisonTypeEnumeration.EXACT);
         assertEquals(rac.getAuthnContextClassRefs().size(), 2);
-        assertEquals(rac.getAuthnContextClassRefs().get(0).getAuthnContextClassRef(), AuthnContext.KERBEROS_AUTHN_CTX);
-        assertEquals(rac.getAuthnContextClassRefs().get(1).getAuthnContextClassRef(), AuthnContext.X509_AUTHN_CTX);
+        assertEquals(rac.getAuthnContextClassRefs().get(0).getURI(), AuthnContext.KERBEROS_AUTHN_CTX);
+        assertEquals(rac.getAuthnContextClassRefs().get(1).getURI(), AuthnContext.X509_AUTHN_CTX);
     }
 
 }

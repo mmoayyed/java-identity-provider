@@ -41,7 +41,7 @@ public class AuthnContextDeclRefPrincipalTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(principal.getName(), "http://opensaml.org/mydecl");
 
         AuthnContextDeclRef ref = buildXMLObject(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME);
-        ref.setAuthnContextDeclRef("http://opensaml.org/mydecl");
+        ref.setURI("http://opensaml.org/mydecl");
         Element xml = getMarshaller(AuthnContextDeclRef.DEFAULT_ELEMENT_NAME).marshall(ref);
         assertXMLEquals(xml.getOwnerDocument(), principal.getAuthnContextDeclRef());
         
