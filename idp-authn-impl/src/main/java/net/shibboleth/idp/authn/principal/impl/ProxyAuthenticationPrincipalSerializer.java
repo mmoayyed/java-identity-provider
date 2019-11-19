@@ -31,6 +31,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -53,8 +54,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 @ThreadSafe
 public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSerializer<String> {
 
-    /** Field name of principal content. */
+    /** Field name of authority content. */
     @Nonnull @NotEmpty private static final String PROXY_AUTH_FIELD = "AA";
+
+    /** Field name of proxy count. */
+    @Nonnull @NotEmpty private static final String PROXY_COUNT_FIELD = "PXC";
+
+    /** Field name of proxy audiences. */
+    @Nonnull @NotEmpty private static final String PROXY_AUD_FIELD = "AUD";
 
     /** Pattern used to determine if input is supported. */
     private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"AA\":.*\\}$");
@@ -79,13 +86,27 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
         
+        final ProxyAuthenticationPrincipal proxyPrincipal = (ProxyAuthenticationPrincipal) principal;
+        
         final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-        ((ProxyAuthenticationPrincipal) principal).getAuthorities().forEach(arrayBuilder::add);
+        proxyPrincipal.getAuthorities().forEach(arrayBuilder::add);
 
         final StringWriter sink = new StringWriter(32);
         
         try (final JsonGenerator gen = getJsonGenerator(sink)) {
-            gen.writeStartObject().write(PROXY_AUTH_FIELD, arrayBuilder.build()).writeEnd();
+            gen.writeStartObject().write(PROXY_AUTH_FIELD, arrayBuilder.build());
+            
+            if (proxyPrincipal.getProxyCount() != null) {
+                gen.write(PROXY_COUNT_FIELD, proxyPrincipal.getProxyCount());
+            }
+            
+            if (!proxyPrincipal.getAudiences().isEmpty()) {
+                final JsonArrayBuilder arrayBuilder2 = getJsonArrayBuilder();
+                proxyPrincipal.getAudiences().forEach(arrayBuilder2::add);
+                gen.write(PROXY_AUD_FIELD, arrayBuilder2.build());
+            }
+            
+            gen.writeEnd();
         }
         return sink.toString();
     }
@@ -95,6 +116,7 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
         return JSON_PATTERN.matcher(value).matches();
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Nullable public ProxyAuthenticationPrincipal deserialize(@Nonnull @NotEmpty final String value)
             throws IOException {
@@ -113,13 +135,39 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
                         ret.getAuthorities().add(((JsonString) e).getString());
                     }
                 }
+                
+                final JsonValue count = ((JsonObject) st).get(PROXY_COUNT_FIELD);
+                if (count != null) {
+                    if (ValueType.NUMBER.equals(count.getValueType())) {
+                        ret.setProxyCount(((JsonNumber) count).intValueExact());
+                    } else {
+                        throw new IOException(
+                                "Found invalid data structure while parsing ProxyAuthenticationPrincipal");
+                    }
+                }
+                
+                final JsonValue audiences = ((JsonObject) st).get(PROXY_AUD_FIELD);
+                if (audiences != null) {
+                    if (ValueType.ARRAY.equals(audiences.getValueType())) {
+                        for (final JsonValue e : (JsonArray) audiences) {
+                            if (ValueType.STRING.equals(e.getValueType())) {
+                                ret.getAudiences().add(((JsonString) e).getString());
+                            }
+                        }
+                    } else {
+                        throw new IOException(
+                                "Found invalid data structure while parsing ProxyAuthenticationPrincipal");
+                    }
+                }
+                
                 return ret;
             }
-            throw new IOException("Serialized ProxyAuthenticationPrincipal missing array field");
+            throw new IOException("Serialized ProxyAuthenticationPrincipal missing primary array field");
         } catch (final JsonException e) {
             throw new IOException("Found invalid data structure while parsing ProxyAuthenticationPrincipal", e);
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Get a {@link JsonObjectBuilder} in a thread-safe manner.

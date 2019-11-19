@@ -23,8 +23,10 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -32,7 +34,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.MoreObjects;
 
 /**
- * Principal that wraps a set of proxied authentication authorities.
+ * Principal that wraps a set of proxied authentication authorities and any restrictions
+ * on subsequent re-use.
  * 
  * @since 3.4.0
  */
@@ -41,9 +44,16 @@ public class ProxyAuthenticationPrincipal implements Principal {
     /** The authorities. */
     @Nonnull @NonnullElements private Collection<String> authorities;
 
+    /** The audiences. */
+    @Nonnull @NonnullElements private Collection<String> audiences;
+
+    /** Constrains additional proxy hops. */
+    @Nullable private Integer proxyCount;
+
     /** Constructor. */
     public ProxyAuthenticationPrincipal() {
         authorities = new ArrayList<>();
+        audiences = new ArrayList<>();
     }
 
     /**
@@ -55,8 +65,9 @@ public class ProxyAuthenticationPrincipal implements Principal {
         Constraint.isNotNull(proxiedAuthorities, "Proxied authority collection cannot be null");
         
         authorities = new ArrayList<>(List.copyOf(proxiedAuthorities));
+        audiences = new ArrayList<>();
     }
-
+    
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getName() {
         return authorities.toString();
@@ -69,6 +80,44 @@ public class ProxyAuthenticationPrincipal implements Principal {
      */
     @Nonnull @NonnullElements @Live public Collection<String> getAuthorities() {
         return authorities;
+    }
+
+    /**
+     * Get the mutable audience collection, the set of relying parties for which proxying
+     * is permissable.
+     * 
+     * @return the audiences
+     */
+    @Nonnull @NonnullElements @Live public Collection<String> getAudiences() {
+        return audiences;
+    }
+    
+    /**
+     * Gets the number of additional proxy hops that should be permitted.
+     * 
+     * <p>A value of 0 disallows further proxying, while a null implies no limit.</p>
+     * 
+     * @return proxy count
+     * 
+     * @since 4.0.0
+     */
+    @Nullable @NonNegative public Integer getProxyCount() {
+        return proxyCount;
+    }
+    
+    /**
+     * Sets the number of additional proxy hops that should be permitted.
+     * 
+     * <p>A value of 0 disallows further proxying, while a null implies no limit.</p>
+     * 
+     * @param count proxy count
+     * 
+     * @since 4.0.0
+     */
+    public void setProxyCount(@Nullable @NonNegative final Integer count) {
+        if (count != null) {
+            proxyCount = Constraint.isGreaterThanOrEqual(0, count, "Proxy count cannot be negative");
+        }
     }
 
     /** {@inheritDoc} */
@@ -98,7 +147,11 @@ public class ProxyAuthenticationPrincipal implements Principal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("authorities", authorities).toString();
+        return MoreObjects.toStringHelper(this)
+                .add("authorities", authorities)
+                .add("proxyCount", proxyCount)
+                .add("audiences", audiences)
+                .toString();
     }
     
 }

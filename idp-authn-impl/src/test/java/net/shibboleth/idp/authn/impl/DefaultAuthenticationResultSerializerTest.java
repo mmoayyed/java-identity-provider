@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import static org.testng.Assert.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.security.auth.Subject;
 
@@ -54,7 +55,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.springframework.core.io.ClassPathResource;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -81,28 +81,28 @@ public class DefaultAuthenticationResultSerializerTest {
         serializer.initialize();
         try {
             serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalid.json"), ACTIVITY);
-            Assert.fail();
+            fail();
         } catch (IOException e) {
             
         }
 
         try {
             serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noFlowId.json"), ACTIVITY);
-            Assert.fail();
+            fail();
         } catch (IOException e) {
             
         }
 
         try {
             serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noInstant.json"), ACTIVITY);
-            Assert.fail();
+            fail();
         } catch (IOException e) {
             
         }
 
         try {
             serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "invalidAdditional.json"), ACTIVITY);
-            Assert.fail();
+            fail();
         } catch (IOException e) {
             
         }
@@ -118,15 +118,15 @@ public class DefaultAuthenticationResultSerializerTest {
         
         serializer.serialize(result);
         final String s2 = fileToString(DATAPATH + "simpleAuthenticationResult.json");
-        // Assert.assertEquals(s, s2); 
+        // assertEquals(s, s2); 
         
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
         
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
-        Assert.assertEquals(result.getAdditionalData(), result2.getAdditionalData());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAdditionalData(), result2.getAdditionalData());
     }
 
     @Test public void testComplex() throws Exception {
@@ -139,14 +139,14 @@ public class DefaultAuthenticationResultSerializerTest {
         
         String s = serializer.serialize(result);
         String s2 = fileToString(DATAPATH + "complexAuthenticationResult.json");
-        Assert.assertEquals(s, s2);
+        assertEquals(s, s2);
         
         AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
         
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
     }
 
     @Test public void testCreds() throws Exception {
@@ -167,7 +167,7 @@ public class DefaultAuthenticationResultSerializerTest {
             strategy.initialize();
             sealer.initialize();
         } catch (ComponentInitializationException e) {
-            Assert.fail(e.getMessage());
+            fail(e.getMessage());
         }
 
         final PasswordPrincipalSerializer pwSerializer = new PasswordPrincipalSerializer();
@@ -184,10 +184,10 @@ public class DefaultAuthenticationResultSerializerTest {
         
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s, ACTIVITY);
         
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
     }
 
     @Test public void testSymbolic() throws Exception {
@@ -201,14 +201,14 @@ public class DefaultAuthenticationResultSerializerTest {
         
         final String s = serializer.serialize(result);
         final String s2 = fileToString(DATAPATH + "symbolicAuthenticationResult.json");
-        Assert.assertEquals(s, s2);
+        assertEquals(s, s2);
         
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
         
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
     }
     
 
@@ -232,15 +232,15 @@ public class DefaultAuthenticationResultSerializerTest {
 
         final String s = serializer.serialize(result);
         final String s2 = fileToString(DATAPATH + "LDAPAuthenticationResult.json");
-        Assert.assertEquals(s, s2);
+        assertEquals(s, s2);
 
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
 
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
-        Assert.assertEquals(
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(
                 ((LdapPrincipal) result.getSubject().getPrincipals().iterator().next()).getLdapEntry(),
                 ((LdapPrincipal) result2.getSubject().getPrincipals().iterator().next()).getLdapEntry());
     }
@@ -252,7 +252,7 @@ public class DefaultAuthenticationResultSerializerTest {
         
         final AuthenticationResult result = createResult("test", new Subject());
         final IdPAttributePrincipal prin = new IdPAttributePrincipal(new IdPAttribute("foo"));
-        prin.getAttribute().setValues(Arrays.asList(new StringAttributeValue("bar"),
+        prin.getAttribute().setValues(List.of(new StringAttributeValue("bar"),
                 new ScopedStringAttributeValue("bar2", "scope"), EmptyAttributeValue.ZERO_LENGTH,
                 new ByteAttributeValue("foo".getBytes())));
         
@@ -260,22 +260,22 @@ public class DefaultAuthenticationResultSerializerTest {
 
         final String s = serializer.serialize(result);
         final String s2 = fileToString(DATAPATH + "IdPAttributeAuthenticationResult.json");
-        Assert.assertEquals(s, s2);
+        assertEquals(s, s2);
 
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
 
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
         
         final IdPAttribute attribute =
                 ((IdPAttributePrincipal) result2.getSubject().getPrincipals().iterator().next()).getAttribute();
-        Assert.assertEquals(attribute.getValues().size(), 3);
-        Assert.assertEquals(((StringAttributeValue) attribute.getValues().get(0)).getValue(), "bar");
-        Assert.assertEquals(((StringAttributeValue)attribute.getValues().get(1)).getValue(), "bar2");
-        Assert.assertEquals(((ScopedStringAttributeValue) attribute.getValues().get(1)).getScope(), "scope");
-        Assert.assertEquals(attribute.getValues().get(2), EmptyAttributeValue.ZERO_LENGTH);
+        assertEquals(attribute.getValues().size(), 3);
+        assertEquals(((StringAttributeValue) attribute.getValues().get(0)).getValue(), "bar");
+        assertEquals(((StringAttributeValue)attribute.getValues().get(1)).getValue(), "bar2");
+        assertEquals(((ScopedStringAttributeValue) attribute.getValues().get(1)).getScope(), "scope");
+        assertEquals(attribute.getValues().get(2), EmptyAttributeValue.ZERO_LENGTH);
     }
 
     @Test public void testProxyAuthentication() throws Exception {
@@ -284,24 +284,26 @@ public class DefaultAuthenticationResultSerializerTest {
         serializer.initialize();
         
         final AuthenticationResult result = createResult("test", new Subject());
-        final ProxyAuthenticationPrincipal prin = new ProxyAuthenticationPrincipal();
-        prin.getAuthorities().addAll(Arrays.asList("foo","bar","baz"));
+        final ProxyAuthenticationPrincipal prin = new ProxyAuthenticationPrincipal(List.of("foo","bar","baz"));
+        prin.setProxyCount(10);
+        prin.getAudiences().add("zorkmid");
         result.getSubject().getPrincipals().add(prin);
 
         final String s = serializer.serialize(result);
         final String s2 = fileToString(DATAPATH + "ProxyAuthenticationResult.json");
-        Assert.assertEquals(s, s2);
+        assertEquals(s, s2);
 
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
 
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
         
-        final Collection<String> authorities =
-                ((ProxyAuthenticationPrincipal) result2.getSubject().getPrincipals().iterator().next()).getAuthorities();
-        Assert.assertEquals(authorities, prin.getAuthorities());
+        final ProxyAuthenticationPrincipal prin2 = (ProxyAuthenticationPrincipal)result2.getSubject().getPrincipals().iterator().next(); 
+        assertEquals(prin.getAuthorities(), prin2.getAuthorities());
+        assertEquals(prin.getProxyCount(), prin2.getProxyCount());
+        assertEquals(prin.getAudiences(), prin2.getAudiences());
     }
 
     @Test public void testNestedAuthenticationResult() throws Exception {
@@ -316,21 +318,21 @@ public class DefaultAuthenticationResultSerializerTest {
 
         final String s = serializer.serialize(result);
         final String s2 = fileToString(DATAPATH + "NestedAuthenticationResult.json");
-        Assert.assertEquals(s, s2);
+        assertEquals(s, s2);
 
         final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
 
-        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
-        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
-        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
-        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        assertEquals(result.getSubject(), result2.getSubject());
         
         final AuthenticationResult nested2 =
                 ((AuthenticationResultPrincipal) result2.getSubject().getPrincipals().iterator().next()).getAuthenticationResult();
-        Assert.assertEquals(nested.getAuthenticationFlowId(), nested2.getAuthenticationFlowId());
-        Assert.assertEquals(nested.getAuthenticationInstant(), nested2.getAuthenticationInstant());
-        Assert.assertEquals(nested.getLastActivityInstant(), nested2.getLastActivityInstant());
-        Assert.assertEquals(nested.getSubject(), nested2.getSubject());
+        assertEquals(nested.getAuthenticationFlowId(), nested2.getAuthenticationFlowId());
+        assertEquals(nested.getAuthenticationInstant(), nested2.getAuthenticationInstant());
+        assertEquals(nested.getLastActivityInstant(), nested2.getLastActivityInstant());
+        assertEquals(nested.getSubject(), nested2.getSubject());
     }
 
     private AuthenticationResult createResult(String flowId, Subject subject) {
