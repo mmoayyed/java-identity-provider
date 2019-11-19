@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -36,8 +37,10 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
+import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
@@ -79,6 +82,9 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 
     /** Field name of private credentials array. */
     @Nonnull @NotEmpty private static final String PRIV_CREDS_ARRAY_FIELD = "priv";
+    
+    /** Field name of private credentials array. */
+    @Nonnull @NotEmpty private static final String ADDTL_DATA_FIELD = "props";    
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultAuthenticationResultSerializer.class);
@@ -162,13 +168,19 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final StringWriter sink = new StringWriter(128);
             final JsonGenerator gen = generatorFactory.createGenerator(sink);
             gen.writeStartObject().write(FLOW_ID_FIELD, instance.getAuthenticationFlowId())
-                    .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant().toEpochMilli())
-                    .writeStartArray(PRINCIPAL_ARRAY_FIELD);
-
+                    .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant().toEpochMilli());
+            
+            final Map<String,String> addtlData = instance.getAdditionalData();
+            if (!addtlData.isEmpty()) {
+                gen.writeStartObject(ADDTL_DATA_FIELD);
+                addtlData.forEach((k,v) -> gen.write(k, v));
+                gen.writeEnd();
+            }
+            
+            gen.writeStartArray(PRINCIPAL_ARRAY_FIELD);
             for (final Principal p : instance.getSubject().getPrincipals()) {
                 serializePrincipal(gen, p);
             }
-
             gen.writeEnd();
             
             final Set<Principal> publicCreds = instance.getSubject().getPublicCredentials(Principal.class);
@@ -188,7 +200,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                 }
                 gen.writeEnd();
             }
-
+            
             // TODO handle custom creds
 
             gen.writeEnd().close();
@@ -223,6 +235,15 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             result.setLastActivityInstant(Instant.ofEpochMilli(expiration != null ? expiration : authnInstant));
             result.setPreviousResult(true);
 
+            final JsonObject addtlData = obj.getJsonObject(ADDTL_DATA_FIELD);
+            if (addtlData != null) {
+                final Map<String,String> dataMap = result.getAdditionalData();
+                addtlData.entrySet()
+                    .stream()
+                    .filter(e -> e.getValue().getValueType().equals(ValueType.STRING))
+                    .forEach(e -> dataMap.put(e.getKey(), ((JsonString) e.getValue()).getString()));
+            }
+            
             final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
             if (principals != null) {
                 for (final JsonValue val : principals) {

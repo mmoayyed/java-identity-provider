@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
@@ -43,6 +44,6 @@ public interface PrincipalSupportingComponent {
      * 
      * @return a set of matching principals
      */
-    @Nonnull @NonnullElements @Unmodifiable <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @NonnullElements @Unmodifiable @NotLive <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c);
 }

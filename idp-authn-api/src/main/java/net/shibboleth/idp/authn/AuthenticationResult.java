@@ -20,18 +20,21 @@ package net.shibboleth.idp.authn;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -47,7 +50,6 @@ import com.google.common.collect.ImmutableSet;
  * that make up a single overall result, but the IdP always acts on a single result as the
  * product of a given request for a login.</p>
  */
-@ThreadSafe
 public class AuthenticationResult implements PrincipalSupportingComponent {
     
     /** The Subject established by the authentication result. */
@@ -65,6 +67,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** Tracks whether a result was loaded from a previous session or created as part of the current request. */
     private boolean previousResult;
     
+    /** A map of additional data to associate with the result. */
+    @Nonnull @NonnullElements private final Map<String,String> additionalData;
+    
     /**
      * Constructor.
      * 
@@ -80,6 +85,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         subject = Constraint.isNotNull(newSubject, "Subject list cannot be null or empty");
         authenticationInstant = Instant.now();
         lastActivityInstant = authenticationInstant;
+        additionalData = new HashMap<>();
     }
 
     /**
@@ -104,7 +110,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         return subject.getPrincipals(c);
     }
@@ -182,6 +188,21 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     public void setPreviousResult(final boolean flag) {
         previousResult = flag;
     }
+    
+    /**
+     * Gets a mutable map of additional name/value string properties to associate with and store with
+     * the result.
+     * 
+     * <p>Note that the implementation may or may not explicitly break on null keys or values but using them
+     * is not intended to work and the behavior in such cases is unspecified.</p>
+     * 
+     * @return a mutable map
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull @NonnullElements @Live public Map<String,String> getAdditionalData() {
+        return additionalData;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -230,8 +251,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
             return usernames.iterator().next().getName();
         }
         
-        for (final Principal p : getSubject().getPrincipals()) {
-            return p.getName();
+        final Set<Principal> principals = getSubject().getPrincipals();
+        if (!principals.isEmpty()) {
+            return principals.iterator().next().getName();
         }
         
         return null;
