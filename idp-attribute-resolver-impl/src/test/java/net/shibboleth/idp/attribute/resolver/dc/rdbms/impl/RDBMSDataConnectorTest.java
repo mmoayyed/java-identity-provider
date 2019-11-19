@@ -48,6 +48,7 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.TestCache;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.ExecutableStatement;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.FormatExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.ResultMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;

@@ -32,9 +32,9 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.V2CompatibleTemplateExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
+package net.shibboleth.idp.attribute.resolver.dc.rdbms;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -36,7 +36,6 @@ import net.shibboleth.idp.attribute.resolver.MultipleResultAnErrorResolutionExce
 import net.shibboleth.idp.attribute.resolver.NoResultAnErrorResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.AbstractMappingStrategy;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.ResultMappingStrategy;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;

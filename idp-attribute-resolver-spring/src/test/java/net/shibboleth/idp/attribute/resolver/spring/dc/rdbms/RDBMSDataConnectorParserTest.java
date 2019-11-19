@@ -53,9 +53,9 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.ExecutableStatement;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
