@@ -50,6 +50,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link AttributeTranscoderRegistryImpl}.
  */
+@SuppressWarnings("rawtypes")
 public class AttributeTranscoderRegistryImplTest {
     
     private AttributeTranscoderRegistryImpl registry;

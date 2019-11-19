@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * Sample transcoder for tests. 
  */
+@SuppressWarnings("rawtypes")
 public class PairTranscoder extends AbstractAttributeTranscoder<Pair> {
 
     /** {@inheritDoc} */

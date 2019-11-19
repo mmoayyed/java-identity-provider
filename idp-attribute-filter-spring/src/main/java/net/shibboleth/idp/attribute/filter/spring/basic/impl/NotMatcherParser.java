@@ -41,7 +41,6 @@ public class NotMatcherParser extends BaseFilterParser {
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "NOT");
 
     /** {@inheritDoc} */
-    /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return NotPolicyRule.class;
