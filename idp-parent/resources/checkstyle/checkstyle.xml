@@ -101,6 +101,10 @@
       <property name="onCommentFormat" value="\bCheck[Ss]tyle:\s*([\w|]+)\s+ON\b"/>
       <property name="checkFormat" value="$1"/>
     </module>
+    <module name="MissingJavadocMethod"/>
+    <module name="MissingJavadocPackage"/>
+    <module name="MissingJavadocType"/>
+    <module name="InvalidJavadocPosition"/>
   </module>
   <module name="FileTabCharacter"/>
   <module name="FileLength">
