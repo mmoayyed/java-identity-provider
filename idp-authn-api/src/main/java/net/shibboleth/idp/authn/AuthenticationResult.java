@@ -33,6 +33,7 @@ import javax.security.auth.Subject;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -287,6 +288,32 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         }
         
         return null;
+    }
+    
+    /**
+     * Inner class implementing a predicate that checks for contained {@link ProxyAuthenticationPrincipal}
+     * objects and enforces any restrictions on reuse based on the current request.
+     */
+    class ProxyRestrictionReusePredicate implements Predicate<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        public boolean test(@Nullable final ProfileRequestContext input) {
+            
+            final Set<ProxyAuthenticationPrincipal> proxieds =
+                    subject.getPrincipals(ProxyAuthenticationPrincipal.class);
+            
+            if (proxieds == null || proxieds.isEmpty()) {
+                return true;
+            }
+            
+            for (final ProxyAuthenticationPrincipal proxied : proxieds) {
+                if (!proxied.test(input)) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
     }
     
 }

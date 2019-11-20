@@ -42,6 +42,7 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
@@ -77,6 +78,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Whether this flow supports forced authentication. */
     private boolean supportsForced;
     
+    /** Whether this flow should honor proxy restrictions. */
+    private boolean proxyRestrictionsEnforced;
+    
     /** Whether this flow allows reuse of its results. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
 
@@ -104,6 +108,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Constructor. */
     public AuthenticationFlowDescriptor() {
         supportsNonBrowser = true;
+        proxyRestrictionsEnforced = true;
         reuseCondition = Predicates.alwaysTrue();
         supportedPrincipals = new Subject();
         activationCondition = Predicates.alwaysTrue();
@@ -169,6 +174,30 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         supportsForced = isSupported;
+    }
+    
+    /**
+     * Gets whether this flow's results should honor restrictions on proxying.
+     * 
+     * @return true iff upstream proxying restrictions should be honored
+     * 
+     * @since 4.0.0
+     */
+    public boolean isProxyRestrictionsEnforced() {
+        return proxyRestrictionsEnforced;
+    }
+    
+    /**
+     * Sets whether this flow's results should honor restrictions on proxying.
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setProxyRestrictionsEnforced(final boolean flag) {
+        proxyRestrictionsEnforced = flag;
     }
     
     /**
@@ -352,7 +381,12 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      */
     @Nonnull public AuthenticationResult newAuthenticationResult(@Nonnull final Subject subject) {
         final AuthenticationResult result = new AuthenticationResult(getId(), subject);
-        result.setReuseCondition(reuseCondition);
+        
+        if (proxyRestrictionsEnforced) {
+            result.setReuseCondition(PredicateSupport.and(reuseCondition, result.new ProxyRestrictionReusePredicate()));
+        } else {
+            result.setReuseCondition(reuseCondition);
+        }
         return result;
     }
     
@@ -376,7 +410,11 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
                 (expiration != null) ?
                         expiration - inactivityTimeout.toMillis() - STORAGE_EXPIRATION_OFFSET.toMillis() :
                             null);
-        result.setReuseCondition(reuseCondition);
+        if (proxyRestrictionsEnforced) {
+            result.setReuseCondition(PredicateSupport.and(reuseCondition, result.new ProxyRestrictionReusePredicate()));
+        } else {
+            result.setReuseCondition(reuseCondition);
+        }
         return result;
     }
 

@@ -23,6 +23,7 @@
             p:passiveAuthenticationSupported="false"
             p:forcedAuthenticationSupported="false"
             p:nonBrowserSupported="true"
+            p:proxyRestrictionsEnforced="%{idp.authn.proxyRestrictionsEnforced:true}"
             p:lifetime="%{idp.authn.defaultLifetime:PT60M}"
             p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}"
             p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}">
