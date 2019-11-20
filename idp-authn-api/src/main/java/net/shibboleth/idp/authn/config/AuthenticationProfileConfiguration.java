@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.config;
 import java.security.Principal;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,4 +93,15 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      */
     boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext);
     
+    /**
+     * Get whether this profile is for functionality local to the IdP.
+     * 
+     * <p>Most authentication profiles are non-local, designed to issue security tokens to other
+     * systems, so this is generally false.</p>
+     * 
+     * @return true iff the use of the associated profile is local to the IdP
+     */
+    default boolean isLocal() {
+        return false;
+    }
 }

@@ -28,11 +28,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -316,11 +316,12 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         
         // Check for admin flow as relying party.
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx == null || rpCtx.getRelyingPartyId() == null) {
-            log.debug("{} No RelyingParty identity, ignoring proxy restrictions on result", getLogPrefix());
+        if (rpCtx == null) {
+            log.debug("{} No RelyingPartyContext, ignoring proxy restrictions on result", getLogPrefix());
             return true;
-        } else if (rpCtx.getProfileConfig() instanceof AdministrativeFlowDescriptor) {
-            log.debug("{} Relying party is an admin flow, ignoring proxy restrictions on result",
+        } else if (!(rpCtx.getProfileConfig() instanceof AuthenticationProfileConfiguration) ||
+                ((AuthenticationProfileConfiguration) rpCtx.getProfileConfig()).isLocal()) {
+            log.debug("{} Profile is not proxy-restricted, ignoring proxy restrictions on result",
                     getLogPrefix());
             return true;
         }
@@ -330,7 +331,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 log.warn("{} Result contains a proxy count of zero, disallowing use", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
                 return false;
-            } else if (!proxied.getAudiences().isEmpty() &&
+            } else if (rpCtx.getRelyingPartyId() != null && !proxied.getAudiences().isEmpty() &&
                     !proxied.getAudiences().contains(rpCtx.getRelyingPartyId())) {
                 log.warn("{} Result contains a proxy restriction disallowing relying party '{}'",
                         getLogPrefix(), rpCtx.getRelyingPartyId());

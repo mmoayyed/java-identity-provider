@@ -88,4 +88,9 @@ public interface AdministrativeFlowDescriptor extends FlowDescriptor, Authentica
      */
     boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext);
 
+    /** {@inheritDoc} */
+    @Override
+    default boolean isLocal() {
+        return true;
+    }
 }

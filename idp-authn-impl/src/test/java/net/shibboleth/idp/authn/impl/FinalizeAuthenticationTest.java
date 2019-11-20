@@ -35,6 +35,7 @@ import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactor
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -48,6 +49,8 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
     
     @BeforeMethod public void setUp() throws Exception {
         super.setUp();
+        
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(new BrowserSSOProfileConfiguration());
         
         action = new FinalizeAuthentication();
         action.initialize();
