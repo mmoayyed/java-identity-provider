@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
+import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -37,9 +40,14 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -49,6 +57,9 @@ import org.slf4j.LoggerFactory;
  * An authentication action that runs after a completed authentication flow (or the reuse
  * of an active result) and transfers information from other contexts into a {@link SubjectContext}
  * child of the {@link ProfileRequestContext}.
+ * 
+ * <p>The action enforces any constraints on proxying that may be present in the result against
+ * the intended use based on the {@link RelyingPartyContext}.</p>
  * 
  * <p>The action also cross-checks {@link RequestedPrincipalContext#getMatchingPrincipal()}, if set,
  * against the {@link AuthenticationResult} to ensure that the result produced actually satisfies the
@@ -75,6 +86,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
+ * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * 
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
@@ -90,10 +102,31 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FinalizeAuthentication.class);
     
+    /** Strategy used to look up a {@link RelyingPartyContext} for proxy validation. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+    
     /** The principal name extracted from the context tree. */
     @Nullable private String canonicalPrincipalName;
-        
-// Checkstyle: CyclomaticComplexity OFF
+     
+    /** Constructor. */
+    public FinalizeAuthentication() {
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+    }
+    
+    /**
+     * Set the strategy used to return the {@link RelyingPartyContext}.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -119,6 +152,15 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                         canonicalPrincipalName);
             }
         }
+
+        final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
+        if (latest == null) {
+            log.warn("{} Authentication result missing from context?", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            return false;
+        } else if (!checkProxyRestrictions(profileRequestContext, latest.getSubject())) {
+            return false;
+        }
         
         // Check for requested Principal criteria and make sure the result accomodates the criteria.
         // This is required because flow selection is based (generally) on statically-defined information
@@ -126,12 +168,6 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         final RequestedPrincipalContext requestedPrincipalCtx =
                 authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (requestedPrincipalCtx != null) {
-            final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
-            if (latest == null) {
-                log.warn("{} Authentication result missing from context?", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
-                return false;
-            }
             
             // If a matching principal is set, re-verify it. Normally this will work.
             final Principal match = requestedPrincipalCtx.getMatchingPrincipal();
@@ -221,7 +257,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                             p.getClass(), requestedPrincipalCtx.getOperator());
             if (factory != null) {
                 final PrincipalEvalPredicate predicate = factory.getPredicate(p);
-
+    
                 // For unweighted results, we'd just apply the predicate to the AuthenticationResult, but
                 // we won't be able to honor weighting, so we have to walk the supported principals one
                 // at a time, wrap it to apply the predicate, and then record it if it succeeds.
@@ -261,4 +297,49 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         return flowDescriptor.getHighestWeighted(matches);
     }
 
+// Checkstyle: CyclomaticComplexity OFF
+    /**
+     * Check for proxy restrictions and evaluate them against the request.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param subject the authentication result's subject
+     * 
+     * @return true iff processing should continue
+     */
+    private boolean checkProxyRestrictions(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final Subject subject) {
+        
+        final Set<ProxyAuthenticationPrincipal> proxieds = subject.getPrincipals(ProxyAuthenticationPrincipal.class);
+        if (proxieds == null || proxieds.isEmpty()) {
+            return true;
+        }
+        
+        // Check for admin flow as relying party.
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpCtx == null || rpCtx.getRelyingPartyId() == null) {
+            log.debug("{} No RelyingParty identity, ignoring proxy restrictions on result", getLogPrefix());
+            return true;
+        } else if (rpCtx.getProfileConfig() instanceof AdministrativeFlowDescriptor) {
+            log.debug("{} Relying party is an admin flow, ignoring proxy restrictions on result",
+                    getLogPrefix());
+            return true;
+        }
+        
+        for (final ProxyAuthenticationPrincipal proxied : proxieds) {
+            if (proxied.getProxyCount() != null && proxied.getProxyCount() == 0) {
+                log.warn("{} Result contains a proxy count of zero, disallowing use", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                return false;
+            } else if (!proxied.getAudiences().isEmpty() &&
+                    !proxied.getAudiences().contains(rpCtx.getRelyingPartyId())) {
+                log.warn("{} Result contains a proxy restriction disallowing relying party '{}'",
+                        getLogPrefix(), rpCtx.getRelyingPartyId());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                return false;
+            }
+        }
+        
+        return true;
+    }
+// Checkstyle: CyclomaticComplexity ON
 }

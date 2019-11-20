@@ -24,6 +24,11 @@
         <!-- Compile Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-admin-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -163,11 +168,6 @@
             <artifactId>DuoWeb</artifactId>
             <version>${duoweb.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jasig.cas.client</groupId>
-            <artifactId>cas-client-core</artifactId>
-            <version>${cas-client.version}</version>
-        </dependency>        
         
 
         <!-- DEPRECATED - remove in V5 -->
@@ -193,6 +193,12 @@
             <artifactId>opensaml-profile-api</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

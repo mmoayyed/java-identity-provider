@@ -17,22 +17,24 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -54,13 +56,19 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
     @Test public void testNotSet() {
         final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
     }
 
     @Test public void testMismatch() {
         prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("bar");
+
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("bar2"));
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setAuthenticationResult(active);
         
         final Event event = action.execute(src);
         
@@ -81,7 +89,7 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
                 TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
         rpCtx.setOperator("florp");
-        rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar1")));
+        rpCtx.setRequestedPrincipals(Collections.singletonList(new TestPrincipal("bar1")));
         authCtx.addSubcontext(rpCtx);
         
         final Event event = action.execute(src);
@@ -103,7 +111,7 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
                 TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
         rpCtx.setOperator("florp");
-        rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar2")));
+        rpCtx.setRequestedPrincipals(Collections.singletonList(new TestPrincipal("bar2")));
         authCtx.addSubcontext(rpCtx);
         
         final Event event = action.execute(src);
@@ -121,14 +129,14 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
         
         final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(event);
-        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(sc);
-        Assert.assertEquals(sc.getPrincipalName(), "foo");
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
+        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
     }
 
     @Test public void testOneActive() {
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(
+                new ProxyAuthenticationPrincipal(Collections.singletonList(ActionTestingSupport.OUTBOUND_MSG_ISSUER)));
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.setAuthenticationResult(active);
@@ -159,4 +167,104 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(sc.getPrincipalName(), "foo");
         Assert.assertEquals(sc.getAuthenticationResults().size(), 2);
     }
+
+    @Test public void testZeroProxyCount() {
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final ProxyAuthenticationPrincipal proxy =
+                new ProxyAuthenticationPrincipal(Collections.singletonList(ActionTestingSupport.OUTBOUND_MSG_ISSUER));
+        proxy.setProxyCount(0);
+        active.getSubject().getPrincipals().add(proxy);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setAuthenticationResult(active);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
+        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
+    }
+
+    @Test public void testZeroProxyCountAdminFlow() {
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final ProxyAuthenticationPrincipal proxy =
+                new ProxyAuthenticationPrincipal(Collections.singletonList(ActionTestingSupport.OUTBOUND_MSG_ISSUER));
+        proxy.setProxyCount(0);
+        active.getSubject().getPrincipals().add(proxy);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setAuthenticationResult(active);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(new BasicAdministrativeFlowDescriptor("admin/test"));
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
+        Assert.assertNotNull(sc);
+        Assert.assertEquals(sc.getPrincipalName(), "foo");
+        Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
+    }
+
+    @Test public void testZeroProxyCountNoRP() {
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final ProxyAuthenticationPrincipal proxy =
+                new ProxyAuthenticationPrincipal(Collections.singletonList(ActionTestingSupport.OUTBOUND_MSG_ISSUER));
+        proxy.setProxyCount(0);
+        active.getSubject().getPrincipals().add(proxy);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setAuthenticationResult(active);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+
+        prc.removeSubcontext(RelyingPartyContext.class);
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
+        Assert.assertNotNull(sc);
+        Assert.assertEquals(sc.getPrincipalName(), "foo");
+        Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
+    }
+
+    @Test public void testValidProxyAudience() {
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final ProxyAuthenticationPrincipal proxy =
+                new ProxyAuthenticationPrincipal(Collections.singletonList(ActionTestingSupport.OUTBOUND_MSG_ISSUER));
+        proxy.setProxyCount(10);
+        proxy.getAudiences().add(ActionTestingSupport.INBOUND_MSG_ISSUER);
+        active.getSubject().getPrincipals().add(proxy);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setAuthenticationResult(active);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
+        Assert.assertNotNull(sc);
+        Assert.assertEquals(sc.getPrincipalName(), "foo");
+        Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
+    }
+
+    @Test public void testInvalidProxyAudience() {
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final ProxyAuthenticationPrincipal proxy =
+                new ProxyAuthenticationPrincipal(Collections.singletonList(ActionTestingSupport.OUTBOUND_MSG_ISSUER));
+        proxy.setProxyCount(10);
+        proxy.getAudiences().add(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        active.getSubject().getPrincipals().add(proxy);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setAuthenticationResult(active);
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
+        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
+    }
+
 }

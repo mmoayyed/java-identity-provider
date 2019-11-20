@@ -67,8 +67,10 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.ProxyRestriction;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -291,7 +293,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             }
         }
     }
-    
+        
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
@@ -327,19 +330,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             log.warn("{} No AuthnContext information usable from assertion", getLogPrefix());
         }
         
-        final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
-        proxied.getAuthorities().add(
-                ((Assertion) samlAuthnContext.getAuthnStatement().getParent()).getIssuer().getValue());
-        
-        if (!authnContext.getAuthenticatingAuthorities().isEmpty()) {
-            proxied.getAuthorities().addAll(
-                    authnContext.getAuthenticatingAuthorities()
-                        .stream()
-                        .map(AuthenticatingAuthority::getURI)
-                        .filter(aa -> !Strings.isNullOrEmpty(aa))
-                        .collect(Collectors.toUnmodifiableList()));
-        }
-        subject.getPrincipals().add(proxied);
+        subject.getPrincipals().add(buildProxyPrincipal(authnContext));
         
         if (attributeContext != null && !attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
@@ -351,6 +342,47 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         }
         
         return subject;
+    }
+// Checkstyle: CyclomaticComplexity ON
+    
+    /**
+     * Construct a populated {@link ProxyAuthenticationPrincipal} based on the inbound assertion.
+     * 
+     * @param authnContext the SAML {@link AuthnContext} issued by the proxied IdP
+     * 
+     * @return a constructed {@link ProxyAuthenticationPrincipal} to include in the {@link Subject}
+     */
+    @Nonnull private ProxyAuthenticationPrincipal buildProxyPrincipal(@Nonnull final AuthnContext authnContext) {
+        
+        final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
+        
+        final Assertion assertion = (Assertion) samlAuthnContext.getAuthnStatement().getParent();
+        
+        proxied.getAuthorities().add(assertion.getIssuer().getValue());
+        
+        if (!authnContext.getAuthenticatingAuthorities().isEmpty()) {
+            proxied.getAuthorities().addAll(
+                    authnContext.getAuthenticatingAuthorities()
+                        .stream()
+                        .map(AuthenticatingAuthority::getURI)
+                        .filter(aa -> !Strings.isNullOrEmpty(aa))
+                        .collect(Collectors.toUnmodifiableList()));
+        }
+        
+        final ProxyRestriction condition = assertion.getConditions().getProxyRestriction();
+        if (condition != null) {
+            proxied.setProxyCount(condition.getProxyCount());
+            if (condition.getAudiences() != null) {
+                proxied.getAudiences().addAll(
+                        condition.getAudiences()
+                            .stream()
+                            .map(Audience::getURI)
+                            .filter(a -> !Strings.isNullOrEmpty(a))
+                            .collect(Collectors.toUnmodifiableList()));
+            }
+        }
+        
+        return proxied;
     }
     
     /**
