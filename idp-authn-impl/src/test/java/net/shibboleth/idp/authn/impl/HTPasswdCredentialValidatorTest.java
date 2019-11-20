@@ -36,7 +36,6 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.action.EventIds;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -77,7 +76,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         action.initialize();
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
     @Test public void testMissingUser() throws Exception {

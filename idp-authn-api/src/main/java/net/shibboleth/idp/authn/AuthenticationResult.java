@@ -24,10 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -40,6 +43,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -70,6 +74,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** A map of additional data to associate with the result. */
     @Nonnull @NonnullElements private final Map<String,String> additionalData;
     
+    /** Whether this result can be reused. */
+    @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
+    
     /**
      * Constructor.
      * 
@@ -86,6 +93,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         authenticationInstant = Instant.now();
         lastActivityInstant = authenticationInstant;
         additionalData = new HashMap<>();
+        reuseCondition = Predicates.alwaysTrue();
     }
 
     /**
@@ -97,6 +105,28 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
         this(flowId, new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
                 Collections.emptySet(), Collections.emptySet()));
+    }
+    
+    /**
+     * Get condition controlling whether this result should be reused for SSO.
+     * 
+     * @return condition controlling whether result should be reused for SSO
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getReuseCondition() {
+        return reuseCondition;
+    }
+    
+    /**
+     * Set condition controlling whether this result should be reused for SSO.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setReuseCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        reuseCondition = Constraint.isNotNull(condition, "Predicate cannot be null");
     }
     
     /**

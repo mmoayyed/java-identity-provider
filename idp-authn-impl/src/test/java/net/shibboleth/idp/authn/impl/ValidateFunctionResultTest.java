@@ -29,7 +29,6 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -58,7 +57,7 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
         action.initialize();
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
     
     @Test public void testNoCredentials() throws ComponentInitializationException {

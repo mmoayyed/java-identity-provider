@@ -48,7 +48,6 @@ import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.ext.PasswordPolicyAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.jaas.LdapPrincipal;
-import org.opensaml.profile.action.EventIds;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -140,7 +139,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         action.initialize();
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
     @Test public void testMissingUser() throws Exception {

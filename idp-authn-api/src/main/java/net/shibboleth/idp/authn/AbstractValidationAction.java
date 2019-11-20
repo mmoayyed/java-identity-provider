@@ -51,7 +51,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.metrics.MetricsSupport;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +62,7 @@ import com.google.common.collect.Iterables;
  * A base class for authentication related actions that validate credentials and produce an
  * {@link AuthenticationResult}.
  * 
- * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  */
@@ -296,7 +295,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             return false;
         } else if (authenticationContext.getAttemptedFlow() == null) {
             log.info("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
             return false;
         }
 
@@ -359,14 +358,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     protected void buildAuthenticationResult(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        if (addDefaultPrincipals && authenticationContext.getAttemptedFlow() != null) {
+        if (addDefaultPrincipals) {
             log.debug("{} Adding custom Principal(s) defined on underlying flow descriptor", getLogPrefix());
-            getSubject().getPrincipals().addAll(
-                    authenticationContext.getAttemptedFlow().getSupportedPrincipals());
+            getSubject().getPrincipals().addAll(authenticationContext.getAttemptedFlow().getSupportedPrincipals());
         }
         
-        final AuthenticationResult result = new AuthenticationResult(authenticationContext.getAttemptedFlow().getId(),
-                populateSubject(getSubject()));
+        final AuthenticationResult result =
+                authenticationContext.getAttemptedFlow().newAuthenticationResult(populateSubject(getSubject()));
         authenticationContext.setAuthenticationResult(result);
         
         // Override cacheability if a predicate is installed.

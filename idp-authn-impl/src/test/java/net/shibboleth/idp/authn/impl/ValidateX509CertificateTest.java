@@ -29,7 +29,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.security.credential.CredentialResolver;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.trust.TrustEngine;
@@ -103,7 +102,7 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
 
     @Test public void testMissingFlow() {
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
     
     @Test public void testMissingCert() {

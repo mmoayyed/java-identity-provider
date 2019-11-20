@@ -35,7 +35,6 @@ import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
-import org.opensaml.profile.action.EventIds;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -64,7 +63,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(null);
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
     
     @Test public void testMissingContext() {

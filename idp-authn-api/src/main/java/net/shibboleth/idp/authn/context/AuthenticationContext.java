@@ -35,7 +35,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
@@ -48,8 +47,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.MoreObjects;
@@ -86,9 +83,6 @@ public final class AuthenticationContext extends BaseContext {
     
     /** Name of a proxied authentication source to use. */
     @Nullable private String authenticatingAuthority;
-
-    /** Strategy used to look up a {@link RelyingPartyContext} for proxy validation. */
-    @Nonnull private Function<AuthenticationContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** Lookup strategy for a fixed event to return from validators for testing. */
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
@@ -138,9 +132,6 @@ public final class AuthenticationContext extends BaseContext {
         stateMap = new HashMap<>();
         
         resultCacheable = true;
-        
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class).compose(
-                new ParentContextLookup<>(ProfileRequestContext.class));
     }
 
     /**
@@ -432,17 +423,6 @@ public final class AuthenticationContext extends BaseContext {
         fixedEventLookupStrategy = strategy;
         return this;
     }
-    
-    /**
-     * Set the strategy used to return the associated {@link RelyingPartyContext} for proxy restriction evaluation.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nullable final Function<AuthenticationContext,RelyingPartyContext> strategy) {
-        relyingPartyContextLookupStrategy = strategy;
-    }
-    
 
     /**
      * Get the authentication flow that was attempted in order to authenticate the user.
@@ -754,7 +734,6 @@ public final class AuthenticationContext extends BaseContext {
                 .toString();
     }
 
-// Checkstyle: CyclomaticComplexity OFF
     /**
      * Check for proxy restrictions and evaluate them against the associated {@link RelyingPartyContext}.
      * 
@@ -768,25 +747,19 @@ public final class AuthenticationContext extends BaseContext {
         if (principals == null || principals.isEmpty()) {
             return true;
         }
-        
-        // Check for local flow as relying party.
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(this);
-        if (rpCtx == null || !(rpCtx.getProfileConfig() instanceof AuthenticationProfileConfiguration) ||
-                ((AuthenticationProfileConfiguration) rpCtx.getProfileConfig()).isLocal()) {
+
+        final BaseContext prc = getParent();
+        if (!(prc instanceof ProfileRequestContext)) {
             return true;
         }
         
         for (final ProxyAuthenticationPrincipal proxied : principals) {
-            if (proxied.getProxyCount() != null && proxied.getProxyCount() == 0) {
-                return false;
-            } else if (rpCtx.getRelyingPartyId() != null && !proxied.getAudiences().isEmpty() &&
-                    !proxied.getAudiences().contains(rpCtx.getRelyingPartyId())) {
+            if (!proxied.test((ProfileRequestContext) prc)) {
                 return false;
             }
         }
         
         return true;
     }
-// Checkstyle: CyclomaticComplexity ON
     
 }

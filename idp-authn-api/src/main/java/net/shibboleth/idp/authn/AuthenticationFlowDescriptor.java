@@ -172,17 +172,6 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
     
     /**
-     * Get condition controlling whether results from this flow should be reused for SSO.
-     * 
-     * @return whether results from this flow should be reused for SSO
-     * 
-     * @since 3.4.0
-     */
-    @Nonnull public Predicate<ProfileRequestContext> getReuseCondition() {
-        return reuseCondition;
-    }
-    
-    /**
      * Set condition controlling whether results from this flow should be reused for SSO.
      * 
      * <p>Defaults to {@link Predicates#alwaysTrue()}.</p>
@@ -342,7 +331,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public void setPrincipalWeightMap(@Nullable @NonnullElements final Map<Principal,Integer> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        principalWeightMap = map != null ? map : Collections.<Principal,Integer>emptyMap();
+        principalWeightMap = map != null ? map : Collections.emptyMap();
     }    
 
     /** {@inheritDoc} */
@@ -354,6 +343,19 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         }
     }
 
+    /**
+     * Creates a new instance of a compatible {@link AuthenticationResult} for use with the corresponding flow.
+     * 
+     * @param subject the subject for the result
+     * 
+     * @return the new result
+     */
+    @Nonnull public AuthenticationResult newAuthenticationResult(@Nonnull final Subject subject) {
+        final AuthenticationResult result = new AuthenticationResult(getId(), subject);
+        result.setReuseCondition(reuseCondition);
+        return result;
+    }
+    
     /** {@inheritDoc} */
     @Override @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance)
             throws IOException {
@@ -370,8 +372,12 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         // Back the expiration off by the inactivity timeout to recover the last activity time.
-        return resultSerializer.deserialize(version, context, key, value, (expiration != null) ? expiration
-                - inactivityTimeout.toMillis() - STORAGE_EXPIRATION_OFFSET.toMillis() : null);
+        final AuthenticationResult result = resultSerializer.deserialize(version, context, key, value,
+                (expiration != null) ?
+                        expiration - inactivityTimeout.toMillis() - STORAGE_EXPIRATION_OFFSET.toMillis() :
+                            null);
+        result.setReuseCondition(reuseCondition);
+        return result;
     }
 
     /**
@@ -395,7 +401,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             return (T) principalArray[principalArray.length - 1];
         }
     }
-
+    
     /** {@inheritDoc} */
     @Override public int hashCode() {
         return getId().hashCode();
@@ -453,4 +459,5 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     static {
         STORAGE_EXPIRATION_OFFSET = Duration.ofMinutes(10);
     }
+
 }

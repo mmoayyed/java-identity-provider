@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +31,6 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -44,10 +42,7 @@ import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -102,29 +97,8 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FinalizeAuthentication.class);
     
-    /** Strategy used to look up a {@link RelyingPartyContext} for proxy validation. */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
     /** The principal name extracted from the context tree. */
     @Nullable private String canonicalPrincipalName;
-     
-    /** Constructor. */
-    public FinalizeAuthentication() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-    }
-    
-    /**
-     * Set the strategy used to return the {@link RelyingPartyContext}.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
-    }
     
     // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
@@ -297,7 +271,6 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         return flowDescriptor.getHighestWeighted(matches);
     }
 
-// Checkstyle: CyclomaticComplexity OFF
     /**
      * Check for proxy restrictions and evaluate them against the request.
      * 
@@ -314,27 +287,9 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             return true;
         }
         
-        // Check for admin flow as relying party.
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx == null) {
-            log.debug("{} No RelyingPartyContext, ignoring proxy restrictions on result", getLogPrefix());
-            return true;
-        } else if (!(rpCtx.getProfileConfig() instanceof AuthenticationProfileConfiguration) ||
-                ((AuthenticationProfileConfiguration) rpCtx.getProfileConfig()).isLocal()) {
-            log.debug("{} Profile is not proxy-restricted, ignoring proxy restrictions on result",
-                    getLogPrefix());
-            return true;
-        }
-        
         for (final ProxyAuthenticationPrincipal proxied : proxieds) {
-            if (proxied.getProxyCount() != null && proxied.getProxyCount() == 0) {
-                log.warn("{} Result contains a proxy count of zero, disallowing use", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
-                return false;
-            } else if (rpCtx.getRelyingPartyId() != null && !proxied.getAudiences().isEmpty() &&
-                    !proxied.getAudiences().contains(rpCtx.getRelyingPartyId())) {
-                log.warn("{} Result contains a proxy restriction disallowing relying party '{}'",
-                        getLogPrefix(), rpCtx.getRelyingPartyId());
+            if (!proxied.test(profileRequestContext)) {
+                log.warn("{} Result contained a proxy restriction disallowing use", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
                 return false;
             }
@@ -342,5 +297,5 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         
         return true;
     }
-// Checkstyle: CyclomaticComplexity ON
+
 }

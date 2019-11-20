@@ -184,13 +184,14 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.debug("{} Attempting to honor signaled flow {}", getLogPrefix(), flow.getId());
 
-        // If not forced, or we just did it, check for an active result for that flow.
+        // If not forced, check for an active result for that flow.
 
-        final AuthenticationResult activeResult;
-        if (!authenticationContext.isForceAuthn() && flow.getReuseCondition().test(profileRequestContext)) {
+        AuthenticationResult activeResult = null;
+        if (!authenticationContext.isForceAuthn()) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
-        } else {
-            activeResult = null;
+            if (!activeResult.getReuseCondition().test(profileRequestContext)) {
+                activeResult = null;
+            }
         }
         
         if (activeResult != null) {
@@ -277,9 +278,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         AuthenticationResult resultToSelect = null;
         
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
-            final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
-                    activeResult.getAuthenticationFlowId());
-            if (flow != null && flow.getReuseCondition().test(profileRequestContext)) {
+            if (activeResult.getReuseCondition().test(profileRequestContext)) {
                 resultToSelect = activeResult;
                 if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(activeResult)) {
                     break;
@@ -448,8 +447,6 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         if (favorSSO) {
             log.debug("{} Giving priority to active results that meet request requirements");
             
-            final Map<String,AuthenticationFlowDescriptor> availableFlows = authenticationContext.getAvailableFlows();
-            
             // Check each active result for compatibility with request.
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 log.debug("{} Checking for an active result compatible with operator '{}' and principal '{}'",
@@ -457,9 +454,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                 if (predicate != null) {
                     for (final AuthenticationResult result : activeResults.values()) {
-                        final AuthenticationFlowDescriptor flow = availableFlows.get(result.getAuthenticationFlowId());
-                        if (flow != null && flow.getReuseCondition().test(profileRequestContext)
-                                && predicate.test(result)) {
+                        if (result.getReuseCondition().test(profileRequestContext) && predicate.test(result)) {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
                         }
@@ -495,7 +490,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         // Now check for an active result we can use from this flow. Not all results from a flow
                         // will necessarily match the request just because the flow might.
                         final AuthenticationResult result = activeResults.get(descriptor.getId());
-                        if (result == null || !descriptor.getReuseCondition().test(profileRequestContext)
+                        if (result == null || !result.getReuseCondition().test(profileRequestContext)
                                 || !predicate.test(result)) {
                             if (!authenticationContext.isPassive()
                                     || descriptor.isPassiveAuthenticationSupported()) {

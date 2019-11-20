@@ -33,7 +33,6 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
-import org.opensaml.profile.action.EventIds;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -58,7 +57,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
 
     @Test public void testMissingFlow() {
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
     
     @Test public void testMissingAddress() {
