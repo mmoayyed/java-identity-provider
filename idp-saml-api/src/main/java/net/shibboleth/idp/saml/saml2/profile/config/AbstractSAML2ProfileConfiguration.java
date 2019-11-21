@@ -44,9 +44,6 @@ import com.google.common.base.Predicates;
 /** Base class for SAML 2 profile configurations. */
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration implements
         SAML2ProfileConfiguration {
-    
-    /** Default proxy count. */
-    @Nonnull public static final Long DEFAULT_PROXY_COUNT = 0L;
 
     /** Whether to ignore signatures in requests. */
     @Nonnull private Predicate<ProfileRequestContext> ignoreRequestSignaturesPredicate;
@@ -64,7 +61,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
 
     /** Lookup function to supply proxyCount property. */
-    @Nonnull private Function<ProfileRequestContext,Long> proxyCountLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
 
     /** Lookup function to supply proxy audiences. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> proxyAudiencesLookupStrategy;
@@ -82,15 +79,16 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         encryptAssertionsPredicate = Predicates.alwaysFalse();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
         encryptAttributesPredicate = Predicates.alwaysFalse();
-        proxyCountLookupStrategy = FunctionSupport.constant(DEFAULT_PROXY_COUNT);
+        proxyCountLookupStrategy = FunctionSupport.constant(null);
         proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
     }
 
     /** {@inheritDoc} */
-    public long getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
-        final Long count = proxyCountLookupStrategy.apply(profileRequestContext);
-        Constraint.isNotNull(count, "Proxy count cannot be null");
-        Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+    @Nullable public Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
+        final Integer count = proxyCountLookupStrategy.apply(profileRequestContext);
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        }
         return count;
     }
 
@@ -99,9 +97,11 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param count maximum number of times an assertion may be proxied
      */
-    public void setProxyCount(@NonNegative final long count) {
-        proxyCountLookupStrategy = FunctionSupport.constant(
-                Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0"));
+    public void setProxyCount(@Nullable @NonNegative final Integer count) {
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        }
+        proxyCountLookupStrategy = FunctionSupport.constant(count);
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @since 3.3.0
      */
-    public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Long> strategy) {
+    public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
         proxyCountLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 

@@ -34,10 +34,10 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * 
  * <p>If a specific setting is unavailable, a null is returned.</p>
  */
-public class ProxyCountLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
+public class ProxyCountLookupFunction extends AbstractRelyingPartyLookupFunction<Integer> {
 
     /** {@inheritDoc} */
-    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Integer apply(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();

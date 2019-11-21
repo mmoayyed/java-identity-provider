@@ -41,7 +41,7 @@ public interface SAML2ProfileConfiguration {
      * 
      * @return maximum number of times an assertion may be proxied
      */
-    @NonNegative long getProxyCount(@Nullable final ProfileRequestContext profileRequestContext);
+    @NonNegative @Nullable Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Gets the unmodifiable collection of audiences for a proxied assertion.

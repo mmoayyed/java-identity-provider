@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -94,17 +93,17 @@ public class AbstractSAML2ProfileConfigurationTest {
     
     @Test public void testProxyCount() {
         final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-        Assert.assertEquals(config.getProxyCount(null), 0);
+        Assert.assertNull(config.getProxyCount(null));
 
         config.setProxyCount(1);
-        Assert.assertEquals(config.getProxyCount(null), 1);
+        Assert.assertEquals(config.getProxyCount(null), Integer.valueOf(1));
     }
 
     @Test public void testIndirectProxyCount() {
         final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
 
-        config.setProxyCountLookupStrategy(FunctionSupport.constant(1L));
-        Assert.assertEquals(config.getProxyCount(null), 1);
+        config.setProxyCountLookupStrategy(FunctionSupport.constant(1));
+        Assert.assertEquals(config.getProxyCount(null), Integer.valueOf(1));
     }
 
     @Test public void testProxyAudiences() {

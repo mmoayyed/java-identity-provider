@@ -197,12 +197,7 @@
             </bean>
         </property>
         <property name="proxyCountLookupStrategy">
-            <bean parent="shibboleth.MDDrivenLongProperty" p:propertyName="proxyCount">
-                <property name="defaultValue">
-                    <util:constant
-                        static-field="net.shibboleth.idp.saml.saml2.profile.config.AbstractSAML2ProfileConfiguration.DEFAULT_PROXY_COUNT" />
-                </property>
-            </bean>
+            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
         </property>
         <property name="proxyAudiencesLookupStrategy">
             <bean parent="shibboleth.MDDrivenSetProperty" p:propertyName="proxyAudiences" />

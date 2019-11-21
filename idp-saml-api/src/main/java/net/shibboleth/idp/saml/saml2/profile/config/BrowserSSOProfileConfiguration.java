@@ -529,7 +529,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * 
      * @since 4.0.0
      */
-    public void setAuthnContextTranslationStrategy(@Nullable final Function<AuthnContext,Collection<Principal>> strategy) {
+    public void setAuthnContextTranslationStrategy(
+            @Nullable final Function<AuthnContext,Collection<Principal>> strategy) {
         authnContextTranslationStrategyLookupStrategy = FunctionSupport.constant(strategy);
     }
 
