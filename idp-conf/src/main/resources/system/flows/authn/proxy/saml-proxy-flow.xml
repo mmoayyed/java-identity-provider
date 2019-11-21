@@ -31,10 +31,10 @@
         <evaluate expression="WriteAuditLog" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="EncodeMessage" />
+        <transition on="proceed" to="EncodeSAMLRequest" />
     </action-state>
     
-    <view-state id="EncodeMessage" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.externalAuthnPathStrategy').apply(opensamlProfileRequestContext) + '/start', flowExecutionContext.getKey().toString())}">
+    <view-state id="EncodeSAMLRequest" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.externalAuthnPathStrategy').apply(opensamlProfileRequestContext) + '/start', flowExecutionContext.getKey().toString())}">
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(new net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl(false)), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.saml.saml2.profile.impl.SAMLAuthnContext(EncodeMessage, messageDecoderFactory))" result="flowScope.samlContext" />

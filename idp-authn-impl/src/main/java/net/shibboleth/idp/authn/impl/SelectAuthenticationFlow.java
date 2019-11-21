@@ -190,6 +190,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         if (!authenticationContext.isForceAuthn()) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
             if (!activeResult.getReuseCondition().test(profileRequestContext)) {
+                log.debug("{} Active result for flow {} not reusable, ignoring", getLogPrefix(),
+                        activeResult.getAuthenticationFlowId());
                 activeResult = null;
             }
         }
@@ -283,6 +285,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(activeResult)) {
                     break;
                 }
+            } else {
+                log.debug("{} Active result for flow {} not reusable, ignoring", getLogPrefix(),
+                        activeResult.getAuthenticationFlowId());
             }
         }
         
@@ -458,6 +463,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
                         }
+                        log.debug("{} Active result for flow {} not usable, ignoring", getLogPrefix(),
+                                result.getAuthenticationFlowId());
                     }
                 } else {
                     log.warn("{} Configuration does not support requested principal evaluation with "
@@ -492,8 +499,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         final AuthenticationResult result = activeResults.get(descriptor.getId());
                         if (result == null || !result.getReuseCondition().test(profileRequestContext)
                                 || !predicate.test(result)) {
-                            if (!authenticationContext.isPassive()
-                                    || descriptor.isPassiveAuthenticationSupported()) {
+                            log.debug("{} Active result for flow {} not usable, ignoring", getLogPrefix(),
+                                    result.getAuthenticationFlowId());
+                            if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
                                 selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                                 return;
                             }

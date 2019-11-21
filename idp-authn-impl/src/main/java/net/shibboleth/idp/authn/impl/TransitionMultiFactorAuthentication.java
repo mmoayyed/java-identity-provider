@@ -273,14 +273,14 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         final AuthenticationResult activeResult = mfaContext.getActiveResults().get(flowId);
         if (activeResult != null) {
             if (activeResult.getReuseCondition().test(profileRequestContext)) {
-                log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
+                log.debug("{} Reusing active result for flow {}", getLogPrefix(), flowId);
                 activeResult.setLastActivityInstantToNow();
                 previousEvent = EventIds.PROCEED_EVENT_ID;
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 doExecute(profileRequestContext, authenticationContext);
                 return;
             }
-            log.debug("{} Condition blocked reuse of active result for '{}' flow", getLogPrefix(), flowId);
+            log.debug("{} Active result for flow {} not reusable, ignoring", getLogPrefix(), flowId);
             mfaContext.getActiveResults().remove(flowId);
         }
      
