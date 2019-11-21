@@ -499,8 +499,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         final AuthenticationResult result = activeResults.get(descriptor.getId());
                         if (result == null || !result.getReuseCondition().test(profileRequestContext)
                                 || !predicate.test(result)) {
-                            log.debug("{} Active result for flow {} not usable, ignoring", getLogPrefix(),
-                                    result.getAuthenticationFlowId());
+                            if (result != null) {
+                                log.debug("{} Active result for flow {} not usable, ignoring", getLogPrefix(),
+                                        result.getAuthenticationFlowId());
+                            }
                             if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
                                 selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                                 return;
