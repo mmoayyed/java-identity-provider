@@ -36,6 +36,7 @@
     <end-state id="RestartAuthentication" />
     <end-state id="RuntimeException" />
     <end-state id="SubjectCanonicalizationError" />
+    <end-state id="InvalidCSRFToken" />
 
     <action-state id="LogRuntimeException">
         <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
@@ -43,10 +44,12 @@
     </action-state>
 
     <global-transitions>
+    	<transition on-exception="net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException" to="InvalidCSRFToken" />
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{currentEvent.id.startsWith('authn/')}" to="ReselectFlow">
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setSignaledFlowId(currentEvent.id)" />
-        </transition>
+        </transition>        
+  		<transition on="InvalidCSRFToken" to="InvalidCSRFToken" />
         <transition on="AccountError" to="AccountError" />
         <transition on="AccountLocked" to="AccountLocked" />
         <transition on="AuthenticationException" to="AuthenticationException" />

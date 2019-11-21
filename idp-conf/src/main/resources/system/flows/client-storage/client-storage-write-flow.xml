@@ -52,9 +52,12 @@
     <end-state id="InvalidEvent" />
     <end-state id="InvalidProfileContext" />
     <end-state id="RuntimeException" />
+    <end-state id="InvalidCSRFToken" />
 
     <global-transitions>
+    	<transition on-exception="net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException" to="InvalidCSRFToken" />
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
+        <transition on="InvalidCSRFToken" to="InvalidCSRFToken" />
         <transition on="InvalidProfileContext" to="InvalidProfileContext" />
         <transition on="RuntimeException" to="RuntimeException" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />

@@ -42,11 +42,17 @@
             <div id="tou-acceptance">
                 <div style="float:left;">
                     <form action="$flowExecutionUrl" method="post" >
+                    	#if (${csrfToken})
+            			  <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
+			            #end
                         <input type="submit" name="_eventId_TermsRejected" value="#springMessageText("idp.terms-of-use.reject", "Refuse")" style="margin-right: 30px;">
                     </form>
                 </div>
                 <div style="float:right;">
                     <form action="$flowExecutionUrl" method="post" >
+                    	#if (${csrfToken})
+            			  <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
+			            #end
                         <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required>
                         <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")</label>
                         #if ($requireCheckbox)

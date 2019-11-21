@@ -24,6 +24,7 @@
     <end-state id="RestartAuthentication" />
     <end-state id="RuntimeException" />
     <end-state id="NoPassive" />
+    <end-state id="InvalidCSRFToken" />
 
     <action-state id="LogRuntimeException">
         <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
@@ -31,7 +32,9 @@
     </action-state>
 
     <global-transitions>
+    	<transition on-exception="net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException" to="InvalidCSRFToken" />
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
+        <transition on="InvalidCSRFToken" to="InvalidCSRFToken" />
         <transition on="InvalidProfileContext" to="InvalidProfileContext" />
         <transition on="MessageExpired" to="MessageExpired" />
         <transition on="MessageReplay" to="MessageReplay" />

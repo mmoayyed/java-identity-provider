@@ -130,9 +130,16 @@
         </on-entry>
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
+    
+     <!-- action state to set the InvalidCSRFToken event and proceed to HandleError -->
+	<action-state id="InvalidCSRFToken">
+		<evaluate expression="'InvalidCSRFToken'" />
+		<transition to="HandleError"/>
+	</action-state>
 
     <!-- Default is to turn non-proceed events into an error. -->
     <global-transitions>
+    	<transition  on-exception="net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException" to="InvalidCSRFToken"/>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>

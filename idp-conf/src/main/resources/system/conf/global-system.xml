@@ -182,6 +182,21 @@
 
     <bean id="shibboleth.EndpointResolver" class="org.opensaml.saml.common.binding.impl.DefaultEndpointResolver" />
 
+	<bean id="shibboleth.CSRFTokenManager" class="net.shibboleth.idp.ui.csrf.CSRFTokenManager"
+       p:csrfParameterName="%{idp.csrf.token.parameter:csrf_token}"/>
+         
+    <bean id="shibboleth.CSRFTokenPredicate" abstract="true"     	
+    	p:includedViewStateIds="%{idp.csrf.include.viewstates:}"
+        p:excludedViewStateIds="%{idp.csrf.exclude.viewstates:}"/>
+   	
+	<bean id="shibboleth.DefaultViewRequiresCSRFTokenPredicate" 
+		class="net.shibboleth.idp.ui.csrf.impl.DefaultViewRequiresCSRFTokenPredicate"
+		parent="shibboleth.CSRFTokenPredicate"/>
+	
+	<bean id="shibboleth.DefaultEventRequiresCSRFTokenValidationPredicate" 
+		class="net.shibboleth.idp.ui.csrf.impl.DefaultEventRequiresCSRFTokenValidationPredicate"
+		parent="shibboleth.CSRFTokenPredicate"/>
+
     <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"

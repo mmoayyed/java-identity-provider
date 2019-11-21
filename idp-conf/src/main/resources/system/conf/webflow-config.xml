@@ -188,6 +188,7 @@
         <webflow:flow-execution-listeners>
             <webflow:listener ref="profileRequestContextFlowExecutionListener"
                               criteria="%{idp.profile.exposeProfileRequestContextInServletRequest:*}" />
+            <webflow:listener ref="csrfTokenFlowExecutionListener"/>          
         </webflow:flow-execution-listeners>
     </webflow:flow-executor>
 
@@ -209,6 +210,12 @@
     <bean id="profileRequestContextFlowExecutionListener"
           class="net.shibboleth.idp.profile.support.ProfileRequestContextFlowExecutionListener" />
 
+	<bean id="csrfTokenFlowExecutionListener" init-method="initialize" destroy-method="destroy"
+          class="net.shibboleth.idp.ui.csrf.impl.CSRFTokenFlowExecutionListener" p:csrfTokenManager-ref="shibboleth.CSRFTokenManager"
+          p:enabled="%{idp.csrf.enabled:false}"
+          p:viewRequiresCSRFTokenPredicate-ref="shibboleth.DefaultViewRequiresCSRFTokenPredicate"
+          p:eventRequiresCSRFTokenValidationPredicate-ref="shibboleth.DefaultEventRequiresCSRFTokenValidationPredicate"/>
+          
     <!-- Expose the FlowExecutor for access via servlet context outside the webflows. -->
 	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
 	   <property name="attributes">
@@ -216,6 +223,7 @@
 	           <entry key="net.shibboleth.idp.flowExecutor" value-ref="flowExecutor"/>
 	       </map>
 	   </property>
-	</bean>
+	</bean>	
 
+         
 </beans>

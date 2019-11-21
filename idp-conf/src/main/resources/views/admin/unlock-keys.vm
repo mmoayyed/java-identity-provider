@@ -43,7 +43,9 @@
                 #end
             
                 <form action="$flowExecutionUrl" method="post">
-                
+                  #if (${csrfToken})
+            	   <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
+				  #end
                   <!--
                   If you have multiple key strategies defined, you'll need multiple pairs of form fields for
                   the passwords, labeled in the order they're fed into the shibboleth.unlock-keys.KeyStrategies

@@ -28,6 +28,7 @@
         <entry key="TermsRejected" value="true" />
         <entry key="RuntimeException" value="false" />
         <entry key="InvalidEvent" value="false" />
+        <entry key="InvalidCSRFToken" value="false" />
         <!--
         <entry key="IdentitySwitch" value="false" />
         <entry key="NoPotentialFlow" value="false" />

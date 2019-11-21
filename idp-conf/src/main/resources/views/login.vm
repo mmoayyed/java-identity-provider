@@ -46,7 +46,9 @@
             #parse("login-error.vm")
 
             <form action="$flowExecutionUrl" method="post">
-
+            #if (${csrfToken})
+            	<input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
+			#end
             #set ($serviceName = $rpUIContext.serviceName)
             #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
               <legend>

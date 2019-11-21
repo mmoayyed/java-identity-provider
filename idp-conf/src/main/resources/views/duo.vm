@@ -57,6 +57,9 @@
             >
             </iframe>
             <form id="duo_form" method="post">
+            	#if (${csrfToken})
+            	    <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
+				#end
                 <input type="hidden" name="_eventId" value="proceed" />
 
             </form>

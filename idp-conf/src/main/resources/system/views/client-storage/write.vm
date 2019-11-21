@@ -17,6 +17,9 @@
 ## to those fields.
 ##
 <form name="form1" action="${flowExecutionUrl}" method="post">
+	 #if (${csrfToken})
+         <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
+	#end
     #foreach ($op in $saveContext.getStorageOperations())
         <input name="shib_idp_ls_exception.$op.getKey()" type="hidden" />
         <input name="shib_idp_ls_success.$op.getKey()" type="hidden" value="false" />
