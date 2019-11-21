@@ -450,8 +450,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             }
             
             for (final SessionIndex index : logoutRequest.getSessionIndexes()) {
-                if (index.getSessionIndex() != null
-                        && index.getSessionIndex().equals(saml2Session.getSessionIndex())) {
+                if (index.getValue() != null && index.getValue().equals(saml2Session.getSessionIndex())) {
                     return true;
                 }
             }

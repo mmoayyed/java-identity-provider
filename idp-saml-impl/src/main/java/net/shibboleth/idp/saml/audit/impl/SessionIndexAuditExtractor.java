@@ -75,8 +75,8 @@ public class SessionIndexAuditExtractor implements Function<ProfileRequestContex
                 }
             } else if (message instanceof LogoutRequest) {
                 for (final SessionIndex index : ((LogoutRequest) message).getSessionIndexes()) {
-                    if (index != null && index.getSessionIndex() != null) {
-                        indexes.add(index.getSessionIndex());
+                    if (index != null && index.getValue() != null) {
+                        indexes.add(index.getValue());
                     }
                 }
             }
