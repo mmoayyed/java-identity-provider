@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import java.util.Collection;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,7 +50,7 @@ public interface SAML2ProfileConfiguration {
      * 
      * @return audiences for a proxied assertion
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Collection<String> getProxyAudiences(
+    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getProxyAudiences(
             @Nullable final ProfileRequestContext profileRequestContext);
     
     /**

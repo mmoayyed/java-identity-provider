@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.authn.context;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,8 +33,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.messaging.context.BaseContext;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A context that holds information about the subject of a request.
@@ -132,11 +130,10 @@ public final class SubjectContext extends BaseContext {
      * @return immutable list of Subjects 
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Subject> getSubjects() {
-        final List<Subject> composite = new ArrayList<>();
-        for (final AuthenticationResult e : getAuthenticationResults().values()) {
-            composite.add(e.getSubject());
-        }
-        return ImmutableList.copyOf(composite);
+        return authenticationResults.values()
+                .stream()
+                .map(AuthenticationResult::getSubject)
+                .collect(Collectors.toUnmodifiableList());
     }
     
 }

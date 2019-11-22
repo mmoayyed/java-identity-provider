@@ -91,11 +91,8 @@
 
     <bean id="AddProxyRestrictionToAssertions"
             class="org.opensaml.saml.saml2.profile.impl.AddProxyRestrictionToAssertions" scope="prototype">
-        <property name="proxyAudiencesLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyAudienceRestrictionsLookupFunction" />
-        </property>
-        <property name="proxyCountLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyCountLookupFunction" />
+        <property name="proxyRestrictionLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyRestrictionLookupFunction" />
         </property>
     </bean>
     

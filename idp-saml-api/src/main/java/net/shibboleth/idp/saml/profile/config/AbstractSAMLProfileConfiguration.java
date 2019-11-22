@@ -69,7 +69,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     @Nonnull private Function<ProfileRequestContext,Duration> assertionLifetimeLookupStrategy;
 
     /** Lookup function to supply assertionAudiences property. */
-    @Nonnull private Function<ProfileRequestContext,Collection<String>> assertionAudiencesLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Set<String>> assertionAudiencesLookupStrategy;
 
     /**
      * Constructor.
@@ -235,7 +235,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
-        final Collection<String> audiences = assertionAudiencesLookupStrategy.apply(profileRequestContext);
+        final Set<String> audiences = assertionAudiencesLookupStrategy.apply(profileRequestContext);
         if (audiences != null) {
             return Set.copyOf(audiences);
         }
@@ -267,7 +267,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
      * @since 4.0.0
      */
     public void setAdditionalAudiencesForAssertionLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+            @Nonnull final Function<ProfileRequestContext,Set<String>> strategy) {
         assertionAudiencesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 

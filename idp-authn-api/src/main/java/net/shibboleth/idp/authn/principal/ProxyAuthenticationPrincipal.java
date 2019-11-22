@@ -20,7 +20,10 @@ package net.shibboleth.idp.authn.principal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -53,7 +56,7 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
     @Nonnull @NonnullElements private Collection<String> authorities;
 
     /** The audiences. */
-    @Nonnull @NonnullElements private Collection<String> audiences;
+    @Nonnull @NonnullElements private Set<String> audiences;
 
     /** Constrains additional proxy hops. */
     @Nullable private Integer proxyCount;
@@ -61,7 +64,7 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
     /** Constructor. */
     public ProxyAuthenticationPrincipal() {
         authorities = new ArrayList<>();
-        audiences = new ArrayList<>();
+        audiences = new HashSet<>();
     }
 
     /**
@@ -73,7 +76,7 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
         Constraint.isNotNull(proxiedAuthorities, "Proxied authority collection cannot be null");
         
         authorities = new ArrayList<>(List.copyOf(proxiedAuthorities));
-        audiences = new ArrayList<>();
+        audiences = new HashSet<>();
     }
     
     /** {@inheritDoc} */
@@ -91,12 +94,12 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
     }
 
     /**
-     * Get the mutable audience collection, the set of relying parties for which proxying
+     * Get the mutable audience set, the set of relying parties for which proxying
      * is permissable.
      * 
      * @return the audiences
      */
-    @Nonnull @NonnullElements @Live public Collection<String> getAudiences() {
+    @Nonnull @NonnullElements @Live public Set<String> getAudiences() {
         return audiences;
     }
     
@@ -166,7 +169,9 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
         }
 
         if (other instanceof ProxyAuthenticationPrincipal) {
-            return authorities.equals(((ProxyAuthenticationPrincipal) other).getAuthorities());
+            return authorities.equals(((ProxyAuthenticationPrincipal) other).getAuthorities()) &&
+                    Objects.equals(proxyCount, ((ProxyAuthenticationPrincipal) other).getProxyCount()) &&
+                    audiences.equals(((ProxyAuthenticationPrincipal) other).getAudiences());
         }
 
         return false;
