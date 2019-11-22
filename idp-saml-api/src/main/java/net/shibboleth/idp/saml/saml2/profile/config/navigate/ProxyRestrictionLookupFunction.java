@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.navigate;
+package net.shibboleth.idp.saml.saml2.profile.config.navigate;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -62,11 +63,18 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
     
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Nullable public Pair<Integer,Set<String>> apply(@Nullable final ProfileRequestContext input) {
+                
+        // The proxy count is normally set to the minimum of local policy and upstream - 1, but
+        // null values have to taken into account, and 0 is the minimum.
         
         Integer proxyCount = null;
+
+        // The empty set signals no constraint on proxy, but a null value is used to track when
+        // the interaction of existing sets has resulted in the null set, which means no proxying.
+        
         final Set<String> audiences = new HashSet<>();
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
@@ -75,34 +83,30 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
             if (pc != null && pc instanceof SAML2ProfileConfiguration) {
                 proxyCount = ((SAML2ProfileConfiguration) pc).getProxyCount(input);
                 final Set<String> configAudiences = ((SAML2ProfileConfiguration) pc).getProxyAudiences(input);
-                if (configAudiences != null) {
+                if (configAudiences != null && !configAudiences.isEmpty()) {
                     audiences.addAll(configAudiences);
                 }
             }
         }
-                
-        final SubjectContext sc = subjectContextLookupStrategy.apply(input);
+
+        // At this point the local configuration applies, and lacking any upstream, that applies.
         
-        if (sc == null) {
-            if (proxyCount != null) {
-                proxyCount = Integer.max(0, proxyCount - 1);
-            }
-            return new Pair<>(proxyCount, audiences);
+        final SubjectContext sc = subjectContextLookupStrategy.apply(input);
+        final Set<ProxyAuthenticationPrincipal> proxieds =
+                sc == null ? Collections.emptySet()
+                    : sc.getSubjects().stream()
+                        .map(s -> s.getPrincipals(ProxyAuthenticationPrincipal.class))
+                        .flatMap(Set::stream)
+                        .collect(Collectors.toUnmodifiableSet());
+
+        if (proxieds.isEmpty()) {
+            return new Pair<>(proxyCount, Set.copyOf(audiences));
         }
         
-        final Set<ProxyAuthenticationPrincipal> proxieds =
-                sc.getSubjects().stream()
-                    .map(s -> s.getPrincipals(ProxyAuthenticationPrincipal.class))
-                    .flatMap(Set::stream)
-                    .collect(Collectors.toUnmodifiableSet());
         for (final ProxyAuthenticationPrincipal p : proxieds) {
-            if (p.getProxyCount() != null) {
-                if (proxyCount != null) {
-                    proxyCount = Integer.min(proxyCount, Integer.max(0, p.getProxyCount() - 1));
-                } else {
-                    proxyCount = Integer.max(0, p.getProxyCount() - 1);
-                }
-            }
+            
+            // Given upstream audiences, we either initialize an empty local set to that set,
+            // or intersect the non-empty local set against upstream.
             
             final Set<String> upstreamAudiences = p.getAudiences();
             if (upstreamAudiences != null && !upstreamAudiences.isEmpty()) {
@@ -110,12 +114,30 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
                     audiences.addAll(upstreamAudiences);
                 } else {
                     audiences.retainAll(upstreamAudiences);
+                    
+                    // If the interaction is empty, we have disallowed proxying by finding no common
+                    // audiences, and can immediately exit signaling no proxying.
+                    
+                    if (audiences.isEmpty()) {
+                        return new Pair<>(0, Collections.emptySet());
+                    }
+                }
+            }
+
+            // Given a non-null upstream count, we reduce the local value if necessary, or possibly
+            // set it for the first time. The max expression just turns -1 back into 0.
+            
+            if (p.getProxyCount() != null) {
+                if (proxyCount != null) {
+                    proxyCount = Integer.min(proxyCount, Integer.max(0, p.getProxyCount() - 1));
+                } else {
+                    proxyCount = Integer.max(0, p.getProxyCount() - 1);
                 }
             }
         }
         
-        return new Pair<>(proxyCount, audiences);
+        return new Pair<>(proxyCount, Set.copyOf(audiences));
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
 }

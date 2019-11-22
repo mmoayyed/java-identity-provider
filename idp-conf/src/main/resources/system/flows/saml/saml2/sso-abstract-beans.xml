@@ -92,7 +92,7 @@
     <bean id="AddProxyRestrictionToAssertions"
             class="org.opensaml.saml.saml2.profile.impl.AddProxyRestrictionToAssertions" scope="prototype">
         <property name="proxyRestrictionLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyRestrictionLookupFunction" />
+            <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyRestrictionLookupFunction" />
         </property>
     </bean>
     
