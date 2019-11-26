@@ -70,7 +70,7 @@ public class IdPUIInfo {
     private final Predicate<LocalizedURI> nullLanguageURL = new Predicate<>() {
         public boolean test(final LocalizedURI u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("URI with value {} has no language associated, ignoring", u.getValue());
+                LOG.warn("URI with value {} has no language associated, ignoring", u.getURI());
                 return false;
             }
             return true;
@@ -133,14 +133,14 @@ public class IdPUIInfo {
                 filter(nullLanguageURL).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
-                        dn -> dn.getValue()));
+                        dn -> dn.getURI()));
         privacyStatementURLs = uiInfo.
                 getPrivacyStatementURLs().
                 stream().
                 filter(nullLanguageURL).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
-                        url -> url.getValue()));
+                        url -> url.getURI()));
         
         final List<Logo> noLocaleLogo = new ArrayList<>();
         final Map<Locale, List<Logo>> withLocaleLogo = new HashMap<>();
