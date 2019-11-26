@@ -733,14 +733,14 @@ public final class RelyingPartyUIContext extends BaseContext {
             final int maxHeight) {
         final int height;
         if (null == logo.getHeight()) {
-            log.warn("No height available for {} assuming a fit", logo.getURL());
+            log.warn("No height available for {} assuming a fit", logo.getURI());
             height = maxHeight -1;
         } else {
             height = logo.getHeight();
         }
         final int width;
         if (null == logo.getWidth()) {
-            log.warn("No width available for {} assuming a fit", logo.getURL());
+            log.warn("No width available for {} assuming a fit", logo.getURI());
             width = maxWidth - 1;
         } else {
             width = logo.getWidth();
@@ -773,7 +773,7 @@ public final class RelyingPartyUIContext extends BaseContext {
                 for (final Logo logo : logos.get(l)) {
                     log.trace("Found logo in UIInfo, ({} x {}) - {}", logo.getWidth(), logo.getHeight(), l);
                     if (logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
-                        final String result = policeURLLogo(logo.getURL());
+                        final String result = policeURLLogo(logo.getURI());
                         if (result != null) {
                             log.debug("Found locale logo from UIInfo, ({} x {}) : {}",
                                     logo.getWidth(), logo.getHeight(), result);
@@ -786,7 +786,7 @@ public final class RelyingPartyUIContext extends BaseContext {
                 for (final Logo logo : logos.get(l)) {
                     log.trace("Found logo in UIInfo, ({} x {}) - {}", logo.getWidth(), logo.getHeight(), l);
                     if (logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
-                        final String result = policeURLLogo(logo.getURL());
+                        final String result = policeURLLogo(logo.getURI());
                         if (result != null) {
                             log.debug("Found locale logo from UIInfo, ({} x {}) : {}",
                                     logo.getWidth(), logo.getHeight(), result);
@@ -802,10 +802,10 @@ public final class RelyingPartyUIContext extends BaseContext {
                 log.trace("Size Mismatch");
                 continue;
             }
-            final String result = policeURLLogo(logo.getURL());
+            final String result = policeURLLogo(logo.getURI());
             if (result != null) {
                 log.debug("Found nonlocale logo from UIInfo, ({} x {}) : {}",
-                        logo.getWidth(), logo.getHeight(), logo.getURL());
+                        logo.getWidth(), logo.getHeight(), logo.getURI());
                 return result;
             }
         }
