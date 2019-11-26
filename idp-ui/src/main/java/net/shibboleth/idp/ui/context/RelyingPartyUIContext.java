@@ -634,7 +634,7 @@ public final class RelyingPartyUIContext extends BaseContext {
         if (null == contact || null == contact.getSurName()) {
             return null;
         }
-        return contact.getSurName().getName();
+        return contact.getSurName().getValue();
     }
 
     /**
@@ -649,7 +649,7 @@ public final class RelyingPartyUIContext extends BaseContext {
         if (null == contact || null == contact.getGivenName()) {
             return null;
         }
-        return contact.getGivenName().getName();
+        return contact.getGivenName().getValue();
     }
 
     /**
@@ -664,7 +664,7 @@ public final class RelyingPartyUIContext extends BaseContext {
         if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
             return null;
         }
-        return policeURLNonLogo(contact.getEmailAddresses().get(0).getAddress());
+        return policeURLNonLogo(contact.getEmailAddresses().get(0).getURI());
     }
 
     /** Helper function for methods which need localized strings.

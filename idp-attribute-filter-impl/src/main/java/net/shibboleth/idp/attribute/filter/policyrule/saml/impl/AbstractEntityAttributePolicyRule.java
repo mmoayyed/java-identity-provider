@@ -340,7 +340,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
 
         } else if (object instanceof XSURI) {
 
-            retVal = ((XSURI) object).getValue();
+            retVal = ((XSURI) object).getURI();
 
         } else if (object instanceof XSBoolean) {
 

@@ -416,7 +416,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     
     private Conditions buildDelegationRequestConditions() {
         Audience audience = (Audience) XMLObjectSupport.buildXMLObject(Audience.DEFAULT_ELEMENT_NAME);
-        audience.setAudienceURI(prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId(prc));
+        audience.setURI(prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId(prc));
         AudienceRestriction ar = (AudienceRestriction) XMLObjectSupport.buildXMLObject(AudienceRestriction.DEFAULT_ELEMENT_NAME);
         ar.getAudiences().add(audience);
         Conditions conditions = (Conditions) XMLObjectSupport.buildXMLObject(Conditions.DEFAULT_ELEMENT_NAME);

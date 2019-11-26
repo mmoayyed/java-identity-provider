@@ -218,7 +218,7 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
         if (objList == null || objList.isEmpty()) {
             return null;
         }
-        return ((Action)objList.get(0)).getValue();
+        return ((Action)objList.get(0)).getURI();
     }
     
     /**

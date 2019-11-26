@@ -389,7 +389,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(assertion.getConditions().getAudienceRestrictions().get(0).getAudiences().size() > 0);
         boolean sawAudience = false;
         for (Audience audience : assertion.getConditions().getAudienceRestrictions().get(0).getAudiences()) {
-            if (Objects.equals(audience.getAudienceURI(), ActionTestingSupport.OUTBOUND_MSG_ISSUER)) {
+            if (Objects.equals(audience.getURI(), ActionTestingSupport.OUTBOUND_MSG_ISSUER)) {
                 sawAudience = true;
             }
         }
@@ -411,7 +411,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(attribValue.getUnknownXMLObjects(EndpointReference.ELEMENT_NAME).size(), 1);
         EndpointReference epr = (EndpointReference) attribValue.getUnknownXMLObjects(EndpointReference.ELEMENT_NAME).get(0);
         Assert.assertNotNull(epr.getAddress());
-        Assert.assertEquals(epr.getAddress().getValue(), ssosURL);
+        Assert.assertEquals(epr.getAddress().getURI(), ssosURL);
         
         Assert.assertNotNull(epr.getMetadata());
         

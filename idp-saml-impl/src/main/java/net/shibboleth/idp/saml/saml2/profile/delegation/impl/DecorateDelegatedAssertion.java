@@ -425,7 +425,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             @Nonnull final Assertion assertion) {
         
         final Address address = (Address) XMLObjectSupport.buildXMLObject(Address.ELEMENT_NAME);
-        address.setValue(libertySSOSEndpointURL);
+        address.setURI(libertySSOSEndpointURL);
         
         final MetadataAbstract libertyAbstract = (MetadataAbstract) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_ABSTRACT_ELEMENT_NAME);
@@ -498,7 +498,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         
         // Sanity check that IdP audience has not already been added by other code.
         for (final Audience audience : audienceRestriction.getAudiences()) {
-            if (Objects.equals(responderId, StringSupport.trimOrNull(audience.getAudienceURI()))) {
+            if (Objects.equals(responderId, StringSupport.trimOrNull(audience.getURI()))) {
                 log.debug("Local entity ID '{}' already present in assertion AudienceRestriction set, skipping",
                         responderId);
                 return;
@@ -506,7 +506,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         
         final Audience idpAudience = (Audience) XMLObjectSupport.buildXMLObject(Audience.DEFAULT_ELEMENT_NAME);
-        idpAudience.setAudienceURI(responderId);
+        idpAudience.setURI(responderId);
         audienceRestriction.getAudiences().add(idpAudience);
     }
 

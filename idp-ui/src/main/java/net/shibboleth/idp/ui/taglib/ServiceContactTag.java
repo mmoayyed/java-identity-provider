@@ -117,7 +117,7 @@ public class ServiceContactTag extends ServiceTagSupport {
         String emailAddress = null;
 
         if (emails != null && !emails.isEmpty()) {
-            emailAddress = emails.get(0).getAddress();
+            emailAddress = emails.get(0).getURI();
         }
 
         if (null != contactName) {
@@ -127,10 +127,10 @@ public class ServiceContactTag extends ServiceTagSupport {
         final GivenName givenName = contact.getGivenName();
         final StringBuilder fullName = new StringBuilder();
         if (null != givenName) {
-            fullName.append(givenName.getName()).append(" ");
+            fullName.append(givenName.getValue()).append(" ");
         }
         if (null != surName) {
-            fullName.append(surName.getName()).append(" ");
+            fullName.append(surName.getValue()).append(" ");
         }
         if (0 == fullName.length()) {
             if (null == emails) {

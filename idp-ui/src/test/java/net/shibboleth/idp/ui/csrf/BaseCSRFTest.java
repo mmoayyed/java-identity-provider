@@ -70,9 +70,9 @@ public class BaseCSRFTest {
 
         private RequestContext context;
 
-        public MockView(String viewId, RequestContext context) {
-            this.viewId = viewId;
-            this.context = context;
+        public MockView(String id, RequestContext ctx) {
+            viewId = id;
+            context = ctx;
         }
 
         /**

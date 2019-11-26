@@ -96,14 +96,13 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
         return sourceValues;
     }
 
+// CheckStyle: CyclomaticComplexity OFF
     /**
      * Evaluate an incoming attribute value against this value map.
      *
      * @param attributeValue incoming attribute value
      * @return set of new values the incoming value mapped to
      */
-    /** {@inheritDoc} */
-    // CheckStyle: CyclomaticComplexity OFF
     @Nullable public Set<StringAttributeValue> apply(@Nullable final String attributeValue) {
         
         if (attributeValue == null) {
@@ -151,5 +150,5 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
         return mappedValues;
     }
-    // CheckStyle: CyclomaticComplexity ON
+// CheckStyle: CyclomaticComplexity ON
 }

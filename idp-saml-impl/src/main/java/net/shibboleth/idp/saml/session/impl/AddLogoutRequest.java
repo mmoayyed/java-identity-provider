@@ -260,7 +260,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
                     (SAMLObjectBuilder<SessionIndex>) bf.<SessionIndex>getBuilderOrThrow(
                             SessionIndex.DEFAULT_ELEMENT_NAME);
             final SessionIndex index = indexBuilder.buildObject();
-            index.setSessionIndex(saml2Session.getSessionIndex());
+            index.setValue(saml2Session.getSessionIndex());
             object.getSessionIndexes().add(index);
         }
         

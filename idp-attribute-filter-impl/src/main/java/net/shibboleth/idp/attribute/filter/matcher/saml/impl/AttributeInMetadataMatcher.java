@@ -391,7 +391,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
         if (xmlObj instanceof XSString) {
             toMatch = ((XSString) xmlObj).getValue();
         } else if (xmlObj instanceof XSURI) {
-            toMatch = ((XSURI) xmlObj).getValue();
+            toMatch = ((XSURI) xmlObj).getURI();
         } else if (xmlObj instanceof XSBoolean) {
             toMatch = ((XSBoolean) xmlObj).getValue().getValue() ? "1" : "0";
         } else if (xmlObj instanceof XSInteger) {

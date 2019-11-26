@@ -96,7 +96,7 @@ public class LibertyHTTPSOAP11EncoderTest extends XMLObjectBaseTestCase {
         encoder.prepareContext();
         
         Action action = buildXMLObject(Action.ELEMENT_NAME);
-        action.setValue(LibertyConstants.SSOS_RESPONSE_WSA_ACTION_URI);
+        action.setURI(LibertyConstants.SSOS_RESPONSE_WSA_ACTION_URI);
         SOAPMessagingSupport.addHeaderBlock(messageContext, action);
         
         encoder.encode();

@@ -552,7 +552,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
             final Conditions conditions = authnRequest.getConditions();
             for (final AudienceRestriction ar : conditions.getAudienceRestrictions()) {
                 for (final Audience audience : ar.getAudiences()) {
-                    final String audienceValue = StringSupport.trimOrNull(audience.getAudienceURI());
+                    final String audienceValue = StringSupport.trimOrNull(audience.getURI());
                     if (Objects.equals(audienceValue, responderId)) {
                         log.debug("Saw an AuthnRequest/Conditions/AudienceRestriction/Audience with value of '{}'",
                                 responderId);

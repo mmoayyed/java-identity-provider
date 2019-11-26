@@ -377,7 +377,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         final SessionIndex sessionIndex = sessionIndexBuilder.buildObject();
-        sessionIndex.setSessionIndex("index");
+        sessionIndex.setValue("index");
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         ((LogoutRequest) prc.getInboundMessageContext().getMessage()).getSessionIndexes().add(sessionIndex);
 

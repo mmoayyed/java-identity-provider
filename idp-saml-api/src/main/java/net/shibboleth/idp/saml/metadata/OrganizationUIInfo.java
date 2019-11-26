@@ -63,7 +63,7 @@ public class OrganizationUIInfo {
     private final Predicate<LocalizedURI> nullLanguageURL = new Predicate<>() {
         public boolean test(final LocalizedURI u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("URI with value {} has no language associated, ignoring", u.getValue());
+                LOG.warn("URI with value {} has no language associated, ignoring", u.getURI());
                 return false;
             }
             return true;
@@ -98,7 +98,7 @@ public class OrganizationUIInfo {
                 filter(nullLanguageURL).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
-                        dn -> dn.getValue()));
+                        dn -> dn.getURI()));
     }
 
     /** 

@@ -44,7 +44,7 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object excludedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(excludedListObject);
         Assert.assertTrue(excludedListObject instanceof Set);
-        Assert.assertEquals(((Set) excludedListObject).size(), 0);
+        Assert.assertEquals(((Set<?>) excludedListObject).size(), 0);
 
     }
    
@@ -58,7 +58,7 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object excludedListObject = ReflectionTestUtils.getField(predicate, EXCLUDED_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(excludedListObject);
         Assert.assertTrue(excludedListObject instanceof Set);
-        Assert.assertEquals(((Set) excludedListObject).size(), 0);
+        Assert.assertEquals(((Set<?>) excludedListObject).size(), 0);
 
         // test setting an actual excluded view state
         List<String> excludedViewStates = Arrays.asList(new String[] {"excludedViewId"});
@@ -66,8 +66,8 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         excludedListObject = ReflectionTestUtils.getField(predicate, EXCLUDED_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(excludedListObject);
         Assert.assertTrue(excludedListObject instanceof Set);
-        Assert.assertEquals(((Set) excludedListObject).size(), 1);
-        Assert.assertTrue(((Set) excludedListObject).contains("excludedViewId"));
+        Assert.assertEquals(((Set<?>) excludedListObject).size(), 1);
+        Assert.assertTrue(((Set<?>) excludedListObject).contains("excludedViewId"));
 
     }
     
@@ -83,8 +83,8 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(includedListObject);
         Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set) includedListObject).size(), 1);
-        Assert.assertTrue(((Set) includedListObject).contains("includedViewId"));
+        Assert.assertEquals(((Set<?>) includedListObject).size(), 1);
+        Assert.assertTrue(((Set<?>) includedListObject).contains("includedViewId"));
         Assert.assertNotNull(includeAllViews);
         Assert.assertTrue(includeAllViews instanceof Boolean);
         Assert.assertFalse((Boolean)includeAllViews);
@@ -102,9 +102,9 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(includedListObject);
         Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set) includedListObject).size(), 2);
-        Assert.assertTrue(((Set) includedListObject).contains("includedViewId"));
-        Assert.assertTrue(((Set) includedListObject).contains("includedViewId2"));
+        Assert.assertEquals(((Set<?>) includedListObject).size(), 2);
+        Assert.assertTrue(((Set<?>) includedListObject).contains("includedViewId"));
+        Assert.assertTrue(((Set<?>) includedListObject).contains("includedViewId2"));
         Assert.assertNotNull(includeAllViews);
         Assert.assertTrue(includeAllViews instanceof Boolean);
         Assert.assertFalse((Boolean)includeAllViews);
@@ -122,7 +122,7 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(includedListObject);
         Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set) includedListObject).size(), 0);
+        Assert.assertEquals(((Set<?>) includedListObject).size(), 0);
         Assert.assertNotNull(includeAllViews);
         Assert.assertTrue(includeAllViews instanceof Boolean);
         Assert.assertTrue((Boolean)includeAllViews);
@@ -141,7 +141,7 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(includedListObject);
         Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set) includedListObject).size(), 0);
+        Assert.assertEquals(((Set<?>) includedListObject).size(), 0);
         Assert.assertNotNull(includeAllViews);
         Assert.assertTrue(includeAllViews instanceof Boolean);
         Assert.assertTrue((Boolean)includeAllViews);
@@ -159,7 +159,7 @@ public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
         Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
         Assert.assertNotNull(includedListObject);
         Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set) includedListObject).size(), 0);
+        Assert.assertEquals(((Set<?>) includedListObject).size(), 0);
         Assert.assertNotNull(includeAllViews);
         Assert.assertTrue(includeAllViews instanceof Boolean);
         Assert.assertFalse((Boolean)includeAllViews);

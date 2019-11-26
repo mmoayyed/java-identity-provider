@@ -102,10 +102,10 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
-        format.setFormat(NameID.EMAIL);
+        format.setURI(NameID.EMAIL);
         role.getNameIDFormats().add(format);
         format = formatBuilder.buildObject();
-        format.setFormat(NameID.TRANSIENT);
+        format.setURI(NameID.TRANSIENT);
         role.getNameIDFormats().add(format);
 
         final List<String> formats = strategy.apply(prc);
@@ -120,10 +120,10 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
-        format.setFormat(NameID.PERSISTENT);
+        format.setURI(NameID.PERSISTENT);
         role.getNameIDFormats().add(format);
         format = formatBuilder.buildObject();
-        format.setFormat(NameID.X509_SUBJECT);
+        format.setURI(NameID.X509_SUBJECT);
         role.getNameIDFormats().add(format);
 
         final List<String> formats = strategy.apply(prc);
@@ -138,10 +138,10 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
-        format.setFormat(NameID.TRANSIENT);
+        format.setURI(NameID.TRANSIENT);
         role.getNameIDFormats().add(format);
         format = formatBuilder.buildObject();
-        format.setFormat(NameID.X509_SUBJECT);
+        format.setURI(NameID.X509_SUBJECT);
         role.getNameIDFormats().add(format);
 
         final List<String> formats = strategy.apply(prc);
@@ -156,10 +156,10 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
-        format.setFormat(NameID.TRANSIENT);
+        format.setURI(NameID.TRANSIENT);
         role.getNameIDFormats().add(format);
         format = formatBuilder.buildObject();
-        format.setFormat(NameID.UNSPECIFIED);
+        format.setURI(NameID.UNSPECIFIED);
         role.getNameIDFormats().add(format);
         
         final List<String> formats = strategy.apply(prc);

@@ -117,7 +117,7 @@ public abstract class AbstractCollectionConfigurationLookupStrategy<T1,T2>
         if (object instanceof XSString) {
             return ((XSString) object).getValue();
         } else if (object instanceof XSURI) {
-            return ((XSURI) object).getValue();
+            return ((XSURI) object).getURI();
         } else if (object instanceof XSBoolean) {
             final XSBooleanValue value = ((XSBoolean) object).getValue();
             return value != null ? (value.getValue() ? "1" : "0") : null;

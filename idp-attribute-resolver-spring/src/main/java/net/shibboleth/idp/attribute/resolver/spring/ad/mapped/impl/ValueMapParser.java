@@ -42,7 +42,6 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 /** Bean definition parser for a {@link ValueMap}. */
 public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type name. */
     /** Schema type name - resolver: . */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ValueMap");

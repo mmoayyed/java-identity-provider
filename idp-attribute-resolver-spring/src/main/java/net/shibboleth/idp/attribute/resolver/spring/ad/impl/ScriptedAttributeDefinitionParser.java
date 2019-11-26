@@ -42,7 +42,6 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
  */
 public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
     /** Schema type name - resolver: . */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ScriptedAttribute");

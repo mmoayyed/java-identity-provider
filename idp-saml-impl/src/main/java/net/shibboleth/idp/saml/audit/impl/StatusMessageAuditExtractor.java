@@ -60,7 +60,7 @@ public class StatusMessageAuditExtractor implements Function<ProfileRequestConte
                         ((StatusResponseType) response).getStatus() != null
                                 ? ((StatusResponseType) response).getStatus().getStatusMessage() : null;
                 if (msg != null) {
-                    return msg.getMessage();
+                    return msg.getValue();
                 }
             }
         }
