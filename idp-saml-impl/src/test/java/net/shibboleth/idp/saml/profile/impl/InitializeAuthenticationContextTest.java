@@ -40,6 +40,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
+
 /** {@link InitializeAuthenticationContext} unit test. */
 public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
 
@@ -122,7 +124,7 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
     }
 
-    @Test public void testAuthnRequestIgnored() throws ComponentInitializationException {
+    @Test public void testScopingIgnored() throws ComponentInitializationException {
         final AuthnRequest authnRequest = SAML2ActionTestingSupport.buildAuthnRequest();
         authnRequest.setIsPassive(true);
         authnRequest.setForceAuthn(true);
@@ -136,7 +138,7 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
 
         action = new InitializeAuthenticationContext();
         action.setProxyCountLookupStrategy(FunctionSupport.constant(1));
-        action.setHonorAuthnRequest(false);
+        action.setIgnoreScopingPredicate(Predicates.alwaysTrue());
         action.initialize();
         
         final Event event = action.execute(requestCtx);
@@ -144,8 +146,8 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertNotNull(authnCtx);
-        Assert.assertFalse(authnCtx.isForceAuthn());
-        Assert.assertFalse(authnCtx.isPassive());
+        Assert.assertTrue(authnCtx.isForceAuthn());
+        Assert.assertTrue(authnCtx.isPassive());
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
     }
 

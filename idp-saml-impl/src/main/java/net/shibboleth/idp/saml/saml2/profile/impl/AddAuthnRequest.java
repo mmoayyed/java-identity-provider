@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -49,9 +51,12 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.IDPEntry;
+import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
+import org.opensaml.saml.saml2.core.Scoping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,6 +207,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     }
 // Checkstyle: CyclomaticComplexity ON
 
+// Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -217,9 +223,6 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         final SAMLObjectBuilder<NameIDPolicy> nipBuilder =
                 (SAMLObjectBuilder<NameIDPolicy>) bf.<NameIDPolicy>getBuilderOrThrow(
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
-        final SAMLObjectBuilder<RequestedAuthnContext> racBuilder =
-                (SAMLObjectBuilder<RequestedAuthnContext>) bf.<RequestedAuthnContext>getBuilderOrThrow(
-                        RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
 
         final AuthnRequest object = requestBuilder.buildObject();
         
@@ -263,7 +266,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         object.setNameIDPolicy(nip);
 
-        final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext, racBuilder);
+        final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext);
         if (rac != null) {
             final AuthnContextComparisonTypeEnumeration operator =
                     profileConfiguration.getAuthnContextComparison(profileRequestContext);
@@ -274,26 +277,33 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             object.setRequestedAuthnContext(rac);
         }
         
+        object.setScoping(buildScoping(profileRequestContext, authenticationContext.getProxyCount(),
+                authenticationContext.getProxiableAuthorities()));
+        
         profileRequestContext.getOutboundMessageContext().setMessage(object);
     }
+// Checkstyle: MethodLength ON
     
     /**
      * Build a {@link RequestedAuthnContext} if warranted.
      * 
      * @param profileRequestContext current profile request context
-     * @param builder object builder
      * 
      * @return the object to include in the request, or null
      */
     @Nullable private RequestedAuthnContext getRequestedAuthnContext(
-            @Nullable final ProfileRequestContext profileRequestContext,
-            @Nonnull final SAMLObjectBuilder<RequestedAuthnContext> builder) {
+            @Nullable final ProfileRequestContext profileRequestContext) {
         
         // RequestedAuthnContext also based on profile configuration.
         final List<Principal> principals = profileConfiguration.getDefaultAuthenticationMethods(profileRequestContext);
         if (principals.isEmpty()) {
             return null;
         }
+        
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        final SAMLObjectBuilder<RequestedAuthnContext> builder =
+                (SAMLObjectBuilder<RequestedAuthnContext>) bf.<RequestedAuthnContext>getBuilderOrThrow(
+                        RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
         
         // Check for class refs.
         final List<AuthnContextClassRefPrincipal> classRefPrincipals = principals.stream()
@@ -342,6 +352,49 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         }
         
         return null;
+    }
+    
+    /**
+     * Build a {@Scoping} element, decrementing the proxy count if set.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param count proxy count
+     * @param idplist list of IdP entityIDs
+     * 
+     * @return populated {@link Scoping}
+     */
+    @Nullable public Scoping buildScoping(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nullable final Integer count, @Nonnull @NonnullElements final Set<String> idplist) {
+        
+        if (count == null && idplist.isEmpty()) {
+            return null;
+        } else if (profileConfiguration.isIgnoreScoping(profileRequestContext)) {
+            log.warn("{} Skipping generation of Scoping element in violation of standard", getLogPrefix());
+            return null;
+        }
+        
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        final SAMLObjectBuilder<Scoping> scopingBuilder =
+                (SAMLObjectBuilder<Scoping>) bf.<Scoping>getBuilderOrThrow(Scoping.DEFAULT_ELEMENT_NAME);
+        final Scoping scoping = scopingBuilder.buildObject();
+        scoping.setProxyCount(Integer.min(0, count - 1));
+        
+        if (!idplist.isEmpty()) {
+            final SAMLObjectBuilder<IDPList> idpListBuilder =
+                    (SAMLObjectBuilder<IDPList>) bf.<IDPList>getBuilderOrThrow(IDPList.DEFAULT_ELEMENT_NAME);
+            final SAMLObjectBuilder<IDPEntry> idpBuilder =
+                    (SAMLObjectBuilder<IDPEntry>) bf.<IDPEntry>getBuilderOrThrow(IDPEntry.DEFAULT_ELEMENT_NAME);
+                        
+            final IDPList idps = idpListBuilder.buildObject();
+            for (final String idp : idplist) {
+                final IDPEntry entry = idpBuilder.buildObject();
+                entry.setProviderID(idp);
+                idps.getIDPEntrys().add(entry);
+            }
+            scoping.setIDPList(idps);
+        }
+        
+        return scoping;
     }
     
 }

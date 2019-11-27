@@ -228,8 +228,7 @@
         p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeAuthenticationContext"
-        class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype"
-        p:honorAuthnRequest="%{idp.saml.honorAuthnRequest:true}" />
+        class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"

@@ -30,6 +30,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreScopingProfileConfigPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -69,15 +70,15 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
 
     /** Extracts forceAuthn property from profile config. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
-    
+
+    /** Extracts ignoreScoping property from profile config. */
+    @Nonnull private Predicate<ProfileRequestContext> ignoreScopingPredicate;
+
     /** Strategy used to determine proxy count from configuration. */
     @Nullable private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
     
     /** Strategy used to locate the {@link AuthnRequest} to operate on, if any. */
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> requestLookupStrategy;
-    
-    /** Whether to honor various policy in an {@link AuthnRequest}. */
-    private boolean honorAuthnRequest;
     
     /** Incoming SAML 2.0 request, if present. */
     @Nullable private AuthnRequest authnRequest;
@@ -86,9 +87,9 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     public InitializeAuthenticationContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         forceAuthnPredicate = new ForceAuthnProfileConfigPredicate();
+        ignoreScopingPredicate = new IgnoreScopingProfileConfigPredicate();
         proxyCountLookupStrategy = new ProxyCountLookupFunction();
         requestLookupStrategy = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
-        honorAuthnRequest = true;
     }
     
     /**
@@ -118,7 +119,20 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
-    
+
+    /**
+     * Set the predicate to apply to determine whether to ignore any inbound {@link Scoping} element. 
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setIgnoreScopingPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        ignoreScopingPredicate = Constraint.isNotNull(condition, "Ignore Scoping predicate cannot be null");
+    }
+
     /**
      * Set the lookup function to apply to derive the proxy count from the configuration.
      * 
@@ -143,22 +157,6 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     
-    /**
-     * Sets whether to honor various policy in an {@link AuthnRequest} such as IsPassive, ForceAuthn, and Scoping.
-     * 
-     * <p>Turning this off constitutes a standards violation and is provided for compatibility with garbage SAML
-     * implementations and incompetent deployers.</p>
-     * 
-     * @param flag flag to set
-     * 
-     * @since 4.0.0
-     */
-    public void setHonorAuthnRequest(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        honorAuthnRequest = flag;
-    }
-    
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -168,12 +166,6 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         }
         
         authnRequest = requestLookupStrategy.apply(profileRequestContext);
-        
-        if (authnRequest != null && !honorAuthnRequest) {
-            log.warn("{} Ignoring incoming AuthnRequest policy content in violation of SAML standard",
-                    getLogPrefix());
-            authnRequest = null;
-        }
         return true;
     }
     
@@ -232,6 +224,11 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         final Scoping scoping = authnRequest.getScoping();
         if (scoping == null) {
             log.debug("{} AuthnRequest did not contain Scoping, nothing to do", getLogPrefix());
+            return true;
+        }
+        
+        if (ignoreScopingPredicate.test(profileRequestContext)) {
+            log.warn("{} Ignoring inbound Scoping element in AuthnRequest in violation of standard", getLogPrefix());
             return true;
         }
         

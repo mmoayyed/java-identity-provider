@@ -72,6 +72,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Whether responses to the authentication request should include an attribute statement. */
     @Nonnull private Predicate<ProfileRequestContext> includeAttributeStatementPredicate;
 
+    /** Whether to ignore Scoping elements within AuthnRequest. */
+    @Nonnull private Predicate<ProfileRequestContext> ignoreScoping;
+    
     /** Whether to mandate forced authentication for the request. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
 
@@ -134,6 +137,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         setEncryptAssertions(true);
         resolveAttributesPredicate = Predicates.alwaysTrue();
         includeAttributeStatementPredicate = Predicates.alwaysTrue();
+        ignoreScoping = Predicates.alwaysFalse();
         forceAuthnPredicate = new ProxyAwareForceAuthnPredicate();
         checkAddressPredicate = Predicates.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
@@ -212,6 +216,43 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setIncludeAttributeStatementPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         includeAttributeStatementPredicate = Constraint.isNotNull(condition,
                 "Include attribute statement predicate cannot be null");
+    }
+    
+    /**
+     * Gets whether Scoping elements in requests should be ignored/omitted.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return whether Scoping elements in requests should be ignored/omitted
+     * 
+     * @since 4.0.0
+     */
+    public boolean isIgnoreScoping(@Nullable final ProfileRequestContext profileRequestContext) {
+        return ignoreScoping.test(profileRequestContext);
+    }
+    
+    /**
+     * Sets whether Scoping elements in requests should be ignored/omitted.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setIgnoreScoping(final boolean flag) {
+        ignoreScoping = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
+    /**
+     * Sets a condition to determine whether Scoping elements in requests should be ignored/omitted.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.0.0
+     */
+    public void setIgnoreScopingPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ignoreScoping = Constraint.isNotNull(condition, "Ignore Scoping condition cannot be null");
     }
     
     /** {@inheritDoc} */
