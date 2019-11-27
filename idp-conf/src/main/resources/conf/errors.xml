@@ -69,6 +69,7 @@
         
         <entry key="UnableToEncode" value-ref="shibboleth.SAML2Status.UnsupportedBinding" />
 
+        <entry key="AccessDenied" value-ref="shibboleth.SAML2Status.RequestDenied" />
         <entry key="MessageReplay" value-ref="shibboleth.SAML2Status.RequestDenied" />
         <entry key="MessageExpired" value-ref="shibboleth.SAML2Status.RequestDenied" />
         <entry key="MessageAuthenticationError" value-ref="shibboleth.SAML2Status.RequestDenied" />

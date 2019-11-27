@@ -92,6 +92,9 @@
     <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
         static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 
+    <util:constant id="SAML2.SSO.FEATURE_SCOPING"
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_SCOPING"/>
+
     <bean id="SAML2.ECP" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-ecp"

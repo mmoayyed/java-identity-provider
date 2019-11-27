@@ -101,11 +101,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     /** Constructor. */
     public AddAuthnRequest() {
         // Default strategy is a 16-byte secure random source.
-        idGeneratorLookupStrategy = new Function<>() {
-            public IdentifierGenerationStrategy apply(final ProfileRequestContext input) {
-                return new SecureRandomIdentifierGenerationStrategy();
-            }
-        };
+        idGeneratorLookupStrategy = prc -> new SecureRandomIdentifierGenerationStrategy();
         
         // Fool the parent class into looking above instead of below the PRC for the context.
         setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));

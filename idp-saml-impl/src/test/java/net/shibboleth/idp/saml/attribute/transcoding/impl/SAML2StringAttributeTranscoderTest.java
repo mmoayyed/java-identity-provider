@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.attribute.transcoding.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -165,7 +164,7 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
                     public Object getNativeValue() {
                         return intArray;
@@ -188,7 +187,7 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
     
     @Test public void single() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -223,7 +222,7 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
 
     @Test public void singleRequested() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
 
         final IdPRequestedAttribute inputAttribute = new IdPRequestedAttribute(ATTR_NAME);
         inputAttribute.setRequired(true);
@@ -307,7 +306,7 @@ public class SAML2StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
     
     @Test public void multi() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1),
                         new StringAttributeValue(STRING_2),
                         new ScopedStringAttributeValue(STRING_1, STRING_2));

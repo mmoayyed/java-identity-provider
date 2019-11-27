@@ -25,9 +25,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,7 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -83,7 +86,13 @@ public final class AuthenticationContext extends BaseContext {
     
     /** Name of a proxied authentication source to use. */
     @Nullable private String authenticatingAuthority;
+    
+    /** Allowable proxy count upstream. */
+    @Nullable @NonNegative private Integer proxyCount;
 
+    /** Allowable proxied sources of authority. */
+    @Nullable @NonnullElements private Set<String> proxiableAuthorities;
+    
     /** Lookup strategy for a fixed event to return from validators for testing. */
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
     
@@ -132,6 +141,8 @@ public final class AuthenticationContext extends BaseContext {
         stateMap = new HashMap<>();
         
         resultCacheable = true;
+        
+        proxiableAuthorities = new HashSet<>();
     }
 
     /**
@@ -359,7 +370,6 @@ public final class AuthenticationContext extends BaseContext {
      * @since 3.4.0
      */
     @Nonnull public AuthenticationContext setMaxAge(@Nullable final Duration age) {
-        
         Constraint.isFalse(age != null && (age.isNegative() || age.isZero()), "MaxAge must be null or greater than 0");
         
         maxAge = age;
@@ -394,6 +404,49 @@ public final class AuthenticationContext extends BaseContext {
     @Nonnull public AuthenticationContext setAuthenticatingAuthority(@Nullable final String authority) {
         authenticatingAuthority = StringSupport.trimOrNull(authority);
         return this;
+    }
+    
+    /**
+     * Get the allowable number of hops upstream to permit for proxied authentication.
+     * 
+     * <p>This follows SAML semantics, but is not strictly specific to it.</p>
+     * 
+     * @return proxy count, null for no limit, zero for no proxying
+     * 
+     * @since 4.0.0
+     */
+    @Nullable @NonNegative public Integer getProxyCount() {
+        return proxyCount;
+    }
+    
+    /**
+     * Set the allowable number of hops upstream to permit for proxied authentication.
+     * 
+     * @param count proxy count, null for no limit, zero for no proxying
+     * 
+     * @return this context
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull public AuthenticationContext setProxyCount(@Nullable @NonNegative final Integer count) {
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count cannot be negative");
+        }
+        proxyCount = count;
+        return this;
+    }
+    
+    /**
+     * Get a live set of the authorities to which proxying is suggested.
+     * 
+     * <p>This follows SAML semantics and is non-critical, but is not strictly specific to it.</p>
+     * 
+     * @return advisory set of authorities
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull @NonnullElements @Live public Set<String> getProxiableAuthorities() {
+        return proxiableAuthorities;
     }
     
     /**

@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -121,7 +120,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
                 BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT);
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
+        ActionTestingSupport.assertEvent(event, EventIds.ACCESS_DENIED);
         Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class));
     }
 

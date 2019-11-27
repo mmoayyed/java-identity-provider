@@ -22,25 +22,25 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 
+import java.util.List;
+
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
-
-import com.google.common.collect.ImmutableList;
 
 /** Base class for further action tests. */
 public class BaseAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
 
     protected RequestContext src;
     protected ProfileRequestContext prc;
-    protected ImmutableList<AuthenticationFlowDescriptor> authenticationFlows;
+    protected List<AuthenticationFlowDescriptor> authenticationFlows;
 
     protected void initializeMembers() throws Exception {        
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.addSubcontext(new AuthenticationContext(), true);
 
-        authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor(),
+        authenticationFlows = List.of(new AuthenticationFlowDescriptor(),
                 new AuthenticationFlowDescriptor(), new AuthenticationFlowDescriptor());
         authenticationFlows.get(0).setId("test1");
         authenticationFlows.get(1).setId("test2");

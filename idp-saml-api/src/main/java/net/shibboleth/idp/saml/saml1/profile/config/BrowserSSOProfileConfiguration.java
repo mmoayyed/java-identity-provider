@@ -34,6 +34,7 @@ import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -70,7 +71,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
 
     /** Lookup function to supply NameIdentifier formats. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
-    
+
+    /** Lookup function to supply proxyCount property. */
+    @Nonnull private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
+
     /** Constructor. */
     public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
@@ -91,6 +95,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
         forceAuthnPredicate = Predicates.alwaysFalse();
+        proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
 
     /**
@@ -325,4 +330,41 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         nameIDFormatPrecedenceLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
         
+    /** {@inheritDoc} */
+    @Nullable public Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
+        final Integer count = proxyCountLookupStrategy.apply(profileRequestContext);
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        }
+        return count;
+    }
+
+    /**
+     * Sets the maximum number of times an assertion may be proxied outbound and/or
+     * the maximum number of hops between the relying party and a proxied authentication
+     * authority inbound.
+     * 
+     * @param count proxy count
+     * 
+     * @since 4.0.0
+     */
+    public void setProxyCount(@Nullable @NonNegative final Integer count) {
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        }
+        proxyCountLookupStrategy = FunctionSupport.constant(count);
+    }
+
+    /**
+     * Set a lookup strategy for the maximum number of times an assertion may be proxied outbound and/or
+     * the maximum number of hops between the relying party and a proxied authentication authority inbound.
+     *
+     * @param strategy  lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
+        proxyCountLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+
 }

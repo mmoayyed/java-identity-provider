@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -92,6 +93,19 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * @since 4.0.0
      */
     boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext);
+    
+    /**
+     * Gets the maximum number of times an assertion may be proxied outbound and/or
+     * the maximum number of hops between the relying party and a proxied authentication
+     * authority inbound.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return maximum number of times an assertion or authentication may be proxied
+     * 
+     * @since 4.0.0
+     */
+    @NonNegative @Nullable Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
      * Get whether this profile is for functionality local to the IdP.

@@ -62,6 +62,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         
     /** Bit constant for RequestedAuthnContext feature. */
     public static final int FEATURE_AUTHNCONTEXT = 0x1;
+
+    /** Bit constant for Scoping feature. */
+    public static final int FEATURE_SCOPING = 0x2;
     
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;

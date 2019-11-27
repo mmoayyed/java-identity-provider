@@ -164,7 +164,7 @@
             <bean parent="shibboleth.Conditions.OR">
                 <constructor-arg>
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
-                        p:honorMetadata="%{idp.signing.honorWantAssertionsSigned:true}" />
+                        p:honorMetadata="%{idp.saml.honorWantAssertionsSigned:true}" />
                 </constructor-arg>
                 <constructor-arg ref="shibboleth.Conditions.IssuingDelegatedAssertion" />
             </bean>
@@ -228,7 +228,8 @@
         p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeAuthenticationContext"
-        class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
+        class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype"
+        p:honorAuthnRequest="%{idp.saml.honorAuthnRequest:true}" />
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"

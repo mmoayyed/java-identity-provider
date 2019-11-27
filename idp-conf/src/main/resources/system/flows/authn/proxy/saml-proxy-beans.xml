@@ -143,7 +143,7 @@
                     p:noResultIsError="false">
                 <property name="activationCondition">
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate"
-                        p:honorMetadata="%{idp.signing.honorWantAuthnRequestsSigned:true}" />
+                        p:honorMetadata="%{idp.saml.honorWantAuthnRequestsSigned:true}" />
                 </property>
             </bean>
         </constructor-arg>

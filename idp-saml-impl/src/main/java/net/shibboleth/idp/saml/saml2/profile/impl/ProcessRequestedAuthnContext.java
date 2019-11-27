@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -67,8 +66,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
- * 
- * @post ProfileRequestContext.
+ * @event {@link EventIds#ACCESS_DENIED}
  */
 public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
 
@@ -206,7 +204,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
                     profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
                 log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+                ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);
                 return;
             }
         }

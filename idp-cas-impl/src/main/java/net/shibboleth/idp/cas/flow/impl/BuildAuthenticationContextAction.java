@@ -72,11 +72,16 @@ public class BuildAuthenticationContextAction
         ac.setForceAuthn(request.isRenew());
         ac.setIsPassive(false);
 
+        final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
+
         if (!ac.isForceAuthn()) {
-            final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
             if (config != null) {
                 ac.setForceAuthn(config.isForceAuthn(profileRequestContext));
             }
+        }
+        
+        if (config != null) {
+            ac.setProxyCount(config.getProxyCount(profileRequestContext));
         }
         
         profileRequestContext.addSubcontext(ac, true);

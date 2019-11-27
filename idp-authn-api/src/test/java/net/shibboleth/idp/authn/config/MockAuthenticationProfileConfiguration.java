@@ -34,6 +34,7 @@ import com.google.common.base.Predicates;
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -59,6 +60,9 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     
     /** ForceAuthn predicate. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
+    
+    /** Proxy count. */
+    @Nonnull private Integer proxyCount;
     
     /**
      * Constructor.
@@ -159,6 +163,24 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
     /** {@inheritDoc} */
     public boolean isForceAuthn(ProfileRequestContext profileRequestContext) {
         return forceAuthnPredicate.test(profileRequestContext);
+    }
+
+    /** {@inheritDoc} */
+    @Nullable @NonNegative public Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
+        return proxyCount;
+    }
+    
+    /**
+     * Set proxy count.
+     * 
+     * @param count the count
+     */
+    public void setProxyCount(@Nullable @NonNegative final Integer count) {
+        if (count != null) {
+            proxyCount = Constraint.isGreaterThanOrEqual(0, count, "Proxy count cannot be negative");
+        } else {
+            proxyCount = null;
+        }
     }
 
 }

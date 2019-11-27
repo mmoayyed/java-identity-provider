@@ -275,6 +275,9 @@
         <property name="nameIDFormatPrecedenceLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="nameIDFormatPrecedence" />
         </property>
+        <property name="proxyCountLookupStrategy">
+            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
+        </property>
     </bean>
     
     <bean id="SAML1.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
@@ -641,6 +644,9 @@
                 </constructor-arg>
                 <constructor-arg value="false" />
             </bean>
+        </property>
+        <property name="proxyCountLookupStrategy">
+            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
         </property>
     </bean>
 

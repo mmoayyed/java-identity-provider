@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.attribute.transcoding.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,8 +45,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -63,7 +62,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
 
     private AttributeTranscoderRegistryImpl registry;
     
-    private XMLObjectBuilder<XSAny> anyBuilder;
+    private SAMLObjectBuilder<AttributeValue> anyBuilder;
     
     private XMLObjectBuilder<XSString> stringBuilder;
 
@@ -79,15 +78,13 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
 
     @BeforeClass public void setUp() throws ComponentInitializationException {
         
-        anyBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
-        stringBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         
-        attributeBuilder = (SAMLObjectBuilder<Attribute>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<Attribute>getBuilderOrThrow(
-                        Attribute.TYPE_NAME);
-        reqAttributeBuilder = (SAMLObjectBuilder<RequestedAttribute>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<RequestedAttribute>getBuilderOrThrow(
-                        RequestedAttribute.TYPE_NAME);
+        anyBuilder = (SAMLObjectBuilder<AttributeValue>) bf.<AttributeValue>getBuilderOrThrow(AttributeValue.DEFAULT_ELEMENT_NAME);
+        stringBuilder = bf.<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
+        
+        attributeBuilder = (SAMLObjectBuilder<Attribute>) bf.<Attribute>getBuilderOrThrow(Attribute.TYPE_NAME);
+        reqAttributeBuilder = (SAMLObjectBuilder<RequestedAttribute>) bf.<RequestedAttribute>getBuilderOrThrow(RequestedAttribute.TYPE_NAME);
         
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
@@ -172,7 +169,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
                     public Object getNativeValue() {
                         return intArray;
@@ -195,7 +192,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
     
     @Test public void single() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), objectFor(STRING_1));
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), objectFor(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -225,7 +222,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
 
     @Test public void singleRequested() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), objectFor(STRING_1));
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), objectFor(STRING_1));
 
         final IdPRequestedAttribute inputAttribute = new IdPRequestedAttribute(ATTR_NAME);
         inputAttribute.setRequired(true);
@@ -260,7 +257,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
         final XSString stringValue = stringBuilder.buildObject(new QName("Foo"));
         stringValue.setValue(STRING_1);
         
-        final XSAny attrValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final AttributeValue attrValue = anyBuilder.buildObject();
         attrValue.getUnknownXMLObjects().add(stringValue);
         
         final Attribute samlAttribute = attributeBuilder.buildObject();
@@ -290,7 +287,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
         final XSString stringValue = stringBuilder.buildObject(new QName("Foo"));
         stringValue.setValue(STRING_1);
         
-        final XSAny attrValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final AttributeValue attrValue = anyBuilder.buildObject();
         attrValue.getUnknownXMLObjects().add(stringValue);
         
         final RequestedAttribute samlAttribute = reqAttributeBuilder.buildObject();
@@ -317,7 +314,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
     
     @Test public void multi() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(objectFor(STRING_1), objectFor(STRING_2));
+                List.of(objectFor(STRING_1), objectFor(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -355,13 +352,13 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
         final XSString stringValue = stringBuilder.buildObject(new QName("Foo"));
         stringValue.setValue(STRING_1);
         
-        final XSAny attrValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final AttributeValue attrValue = anyBuilder.buildObject();
         attrValue.getUnknownXMLObjects().add(stringValue);
 
         final XSString stringValue2 = stringBuilder.buildObject(new QName("Bar"));
         stringValue2.setValue(STRING_2);
         
-        final XSAny attrValue2 = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final AttributeValue attrValue2 = anyBuilder.buildObject();
         attrValue2.getUnknownXMLObjects().add(stringValue2);
         
         final Attribute samlAttribute = attributeBuilder.buildObject();
