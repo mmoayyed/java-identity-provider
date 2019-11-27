@@ -100,7 +100,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** The principal name extracted from the context tree. */
     @Nullable private String canonicalPrincipalName;
     
-    // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -132,7 +132,12 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             log.warn("{} Authentication result missing from context?", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
             return false;
-        } else if (!checkProxyRestrictions(profileRequestContext, latest.getSubject())) {
+        }
+        
+        final AuthenticationFlowDescriptor flowDescriptor =
+                authenticationContext.getAvailableFlows().get(latest.getAuthenticationFlowId());
+        if (flowDescriptor.isProxyRestrictionsEnforced() &&
+                !checkProxyRestrictions(profileRequestContext, latest.getSubject())) {
             return false;
         }
         
@@ -173,7 +178,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         
         return true;
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
     /** {@inheritDoc} */
     @Override
