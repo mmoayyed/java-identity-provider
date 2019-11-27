@@ -51,14 +51,6 @@
             </property>
         </bean>
         
-        <bean id="authn/External" parent="shibboleth.AuthenticationFlow"
-            p:nonBrowserSupported="false" />
-
-        <bean id="authn/RemoteUser" parent="shibboleth.AuthenticationFlow"
-            p:nonBrowserSupported="false" />
-
-        <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
-
         <bean id="authn/Function" parent="shibboleth.AuthenticationFlow" />
 
         <bean id="authn/X509" parent="shibboleth.AuthenticationFlow"
@@ -137,7 +129,21 @@
         <bean id="authn/Proxy" parent="shibboleth.AuthenticationFlow"
                 p:nonBrowserSupported="false"
                 p:passiveAuthenticationSupported="true"
-                p:forcedAuthenticationSupported="true" />
+                p:forcedAuthenticationSupported="true"
+                p:proxyScopingEnforced="true" />
+
+        <!--
+        These flows are often, though not exclusively, used to proxy authentication, so may need
+        the proxyScopingEnforced property enabled by hand to honor RP/local proxy count limits.
+        -->
+
+        <bean id="authn/External" parent="shibboleth.AuthenticationFlow"
+            p:nonBrowserSupported="false" />
+
+        <bean id="authn/RemoteUser" parent="shibboleth.AuthenticationFlow"
+            p:nonBrowserSupported="false" />
+
+        <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
 
     </util:list>
 

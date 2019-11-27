@@ -33,6 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -78,9 +79,12 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Whether this flow supports forced authentication. */
     private boolean supportsForced;
     
-    /** Whether this flow should honor proxy restrictions. */
+    /** Whether this flow should honor proxy restrictions toward RPs. */
     private boolean proxyRestrictionsEnforced;
-    
+
+    /** Whether this flow should honor proxy scoping restrictions toward IdPs. */
+    private boolean proxyScopingEnforced;
+
     /** Whether this flow allows reuse of its results. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
 
@@ -109,7 +113,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public AuthenticationFlowDescriptor() {
         supportsNonBrowser = true;
         proxyRestrictionsEnforced = true;
-        reuseCondition = Predicates.alwaysTrue();
+        proxyScopingEnforced = false;
+        reuseCondition = new ProxyCountPredicate();
         supportedPrincipals = new Subject();
         activationCondition = Predicates.alwaysTrue();
         inactivityTimeout = Duration.ofMinutes(30);
@@ -177,9 +182,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
     
     /**
-     * Gets whether this flow's results should honor restrictions on proxying.
+     * Gets whether this flow's results should honor restrictions on proxying toward RPs.
      * 
-     * @return true iff upstream proxying restrictions should be honored
+     * @return true iff proxying restrictions issued by IdPs should be honored
      * 
      * @since 4.0.0
      */
@@ -188,7 +193,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
     
     /**
-     * Sets whether this flow's results should honor restrictions on proxying.
+     * Sets whether this flow's results should honor restrictions on proxying toward RPs
      * 
      * <p>Defaults to true.</p>
      * 
@@ -199,7 +204,31 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public void setProxyRestrictionsEnforced(final boolean flag) {
         proxyRestrictionsEnforced = flag;
     }
+
+    /**
+     * Gets whether this flow's results should honor restrictions on proxying toward IdPs.
+     * 
+     * @return true iff proxying restrictions issued by RPs should be honored
+     * 
+     * @since 4.0.0
+     */
+    public boolean isProxyScopingEnforced() {
+        return proxyScopingEnforced;
+    }
     
+    /**
+     * Sets whether this flow's results should honor restrictions on proxying toward IdPs.
+     * 
+     * <p>Defaults to false. Should be enabled for flows that represent proxied authentication.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setProxyScopingEnforced(final boolean flag) {
+        proxyScopingEnforced = flag;
+    }
+
     /**
      * Set condition controlling whether results from this flow should be reused for SSO.
      * 
@@ -212,7 +241,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public void setReuseCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        reuseCondition = Constraint.isNotNull(condition, "Predicate cannot be null");
+        // Auto-installs a guard against use of a proxied result if requester proxy count is zero.
+        reuseCondition = PredicateSupport.and(new ProxyCountPredicate(),
+                Constraint.isNotNull(condition, "Predicate cannot be null"));
     }
 
     /**
@@ -381,7 +412,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      */
     @Nonnull public AuthenticationResult newAuthenticationResult(@Nonnull final Subject subject) {
         final AuthenticationResult result = new AuthenticationResult(getId(), subject);
-        
+
         if (proxyRestrictionsEnforced) {
             result.setReuseCondition(PredicateSupport.and(reuseCondition, result.new ProxyRestrictionReusePredicate()));
         } else {
@@ -427,6 +458,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @since 4.0.0
      */
+    @SuppressWarnings("unchecked")
     @Nullable public <T extends Principal> T getHighestWeighted(
             @Nonnull @NonnullElements final Collection<T> principals) {
         if (principals.isEmpty()) {
@@ -478,7 +510,6 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     private class WeightedComparator<T> implements Comparator<T> {
 
         /** {@inheritDoc} */
-        @Override
         public int compare(final T o1, final T o2) {
             
             final int weight1 = principalWeightMap.containsKey(o1) ? principalWeightMap.get(o1) : 0;
@@ -492,6 +523,26 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             return 0;
         }
         
+    }
+    
+    /**
+     * A {@link Predicate} that implements a cross-check between an effective proxy count of zero and
+     * whether a descriptor is honoring the limit.
+     */
+    private class ProxyCountPredicate implements Predicate<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        public boolean test(@Nullable final ProfileRequestContext input) {
+            
+            if (proxyScopingEnforced) {
+                final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
+                if (authnCtx != null && authnCtx.getProxyCount() != null && authnCtx.getProxyCount() == 0) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
     }
     
     static {

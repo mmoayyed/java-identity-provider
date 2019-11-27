@@ -77,6 +77,7 @@ public class X509AuthServlet extends HttpServlet {
     }
     
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);

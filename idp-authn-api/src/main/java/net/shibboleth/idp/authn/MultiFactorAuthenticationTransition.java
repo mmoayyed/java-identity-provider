@@ -90,6 +90,7 @@ public class MultiFactorAuthenticationTransition {
      * 
      * @param map map of transition rules
      */
+    @SuppressWarnings("unchecked")
     public void setNextFlowStrategyMap(@Nonnull @NonnullElements final Map<String,Object> map) {
         Constraint.isNotNull(map, "Transition strategy map cannot be null");
         

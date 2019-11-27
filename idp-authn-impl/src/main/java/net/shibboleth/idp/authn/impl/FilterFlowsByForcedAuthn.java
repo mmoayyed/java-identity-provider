@@ -49,12 +49,16 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+
         if (!authenticationContext.isForceAuthn() && authenticationContext.getMaxAge() == null) {
             log.debug("{} Request does not have forced authentication requirement, nothing to do", getLogPrefix());
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
     
     /** {@inheritDoc} */

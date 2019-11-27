@@ -302,6 +302,12 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
                         AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
                 return;
+            } else if (flow.isProxyScopingEnforced() &&
+                    authenticationContext.getProxyCount() != null && authenticationContext.getProxyCount() == 0) {
+                log.error("{} Targeted login flow '{}' cannot be used with an effective ProxyCount of zero",
+                        getLogPrefix(), flowId);
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.PROXY_COUNT_EXCEEDED);
+                return;
             }
         }
         

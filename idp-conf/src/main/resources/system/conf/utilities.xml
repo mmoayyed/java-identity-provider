@@ -331,6 +331,11 @@
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.INVALID_NAMEID_POLICY" />
     </util:list>
 
+    <util:list id="shibboleth.SAML2Status.ProxyCountExceeded">
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.PROXY_COUNT_EXCEEDED" />
+    </util:list>
+
     <util:list id="shibboleth.SAML2Status.ChannelBindingsError">
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER" />
         <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20CB_NS" />

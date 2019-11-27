@@ -245,6 +245,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 for (final Principal candidate
                         : authenticationContext.getAuthenticationResult().getSupportedPrincipals(p.getClass())) {
                     if (predicate.test(new PrincipalSupportingComponent() {
+                        @SuppressWarnings("unchecked")
                         public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
                             return Collections.<T>singleton((T) candidate);
                         }

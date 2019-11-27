@@ -90,6 +90,7 @@
         <entry key="SessionNotFound" value-ref="shibboleth.SAML2Status.UnknownPrincipal" />
         
         <entry key="InvalidNameIDPolicy" value-ref="shibboleth.SAML2Status.InvalidNameIDPolicy" />
+        <entry key="ProxyCountExceeded" value-ref="shibboleth.SAML2Status.ProxyCountExceeded" />
         
         <entry key="ChannelBindingsError" value-ref="shibboleth.SAML2Status.ChannelBindingsError" />
     </util:map>

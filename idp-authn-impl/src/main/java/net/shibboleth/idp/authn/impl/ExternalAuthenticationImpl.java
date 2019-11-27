@@ -110,6 +110,7 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
 
  // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
             @Nonnull final ProfileRequestContext profileRequestContext,

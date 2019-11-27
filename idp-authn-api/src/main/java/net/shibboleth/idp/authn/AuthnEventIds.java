@@ -80,7 +80,10 @@ public final class AuthnEventIds {
 
     /** ID of event returned if an authenticated subject doesn't match the identity in an existing session. */
     @Nonnull @NotEmpty public static final String IDENTITY_SWITCH = "IdentitySwitch";
-    
+
+    /** ID of event returned if proxying is disallowed. */
+    @Nonnull @NotEmpty public static final String PROXY_COUNT_EXCEEDED = "ProxyCountExceeded";
+
     /** ID of event returned if authentication throws an exception unrelated to credential validation. */
     @Nonnull @NotEmpty public static final String AUTHN_EXCEPTION = "AuthenticationException";
 

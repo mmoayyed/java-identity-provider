@@ -86,7 +86,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     @Nullable private RequestedPrincipalContext requestedPrincipalCtx; 
 
     /** A subordinate PreferredPrincipalContext, if any. */
-    @Nullable private PreferredPrincipalContext preferredPrincipalCtx; 
+    @Nullable private PreferredPrincipalContext preferredPrincipalCtx;
+    
+    /** Tracks a proxy count of zero for the request. */
+    private boolean noProxying;
 
     /**
      * Get whether SSO should trump explicit relying party requirements preference.
@@ -116,6 +119,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
         }
+        
+        noProxying = authenticationContext.getProxyCount() != null && authenticationContext.getProxyCount() == 0;
         
         requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (requestedPrincipalCtx != null) {
@@ -184,8 +189,15 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.debug("{} Attempting to honor signaled flow {}", getLogPrefix(), flow.getId());
 
-        // If not forced, check for an active result for that flow.
+        if (noProxying && flow.isProxyScopingEnforced()) {
+            log.error("{} Signaled flow {} disallowed due to proxy count of zero", getLogPrefix(), flow.getId());
+            ActionSupport.buildEvent(profileRequestContext,
+                    authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.PROXY_COUNT_EXCEEDED);
+            return;
+        }
 
+        // If not forced, check for an active result for that flow.
+        
         AuthenticationResult activeResult = null;
         if (!authenticationContext.isForceAuthn()) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
@@ -268,7 +280,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             if (flow == null) {
                 log.info("{} No potential flows left to choose from, authentication failed", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext,
-                        authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
+                        authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE :
+                            (noProxying ? AuthnEventIds.PROXY_COUNT_EXCEEDED : AuthnEventIds.NO_POTENTIAL_FLOW));
                 return;
             }
             selectInactiveFlow(profileRequestContext, authenticationContext, flow);
@@ -302,7 +315,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         if (flow == null) {
             log.info("{} No potential flows left to choose from, authentication failed", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext,
-                    authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
+                    authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE :
+                        (noProxying ? AuthnEventIds.PROXY_COUNT_EXCEEDED : AuthnEventIds.NO_POTENTIAL_FLOW));
             return;
         }
         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
@@ -326,10 +340,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
             if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
                 if (!authenticationContext.isPassive() || flow.isPassiveAuthenticationSupported()) {
-                    if (flow.test(profileRequestContext)) {
-                        selectedFlow = flow;
-                        if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(flow)) {
-                            break;
+                    if (!noProxying || !flow.isProxyScopingEnforced()) {
+                        if (flow.test(profileRequestContext)) {
+                            selectedFlow = flow;
+                            if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(flow)) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -397,6 +413,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Selects an inactive flow in the presence of specific requested Principals, and completes processing.
      * 
@@ -411,7 +428,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // Check each flow for compatibility with request. Don't check for an active result also.
         // Also omit anything in the intermediates collection already.
         for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-            log.debug("{} Checking for an inactive flow compatible with operator '{}' and principal '{}'",
+            log.debug("{} Checking for inactive flow compatible with operator '{}' and principal '{}'",
                     getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
             final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
             if (predicate != null) {
@@ -419,8 +436,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
                             && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
                         if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
-                            selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
-                            return;
+                            if (!noProxying || !descriptor.isProxyScopingEnforced()) {
+                                selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                                return;
+                            }
+                            log.debug("{} Flow '{}' disallowed by effective proxy count of zero", getLogPrefix(),
+                                    descriptor.getId());
                         }
                     }
                 }
@@ -431,12 +452,15 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             }
         }
         
-        
         log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
         ActionSupport.buildEvent(profileRequestContext,
-                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
+                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE :
+                    (noProxying ? AuthnEventIds.PROXY_COUNT_EXCEEDED : AuthnEventIds.REQUEST_UNSUPPORTED));
     }
+// Checkstyle: CyclomaticComplexity ON
     
+    
+// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount OFF
     /**
      * Selects a flow or an active result in the presence of specific requested Principals and completes processing.
      * 
@@ -444,7 +468,6 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * @param authenticationContext the current authentication context
      * @param activeResults active results that may be reused
      */
-// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount OFF
     private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull @NonnullElements final Map<String,AuthenticationResult> activeResults) {
@@ -504,8 +527,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                                         result.getAuthenticationFlowId());
                             }
                             if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
-                                selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
-                                return;
+                                if (!noProxying || !descriptor.isProxyScopingEnforced()) {
+                                    selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                                    return;
+                                }
+                                log.debug("{} Flow '{}' disallowed by effective proxy count of zero", getLogPrefix(),
+                                        descriptor.getId());
                             }
                         } else {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
@@ -522,7 +549,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.info("{} None of the potential authentication flows can satisfy the request", getLogPrefix());
         ActionSupport.buildEvent(profileRequestContext,
-                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
+                authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE :
+                    (noProxying ? AuthnEventIds.PROXY_COUNT_EXCEEDED : AuthnEventIds.REQUEST_UNSUPPORTED));
     }
 // Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
         
