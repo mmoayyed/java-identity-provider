@@ -9,6 +9,7 @@
     <!-- This is an interceptor flow handled outside the webflow engine. -->
     
     <view-state id="ExternalTransfer" view="externalRedirect:#{T(net.shibboleth.idp.profile.interceptor.ExternalInterceptor).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.intercept.externalPathStrategy').apply(opensamlProfileRequestContext), flowExecutionContext.getKey().toString())}">
+        <attribute name="csrf_excluded" value="true" type="boolean"/>
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).addSubcontext(new net.shibboleth.idp.profile.context.ExternalInterceptorContext(new net.shibboleth.idp.profile.interceptor.impl.ExternalInterceptorImpl()), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
         </on-render>

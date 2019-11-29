@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.ui.csrf.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
@@ -27,6 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.ui.csrf.BaseCSRFTest;
+import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicate;
 import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicateTest;
 
 
@@ -36,13 +34,11 @@ import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicateTest;
  */
 public class DefaultViewRequiresCSRFTokenPredicateTest extends BaseCSRFTest{
     
+    /** Test view is included in CSRF verification.*/
     @Test public void testViewRequiresCSRFToken() {
         
         DefaultViewRequiresCSRFTokenPredicate predicate = new DefaultViewRequiresCSRFTokenPredicate();
-       
-        List<String> includedViewStates = Arrays.asList(new String[] {"*"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        
+      
         MockFlowSession flowSession = new MockFlowSession();
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
         flowSession.setState(currentState);
@@ -52,12 +48,14 @@ public class DefaultViewRequiresCSRFTokenPredicateTest extends BaseCSRFTest{
         Assert.assertTrue(predicate.test(src));
     }
     
+    /** Test view has been excluded from CSRF verification.*/
     @Test public void testViewDoesNotRequiresCSRFToken() {
         
         DefaultViewRequiresCSRFTokenPredicate predicate = new DefaultViewRequiresCSRFTokenPredicate();
         
         MockFlowSession flowSession = new MockFlowSession();
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
+        currentState.getAttributes().put(BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, true);
         flowSession.setState(currentState);
         MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
         MockRequestContext src = new MockRequestContext(context);

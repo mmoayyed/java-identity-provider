@@ -17,12 +17,14 @@
 
 package net.shibboleth.idp.ui.csrf;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 
 /**
  * An anti cross-site request forgery token. 
  */
-public interface CSRFToken {
+public interface CSRFToken extends Serializable{
 
     /**
      * The name to be used in HTML form input elements to store the CSRF token value. 

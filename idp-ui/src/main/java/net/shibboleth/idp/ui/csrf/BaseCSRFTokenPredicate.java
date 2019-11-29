@@ -17,112 +17,53 @@
 
 package net.shibboleth.idp.ui.csrf;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.definition.StateDefinition;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 
 /**
- * A base class for predicates that determine if CSRF protection is required/enabled. Stores the
- * state IDs for view-states that have been either included and or excluded from CSRF 
- * protection. Also contains the logic to test whether a request context state 
- * has been included or excluded.
+ * A base helper class for predicates that determine if CSRF protection is required per state. 
  */
 public abstract class BaseCSRFTokenPredicate {
     
-    /** The character value of the wildcard used to indicate all views should be included.*/
-    @Nonnull @NotEmpty public static final String INCLUDE_ALL_WILDCARD = "*";
+    /** 
+     *  Name of the metadata attribute that, if true, excludes a view 
+     *  from CSRF protection.
+     */
+    @Nonnull @NotEmpty public static final String CSRF_EXCLUDED_ATTRIBUTE_NAME = "csrf_excluded";
     
-    /** View-state IDs that are excluded from CSRF protection.*/
-    @Nonnull @NonnullElements private Set<String> excludedViewStateIds;
-    
-    /** View-state IDs that require CSRF protection. */
-    @Nonnull @NonnullElements private Set<String> includedViewStateIds;
-    
-    /** Are all view-states included? if so, includedViewstateIds can be ignored. Default is false.*/
-    @Nonnull private boolean includeAllViewStates;    
-    
-    /** Constructor.*/
-    public BaseCSRFTokenPredicate() {
-        excludedViewStateIds = Collections.emptySet();        
-        includedViewStateIds = Collections.emptySet();
-        includeAllViewStates = false;
-    }
     
     /**
-     * Set the excluded view-state IDs.
+     * Safe get the <code>boolean</code> value of the attribute from the attributes annotating 
+     * the {@link StateDefinition}. Returns the <code>defaultValue</code> if either:
+     * <ul>
+     *  <li>the <code>state</code> is null.</li>
+     *  <li><code>attributeName</code> is null or no value is found.</li>
+     *  <li>the value is found but is not a {@link Boolean}.</li>
+     * </ul>
      * 
-     * @param excludelist excluded view-state IDs.
+     * @param state the state definition to find the attribute from.
+     * @param attributeName the name of the attribute to find.
+     * @param defaultValue a default value.
+     * @return the boolean value of the attribute on the state definition.
      */
-    public void setExcludedViewStateIds(@Nullable @NonnullElements final Collection<String> excludelist) {       
-        excludedViewStateIds = new HashSet<>(StringSupport.normalizeStringCollection(excludelist));
-    }
-    
-    /**
-     * Set the included view-state IDs. If a wildcard is present, <code>includeAllViews</code> is set
-     * to true and <code>includedViewstateIds</code> to an empty list. Removes empty and or null
-     * values from the input.
-     * 
-     * @param includedList included view state IDs.
-     */
-    public void setIncludedViewStateIds(@Nullable @NonnullElements final Collection<String> includedList) {   
-        if (includedList!=null) {
-            includedViewStateIds = new HashSet<>(includedList.size());
-            for (final String include : includedList) {
-                final String trimmedInclude = StringSupport.trimOrNull(include);
-                if (INCLUDE_ALL_WILDCARD.equals(trimmedInclude)) {
-                    includeAllViewStates = true;
-                    includedViewStateIds = Collections.emptySet();
-                    return;
-                } else if (trimmedInclude!=null) {
-                    includedViewStateIds.add(trimmedInclude);
-                }                
-            }
-        } else {
-            includedViewStateIds = Collections.emptySet();
-        }        
-    }
-    
-    /**
-     * Determines if the current state contained in the request context is included and not excluded from
-     * CSRF protection. More specifically, checks the state's ID against the included and excluded view sets;
-     * returns true iff:
-     * <ol>
-     *  <li>All views-states are included, and the specific view-state has not been explicitly excluded. Or;</li>
-     *  <li>All views-states are not included but the specific view-state has been explicitly included
-     *  and not explicitly excluded.</li>
-     * </ol>
-     * 
-     * @param context the request context that contains the current state identifier.
-     * @return true iff the state, by it's identifier, should be included in CSRF checks. False otherwise.
-     */
-    protected boolean isStateIncluded(@Nonnull final RequestContext context) {
+    @Nonnull protected boolean safeGetBooleanStateAttribute(@Nullable final StateDefinition state, 
+            @Nullable final String attributeName, @Nonnull final boolean defaultValue) {
         
-        if (context.getCurrentState()==null) {
-            return false;
-        }       
-       
-        final String stateId = context.getCurrentState().getId();
-        
-        if (includeAllViewStates && !excludedViewStateIds.contains(stateId)) {
-            return true;
+        //catch no state exists. Return default.
+        if (state==null) {
+            return defaultValue;
         }
-        if (!includeAllViewStates) {
-            if (includedViewStateIds.contains(stateId) && !excludedViewStateIds.contains(stateId)) {
-                return true;
-            }
+        try {
+            return state.getAttributes().getBoolean(attributeName,defaultValue);            
+        } catch (final IllegalArgumentException e) {
+            //catch attribute exists but not a boolean. Return default.
+            return defaultValue;
         }
-        
-        return false;
         
     }
 

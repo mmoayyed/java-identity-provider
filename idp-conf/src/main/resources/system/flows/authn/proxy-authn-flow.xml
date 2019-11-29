@@ -17,6 +17,7 @@
     </decision-state>
 
     <view-state id="DoDiscovery" view="externalRedirect:#{DiscoveryProfileRequestFunction.apply(new net.shibboleth.utilities.java.support.collection.Pair(flowRequestContext, opensamlProfileRequestContext))}">
+        <attribute name="csrf_excluded" value="true" type="boolean"/>
         <transition on="proceed" to="ExtractDiscoveryResponse" />
     </view-state>
     

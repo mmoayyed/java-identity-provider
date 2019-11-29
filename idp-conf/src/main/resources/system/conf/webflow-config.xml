@@ -215,6 +215,15 @@
           p:enabled="%{idp.csrf.enabled:false}"
           p:viewRequiresCSRFTokenPredicate-ref="shibboleth.DefaultViewRequiresCSRFTokenPredicate"
           p:eventRequiresCSRFTokenValidationPredicate-ref="shibboleth.DefaultEventRequiresCSRFTokenValidationPredicate"/>
+    
+   	<bean id="shibboleth.CSRFTokenManager" class="net.shibboleth.idp.ui.csrf.CSRFTokenManager"
+       p:csrfParameterName="%{idp.csrf.token.parameter:csrf_token}"/>
+   	
+	<bean id="shibboleth.DefaultViewRequiresCSRFTokenPredicate" 
+		class="net.shibboleth.idp.ui.csrf.impl.DefaultViewRequiresCSRFTokenPredicate"/>
+	
+	<bean id="shibboleth.DefaultEventRequiresCSRFTokenValidationPredicate" 
+		class="net.shibboleth.idp.ui.csrf.impl.DefaultEventRequiresCSRFTokenValidationPredicate"/>
           
     <!-- Expose the FlowExecutor for access via servlet context outside the webflows. -->
 	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">

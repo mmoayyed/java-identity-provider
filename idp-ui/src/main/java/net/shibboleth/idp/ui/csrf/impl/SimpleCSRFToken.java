@@ -31,6 +31,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 @Immutable
 public class SimpleCSRFToken implements CSRFToken{
     
+
+    /** Serial UID. */
+    private static final long serialVersionUID = 3742188179558262003L;
+
     /** The anti-csrf token value.*/
     @Nonnull @NotEmpty private String token;
     

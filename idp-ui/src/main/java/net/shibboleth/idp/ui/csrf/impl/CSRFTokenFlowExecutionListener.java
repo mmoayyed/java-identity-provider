@@ -43,8 +43,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 /**
  * A flow execution lifecycle listener that, if enabled:
  * <ul>
- *      <li>Sets an anti-CSRF token into the view-scope map on rendering of an included view-state</li>
- *      <li>Checks the CSRF token in a HTTP request matches that stored in the view-scope when a suitable 
+ *      <li>Sets an anti-CSRF token into the view-scope map on rendering of a suitable view-state</li>
+ *      <li>Checks the CSRF token in a HTTP request matches that stored in the view-scope map when a suitable 
  *       view-state event occurs.</li>
  * </ul>
  */

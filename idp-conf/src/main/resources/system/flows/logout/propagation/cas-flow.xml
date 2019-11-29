@@ -3,6 +3,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
     <view-state id="ShowServiceLogoutView" view="cas/logoutService">
+    	<attribute name="csrf_excluded" value="true" type="boolean"/>
         <on-render>
             <set name="viewScope.logoutPropCtx"
                  value="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" />

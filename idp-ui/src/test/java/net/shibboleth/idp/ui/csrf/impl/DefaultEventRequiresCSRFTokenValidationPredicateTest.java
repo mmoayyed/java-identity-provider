@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.ui.csrf.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
@@ -28,6 +25,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.ui.csrf.BaseCSRFTest;
+import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicate;
 import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicateTest;
 
 
@@ -37,12 +35,10 @@ import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicateTest;
  */
 public class DefaultEventRequiresCSRFTokenValidationPredicateTest extends BaseCSRFTest{
 
+    /** Test event and view requires CSRF verification.*/
     @Test public void testEventRequiresCSRFTokenValidation() {
 
         DefaultEventRequiresCSRFTokenValidationPredicate predicate = new DefaultEventRequiresCSRFTokenValidationPredicate();
-
-        List<String> includedViewStates = Arrays.asList(new String[] {"*"});
-        predicate.setIncludedViewStateIds(includedViewStates);
 
         MockFlowSession flowSession = new MockFlowSession();
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
@@ -58,11 +54,8 @@ public class DefaultEventRequiresCSRFTokenValidationPredicateTest extends BaseCS
 
         DefaultEventRequiresCSRFTokenValidationPredicate predicate = new DefaultEventRequiresCSRFTokenValidationPredicate();
 
-        List<String> includedViewStates = Arrays.asList(new String[] {"*"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-
         MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
+        MockViewState currentState = new MockViewState("testFlow", "a-view-state");        
         flowSession.setState(currentState);
         MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
         MockRequestContext src = new MockRequestContext(context);
@@ -70,17 +63,14 @@ public class DefaultEventRequiresCSRFTokenValidationPredicateTest extends BaseCS
         Assert.assertTrue(predicate.test(src,new Event(this,"random-event-id")));
     }
     
+    /** Test that token verification is not required if state is excluded.*/
     @Test public void testEventDoesNotRequiresCSRFTokenValidationExcludedState() {
 
-        DefaultEventRequiresCSRFTokenValidationPredicate predicate = new DefaultEventRequiresCSRFTokenValidationPredicate();
-
-        List<String> includedViewStates = Arrays.asList(new String[] {"*"});
-        List<String> excludedViewStateIds = Arrays.asList(new String[] {"a-view-state"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        predicate.setExcludedViewStateIds(excludedViewStateIds);
+        DefaultEventRequiresCSRFTokenValidationPredicate predicate = new DefaultEventRequiresCSRFTokenValidationPredicate();        
         
         MockFlowSession flowSession = new MockFlowSession();
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
+        currentState.getAttributes().put(BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, true);
         flowSession.setState(currentState);
         MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
         MockRequestContext src = new MockRequestContext(context);

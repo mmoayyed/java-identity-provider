@@ -29,20 +29,21 @@ import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicate;
  * request context. Guaranteed to be in a view-state when tested by the 
  * {@link CSRFTokenFlowExecutionListener}.</p>
  * 
- * <p>Returns true if the view-state requires a CSRF token - as determined by checking
- * the request context against the {@link BaseCSRFTokenPredicate#isStateIncluded()} method.</p>
+ * <p>Returns true if the view-state requires a CSRF token. More specifically,
+ * returns true iff the state definition does not contain a 
+ * <code>{@value BaseCSRFTokenPredicate#CSRF_EXCLUDED_ATTRIBUTE_NAME}</code> metadata attribute with a 
+ * value of <code>{@literal true}</code>.</p>
  */
 public class DefaultViewRequiresCSRFTokenPredicate
             extends BaseCSRFTokenPredicate implements Predicate<RequestContext>{
-
+    
     /** {@inheritDoc} */
     public boolean test(@Nonnull final RequestContext context) {
         
-        //if state is not included by configuration, return false.
-        if (!isStateIncluded(context)) {
-            return false;
-        }
-        return true;
+        final boolean excluded = safeGetBooleanStateAttribute(context.getCurrentState(),
+                CSRF_EXCLUDED_ATTRIBUTE_NAME,false);
+        //if NOT excluded from CSRF checks, return true, else return false.
+        return !excluded;
     }
 
 }

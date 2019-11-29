@@ -17,260 +17,75 @@
 
 package net.shibboleth.idp.ui.csrf;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
-
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.webflow.test.MockFlowExecutionContext;
-import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.definition.StateDefinition;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- *
+ * Base CSRF token predicate tests.
  */
 public class BaseCSRFTokenPredicateTest extends BaseCSRFTest{
     
 
-    /** Test setting the included view states.*/
-    @Test public void testSetNullIncludedViewStates() {
-
+    @Test public void testSafeGetBooleanAttributeWithNullStateDefinition(){
+        
         BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        predicate.setIncludedViewStateIds(null);
-
-        Object excludedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(excludedListObject);
-        Assert.assertTrue(excludedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) excludedListObject).size(), 0);
-
+        Assert.assertFalse(predicate.safeGetBooleanStateAttribute(null, "test", false));
+        Assert.assertTrue(predicate.safeGetBooleanStateAttribute(null, "test", true));
+        
     }
-   
-    /** Test setting the excluded view states.*/
-    @Test public void testSetExcludedViewStates() {
-
+    
+    @Test public void testSafeGetBooleanAttributeWithNullAttrName(){
+        
         BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-       
-        predicate.setExcludedViewStateIds(null);
-        // should be set as empty list
-        Object excludedListObject = ReflectionTestUtils.getField(predicate, EXCLUDED_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(excludedListObject);
-        Assert.assertTrue(excludedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) excludedListObject).size(), 0);
-
-        // test setting an actual excluded view state
-        List<String> excludedViewStates = Arrays.asList(new String[] {"excludedViewId"});
-        predicate.setExcludedViewStateIds(excludedViewStates);
-        excludedListObject = ReflectionTestUtils.getField(predicate, EXCLUDED_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(excludedListObject);
-        Assert.assertTrue(excludedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) excludedListObject).size(), 1);
-        Assert.assertTrue(((Set<?>) excludedListObject).contains("excludedViewId"));
+        StateDefinition state = new MockViewState("test", "test-view");
+        Assert.assertFalse(predicate.safeGetBooleanStateAttribute(state, null, false));
+        Assert.assertTrue(predicate.safeGetBooleanStateAttribute(state, null, true));
+        
+    }
+    
+    /** Test normal operation of the safeGetBoolean method with a true csrf exclusion attribute.*/
+    @Test public void testSafeGetBooleanTrue() {
+        
+        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
+        StateDefinition state = new MockViewState("test", "test-view");
+        state.getAttributes().put(BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, true);
+        Assert.assertTrue(predicate.safeGetBooleanStateAttribute(state, 
+                BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, false));
 
     }
     
-    /** Test setting one included view states.*/
-    @Test public void testSetOneIncludedViewStates() {
+    /** Test normal operation of the safeGetBoolean method with a false csrf exclusion attribute.*/
+    @Test public void testSafeGetBooleanFalse() {
         
         BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        
-     // test setting an actual include view state, but no wildcard
-        List<String> includedViewStates = Arrays.asList(new String[] {"includedViewId"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        Object includedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
-        Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(includedListObject);
-        Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) includedListObject).size(), 1);
-        Assert.assertTrue(((Set<?>) includedListObject).contains("includedViewId"));
-        Assert.assertNotNull(includeAllViews);
-        Assert.assertTrue(includeAllViews instanceof Boolean);
-        Assert.assertFalse((Boolean)includeAllViews);
+        StateDefinition state = new MockViewState("test", "test-view");
+        state.getAttributes().put(BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, false);
+        Assert.assertFalse(predicate.safeGetBooleanStateAttribute(state, 
+                BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, false));
+
     }
     
-    /** Test setting two included view states.*/
-    @Test public void testSetTwoIncludedViewStates() {
+    /** Test normal operation of the safeGetBoolean method with a null csrf exclusion attribute.*/
+    @Test public void testSafeGetBooleanNullAttributeFalse() {
         
         BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        
-     // test setting two actual include view state, but no wildcard
-        List<String> includedViewStates = Arrays.asList(new String[] {"includedViewId","includedViewId2"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        Object includedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
-        Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(includedListObject);
-        Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) includedListObject).size(), 2);
-        Assert.assertTrue(((Set<?>) includedListObject).contains("includedViewId"));
-        Assert.assertTrue(((Set<?>) includedListObject).contains("includedViewId2"));
-        Assert.assertNotNull(includeAllViews);
-        Assert.assertTrue(includeAllViews instanceof Boolean);
-        Assert.assertFalse((Boolean)includeAllViews);
+        StateDefinition state = new MockViewState("test", "test-view");
+        Assert.assertFalse(predicate.safeGetBooleanStateAttribute(state, 
+                BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, false));
+
     }
     
-    /** Test setting a wildcard include list element.*/
-    @Test public void testSetWildcardIncludedViewStates() {
+    /** Test normal operation of the safeGetBoolean method with a wrongly typed csrf exclusion attribute.*/
+    @Test public void testSafeGetBooleanWrongTypeAttributeFalse() {
         
         BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        
-      //test setting a wildcard include list element
-        List<String> includedViewStates = Arrays.asList(new String[] {BaseCSRFTokenPredicate.INCLUDE_ALL_WILDCARD});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        Object includedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
-        Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(includedListObject);
-        Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) includedListObject).size(), 0);
-        Assert.assertNotNull(includeAllViews);
-        Assert.assertTrue(includeAllViews instanceof Boolean);
-        Assert.assertTrue((Boolean)includeAllViews);
-    }
-    
-    /** Test setting a wildcard include list element alongside other viewstates.*/
-    @Test public void testSetWildcardAndOtherIncludedViewStates() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        
-      //test setting a wildcard include list element alongside other includes.
-        //should result in 0 includedViewstateIds being set, but the includeAllViews=true
-        List<String> includedViewStates = Arrays.asList(new String[] {"anotherViewState","*","moreViewStates"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        Object includedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
-        Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(includedListObject);
-        Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) includedListObject).size(), 0);
-        Assert.assertNotNull(includeAllViews);
-        Assert.assertTrue(includeAllViews instanceof Boolean);
-        Assert.assertTrue((Boolean)includeAllViews);
-    }
-    
-    /** Test setting  empty and null viewstate ids.*/
-    @Test public void testSetEmptyAndNullIncludedViewStates() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        
-        //test setting one empty and one null element. Should leave 0 included.
-        List<String>  includedViewStates = Arrays.asList(new String[] {"",null});        
-        predicate.setIncludedViewStateIds(includedViewStates);
-        Object includedListObject = ReflectionTestUtils.getField(predicate, INCLUDED_VIEWSTATES_FIELDNAME);
-        Object includeAllViews = ReflectionTestUtils.getField(predicate, INCLUDE_ALL_VIEWSTATES_FIELDNAME);
-        Assert.assertNotNull(includedListObject);
-        Assert.assertTrue(includedListObject instanceof Set);
-        Assert.assertEquals(((Set<?>) includedListObject).size(), 0);
-        Assert.assertNotNull(includeAllViews);
-        Assert.assertTrue(includeAllViews instanceof Boolean);
-        Assert.assertFalse((Boolean)includeAllViews);
-    }
-    
-    /** Test all states included, nothing excluded, predicate true.*/
-    @Test public void testAllStatesAreIncluded() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        List<String> includedViewStates = Arrays.asList(new String[] {"*"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        
-        MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
-        flowSession.setState(currentState);
-        MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
-        MockRequestContext src = new MockRequestContext(context);
-        
-        Assert.assertTrue(predicate.isStateIncluded(src));
-        
-    }
-    
-    /** Test one states included, nothing excluded, predicate true.*/
-    @Test public void testViewStatesIsIncluded() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        List<String> includedViewStates = Arrays.asList(new String[] {"a-view-state"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        
-        MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
-        flowSession.setState(currentState);
-        MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
-        MockRequestContext src = new MockRequestContext(context);
-        
-        Assert.assertTrue(predicate.isStateIncluded(src));
-        
-    }
-    
-    /** Test one state included, same state excluded, predicate false.*/
-    @Test public void testViewStatesIsIncludedAndExcluded() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        List<String> includedViewStates = Arrays.asList(new String[] {"a-view-state"});
-        List<String> excludeddViewStates = Arrays.asList(new String[] {"a-view-state"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        predicate.setExcludedViewStateIds(excludeddViewStates);
-        
-        MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
-        flowSession.setState(currentState);
-        MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
-        MockRequestContext src = new MockRequestContext(context);
-        
-        Assert.assertFalse(predicate.isStateIncluded(src));
-        
-    }
-    
-    /** Test one state included, other states are excluded, predicate true.*/
-    @Test public void testViewStatesIsIncludedAndOthersExcluded() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        List<String> includedViewStates = Arrays.asList(new String[] {"a-view-state"});
-        List<String> excludeddViewStates = Arrays.asList(new String[] {"a-view-state-not-same-as-included"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        predicate.setExcludedViewStateIds(excludeddViewStates);
-        
-        MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
-        flowSession.setState(currentState);
-        MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
-        MockRequestContext src = new MockRequestContext(context);
-        
-        Assert.assertTrue(predicate.isStateIncluded(src));
-        
-    }
-    
-    /** Test all states included, the current state excluded excluded, predicate false.*/
-    @Test public void testAllViewStatesIncludedOneExcluded() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        List<String> includedViewStates = Arrays.asList(new String[] {"*"});
-        List<String> excludeddViewStates = Arrays.asList(new String[] {"a-view-state"});
-        predicate.setIncludedViewStateIds(includedViewStates);
-        predicate.setExcludedViewStateIds(excludeddViewStates);
-        
-        MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
-        flowSession.setState(currentState);
-        MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
-        MockRequestContext src = new MockRequestContext(context);
-        
-        Assert.assertFalse(predicate.isStateIncluded(src));
-        
-    }
-    
-    /** Test nothing included, one excluded, so predicate always false.*/
-    @Test public void testExcludedNoneIncluded() {
-        
-        BaseCSRFTokenPredicate predicate = new MockBaseCSRFTokenPredicateImplementaiton();
-        List<String> excludeddViewStates = Arrays.asList(new String[] {"a-view-state"});
-        predicate.setExcludedViewStateIds(excludeddViewStates);
-        
-        MockFlowSession flowSession = new MockFlowSession();
-        MockViewState currentState = new MockViewState("testFlow", "a-view-state");
-        flowSession.setState(currentState);
-        MockFlowExecutionContext context = new MockFlowExecutionContext(flowSession);
-        MockRequestContext src = new MockRequestContext(context);
-        
-        Assert.assertFalse(predicate.isStateIncluded(src));
-        
+        StateDefinition state = new MockViewState("test", "test-view");
+        state.getAttributes().put(BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, "true");
+        Assert.assertFalse(predicate.safeGetBooleanStateAttribute(state, 
+                BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, false));
+
     }
     
     

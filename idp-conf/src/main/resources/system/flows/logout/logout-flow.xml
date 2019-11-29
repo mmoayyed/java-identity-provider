@@ -90,6 +90,7 @@
     </action-state>
 
     <view-state id="LogoutView" view="logout">
+    	<attribute name="csrf_excluded" value="true" type="boolean"/>
         <on-render>
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
