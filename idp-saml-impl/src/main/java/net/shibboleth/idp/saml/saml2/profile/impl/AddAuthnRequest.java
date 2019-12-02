@@ -66,13 +66,12 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>If an issuer value is returned via a lookup strategy, then it's set as the Issuer of the message.</p>
  * 
- * <p>Various other values are derived from the active configuration. The outbound relay state is also
- * set to the flow execution key.</p>
+ * <p>Various other values are derived from the active configuration such as {@link RequestedAuthnContext},
+ * {@link NameIDPolicy}, and {@link Scoping}.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
- * @event {@link EventIds#MESSAGE_PROC_ERROR}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * 
  * @post ProfileRequestContext.getOutboundMessageContext().getMessage() != null
@@ -87,9 +86,6 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
 
     /** Strategy used to locate the {@link IdentifierGenerationStrategy} to use. */
     @Nonnull private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
-
-    /** Strategy used to obtain the relay state token to provide. */
-    @Nonnull private Function<ProfileRequestContext,String> relayStateLookupStrategy;
     
     /** Strategy used to obtain the request issuer value. */
     @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
@@ -134,17 +130,6 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
 
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
-    }
-    
-    /**
-     * Set the strategy used to obtain the RelayState value to supply for flow restoration.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRelayStateLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        relayStateLookupStrategy = Constraint.isNotNull(strategy, "RelayState lookup srategy cannot be null");
     }
 
     /**
