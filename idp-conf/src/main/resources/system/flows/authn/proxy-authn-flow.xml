@@ -33,26 +33,10 @@
         <if test="protocolIterator.hasNext()" then="CallProxyFlow" else="ReselectFlow" />
     </decision-state>
     
-    <subflow-state id="CallProxyFlow" subflow="proxy/#{protocolIterator.next()}">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="ContinueSuccessfulAuthentication" />
-        <transition on="ReselectFlow" to="SelectProxyFlow" />
-    </subflow-state>
-
-    <action-state id="ContinueSuccessfulAuthentication">
-        <evaluate expression="PopulateSubjectCanonicalizationContext" />
-        <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="CallSubjectCanonicalization" />
-    </action-state>
-
-    <!-- This runs a c14n step on the result of the authentication. -->
-    <subflow-state id="CallSubjectCanonicalization" subflow="c14n">
+    <subflow-state id="CallProxyFlow" subflow="authn/#{protocolIterator.next()}">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="proceed" />
-        
-        <!-- This shouldn't generally happen, but if c14n fails, it's allowable to fall through. -->
-        <transition on="SubjectCanonicalizationError" to="ReselectFlow" />
+        <transition on="ReselectFlow" to="SelectProxyFlow" />
     </subflow-state>
 
     <bean-import resource="proxy-authn-beans.xml" />
