@@ -46,9 +46,7 @@
             #parse("login-error.vm")
 
             <form action="$flowExecutionUrl" method="post">
-            #if (${csrfToken})
-            	<input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
-			#end
+            #parse("csrf/csrf.vm")
             #set ($serviceName = $rpUIContext.serviceName)
             #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
               <legend>
@@ -60,12 +58,12 @@
               <div class="form-element-wrapper">
                 <label for="username">#springMessageText("idp.login.username", "Username")</label>
                 <input class="form-element form-field" id="username" name="j_username" type="text"
-                	value="#if($username)$encoder.encodeForHTML($username)#end">
+                    value="#if($username)$encoder.encodeForHTML($username)#end" />
               </div>
 
               <div class="form-element-wrapper">
                 <label for="password">#springMessageText("idp.login.password", "Password")</label>
-                <input class="form-element form-field" id="password" name="j_password" type="password" value="">
+                <input class="form-element form-field" id="password" name="j_password" type="password" value="" />
               </div>
 
               ## You may need to modify this to taste, such as changing the flow name its checking for to authn/MFA.
@@ -79,7 +77,7 @@
             #end
 
               <div class="form-element-wrapper">
-                <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true">
+                <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true" />
                 <label for="_shib_idp_revokeConsent">#springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")</label>
               </div>
 
@@ -102,7 +100,7 @@
             #end
             </form>
 
-			#*
+            #*
               //
               //    SP Description & Logo (optional)
               //    These idpui lines will display added information (if available
@@ -142,5 +140,5 @@
       </footer>
     </div>
     
- 	</body>
+     </body>
 </html>

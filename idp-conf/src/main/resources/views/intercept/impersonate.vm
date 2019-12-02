@@ -34,9 +34,7 @@
           <div class="content">
 
             <form action="$flowExecutionUrl" method="post">
-    		#if (${csrfToken})
-       			 <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
-			#end
+            #parse("csrf/csrf.vm")
             #set ($serviceName = $rpUIContext.serviceName)
             #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
               <legend>
@@ -50,7 +48,7 @@
 
               <div class="form-element-wrapper">
                 <label for="impersonation">#springMessageText("idp.impersonate.login-as", "Login as")</label>
-                <input class="form-element form-field" id="impersonation" name="principal" type="text">
+                <input class="form-element form-field" id="impersonation" name="principal" type="text" />
                 
                 <!-- Defaults to input box above, example below populates a select list from an IdPAttribute. -->
                 <!--

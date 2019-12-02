@@ -16,9 +16,7 @@
 ## pairing with the doLoad() function that populates the fields.
 ##
 <form name="form1" action="${flowExecutionUrl}" method="post">
-	 #if (${csrfToken})
-        <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
-	#end
+    #parse("csrf/csrf.vm")
     #foreach ($key in $loadContext.getStorageKeys())
         <input name="shib_idp_ls_exception.$key" type="hidden" />
         <input name="shib_idp_ls_success.$key" type="hidden" value="false" />

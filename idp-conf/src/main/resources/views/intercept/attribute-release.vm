@@ -35,9 +35,7 @@
     </head>
     <body>
         <form action="$flowExecutionUrl" method="post" style="padding:10px" >
-        	#if (${csrfToken})
-            	<input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
-			#end
+            #parse("csrf/csrf.vm")
             <div class="box">
                 <header>
                     <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">

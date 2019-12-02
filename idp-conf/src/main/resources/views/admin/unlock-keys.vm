@@ -43,9 +43,8 @@
                 #end
             
                 <form action="$flowExecutionUrl" method="post">
-                  #if (${csrfToken})
-            	   <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" id="csrf_token">
-				  #end
+                  #parse("csrf/csrf.vm")
+                  
                   <!--
                   If you have multiple key strategies defined, you'll need multiple pairs of form fields for
                   the passwords, labeled in the order they're fed into the shibboleth.unlock-keys.KeyStrategies
@@ -54,12 +53,12 @@
 
                   <div class="form-element-wrapper">
                     <label for="password">#springMessageText("idp.unlock-keys.keystorePassword", "DataSealer Keystore Password")</label>
-                    <input class="form-element form-field" id="password" name="keystorePassword" type="password">
+                    <input class="form-element form-field" id="password" name="keystorePassword" type="password" />
                   </div>
 
                   <div class="form-element-wrapper">
                     <label for="password">#springMessageText("idp.unlock-keys.keyPassword", "DataSealer Key Password")</label>
-                    <input class="form-element form-field" id="password" name="keyPassword" type="password">
+                    <input class="form-element form-field" id="password" name="keyPassword" type="password" />
                   </div>
 
                   <!--
@@ -69,7 +68,7 @@
 
                   <div class="form-element-wrapper">
                     <label for="password">#springMessageText("idp.unlock-keys.privateKeyPassword", "Private Key Password")</label>
-                    <input class="form-element form-field" id="password" name="privateKeyPassword" type="password">
+                    <input class="form-element form-field" id="password" name="privateKeyPassword" type="password" />
                   </div>
                   
                   <div class="form-element-wrapper">

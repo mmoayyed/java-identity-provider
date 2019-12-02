@@ -1,0 +1,6 @@
+##
+## Velocity template to handle form field for CSRF check
+##
+#if (${csrfToken})
+    <input type="hidden" name="${csrfToken.parameterName}" value="${csrfToken.token}" />
+#end
