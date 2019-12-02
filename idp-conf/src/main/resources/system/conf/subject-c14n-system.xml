@@ -35,7 +35,7 @@
 
     <!-- Remove in V5. -->
     <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization"
-        factory-method="c14LegacyPrincipalConnectorFactory" />
+        factory-method="c14LegacyPrincipalConnectorFactory" lazy-init="true" />
 
     <bean id="shibboleth.AbstractSAML1C14NFlowBean" abstract="true"
             class="net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor">
