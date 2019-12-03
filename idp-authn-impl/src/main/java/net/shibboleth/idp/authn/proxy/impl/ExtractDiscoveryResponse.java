@@ -21,11 +21,9 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * An action that extracts a discovery service result and copies it to the {@link AuthenticationContext}.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post If getHttpServletRequest() != null, the content of the "entityID" parameter will be
  * added via {@link AuthenticationContext#setAuthenticatingAuthority(String)}.
@@ -51,8 +48,7 @@ public class ExtractDiscoveryResponse extends AbstractAuthenticationAction {
 
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
-            log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            log.error("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             return;
         }
 
@@ -60,7 +56,6 @@ public class ExtractDiscoveryResponse extends AbstractAuthenticationAction {
         
         if (entityID == null) {
             log.debug("{} No entityID parameter found", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
 

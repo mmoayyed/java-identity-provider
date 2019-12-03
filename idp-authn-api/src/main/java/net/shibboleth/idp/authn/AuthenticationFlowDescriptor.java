@@ -84,6 +84,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
     /** Whether this flow should honor proxy scoping restrictions toward IdPs. */
     private boolean proxyScopingEnforced;
+    
+    /** Whether this flow should invoke discovery if no authenticating authority populated. */
+    private boolean discoveryRequired;
 
     /** Whether this flow allows reuse of its results. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
@@ -113,7 +116,6 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public AuthenticationFlowDescriptor() {
         supportsNonBrowser = true;
         proxyRestrictionsEnforced = true;
-        proxyScopingEnforced = false;
         reuseCondition = new ProxyCountPredicate();
         supportedPrincipals = new Subject();
         activationCondition = Predicates.alwaysTrue();
@@ -227,6 +229,32 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      */
     public void setProxyScopingEnforced(final boolean flag) {
         proxyScopingEnforced = flag;
+    }
+    
+    /**
+     * Gets whether to invoke discovery subflow if {@link AuthenticationContext#getAuthenticatingAuthority()}
+     * is null.
+     * 
+     * @return whether to invoke discovery
+     * 
+     * @since 4.0.0
+     */
+    public boolean isDiscoveryRequired() {
+        return discoveryRequired;
+    }
+    
+    /**
+     * Sets whether to invoke discovery subflow if {@link AuthenticationContext#getAuthenticatingAuthority()}
+     * is null.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.0.0
+     */
+    public void setDiscoveryRequired(final boolean flag) {
+        discoveryRequired = flag;
     }
 
     /**

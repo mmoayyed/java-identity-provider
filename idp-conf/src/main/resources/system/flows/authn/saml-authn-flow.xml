@@ -5,7 +5,17 @@
 
     <!-- This is a login flow for oroxied authentication implemented via SAML 2.0. -->
 
-    <action-state id="IssueRequest">
+    <on-start>
+        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.SAML.discoveryFunction') ? opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.discoveryFunction').apply(opensamlProfileRequestContext)) : null" />
+    </on-start>
+
+    <decision-state id="CheckDiscovery">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAttemptedFlow().isDiscoveryRequired()"
+            then="DoDiscovery"
+            else="PostDiscovery"/>
+    </decision-state>
+
+    <action-state id="PostDiscovery">
         <evaluate expression="InitializeProxyProfileRequestContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />
         

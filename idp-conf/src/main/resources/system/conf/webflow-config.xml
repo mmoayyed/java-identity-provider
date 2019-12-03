@@ -86,8 +86,10 @@
                 <entry key="authn/Duo" value="../system/flows/authn/duo-authn-flow.xml" />
                 <entry key="authn/MFA" value="../system/flows/authn/mfa-authn-flow.xml" />
                 <entry key="authn/Function" value="../system/flows/authn/function-authn-flow.xml" />
-                <entry key="authn/Proxy" value="../system/flows/authn/proxy-authn-flow.xml" />
                 <entry key="authn/SAML" value="../system/flows/authn/saml-authn-flow.xml" />
+          
+                <!-- One-off flow for discovery. -->
+                <entry key="authn/Discovery" value="../system/flows/authn/discovery-flow.xml" />
           
                 <!-- Master flow for subject c14n. -->
                 <entry key="c14n.events" value="../conf/c14n/subject-c14n-events-flow.xml" />

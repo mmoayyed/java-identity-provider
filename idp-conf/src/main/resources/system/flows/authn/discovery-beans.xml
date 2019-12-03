@@ -19,16 +19,14 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.Proxy.discoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
-        c:target-ref="shibboleth.authn.Proxy.discoveryURL" />
+    <bean id="shibboleth.authn.discoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
+        c:target-ref="shibboleth.authn.discoveryURL" />
 
-    
-
-    <import resource="../../../conf/authn/proxy-authn-config.xml" />
+    <import resource="../../../conf/authn/discovery-config.xml" />
 
     <bean id="DiscoveryProfileRequestFunction" lazy-init="true"
         class="net.shibboleth.idp.authn.proxy.impl.DiscoveryProfileRequestFunction"
-        p:discoveryURLLookupStrategy-ref="shibboleth.authn.Proxy.discoveryURLStrategy" />
+        p:discoveryURLLookupStrategy-ref="shibboleth.authn.discoveryURLStrategy" />
 
     <!-- Action beans. -->
 

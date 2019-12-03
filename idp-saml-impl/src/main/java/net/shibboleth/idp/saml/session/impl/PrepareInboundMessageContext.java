@@ -110,6 +110,10 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
             if (relyingPartyId != null) {
                 return true;
             }
+            
+            log.warn("{} No relying party ID returned from lookup function", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
         }
         
         final LogoutPropagationContext logoutPropCtx = logoutPropContextLookupStrategy.apply(profileRequestContext);

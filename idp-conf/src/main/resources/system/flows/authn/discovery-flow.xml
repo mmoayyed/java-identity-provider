@@ -1,0 +1,25 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      parent="authn.abstract">
+
+    <!-- This is a one-off flow for performing IdP Discovery using a standard SAML discovery service. -->
+
+    <on-start>
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(null)" />
+    </on-start>
+
+    <view-state id="IssueDiscoveryRequest" view="externalRedirect:#{DiscoveryProfileRequestFunction.apply(new net.shibboleth.utilities.java.support.collection.Pair(flowRequestContext, opensamlProfileRequestContext))}">
+        <attribute name="csrf_excluded" value="true" type="boolean"/>
+        <transition on="proceed" to="ExtractDiscoveryResponse" />
+    </view-state>
+    
+    <action-state id="ExtractDiscoveryResponse">
+        <evaluate expression="ExtractDiscoveryResponse" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="proceed" />
+    </action-state>
+    
+    <bean-import resource="discovery-beans.xml" />
+</flow>

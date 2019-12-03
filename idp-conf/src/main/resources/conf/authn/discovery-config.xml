@@ -12,22 +12,23 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!--  General Configuration -->
-
-    <!-- Optional Function<ProfileRequest,String> to supply name of proxied IdP. -->
+    <!-- Specify discovery service location. -->
     
-    <bean id="shibboleth.authn.Proxy.discoveryFunction" parent="shibboleth.Functions.Constant"
-        c:target="urn:mace:incommon:osu.edu" />
-
-    <!-- Alternatively use a standardized discovery service. -->
-    
-    <!--
-    <bean id="shibboleth.authn.Proxy.discoveryURL" class="java.lang.String"
+    <bean id="shibboleth.authn.discoveryURL" class="java.lang.String"
         c:_0="https://ds.example.org/shibboleth-ds/index.html" />
-     -->
-        
-    <util:list id="shibboleth.authn.Proxy.precedence">
-        <value>SAML</value>
-    </util:list>
+ 
+    <!-- Alternatively specify a Function<ProfileRequestContext,String> to return the URL. -->
+    <!--
+    <bean id="shibboleth.authn.discoveryURLStrategy"
+            parent="shibboleth.ContextFunction.Scripted" factory-method="inlineScript">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+                "https://ds.example.org/shibboleth-ds/index.html";
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+    -->
  
 </beans>

@@ -126,15 +126,19 @@
             </property>
         </bean>
 
-        <bean id="authn/Proxy" parent="shibboleth.AuthenticationFlow"
-                p:nonBrowserSupported="false"
-                p:passiveAuthenticationSupported="true"
-                p:forcedAuthenticationSupported="true"
-                p:proxyScopingEnforced="true" />
+        <!-- This is a flow for proxied SAML authentication to another IdP. -->
+
+        <bean id="authn/SAML" parent="shibboleth.AuthenticationFlow"
+            p:nonBrowserSupported="false"
+            p:passiveAuthenticationSupported="true"
+            p:forcedAuthenticationSupported="true"
+            p:proxyScopingEnforced="true"
+            p:discoveryRequired="true" />
 
         <!--
         These flows are often, though not exclusively, used to proxy authentication, so may need
-        the proxyScopingEnforced property enabled by hand to honor RP/local proxy count limits.
+        the proxyScopingEnforced flag enabled by hand to honor RP/local proxy count limits,
+        and may optionally trigger discovery via the discoveryRequired flag.
         -->
 
         <bean id="authn/External" parent="shibboleth.AuthenticationFlow"

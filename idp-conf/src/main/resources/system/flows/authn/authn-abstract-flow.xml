@@ -39,6 +39,18 @@
     <end-state id="SubjectCanonicalizationError" />
     <end-state id="InvalidCSRFToken" />
 
+    <!-- Support for discovery implemented via branch to DoDiscovery action. -->
+    <decision-state id="DoDiscovery">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAuthenticatingAuthority() == null"
+            then="CallDiscovery"
+            else="PostDiscovery" />
+    </decision-state>
+    
+    <subflow-state id="CallDiscovery" subflow="authn/Discovery">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="PostDiscovery" />
+    </subflow-state>
+  
     <action-state id="LogRuntimeException">
         <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
         <transition to="RuntimeException" />

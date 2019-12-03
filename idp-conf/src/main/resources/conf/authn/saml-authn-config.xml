@@ -12,7 +12,15 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-
+    <!--
+    Optional Function<ProfileRequest,String> to supply name of proxied IdP,
+    otherwise flow assumes IdP discovery has been performed already.
+    -->
+    <!--
+    <bean id="shibboleth.authn.SAML.discoveryFunction" parent="shibboleth.Functions.Constant"
+        c:target="https://idp.example.org/idp/shibboleth" />
+    -->
+    
     <!--
     Add authentication flow descriptor's supportedPrincipals collection to the
     resulting Subject? This may be problematic if it happens without regard for
