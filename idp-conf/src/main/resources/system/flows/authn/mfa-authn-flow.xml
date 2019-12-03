@@ -4,7 +4,17 @@
     
     <!-- This is a login flow for executing an arbitrary multi-factor workflow consisting of other flows. -->
     
-    <action-state id="PopulateMultiFactorAuthenticationContext">
+    <on-start>
+        <!-- If installed, this can bypass discovery. -->
+        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.MFA.discoveryFunction') ? opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.MFA.discoveryFunction').apply(opensamlProfileRequestContext)) : null" />
+    </on-start>
+
+    <action-state id="Start">
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="DoDiscovery" />
+    </action-state>
+    
+    <action-state id="PostDiscovery">
         <evaluate expression="PopulateMultiFactorAuthenticationContext" />
         <evaluate expression="'proceed'" />
         

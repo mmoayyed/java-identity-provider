@@ -39,9 +39,9 @@
     <end-state id="SubjectCanonicalizationError" />
     <end-state id="InvalidCSRFToken" />
 
-    <!-- Support for discovery implemented via branch to DoDiscovery action. -->
+    <!-- Support for discovery implemented via child flow branch to DoDiscovery action. -->
     <decision-state id="DoDiscovery">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAuthenticatingAuthority() == null"
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAttemptedFlow().isDiscoveryRequired() and opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAuthenticatingAuthority() == null"
             then="CallDiscovery"
             else="PostDiscovery" />
     </decision-state>

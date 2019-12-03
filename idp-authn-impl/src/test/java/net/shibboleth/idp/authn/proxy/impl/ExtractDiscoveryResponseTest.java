@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn.proxy.impl;
 
+
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -45,14 +47,14 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         action.initialize();
         final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
         Assert.assertNull(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority());
     }
 
     @Test public void testFailure() throws Exception {
         final Event event = action.execute(src);
         
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
         Assert.assertNull(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority());
     }
 

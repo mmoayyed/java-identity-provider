@@ -5,7 +5,17 @@
 
     <!-- This is a login flow for function-driven authentication. -->
     
-    <action-state id="CallFunction">
+    <on-start>
+        <!-- If installed, this can bypass discovery. -->
+        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.Function.discoveryFunction') ? opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.Function.discoveryFunction').apply(opensamlProfileRequestContext)) : null" />
+    </on-start>
+
+    <action-state id="Start">
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="DoDiscovery" />
+    </action-state>
+    
+    <action-state id="PostDiscovery">
         <evaluate expression="ValidateFunctionResult" />
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />

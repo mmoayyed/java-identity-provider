@@ -3,17 +3,17 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       parent="authn.abstract">
 
-    <!-- This is a login flow for oroxied authentication implemented via SAML 2.0. -->
+    <!-- This is a login flow for proxied authentication implemented via SAML 2.0. -->
 
     <on-start>
+        <!-- If installed, this can bypass discovery. -->
         <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.SAML.discoveryFunction') ? opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.discoveryFunction').apply(opensamlProfileRequestContext)) : null" />
     </on-start>
 
-    <decision-state id="CheckDiscovery">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAttemptedFlow().isDiscoveryRequired()"
-            then="DoDiscovery"
-            else="PostDiscovery"/>
-    </decision-state>
+    <action-state id="Start">
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="DoDiscovery" />
+    </action-state>
 
     <action-state id="PostDiscovery">
         <evaluate expression="InitializeProxyProfileRequestContext" />

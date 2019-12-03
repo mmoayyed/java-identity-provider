@@ -4,8 +4,18 @@
       parent="authn.abstract">
 
     <!-- This is a login flow for container-based pseudo-authentication implemented via external authentication. -->
+
+    <on-start>
+        <!-- If installed, this can bypass discovery. -->
+        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.RemoteUser.discoveryFunction') ? opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.RemoteUser.discoveryFunction').apply(opensamlProfileRequestContext)) : null" />
+    </on-start>
+
+    <action-state id="Start">
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="DoDiscovery" />
+    </action-state>
     
-    <view-state id="ExternalTransfer" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.RemoteUser.externalAuthnPathStrategy').apply(opensamlProfileRequestContext), flowExecutionContext.getKey().toString())}">
+    <view-state id="PostDiscovery" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.RemoteUser.externalAuthnPathStrategy').apply(opensamlProfileRequestContext), flowExecutionContext.getKey().toString())}">
         <attribute name="csrf_excluded" value="true" type="boolean"/>
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(new net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl(calledAsExtendedFlow?:false)), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
