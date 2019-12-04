@@ -53,7 +53,6 @@ import com.google.common.base.Strings;
  * is within a given range and generates an {@link net.shibboleth.idp.authn.AuthenticationResult}.
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
@@ -108,14 +107,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
         }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
-            return false;
-        }
-        
+
         uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
         if (uaContext == null) {
             log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());

@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  * <p>Various optional properties are supported to control the validation process.</p>
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
@@ -123,13 +122,6 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
 
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
             return false;
         }
         

@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * optionally validating the certificate(s) against a {@link TrustEngine}.
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
@@ -94,13 +93,6 @@ public class ValidateX509Certificate extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.info("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
             return false;
         }
         

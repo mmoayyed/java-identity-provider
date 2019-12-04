@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
  * An action that processes a list of {@link CredentialValidator} objects to produce an {@link AuthenticationResult}.
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event others on error
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  * 
@@ -164,12 +163,6 @@ public class ValidateCredentials extends AbstractValidationAction implements War
             @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.info("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
