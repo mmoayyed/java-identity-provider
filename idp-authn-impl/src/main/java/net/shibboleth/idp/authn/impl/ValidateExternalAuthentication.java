@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
  * contents.
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  * @event {@link AuthnEventIds#AUTHN_EXCEPTION}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
@@ -138,13 +137,6 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
             return false;
         }
         
