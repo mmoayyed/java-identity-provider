@@ -18,10 +18,12 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
 
@@ -34,7 +36,7 @@ public class CryptoTransientNameIdentifierDecoder extends BaseCryptoTransientDec
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+    @Nullable @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
 
         return super.decode(nameIdentifier.getValue(), c14nContext.getRequesterId());

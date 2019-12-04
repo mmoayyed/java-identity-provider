@@ -80,8 +80,8 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
      * @return the decoded entity.
      * @throws NameDecoderException if a decode error occurs.
      */
-    @Nullable protected String decode(@Nonnull final String transientId, @Nonnull @NotEmpty final String requesterId)
-            throws NameDecoderException {
+    @Nullable @NotEmpty protected String decode(@Nonnull final String transientId,
+            @Nonnull @NotEmpty final String requesterId) throws NameDecoderException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         if (null == transientId) {
@@ -96,13 +96,13 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         } catch (final DataExpiredException e) {
             throw new NameDecoderException(getLogPrefix() + " Principal identifier has expired");
         } catch (final DataSealerException e) {
-            log.debug("{} Caught exception unwrapping principal identifier", getLogPrefix(), e);
-            return null;
+            throw new NameDecoderException(getLogPrefix() + " Caught exception unwrapping sealed transient identifier",
+                    e);
         }
 
-        if (decodedId == null) {
-            throw new NameDecoderException(getLogPrefix() + " Unable to recover principal from transient identifier: "
-                    + transientId);
+        if (Strings.isNullOrEmpty(decodedId)) {
+            log.debug("{} Unable to recover principal from transient identifier: {}", getLogPrefix(), transientId);
+            return null;
         }
 
         // Split the identifier.
