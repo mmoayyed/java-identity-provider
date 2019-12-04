@@ -30,22 +30,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.DerefAliases;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchScope;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
-import org.ldaptive.provider.ProviderConfig;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -188,35 +184,31 @@ public class LDAPDataConnectorParserTest {
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-minimal.xml"});
         assertNotNull(dataConnector);
         assertTrue(dataConnector.isFailFastInitialize());
-        assertEquals(Duration.ZERO, dataConnector.getNoRetryDelay());
+        assertEquals(dataConnector.getNoRetryDelay(), Duration.ZERO);
         final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
         assertNotNull(connFactory);
 
         final ConnectionConfig connConfig = connFactory.getConnectionConfig();
         assertNotNull(connConfig);
-        assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
-        assertEquals(false, connConfig.getUseSSL());
-        assertEquals(false, connConfig.getUseStartTLS());
+        assertEquals(connConfig.getLdapUrl(), "ldap://localhost:10389");
+        assertFalse(connConfig.getUseSSL());
+        assertFalse(connConfig.getUseStartTLS());
         final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
-        assertEquals("cn=Directory Manager", connInitializer.getBindDn());
-        assertEquals("password", connInitializer.getBindCredential().getString());
-        assertEquals(3000, connConfig.getConnectTimeout());
-        assertEquals(3000, connConfig.getResponseTimeout());
+        assertEquals(connInitializer.getBindDn(), "cn=Directory Manager");
+        assertEquals(connInitializer.getBindCredential().getString(), "password");
+        assertEquals(connConfig.getConnectTimeout(), Duration.ofSeconds(3));
+        assertEquals(connConfig.getResponseTimeout(), Duration.ofSeconds(3));
 
         final SslConfig sslConfig = connFactory.getConnectionConfig().getSslConfig();
         assertNotNull(sslConfig);
         final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         assertNotNull(credentialConfig);
 
-        final ProviderConfig<?> providerConfig = connFactory.getProvider().getProviderConfig();
-        assertNotNull(providerConfig);
-        assertTrue(providerConfig.getProperties().isEmpty());
-
         final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         assertNotNull(searchExecutor);
-        assertEquals("", searchExecutor.getBaseDn());
+        assertEquals(searchExecutor.getBaseDn(), "");
         assertNull(searchExecutor.getSearchFilter());
-        assertEquals(3000, searchExecutor.getTimeLimit());
+        assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(3));
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
@@ -252,47 +244,43 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(connFactory);
         final BlockingConnectionPool connPool = (BlockingConnectionPool) connFactory.getConnectionPool();
         assertNotNull(connPool);
-        assertEquals(0, connPool.getBlockWaitTime());
+        assertNull(connPool.getBlockWaitTime());
         assertEquals("resolver-pool", connPool.getName());
         final PoolConfig poolConfig = connPool.getPoolConfig();
         assertNotNull(poolConfig);
-        assertEquals(0, poolConfig.getMinPoolSize());
-        assertEquals(3, poolConfig.getMaxPoolSize());
+        assertEquals(poolConfig.getMinPoolSize(), 0);
+        assertEquals(poolConfig.getMaxPoolSize(), 3);
         assertFalse(poolConfig.isValidatePeriodically());
-        assertEquals(1800, poolConfig.getValidatePeriod());
+        assertEquals(poolConfig.getValidatePeriod(), Duration.ofMinutes(30));
         assertTrue(connPool.getFailFastInitialize());
         assertNull(connPool.getValidator());
 
         final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) connPool.getPruneStrategy();
         assertNotNull(pruneStrategy);
-        assertEquals(300, pruneStrategy.getPrunePeriod());
-        assertEquals(600, pruneStrategy.getIdleTime());
+        assertEquals(pruneStrategy.getPrunePeriod(), Duration.ofMinutes(5));
+        assertEquals(pruneStrategy.getIdleTime(), Duration.ofMinutes(10));
 
         final ConnectionConfig connConfig = connPool.getConnectionFactory().getConnectionConfig();
         assertNotNull(connConfig);
-        assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
-        assertEquals(false, connConfig.getUseSSL());
-        assertEquals(false, connConfig.getUseStartTLS());
+        assertEquals(connConfig.getLdapUrl(), "ldap://localhost:10389");
+        assertFalse(connConfig.getUseSSL());
+        assertFalse(connConfig.getUseStartTLS());
         final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
-        assertEquals("cn=Directory Manager", connInitializer.getBindDn());
-        assertEquals("password", connInitializer.getBindCredential().getString());
-        assertEquals(3000, connConfig.getConnectTimeout());
-        assertEquals(3000, connConfig.getResponseTimeout());
+        assertEquals(connInitializer.getBindDn(), "cn=Directory Manager");
+        assertEquals(connInitializer.getBindCredential().getString(), "password");
+        assertEquals(connConfig.getConnectTimeout(), Duration.ofSeconds(3));
+        assertEquals(connConfig.getResponseTimeout(), Duration.ofSeconds(3));
 
         final SslConfig sslConfig = connPool.getConnectionFactory().getConnectionConfig().getSslConfig();
         assertNotNull(sslConfig);
         final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         assertNotNull(credentialConfig);
 
-        final ProviderConfig<?> providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
-        assertNotNull(providerConfig);
-        assertTrue(providerConfig.getProperties().isEmpty());
-
         final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         assertNotNull(searchExecutor);
-        assertEquals("", searchExecutor.getBaseDn());
+        assertEquals(searchExecutor.getBaseDn(), "");
         assertNull(searchExecutor.getSearchFilter());
-        assertEquals(3000, searchExecutor.getTimeLimit());
+        assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(3));
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
@@ -315,74 +303,6 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         assertNotNull(attrs);
-        assertNotNull(attrs.get("entryDN"));
-    }
-
-    @Test public void v2JndiConfig() throws Exception {
-        final LDAPDataConnector dataConnector =
-          getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-jndi.xml"});
-        assertNotNull(dataConnector);
-        assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
-        final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
-        assertNotNull(connFactory);
-
-        final ConnectionConfig connConfig = connFactory.getConnectionConfig();
-        assertNotNull(connConfig);
-        assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
-        assertEquals(false, connConfig.getUseSSL());
-        assertEquals(true, connConfig.getUseStartTLS());
-        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
-        assertEquals("cn=Directory Manager", connInitializer.getBindDn());
-        assertEquals("password", connInitializer.getBindCredential().getString());
-        assertEquals(2000, connConfig.getConnectTimeout());
-        assertEquals(4000, connConfig.getResponseTimeout());
-
-        final SslConfig sslConfig = connFactory.getConnectionConfig().getSslConfig();
-        assertNotNull(sslConfig);
-        final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
-        assertNotNull(credentialConfig);
-
-        final ProviderConfig<?> providerConfig = connFactory.getProvider().getProviderConfig();
-        assertNotNull(providerConfig);
-        assertEquals("value1", providerConfig.getProperties().get("name1"));
-        assertEquals("finding", providerConfig.getProperties().get("java.naming.ldap.derefAliases"));
-        assertEquals("jpegPhoto employeeNumber", providerConfig.getProperties().get("java.naming.ldap.attributes.binary"));
-
-        final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
-        assertNotNull(searchExecutor);
-        assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
-        assertNull(searchExecutor.getSearchFilter());
-        assertEquals(7000, searchExecutor.getTimeLimit());
-        assertEquals(SearchScope.SUBTREE, searchExecutor.getSearchScope());
-        assertEquals(DerefAliases.FINDING, searchExecutor.getDerefAliases());
-        assertEquals(new String[] {"jpegPhoto", "employeeNumber"}, searchExecutor.getBinaryAttributes());
-
-        final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
-        assertNotNull(validator);
-        assertFalse(validator.isThrowValidateError());
-        assertNotNull(validator.getConnectionFactory());
-
-        final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
-        assertNotNull(searchBuilder);
-
-        final StringAttributeValueMappingStrategy mappingStrategy =(StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
-        assertNotNull(mappingStrategy);
-        assertTrue(mappingStrategy.isNoResultAnError());
-        assertTrue(mappingStrategy.isMultipleResultsAnError());
-
-        assertNull(dataConnector.getResultsCache());
-
-        dataConnector.initialize();
-        final AttributeResolutionContext context =
-          TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-            TestSources.SP_ENTITY_ID);
-        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
-        assertNotNull(attrs);
-        assertEquals(5, attrs.size());
-        assertNotNull(attrs.get("cn"));
-        assertNotNull(attrs.get("sn"));
-        assertNotNull(attrs.get("jpegPhoto"));
-        assertEquals(attrs.get("employeeNumber").getValues().get(0).getNativeValue(), "C2J20hMNp7NlUwQ+");
         assertNotNull(attrs.get("entryDN"));
     }
 
@@ -525,61 +445,54 @@ public class LDAPDataConnectorParserTest {
     protected void doTest(final LDAPDataConnector dataConnector) throws ResolutionException {
 
         final String id = dataConnector.getId();
-        assertEquals("myLDAP", id);
-        assertEquals(Duration.ofMinutes(5), dataConnector.getNoRetryDelay());
+        assertEquals(id, "myLDAP");
+        assertEquals(dataConnector.getNoRetryDelay(), Duration.ofMinutes(5));
 
         final PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
         assertNotNull(connFactory);
         final BlockingConnectionPool connPool = (BlockingConnectionPool) connFactory.getConnectionPool();
         assertNotNull(connPool);
-        assertEquals(5000, connPool.getBlockWaitTime());
-        assertEquals("resolver-pool", connPool.getName());
+        assertEquals(connPool.getBlockWaitTime(), Duration.ofSeconds(5));
+        assertEquals(connPool.getName(), "resolver-pool");
         final PoolConfig poolConfig = connPool.getPoolConfig();
         assertNotNull(poolConfig);
-        assertEquals(5, poolConfig.getMinPoolSize());
-        assertEquals(10, poolConfig.getMaxPoolSize());
+        assertEquals(poolConfig.getMinPoolSize(), 5);
+        assertEquals(poolConfig.getMaxPoolSize(), 10);
         assertTrue(poolConfig.isValidatePeriodically());
-        assertEquals(900, poolConfig.getValidatePeriod());
+        assertEquals(poolConfig.getValidatePeriod(), Duration.ofMinutes(15));
         assertFalse(connPool.getFailFastInitialize());
 
         final SearchValidator searchValidator = (SearchValidator) connPool.getValidator();
         assertNotNull(searchValidator);
-        assertEquals("dc=shibboleth,dc=net", searchValidator.getSearchRequest().getBaseDn());
-        assertEquals("(ou=people)", searchValidator.getSearchRequest().getSearchFilter().getFilter());
+        assertEquals(searchValidator.getSearchRequest().getBaseDn(), "dc=shibboleth,dc=net");
+        assertEquals(searchValidator.getSearchRequest().getSearchFilter().getFilter(), "(ou=people)");
 
         final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) connPool.getPruneStrategy();
         assertNotNull(pruneStrategy);
-        assertEquals(300, pruneStrategy.getPrunePeriod());
-        assertEquals(600, pruneStrategy.getIdleTime());
+        assertEquals(pruneStrategy.getPrunePeriod(), Duration.ofMinutes(5));
+        assertEquals(pruneStrategy.getIdleTime(), Duration.ofMinutes(10));
 
         final ConnectionConfig connConfig = connPool.getConnectionFactory().getConnectionConfig();
         assertNotNull(connConfig);
-        assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
-        assertEquals(false, connConfig.getUseSSL());
-        assertEquals(true, connConfig.getUseStartTLS());
+        assertEquals(connConfig.getLdapUrl(), "ldap://localhost:10389");
+        assertFalse(connConfig.getUseSSL());
+        assertTrue(connConfig.getUseStartTLS());
         final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
-        assertEquals("cn=Directory Manager", connInitializer.getBindDn());
-        assertEquals("password", connInitializer.getBindCredential().getString());
-        assertEquals(2000, connConfig.getConnectTimeout());
-        assertEquals(4000, connConfig.getResponseTimeout());
+        assertEquals(connInitializer.getBindDn(), "cn=Directory Manager");
+        assertEquals(connInitializer.getBindCredential().getString(), "password");
+        assertEquals(connConfig.getConnectTimeout(), Duration.ofSeconds(2));
+        assertEquals(connConfig.getResponseTimeout(), Duration.ofSeconds(4));
 
         final SslConfig sslConfig = connPool.getConnectionFactory().getConnectionConfig().getSslConfig();
         assertNotNull(sslConfig);
         final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         assertNotNull(credentialConfig);
 
-        final Map<String, Object> providerProps = new HashMap<>();
-        providerProps.put("name1", "value1");
-        providerProps.put("name2", "value2");
-        final ProviderConfig<?> providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
-        assertNotNull(providerConfig);
-        assertEquals(providerProps, providerConfig.getProperties());
-
         final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         assertNotNull(searchExecutor);
-        assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
+        assertEquals(searchExecutor.getBaseDn(), "ou=people,dc=shibboleth,dc=net");
         assertNull(searchExecutor.getSearchFilter());
-        assertEquals(7000, searchExecutor.getTimeLimit());
+        assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(7));
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);

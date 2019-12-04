@@ -23,9 +23,9 @@ import java.security.KeyStore;
 
 import javax.annotation.Nonnull;
 
+import com.unboundid.util.ssl.SSLUtil;
 import org.ldaptive.ssl.CredentialConfigFactory;
-import org.ldaptive.ssl.SslConfig;
-import org.ldaptive.ssl.TLSSocketFactory;
+import org.ldaptive.ssl.SSLContextInitializer;
 import org.springframework.core.io.Resource;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -67,12 +67,11 @@ public class InMemoryDirectory {
             final KeyStore ks = KeyStore.getInstance("JKS");
             final String ksPass = "changeit";
             ks.load(keystore.getInputStream(), ksPass.toCharArray());
-            final TLSSocketFactory socketFactory = new TLSSocketFactory();
-            socketFactory.setSslConfig(new SslConfig(CredentialConfigFactory.createKeyStoreCredentialConfig(ks, ksPass)));
-            socketFactory.initialize();
-            
-            config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, port,
-                    socketFactory));
+            final SSLContextInitializer sslInit =
+                CredentialConfigFactory.createKeyStoreCredentialConfig(ks, ksPass).createSSLContextInitializer();
+            final SSLUtil sslUtil = new SSLUtil(sslInit.getKeyManagers(), sslInit.getTrustManagers());
+            config.setListenerConfigs(
+                InMemoryListenerConfig.createLDAPConfig("default", null, port, sslUtil.createSSLSocketFactory()));
         } catch (final GeneralSecurityException e) {
             throw new IOException("Error reading keystore", e);
         }

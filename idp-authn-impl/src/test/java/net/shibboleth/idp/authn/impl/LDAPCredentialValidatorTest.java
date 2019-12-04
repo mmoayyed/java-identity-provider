@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -417,7 +418,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         warningAuthenticator.setAuthenticationResponseHandlers(new AuthenticationResponseHandler() {
             public void handle(AuthenticationResponse response) throws LdapException {
                 response.setAccountState(
-                        new AccountState(new AccountState.DefaultWarning(java.util.Calendar.getInstance(), 10)));
+                        new AccountState(new AccountState.DefaultWarning(ZonedDateTime.now(), 10)));
             }
         });
         validator.setAuthenticator(warningAuthenticator);

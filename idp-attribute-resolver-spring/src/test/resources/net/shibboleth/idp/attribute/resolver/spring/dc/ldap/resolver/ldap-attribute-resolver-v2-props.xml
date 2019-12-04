@@ -21,8 +21,6 @@
             ]]>
         </FilterTemplate>
         <ReturnAttributes>%{search.returnAttributes}</ReturnAttributes>
-        <LDAPProperty name="name1" value="%{jndi.property1}"/>
-        <LDAPProperty name="name2" value="%{jndi.property2}"/>
         <StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">
             <security:Certificate>
               MIICATCCAWoCCQCZy4ovDlQTvDANBgkqhkiG9w0BAQUFADBFMRMwEQYKCZImiZPy

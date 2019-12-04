@@ -76,9 +76,9 @@ public class PooledTemplateSearchDnResolver extends AbstractTemplateSearchDnReso
     @Override public String toString() {
         return String.format(
                 "[%s@%d::factory=%s, templateName=%s, baseDn=%s, userFilter=%s, userFilterParameters=%s, "
-                        + "allowMultipleDns=%s, subtreeSearch=%s, derefAliases=%s, followReferrals=%s]",
+                        + "allowMultipleDns=%s, subtreeSearch=%s, derefAliases=%s]",
                 getClass().getName(), hashCode(), factory, getTemplate().getTemplateName(), getBaseDn(),
                 getUserFilter(), Arrays.toString(getUserFilterParameters()), getAllowMultipleDns(), getSubtreeSearch(),
-                getDerefAliases(), getFollowReferrals());
+                getDerefAliases());
     }
 }

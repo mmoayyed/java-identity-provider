@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
+import org.ldaptive.ResultCode;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
@@ -61,6 +62,11 @@ public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInit
                     @Nonnull final ConnectionFactory factory) throws LdapException {
                 final Response<SearchResult> response = executor.search(factory, searchFilter);
                 log.trace("Search returned response {}", response);
+                if (response.getResultCode() != ResultCode.SUCCESS) {
+                    // It's possible for the LDAP to return partial results and report either a size limit or
+                    // time limit result code. Throw if we don't receive all results.
+                    throw new LdapException("Search operation did not return success: " + response.getResultCode());
+                }
                 return response.getResult();
             }
 

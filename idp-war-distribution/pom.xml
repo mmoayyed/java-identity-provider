@@ -44,17 +44,6 @@
             <version>${metrics.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- IDP-1401 - UnboundID as default ldaptive LDAP provider -->
-        <dependency>
-            <groupId>org.ldaptive</groupId>
-            <artifactId>ldaptive-unboundid</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.unboundid</groupId>
-            <artifactId>unboundid-ldapsdk</artifactId>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 
     <distributionManagement>

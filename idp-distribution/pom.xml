@@ -77,16 +77,6 @@
             <version>${metrics.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ldaptive</groupId>
-            <artifactId>ldaptive-unboundid</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.unboundid</groupId>
-            <artifactId>unboundid-ldapsdk</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         
         <!-- Test Dependencies -->
 

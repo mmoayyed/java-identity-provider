@@ -15,20 +15,6 @@
                 </constructor-arg>
                 <constructor-arg index="1">
                     <bean class="org.ldaptive.DefaultConnectionFactory">
-                        <property name="provider">
-                            <bean class="org.ldaptive.provider.jndi.JndiProvider">
-                                <property name="providerConfig">
-                                    <bean class="org.ldaptive.provider.jndi.JndiProviderConfig">
-                                        <property name="properties">
-                                            <map>
-                                                <entry key="name1" value="%{jndi.property1}" />
-                                                <entry key="name2" value="%{jndi.property2}" />
-                                            </map>
-                                        </property>
-                                    </bean>
-                                </property>
-                            </bean>
-                        </property>
                         <property name="connectionConfig">
                             <bean class="org.ldaptive.ConnectionConfig" p:ldapUrl="%{connectionConfig.ldapURL}"
                                 p:useStartTLS="%{connectionConfig.useStartTLS}"

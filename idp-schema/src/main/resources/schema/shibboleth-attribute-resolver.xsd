@@ -775,13 +775,6 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="LDAPProperty" type="resolver:PropertyType">
-                        <annotation>
-                            <documentation>
-                                LDAP connection properties relevant to the underlying provider being used.
-                            </documentation>
-                        </annotation>
-                    </element>
                     <element name="StartTLSTrustCredential" type="sec:X509Credential">
                         <annotation>
                             <documentation>
@@ -816,7 +809,7 @@
                 <attribute name="connectionStrategy" type="resolver:ConnectionStrategyType">
                     <annotation>
                         <documentation>
-                            The LDAP connection strategy. Acceptable values are DEFAULT, ACTIVE_PASSIVE, ROUND_ROBIN, and RANDOM.
+                            The LDAP connection strategy. Acceptable values are ACTIVE_PASSIVE, ROUND_ROBIN and RANDOM.
                             Default value is ACTIVE_PASSIVE.
                         </documentation>
                     </annotation>
@@ -1581,7 +1574,6 @@
             <documentation>Supported connection strategies.</documentation>
         </annotation>
         <restriction base="string">
-            <enumeration value="DEFAULT"/>
             <enumeration value="ACTIVE_PASSIVE"/>
             <enumeration value="ROUND_ROBIN"/>
             <enumeration value="RANDOM"/>
@@ -1643,16 +1635,6 @@
                     Note that when this threshold is reach the pool will begin blocking until a connection
                     is available.
                     Default value is 3.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="blockWhenEmpty" type="resolver:string">
-            <annotation>
-                <documentation>
-                    Whether the pool should block when maxPoolSize objects are in use.
-                    If false, pool will grow beyond the maxPoolSize value.
-                    Note that a properly configured blocking pool will yield better performance.
-                    Default value is true.
                 </documentation>
             </annotation>
         </attribute>
