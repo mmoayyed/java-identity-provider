@@ -41,9 +41,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
  */
 public class MetadataGeneratorTask extends Task {
 
-    /** Where we collect the parameters. */
-
-    /** where to put the data. */
+    /** Where to put the data. */
     private File outputFile;
 
     /** Where idp.home is. */
