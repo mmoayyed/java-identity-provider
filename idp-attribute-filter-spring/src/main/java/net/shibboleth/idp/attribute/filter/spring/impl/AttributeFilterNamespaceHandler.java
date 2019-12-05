@@ -45,6 +45,7 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequest
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerInEntityGroupRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeRegexRuleParser;
@@ -145,6 +146,9 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterInEntityGroupRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerInEntityGroupRuleParser.SCHEMA_TYPE,
+                new AttributeIssuerInEntityGroupRuleParser());
 
         registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new AttributeInMetadataRuleParser());

@@ -20,20 +20,20 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerInEntityGroupPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 /**
- * Parser for {@link AttributeRequesterInEntityGroupPolicyRule}.
+ * Parser for {@link AttributeIssuerInEntityGroupPolicyRule}.
  */
-public class AttributeRequesterInEntityGroupRuleParser extends AbstractEntityGroupRuleParser {
+public class AttributeIssuerInEntityGroupRuleParser extends AbstractEntityGroupRuleParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "InEntityGroup");
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE, "IssuerInEntityGroup");
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Class<AttributeRequesterInEntityGroupPolicyRule> getNativeBeanClass() {
-        return AttributeRequesterInEntityGroupPolicyRule.class;
+    @Override @Nonnull protected Class<AttributeIssuerInEntityGroupPolicyRule> getNativeBeanClass() {
+        return AttributeIssuerInEntityGroupPolicyRule.class;
     }
 
 }

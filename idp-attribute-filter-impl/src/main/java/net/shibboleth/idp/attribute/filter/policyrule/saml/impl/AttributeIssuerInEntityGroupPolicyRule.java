@@ -28,13 +28,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A matcher that evaluates to true if attribute requester's metadata matches the provided entity group name,
+ * A matcher that evaluates to true if attribute issuer's metadata matches the provided entity group name,
  * or a valid metadata-sourced affiliation of entities.
+ * 
+ * @since 4.0.0
  */
-public class AttributeRequesterInEntityGroupPolicyRule extends AbstractEntityGroupPolicyRule {
+public class AttributeIssuerInEntityGroupPolicyRule extends AbstractEntityGroupPolicyRule {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterInEntityGroupPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeIssuerInEntityGroupPolicyRule.class);
 
     /**
      * Gets the entity descriptor for the entity to check.
@@ -44,10 +46,10 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractEntityGro
      * @return entity descriptor for the entity to check
      */
     @Nullable protected EntityDescriptor getEntityMetadata(@Nonnull final AttributeFilterContext filterContext) {
-        final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
+        final SAMLMetadataContext metadataContext = filterContext.getIssuerMetadataContext();
 
         if (null == metadataContext) {
-            log.debug("{} No requester metadata found", getLogPrefix());
+            log.debug("{} No issuer metadata found", getLogPrefix());
             return null;
         }
         return metadataContext.getEntityDescriptor();

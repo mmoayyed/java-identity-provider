@@ -737,6 +737,18 @@
         </complexContent>
     </complexType>
 
+    <complexType name="IssuerInEntityGroup">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if the attribute issuer is found in metadata and
+                is a member of the given entity group.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:EntityGroupMatchType"/>
+        </complexContent>
+    </complexType>
+
     <complexType name="EntityGroupMatchType" abstract="true">
         <complexContent>
             <extension base="afp:MatchFunctorType">
