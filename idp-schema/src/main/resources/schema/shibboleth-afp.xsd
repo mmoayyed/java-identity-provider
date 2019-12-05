@@ -780,32 +780,7 @@
             <extension base="afp:RegistrationAuthorityMatchType" />
         </complexContent>
     </complexType>
-    
-    <complexType name="ScopeMatchesShibMDScope">
-        <annotation>
-            <documentation>
-                A match function that ensures that an attribute value's scope matches a scope given in
-                metadata for the entity or role of the attribute issuer.
-                
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:MatchFunctorType"/>
-        </complexContent>
-    </complexType>
-
-    <complexType name="ValueMatchesShibMDScope">
-        <annotation>
-            <documentation>
-                A match function that ensures that an attribute value's scope matches a scope given in
-                metadata for the entity or role of the attribute issuer.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:MatchFunctorType"/>
-        </complexContent>
-    </complexType>
-    
+        
     <complexType name="IssuerRegistrationAuthority">
         <annotation>
             <documentation>
@@ -834,6 +809,30 @@
                     </annotation>
                 </attribute>
             </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ScopeMatchesShibMDScope">
+        <annotation>
+            <documentation>
+                A match function that ensures that an attribute value's scope matches a scope given in
+                metadata for the entity or role of the attribute issuer.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ValueMatchesShibMDScope">
+        <annotation>
+            <documentation>
+                A match function that ensures that an attribute value's scope matches a scope given in
+                metadata for the entity or role of the attribute issuer.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType"/>
         </complexContent>
     </complexType>
 
