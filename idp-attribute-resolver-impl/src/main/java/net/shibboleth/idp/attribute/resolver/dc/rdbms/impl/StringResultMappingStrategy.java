@@ -21,9 +21,10 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
- * Deprecating Placeholder for old (documented) class.
+ * Classpath placeholder for legacy configurations using undocumented classes.
+ * @deprecated
  */
-public class StringResultMappingStrategy
+@Deprecated public class StringResultMappingStrategy
         extends net.shibboleth.idp.attribute.resolver.dc.rdbms.StringResultMappingStrategy {
 
     /** Constructor. */

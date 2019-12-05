@@ -21,9 +21,10 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
- *A {@link V2CompatibleTemplatedExecutableStatementBuilder} with a legacy name which warns.
- */
-public class TemplatedExecutableStatementBuilder extends V2CompatibleTemplatedExecutableStatementBuilder {
+* Classpath placeholder for legacy configurations.
+* @deprecated
+*/
+@Deprecated public class TemplatedExecutableStatementBuilder extends V2CompatibleTemplatedExecutableStatementBuilder {
 
     /** Constructor. 
      * This is purely there to move people away from the V3 impl class.

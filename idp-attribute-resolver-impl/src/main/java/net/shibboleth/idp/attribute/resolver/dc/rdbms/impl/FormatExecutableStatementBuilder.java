@@ -21,9 +21,10 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
- * Placeholder for legacy use of an impl class.
+ * Classpath placeholder for legacy configurations.
+ * @deprecated
  */
-public class FormatExecutableStatementBuilder
+@Deprecated public class FormatExecutableStatementBuilder
         extends net.shibboleth.idp.attribute.resolver.dc.rdbms.FormatExecutableStatementBuilder {
 
     /** Constructor. */
