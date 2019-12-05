@@ -31,10 +31,10 @@ import net.shibboleth.idp.attribute.resolver.dc.rdbms.TemplatedExecutableStateme
  * A {@link TemplatedExecutableStatementBuilder} which also injects an
  * {@link V2SAMLProfileRequestContext} into the spring context.
  */
-public class V2CompatibleTemplateExecutableStatementBuilder extends TemplatedExecutableStatementBuilder {
+public class V2CompatibleTemplatedExecutableStatementBuilder extends TemplatedExecutableStatementBuilder {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(V2CompatibleTemplateExecutableStatementBuilder.class);
+    private final Logger log = LoggerFactory.getLogger(V2CompatibleTemplatedExecutableStatementBuilder.class);
 
     /** {@inheritDoc} */
     protected void addExtraVelocityContext(@Nonnull final VelocityContext velocityContext,
