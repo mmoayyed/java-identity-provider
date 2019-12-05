@@ -9,42 +9,24 @@
        default-destroy-method="destroy"
        default-lazy-init="true">
 
+    <!--
+    Default behavior is to rely on properties to populate the various beans.
+    You can override these, particularly shibboleth.authn.LDAP.authenticator,
+    to customize the settings or avoid use of properties.
+    
+    Be cautious of any direct dependency on ldaptive classes to simplify upgrades.
+    -->
+
     <bean id="shibboleth.authn.LDAP.returnAttributes" parent="shibboleth.CommaDelimStringArray">
         <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes:1.1}" />
     </bean>
 
-    <bean id="shibboleth.authn.LDAP.trustCertificates" parent="shibboleth.X509ResourceCredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates:undefined}" />
-    <bean id="shibboleth.authn.LDAP.truststore" parent="shibboleth.KeystoreResourceCredentialConfig" p:truststore="%{idp.authn.LDAP.trustStore:undefined}" />
-
-    <bean id="shibboleth.authn.LDAP.authenticator" class="net.shibboleth.idp.authn.config.LDAPAuthenticationFactoryBean"
-          p:authenticatorType="%{idp.authn.LDAP.authenticator:anonSearchAuthenticator}"
-          p:trustType="%{idp.authn.LDAP.sslConfig:certificateTrust}"
-          p:ldapUrl="%{idp.authn.LDAP.ldapURL}"
-          p:useStartTLS="%{idp.authn.LDAP.useStartTLS:true}"
-          p:connectTimeout="%{idp.authn.LDAP.connectTimeout:PT3S}"
-          p:responseTimeout="%{idp.authn.LDAP.responseTimeout:PT3S}"
-          p:trustCertificatesCredentialConfig-ref="shibboleth.authn.LDAP.trustCertificates"
-          p:truststoreCredentialConfig-ref="shibboleth.authn.LDAP.truststore"
-          p:blockWaitTime="%{idp.pool.LDAP.blockWaitTime:PT3S}"
-          p:minPoolSize="%{idp.pool.LDAP.minSize:3}"
-          p:maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
-          p:validateOnCheckout="%{idp.pool.LDAP.validateOnCheckout:false}"
-          p:validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
-          p:validatePeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
-          p:prunePeriod="%{idp.pool.LDAP.prunePeriod:PT5M}"
-          p:idleTime="%{idp.pool.LDAP.idleTime:PT10M}"
-          p:dnFormat="%{idp.authn.LDAP.dnFormat:undefined}"
-          p:baseDn="#{'%{idp.authn.LDAP.baseDN:undefined}'.trim()}"
-          p:userFilter="#{'%{idp.authn.LDAP.userFilter:undefined}'.trim()}"
-          p:subtreeSearch="%{idp.authn.LDAP.subtreeSearch:false}"
-          p:resolveEntryOnFailure="%{idp.authn.LDAP.resolveEntryOnFailure:false}"
-          p:velocityEngine-ref="shibboleth.VelocityEngine"
-          p:bindDn="#{'%{idp.authn.LDAP.bindDN:undefined}'.trim()}"
-          p:bindDnCredential="%{idp.authn.LDAP.bindDNCredential:undefined}"
-          p:usePasswordPolicy="%{idp.authn.LDAP.usePasswordPolicy:false}"
-          p:usePasswordExpiration="%{idp.authn.LDAP.usePasswordExpiration:false}"
-          p:freeIPA="%{idp.authn.LDAP.freeIPADirectory:false}"
-          p:EDirectory="%{idp.authn.LDAP.eDirectory:false}"
-    />
+    <bean id="shibboleth.authn.LDAP.trustCertificates" parent="shibboleth.X509ResourceCredentialConfig"
+        p:trustCertificates="%{idp.authn.LDAP.trustCertificates:undefined}" />
+        
+    <bean id="shibboleth.authn.LDAP.truststore" parent="shibboleth.KeystoreResourceCredentialConfig"
+        p:truststore="%{idp.authn.LDAP.trustStore:undefined}" />
+        
+    <bean id="shibboleth.authn.LDAP.authenticator" parent="shibboleth.LDAPAuthenticationFactory" />
 
 </beans>

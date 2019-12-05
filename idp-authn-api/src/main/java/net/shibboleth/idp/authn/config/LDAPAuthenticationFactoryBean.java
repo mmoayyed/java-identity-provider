@@ -24,6 +24,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.PooledTemplateSearchDnResolver;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+
 import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
@@ -200,15 +204,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   /** Whether to use account state data as defined by the EDirectory schema. */
   private boolean isEDirectory;
 
-  public void setAuthenticatorType(final String type) {
+  public void setAuthenticatorType(@Nonnull @NotEmpty final String type) {
     authenticatorType = AuthenticatorType.fromLabel(type);
   }
 
-  public void setTrustType(final String type) {
+  public void setTrustType(@Nonnull @NotEmpty final String type) {
     trustType = TrustType.fromLabel(type);
   }
 
-  public void setLdapUrl(final String url) {
+  public void setLdapUrl(@Nullable @NotEmpty final String url) {
     ldapUrl = url;
   }
 
@@ -220,11 +224,11 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     useSSL = b;
   }
 
-  public void setConnectTimeout(final Duration timeout) {
+  public void setConnectTimeout(@Nullable final Duration timeout) {
     connectTimeout = timeout;
   }
 
-  public void setResponseTimeout(final Duration timeout) {
+  public void setResponseTimeout(@Nullable final Duration timeout) {
     responseTimeout = timeout;
   }
 
@@ -236,7 +240,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     truststoreCredentialConfig = config;
   }
 
-  public void setBlockWaitTime(final Duration time) {
+  public void setBlockWaitTime(@Nullable final Duration time) {
     blockWaitTime = time;
   }
 
@@ -256,15 +260,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     validatePeriodically = b;
   }
 
-  public void setValidatePeriod(final Duration period) {
+  public void setValidatePeriod(@Nullable final Duration period) {
     validatePeriod = period;
   }
 
-  public void setPrunePeriod(final Duration period) {
+  public void setPrunePeriod(@Nullable final Duration period) {
     prunePeriod = period;
   }
 
-  public void setIdleTime(final Duration time) {
+  public void setIdleTime(@Nullable final Duration time) {
     idleTime = time;
   }
 
@@ -374,8 +378,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
    *
    * @return new blocking connection pool
    */
-  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config)
-  {
+  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config) {
     final PoolConfig poolConfig = new PoolConfig();
     poolConfig.setMinPoolSize(minPoolSize);
     poolConfig.setMaxPoolSize(maxPoolSize);
@@ -394,13 +397,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     return pool;
   }
 
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
   @Override
   protected Authenticator createInstance() throws Exception {
     // check for deprecated useSSL property
     if (useSSL) {
-      log.warn("The useSSL property is deprecated, specify the use of LDAPS in your URL by using the ldaps:// scheme.");
+      DeprecationSupport.warn(ObjectType.PROPERTY, "useSSL", "LDAP authentication",
+              "use of ldaps:// scheme in connection URL");
       final LdapURL url = new LdapURL(ldapUrl);
-      for (String s : url.getHostnamesWithSchemeAndPort()) {
+      for (final String s : url.getHostnamesWithSchemeAndPort()) {
         if (!s.startsWith("ldaps://")) {
           throw new IllegalArgumentException("useSSL property specified but URL scheme is not ldaps:// for " + s);
         }
@@ -445,6 +450,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
             createConnectionConfig())));
       authenticator.setDnResolver(anonSearchDnResolver);
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
+      break;
     default:
       break;
     }
@@ -466,6 +472,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     }
     return authenticator;
   }
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
   @Override
   public Class<?> getObjectType() {
