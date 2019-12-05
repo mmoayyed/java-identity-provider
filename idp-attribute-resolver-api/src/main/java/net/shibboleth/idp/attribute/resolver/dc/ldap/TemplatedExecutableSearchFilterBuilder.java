@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
+package net.shibboleth.idp.attribute.resolver.dc.ldap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,15 +24,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.velocity.Template;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -44,7 +35,14 @@ import org.ldaptive.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.velocity.Template;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder} that generates the search filter to
@@ -158,6 +156,14 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         v2Compatibility = compat;
     }
 
+    /** Method to allow private additions to the velocity context.
+     * @param velocityContext where to add the information
+     * @param resolutionContext current resolution context
+     */
+    protected void addExtraVelocityContext(@Nonnull final VelocityContext velocityContext,
+            @Nonnull final AttributeResolutionContext resolutionContext) {
+    }
+
     /** {@inheritDoc} */
     @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final Map<String, List<IdPAttributeValue>> dependencyAttributes) throws ResolutionException {
@@ -166,12 +172,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
 
-        if (isV2Compatibility()) {
-            final V2SAMLProfileRequestContext requestContext = new V2SAMLProfileRequestContext(resolutionContext, null);
-            log.trace("Adding v2 request context {}", requestContext);
-            context.put("requestContext", requestContext);
-        }
-
+        addExtraVelocityContext(context, resolutionContext);
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());

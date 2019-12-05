@@ -59,10 +59,10 @@
         <constructor-arg value="%{cache.cacheBuilderSpec}" />
     </bean>
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilder" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder"
+    <bean class="net.shibboleth.idp.attribute.resolver.dc.ldap.TemplatedExecutableSearchFilterBuilder"
         p:templateText="%{search.filter}" p:velocityEngine-ref="shibboleth.VelocityEngine"
         init-method="initialize" />
-    <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy"
+    <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMappingStrategy"
         p:noResultAnError="%{noResultIsError}" p:multipleResultsAnError="%{multipleResultsIsError}">
         <property name="resultRenamingMap">
             <map>

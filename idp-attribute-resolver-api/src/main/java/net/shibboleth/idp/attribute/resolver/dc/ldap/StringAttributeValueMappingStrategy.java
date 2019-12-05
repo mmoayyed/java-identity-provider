@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
+package net.shibboleth.idp.attribute.resolver.dc.ldap;
 
 import java.util.ArrayList;
 import java.util.HashMap;

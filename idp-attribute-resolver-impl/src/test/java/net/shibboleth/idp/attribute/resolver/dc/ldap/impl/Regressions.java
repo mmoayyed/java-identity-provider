@@ -43,6 +43,10 @@ import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.ExecutableSearchFilter;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.ParameterizedExecutableSearchFilterBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.SearchResultMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

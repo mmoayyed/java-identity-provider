@@ -57,10 +57,10 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.V2CompatibleTemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
@@ -218,7 +218,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @param parserContext bean definition parsing context
          * @return connection config bean definition
          */
-        // CheckStyle: CyclomaticComplexity OFF
+        // CheckStyle: CyclomaticComplexity|MethodLength OFF
         @Nonnull public BeanDefinition createConnectionConfig(@Nonnull final ParserContext parserContext) {
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
             final String useStartTLS = AttributeSupport.getAttributeValue(configElement, new QName("useStartTLS"));
@@ -294,7 +294,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             return connectionConfig.getBeanDefinition();
         }
-        // CheckStyle: CyclomaticComplexity ON
+        // CheckStyle: CyclomaticComplexity|MethodLength ON
 
         /**
          * Read StartTLS trust and authentication credentials.
@@ -406,8 +406,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @return the bean definition for the template search builder.
          */
         @Nonnull public BeanDefinition createTemplateBuilder() {
-            final BeanDefinitionBuilder templateBuilder =
-                    BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
+            final BeanDefinitionBuilder templateBuilder = BeanDefinitionBuilder.genericBeanDefinition(
+                    V2CompatibleTemplatedExecutableSearchFilterBuilder.class);
             templateBuilder.setInitMethodName("initialize");
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
