@@ -41,7 +41,6 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-jvm</artifactId>
-            <version>${metrics.version}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
