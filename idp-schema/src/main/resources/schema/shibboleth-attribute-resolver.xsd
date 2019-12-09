@@ -708,10 +708,17 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="salt" type="resolver:string" use="required">
+                <attribute name="salt" type="resolver:string">
                     <annotation>
                         <documentation>
                             A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="encodedSalt" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            A base64-encoded salt, of at least 16 bytes, used in the computed ID.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1486,6 +1493,13 @@
                     <annotation>
                         <documentation>
                             A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="encodedSalt" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            A base64-encoded salt, of at least 16 bytes, used in the computed ID.
                         </documentation>
                     </annotation>
                 </attribute>

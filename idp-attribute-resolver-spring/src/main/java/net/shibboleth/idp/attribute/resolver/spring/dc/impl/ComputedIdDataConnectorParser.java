@@ -78,20 +78,32 @@ public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser
         }
 
         final String salt;
+        final String encodedSalt;
         if (config.hasAttributeNS(null, "salt")) {
             salt = config.getAttributeNS(null, "salt");
+            encodedSalt = null;
+            if (config.hasAttributeNS(null, "encodedSalt")) {
+                log.warn("{} Ignoring encodedSalt in favor of salt", getLogPrefix());
+            }
+        } else if (config.hasAttributeNS(null, "encodedSalt")) {
+            salt = null;
+            encodedSalt = config.getAttributeNS(null, "encodedSalt");
         } else {
+            encodedSalt = null;
             salt = null;
         }
         
-        if (null == salt) {
-            log.debug("{} No salt provided", getLogPrefix());
-        } else {
+        if (salt != null) {
             log.debug("{} See TRACE log for the salt value", getLogPrefix());
             log.trace("{} Salt: '{}'", getLogPrefix(), salt);
+            builder.addPropertyValue("salt", salt);
+        } else if (encodedSalt != null) {
+            log.debug("{} See TRACE log for the salt value", getLogPrefix());
+            log.trace("{} Encoded Salt: '{}'", getLogPrefix(), encodedSalt);
+            builder.addPropertyValue("encodedSalt", encodedSalt);
+        } else {
+            log.debug("{} No salt provided", getLogPrefix());
         }
-
-        builder.addPropertyValue("salt", salt);
 
         return builder.getBeanDefinition();
     }
