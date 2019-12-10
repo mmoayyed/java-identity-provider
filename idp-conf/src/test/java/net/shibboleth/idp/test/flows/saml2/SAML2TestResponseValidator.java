@@ -504,7 +504,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         Assert.assertEquals(audiences.size(), 1);
 
         final Audience audience = audiences.get(0);
-        Assert.assertEquals(audience.getAudienceURI(), AbstractFlowTest.SP_ENTITY_ID);
+        Assert.assertEquals(audience.getURI(), AbstractFlowTest.SP_ENTITY_ID);
     }
 
     /**

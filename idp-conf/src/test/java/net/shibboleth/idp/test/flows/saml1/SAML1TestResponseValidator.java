@@ -263,7 +263,7 @@ public class SAML1TestResponseValidator {
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
         if (statusCode != StatusCode.SUCCESS) {
-            Assert.assertEquals(status.getStatusMessage().getMessage(), statusMessage);
+            Assert.assertEquals(status.getStatusMessage().getValue(), statusMessage);
         }
     }
 
@@ -359,7 +359,7 @@ public class SAML1TestResponseValidator {
     public void assertAudiences(@Nullable final List<Audience> audiences) {
         Assert.assertNotNull(audiences);
         Assert.assertEquals(audiences.size(), 1);
-        Assert.assertEquals(audiences.get(0).getUri(), spEntityID);
+        Assert.assertEquals(audiences.get(0).getURI(), spEntityID);
     }
 
     /**
@@ -466,7 +466,7 @@ public class SAML1TestResponseValidator {
      */
     public void assertConfirmationMethod(@Nullable final ConfirmationMethod method) {
         Assert.assertNotNull(method);
-        Assert.assertEquals(method.getConfirmationMethod(), confirmationMethod);
+        Assert.assertEquals(method.getURI(), confirmationMethod);
     }
 
     /**

@@ -57,15 +57,15 @@ public class NameIDFormatFilterParserTest extends AbstractMetadataParserTest {
         Assert.assertNotNull(entity);
 
         Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().size(), 1);
-        Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().get(0).getFormat(), "foo");
+        Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().get(0).getURI(), "foo");
 
         key = new EntityIdCriterion("https://sp2.example.org/sp/shibboleth");
         entity = resolver.resolveSingle(new CriteriaSet(key));
         Assert.assertNotNull(entity);
 
         Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().size(), 2);
-        Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().get(0).getFormat(), "foo");
-        Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().get(1).getFormat(), "bar");
+        Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().get(0).getURI(), "foo");
+        Assert.assertEquals(entity.getSPSSODescriptor(SAMLConstants.SAML20P_NS).getNameIDFormats().get(1).getURI(), "bar");
     }
     
 }

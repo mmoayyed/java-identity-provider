@@ -108,7 +108,7 @@ public class SAML2TestStatusResponseTypeValidator {
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
         if (statusCode != StatusCode.SUCCESS) {
-            Assert.assertEquals(status.getStatusMessage().getMessage(), statusMessage);
+            Assert.assertEquals(status.getStatusMessage().getValue(), statusMessage);
             if (status.getStatusCode().getStatusCode() != null) {
                 Assert.assertEquals(status.getStatusCode().getStatusCode().getValue(), statusCodeNested);
             }
