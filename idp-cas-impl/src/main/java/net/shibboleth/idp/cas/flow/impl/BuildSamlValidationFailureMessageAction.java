@@ -53,7 +53,7 @@ public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSam
         statusCode.setValue(new QName(NAMESPACE, validationResponse.getErrorCode()));
         status.setStatusCode(statusCode);
         final StatusMessage message = newSAMLObject(StatusMessage.class, StatusMessage.DEFAULT_ELEMENT_NAME);
-        message.setMessage(validationResponse.getErrorDetail());
+        message.setValue(validationResponse.getErrorDetail());
         status.setStatusMessage(message);
         response.setStatus(status);
 

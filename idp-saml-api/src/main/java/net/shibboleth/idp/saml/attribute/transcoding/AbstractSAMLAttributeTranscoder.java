@@ -149,7 +149,7 @@ public abstract class AbstractSAMLAttributeTranscoder<AttributeType extends SAML
 
         } else if (object instanceof XSURI) {
 
-            retVal = ((XSURI) object).getValue();
+            retVal = ((XSURI) object).getURI();
 
         } else if (object instanceof XSBoolean) {
 

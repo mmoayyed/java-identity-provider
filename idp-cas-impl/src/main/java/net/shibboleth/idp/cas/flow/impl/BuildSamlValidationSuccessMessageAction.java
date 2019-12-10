@@ -132,7 +132,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         final AudienceRestrictionCondition audienceRestriction = newSAMLObject(
                 AudienceRestrictionCondition.class, AudienceRestrictionCondition.DEFAULT_ELEMENT_NAME);
         final Audience audience = newSAMLObject(Audience.class, Audience.DEFAULT_ELEMENT_NAME);
-        audience.setUri(request.getService());
+        audience.setURI(request.getService());
         audienceRestriction.getAudiences().add(audience);
         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
         assertion.setConditions(conditions);
@@ -168,7 +168,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
                 SubjectConfirmation.class, SubjectConfirmation.DEFAULT_ELEMENT_NAME);
         final ConfirmationMethod method = newSAMLObject(
                 ConfirmationMethod.class, ConfirmationMethod.DEFAULT_ELEMENT_NAME);
-        method.setConfirmationMethod(ConfirmationMethod.METHOD_ARTIFACT);
+        method.setURI(ConfirmationMethod.METHOD_ARTIFACT);
         confirmation.getConfirmationMethods().add(method);
         final NameIdentifier nameIdentifier = newSAMLObject(NameIdentifier.class, NameIdentifier.DEFAULT_ELEMENT_NAME);
         nameIdentifier.setValue(identifier);

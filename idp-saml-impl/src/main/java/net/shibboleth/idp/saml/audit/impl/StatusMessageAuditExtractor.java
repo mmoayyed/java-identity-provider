@@ -53,7 +53,7 @@ public class StatusMessageAuditExtractor implements Function<ProfileRequestConte
                         ((Response) response).getStatus() != null
                                 ? ((Response) response).getStatus().getStatusMessage() : null;
                 if (msg != null) {
-                    return msg.getMessage();
+                    return msg.getValue();
                 }
             } else if (response instanceof StatusResponseType) {
                 final org.opensaml.saml.saml2.core.StatusMessage msg =
