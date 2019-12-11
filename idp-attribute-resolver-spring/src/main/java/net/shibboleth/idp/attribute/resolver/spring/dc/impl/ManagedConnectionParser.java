@@ -185,24 +185,6 @@ public class ManagedConnectionParser {
     }
 
     /**
-     * Loads the supplied JDBC driver class into the classloader for this class.
-     *
-     * @param jdbcDriver to load
-     *
-     * @return the jdbc driver supplied to the method
-     */
-    @Deprecated public static String loadJdbcDriver(final String jdbcDriver) {
-        // JDBC driver must be loaded in order to register itself
-        final ClassLoader classLoader = ManagedConnectionParser.class.getClassLoader();
-        try {
-            classLoader.loadClass(jdbcDriver);
-        } catch (final ClassNotFoundException e) {
-            LOG.error("JDBC driver '{}' could not be found", jdbcDriver, e);
-        }
-        return jdbcDriver;
-    }
-    
-    /**
      * Get the bean ID of an externally defined data source.
      * 
      * @param config the config element
