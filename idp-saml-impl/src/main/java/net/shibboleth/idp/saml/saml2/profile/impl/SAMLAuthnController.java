@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -42,6 +43,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.common.messaging.context.SAMLMessageReceivedEndpointContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,7 +226,9 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
             try {
                 decoder.initialize();
                 decoder.decode();
-                nestedPRC.setInboundMessageContext(decoder.getMessageContext());
+                final MessageContext messageContext = decoder.getMessageContext();
+                messageContext.addSubcontext(new SAMLMessageReceivedEndpointContext(httpRequest));
+                nestedPRC.setInboundMessageContext(messageContext);
             } finally {
                 decoder.destroy();
             }

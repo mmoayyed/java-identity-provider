@@ -232,6 +232,46 @@
         </constructor-arg>
     </bean>
 
+    <bean id="HandleResponse" parent="NestedWebFlowMessageHandlerAdaptor" scope="prototype" c:executionDirection="INBOUND">
+        <constructor-arg>
+            <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain">
+                <property name="handlers">
+                    <list>
+                        <bean class="org.opensaml.saml.common.binding.impl.CheckMessageVersionHandler" scope="prototype"
+                            p:ignoreMissingOrUnrecognized="true" />
+                        <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
+                            p:protocol-ref="shibboleth.MetadataLookup.Protocol"
+                            p:role-ref="shibboleth.MetadataLookup.Role" />
+                        <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
+                            <property name="roleDescriptorResolver">
+                                <bean class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
+                                      c:mdResolver-ref="shibboleth.MetadataResolver" />
+                            </property>
+                        </bean>
+                        <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype"
+                            p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                        <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
+                            p:replayCache-ref="shibboleth.ReplayCache"
+                            p:expires="%{idp.policy.messageLifetime:PT3M}" />
+                        <bean class="org.opensaml.saml.common.binding.security.impl.MessageLifetimeSecurityHandler" scope="prototype"
+                            p:messageLifetime="%{idp.policy.messageLifetime:PT3M}"
+                            p:clockSkew="%{idp.policy.clockSkew:PT3M}" />
+                        <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype" />
+                        <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype"
+                            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                            p:parser-ref="shibboleth.ParserPool"
+                            p:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+                        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
+                            <property name="issuerLookupStrategy">
+                                <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+		     </bean>
+        </constructor-arg>
+    </bean>
+
     <bean id="PopulateDecryptionParameters" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
         <constructor-arg>
 		    <bean class="org.opensaml.profile.action.impl.PopulateDecryptionParameters"
