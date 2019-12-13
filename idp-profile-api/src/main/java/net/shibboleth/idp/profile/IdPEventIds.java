@@ -68,6 +68,9 @@ public final class IdPEventIds {
     /** ID of the event returned if some attributes cannot be encoded. */
     @Nonnull @NotEmpty public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
     
+    /** ID of the event returned by a flow to signal the need to re-derive parameters. */
+    @Nonnull @NotEmpty public static final String UPDATE_SECURITY_PARAMETERS = "UpdateSecurityParameters";
+    
     /** Constructor. */
     private IdPEventIds() {
 

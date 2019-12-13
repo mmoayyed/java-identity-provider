@@ -103,6 +103,16 @@
         </property>
     </bean>
     
+    <bean id="PopulateRequestSignatureSigningParameters"
+            class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
+            p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
+            p:noResultIsError="true">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate" />
+        </property>
+    </bean>
+    
     <bean id="SOAPLogoutRequest"
         class="net.shibboleth.idp.saml.saml2.profile.impl.SOAPLogoutRequest" scope="prototype"
         p:SOAPClient-ref="shibboleth.SOAPClient.SAML"

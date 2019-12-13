@@ -7,13 +7,19 @@
     before returning control to the calling (profile) flow.
     -->
 
+    <action-state id="FilterFlowsByNonBrowserSupport">
+        <evaluate expression="FilterFlowsByNonBrowserSupport" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="SelectInterceptFlow" />
+    </action-state>
+
     <!--
     The select action is the "dispatching" step. Anything starting with "intercept/"
     is a flow descriptor that we send control to. If there are no flows available or
     remaining to be executed, control passes back to the calling (profile) flow.
     -->
     <action-state id="SelectInterceptFlow">
-        <evaluate expression="FilterFlowsByNonBrowserSupport" />
         <evaluate expression="SelectInterceptFlow" />
         <evaluate expression="'proceed'" />
 
@@ -24,7 +30,7 @@
     </action-state>
 
     <!--
-    This invokes a flow. Anything but proceed is an error, otherwise control passes
+    This invokes a flow. Anything but proceed is a terminating state, otherwise control passes
     back to this flow to select another flow to be executed.
     -->
     <subflow-state id="CallInterceptFlow" subflow="#{currentEvent.id}">

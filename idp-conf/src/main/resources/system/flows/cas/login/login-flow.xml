@@ -118,6 +118,7 @@
     <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="GrantServiceTicket" />
+        <transition on="UpdateSecurityParameters" to="GrantServiceTicket" />
         <transition on="RestartAuthentication" to="AuthenticationSetup" />
     </subflow-state>
 
