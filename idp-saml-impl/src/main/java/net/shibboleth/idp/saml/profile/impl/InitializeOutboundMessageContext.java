@@ -102,6 +102,10 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("{} No relying party context", getLogPrefix());
@@ -118,7 +122,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
 
         peerEntityCtx = (SAMLPeerEntityContext) identifyingCtx;
 
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
 
     /** {@inheritDoc} */

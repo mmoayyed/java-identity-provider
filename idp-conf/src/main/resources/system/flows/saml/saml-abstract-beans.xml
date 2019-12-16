@@ -237,6 +237,9 @@
             <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
         </property>
     </bean>
+    
+    <bean id="UpdateSAMLSelfEntityContext"
+        class="net.shibboleth.idp.saml.profile.impl.UpdateSAMLSelfEntityContext" scope="prototype" />
 
     <bean id="AddInResponseToToResponse"
             class="org.opensaml.saml.common.profile.impl.AddInResponseToToResponse" scope="prototype">

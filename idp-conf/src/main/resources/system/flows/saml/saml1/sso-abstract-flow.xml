@@ -79,6 +79,7 @@
     </action-state>
 
     <action-state id="BuildResponse">
+        <evaluate expression="UpdateSAMLSelfEntityContext" />
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
 
