@@ -114,10 +114,10 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         
         if (isDeprecatedId(id)) {
             // Issue a deprecation warning once but log more in debug and trace to help fixing
-            DeprecationSupport.warnOnce(ObjectType.BEAN,
+            DeprecationSupport.warnOnce(ObjectType.CONFIGURATION,
                     "IdPAttribute",
-                    "Attributes with special characters (\'\"%{})", null);
-            LOG.debug("{} - deprecate character in attribute name", id);
+                    "IdPAttribute id with special characters (\'\"%{})", null);
+            LOG.debug("{} - deprecated character in attribute name", id);
             LOG.trace("Stack", new Exception("Stack Trace, not a thrown exception:"));
         }
         displayNames = Collections.emptyMap();

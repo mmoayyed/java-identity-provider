@@ -50,7 +50,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /** Service implementation of the {@link AttributeTranscoderRegistry} interface. */
 @ThreadSafe
@@ -131,6 +133,13 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             
             final String internalId = StringSupport.trimOrNull(mapping.get(PROP_ID, String.class));
             if (internalId != null && !IdPAttribute.isInvalidId(internalId)) {
+                
+                if (IdPAttribute.isDeprecatedId(internalId)) {
+                    DeprecationSupport.warn(ObjectType.CONFIGURATION,
+                            "TranscodingRule",
+                            "TranscodingRule id with special characters (\'\"%{})", null);
+                }
+                
                 final Predicate<?> activationCondition = buildActivationCondition(mapping.getMap());
                 if (activationCondition != null) {
                     mapping.getMap().put(PROP_CONDITION, activationCondition);
