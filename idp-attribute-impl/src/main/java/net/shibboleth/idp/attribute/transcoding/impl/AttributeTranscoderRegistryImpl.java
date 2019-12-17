@@ -130,7 +130,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         for (final TranscodingRule mapping : mappings) {
             
             final String internalId = StringSupport.trimOrNull(mapping.get(PROP_ID, String.class));
-            if (internalId != null) {
+            if (internalId != null && !IdPAttribute.isInvalidId(internalId)) {
                 final Predicate<?> activationCondition = buildActivationCondition(mapping.getMap());
                 if (activationCondition != null) {
                     mapping.getMap().put(PROP_CONDITION, activationCondition);
@@ -142,6 +142,8 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
                 for (final AttributeTranscoder<?> transcoder : transcoders) {
                     addMapping(internalId, transcoder, mapping.getMap());
                 }
+            } else {
+                log.warn("Ignoring TranscodingRule with invalid id property: {}", internalId);
             }
         }
     }

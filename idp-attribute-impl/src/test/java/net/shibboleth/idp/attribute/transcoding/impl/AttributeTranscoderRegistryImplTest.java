@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.transcoding.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -91,11 +90,17 @@ public class AttributeTranscoderRegistryImplTest {
         ruleset4.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
         ruleset4.put("name", "baz");
         
-        registry.setTranscoderRegistry(Arrays.asList(
+        final Map<String,Object> ruleset5 = new HashMap<>();
+        ruleset5.put(AttributeTranscoderRegistry.PROP_ID, "foo bar");
+        ruleset5.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        ruleset5.put("name", "baz");
+        
+        registry.setTranscoderRegistry(List.of(
                 new TranscodingRule(ruleset1),
                 new TranscodingRule(ruleset2),
                 new TranscodingRule(ruleset3),
-                new TranscodingRule(ruleset4)));
+                new TranscodingRule(ruleset4),
+                new TranscodingRule(ruleset5)));
         registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
         
