@@ -59,11 +59,14 @@
         <evaluate expression="ContinueSAMLAuthentication" />
         <evaluate expression="PopulateSignatureValidationParameters" />
         <evaluate expression="PopulateClientTLSValidationParameters" />
+        <evaluate expression="PopulateInboundMessageContextWithSAMLSelf" />
         <evaluate expression="HandleResponse" />
         <evaluate expression="PopulateDecryptionParameters" />
         <evaluate expression="DecryptAssertions" />
+        <evaluate expression="ValidateAssertions" />
         <evaluate expression="DecryptNameIDs" />
         <evaluate expression="DecryptAttributes" />
+        <evaluate expression="ProcessAssertionsForAuthentication" />
         <evaluate expression="ValidateSAMLAuthentication" />
         <evaluate expression="PostAssertionPopulateAuditContext" />
         <evaluate expression="PostResponsePopulateAuditContext" />

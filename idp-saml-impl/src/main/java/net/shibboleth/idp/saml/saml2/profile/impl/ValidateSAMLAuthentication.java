@@ -240,13 +240,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         profileConfiguration = (BrowserSSOProfileConfiguration) rpContext.getProfileConfig();
         
-        // TODO: Dummy code until we have something processing the results properly.
-        final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
-        Constraint.isTrue(response.getAssertions().size() == 1, "Wrong assertion count");
-        Constraint.isTrue(response.getAssertions().get(0).getAuthnStatements().size() == 1, "Wrong statement count");
-        authenticationContext.getSubcontext(SAMLAuthnContext.class)
-            .setSubject(response.getAssertions().get(0).getSubject())
-            .setAuthnStatement(response.getAssertions().get(0).getAuthnStatements().get(0));        
         return true;
     }
     

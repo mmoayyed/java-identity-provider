@@ -117,6 +117,12 @@
         </constructor-arg>
     </bean>
 
+    <bean id="PopulateInboundMessageContextWithSAMLSelf" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <bean class="net.shibboleth.idp.saml.profile.impl.PopulateInboundMessageContextWithSAMLSelf" scope="prototype" />
+        </constructor-arg>
+    </bean>
+
     <util:constant id="shibboleth.EndpointType"
         static-field="org.opensaml.saml.saml2.metadata.SingleSignOnService.DEFAULT_ELEMENT_NAME" />
 
@@ -285,6 +291,68 @@
             <bean class="org.opensaml.saml.saml2.profile.impl.DecryptAssertions" />
         </constructor-arg>
     </bean>
+
+    <bean id="AssertionValidator" class="org.opensaml.saml.saml2.assertion.SAML20AssertionValidator">
+        <!-- Condition validators. -->
+        <constructor-arg index="0">
+            <util:list>
+                <bean class="org.opensaml.saml.saml2.assertion.impl.AudienceRestrictionConditionValidator" />
+                <bean class="org.opensaml.saml.saml2.assertion.impl.DelegationRestrictionConditionValidator" />
+                <bean class="org.opensaml.saml.saml2.assertion.impl.OneTimeUseConditionValidator">
+                    <constructor-arg ref="shibboleth.ReplayCache" />
+                    <constructor-arg value="#{null}" />
+                </bean>
+                <bean class="org.opensaml.saml.saml2.assertion.impl.ProxyRestrictionConditionValidator" />
+            </util:list>
+        </constructor-arg>
+        <!-- SubjectConfirmation validators. -->
+        <constructor-arg index="1">
+            <util:list>
+                <bean class="org.opensaml.saml.saml2.assertion.impl.BearerSubjectConfirmationValidator" />
+                <bean class="org.opensaml.saml.saml2.assertion.impl.HolderOfKeySubjectConfirmationValidator" />
+            </util:list>
+        </constructor-arg>
+        <!-- Statement validators. -->
+        <constructor-arg index="2">
+            <util:list>
+                <bean class="org.opensaml.saml.saml2.assertion.impl.AuthnStatementValidator" />
+            </util:list>
+        </constructor-arg>
+        <!-- This is null b/c in this case we use a dynamically-resolved engine in the ValidationContext -->
+        <constructor-arg index="3" value="#{null}" />
+        <constructor-arg index="4">
+            <bean class="org.opensaml.saml.security.impl.SAMLSignatureProfileValidator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="AssertionValidationContextBuilder" class="org.opensaml.saml.saml2.profile.impl.DefaultAssertionValidationContextBuilder">
+        <property name="checkAddress">
+            <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.CheckAddressPredicate" />
+        </property>
+        <property name="maximumTimeSinceAuthn">
+            <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.MaximumTimeSinceAuthnLookupFunction" />
+        </property>
+        <property name="signatureRequired">
+            <bean parent="shibboleth.Conditions.NOT">
+                <constructor-arg>
+                    <bean class="org.opensaml.saml.common.profile.logic.InboundMessageSignedPredicate" />
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="ValidateAssertions" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
+        <constructor-arg>
+            <!-- TODO: should invalid be fatal, or let a later action decide what to do? -->
+            <bean class="org.opensaml.saml.saml2.profile.impl.ValidateAssertions" scope="prototype"
+                  p:invalidFatal="true"
+                  p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                  p:validationContextBuilder-ref="AssertionValidationContextBuilder"
+                  p:assertionValidator-ref="AssertionValidator" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="ProcessAssertionsForAuthentication" class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessAssertionsForAuthentication" scope="prototype" />
 
     <bean id="DecryptNameIDs" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
         <constructor-arg>
