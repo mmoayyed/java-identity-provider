@@ -129,7 +129,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertTrue(responseBody.contains("<cas:attributes>"));
         assertTrue(responseBody.contains("<cas:uid>john</cas:uid>"));
-        assertTrue(responseBody.contains("<cas:eduPersonPrincipalName>john</cas:eduPersonPrincipalName>"));
+        assertTrue(responseBody.contains("<cas:eduPersonPrincipalName>john@example.org</cas:eduPersonPrincipalName>"));
         assertTrue(responseBody.contains("<cas:mail>john@example.org</cas:mail>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
         assertFalse(responseBody.contains("<cas:proxies>"));

@@ -96,7 +96,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"uid\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john</saml1:AttributeValue></saml1:Attribute>"));
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"mail\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
-        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"eduPersonPrincipalName\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john</saml1:AttributeValue></saml1:Attribute>"));
+        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"eduPersonPrincipalName\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
@@ -143,7 +143,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"uid\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john</saml1:AttributeValue></saml1:Attribute>"));
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"mail\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
-        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"eduPersonPrincipalName\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john</saml1:AttributeValue></saml1:Attribute>"));
+        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"eduPersonPrincipalName\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
