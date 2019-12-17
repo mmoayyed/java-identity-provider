@@ -217,7 +217,7 @@
             <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod">
                 <property name="defaultValue">
                     <util:constant
-                        static-field="net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration.DEFAULT_TICKET_VALIDITY_PERIOD" />
+                        static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.DEFAULT_TICKET_VALIDITY_PERIOD" />
                 </property>
             </bean>
         </property>
@@ -634,7 +634,7 @@
     </bean>
 
     <bean id="CAS.LoginConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
-            class="net.shibboleth.idp.cas.config.impl.LoginConfiguration">
+            class="net.shibboleth.idp.cas.config.LoginConfiguration">
         <property name="defaultAuthenticationMethodsLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="defaultAuthenticationMethods"
                 p:propertyType="#{T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal)}" />
@@ -659,15 +659,15 @@
     </bean>
 
     <bean id="CAS.ProxyConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
-        class="net.shibboleth.idp.cas.config.impl.ProxyConfiguration" />
+        class="net.shibboleth.idp.cas.config.ProxyConfiguration" />
 
     <bean id="CAS.ValidateConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
-            class="net.shibboleth.idp.cas.config.impl.ValidateConfiguration">
+            class="net.shibboleth.idp.cas.config.ValidateConfiguration">
         <property name="ticketValidityPeriodLookupStrategy">
             <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="ticketValidityPeriod">
                 <property name="defaultValue">
                     <util:constant
-                        static-field="net.shibboleth.idp.cas.config.impl.ValidateConfiguration.DEFAULT_TICKET_VALIDITY_PERIOD" />
+                        static-field="net.shibboleth.idp.cas.config.ValidateConfiguration.DEFAULT_TICKET_VALIDITY_PERIOD" />
                 </property>
             </bean>
         </property>

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.config.impl;
+package net.shibboleth.idp.cas.config;
 
 import java.time.Duration;
 import java.util.function.Function;
@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
+import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;

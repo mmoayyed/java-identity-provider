@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
-/** CAS protocol configuration implementations. */
+/**
+ * CAS protocol configuration implementations.
+ */
 
-package net.shibboleth.idp.cas.config.impl;
+package net.shibboleth.idp.cas.config;

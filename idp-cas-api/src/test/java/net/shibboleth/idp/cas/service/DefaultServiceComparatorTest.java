@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.service.impl;
+package net.shibboleth.idp.cas.service;
 
 import org.testng.annotations.Test;
 

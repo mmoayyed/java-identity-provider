@@ -26,6 +26,7 @@ import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;

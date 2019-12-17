@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.config.impl;
+package net.shibboleth.idp.cas.config;
 
 import java.time.Duration;
 import java.util.Comparator;
@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.cas.service.impl.DefaultServiceComparator;
-import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
+import net.shibboleth.idp.cas.service.DefaultServiceComparator;
+import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;

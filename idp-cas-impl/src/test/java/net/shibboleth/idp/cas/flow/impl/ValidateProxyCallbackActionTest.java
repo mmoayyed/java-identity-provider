@@ -21,7 +21,7 @@ import java.net.URI;
 import java.security.cert.CertificateException;
 import java.time.Instant;
 
-import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;

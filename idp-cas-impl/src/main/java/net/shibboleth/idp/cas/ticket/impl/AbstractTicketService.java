@@ -25,9 +25,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
-import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
-import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;

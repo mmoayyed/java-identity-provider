@@ -32,8 +32,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
-import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
+import net.shibboleth.idp.cas.config.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;

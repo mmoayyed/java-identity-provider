@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.config.impl;
+package net.shibboleth.idp.cas.config;
 
 import java.util.function.Function;
 

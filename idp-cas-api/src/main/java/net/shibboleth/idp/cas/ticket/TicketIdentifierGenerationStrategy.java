@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.ticket.impl;
+package net.shibboleth.idp.cas.ticket;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -72,11 +72,9 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     public TicketIdentifierGenerationStrategy(
             @Nonnull @NotEmpty @ParameterName(name="prefix") final String prefix,
             @Positive @ParameterName(name="randomLength") final int randomLength) {
-        ticketLength = (int) Constraint.isGreaterThan(0, randomLength, "Random length must be positive");
+        ticketLength = Constraint.isGreaterThan(0, randomLength, "Random length must be positive");
         ticketPrefix = Constraint.isNotNull(StringSupport.trimOrNull(prefix), "Prefix cannot be null or empty");
-        if (!isUrlSafe(this.ticketPrefix)) {
-            throw new IllegalArgumentException("Unsupported prefix " + this.ticketPrefix);
-        }
+        Constraint.isTrue(isUrlSafe(ticketPrefix), "Unsupported prefix " + ticketPrefix);
         idGenerator = new RandomIdGenerator(ticketLength);
     }
 
@@ -88,9 +86,7 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     public void setSuffix(@Nullable final String suffix) {
         final String s = StringSupport.trimOrNull(suffix);
         if (s != null) {
-            if (!isUrlSafe(s)) {
-                throw new IllegalArgumentException("Unsupported suffix " + s);
-            }
+            Constraint.isTrue(isUrlSafe(s), "Unsupported suffix " + s);
             ticketSuffix = s;
         }
     }

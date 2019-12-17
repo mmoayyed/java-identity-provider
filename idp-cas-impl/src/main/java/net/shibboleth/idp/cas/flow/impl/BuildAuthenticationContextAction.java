@@ -21,8 +21,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
-import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 

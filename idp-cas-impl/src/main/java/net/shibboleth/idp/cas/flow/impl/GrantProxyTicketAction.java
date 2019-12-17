@@ -24,8 +24,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Predicates;
-import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
-import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
+
+import net.shibboleth.idp.cas.config.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;

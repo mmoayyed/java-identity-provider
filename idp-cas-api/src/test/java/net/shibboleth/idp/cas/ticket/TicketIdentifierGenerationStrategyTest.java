@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.ticket.impl;
+package net.shibboleth.idp.cas.ticket;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -85,8 +87,7 @@ public class TicketIdentifierGenerationStrategyTest {
         }
     }
 
-    @Test(dataProvider = "url-safety",
-          expectedExceptions = IllegalArgumentException.class)
+    @Test(dataProvider = "url-safety", expectedExceptions = ConstraintViolationException.class)
     public void testUrlSafety(final String prefix, final String suffix) {
         new TicketIdentifierGenerationStrategy(prefix, 10).setSuffix(suffix);
     }

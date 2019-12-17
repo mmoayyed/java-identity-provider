@@ -19,7 +19,7 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;

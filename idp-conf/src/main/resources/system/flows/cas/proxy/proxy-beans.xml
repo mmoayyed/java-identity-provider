@@ -11,7 +11,7 @@
     <!-- Action beans -->
     <bean id="InitializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-          p:profileId="#{T(net.shibboleth.idp.cas.config.impl.ProxyConfiguration).PROFILE_ID}"
+          p:profileId="#{T(net.shibboleth.idp.cas.config.ProxyConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="false" />
 

@@ -53,7 +53,7 @@
                     <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
                 </entry>
                 <entry key="#{T(net.shibboleth.idp.cas.session.impl.CASSPSession)}">
-                    <util:constant static-field="net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration.PROTOCOL_URI" />
+                    <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
                 </entry>
             </map>
         </property>

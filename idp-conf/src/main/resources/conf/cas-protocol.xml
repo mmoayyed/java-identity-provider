@@ -81,7 +81,7 @@
        | Those sorts of URLs are commonly emitted by Java servlet-based web applications.
        -->
     <!--<bean id="shibboleth.CASServiceComparator"
-          class="net.shibboleth.idp.cas.service.impl.DefaultServiceComparator"
+          class="net.shibboleth.idp.cas.service.DefaultServiceComparator"
           c:parameterNames="[a-z]+sessionid" />-->
 
     <!--

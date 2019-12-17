@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
-import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;

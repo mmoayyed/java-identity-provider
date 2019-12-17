@@ -22,10 +22,10 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
-import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
-import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
-import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
+import net.shibboleth.idp.cas.config.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;

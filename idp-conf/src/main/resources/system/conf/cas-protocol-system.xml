@@ -63,7 +63,7 @@
     <bean id="shibboleth.DefaultCASProxyValidateIdPSessionPredicate" parent="shibboleth.Conditions.FALSE" />
 
     <bean id="shibboleth.DefaultCASServiceComparator"
-          class="net.shibboleth.idp.cas.service.impl.DefaultServiceComparator" />
+          class="net.shibboleth.idp.cas.service.DefaultServiceComparator" />
 
     <util:list id="shibboleth.DefaultCASServiceRegistries">
         <ref bean="shibboleth.CASMetadataServiceRegistry" />

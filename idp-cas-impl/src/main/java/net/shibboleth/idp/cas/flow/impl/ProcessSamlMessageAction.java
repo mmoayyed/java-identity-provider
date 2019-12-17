@@ -19,7 +19,7 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.SamlParam;

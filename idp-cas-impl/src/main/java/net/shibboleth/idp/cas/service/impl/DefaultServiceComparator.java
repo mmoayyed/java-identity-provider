@@ -17,35 +17,26 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Comparator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Default comparator implementation for comparing CAS service URLs. URL comparison is case-insensitive and supports
  * ignoring predefined URL path parameters. The common session marker <em>;jessionid=value</em> is ignored by default.
  *
  * @author Marvin S. Addison
+ * 
+ * @deprecated
  */
-public class DefaultServiceComparator implements Comparator<String> {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(DefaultServiceComparator.class);
-
-    /** Ignored patterns in path part of URL. */
-    private final Pattern[] ignoredPatterns;
+@Deprecated(forRemoval=true, since="4.0.0")
+public class DefaultServiceComparator extends net.shibboleth.idp.cas.service.DefaultServiceComparator {
 
     /** Creates a new instance that ignores <em>;jsessionid=value</em>. */
     public DefaultServiceComparator() {
-        this("jsessionid");
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), "cas-protocol.xml",
+                "net.shibboleth.idp.cas.service.DefaultServiceComparator");
     }
 
     /**
@@ -54,37 +45,9 @@ public class DefaultServiceComparator implements Comparator<String> {
      * @param  parameterNames  List of path parameter names to ignore.
      */
     public DefaultServiceComparator(@Nonnull final String ... parameterNames) {
-        Constraint.isNotNull(parameterNames, "Parameters names cannot be null");
-        ignoredPatterns = new Pattern[parameterNames.length];
-        for (int i = 0; i < parameterNames.length; i++) {
-            ignoredPatterns[i] = Pattern.compile(";" + parameterNames[i] + "(?:=[^;/]+)?", Pattern.CASE_INSENSITIVE);
-        }
+        super(parameterNames);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), "cas-protocol.xml",
+                "net.shibboleth.idp.cas.service.DefaultServiceComparator");
     }
-
-    @Override
-    public int compare(final String a, final String b) {
-        return stripPathParameters(a).compareToIgnoreCase(stripPathParameters(b));
-    }
-
-    /**
-     * Strips any of the named path parameters (and any associated values) from the given URI.
-     *
-     * @param uriString String form of URI from which to strip named path parameters.
-     *
-     * @return URI with named path parameters and any associated values removed.
-     */
-    private String stripPathParameters(final String uriString) {
-        try {
-            final URI uri = new URI(uriString);
-            String path = uri.getPath();
-            for (final Pattern pattern : ignoredPatterns) {
-                final Matcher m = pattern.matcher(path);
-                path = m.replaceAll("");
-            }
-            return new URI(uri.getScheme(), uri.getAuthority(), path, uri.getQuery(), uri.getFragment()).toString();
-        } catch (final URISyntaxException e) {
-            log.warn("Error parsing {}", uriString);
-            return uriString;
-        }
-    }
+    
 }

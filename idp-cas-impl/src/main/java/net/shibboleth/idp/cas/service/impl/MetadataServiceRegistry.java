@@ -22,9 +22,9 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
-import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
-import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
+import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;

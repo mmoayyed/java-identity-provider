@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
-import net.shibboleth.idp.cas.config.impl.ProxyConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;

@@ -33,7 +33,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
 
-import net.shibboleth.idp.cas.config.impl.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.service.Service;
