@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import java.net.URI;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
@@ -36,8 +34,6 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,9 +41,6 @@ import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
 /**
@@ -319,13 +312,4 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 
-    @SuppressWarnings("unused")
-    private static ProxyAuthenticator<TrustEngine<X509Credential>> mockProxyAuthenticator(final Exception toBeThrown)
-            throws Exception {
-        final ProxyAuthenticator<TrustEngine<X509Credential>> authenticator = mock(ProxyAuthenticator.class);
-        if (toBeThrown != null) {
-            doThrow(toBeThrown).when(authenticator).authenticate(any(URI.class), any(TrustEngine.class));
-        }
-        return authenticator;
-    }
 }
