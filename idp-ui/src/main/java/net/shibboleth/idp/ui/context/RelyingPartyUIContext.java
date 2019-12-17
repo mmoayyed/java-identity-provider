@@ -19,7 +19,9 @@ package net.shibboleth.idp.ui.context;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -42,11 +45,14 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
 import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -126,6 +132,35 @@ public final class RelyingPartyUIContext extends BaseContext {
         return this;
     }
 
+    /**
+     * Shorthand method that returns a collapsed copy of the String values of a given
+     * mapped Entity Attribute in the metadata, or an empty collection. 
+     * 
+     * @param id    attribute ID
+     * 
+     * @return unmodifiable collection of string values
+     * 
+     * @since 4.0.0
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getEntityAttributeStringValues(
+            @Nonnull @NotEmpty final String id) {
+        
+        XMLObject object = getRPEntityDescriptor(); 
+        if (object == null) {
+            return Collections.emptyList();
+        }
+        
+        final List<String> accumulator = new ArrayList<>();
+        
+        while (object != null) {
+            object.getObjectMetadata().get(AttributesMapContainer.class).forEach(
+                    c -> accumulator.addAll(c.getStringValues(id)));
+            object = object.getParent();
+        }
+
+        return List.copyOf(accumulator);
+    }
+    
     /**
      * Get the {@link ACSUIInfo} for the request.
      * 

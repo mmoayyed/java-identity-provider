@@ -21,6 +21,7 @@ import static org.testng.Assert.*;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -122,6 +123,9 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         StringAttributeValue sav = (StringAttributeValue) attr.getValues().iterator().next();
 
         assertEquals(sav.getValue(), "http://id.incommon.org/category/research-and-scholarship");
+        
+        assertEquals(container.getStringValues("http://macedir.org/entity-category"),
+                Collections.singletonList("http://id.incommon.org/category/research-and-scholarship"));
     }
 
     @Test public void requiredAttributes() throws FilterException {

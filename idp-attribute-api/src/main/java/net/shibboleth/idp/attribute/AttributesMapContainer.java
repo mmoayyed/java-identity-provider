@@ -17,8 +17,21 @@
 
 package net.shibboleth.idp.attribute;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Multimap;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * Container for decoded attributes. This gives us a distinguished class to look for in the
@@ -27,20 +40,45 @@ import com.google.common.collect.Multimap;
 public final class AttributesMapContainer implements Supplier<Multimap<String,IdPAttribute>> {
 
     /** The map we are encapsulating.*/
-    private final Multimap<String,IdPAttribute> providedValue;
+    @Nullable @NonnullElements private final Multimap<String,IdPAttribute> providedValue;
 
     /**
      * Constructor.
      * 
      * @param value the value to return.
      */
-    public AttributesMapContainer(final Multimap<String,IdPAttribute> value) {
+    public AttributesMapContainer(@Nullable @NonnullElements final Multimap<String,IdPAttribute> value) {
         providedValue = value;
     }
 
     /** {@inheritDoc} */
-    @Override public Multimap<String,IdPAttribute> get() {
+    @Override
+    @Nullable @NonnullElements public Multimap<String,IdPAttribute> get() {
         return providedValue;
     }
 
+    /**
+     * Shorthand method that returns a collapsed copy of the String values of a given
+     * IdPAttribute in the container, or an empty collection. 
+     * 
+     * @param id    attribute ID
+     * 
+     * @return unmodifiable collection of string values
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getStringValues(
+            @Nonnull @NotEmpty final String id) {
+        
+        if (providedValue != null) {
+            return providedValue.get(id)
+                    .stream()
+                    .map(IdPAttribute::getValues)
+                    .flatMap(List::stream)
+                    .filter(StringAttributeValue.class::isInstance)
+                    .map(StringAttributeValue.class::cast)
+                    .map(StringAttributeValue::getValue)
+                    .collect(Collectors.toUnmodifiableList());
+        }
+        return Collections.emptyList();
+    }
+    
 }
