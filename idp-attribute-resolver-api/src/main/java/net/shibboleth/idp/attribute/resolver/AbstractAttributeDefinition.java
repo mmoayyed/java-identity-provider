@@ -98,20 +98,21 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         // Set up the dependencies first. Then the initialize in the parent
         // will correctly rehash the dependencies.
         super.doInitialize();
+        
         // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
         logPrefix = null;
         
         if (IdPAttribute.isInvalidId(getId())) {
-            throw new ComponentInitializationException(
-                    "Invalid Attribute Definitions name (" + getId() + ")");
+            throw new ComponentInitializationException("Invalid Attribute Definitions name (" + getId() + ")");
         }
+        
         if (IdPAttribute.isDeprecatedId(getId())) {
             DeprecationSupport.warnOnce(
                     ObjectType.CONFIGURATION,
-                    "Use of Attributes definition with invalid characters",
+                    "Use of AttributeDefinition id with invalid characters",
                     getLogPrefix(),
                     null);
-            log.debug("{} : Deprecated characters in Attribute Defintion id.", getLogPrefix());
+            log.debug("{} : Deprecated characters in AttributeDefintion id", getLogPrefix());
         }
     }
 
