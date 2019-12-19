@@ -81,7 +81,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
     
     /** Strategy used to determine the AuthenticationMethod attribute. */
     @NonnullAfterInit private Function<ProfileRequestContext,AuthenticationMethodPrincipal> methodLookupStrategy;
-
+    
     /** The generator to use. */
     @Nullable private IdentifierGenerationStrategy idGenerator;
         
@@ -107,7 +107,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
         
         methodLookupStrategy = Constraint.isNotNull(strategy, "Authentication method strategy cannot be null");
     }
-    
+        
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -170,12 +170,13 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
             statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());
         }
         
-        if (getHttpServletRequest() != null) {
+        final String address = getAddressLookupStrategy().apply(profileRequestContext);
+        if (address != null) {
             final SubjectLocality locality = localityBuilder.buildObject();
-            locality.setIPAddress(getHttpServletRequest().getRemoteAddr());
+            locality.setIPAddress(address);
             statement.setSubjectLocality(locality);
         } else {
-            log.debug("{} HttpServletRequest not available, omitting SubjectLocality element", getLogPrefix());
+            log.debug("{} Address not available, omitting SubjectLocality element", getLogPrefix());
         }
         
         return statement;
@@ -216,5 +217,5 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
         }
         
     }
-    
+        
 }

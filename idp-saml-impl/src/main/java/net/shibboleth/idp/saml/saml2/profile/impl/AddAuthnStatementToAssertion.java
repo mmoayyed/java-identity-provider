@@ -178,8 +178,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      * 
      * @return the authentication statement
      */
-    @Nonnull private AuthnStatement buildAuthnStatement(
-            @Nonnull final ProfileRequestContext profileRequestContext,
+    @Nonnull private AuthnStatement buildAuthnStatement(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nullable final RequestedPrincipalContext requestedPrincipalContext) {
 
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
@@ -231,21 +230,21 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
             }
         }
         
-        if (sessionLifetimeLookupStrategy != null) {
-            final Duration lifetime = sessionLifetimeLookupStrategy.apply(profileRequestContext);
-            if (lifetime != null && lifetime.toMillis() > 0) {
-                statement.setSessionNotOnOrAfter(Instant.now().plus(lifetime));
-            }
+        final Duration lifetime = sessionLifetimeLookupStrategy != null ?
+                sessionLifetimeLookupStrategy.apply(profileRequestContext) : null;
+        if (lifetime != null && lifetime.toMillis() > 0) {
+            statement.setSessionNotOnOrAfter(Instant.now().plus(lifetime));
         }
         
         statement.setSessionIndex(getIdGenerator().generateIdentifier());
 
-        if (getHttpServletRequest() != null) {
+        final String address = getAddressLookupStrategy().apply(profileRequestContext);
+        if (address != null) {
             final SubjectLocality locality = localityBuilder.buildObject();
-            locality.setAddress(getHttpServletRequest().getRemoteAddr());
+            locality.setAddress(address);
             statement.setSubjectLocality(locality);
         } else {
-            log.debug("{} HttpServletRequest not available, omitting SubjectLocality element", getLogPrefix());
+            log.debug("{} Address not available, omitting SubjectLocality element", getLogPrefix());
         }
         
         return statement;

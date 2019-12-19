@@ -33,6 +33,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -64,7 +66,10 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
 
     /** Strategy used to obtain the assertion issuer value. */
     @Nonnull private Function<ProfileRequestContext,String> issuerLookupStrategy;
-
+    
+    /** Strategy used to obtain the client Address to insert. */
+    @NonnullAfterInit private Function<ProfileRequestContext,String> addressLookupStrategy;
+    
     /** AuthenticationResult basis of statement. */
     @Nullable private AuthenticationResult authenticationResult;
 
@@ -127,6 +132,30 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
 
         issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
     }
+
+    /**
+     * Get the strategy used to obtain the client IP address to insert into the statement.
+     * 
+     * @return lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    @NonnullAfterInit public Function<ProfileRequestContext,String> getAddressLookupStrategy() {
+        return addressLookupStrategy;
+    }
+    
+    /**
+     * Set the strategy used to obtain the client IP address to insert into the statement.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.0.0
+     */
+    public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        addressLookupStrategy = strategy;
+    }
     
     /**
      * Get the {@link AuthenticationResult} to encode.
@@ -156,6 +185,16 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
     @Nonnull public String getIssuerId() {
         Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
         return issuerId;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (addressLookupStrategy == null) {
+            addressLookupStrategy = new RemoteAddressStrategy();
+        }
     }
     
     /** {@inheritDoc} */
@@ -193,4 +232,21 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
         return true;
     }
     
+    /**
+     * Default strategy for obtaining client address from servlet layer.
+     * 
+     * @since 4.0.0
+     */
+    private class RemoteAddressStrategy implements Function<ProfileRequestContext,String> {
+
+        /** {@inheritDoc} */
+        @Nullable public String apply(@Nullable final ProfileRequestContext t) {
+            if (getHttpServletRequest() != null) {
+                return getHttpServletRequest().getRemoteAddr();
+            }
+            
+            return null;
+        }
+        
+    }
 }
