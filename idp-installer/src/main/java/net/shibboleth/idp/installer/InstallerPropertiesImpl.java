@@ -226,7 +226,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             }
             log.debug("Loading properties from {}", file.toAbsolutePath());
 
-            /** The file specified in the system file idp.property.file (if present). */
+            /* The file specified in the system file idp.property.file (if present). */
             final File idpPropertyFile = file.toFile();
             try {
                 installerProperties.load(new FileInputStream(idpPropertyFile));

@@ -158,8 +158,8 @@ public class SelfSignedCertificateGeneratorTask extends Task {
         generator.setURISubjectAltNames(nameList);
     }
 
+    /** {@inheritDoc}. */
     @Override 
-    /** {@inheritDoc} */
     public void execute() {
         try {
             generator.generate();
