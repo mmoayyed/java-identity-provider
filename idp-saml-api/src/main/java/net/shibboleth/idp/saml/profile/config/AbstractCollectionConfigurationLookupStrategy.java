@@ -41,7 +41,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * A strategy function that examines SAML metadata associated with a relying party and derives List<String>-valued
+ * A strategy function that examines SAML metadata associated with a relying party and derives List&lt;String&gt;-valued
  * configuration settings based on EntityAttribute extension tags.
  * 
  * @param <T1> type of collection member

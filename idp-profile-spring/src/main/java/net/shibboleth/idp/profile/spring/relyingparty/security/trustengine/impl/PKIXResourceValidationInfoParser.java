@@ -24,10 +24,12 @@ import org.w3c.dom.Element;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 /**
- * Parser for &lt;ValidationInfo type="PKIXFilesystem"&gt; and &lt;ValidationInfo type="PKIXResourceBacked"&gt;.<br/>
+ * Parser for &lt;ValidationInfo type="PKIXFilesystem"&gt; and &lt;ValidationInfo type="PKIXResourceBacked"&gt;.
  * 
+ * <p>
  * All of the heavy lifting is done in the super class and the associated factory bean (which gets the parameters of the
- * type is wants by virtue of Springs type coercion.
+ * type is wants by virtue of Springs type coercion).
+ * </p>
  */
 public class PKIXResourceValidationInfoParser extends AbstractPKIXValidationInfoParser {
 

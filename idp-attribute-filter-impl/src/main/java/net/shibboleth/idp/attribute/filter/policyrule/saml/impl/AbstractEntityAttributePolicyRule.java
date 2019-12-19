@@ -62,14 +62,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Multimap;
 
 /**
- * Base class for matchers that check whether a particular entity attribute is present and contains a given value.<br/>
+ * Base class for matchers that check whether a particular entity attribute is present and contains a given value.
  * 
+ * <p>
  * Given the metadata for an entity, this class takes care of navigation to the attribute and extracting the values,
  * including optimized handling of mapped attributes.
+ * </p>
  * 
+ * <p>
  * Classes wishing to implement Entity Attribute matchers implement {@link #getEntityMetadata(AttributeFilterContext)}
  * to navigate to the entity (probably recipient or issuer) and {@link #entityAttributeValueMatches(Set)} to
  * implement the comparison (probably string or regexp).
+ * </p>
  */
 public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRule {
 

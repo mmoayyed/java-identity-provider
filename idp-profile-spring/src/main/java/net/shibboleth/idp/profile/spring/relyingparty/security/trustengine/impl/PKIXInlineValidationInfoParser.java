@@ -24,10 +24,12 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import org.w3c.dom.Element;
 
 /**
- * Parser for &lt;ValidationInfo type="PKIXInline"&gt;.<br/>
+ * Parser for &lt;ValidationInfo type="PKIXInline"&gt;.
  * 
+ * <p>
  * All of the heavy lifting is done in the super class and the associated factory bean (which gets the parameters of
- * the type is wants by virtue of Springs type coercion.
+ * the type is wants by virtue of Springs type coercion).
+ * </p>
  */
 public class PKIXInlineValidationInfoParser extends AbstractPKIXValidationInfoParser {
     

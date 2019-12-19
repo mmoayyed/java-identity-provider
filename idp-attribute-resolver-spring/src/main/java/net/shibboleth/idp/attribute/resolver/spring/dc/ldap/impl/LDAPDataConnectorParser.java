@@ -93,8 +93,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
     
     // CheckStyle: MethodLength|CyclomaticComplexity OFF
     /**
-     * Parses a version 2 configuration. <br/>
+     * Parses a version 2 configuration.
+     * 
+     * <p>
      * The following automatically created &amp; injected beans acquire hard wired defaults:
+     * </p>
+     * 
      * <ul>
      * <li>{@link SearchExecutor#setTimeLimit(Duration)} defaults to 3s, overridden by the "searchTimeLimit" attribute.
      * </li>

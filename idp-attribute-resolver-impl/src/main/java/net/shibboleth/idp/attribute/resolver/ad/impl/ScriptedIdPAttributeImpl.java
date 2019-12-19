@@ -40,9 +40,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An encapsulated Attribute suitable for handing to scripts. This handles some of the cumbersome issues associated with
- * {@link IdPAttribute} and also a lot of the V2 backwards compatibility stuff. <br/>
+ * {@link IdPAttribute} and also a lot of the V2 backwards compatibility stuff.
+ * 
+ * <p>
  * NOTE, the java signature for this class may and will change on minor version changes. However the Scripting interface
  * will remain the same (methods will never be removed).
+ * </p>
  */
 public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
 
@@ -56,9 +59,12 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
     private boolean calledGetNativeAttribute;
 
     /**
-     * All the {@link StringAttributeValue}, but as strings.<br/>
+     * All the {@link StringAttributeValue}, but as strings.
+     * 
+     * <p>
      * All other attributes as their native representation. If null then the {@link #getValues()} method has not been
      * called.
+     * </p>
      */
     private Collection<Object> attributeValues;
 
@@ -105,8 +111,11 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
     }
 
     /**
-     * Return all the values, but with {@link StringAttributeValue} values returned as strings.<br/>
+     * Return all the values, but with {@link StringAttributeValue} values returned as strings.
+     * 
+     * <p>
      * This method is a helper method for V2 compatibility.
+     * </p>
      * 
      * @return a modifiable collection of the string attributes (not the String
      * @throws ResolutionException if the script has called {@link #getNativeAttribute()}

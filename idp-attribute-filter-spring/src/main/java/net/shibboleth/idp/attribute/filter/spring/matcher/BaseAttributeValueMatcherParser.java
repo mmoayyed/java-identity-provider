@@ -29,11 +29,15 @@ import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 /**
- * Base function for all Attribute Value matchers. <br/>
+ * Base function for all Attribute Value matchers.
  * 
+ * <p>
  * This function takes care of the bean nesting needed to convert the bean (which is a natural matcher) into the correct
- * type. Specifically:<br/>
+ * type. Specifically:
+ * </p>
+ * 
  * <table>
+ * <caption>Bean Nesting</caption>
  * <tr>
  * <td>PolicyRule With Id</td>
  * <td>Nest inside a {@link PolicyFromMatcherId}</td>

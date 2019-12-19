@@ -132,7 +132,7 @@ public abstract class AbstractMatchesShibMDScopeMatcher
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Filter '<filterID>' :"
+     * @return "Attribute Filter '&lt;filterID&gt;' :"
      */
     protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.

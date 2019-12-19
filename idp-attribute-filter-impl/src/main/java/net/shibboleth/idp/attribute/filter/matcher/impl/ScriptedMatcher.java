@@ -179,15 +179,21 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     
     /**
      * Perform the AttributeValueMatching.
+     * 
      * <p>
      * When the script is evaluated, the following properties will be available via the {@link ScriptContext}:
+     * </p>
+     * 
      * <ul>
      * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
      * <li><code>attribute</code> - the attribute whose values are to be evaluated
      * </ul>
+     * 
+     * <p>
      * The script <strong>MUST</strong> return a {@link Set} containing the {@link IdPAttributeValue} objects that were
      * matched.
      * </p>
+     * 
      * {@inheritDoc}
      */
     @Override @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue> getMatchingValues(

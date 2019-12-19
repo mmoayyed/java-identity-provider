@@ -27,8 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that the scope of a {@link ScopedStringAttributeValue} is a string match to the value configured. <br/>
+ * Test that the scope of a {@link ScopedStringAttributeValue} is a string match to the value configured.
+ * 
+ * <p>
  * If the value is not scoped return false (meaning that the value will not be included in the resulting set).
+ * </p>
  */
 public class AttributeScopeStringMatcher extends AbstractStringMatcher {
 

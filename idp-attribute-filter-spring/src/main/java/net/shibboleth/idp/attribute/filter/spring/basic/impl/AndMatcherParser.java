@@ -33,9 +33,12 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
- * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.<br/>
+ * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.
+ * 
+ * <p>
  * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or
  * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
+ * </p>
  */
 public class AndMatcherParser extends BaseFilterParser {
 

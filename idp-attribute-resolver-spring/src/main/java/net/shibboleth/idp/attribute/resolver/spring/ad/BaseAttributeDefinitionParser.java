@@ -70,7 +70,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Definition '<definitionID>' :"
+     * @return "Attribute Definition '&lt;definitionID&gt;' :"
      */
     @Override @Nonnull @NotEmpty protected String getLogPrefix() {
         final StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId())

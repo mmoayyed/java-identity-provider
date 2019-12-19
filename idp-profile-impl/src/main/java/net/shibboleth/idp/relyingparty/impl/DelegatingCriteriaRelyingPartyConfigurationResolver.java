@@ -55,12 +55,12 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
  * 
  * <p>
  * One of the following input criteria is required for resolution based on relying party entityID:
+ * </p>
  * <ul>
  * <li>{@link ProfileRequestContextCriterion}</li>
  * <li>{@link EntityIdCriterion}</li>
  * <li>{@link RoleDescriptorCriterion}</li>
  * </ul>
- * </p>
  */
 public class DelegatingCriteriaRelyingPartyConfigurationResolver extends AbstractIdentifiedInitializableComponent 
         implements CriteriaRelyingPartyConfigurationResolver, IdentifiableComponent {

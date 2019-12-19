@@ -184,7 +184,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     
     /**
      * Sets the strategy function to invoke for generalized extraction of data into
-     * {@link IdPAttribute} objects for inclusion in the {@link AuthenticationResult}.
+     * {@link IdPAttribute} objects for inclusion in the
+     * {@link net.shibboleth.idp.authn.AuthenticationResult}.
      * 
      * @param strategy extraction strategy
      */

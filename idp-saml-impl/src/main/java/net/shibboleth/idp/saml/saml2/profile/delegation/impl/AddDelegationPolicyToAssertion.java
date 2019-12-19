@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * The maximum chain delegation length value for the added policy element is as follows:
+ * </p>
  * <ol>
  * <li>If an inbound assertion token is present as determined by the strategy set by
  * {@link #setAssertionTokenStrategy(Function)}, the value is obtained from the policy contained
@@ -60,7 +61,6 @@ import org.slf4j.LoggerFactory;
  * <li>If neither of these approaches produces a value, a default value is used 
  * {@link #DEFAULT_POLICY_MAX_CHAIN_LENGTH}</li>
  * </ol>
- * </p>
  */
 @Prototype
 public class AddDelegationPolicyToAssertion extends AbstractProfileAction {

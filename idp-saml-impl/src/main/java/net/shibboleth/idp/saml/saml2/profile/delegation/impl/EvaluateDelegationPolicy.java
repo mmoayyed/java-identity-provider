@@ -51,10 +51,11 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * Two policy checks are performed:
+ * </p>
  * <ol>
  * <li>
- * The active {@link SSOSProfileConfiguration} is resolved and the predicate 
- * {@link SSOSProfileConfiguration#getDelegationPredicate()} is applied.  If the predicate evaluates to false,
+ * The active {@link SSOSProfileConfiguration} is resolved and its predicate 
+ * is applied.  If the predicate evaluates to false,
  * the request is not allowed.  An example predicate commonly used here is 
  * {@link net.shibboleth.idp.saml.profile.config.logic.AllowedSAMLPresentersPredicate}.
  * </li>
@@ -69,7 +70,6 @@ import org.slf4j.LoggerFactory;
  * inbound assertion token's {@link Advice}.
  * </li>
  * </ol>
- * </p>
  * 
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link EventIds#INVALID_PROFILE_CTX}

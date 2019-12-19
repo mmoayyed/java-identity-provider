@@ -17,9 +17,11 @@
 
 /**
  * This Package contains interface definitions exported to ECMAScript.
- * <br/>
+ *
+ * <p>
  * Interfaces defined in this package are not targeted at Java, and should not be
  * used by Java.
+ * </p>
  */
 
 package net.shibboleth.idp.attribute.resolver.scripted;

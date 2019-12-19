@@ -165,6 +165,7 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
     /**
      * <p>
      * This implementation performs the following actions on the context's {@link HttpServletResponse}:
+     * </p>
      * <ol>
      *   <li>Adds the HTTP header: "Cache-control: no-cache, no-store"</li>
      *   <li>Adds the HTTP header: "Pragma: no-cache"</li>
@@ -173,7 +174,6 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
      *   <li>Sets the SOAPAction HTTP header the value returned by {@link #getSOAPAction()}, if
      *   that returns non-null.</li>
      * </ol>
-     * </p>
      * 
      * <p>
      * Subclasses should NOT set the SOAPAction HTTP header in this method. Instead, they should override 

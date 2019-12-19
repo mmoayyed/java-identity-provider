@@ -27,9 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test that an {@link IdPAttributeValue} is a regexp match to the configured string. <br/>
+ * Test that an {@link IdPAttributeValue} is a regexp match to the configured string.
+ * 
+ * <p>
  * If the value is not a {@link StringAttributeValue} string it is coerced into a string via the value's
  * {@link java.lang.Object#toString()} method.
+ * </p>
  */
 public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
 

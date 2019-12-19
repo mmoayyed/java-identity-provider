@@ -46,13 +46,13 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The {@link Direction} enum is used to indicate the target message context for the invocation
  * of the handler:
+ * </p>
  * <ul>
  * <li>{@link Direction#INBOUND} indicates to execute the handler on the 
  * {@link ProfileRequestContext#getInboundMessageContext()}</li>
  * <li>{@link Direction#OUTBOUND} indicates to execute the handler on the 
  * {@link ProfileRequestContext#getOutboundMessageContext()}</li>
  * </ul>
- * </p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}

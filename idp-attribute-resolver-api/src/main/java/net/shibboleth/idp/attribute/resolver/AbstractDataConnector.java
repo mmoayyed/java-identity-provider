@@ -228,7 +228,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Data connector '<definitionID>' :"
+     * @return "Data connector '&lt;definitionID&gt;' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronized clearing of per class cache.

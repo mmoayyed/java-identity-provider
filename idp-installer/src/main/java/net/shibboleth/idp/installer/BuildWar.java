@@ -29,8 +29,11 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-/** Code to build the war file during an install or on request.<p/>
- * This code<ul>
+/**
+ * Code to build the war file during an install or on request.
+ * 
+ * <p>This code:</p>
+ * <ul>
  * <li>Deletes any old detritus</li>
  * <li>Creates a directory called webapp.tmp and populates it from the dist folder</li>
  * <li>Overwrites this from edit-webapp</li>

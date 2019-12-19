@@ -31,9 +31,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.MoreObjects;
 
 /**
- * {@link PolicyRequirementRule} that implements the negation of a matcher. <br/>
- * <br/>
- * if FAIL then FAIL else if TRUE then FALSE else TRUE<br/>
+ * {@link PolicyRequirementRule} that implements the negation of a matcher.
+ * 
+ * <p>
+ * if FAIL then FAIL else if TRUE then FALSE else TRUE
+ * </p>
  */
 @ThreadSafe
 public final class NotPolicyRule extends AbstractIdentifiableInitializableComponent implements PolicyRequirementRule {

@@ -37,9 +37,12 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.w3c.dom.Element;
 
 /**
- * Specific parser for all X509Credentials.<br/>
+ * Specific parser for all X509Credentials.
+ * 
+ * <p>
  * This does the work of putting the element values into strings. The bean factory then does the correct thing - with
  * some help from Spring doing auto-conversion.
+ * </p>
  */
 public abstract class AbstractX509CredentialParser extends AbstractCredentialParser {
 

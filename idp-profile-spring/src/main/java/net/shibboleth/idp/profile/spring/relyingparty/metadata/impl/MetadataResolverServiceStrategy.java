@@ -39,12 +39,14 @@ import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
- * Strategy for summoning up a {@link MetadataResolver} from a populated {@link ApplicationContext}. <br/>
+ * Strategy for summoning up a {@link MetadataResolver} from a populated {@link ApplicationContext}.
+ * 
+ * <p>
  * This is made somewhat complex by the need to chain multiple, top level Metadata Resolvers, but to not combine non
  * top level resolvers. The parser will create a {@link MetadataProviderContainer} for each top level resolver. If we
  * encounter but one we are done (it is a {@link ServiceableComponent} already), otherwise we need to chain all the
  * children together and wrap them into a Serviceable Component.
- * 
+ * </p>
  */
 public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitializableComponent implements
         Function<ApplicationContext, ServiceableComponent<MetadataResolver>> {

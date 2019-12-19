@@ -39,6 +39,7 @@ import org.springframework.webflow.execution.RequestContext;
  * You can contextualize the logging of the context tree either by setting {@link #setDescription(String)},
  * or more usefully by using an attribute on the specific action expression as below.  This allows using
  * just one declaration of the action bean, but parameterized differently depending on where it is placed.
+ * </p>
  * 
  * <pre>
  * {@code
@@ -47,8 +48,6 @@ import org.springframework.webflow.execution.RequestContext;
  * </evaluate>
  *  }
  * </pre>
- * 
- * </p>
  */
 //Checkstyle: JavadocStyle ON
 public class LogContextTree extends AbstractProfileAction {

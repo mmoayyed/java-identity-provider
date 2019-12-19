@@ -52,10 +52,12 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * MVC controller for managing the SPNEGO exchanges implemented as an {@link ExternalAuthentication} mechanism.
  * 
- * The handler methods either return contents back to the browser by returning an appropriate ResponseEntity<String>
- * object, or they return back to the flow by calling
+ * <p>
+ * The handler methods either return contents back to the browser by returning an appropriate
+ * ResponseEntity&lt;String&gt; object, or they return back to the flow by calling
  * {@link ExternalAuthentication#finishExternalAuthentication(String, HttpServletRequest, HttpServletResponse)} and
  * returning null. On unrecoverable errors, an exception is thrown.
+ * </p>
  */
 @Controller
 @RequestMapping(value="%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}")

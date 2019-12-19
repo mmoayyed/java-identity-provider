@@ -67,9 +67,12 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
     /**
      * Handle attributes which are inappropriate for specific implementations. The chaining metadata provider cannot
-     * have "requireValidMetadata" or "failFastInitialization" set, even though they are present in the schema. <br/>
+     * have "requireValidMetadata" or "failFastInitialization" set, even though they are present in the schema.
+     * 
+     * <p>
      * This method detects whether these elements are present and if the element is not a chaining provider returns
      * true, otherwise it returns false and emits a warning.
+     * </p>
      * 
      * @param element the element
      * @param attribute the attribute

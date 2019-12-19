@@ -69,7 +69,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
     }
     
     /**
-     * Set the strategy to use to locate/create the {@link ProfileRequestContext to operate on.
+     * Set the strategy to use to locate/create the {@link ProfileRequestContext} to operate on.
      * 
      * @param strategy lookup/creation strategy
      */

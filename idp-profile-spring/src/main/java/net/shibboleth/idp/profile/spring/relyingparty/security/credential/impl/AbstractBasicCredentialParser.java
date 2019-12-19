@@ -35,9 +35,12 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Specific parser for all BasicCredentials.<br/>
+ * Specific parser for all BasicCredentials.
+ * 
+ * <p>
  * This does the work of putting the element values into strings. The bean factory then does the correct thing - with
  * some help from Spring doing auto-conversion.
+ * </p>
  */
 public abstract class AbstractBasicCredentialParser extends AbstractCredentialParser {
 

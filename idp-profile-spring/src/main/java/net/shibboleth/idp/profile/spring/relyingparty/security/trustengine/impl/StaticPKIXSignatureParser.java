@@ -42,15 +42,16 @@ public class StaticPKIXSignatureParser extends AbstractStaticPKIXParser {
     }
 
     /**
-     * {@inheritDoc} <br/>
-     * We call into
+     * {@inheritDoc}
+     * 
+     * <p>We call into
      * {@link 
      * PKIXSignatureTrustEngine#PKIXSignatureTrustEngine(
      * org.opensaml.security.x509.PKIXValidationInformationResolver, 
      * org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver, 
      * org.opensaml.security.x509.PKIXTrustEvaluator, 
-     * org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
-     * .
+     * org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}.
+     * </p>
      */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {

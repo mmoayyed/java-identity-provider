@@ -33,7 +33,7 @@ public interface ScriptedIdPAttribute {
 
     /**
      * Return all the values, but with {@link net.shibboleth.idp.attribute.StringAttributeValue} values returned as
-     * strings.<br/>
+     * strings.
      * 
      * @return a modifiable collection of the string attributes
      * @throws ResolutionException if the script has called {@link #getNativeAttribute()}

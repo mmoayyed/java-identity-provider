@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * back into the flow and pick up any signaled errors if necessary.</p>
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@Link EventIds#MESSAGE_PROC_ERROR}
+ * @event {@link EventIds#MESSAGE_PROC_ERROR}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event various

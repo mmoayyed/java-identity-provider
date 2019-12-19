@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * The output of 3 different evaluations is combined to produce the final result:
+ * </p>
  * <ol>
  * 
  * <li>
@@ -91,7 +92,6 @@ import org.slf4j.LoggerFactory;
  * </li>
  * 
  * </ol>
- * </p>
  * 
  * <p>
  * If 1) delegation is allowed, 2) subject confirmation credentials were resolved, and 3) request status was either 

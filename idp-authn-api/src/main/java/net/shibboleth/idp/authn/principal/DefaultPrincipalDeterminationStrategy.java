@@ -39,7 +39,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * 
  * <p>
  * The context is located using a lookup strategy, by default a child of the input context.
- * <p>
+ * </p>
  * 
  * <p>
  * If for any reason a matching Principal can't be located, a default is returned.

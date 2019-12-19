@@ -49,14 +49,13 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Base class for Spring-aware profile actions.
  * 
- * <p>This base class takes care of the following:
+ * <p>This base class takes care of the following:</p>
  * <ul>
  * <li>retrieving the {@link ProfileRequestContext} from the current request environment</li>
  * <li>populating the SWF {@link RequestContext} into the profile context tree</li>
  * <li>starting or stopping any timers as instructed by a
  *     {@link org.opensaml.profile.context.MetricContext} in the tree</li>
  * </ul>
- * </p>
  * 
  * <p>Action implementations may override {@link #doExecute(RequestContext, ProfileRequestContext)}
  * if they require SWF functionality, but most should override {@link #doExecute(ProfileRequestContext)}

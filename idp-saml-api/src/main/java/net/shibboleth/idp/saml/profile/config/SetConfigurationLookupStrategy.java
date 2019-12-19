@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 /**
- * A strategy function that examines SAML metadata associated with a relying party and derives Set<String>-valued
+ * A strategy function that examines SAML metadata associated with a relying party and derives Set&lt;String&gt;-valued
  * configuration settings based on EntityAttribute extension tags.
  * 
  * @param <T> type of object in list

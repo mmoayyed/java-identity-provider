@@ -160,11 +160,16 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      * Calculate the PolicyRule.
      * <p>
      * When the script is evaluated, the following property will be available via the {@link ScriptContext}:
+     * </p>
+     * 
      * <ul>
      * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
      * </ul>
+     * 
+     * <p>
      * The script <strong>MUST</strong> return a {@link java.lang.Boolean}
      * </p>
+     *
      * {@inheritDoc}
      */
     @Override

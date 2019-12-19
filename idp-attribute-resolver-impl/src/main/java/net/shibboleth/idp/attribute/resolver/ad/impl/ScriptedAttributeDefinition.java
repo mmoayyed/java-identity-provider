@@ -58,6 +58,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * 
  * <p>
  * The evaluated script has access to the following information:
+ * </p>
  * <ul>
  * <li>A script attribute whose name is the ID of this attribute definition and whose value is a newly constructed
  * {@link IdPAttribute}.</li>
@@ -67,7 +68,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link List} of {@link IdPAttributeValue}
  * for the attribute.</li>
  * </ul>
- * </p>
+ * 
  * <p>
  * The evaluated script should populate the values of the newly constructed {@link IdPAttribute} mentioned above. No
  * other information from the script will be taken in to account.

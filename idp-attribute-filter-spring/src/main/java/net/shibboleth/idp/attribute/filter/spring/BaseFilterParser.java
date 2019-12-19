@@ -39,9 +39,12 @@ import org.w3c.dom.Element;
 import com.google.common.base.Strings;
 
 /**
- * Base class for Spring bean definition parsers within the filter engine configuration. <br>
+ * Base class for Spring bean definition parsers within the filter engine configuration.
+ * 
+ * <p>
  * This base class is responsible for generating an ID for the Spring bean that is unique within all the policy
  * components loaded. This in turn underpins our implementation of referencing in the language.
+ * </p>
  */
 public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
 
@@ -124,10 +127,15 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
     /**
      * {@inheritDoc}
      * 
+     * <p>
      * Calculate the qualified id once, and set both the id property as well as a qualified id metadata attribute used
-     * by the {@link #resolveId(Element, AbstractBeanDefinition, ParserContext)} method.<br/>
+     * by the {@link #resolveId(Element, AbstractBeanDefinition, ParserContext)} method.
+     * </p>
+     * 
+     * <p>
      * If we auto-generate a name then we issue a warning so users can (1) correct this, but also so they can make sense
      * of the logging in the filters which uses the id extensively.
+     * </p>
      */
     @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
@@ -166,9 +174,12 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
     }
 
     /**
-     * Is this inside a &lt;PolicyRequirementRule&gt; or an permit or deny rule?. <br/>
+     * Is this inside a &lt;PolicyRequirementRule&gt; or an permit or deny rule?.
+     * 
+     * <p>
      * This is used when parsing the various rules (&lt;MatchFunctorType&gt;) since the bean we summon up depends on
      * where we find ourselves.
+     * </p>
      * 
      * @param element the element under question
      * @return true if it is inside a policy requirement rule, false otherwise.

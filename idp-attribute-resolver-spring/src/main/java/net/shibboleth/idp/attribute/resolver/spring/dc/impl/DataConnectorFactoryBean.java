@@ -252,9 +252,12 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /**
-     * {@inheritDoc}. <br/>
+     * {@inheritDoc}
+     * 
+     * <p>
      * In order to create the bean we introspect with respect to contents of the Spring resources and inject as
      * required.
+     * </p>
      */
     @Override protected AbstractDataConnector doCreateInstance() throws Exception {
 

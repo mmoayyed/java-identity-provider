@@ -24,7 +24,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Basis of all implementations of {@link PolicyRequirementRule} which do some sort of comparison.
  */
-
 public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializableComponent implements
         PolicyRequirementRule {
 
@@ -43,7 +42,7 @@ public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializab
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Filter '<filterID>' :"
+     * @return "Attribute Filter '&lt;filterID&gt;' :"
      */
     protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.

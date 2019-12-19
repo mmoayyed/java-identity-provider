@@ -89,6 +89,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * The decoration consists of 3 primary parts:
+ * </p>
  * <ol>
  * <li>
  * A holder-of-key {@link SubjectConfirmation} is added to the assertion's {@link Subject}. The credentials used
@@ -109,7 +110,6 @@ import org.slf4j.LoggerFactory;
  * {@link #setLibertySSOSEndpointURLLookupStrategy(Function)}.
  * </li>
  * </ol>
- * </p>
  * 
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  */

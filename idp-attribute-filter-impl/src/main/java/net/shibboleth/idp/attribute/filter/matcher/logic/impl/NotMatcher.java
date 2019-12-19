@@ -39,10 +39,12 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.MoreObjects;
 
 /**
- * {@link Matcher} that implements the negation of a matcher. <br/>
- * <br/>
+ * {@link Matcher} that implements the negation of a matcher.
+ * 
+ * <p>
  * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}. The
  * predicate is the logical NOT of the composed {@link Matcher}. If the matcher fails then failure is returned.
+ * </p>
  */
 @ThreadSafe
 public final class NotMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {

@@ -27,7 +27,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test that the scope in a {@link ScopedStringAttributeValue} is a regexp match to configured value.
- * <br/>If the value is not scoped return false (meaning that the value will not be included in the resulting set).
+ * 
+ * <p>
+ * If the value is not scoped return false (meaning that the value will not be included in the resulting set).
+ * </p>
  */
 public class AttributeScopeRegexpMatcher extends AbstractRegexpStringMatcher {
 

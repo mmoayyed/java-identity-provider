@@ -80,8 +80,11 @@ public class ScopesContainer {
         }
     }
     
-    /** Does the provided string match the scopes for this XMLObject?.
-     * <br/> We test first against the non regexp scopes for the sake of performance.
+    /**
+     * Does the provided string match the scopes for this XMLObject?
+     * 
+     * <p> We test first against the non regexp scopes for the sake of performance.</p>
+     * 
      * @param scope what to test.
      * @return whether it matches any of the scopes.
      */

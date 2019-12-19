@@ -58,7 +58,8 @@ import org.slf4j.LoggerFactory;
  * be used or created</p>
  * 
  * <p>A constructed {@link Assertion} will have its ID, IssueInstant, Issuer, and Version properties set.
- * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()}.</p>
+ * The issuer is based on
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId(ProfileRequestContext)}.</p>
  * 
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link EventIds#INVALID_PROFILE_CTX}

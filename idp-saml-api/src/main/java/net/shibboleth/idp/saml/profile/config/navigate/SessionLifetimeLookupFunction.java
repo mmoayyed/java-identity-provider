@@ -29,7 +29,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns {@link BrowserSSOProfileConfiguration#getMaximumSPSessionLifetime(ProfileRequestContext))}
+ * A function that returns {@link BrowserSSOProfileConfiguration#getMaximumSPSessionLifetime(ProfileRequestContext)}
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

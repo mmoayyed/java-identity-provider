@@ -138,10 +138,14 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
     }
 // Checkstyle: MethodLength ON
 
-    /** Helper Function for map construction.<br/>
+    /**
+     * Helper Function for map construction.
      * 
+     * <p>
      * This does all the service handling and just calls the specific {@link BiConsumer} to
-     * add each appropriate the value to the map. 
+     * add each appropriate the value to the map.
+     * </p>
+     * 
      * @param consume the thing which does checking and adding the building
      * @return an appropriate map
      */

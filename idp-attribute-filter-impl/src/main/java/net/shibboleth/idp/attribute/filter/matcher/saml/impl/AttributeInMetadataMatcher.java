@@ -420,7 +420,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     /**
      * return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Filter '<filterID>' :"
+     * @return "Attribute Filter '&lt;filterID&gt;' :"
      */
     @Nonnull protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.

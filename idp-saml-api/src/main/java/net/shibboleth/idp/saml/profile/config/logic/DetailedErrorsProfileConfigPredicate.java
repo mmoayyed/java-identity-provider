@@ -26,7 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * A predicate that evaluates
- * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#isDetailedErrors(ProfileRequestContext)()}
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#isDetailedErrors(ProfileRequestContext)}
  * if available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

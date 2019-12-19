@@ -28,10 +28,15 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 
 /**
- * Base function for all natural policy rules. <br/>
+ * Base function for all natural policy rules.
+ * 
+ * <p>
  * This function takes care of the bean nesting needed to convert the bean (which is a natural policy rule) into the
- * correct type. Specifically:<br/>
+ * correct type. Specifically:
+ * </p>
+ * 
  * <table>
+ * <caption>Bean Nesting</caption>
  * <tr>
  * <td>PolicyRule</td>
  * <td>Native</td>

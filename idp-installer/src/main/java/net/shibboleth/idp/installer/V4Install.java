@@ -448,7 +448,9 @@ public class V4Install extends AbstractInitializableComponent {
             generateSealer();
         }
 
-        /** Helper method for {@link #manageKeys()} to generate a crt and key file.
+        /**
+         * Helper method for {@link #execute()} to generate a crt and key file.
+         * 
          * @param fileBase the partial file name
          * @return true iff the file pair was created
          * @throws BuildException if badness occurrs.
@@ -491,8 +493,10 @@ public class V4Install extends AbstractInitializableComponent {
             return true;
         }
 
-        /** Helper method for {@link #manageKeys()} to generate the backchannel keystore.
-         * @throws BuildException if badness occurrs.
+        /**
+         * Helper method for {@link #execute()} to generate the backchannel keystore.
+         * 
+         * @throws BuildException if badness occurs.
          */
         private void generateKeyStore() {
             final Path credentials = installerProps.getTargetDir().resolve("credentials");
@@ -531,8 +535,10 @@ public class V4Install extends AbstractInitializableComponent {
               }
         }
 
-        /** Helper method for {@link #manageKeys()} to generate the Sealer.
-         * @throws BuildException if badness occurrs.
+        /**
+         * Helper method for {@link #execute()} to generate the Sealer.
+         * 
+         * @throws BuildException if badness occurs.
          */
         private void generateSealer() {
             final Path credentials = installerProps.getTargetDir().resolve("credentials");

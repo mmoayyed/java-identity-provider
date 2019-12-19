@@ -218,7 +218,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Data Connector: '<definitionID>' :"
+     * @return "Data Connector: '&lt;definitionID&gt;' :"
      */
     @Override @Nonnull @NotEmpty protected String getLogPrefix() {
         final StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");

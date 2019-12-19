@@ -195,7 +195,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
     /**
      * return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Definition '<definitionID>' :"
+     * @return "Attribute Definition '&lt;definitionID&gt;' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.

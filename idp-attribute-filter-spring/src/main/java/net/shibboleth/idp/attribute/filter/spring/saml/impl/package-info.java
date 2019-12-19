@@ -17,8 +17,11 @@
 
 /**
  * Parsers for the top level of the "urn:mace:shibboleth:2.0:saml" namespace.
- * <br/> These are all "policy" type &lt;MatchFunctorType&gt; rules and so all
- * the parsers are based on {@link net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser}
+ * 
+ * <p>
+ * These are all "policy" type &lt;MatchFunctorType&gt; rules and so all
+ * the parsers are based on {@link net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser}.
+ * </p>
  */
 
 package net.shibboleth.idp.attribute.filter.spring.saml.impl;

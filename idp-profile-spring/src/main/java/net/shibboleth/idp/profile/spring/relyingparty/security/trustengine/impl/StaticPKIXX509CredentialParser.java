@@ -41,13 +41,15 @@ public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
     }
 
     /**
-     * {@inheritDoc} <br/>
+     * {@inheritDoc}
+     * 
+     * <p>
      * We call into
      * {@link PKIXX509CredentialTrustEngine#PKIXX509CredentialTrustEngine(
      *   org.opensaml.security.x509.PKIXValidationInformationResolver,
      *   org.opensaml.security.x509.PKIXTrustEvaluator,
-     *   org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
-     * .
+     *   org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}.
+     * </p>
      */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {

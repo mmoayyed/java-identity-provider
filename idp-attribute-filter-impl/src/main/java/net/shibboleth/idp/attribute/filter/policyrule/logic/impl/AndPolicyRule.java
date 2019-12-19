@@ -34,8 +34,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * if every rule returns {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#TRUE},
  * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FAIL} as soon as a rule returns
  * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FAIL}, and
- * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FALSE} otherwise.<br/>
+ * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FALSE} otherwise.
+ * 
+ * <p>
  * The standard "fail/false fast" optimization is implemented.
+ * </p>
  */
 @ThreadSafe
 public class AndPolicyRule extends AbstractComposedPolicyRule {

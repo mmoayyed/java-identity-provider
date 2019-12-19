@@ -340,7 +340,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     }
     
     /**
-     * Build a {@Scoping} element, decrementing the proxy count if set.
+     * Build a {@link Scoping} element, decrementing the proxy count if set.
      * 
      * @param profileRequestContext current profile request context
      * @param count proxy count

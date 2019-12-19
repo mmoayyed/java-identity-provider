@@ -35,13 +35,15 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorPars
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
- * Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. <br/>
+ * Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}.
  * 
+ * <p>
  * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the
  * {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} and
  * {@link net.shibboleth.idp.attribute.resolver.DataConnector} beans are sucked out of Spring
  * by type and injected into a new {@link net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl} via a
  * {@link net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy}.
+ * </p>
  */
 public class AttributeResolverParser implements BeanDefinitionParser {
 

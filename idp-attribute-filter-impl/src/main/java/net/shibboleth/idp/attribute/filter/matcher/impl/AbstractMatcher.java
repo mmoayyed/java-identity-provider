@@ -36,10 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the bases of all implementations of {@link Matcher} which do some sort of comparison.<br/>
- * <br/>
+ * This is the base of all implementations of {@link Matcher} which do some sort of comparison.
  */
-
 public abstract class AbstractMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
 
     /** Class logger. */
@@ -85,7 +83,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Filter '<filterID>' :"
+     * @return "Attribute Filter '&lt;filterID&gt;' :"
      */
     protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.

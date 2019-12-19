@@ -28,7 +28,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * A function that returns the allowable proxy count based on the result of
- * {@link SAML2ProfileConfiguration#getProxyCount()}, if such a profile is available
+ * {@link SAML2ProfileConfiguration#getProxyCount(ProfileRequestContext)},
+ * if such a profile is available
  * from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 

@@ -51,8 +51,8 @@ import com.google.common.base.Predicates;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link org.opensaml.profile.action.EventIds#IO_ERROR}
  * @post The sessions are removed from the session manager.
- * @post The sessions are removed from the {@LogoutContext}.
- * @post The {@SessionContext} is removed if it matched one of the sessions destroyed.
+ * @post The sessions are removed from the {@link LogoutContext}.
+ * @post The {@link SessionContext} is removed if it matched one of the sessions destroyed.
  * 
  * @since 4.0.0
  */

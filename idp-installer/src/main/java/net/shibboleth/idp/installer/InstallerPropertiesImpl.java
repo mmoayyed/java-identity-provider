@@ -361,8 +361,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return !addr.getHostAddress().equals(addr.getCanonicalHostName());
     }
 
-    /** Find the most aposite network connector. Taken from Ant.
-     * @throws SocketException
+    /**
+     * Find the most apposite network connector. Taken from Ant.
+     * 
      * @return the best name we can work out
      */
     // CheckStyle: CyclomaticComplexity OFF

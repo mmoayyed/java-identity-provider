@@ -50,11 +50,14 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * Implementation of Mapped Attributes. <br/>
+ * Implementation of Mapped Attributes.
+ * 
+ * <p>
  * An attribute definition that takes the values from previous resolution stages and converts them as it creates the
  * output attribute. Each value is compared with a lookup table (a {@link java.util.Collection} of @link{ValueMap}s) and
  * if it matches then the appropriate value(s) is/are substituted. Non matches are either passed through or are removed
  * depending on the setting 'passThru'.
+ * </p>
  * */
 @ThreadSafe
 public class MappedAttributeDefinition extends AbstractAttributeDefinition {

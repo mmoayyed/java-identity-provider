@@ -53,10 +53,13 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
     /**
      * {@inheritDoc}.
      * 
-     * We inject an inferred {@link SubjectDerivedAttributeValuesFunction}.<br/>
+     * We inject an inferred {@link SubjectDerivedAttributeValuesFunction}.
+     * 
+     * <p>
      * If 'principalAttributeName' we also inject an inferred {@link IdPAttributePrincipalValuesFunction} If
      * 'attributeValueFunctionRef' the user has provided the function The
-     * {@link ContextDerivedAttributeDefinitionParser} does the case when the user injects the top level function
+     * {@link ContextDerivedAttributeDefinitionParser} does the case when the user injects the top level function.
+     * </p>
      */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {

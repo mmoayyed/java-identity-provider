@@ -17,8 +17,11 @@
 
 /**
  * Classes which parse beans which are natural "Matchers" (that is to say that they look at attribute values).
- * <br/> The bulk of the work is done in the base class 
- * {@link net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser}. 
+ * 
+ * <p>
+ * The bulk of the work is done in the base class 
+ * {@link net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser}.
+ * </p>
  */
 
 package net.shibboleth.idp.attribute.filter.spring.matcher.impl;
