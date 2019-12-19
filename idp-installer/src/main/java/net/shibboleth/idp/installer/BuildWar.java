@@ -25,6 +25,7 @@ import org.apache.tools.ant.taskdefs.Jar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -68,7 +69,12 @@ public final class BuildWar extends AbstractInitializableComponent {
         final Path target = installerProps.getTargetDir();
         final Path warFile = target.resolve("war").resolve("idp.war");
 
-        log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), currentState.getInstalledVersion());
+        String currentVersion = currentState.getInstalledVersion();
+        if (currentVersion == null) {
+            // indicates a clean install
+            currentVersion = Version.getVersion();
+        }
+        log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), currentVersion);
         InstallerSupport.deleteTree(target.resolve("webpapp"));
         final Path webAppTmp =target.resolve("webpapp.tmp");
         InstallerSupport.deleteTree(webAppTmp);
