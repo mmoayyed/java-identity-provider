@@ -88,26 +88,19 @@
         </property>
     </bean>
 
+    <util:map id="shibboleth.DefaultVelocityEngineProperties">
+        <entry key="parser.space_gobbling" value="%{idp.velocity.space.gobbling:bc}" />
+        <entry key="resource.loaders" value="file, classpath, string" />
+        <entry key="resource.loader.classpath.class" value="org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader" />
+        <entry key="resource.loader.string.class" value="org.apache.velocity.runtime.resource.loader.StringResourceLoader" />
+        <entry key="resource.loader.file.class" value="org.apache.velocity.runtime.resource.loader.FileResourceLoader" />
+        <entry key="resource.loader.file.path" value="#{'%{idp.views:%{idp.home}/views}'.trim()}" />
+        <entry key="resource.loader.file.cache" value="false" />
+    </util:map>
+
     <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean"
-            depends-on="shibboleth.LoggingService">
-        <property name="velocityProperties">
-            <props>
-                <prop key="parser.space_gobbling">%{idp.velocity.space.gobbling:bc}</prop>
-                <prop key="resource.loaders">file, classpath, string</prop>
-                <prop key="resource.loader.classpath.class">
-                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-                </prop>
-                <prop key="resource.loader.string.class">
-                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
-                </prop>
-                <prop key="resource.loader.file.class">
-                    org.apache.velocity.runtime.resource.loader.FileResourceLoader
-                </prop>
-                <prop key="resource.loader.file.path">#{'%{idp.views:%{idp.home}/views}'.trim()}</prop>
-                <prop key="resource.loader.file.cache">false</prop>
-            </props>
-        </property>
-    </bean>
+        depends-on="shibboleth.LoggingService"
+        p:velocityPropertiesMap="#{getObject('shibboleth.VelocityEngineProperties') ?: getObject('shibboleth.DefaultVelocityEngineProperties')}" />
 
     <alias name="%{idp.xml.parserPool:shibboleth.DefaultParserPool}" alias="shibboleth.ParserPool"/>
 
