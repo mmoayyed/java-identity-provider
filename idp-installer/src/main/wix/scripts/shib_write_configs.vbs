@@ -103,6 +103,9 @@ if (Err.Number = 0 ) then
     SecretsFile.WriteLine "#"
     SecretsFile.WriteLine "idp.sealer.storePassword=" & SealerPassword
     SecretsFile.WriteLine "idp.sealer.keyPassword=" & SealerPassword
+	if ConfigureAd = "true" then
+        SecretsFile.Writeline "idp.authn.LDAP.bindDNCredential=" & AdPass
+    end if
     SecretsFile.Close
 else
     LogFile.Writeline "SecretsFile failed " & Err & "  -  " & SecretsFile
@@ -180,7 +183,6 @@ if ConfigureAd = "true" then
         LDAPFile.Writeline "idp.authn.LDAP.userFilter= (sAMAccountName={user})"
         LDAPFile.Writeline "idp.authn.LDAP.bindDN=" & AdUser & "@" & AdDomain
         LDAPFile.Writeline "idp.attribute.resolver.LDAP.searchFilter= (sAMAccountName=$resolutionContext.principal)"
-        LDAPFile.Writeline "idp.authn.LDAP.bindDNCredential=" & AdPass
         LDAPFile.Writeline "idp.authn.LDAP.dnFormat= %s@" & AdDomain
         LDAPFile.Close
     else
