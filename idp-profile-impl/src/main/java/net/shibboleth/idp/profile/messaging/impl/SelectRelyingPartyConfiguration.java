@@ -142,8 +142,8 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
             log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
             relyingPartyCtx.setConfiguration(config);
         } catch (final ResolverException e) {
-            log.error("{} Error trying to resolve relying party configuration", getLogPrefix(), e);
-            throw new MessageHandlerException("Error trying to resolve relying party configuration");
+            log.error("{} Error trying to resolve relying party configuration: {}", getLogPrefix(), e.getMessage());
+            throw new MessageHandlerException("Error trying to resolve relying party configuration", e);
         }
     }
 }

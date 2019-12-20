@@ -558,7 +558,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             log.debug("No AuthenticationResult for flow {} in session {}", flowId, getId());
             return null;
         } catch (final IOException e) {
-            log.error("Exception loading AuthenticationResult for flow {} from storage", flowId, e);
+            log.error("Exception loading AuthenticationResult for flow {} from storage: {}", flowId, e.getMessage());
             throw e;
         }
     }
@@ -605,7 +605,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             
             return success;
         } catch (final IOException e) {
-            log.error("Exception saving AuthenticationResult for flow {} to storage", flowId, e);
+            log.error("Exception saving AuthenticationResult for flow {} to storage: {}", flowId, e.getMessage());
             throw e;
         }
     }
@@ -652,10 +652,11 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     record.getVersion(), getId(), key, record.getValue().substring(pos + 1), record.getExpiration());
             
         } catch (final IOException e) {
-            log.error("IOException loading SPSession for service {} from storage", serviceId, e);
+            log.error("IOException loading SPSession for service {} from storage: {}", serviceId, e.getMessage());
             throw e;
         } catch (final ClassNotFoundException e) {
-            log.error("ClassNotFoundException loading SPSession for service {} from storage", serviceId, e);
+            log.error("ClassNotFoundException loading SPSession for service {} from storage: {}", serviceId,
+                    e.getMessage());
             throw new IOException(e);
         }
     }
@@ -707,7 +708,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             
             return success;
         } catch (final IOException e) {
-            log.error("IOException saving SPSession for service {} to storage", session.getId(), e);
+            log.error("IOException saving SPSession for service {} to storage: {}", session.getId(), e.getMessage());
             throw e;
         }
     }

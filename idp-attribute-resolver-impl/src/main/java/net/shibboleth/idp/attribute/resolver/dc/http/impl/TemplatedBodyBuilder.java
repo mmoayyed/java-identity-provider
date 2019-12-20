@@ -364,7 +364,7 @@ public class TemplatedBodyBuilder extends AbstractHTTPSearchBuilder {
             url = merge(urlTemplate, context);
             body = merge(bodyTemplate, context);
         } catch (final VelocityException e) {
-            log.error("Error running template engine", e);
+            log.error("Error running template engine: {}", e.getMessage());
             throw new ResolutionException("Error running template engine", e);
         }
         

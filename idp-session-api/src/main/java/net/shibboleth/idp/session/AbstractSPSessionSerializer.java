@@ -84,7 +84,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             
             return sink.toString();
         } catch (final JsonException e) {
-            log.error("Exception while serializing SPSession", e);
+            log.error("Exception while serializing SPSession: {}", e.getMessage());
             throw new IOException("Exception while serializing SPSession", e);
         }
     }
@@ -112,7 +112,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             return doDeserialize(obj, serviceId, creation, Instant.ofEpochMilli(expiration).minus(expirationOffset));
             
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
-            log.error("Exception while parsing SPSession", e);
+            log.error("Exception while parsing SPSession: {}", e.getMessage());
             throw new IOException("Found invalid data structure while parsing SPSession", e);
         }
     }

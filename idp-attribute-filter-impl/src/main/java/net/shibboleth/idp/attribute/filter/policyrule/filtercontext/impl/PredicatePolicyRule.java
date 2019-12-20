@@ -127,7 +127,7 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
             log.trace("{} Predicate returned false", getLogPrefix());
             return Tristate.FALSE;
         } catch (final Throwable ex) {
-            log.warn("{} Applying the predicated failed", getLogPrefix(), ex);
+            log.warn("{} Applying the predicate failed", getLogPrefix(), ex);
             return Tristate.FAIL;
         }
     }

@@ -68,7 +68,7 @@ public class OrganizationDisplayNameTag extends ServiceTagSupport {
                 pageContext.getOut().print(HTMLEncoder.encodeForHTML(name));
             }
         } catch (final IOException e) {
-            log.warn("Error generating OrganizationDisplayName", e);
+            log.warn("Error generating OrganizationDisplayName: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

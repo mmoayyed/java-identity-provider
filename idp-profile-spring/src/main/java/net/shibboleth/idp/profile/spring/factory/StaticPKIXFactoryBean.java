@@ -152,7 +152,7 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
             try(final InputStream is = f.getInputStream()) {
                 certificates.addAll(X509Support.decodeCertificates(is));
             } catch (final CertificateException | IOException e) {
-                log.error("Could not decode Certificate at {}", f.getDescription(), e);
+                log.error("Could not decode Certificate at {}: {}", f.getDescription(), e.getMessage());
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getDescription(), e);
             }
         }
@@ -174,7 +174,7 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
             try(final InputStream is = crlFile.getInputStream())  {
                 crls.addAll(X509Support.decodeCRLs(is));
             } catch (final CRLException | IOException e) {
-                log.error("Could not decode CRL file at {}: {}", crlFile.getDescription(), e);
+                log.error("Could not decode CRL file at {}: {}", crlFile.getDescription(), e.getMessage());
                 throw new FatalBeanException("Could not decode provided CRL file " + crlFile.getDescription(), e);
             }
         }

@@ -200,9 +200,9 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
 
         try {
             return merge(context);
-        } catch (final VelocityException ex) {
-            log.error("Error running template", ex);
-            throw new ResolutionException("Error running template", ex);
+        } catch (final VelocityException e) {
+            log.error("Error running template: {}", e.getMessage());
+            throw new ResolutionException("Error running template", e);
         }
     }
 

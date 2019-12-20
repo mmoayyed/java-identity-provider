@@ -567,7 +567,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             storageService.deleteContext(sessionId);
             log.debug("Destroyed session {}", sessionId);
         } catch (final IOException e) {
-            log.error("Exception while destroying session {}", sessionId, e);
+            log.error("Exception while destroying session {}: {}", sessionId, e.getMessage());
             throw new SessionException("Exception while destroying session", e);
         }
     }

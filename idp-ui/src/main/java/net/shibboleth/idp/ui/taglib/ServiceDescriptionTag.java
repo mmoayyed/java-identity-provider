@@ -62,7 +62,7 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
                 pageContext.getOut().print(result);
             }
         } catch (final IOException e) {
-            log.warn("Error generating Description", e);
+            log.warn("Error generating Description: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

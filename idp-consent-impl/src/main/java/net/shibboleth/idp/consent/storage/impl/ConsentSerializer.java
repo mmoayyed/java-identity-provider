@@ -168,7 +168,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
                     key, value, expiration, consents,});
             return consents;
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
-            log.error("Exception while parsing consent", e);
+            log.error("Exception while parsing consent: {}", e.getMessage());
             throw new IOException("Found invalid data structure while parsing consent", e);
         }
     }

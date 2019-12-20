@@ -86,7 +86,7 @@ public class ServiceNameTag extends ServiceTagSupport {
                 pageContext.getOut().print(serviceName);
             }
         } catch (final IOException e) {
-            log.warn("Error generating name");
+            log.warn("Error generating name: {}", e.getMessage());
             throw new JspException("StartTag", e);
         }
         return super.doStartTag();

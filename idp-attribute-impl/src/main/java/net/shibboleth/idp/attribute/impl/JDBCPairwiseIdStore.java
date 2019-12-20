@@ -529,7 +529,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
                 throw new ComponentInitializationException(
                         "The database was not reachable or was not defined with an appropriate table + primary key");
             }
-            log.warn("The database was not reachable or was not defined with an appropriate table + primary key",e);
+            log.warn("The database was not reachable or was not defined with an appropriate table + primary key", e);
         }
     }
 

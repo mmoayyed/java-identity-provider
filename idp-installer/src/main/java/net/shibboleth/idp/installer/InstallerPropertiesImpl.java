@@ -231,7 +231,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             try {
                 installerProperties.load(new FileInputStream(idpPropertyFile));
             } catch (final IOException e) {
-                log.error("Could not load {}", file.toAbsolutePath(), e);
+                log.error("Could not load {}: {}", file.toAbsolutePath(), e.getMessage());
                 throw new ComponentInitializationException(e);
             }
             if (!isNoTidy()) {

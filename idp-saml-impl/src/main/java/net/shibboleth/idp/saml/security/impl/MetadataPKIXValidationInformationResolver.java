@@ -430,7 +430,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
             return getRoleDescriptorResolver().resolve(criteriaSet);
 
         } catch (final ResolverException e) {
-            log.error("Unable to resolve information from metadata", e);
+            log.error("Unable to resolve information from metadata: {}", e.getMessage());
             throw new ResolverException("Unable to resolve unformation from metadata", e);
         }
 

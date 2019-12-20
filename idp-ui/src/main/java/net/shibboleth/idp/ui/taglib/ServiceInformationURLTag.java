@@ -78,7 +78,7 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
                 pageContext.getOut().print(buildHyperLink(infoURL, linkText));
             }
         } catch (final IOException e) {
-            log.warn("Error generating InformationURL", e);
+            log.warn("Error generating InformationURL: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

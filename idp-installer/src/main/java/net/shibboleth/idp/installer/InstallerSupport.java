@@ -66,7 +66,7 @@ public final class InstallerSupport {
                 Files.createDirectories(dir);
                 log.debug("Created directory {}", dir);
             } catch (final IOException e) {
-                log.error("Could not create {}", dir, e);
+                log.error("Could not create {}: {}", dir, e.getMessage());
                throw new BuildException(e);
             }
         }
@@ -149,7 +149,7 @@ public final class InstallerSupport {
         try {
             exec.execute();
         } catch (final IOException e) {
-            log.warn("{} failed: ", line, e);
+            log.warn("{} failed: {}", line, e.getMessage());
             throw new BuildException(e);
         }
     }
@@ -180,7 +180,7 @@ public final class InstallerSupport {
         try {
             exec.execute();
         } catch (final IOException e) {
-            log.warn("{} failed: ", line, e);
+            log.warn("{} failed: {}", line, e.getMessage());
             throw new BuildException(e);
         }
     }

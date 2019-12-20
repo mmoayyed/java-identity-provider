@@ -219,19 +219,17 @@ public class GSSContextAcceptor {
         }
         log.trace("Server login successful using principal: {}", realm.getServicePrincipal());
 
-        /*
-         * Create the server credentials and an acceptor context.
-         */
+        // Create the server credentials and an acceptor context.
         log.trace("Creating GSS credentials and context");
         final GSSManager manager = GSSManager.getInstance();
         try {
             serverCreds = getServerCredential(krbSubject);
             context = manager.createContext(serverCreds);
         } catch (final PrivilegedActionException e) {
-            log.error("Error creating GSS credentials", e);
+            log.error("Error creating GSS credentials: {}", e.getMessage());
             throw e;
         } catch (final GSSException e) {
-            log.error("Error creating GSS acceptor context", e);
+            log.error("Error creating GSS acceptor context: {}", e.getMessage());
             throw e;
         }
         log.trace("GSS acceptor context created");

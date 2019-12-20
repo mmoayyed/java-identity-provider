@@ -77,7 +77,7 @@ public class ServicePrivacyURLTag extends ServiceTagSupport {
                 pageContext.getOut().print(buildHyperLink(privacyURL, linkText));
             }
         } catch (final IOException e) {
-            log.warn("Error generating PrivacyStatementURL", e);
+            log.warn("Error generating PrivacyStatementURL: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

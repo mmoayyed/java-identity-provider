@@ -194,7 +194,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
             final SearchFilter searchFilter = new SearchFilter(merge(context));
             return super.build(searchFilter);
         } catch (final VelocityException e) {
-            log.error("Error running template", e);
+            log.error("Error running template: {}", e.getMessage());
             throw new ResolutionException("Error running template", e);
         }
     }

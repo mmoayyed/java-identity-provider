@@ -101,7 +101,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
         try {
             return X509Support.decodeCertificate(entityCertificate);
         } catch (final CertificateException e) {
-            log.error("{}: Could not decode provided Entity Certificate", getConfigDescription(), e);
+            log.error("{}: Could not decode provided Entity Certificate: {}", getConfigDescription(), e.getMessage());
             throw new FatalBeanException("Could not decode provided Entity Certificate", e);
         }
     }
@@ -113,7 +113,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
             try {
                 certs.add(X509Support.decodeCertificate(cert.trim()));
             } catch (final CertificateException e) {
-                log.error("{}: Could not decode provided Certificate", getConfigDescription(), e);
+                log.error("{}: Could not decode provided Certificate: {}", getConfigDescription(), e.getMessage());
                 throw new FatalBeanException("Could not decode provided Certificate", e);
             }
         }
@@ -138,7 +138,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
             try {
                 result.add(X509Support.decodeCRL(crl));
             } catch (final CRLException | CertificateException e) {
-                log.error("{}: Could not decode provided CRL", getConfigDescription(), e);
+                log.error("{}: Could not decode provided CRL: {}", getConfigDescription(), e.getMessage());
                 throw new FatalBeanException("Could not decode provided CRL", e);
             }
         }

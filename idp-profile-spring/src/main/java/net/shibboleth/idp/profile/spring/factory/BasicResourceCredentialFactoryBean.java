@@ -30,7 +30,6 @@ import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.crypto.KeySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.Resource;
 
@@ -115,8 +114,8 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
         try (InputStream is = getPublicKeyInfo().getInputStream()) {
             return KeyPairUtil.readPublicKey(is);
         } catch (final IOException e) {
-            log.error("{}: Could not decode public key", getConfigDescription(), e);
-            throw new FatalBeanException("Could not decode public key", e);
+            log.error("{}: Could not decode public key: {}", getConfigDescription(), e.getMessage());
+            throw new BeanCreationException("Could not decode public key", e);
         }
     }
 
@@ -128,8 +127,8 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
         try (InputStream is = getPrivateKeyInfo().getInputStream()) {
             return KeySupport.decodePrivateKey(is, getPrivateKeyPassword());
         } catch (final KeyException | IOException e) {
-            log.error("{}: Could not decode private key", getConfigDescription(), e);
-            throw new BeanCreationException("Could not decode private key", getConfigDescription(), e);
+            log.error("{}: Could not decode private key: {}", getConfigDescription(), e.getMessage());
+            throw new BeanCreationException("Could not decode private key", e);
         }
     }
 
@@ -141,7 +140,7 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
         try (InputStream is = getSecretKeyInfo().getInputStream()) {
             return KeySupport.decodeSecretKey(decodeSecretKey(ByteStreams.toByteArray(is)), getSecretKeyAlgorithm());
         } catch (final KeyException | IOException e) {
-            log.error("{}: Could not decode secret key", getConfigDescription(), e);
+            log.error("{}: Could not decode secret key: {}", getConfigDescription(), e.getMessage());
             throw new BeanCreationException("Could not decode secret key", e);
         }
     }

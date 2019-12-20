@@ -99,8 +99,8 @@ public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryB
             try(final InputStream is = f.getInputStream()) {
                 credentials.add(new BasicCredential(KeyPairUtil.readPublicKey(is)));
             } catch (final EncodingException|StreamException|IOException e) {
-                log.error("Could not decode public key from {}", f.getDescription(), e);
-                throw new FatalBeanException("Could not decode public key from: " + f.getDescription(), e);
+                log.error("Could not decode public key from {}: {}", f.getDescription(), e.getMessage());
+                throw new FatalBeanException("Could not decode public key from " + f.getDescription(), e);
             }
         }
                 
@@ -117,8 +117,8 @@ public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryB
                 }
                 
             } catch (final CertificateException | IOException e) {
-                log.error("Could not decode certificate from {}", f.getDescription(), e);
-                throw new FatalBeanException("Could not decode certificate from: " + f.getDescription(), e);
+                log.error("Could not decode certificate from {}: {}", f.getDescription(), e.getMessage());
+                throw new FatalBeanException("Could not decode certificate from " + f.getDescription(), e);
             }
         }
 

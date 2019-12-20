@@ -197,7 +197,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 valueList.add(StringAttributeValue.valueOf(templateResult));
             } catch (final VelocityException e) {
                 // uncovered path
-                log.error("{} Unable to evaluate velocity template", getLogPrefix(), e);
+                log.error("{} Unable to evaluate velocity template: {}", getLogPrefix(), e.getMessage());
                 throw new ResolutionException("Unable to evaluate template", e);
             }
         }

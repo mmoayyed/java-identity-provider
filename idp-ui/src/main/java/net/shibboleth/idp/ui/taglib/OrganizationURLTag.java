@@ -78,7 +78,7 @@ public class OrganizationURLTag extends ServiceTagSupport {
                 pageContext.getOut().print(buildHyperLink(orgURL, linkText));
             }
         } catch (final IOException e) {
-            log.warn("Error generating OrganizationURL", e);
+            log.warn("Error generating OrganizationURL: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

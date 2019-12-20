@@ -210,7 +210,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
                 pageContext.getOut().print(result);
             }
         } catch (final IOException e) {
-            log.warn("Error generating Logo", e);
+            log.warn("Error generating Logo: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

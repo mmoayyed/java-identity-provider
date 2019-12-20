@@ -57,8 +57,8 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
         final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));
 
         if (null == regexp) {
-            log.error("{} No regexp specified.", getLogPrefix());
-            throw new BeanCreationException(getLogPrefix() + " No regexp text provided.");
+            log.error("{} No regexp specified", getLogPrefix());
+            throw new BeanCreationException(getLogPrefix() + " No regexp text provided");
         }
 
         final BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);

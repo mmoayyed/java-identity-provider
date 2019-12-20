@@ -179,7 +179,7 @@ public class ServiceContactTag extends ServiceTagSupport {
                 pageContext.getOut().print(result);
             }
         } catch (final IOException e) {
-            log.warn("Error generating contact");
+            log.warn("Error generating contact: {}", e.getMessage());
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

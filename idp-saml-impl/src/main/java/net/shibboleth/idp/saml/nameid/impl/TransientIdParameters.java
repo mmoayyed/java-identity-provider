@@ -126,9 +126,8 @@ public class TransientIdParameters {
 
             return sink.toString();
         } catch (final JsonException e) {
-
-            log.error("Exception while serializing IdPSession", e);
-            throw new IOException("Exception while serializing IdPSession", e);
+            log.error("Exception while serializing TransientID: {}", e.getMessage());
+            throw new IOException("Exception while serializing TransientID", e);
         }
     }
 }

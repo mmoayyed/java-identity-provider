@@ -80,7 +80,8 @@ public class PKIXResourceValidationInfoFactoryBean extends AbstractBasicPKIXVali
             try(InputStream is = f.getInputStream()) {
                 certificates.addAll(X509Support.decodeCertificates(is));
             } catch (final CertificateException | IOException e) {
-                log.error("{}: Could not decode Certificate at {}", getConfigDescription(), f.getDescription(), e);
+                log.error("{}: Could not decode Certificate at {}: {}", getConfigDescription(), f.getDescription(),
+                        e.getMessage());
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getDescription(), e);
             }
         }
@@ -102,7 +103,7 @@ public class PKIXResourceValidationInfoFactoryBean extends AbstractBasicPKIXVali
                 crls.addAll(X509Support.decodeCRLs(is));
             } catch (final CRLException | IOException e) {
                 log.error("{}: Could not decode CRL file at {}: {}", getConfigDescription(), crlFile.getDescription(),
-                        e);
+                        e.getMessage());
                 throw new FatalBeanException("Could not decode provided CRL file " + crlFile.getDescription(), e);
             }
         }

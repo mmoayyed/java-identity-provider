@@ -143,14 +143,14 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
             soapMessage = (Envelope) unmarshallMessage(request.getInputStream());
             messageContext.getSubcontext(SOAP11Context.class, true).setEnvelope(soapMessage);
         } catch (final IOException e) {
-            log.error("Unable to obtain input stream from HttpServletRequest", e);
+            log.error("Unable to obtain input stream from HttpServletRequest: {}", e.getMessage());
             throw new MessageDecodingException("Unable to obtain input stream from HttpServletRequest", e);
         }
         
         try {
             getBodyHandler().invoke(messageContext);
         } catch (final MessageHandlerException e) {
-            log.error("Error processing SOAP Envelope body", e);
+            log.error("Error processing SOAP Envelope body: {}", e.getMessage());
             throw new MessageDecodingException("Error processing SOAP Envelope body", e);
         }
         

@@ -143,7 +143,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
 
             return sink.toString();
         } catch (final JsonException e) {
-            log.error("Exception while serializing IdPSession", e);
+            log.error("Exception while serializing IdPSession: {}", e.getMessage());
             throw new IOException("Exception while serializing IdPSession", e);
         }
     }
@@ -212,7 +212,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             return objectToPopulate;
 
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
-            log.error("Exception while parsing IdPSession", e);
+            log.error("Exception while parsing IdPSession: {}", e.getMessage());
             throw new IOException("Found invalid data structure while parsing IdPSession", e);
         }
     }

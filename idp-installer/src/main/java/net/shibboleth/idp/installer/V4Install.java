@@ -161,7 +161,7 @@ public class V4Install extends AbstractInitializableComponent {
             final OutputStream out = new FileOutputStream(versFile.toFile());
             vers.store(out, "Version file written at " + Instant.now());
         } catch (final IOException e) {
-            log.error("Couldn't write version file", e);
+            log.error("Couldn't write version file: {}", e.getMessage());
             throw new BuildException("Couldn't write versioning information", e);
         }
     }

@@ -164,7 +164,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
             return certs.iterator().next();
         } catch (final CertificateException | IOException e) {
             log.error("{}: Could not decode provided Entity Certificate at {}: {}", getConfigDescription(),
-                    entityResource.getDescription(), e);
+                    entityResource.getDescription(), e.getMessage());
             throw new FatalBeanException("Could not decode provided Entity Certificate file "
                     + entityResource.getDescription(), e);
         }
@@ -183,7 +183,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
                 certificates.addAll(X509Support.decodeCertificates(is));
             } catch (final CertificateException | IOException e) {
                 log.error("{}: could not decode CertificateFile at {}: {}", getConfigDescription(),
-                        r.getDescription(), e);
+                        r.getDescription(), e.getMessage());
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + r.getDescription(), e);
             }
         }
@@ -199,7 +199,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
             return KeySupport.decodePrivateKey(is, getPrivateKeyPassword());
         } catch (final KeyException | IOException e) {
             log.error("{}: Could not decode KeyFile at {}: {}", getConfigDescription(),
-                    privateKeyResource.getDescription(), e);
+                    privateKeyResource.getDescription(), e.getMessage());
             throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyResource.getDescription(), e);
         }
     }
@@ -214,7 +214,8 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
             try (InputStream is = crl.getInputStream()) {
                 crls.addAll(X509Support.decodeCRLs(is));
             } catch (final CRLException | IOException e) {
-                log.error("{}: Could not decode CRL file: {}", getConfigDescription(), crl.getDescription(), e);
+                log.error("{}: Could not decode CRL file at {}: {}", getConfigDescription(), crl.getDescription(),
+                        e.getMessage());
                 throw new FatalBeanException("Could not decode provided CRL file " + crl.getDescription(), e);
             }
         }
