@@ -231,7 +231,7 @@ public class V4Install extends AbstractInitializableComponent {
                     replacements.load(new FileInputStream(mergeFile));
                 } else {
                     replacements = getIdPReplacements(sealerCreated);
-                    log.debug("Creating {} from {} and {}", target, source, replacements);
+                    log.debug("Creating {} from {} and {}", target, source, replacements.keySet());
                 }
                 propertiesToReWrite.load(new FileInputStream(source.toFile()));
                 propertiesToReWrite.replaceProperties(replacements);
