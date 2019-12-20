@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Copy the distribution to the final location.  Prior to doing so
@@ -46,14 +47,18 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     /** Properties for the job. */
     @Nonnull private final InstallerProperties installerProps;
 
+    /** The state of the current install. */
+    @Nonnull private final CurrentInstallState installState;
+
     /** Constructor.
      * @param props The environment for the work.
-     * @param installState  Where we are right now.
+     * @param state  Where we are right now.
      */
-    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState state) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
-        installerProps = props;
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(state);
+        installerProps = Constraint.isNotNull(props, "Installer Properties should be non null");
+        installState = Constraint.isNotNull(state, "Current state should be non-null");
     }
 
     /** Copy the distribution from the dstribution to their new locations, having
@@ -72,6 +77,9 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void backupOld() throws BuildException {
+        if (installState.getInstalledVersion() == null) {
+            return;
+        }
         final SimpleDateFormat fmt = new SimpleDateFormat("'old-'yyyy-MM-dd-HH-mm-ss");
         final Path backup = installerProps.getTargetDir().resolve(fmt.format(Date.from(Instant.now())));
         InstallerSupport.createDirectory(backup);
