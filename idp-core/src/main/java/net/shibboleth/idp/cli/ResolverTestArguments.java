@@ -52,7 +52,7 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
     @Parameter(names = {"--saml2"}, description = "Show results with SAML 2.0 encoding")
     private boolean saml2;
 
-    /**
+    /*
      * Below are legacy options from the 2.x AACLI tool that are no longer supported.
      */
     

@@ -216,8 +216,8 @@ public class SAML1TestResponseValidator {
         final Subject attributeStatementSubject = attributeStatement.getSubject();
         assertSubject(attributeStatementSubject);
 
-        final NameIdentifier nameIdentifier = attributeStatementSubject.getNameIdentifier();
-        assertNameIdentifier(nameIdentifier);
+        final NameIdentifier nameId = attributeStatementSubject.getNameIdentifier();
+        assertNameIdentifier(nameId);
 
         final SubjectConfirmation subjectConfirmation = attributeStatementSubject.getSubjectConfirmation();
         assertSubjectConfirmation(subjectConfirmation);

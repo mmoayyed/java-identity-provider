@@ -18,13 +18,8 @@
 package net.shibboleth.idp.ui.csrf.impl;
 
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.BiPredicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.webflow.engine.ActionState;
@@ -322,16 +317,16 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     @Test public void testSetEnabled() {
 
         //create a new instance to test default enabled = false.
-        CSRFTokenFlowExecutionListener listener = new CSRFTokenFlowExecutionListener();
+        CSRFTokenFlowExecutionListener theListener = new CSRFTokenFlowExecutionListener();
         // test default is false.
-        Object enabledObject = ReflectionTestUtils.getField(listener, "enabled");
+        Object enabledObject = ReflectionTestUtils.getField(theListener, "enabled");
         Assert.assertNotNull(enabledObject);
         Assert.assertTrue(enabledObject instanceof Boolean);
         Assert.assertFalse(((Boolean) enabledObject));
 
         // test enabling
-        listener.setEnabled(true);
-        enabledObject = ReflectionTestUtils.getField(listener, "enabled");
+        theListener.setEnabled(true);
+        enabledObject = ReflectionTestUtils.getField(theListener, "enabled");
         Assert.assertNotNull(enabledObject);
         Assert.assertTrue(enabledObject instanceof Boolean);
         Assert.assertTrue(((Boolean) enabledObject));
@@ -405,30 +400,30 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     @Test(expectedExceptions=ComponentInitializationException.class) void testUnsetCsrfTokenManager() 
             throws ComponentInitializationException{
         
-        CSRFTokenFlowExecutionListener listener = new CSRFTokenFlowExecutionListener();
-        listener.setViewRequiresCSRFTokenPredicate(new DefaultViewRequiresCSRFTokenPredicate());
-        listener.setEventRequiresCSRFTokenValidationPredicate(new DefaultEventRequiresCSRFTokenValidationPredicate());
-        listener.initialize();
+        CSRFTokenFlowExecutionListener theListener = new CSRFTokenFlowExecutionListener();
+        theListener.setViewRequiresCSRFTokenPredicate(new DefaultViewRequiresCSRFTokenPredicate());
+        theListener.setEventRequiresCSRFTokenValidationPredicate(new DefaultEventRequiresCSRFTokenValidationPredicate());
+        theListener.initialize();
     }
     
     /** Test an unset ViewRequiresCSRFToken predicate triggers an initialisation exception.*/
     @Test(expectedExceptions=ComponentInitializationException.class) void testUnsetEventRequiresCSRFValidationPredicate() 
             throws ComponentInitializationException{
         
-        CSRFTokenFlowExecutionListener listener = new CSRFTokenFlowExecutionListener();
-        listener.setCsrfTokenManager(new CSRFTokenManager());
-        listener.setViewRequiresCSRFTokenPredicate(new DefaultViewRequiresCSRFTokenPredicate());
-        listener.initialize();
+        CSRFTokenFlowExecutionListener theListener = new CSRFTokenFlowExecutionListener();
+        theListener.setCsrfTokenManager(new CSRFTokenManager());
+        theListener.setViewRequiresCSRFTokenPredicate(new DefaultViewRequiresCSRFTokenPredicate());
+        theListener.initialize();
     }
     
     /** Test an unset EventRequiresCSRFTokenValidation predicate triggers an initialisation exception.*/
     @Test(expectedExceptions=ComponentInitializationException.class) void testUnsetViewRequiresCSRFTokenPredicate() 
             throws ComponentInitializationException{
         
-        CSRFTokenFlowExecutionListener listener = new CSRFTokenFlowExecutionListener();
-        listener.setCsrfTokenManager(new CSRFTokenManager());
-        listener.setEventRequiresCSRFTokenValidationPredicate(new DefaultEventRequiresCSRFTokenValidationPredicate());
-        listener.initialize();
+        CSRFTokenFlowExecutionListener theListener = new CSRFTokenFlowExecutionListener();
+        theListener.setCsrfTokenManager(new CSRFTokenManager());
+        theListener.setEventRequiresCSRFTokenValidationPredicate(new DefaultEventRequiresCSRFTokenValidationPredicate());
+        theListener.initialize();
     }
     
    
