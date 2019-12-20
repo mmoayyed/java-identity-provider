@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
+import org.apache.tools.ant.input.InputHandler;
 import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.launch.Launcher;
 import org.slf4j.Logger;
@@ -175,12 +176,27 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** Local overload of properties (to deal with nested calling). */
     private Map<String, String> inheritedProperties = Collections.EMPTY_MAP;
 
+    /** Inout handler from the prompting. */
+    private final InputHandler inputHandler;
+
     /**
      * Constructor.
      * @param copiedDistribution Has the distribution been copied? If no we don't need the source dir.
      */
     public InstallerPropertiesImpl(final boolean copiedDistribution) {
         needSourceDir = !copiedDistribution;
+        inputHandler = getInputHandler();
+    }
+
+    /** Get an {@link InputHandler} for the prompting.
+     * @return an input handler */
+    protected InputHandler getInputHandler() {
+        return new DefaultInputHandler() {
+            // we wants the prompts to be more obviously prompts
+            protected String getPrompt(final InputRequest request) {
+                return super.getPrompt(request) + " ? ";
+            }
+        };
     }
 
     /** Set any properties inherited from the base environment.
@@ -284,7 +300,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         final String defaultValue = defaultSupplier.get();
         request.setDefaultValue(defaultValue);
 
-        new DefaultInputHandler().handleInput(request);
+        inputHandler.handleInput(request);
         value = request.getInput();
         if (value == null || "".contentEquals(value)) {
             return defaultValue;
