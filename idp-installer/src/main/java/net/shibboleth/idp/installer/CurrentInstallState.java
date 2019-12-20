@@ -43,11 +43,16 @@ public interface CurrentInstallState extends InitializableComponent {
      */
     boolean isIdPPropertiesPresent();
 
-    /** Was ldapp.properties present in the target file when we started the install?
+    /** Was ldap.properties present in the target file when we started the install?
      * @return if it was.
      */
     boolean isLDAPPropertiesPresent();
  
+    /** Was secrets.properties present in the target file when we started the install?
+     * @return if it was.
+     */
+    boolean isSecretsPropertiesPresent();
+
     /** Get the properties associated with the current configuration.
      * This comes idp.properties and anything it points to via
      * {@value IdPPropertiesApplicationContextInitializer#IDP_ADDITIONAL_PROPERTY}.

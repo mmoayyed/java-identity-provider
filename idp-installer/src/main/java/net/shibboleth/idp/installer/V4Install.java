@@ -188,10 +188,6 @@ public class V4Install extends AbstractInitializableComponent {
      */
     private Properties getIdPReplacements(final boolean sealerCreated) {
         final Properties result = new Properties();
-        if (sealerCreated) {
-            result.setProperty("idp.sealer.storePassword", installerProps.getSealerPassword());
-            result.setProperty("idp.sealer.keyPassword", installerProps.getSealerPassword());
-        }
         result.setProperty("idp.entityID", installerProps.getEntityID());
         result.setProperty("idp.scope", installerProps.getScope());
         return result;
@@ -206,7 +202,7 @@ public class V4Install extends AbstractInitializableComponent {
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
         final Path conf = installerProps.getTargetDir().resolve("conf");
-        final Path dstConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
+        final Path distConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
         if (!currentState.isIdPPropertiesPresent()) {
             // We have to populate it
             try {
@@ -215,7 +211,7 @@ public class V4Install extends AbstractInitializableComponent {
                     throw new BuildException("Internal error - idp.properties");
                 }
                 final Path mergePath = installerProps.getIdPMergeProperties();
-                final Path source = dstConf.resolve("idp.properties");
+                final Path source = distConf.resolve("idp.properties");
                 if (!Files.exists(source)) {
                     throw new BuildException("missing idp.properties in dist");
                 }
@@ -249,7 +245,7 @@ public class V4Install extends AbstractInitializableComponent {
                 if (Files.exists(target)) {
                     throw new BuildException("Internal error - ldap.properties");
                 }
-                final Path source = dstConf.resolve("ldap.properties");
+                final Path source = distConf.resolve("ldap.properties");
                 if (!Files.exists(source)) {
                     throw new BuildException("missing ldap.properties in dist");
                 }
@@ -266,6 +262,42 @@ public class V4Install extends AbstractInitializableComponent {
                 propertiesToReWrite.store(new FileOutputStream(target.toFile()));
             } catch (final IOException e) {
                 throw new BuildException("Failed to generate ldap.properties", e);
+            }
+        }
+
+        if (sealerCreated) {
+            // We need to write the passwords to secrets.properties
+            try {
+                final Path target = conf.resolve("secrets.properties");
+                if (Files.exists(target)) {
+                    throw new BuildException("Internal error - secrets.properties");
+                }
+                final Path mergePath = installerProps.getSecretsMergeProperties();
+                final Path source = distConf.resolve("secrets.properties");
+                if (!Files.exists(source)) {
+                    throw new BuildException("missing secrets.properties in dist");
+                }
+                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
+                final Properties replacements;
+                if (mergePath != null) {
+                    log.debug("Creating {} from {} and {}", target, source, mergePath);
+                    replacements = new Properties();
+                    final File mergeFile = mergePath.toFile();
+                    if (!installerProps.isNoTidy()) {
+                        mergeFile.deleteOnExit();
+                    }
+                    replacements.load(new FileInputStream(mergeFile));
+                } else {
+                    replacements = new Properties(2);
+                    replacements .setProperty("idp.sealer.storePassword", installerProps.getSealerPassword());
+                    replacements .setProperty("idp.sealer.keyPassword", installerProps.getSealerPassword());
+                    log.debug("Creating {} from {} and {}", target, source, replacements.keySet());
+                }
+                propertiesToReWrite.load(new FileInputStream(source.toFile()));
+                propertiesToReWrite.replaceProperties(replacements);
+                propertiesToReWrite.store(new FileOutputStream(target.toFile()));
+            } catch (final IOException e) {
+                throw new BuildException("Failed to generate secrets.properties", e);
             }
         }
 

@@ -61,6 +61,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** The name of a property file to merge with ldap.properties. */
     public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
 
+    /** The name of a property file to merge with ldap.properties. */
+    public static final String SECRETS_PROPERTIES_MERGE = "secrets.merge.properties";
+
     /** The name of a directory to overlay "under" the distribution conf. */
     public static final String CONF_PRE_OVERLAY = "idp.conf.preoverlay";
 
@@ -569,6 +572,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** {@inheritDoc}. */
     @Override public Path getLDAPMergeProperties() throws BuildException {
         return getMergeFile(LDAP_PROPERTIES_MERGE);
+    }
+
+    /** {@inheritDoc}. */
+    @Override public Path getSecretsMergeProperties() throws BuildException {
+        return getMergeFile(SECRETS_PROPERTIES_MERGE);
     }
 
     /** {@inheritDoc}. */

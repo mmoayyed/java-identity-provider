@@ -54,6 +54,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** Whether the LDAP properties file exists.*/
     private boolean ldapPropertiesPresent;
 
+    /** Whether the secrets properties file exists.*/
+    private boolean secretsPropertiesPresent;
+
     /** Old Version. */
     private String oldVersion;
     
@@ -143,6 +146,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         super.doInitialize();
         idpPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("idp.properties"));
         ldapPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("ldap.properties"));
+        secretsPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("secrets.properties"));
         findPreviousVersion();
         setupPreviousProps();
     }
@@ -160,6 +164,11 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     public boolean isLDAPPropertiesPresent() {
         return ldapPropertiesPresent;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSecretsPropertiesPresent() {
+        return secretsPropertiesPresent;
     }
 
     /** {@inheritDoc} */
