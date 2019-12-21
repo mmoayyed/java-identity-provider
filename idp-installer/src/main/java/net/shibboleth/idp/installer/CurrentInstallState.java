@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.installer;
 
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
@@ -59,4 +62,11 @@ public interface CurrentInstallState extends InitializableComponent {
      * @return the properties, or null if this is a new install.
      */
     @Nullable Properties getCurrentlyInstalledProperties();
+
+    /** Return the list of paths of files which were not there prior to the install
+     * but which might be created by the installed but to no purpose.
+     * @return the list of paths.
+     * @return
+     */
+    @Nonnull List<Path> getPathsToBeDeleted();
 }

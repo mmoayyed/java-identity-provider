@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -35,6 +38,7 @@ import net.shibboleth.idp.installer.CurrentInstallState;
 import net.shibboleth.idp.installer.InstallerProperties;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -47,6 +51,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
     /** Where we are installing to. */
     private final Path targetDir;
+    
+    /** The files we will delete if they created on upgrade. */
+    private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", },
+                                                   }; 
 
     /** Whether the IdP properties file exists.*/
     private boolean idpPropertiesPresent;
@@ -62,6 +70,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     
     /** Previous props. */
     private Properties props;
+    
+    /** The files to delete after an upgrade. */
+    @NonnullAfterInit private List<Path> pathsToDelete;
 
     /** Constructor.
      * @param installerProps the installer situation.
@@ -149,6 +160,24 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         secretsPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("secrets.properties"));
         findPreviousVersion();
         setupPreviousProps();
+
+        if (null == getInstalledVersion()) {
+            // New install.  We need all files
+            pathsToDelete = Collections.emptyList();
+        } else {
+            pathsToDelete = new ArrayList<>();
+            for (int i = 0; i < deleteAfterUpgrades.length; i++) {
+                Path p = targetDir;
+                final String[] paths = deleteAfterUpgrades[i];
+                for (int j = 0; j < paths.length; j++) {
+                    p = p.resolve(paths[j]);
+                }
+                if (!Files.exists(p)) {
+                    // doesn't exist,  Candidate for deletion
+                    pathsToDelete.add(p);
+                }
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -174,5 +203,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     @Nullable public Properties getCurrentlyInstalledProperties() {
         return props;
+    }
+
+    /** {@inheritDoc} */
+    public List<Path> getPathsToBeDeleted() {
+        return pathsToDelete;
     }
 }

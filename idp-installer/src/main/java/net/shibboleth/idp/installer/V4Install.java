@@ -103,6 +103,7 @@ public class V4Install extends AbstractInitializableComponent {
         populatePropertyFiles(keyManager.isCreatedSealer());
         handleEditWebApp();
         populateUserDirectories();
+        deleteSpuriousFiles();
         generateMetadata();
         reprotect();
     }
@@ -377,6 +378,23 @@ public class V4Install extends AbstractInitializableComponent {
         InstallerSupport.createDirectory(targetBase.resolve("logs"));
     }
     
+    /** Delete those files which were created but not needed.
+     * @throws BuildException if badness occurs
+     */
+    protected void deleteSpuriousFiles() throws BuildException {
+        for (final Path p : currentState.getPathsToBeDeleted()) {
+            if (!Files.exists(p)) {
+                log.debug("File to be deleted did exist?");
+            } else {
+                try {
+                    Files.delete(p);
+                } catch (final IOException e) {
+                    log.debug("Delete failed", e);
+                }
+            }
+        }
+    }
+
     /** Create and populate (if it does not exist) the "metadata/idp-metadata.xml" file.
      * @throws BuildException if badness occurs
      */
