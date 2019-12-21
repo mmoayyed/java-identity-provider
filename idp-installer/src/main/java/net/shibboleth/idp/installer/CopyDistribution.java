@@ -157,6 +157,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
             throw new BuildException("Source distribution not found");
         }
         distCopy(src, dist, "conf");
+        distCopy(src, dist, "credentials");
         distCopy(src, dist, "flows");
         distCopy(src, dist, "messages");
         distCopy(src, dist, "views");

@@ -268,17 +268,17 @@ public class V4Install extends AbstractInitializableComponent {
         if (sealerCreated) {
             // We need to write the passwords to secrets.properties
             try {
-                final Path target = conf.resolve("secrets.properties");
+                final Path target = installerProps.getTargetDir().resolve("credentials").resolve("secrets.properties");
                 if (Files.exists(target)) {
                     throw new BuildException("Internal error - secrets.properties");
                 }
-                final Path mergePath = installerProps.getSecretsMergeProperties();
-                final Path source = distConf.resolve("secrets.properties");
+                final Path distCreds = installerProps.getTargetDir().resolve("dist").resolve("credentials");
+                final Path source = distCreds.resolve("secrets.properties");
                 if (!Files.exists(source)) {
                     throw new BuildException("missing secrets.properties in dist");
                 }
-                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
                 final Properties replacements;
+                final Path mergePath = installerProps.getSecretsMergeProperties();
                 if (mergePath != null) {
                     log.debug("Creating {} from {} and {}", target, source, mergePath);
                     replacements = new Properties();
@@ -293,6 +293,7 @@ public class V4Install extends AbstractInitializableComponent {
                     replacements .setProperty("idp.sealer.keyPassword", installerProps.getSealerPassword());
                     log.debug("Creating {} from {} and {}", target, source, replacements.keySet());
                 }
+                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
                 propertiesToReWrite.load(new FileInputStream(source.toFile()));
                 propertiesToReWrite.replaceProperties(replacements);
                 propertiesToReWrite.store(new FileOutputStream(target.toFile()));
