@@ -61,6 +61,7 @@
     <!-- Exception handling -->
     
     <bean id="shibboleth.ExceptionResolver" class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver"
+        c:_0="#{getObject('shibboleth.ExceptionResolverViewExtenderFunction')}"
         p:defaultErrorView="%{idp.errors.defaultView:error}"
         p:excludedExceptions="#{getObject('%{idp.errors.excludedExceptions:undefined}')}"
         p:exceptionMappings="#{getObject('%{idp.errors.exceptionMappings:undefined}')}" />
