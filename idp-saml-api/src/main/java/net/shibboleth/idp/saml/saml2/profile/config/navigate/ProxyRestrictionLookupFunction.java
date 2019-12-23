@@ -68,13 +68,10 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
     @Nullable public Pair<Integer,Set<String>> apply(@Nullable final ProfileRequestContext input) {
                 
         // The proxy count is normally set to the minimum of local policy and upstream - 1, but
-        // null values have to taken into account, and 0 is the minimum.
+        // null values have to be taken into account, and 0 is the minimum.
         
         Integer proxyCount = null;
 
-        // The empty set signals no constraint on proxy, but a null value is used to track when
-        // the interaction of existing sets has resulted in the null set, which means no proxying.
-        
         final Set<String> audiences = new HashSet<>();
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
@@ -89,7 +86,7 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
             }
         }
 
-        // At this point the local configuration applies, and lacking any upstream, that applies.
+        // At this point the local configuration is derived, and lacking any upstream constraint, that applies.
         
         final SubjectContext sc = subjectContextLookupStrategy.apply(input);
         final Set<ProxyAuthenticationPrincipal> proxieds =
