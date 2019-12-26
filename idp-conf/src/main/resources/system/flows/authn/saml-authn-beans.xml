@@ -278,7 +278,7 @@
         p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
         p:attributeFilter-ref="shibboleth.AttributeFilterService"
         p:metadataResolver-ref="shibboleth.MetadataResolver"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.SAML.addDefaultPrincipals') ?: true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.SAML.addDefaultPrincipals') ?: false}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.SAML.resultCachingPredicate')}"        
         p:attributeExtractionStrategy="#{getObject('shibboleth.authn.SAML.attributeExtractionStrategy')}" />
 
