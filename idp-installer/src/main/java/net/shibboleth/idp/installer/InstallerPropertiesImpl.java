@@ -62,8 +62,8 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** The name of a property file to merge with ldap.properties. */
     public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
 
-    /** The name of a property file to merge with ldap.properties. */
-    public static final String SECRETS_PROPERTIES_MERGE = "secrets.merge.properties";
+    /** The LDAP Password (usually associated with a username in ldap.properties). */
+    public static final String LDAP_PASSWORD = "idp.LDAP.Credentials";
 
     /** The name of a directory to overlay "under" the distribution conf. */
     public static final String CONF_PRE_OVERLAY = "idp.conf.preoverlay";
@@ -176,7 +176,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** Local overload of properties (to deal with nested calling). */
     private Map<String, String> inheritedProperties = Collections.EMPTY_MAP;
 
-    /** Inout handler from the prompting. */
+    /** Input handler from the prompting. */
     private final InputHandler inputHandler;
 
     /**
@@ -492,6 +492,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}. */
+    @Override @Nullable public String getLDAPPassword() throws BuildException {
+        return  installerProperties.getProperty(LDAP_PASSWORD);
+    }
+
+    /** {@inheritDoc}. */
     @Override @Nonnull public String getSubjectAltName() {
         return "https://" + getHostName() + "/idp/shibboleth";
     }
@@ -588,11 +593,6 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** {@inheritDoc}. */
     @Override public Path getLDAPMergeProperties() throws BuildException {
         return getMergeFile(LDAP_PROPERTIES_MERGE);
-    }
-
-    /** {@inheritDoc}. */
-    @Override public Path getSecretsMergeProperties() throws BuildException {
-        return getMergeFile(SECRETS_PROPERTIES_MERGE);
     }
 
     /** {@inheritDoc}. */

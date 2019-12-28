@@ -17,9 +17,11 @@
 
 package net.shibboleth.idp.installer;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -203,7 +205,7 @@ public class V4Install extends AbstractInitializableComponent {
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
         final Path conf = installerProps.getTargetDir().resolve("conf");
-        final Path distConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
+        final Path dstConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
         if (!currentState.isIdPPropertiesPresent()) {
             // We have to populate it
             try {
@@ -212,7 +214,7 @@ public class V4Install extends AbstractInitializableComponent {
                     throw new BuildException("Internal error - idp.properties");
                 }
                 final Path mergePath = installerProps.getIdPMergeProperties();
-                final Path source = distConf.resolve("idp.properties");
+                final Path source = dstConf.resolve("idp.properties");
                 if (!Files.exists(source)) {
                     throw new BuildException("missing idp.properties in dist");
                 }
@@ -246,7 +248,7 @@ public class V4Install extends AbstractInitializableComponent {
                 if (Files.exists(target)) {
                     throw new BuildException("Internal error - ldap.properties");
                 }
-                final Path source = distConf.resolve("ldap.properties");
+                final Path source = dstConf.resolve("ldap.properties");
                 if (!Files.exists(source)) {
                     throw new BuildException("missing ldap.properties in dist");
                 }
@@ -266,44 +268,50 @@ public class V4Install extends AbstractInitializableComponent {
             }
         }
 
-        if (sealerCreated) {
-            // We need to write the passwords to secrets.properties
-            try {
-                final Path target = installerProps.getTargetDir().resolve("credentials").resolve("secrets.properties");
-                if (Files.exists(target)) {
-                    throw new BuildException("Internal error - secrets.properties");
-                }
-                final Path distCreds = installerProps.getTargetDir().resolve("dist").resolve("credentials");
-                final Path source = distCreds.resolve("secrets.properties");
-                if (!Files.exists(source)) {
-                    throw new BuildException("missing secrets.properties in dist");
-                }
-                final Properties replacements;
-                final Path mergePath = installerProps.getSecretsMergeProperties();
-                if (mergePath != null) {
-                    log.debug("Creating {} from {} and {}", target, source, mergePath);
-                    replacements = new Properties();
-                    final File mergeFile = mergePath.toFile();
-                    if (!installerProps.isNoTidy()) {
-                        mergeFile.deleteOnExit();
-                    }
-                    replacements.load(new FileInputStream(mergeFile));
+        if (null == currentState.getInstalledVersion()) {
+            log.debug("Detected a new Install.  Creating secrets.properties.");
+            final Path secrets = installerProps.getTargetDir().resolve("credentials").resolve("secrets.properties");
+            try (final FileWriter fileWriter = new FileWriter(secrets.toFile());
+                 final BufferedWriter out = new BufferedWriter(fileWriter)) {
+                
+                out.write("# This is a reserved spot for most properties containing passwords or other secrets.");
+                out.newLine();
+                out.write("# Created by install at " + Instant.now());
+                out.newLine();
+                out.newLine();
+                out.write("# Access to internal AES encryption key");
+                out.newLine();
+                final String password;
+                if (sealerCreated) {
+                    password = installerProps.getSealerPassword();
                 } else {
-                    replacements = new Properties(2);
-                    replacements .setProperty("idp.sealer.storePassword", installerProps.getSealerPassword());
-                    replacements .setProperty("idp.sealer.keyPassword", installerProps.getSealerPassword());
-                    log.debug("Creating {} from {} and {}", target, source, replacements.keySet());
+                    password = "password";
                 }
-                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
-                propertiesToReWrite.load(new FileInputStream(source.toFile()));
-                propertiesToReWrite.replaceProperties(replacements);
-                propertiesToReWrite.store(new FileOutputStream(target.toFile()));
+                out.write("idp.sealer.storePassword = " + password);
+                out.newLine();
+                out.write("idp.sealer.keyPassword = " + password);
+                out.newLine();
+                out.newLine();
+                String ldapPassword = installerProps.getLDAPPassword();
+                if (null == ldapPassword) {
+                    ldapPassword = "myServicePassword";
+                }
+                out.write("# Default access to LDAP authn and attribute stores. ");
+                out.newLine();
+                out.write("idp.authn.LDAP.bindDNCredential              = " + ldapPassword);
+                out.newLine();
+                out.write("idp.attribute.resolver.LDAP.bindDNCredential " +
+                          "= %{idp.authn.LDAP.bindDNCredential:undefined}");
+                out.newLine();
+                out.newLine();
+                out.write("# Salt used to generate persistent/pairwise IDs, must be kept secret");
+                out.newLine();
+                out.write("#idp.persistentId.salt = changethistosomethingrandom");
+                out.newLine();
             } catch (final IOException e) {
                 throw new BuildException("Failed to generate secrets.properties", e);
             }
-        }
-
-        if (CurrentInstallState.V3_VERSION.equals(currentState.getInstalledVersion())) {
+        } else if (CurrentInstallState.V3_VERSION.equals(currentState.getInstalledVersion())) {
             log.debug("Detected a V3 to V4 update.  Editing services.properties");
             final Path servicesProps = conf.resolve("services.properties");
             if (!Files.exists(servicesProps)) {

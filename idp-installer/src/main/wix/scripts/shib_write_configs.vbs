@@ -64,11 +64,11 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava 
     AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
-    AntFile.WriteLine "secrets.merge.properties=secrets.replace.properties"
     if (IdPScope <> "") then
        AntFile.WriteLine "idp.scope=" & IdPScope
     end if
     if ConfigureAd = "true" then
+       AntFile.Writeline "idp.LDAP.credential=" & AdPass
        AntFile.WriteLine "ldap.merge.properties=ldap.mergeProperties"
     end if
     AntFile.WriteLine "#"
@@ -94,21 +94,6 @@ if (Err.Number = 0 ) then
     PropsFile.Close
 else
     LogFile.Writeline "PropsFile failed " & Err & "  -  " & PropsFile
-end if
-
-set SecretsFile=FileSystemObj.OpenTextFile(InstallDir & "\secrets.replace.properties" , 2, True)
-if (Err.Number = 0 ) then
-    SecretsFile.WriteLine "#"
-    SecretsFile.WriteLine "# File to be merged into secrets.properties"
-    SecretsFile.WriteLine "#"
-    SecretsFile.WriteLine "idp.sealer.storePassword=" & SealerPassword
-    SecretsFile.WriteLine "idp.sealer.keyPassword=" & SealerPassword
-	if ConfigureAd = "true" then
-        SecretsFile.Writeline "idp.authn.LDAP.bindDNCredential=" & AdPass
-    end if
-    SecretsFile.Close
-else
-    LogFile.Writeline "SecretsFile failed " & Err & "  -  " & SecretsFile
 end if
 
 if (InstallJetty <> "") then

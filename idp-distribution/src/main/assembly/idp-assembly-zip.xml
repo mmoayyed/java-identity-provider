@@ -10,7 +10,6 @@
             <excludes>
                 <exclude>**/*.bat</exclude>
                 <exclude>**/*.config</exclude>
-                <exclude>**/*.credentials</exclude>
                 <exclude>**/*.ini</exclude>
                 <exclude>**/*.properties</exclude>
                 <exclude>**/*.txt</exclude>
@@ -24,7 +23,6 @@
             <includes>
                 <include>**/*.bat</include>
                 <include>**/*.config</include>
-                <include>**/*.credentials</include>
                 <include>**/*.ini</include>
                 <include>**/*.properties</include>
                 <include>**/*.txt</include>

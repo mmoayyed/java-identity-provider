@@ -118,15 +118,14 @@ public interface InstallerProperties extends InitializableComponent {
      */
     @Nullable public Path getLDAPMergeProperties() throws BuildException;
 
-    /** Get the a file to merge with secrets.properties or null.
-    *
-    * @return the path or null if it none required.
-    * @throws BuildException  if badness happens
-    */
-   @Nullable public Path getSecretsMergeProperties() throws BuildException;
+    /** Get the LDAP password iff one was provided.  DO NOT PROMPT
+     *
+     * @return the password if provided by a properties
+     * @throws BuildException  if badness happens
+     */
+    @Nullable public String getLDAPPassword()  throws BuildException;
 
-
-   /** Get a directory to use to "pre-overlay" the conf directory.
+    /** Get a directory to use to "pre-overlay" the conf directory.
      * Files will be copied from here if they don't already exist in conf,
      * <b>before</b> the files are copied from the distribution.
      * @return the path or null if non specified.
