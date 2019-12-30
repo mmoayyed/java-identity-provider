@@ -65,7 +65,11 @@ public class AbstractDataConnectorTest {
         assertNull(connector.getFailoverDataConnectorId());
     }
 
-    /** Test the resolution of the data connector. */
+    /**
+     * Test the resolution of the data connector.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);

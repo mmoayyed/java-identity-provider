@@ -45,6 +45,8 @@ public class SAML2POSTSimpleSignSSOFlowTest extends AbstractSAML2SSOFlowTest {
 
     /**
      * Test the SAML 2 POST SSO flow.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void testSAML2POSTSSOFlow() throws Exception {
 

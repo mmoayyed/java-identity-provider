@@ -51,7 +51,8 @@ public class MockDataConnector extends AbstractDataConnector {
      * 
      * @param id unique ID for this data connector
      * @param connectorValues static collection of values returned by this connector
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     public MockDataConnector(String id, Map<String, IdPAttribute> connectorValues) throws ComponentInitializationException {
         setId(id);
@@ -70,7 +71,11 @@ public class MockDataConnector extends AbstractDataConnector {
         initialize();
     }
 
-    /** Fail resolutions */
+    /**
+     * Fail resolutions
+     * 
+     * @param fail <code>true</code> to return a {@link ResolutionException}, otherwise <code>null</code>
+     */
     public void setFailure(boolean fail) {
         if (fail) {
             resolutionException = new ResolutionException();

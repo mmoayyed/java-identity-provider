@@ -101,7 +101,11 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_MSG_CTX);
     }
 
-    /** Test that the action proceeds properly returning no assertions if there is no authentication result. */
+    /**
+     * Test that the action proceeds properly returning no assertions if there is no authentication result.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAuthenticationStatement() throws Exception {
         prc.getSubcontext(AuthenticationContext.class, true);
 
@@ -109,9 +113,12 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    /** Test that the authentication statement is properly added. 
-     * @throws InterruptedException 
-     * @throws ComponentInitializationException */
+    /**
+     * Test that the authentication statement is properly added.
+     * 
+     * @throws InterruptedException ...
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testAddAuthenticationStatement() throws InterruptedException, ComponentInitializationException {
         final Instant now = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time

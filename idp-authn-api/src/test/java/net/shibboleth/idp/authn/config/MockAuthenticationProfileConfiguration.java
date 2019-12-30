@@ -80,6 +80,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
      * 
      * @param id ID of this profile
      * @param methods default authentication methods to use
+     * @param flows ...
      * @param formats name identifier formats to use
      */
     public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,

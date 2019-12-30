@@ -41,14 +41,17 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * This tests not just the parsing of the rule, but also the construction of the complex tests.<br/>
- * <code>
- *  <PermitValueRule xsi:type="basic:AttributeRequesterString" value="https://service.example.edu/shibboleth-sp" />
- * </code><br/>
- * vs<br/>
- * <code>
- *  <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://service.example.edu/shibboleth-sp" />
- * </code><br/>
+ * This tests not just the parsing of the rule, but also the construction of the complex tests.
+ * 
+ * <pre>
+ * &lt;PermitValueRule xsi:type="basic:AttributeRequesterString" value="https://service.example.edu/shibboleth-sp" /&gt;
+ * </pre>
+ * 
+ * <p>vs</p>
+ * 
+ * <pre>
+ * &lt;afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://service.example.edu/shibboleth-sp" /&gt;
+ * </pre>
  */
 public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserTest {
 

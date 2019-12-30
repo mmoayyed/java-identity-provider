@@ -113,7 +113,11 @@ public class AuthenticationFlowDescriptorTest {
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(baz));
     }
     
-    /** Tests handling of active/inactive checks. */
+    /**
+     * Tests handling of active/inactive checks.
+     * 
+     * @throws InterruptedException ...
+     */
     @Test public void testActiveResults() throws InterruptedException {
         AuthenticationResult result = new AuthenticationResult("test", new UsernamePrincipal("foo"));
         Assert.assertTrue(descriptor.isResultActive(result));

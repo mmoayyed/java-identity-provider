@@ -80,7 +80,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     /**
      * Allows override of component properties before initializing them.
      * 
-     * @throws ComponentInitializationException 
+     * @throws ComponentInitializationException ...
      */
     protected void adjustProperties() throws ComponentInitializationException {
         
@@ -97,7 +97,8 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
      * @param principalName name of principal for session
      * 
      * @return the cookie established by the SessionManager
-     * @throws SessionException
+     * 
+     * @throws SessionException ...
      */
     protected Cookie createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());

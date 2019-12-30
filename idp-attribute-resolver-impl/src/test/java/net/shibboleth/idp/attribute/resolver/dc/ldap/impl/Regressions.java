@@ -99,8 +99,10 @@ public class Regressions {
      * 
      * @param builder to build search requests
      * @param strategy to map search results
+     * 
      * @return ldap data connector
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder<ExecutableSearchFilter> builder,
             final SearchResultMappingStrategy strategy) throws ComponentInitializationException {

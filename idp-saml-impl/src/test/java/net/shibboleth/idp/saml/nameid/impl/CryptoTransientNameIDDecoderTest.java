@@ -68,9 +68,9 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
     /**
      * Set up the data sealer. We take advantage of the fact that Spring a {@link ClassPathResource} wraps a files.
      * 
-     * @throws IOException
-     * @throws DataSealerException
-     * @throws ComponentInitializationException
+     * @throws IOException ...
+     * @throws DataSealerException ...
+     * @throws ComponentInitializationException ...
      */
     @BeforeClass public void setupDataSealer() throws IOException, DataSealerException, ComponentInitializationException {
 

@@ -22,16 +22,14 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.trust.TrustEngine;
 
-/**
- *
- */
 public class MockTrustEngine<T> implements TrustEngine<T> {
 
     private final boolean result;
     
     /**
      * Constructor.
-     *
+     * 
+     * @param retVal ...
      */
     public MockTrustEngine(boolean retVal) {
         result = retVal;

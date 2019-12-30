@@ -34,8 +34,8 @@ public class AuthnContextClassRefPrincipalTest extends XMLObjectBaseTestCase {
     /**
      * Tests that everything is properly initialized during object construction.
      *  
-     * @throws MarshallingException
-     * @throws CloneNotSupportedException 
+     * @throws MarshallingException ...
+     * @throws CloneNotSupportedException ...
      */
     @Test public void testInstantiation() throws MarshallingException, CloneNotSupportedException {
         AuthnContextClassRefPrincipal principal = new AuthnContextClassRefPrincipal(AuthnContext.KERBEROS_AUTHN_CTX);

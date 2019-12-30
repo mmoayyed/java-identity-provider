@@ -59,7 +59,6 @@ public class BaseCSRFTest {
     
     /**
      * MockView, for use when you do not actually need a rendered response.
-     * @see {@link org.springframework.webflow.test.MockViewFactoryCreator#MockView}. 
      */
     protected static class MockView implements View {
 

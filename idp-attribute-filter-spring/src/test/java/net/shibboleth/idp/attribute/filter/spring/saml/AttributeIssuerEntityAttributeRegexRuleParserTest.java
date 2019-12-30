@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link AttributeIssuerEntityAttributeRegexRuleParser}.
+ * test for {@link AttributeIssuerEntityAttributeRegexPolicyRule}.
  */
 public class AttributeIssuerEntityAttributeRegexRuleParserTest extends  BaseAttributeFilterParserTest {
 

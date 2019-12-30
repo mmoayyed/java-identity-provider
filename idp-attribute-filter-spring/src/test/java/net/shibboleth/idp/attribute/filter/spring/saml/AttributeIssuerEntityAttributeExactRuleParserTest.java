@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * test for {@link AttributeIssuerEntityAttributeExactRuleParser}.
+ * test for {@link AttributeIssuerEntityAttributeExactPolicyRule}.
  */
 public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
 
@@ -48,6 +48,5 @@ public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttri
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");
         assertFalse(rule.getIgnoreUnmappedEntityAttributes());
     }
-
 
 }

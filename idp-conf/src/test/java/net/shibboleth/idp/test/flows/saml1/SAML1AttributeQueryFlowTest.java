@@ -137,6 +137,8 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
     /**
      * Build the {@link MockHttpServletRequest}.
      * 
+     * @param includeDesignators ...
+     * 
      * @throws Exception if an error occurs
      */
     public void buildRequest(final boolean includeDesignators) throws Exception {

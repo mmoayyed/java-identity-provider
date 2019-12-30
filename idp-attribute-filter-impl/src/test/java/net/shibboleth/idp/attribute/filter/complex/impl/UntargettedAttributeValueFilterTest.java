@@ -65,17 +65,22 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     }
 
     /**
-     * test the following policy.
+     * Test the following policy.
      * 
-     <code>
-      <AttributeFilterPolicy id="targettedValueInEPA">
-          <PolicyRequirementRule xsi:type="basic:ANY" /> 
-          <AttributeRule attributeID="eduPersonAffiliation">
-              <PermitValueRule xsi:type="basic:AttributeValueString" value="jsmith" ignoreCase="true"/>
-          </AttributeRule>
-      <AttributeFilterPolicy/>
-      </code> which should return One values of eduPersonAffiliation when eduPersonAffiliation attribute has a value of "jsmith"
+     * <pre>
+     * &lt;AttributeFilterPolicy id="targettedValueInEPA"&gt;
+     *     &lt;PolicyRequirementRule xsi:type="basic:ANY" /&gt; 
+     *     &lt;AttributeRule attributeID="eduPersonAffiliation"&gt;
+     *         &lt;PermitValueRule xsi:type="basic:AttributeValueString" value="jsmith" ignoreCase="true"/&gt;
+     *     &lt;/AttributeRule&gt;
+     * &lt;AttributeFilterPolicy/&gt;
+     * </pre>
      * 
+     * which should return One values of eduPersonAffiliation when eduPersonAffiliation attribute has a value of "jsmith"
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     * @throws AttributeFilterException ...
      */
     @Test public void testUntargettedPolicyRequirement() throws ComponentInitializationException, ResolutionException,
             AttributeFilterException {
@@ -117,19 +122,22 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     }
 
     /**
-     * test the following policy.
+     * Test the following policy.
      * 
-     <code>
-        <AttributeFilterPolicy id="targettedValueInEPA">
-        <PolicyRequirementRule xsi:type="basic:AttributeValueString" value="jsmith" ignoreCase="true"/>
-        <AttributeRule attributeID="eduPersonAffiliation">
-          <PermitValueRule xsi:type="basic:ANY" />
-        </AttributeRul>
-      <AttributeFilterPolicy/>
-     </code>
-
-    * which should return all values of eduPersonAffiliation when any attribute has a value of "jsmith"
+     * <pre>
+     * &lt;AttributeFilterPolicy id="targettedValueInEPA"&gt;
+     *   &lt;PolicyRequirementRule xsi:type="basic:AttributeValueString" value="jsmith" ignoreCase="true"/&gt;
+     *   &lt;AttributeRule attributeID="eduPersonAffiliation"&gt;
+     *     &lt;PermitValueRule xsi:type="basic:ANY" /&gt;
+     *   &lt;/AttributeRule&gt;
+     * &lt;AttributeFilterPolicy/&gt;
+     * </pre>
      * 
+     * which should return all values of eduPersonAffiliation when any attribute has a value of "jsmith"
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     * @throws AttributeFilterException ...
      */
     @Test public void testUntargettedPolicyValue() throws ComponentInitializationException, ResolutionException,
             AttributeFilterException {

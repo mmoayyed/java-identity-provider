@@ -48,7 +48,11 @@ public class SelectRelyingPartyConfigurationTest {
         action.initialize();
     }
 
-    /** Test that the action errors out properly if there is no relying party context. */
+    /**
+     * Test that the action errors out properly if there is no relying party context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyContext() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
@@ -65,7 +69,11 @@ public class SelectRelyingPartyConfigurationTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
-    /** Test that the action errors out properly if there is no relying party configuration. */
+    /**
+     * Test that the action errors out properly if there is no relying party configuration.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
@@ -82,7 +90,11 @@ public class SelectRelyingPartyConfigurationTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
-    /** Test that the action errors out properly if the relying party configuration can not be resolved. */
+    /**
+     * Test that the action errors out properly if the relying party configuration can not be resolved.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testUnableToResolveRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
@@ -105,7 +117,11 @@ public class SelectRelyingPartyConfigurationTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
-    /** Test that the action resolves the relying party and proceeds properly. */
+    /**
+     * Test that the action resolves the relying party and proceeds properly.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testResolveRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);

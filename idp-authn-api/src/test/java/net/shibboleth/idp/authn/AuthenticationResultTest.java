@@ -31,7 +31,11 @@ import org.testng.annotations.Test;
 /** {@link AuthenticationResult} unit test. */
 public class AuthenticationResultTest {
 
-    /** Tests that everything is properly initialized during object construction. */
+    /**
+     * Tests that everything is properly initialized during object construction.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testInstantiation() throws Exception {
         Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time

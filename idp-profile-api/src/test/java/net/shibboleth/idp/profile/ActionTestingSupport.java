@@ -42,6 +42,7 @@ public class ActionTestingSupport {
      * Checks that the event is not null, that the event source is not null, and that the event ID is the given id.
      * 
      * @param event the event to check
+     * @param id ...
      */
     public static void assertEvent(final Event event, final String id) {
         Assert.assertNotNull(event);

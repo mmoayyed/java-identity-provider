@@ -166,7 +166,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
     }
 
-    /** An SP with no endpoints in metadata. */
+    /**
+     * An SP with no endpoints in metadata.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testNoEndpoints() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPNoEndpoints.xml");
@@ -179,7 +183,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
 
-    /** An SP with no endpoints in metadata interacting with signed requests. */
+    /**
+     * An SP with no endpoints in metadata interacting with signed requests.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testSignedNoEndpoints() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPNoEndpoints.xml");
@@ -214,7 +222,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
     }
     
-    /** No endpoint with the location requested. */
+    /**
+     * No endpoint with the location requested.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testBadLocation() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -229,7 +241,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
 
-    /** No endpoint at a location with the right binding requested. */
+    /**
+     * No endpoint at a location with the right binding requested.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testBadBinding() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -244,7 +260,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
 
-    /** Endpoint matches but we don't support the binding. */
+    /**
+     * Endpoint matches but we don't support the binding.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testUnsupportedBinding() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -260,7 +280,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
     
-    /** No endpoint with a requested index. */
+    /**
+     * No endpoint with a requested index.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testBadIndex() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -277,7 +301,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
     
-    /** Test SOAP case. */
+    /**
+     * Test SOAP case.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test
     public void testSynchronous() throws ComponentInitializationException {
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setBindingUri(
@@ -302,7 +330,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertSame(binding, bindingCtx.getBindingDescriptor());
     }
     
-    /** Requested location/binding are in metadata. */
+    /**
+     * Requested location/binding are in metadata.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testInMetadata() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -328,7 +360,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
     }
 
-    /** Requested index is in metadata. */
+    /**
+     * Requested index is in metadata.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testIndexInMetadata() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -358,7 +394,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
     }
 
-    /** No endpoint with a requested index. */
+    /**
+     * No endpoint with a requested index.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testIndexUnsupportedBinding() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -375,7 +415,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
     
-    /** Get the default endpoint. */
+    /**
+     * Get the default endpoint.
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testDefault() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
@@ -404,7 +448,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST.replace("POST2", "POST"));
     }
     
-    /** Test a SAML 1 request (use of SAML2 bindings here is just for simplicity in testing). */
+    /**
+     * Test a SAML 1 request (use of SAML2 bindings here is just for simplicity in testing).
+     * 
+     * @throws UnmarshallingException ...
+     */
     @Test
     public void testSAML1InMetadata() throws UnmarshallingException {
         final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");

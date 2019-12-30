@@ -125,7 +125,12 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         
         private Instant expirationTime;
         
-        /** Constructor. */
+        /**
+         * Constructor.
+         * 
+         * @param creation ...
+         * @param expiration ...
+         */
         DummyStrategy(final Instant creation, final Instant expiration) {
             creationTime = creation;
             expirationTime = expiration;

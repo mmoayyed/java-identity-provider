@@ -44,7 +44,11 @@ import org.testng.annotations.Test;
 /** Unit test for {@link AttributeFilter}. */
 public class AttributeFilterImplTest {
 
-    /** Test that post-construction state is what is expected. */
+    /**
+     * Test that post-construction state is what is expected.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testPostConstructionState() throws Exception {
         AttributeFilter filter = new AttributeFilterImpl("engine", Collections.EMPTY_LIST);
         Assert.assertNotNull(filter.getFilterPolicies());
@@ -73,7 +77,11 @@ public class AttributeFilterImplTest {
         }
     }
 
-    /** Test setting and retrieving filter policies. */
+    /**
+     * Test setting and retrieving filter policies.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testFilterPolicies() throws Exception {
         AttributeFilterPolicy policy1 = new AttributeFilterPolicy("policy1", PolicyRequirementRule.MATCHES_NONE, null);
         AttributeFilterPolicy policy2 = new AttributeFilterPolicy("policy2", PolicyRequirementRule.MATCHES_NONE, null);
@@ -111,7 +119,11 @@ public class AttributeFilterImplTest {
         }
     }
 
-    /** Test filtering attributes. */
+    /**
+     * Test filtering attributes.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testFilterAttributes() throws Exception {
         MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");

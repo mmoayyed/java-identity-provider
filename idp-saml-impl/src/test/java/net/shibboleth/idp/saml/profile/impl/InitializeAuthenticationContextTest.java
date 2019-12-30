@@ -54,8 +54,11 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         action.initialize();
     }
     
-    /** Test that the action functions properly if there is no inbound message context. 
-     * @throws ComponentInitializationException */
+    /**
+     * Test that the action functions properly if there is no inbound message context.
+     *  
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testNoInboundMessageContext() throws ComponentInitializationException {
         final RequestContext requestCtx = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
@@ -71,7 +74,11 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
     }
 
-    /** Test that the action functions properly if there is no inbound message. */
+    /**
+     * Test that the action functions properly if there is no inbound message.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testNoInboundMessage() throws ComponentInitializationException {
         final RequestContext requestCtx = new RequestContextBuilder().setInboundMessage(null).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
@@ -86,7 +93,11 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
     }
 
-    /** Test that the action functions properly if the inbound message is not a SAML 2 AuthnRequest. */
+    /**
+     * Test that the action functions properly if the inbound message is not a SAML 2 AuthnRequest.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testSAML1AuthnRequest() throws ComponentInitializationException {
         final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(
@@ -104,7 +115,11 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
     }
 
-    /** Test that the action proceeds properly if the inbound message is a SAML2 AuthnRequest. */
+    /**
+     * Test that the action proceeds properly if the inbound message is a SAML2 AuthnRequest.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testCreateAuthenticationContext() throws ComponentInitializationException {
         final AuthnRequest authnRequest = SAML2ActionTestingSupport.buildAuthnRequest();
         authnRequest.setIsPassive(true);

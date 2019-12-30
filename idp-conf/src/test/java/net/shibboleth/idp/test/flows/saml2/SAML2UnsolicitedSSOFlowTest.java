@@ -34,7 +34,9 @@ public class SAML2UnsolicitedSSOFlowTest extends AbstractSAML2FlowTest {
     @Nonnull public final static String FLOW_ID = "SAML2/Unsolicited/SSO";
 
     /**
-     * Test the SAML 2 unsolicited SSO flow
+     * Test the SAML 2 unsolicited SSO flow.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void testSAML2UnsolicitedSSOFlow() throws Exception {
 

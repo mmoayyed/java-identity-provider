@@ -68,8 +68,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         //listener.initialize();
     }
 
-    /** Test the listener adds the CSRF token to the viewScope on view rendering.
-     * @throws ComponentInitializationException */
+    /**
+     * Test the listener adds the CSRF token to the viewScope on view rendering.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testAddingCsrfTokenToViewScopeOnRendering() throws ComponentInitializationException {
 
         listener.initialize();
@@ -90,7 +93,8 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     /**
      * Test the listener throws an {@link InvalidCSRFTokenException} if the viewScope and request token do not match.
      * View is not excluded.
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Test(expectedExceptions=InvalidCSRFTokenException.class) public void testInvalidToken() throws ComponentInitializationException {
         
@@ -114,7 +118,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
 
     }
     
-    /** Test an {@link InvalidCSRFTokenException} is not thrown if the token in the request and viewscope matches.*/
+    /**
+     * Test an {@link InvalidCSRFTokenException} is not thrown if the token in the request and viewscope matches.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testValidToken() throws ComponentInitializationException {
         
         listener.initialize();
@@ -141,7 +149,8 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     /**
      * Test the listener does not thrown an {@link InvalidCSRFTokenException}. The tokens do not match,
      * but the specific view is excluded.
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Test public void testViewExcluded() throws ComponentInitializationException {
         
@@ -170,7 +179,8 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     /**
      * Test the listener does not throw an {@link InvalidCSRFTokenException} even though the tokens do not match, because
      * the listener is disabled.
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Test public void testDisabled() throws ComponentInitializationException {
         
@@ -199,7 +209,8 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
      * Test the listener gracefully (no exception) handles a non view-state. Note this
      * should really not happen in production, as SWF should not call the viewRendering method
      * unless in a view-state.
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      * */
     @Test public void testDoesNotAddTokenToNonViewState() throws ComponentInitializationException {
 
@@ -217,7 +228,8 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
      * Test the listener does not test the CSRF token if called from in a non view-state. 
      * No exception should be thrown. Note, if it did test the tokens, as none are present, an exception
      * would be thrown - which is undesirable.
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      * */
     @Test public void testDoesNotTestTokenInNonViewState() throws ComponentInitializationException {
         
@@ -233,8 +245,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     
    
     
-    /** Test the listener throws an {@link InvalidCSRFTokenException} if no CSRF token is present in the Http request.
-     * @throws ComponentInitializationException */
+    /**
+     * Test the listener throws an {@link InvalidCSRFTokenException} if no CSRF token is present in the Http request.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test(expectedExceptions=InvalidCSRFTokenException.class) public void testHttpRequestTokenException() 
             throws ComponentInitializationException {
 
@@ -255,8 +270,9 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     
     /**
      * Test the listener does throw an {@link InvalidCSRFTokenException} as the tokens do not match.
-     * A new {@link EventRequiresCSRFTokenValidationPredicate} is created to match by eventId.
-     * @throws ComponentInitializationException 
+     * A new {@link BiPredicate} is created to match by eventId.
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Test(expectedExceptions=InvalidCSRFTokenException.class) public void 
             testInvalidTokenUsingNewEventRequiresCSRFTokenValidationPredicate() throws ComponentInitializationException  {
@@ -291,8 +307,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         
     }
     
-    /** Test the listener throws an {@link InvalidCSRFTokenException} if no CSRF token is present in the viewscope.
-     * @throws ComponentInitializationException */
+    /**
+     * Test the listener throws an {@link InvalidCSRFTokenException} if no CSRF token is present in the viewscope.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test(expectedExceptions=InvalidCSRFTokenException.class) public void testNoViewScopeTokenException() 
             throws ComponentInitializationException {
 
@@ -306,8 +325,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
 
     }
   
-    /** Test setting a CSRF token manager.
-     * @throws ComponentInitializationException */
+    /**
+     * Test setting a CSRF token manager.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testSetCsrfTokenManager() throws ComponentInitializationException {      
         listener.setCsrfTokenManager(new CSRFTokenManager());
         listener.initialize();
@@ -332,8 +354,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         Assert.assertTrue(((Boolean) enabledObject));
     }
     
-    /** Test the listener does not add CSRF token to the viewScope on view rendering, as listener disabled.
-     * @throws ComponentInitializationException */
+    /**
+     * Test the listener does not add CSRF token to the viewScope on view rendering, as listener disabled.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testTokenNotAddedToViewScopeOnRenderingWhenDisabled() throws ComponentInitializationException {
         
         //set enabled to false.
@@ -372,7 +397,8 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     /**
      * Tests the {@link InvalidCSRFTokenException} is thrown when the view scoped token is the wrong type -
      * String rather than {@link CSRFToken}.
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Test(expectedExceptions=InvalidCSRFTokenException.class) public void testTokenWrongType() 
             throws ComponentInitializationException {
@@ -396,7 +422,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         listener.eventSignaled(src, new Event(this,"proceed")); 
     }
     
-    /** Test an unset csrf token manager triggers an initialisation exception.*/
+    /**
+     * Test an unset csrf token manager triggers an initialisation exception.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test(expectedExceptions=ComponentInitializationException.class) void testUnsetCsrfTokenManager() 
             throws ComponentInitializationException{
         
@@ -406,7 +436,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         theListener.initialize();
     }
     
-    /** Test an unset ViewRequiresCSRFToken predicate triggers an initialisation exception.*/
+    /**
+     * Test an unset ViewRequiresCSRFToken predicate triggers an initialisation exception.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test(expectedExceptions=ComponentInitializationException.class) void testUnsetEventRequiresCSRFValidationPredicate() 
             throws ComponentInitializationException{
         
@@ -416,7 +450,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         theListener.initialize();
     }
     
-    /** Test an unset EventRequiresCSRFTokenValidation predicate triggers an initialisation exception.*/
+    /**
+     * Test an unset EventRequiresCSRFTokenValidation predicate triggers an initialisation exception.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test(expectedExceptions=ComponentInitializationException.class) void testUnsetViewRequiresCSRFTokenPredicate() 
             throws ComponentInitializationException{
         
@@ -426,7 +464,4 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         theListener.initialize();
     }
     
-   
-    
-
 }

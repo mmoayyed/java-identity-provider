@@ -117,7 +117,11 @@ public class PopulateAuditContextTest {
         
         private Collection<String> result;
         
-        /** Constructor. */
+        /**
+         * Constructor.
+         * 
+         * @param arg ...
+         */
         public MockFunction(final Collection<String> arg) {
             result = arg;
         }

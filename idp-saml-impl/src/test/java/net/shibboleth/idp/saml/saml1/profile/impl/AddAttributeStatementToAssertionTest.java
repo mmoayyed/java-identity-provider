@@ -133,7 +133,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setTranscoderRegistry(new MockReloadableService<>(registry));
     }
 
-    /** Test that the action errors out properly if there is no relying party context. */
+    /**
+     * Test that the action errors out properly if there is no relying party context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyContext() throws Exception {
         prc.removeSubcontext(RelyingPartyContext.class);
 
@@ -142,7 +146,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
     }
 
-    /** Test that the action errors out properly if there is no outbound context. */
+    /**
+     * Test that the action errors out properly if there is no outbound context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoOutboundContext() throws Exception {
         prc.setOutboundMessageContext(null);
 
@@ -154,14 +162,22 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_MSG_CTX);
     }
 
-    /** Test that the action continues properly if there is no attribute context. */
+    /**
+     * Test that the action continues properly if there is no attribute context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAttributeContext() throws Exception {
         action.initialize();
         Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
     }
 
-    /** Test that the action continues properly if the attribute context does not contain attributes. */
+    /**
+     * Test that the action continues properly if the attribute context does not contain attributes.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAttributes() throws Exception {
         final AttributeContext attribCtx = new AttributeContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
@@ -171,7 +187,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ActionTestingSupport.assertProceedEvent(result);
     }
 
-    /** Test that the action ignores attribute encoding errors. */
+    /**
+     * Test that the action ignores attribute encoding errors.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testIgnoreAttributeEncodingErrors() throws Exception {
 
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
@@ -208,7 +228,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ActionTestingSupport.assertProceedEvent(result);
     }
 
-    /** Test that the action returns the correct transition when an attribute encoding error occurs. */
+    /**
+     * Test that the action returns the correct transition when an attribute encoding error occurs.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void failOnAttributeEncodingErrors() throws Exception {
         
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
@@ -248,6 +272,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /**
      * Test that the attribute statement is correctly added as a new assertion of a response already containing an
      * assertion.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void testAddedAttributeStatement() throws Exception {
 
@@ -276,7 +302,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         }
     }
 
-    /** Test that the attribute statement is correctly added to an assertion which already exists in the response. */
+    /**
+     * Test that the attribute statement is correctly added to an assertion which already exists in the response.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testAssertionInResponse() throws Exception {
         ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
                 SAML1ActionTestingSupport.buildAssertion());
@@ -303,6 +333,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /**
      * Test that the attribute statement is correctly added to a newly created assertion of the response which
      * originally contained no assertions.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void testNoAssertionInResponse() throws Exception {
         final AttributeContext attribCtx = buildAttributeContext();

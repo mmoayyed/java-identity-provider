@@ -86,7 +86,7 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
         /**
          * Constructor.
          *
-         * @param environment
+         * @param env ...
          */
         public MyInitialContext(Hashtable<?, ?> env) {
             environment = env;
@@ -242,7 +242,7 @@ public class ManagedConnectionTest extends BaseAttributeDefinitionParserTest {
         /**
          * Constructor.
          *
-         * @param env
+         * @param env ...
          */
         public MyDataSource(Hashtable<?, ?> env) {
             environment = env;

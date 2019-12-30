@@ -58,10 +58,11 @@ public interface CurrentInstallState extends InitializableComponent {
      */
     @Nullable Properties getCurrentlyInstalledProperties();
 
-    /** Return the list of paths of files which were not there prior to the install
+    /**
+     * Return the list of paths of files which were not there prior to the install
      * but which might be created by the installed but to no purpose.
+     * 
      * @return the list of paths.
-     * @return
      */
     @Nonnull List<Path> getPathsToBeDeleted();
 }

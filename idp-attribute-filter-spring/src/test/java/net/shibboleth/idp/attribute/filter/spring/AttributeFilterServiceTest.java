@@ -68,9 +68,11 @@ public class AttributeFilterServiceTest {
      * 
      * @param name service bean name
      * @param nativeSpring whether native syntax is used
+     * 
      * @return the service
+     * 
      * @throws ServiceException if an error occurs loading the service
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException ...
      */
     private AttributeFilter getFilter(String name, boolean nativeSpring) throws ServiceException,
             ComponentInitializationException {

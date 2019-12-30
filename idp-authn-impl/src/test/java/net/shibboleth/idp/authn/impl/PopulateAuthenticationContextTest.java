@@ -39,7 +39,11 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         initializeMembers();
     }
 
-    /** Test available flows == potential flows. */
+    /**
+     * Test available flows == potential flows.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testIdentical() throws Exception {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
@@ -61,7 +65,11 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         Assert.assertEquals(authCtx.getPotentialFlows(), authCtx.getAvailableFlows());
     }
     
-    /** Test available flows != potential flows. */
+    /**
+     * Test available flows != potential flows.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNonIdentical() throws Exception {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
@@ -90,7 +98,11 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         Assert.assertNull(authCtx.getPotentialFlows().get("test4"));
     }
     
-    /** Test active flow filtering. */
+    /**
+     * Test active flow filtering.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testFiltered() throws Exception {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();

@@ -131,7 +131,7 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     /**
      *  Initialize OpenSAML.
      *
-     * @throws InitializationException
+     * @throws InitializationException ...
      */
     @BeforeSuite
     public void initOpenSAML() throws InitializationException {

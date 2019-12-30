@@ -279,7 +279,8 @@ public class RequestContextBuilder {
      * </ul>
      * 
      * @return the constructed {@link MockRequestContext}
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Nonnull public RequestContext buildRequestContext() throws ComponentInitializationException {
         final MockRequestContext context = new MockRequestContext();
@@ -391,8 +392,11 @@ public class RequestContextBuilder {
      * {@link #selectProfileConfiguration(Map)}</li>
      * </ul>
      * 
+     * @param profileRequestContext ...
+     * 
      * @return the constructed {@link RelyingPartyContext}
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
             @Nonnull final ProfileRequestContext profileRequestContext) throws ComponentInitializationException {
@@ -418,13 +422,14 @@ public class RequestContextBuilder {
      * <li>configuration ID is 'mock'</li>
      * <li>the responder ID provided by {@link #setOutboundMessageIssuer(String)} or
      * {@link ActionTestingSupport#OUTBOUND_MSG_ISSUER} if none is given</li>
-     * <li>the activation criteria is {@link Predicates#alwaysTrue()}</li>
+     * <li>the activation criteria is {@link com.google.common.base.Predicates#alwaysTrue()}</li>
      * <li>the profile configurations provided {@link #setRelyingPartyProfileConfigurations(Collection)} or one
      * {@link MockProfileConfiguration} if none is provided</li>
      * </ul>
      * 
      * @return the constructed {@link RelyingPartyConfiguration}
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     @Nonnull protected RelyingPartyConfiguration buildRelyingPartyConfiguration() throws ComponentInitializationException {
         String responderId;

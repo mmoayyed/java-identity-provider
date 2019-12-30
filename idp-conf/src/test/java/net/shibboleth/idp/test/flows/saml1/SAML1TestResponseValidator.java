@@ -412,14 +412,15 @@ public class SAML1TestResponseValidator {
     }
 
     /**
-     * Assert that :
+     * Assert that:
+     * 
      * <ul>
      * <li>the name identifier is not null</li>
      * <li>the name identifier value is not null</li>
      * <li>the name identifier value is the expected value if the format is not transient</li>
      * <li>the name format is the expected name format</li>
      * <li>the name qualifier is the expected name qualifier</li>
-     * <ul>
+     * </ul>
      * 
      * @param identifier the name identifier
      */

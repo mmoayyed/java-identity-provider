@@ -104,10 +104,10 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     /**
      * Test resolution of an simple script (statically generated data).
      * 
-     * @throws ResolutionException
+     * @throws ResolutionException ...
      * @throws ComponentInitializationException only if the test will fail
-     * @throws ScriptException
-     * @throws IOException
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void simple() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -134,10 +134,10 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     /**
      * Test resolution of an simple script (statically generated data).
      * 
-     * @throws ResolutionException
+     * @throws ResolutionException ...
      * @throws ComponentInitializationException only if the test will fail
-     * @throws ScriptException
-     * @throws IOException
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void subject() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -166,7 +166,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     
 
     /**
-     * Test resolution of an script which uses the custom bean
+     * Test resolution of an script which uses the custom bean.
+     * 
+     * @throws ResolutionException ...
+     * @throws ComponentInitializationException ...
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void custom() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -194,10 +199,10 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     /**
      * Test resolution of an simple script (statically generated data).
      * 
-     * @throws ResolutionException
+     * @throws ResolutionException ...
      * @throws ComponentInitializationException only if the test will fail
-     * @throws ScriptException
-     * @throws IOException
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void simple2() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -349,8 +354,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * 
      * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if things go wrong
-     * @throws ScriptException
-     * @throws IOException
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void attributes() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -390,8 +395,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * 
      * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if things go wrong
-     * @throws ScriptException
-     * @throws IOException
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void attributesWithNull() throws ResolutionException, ComponentInitializationException,
             ScriptException, IOException {
@@ -464,8 +469,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * 
      * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if the test has gone wrong
-     * @throws ScriptException
-     * @throws IOException
+     * @throws ScriptException ...
+     * @throws IOException ...
      */
     @Test public void context() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {

@@ -43,9 +43,11 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
      * single &lt;mdattr:EntityAttributes/&gt; statement.
      * 
      * @param xmlFileName the file within the test directory.
+     * 
      * @return the att
-     * @throws ComponentInitializationException
-     * @throws ResolutionException
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
      */
     protected Map<String, IdPAttribute> getIdPAttributes(String xmlFileName) throws ComponentInitializationException,
             ResolutionException {

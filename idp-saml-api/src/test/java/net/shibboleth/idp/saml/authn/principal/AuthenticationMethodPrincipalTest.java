@@ -29,9 +29,8 @@ public class AuthenticationMethodPrincipalTest {
 
     /**
      * Tests that everything is properly initialized during object construction.
-     *  
-     * @throws MarshallingException
-     * @throws CloneNotSupportedException 
+     * 
+     * @throws CloneNotSupportedException ...
      */
     @Test public void testInstantiation() throws CloneNotSupportedException {
         AuthenticationMethodPrincipal principal =

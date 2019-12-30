@@ -49,7 +49,7 @@ public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
     /**
      * Test the SAML 2 Redirect SSO flow.
      * 
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     @Test public void testSAML2RedirectFlow() throws Exception {
 

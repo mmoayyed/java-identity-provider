@@ -30,8 +30,9 @@ public class MockValuePredicateMatcher extends AbstractMatcher {
     /**
      * Constructor.
      * 
-     * @param valueMatchingPredicate
-     * @throws ComponentInitializationException
+     * @param valueMatchingPredicate ...
+     * 
+     * @throws ComponentInitializationException ...
      */
     public MockValuePredicateMatcher(Predicate<IdPAttributeValue> valueMatchingPredicate) throws ComponentInitializationException {
         valuePredicate  = valueMatchingPredicate;

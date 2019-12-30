@@ -60,7 +60,11 @@ public class PopulateSubjectCanonicalizationContextTest {
         action.execute(src);
     }
 
-    /** Test that the context is properly added. */
+    /**
+     * Test that the context is properly added.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testAction() throws Exception {
         
         ActionTestingSupport.assertProceedEvent(prc);

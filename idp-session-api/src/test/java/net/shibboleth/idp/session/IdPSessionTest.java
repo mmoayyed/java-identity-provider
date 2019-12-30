@@ -29,7 +29,11 @@ import org.testng.annotations.Test;
 /** {@link IdPSession} unit test. */
 public class IdPSessionTest {
 
-    /** Tests that everything is properly initialized during object construction. */
+    /**
+     * Tests that everything is properly initialized during object construction.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testInstantiation() throws Exception {
         final Instant start = Instant.now();
         Thread.sleep(50);
@@ -73,7 +77,11 @@ public class IdPSessionTest {
         }
     }
 
-    /** Tests mutating the last activity instant. */
+    /**
+     * Tests mutating the last activity instant.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testLastActivityInstant() throws Exception {
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
 
@@ -88,7 +96,11 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getLastActivityInstant(), now);
     }
 
-    /** Tests mutating the last activity instant. */
+    /**
+     * Tests mutating the last activity instant.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testAddressValidation() throws Exception {
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
 
@@ -100,8 +112,11 @@ public class IdPSessionTest {
         Assert.assertFalse(session.checkAddress("fe80::5a55:caff:fef2:65a3"));
     }
     
-    /** Tests adding service sessions. 
-     * @throws SessionException */
+    /**
+     * Tests adding service sessions.
+     * 
+     * @throws SessionException ...
+     */
     @Test public void testAddSPSessions() throws SessionException {
         final Instant now = Instant.now();
         final Instant exp = now.plusSeconds(60);
@@ -151,8 +166,11 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
     }
 
-    /** Tests removing service sessions. 
-     * @throws SessionException */
+    /**
+     * Tests removing service sessions.
+     * 
+     * @throws SessionException ...
+     */
     @Test public void testRemoveSPSession() throws SessionException {
         final Instant now = Instant.now();
         final Instant exp = now.plusSeconds(60);
@@ -187,8 +205,11 @@ public class IdPSessionTest {
         }
     }
 
-    /** Tests remove authentication results. 
-     * @throws SessionException */
+    /**
+     * Tests remove authentication results.
+     * 
+     * @throws SessionException ...
+     */
     @Test public void testRemoveAuthenticationResult() throws SessionException {
         AuthenticationResult event1 = new AuthenticationResult("foo", new UsernamePrincipal("john"));
         AuthenticationResult event2 = new AuthenticationResult("bar", new UsernamePrincipal("john"));
@@ -229,8 +250,8 @@ public class IdPSessionTest {
         /**
          * Constructor.
          *
-         * @param sessionId
-         * @param canonicalName
+         * @param sessionId ...
+         * @param canonicalName ...
          */
         public DummyIdPSession(String sessionId, String canonicalName) {
             super(sessionId, canonicalName, Instant.now());

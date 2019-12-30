@@ -80,8 +80,9 @@ public class SPNEGOAuthnController {
      * @param httpResponse the HTTP response
      * 
      * @return the response view
-     * @throws IOException 
-     * @throws ExternalAuthenticationException 
+     * 
+     * @throws IOException ...
+     * @throws ExternalAuthenticationException ...
      */
     @RequestMapping(value = "/{conversationKey}", method = RequestMethod.GET)
     @Nullable public ModelAndView startSPNEGO(@PathVariable @Nonnull @NotEmpty final String conversationKey,
@@ -116,8 +117,9 @@ public class SPNEGOAuthnController {
      * @param httpResponse the HTTP response
      * 
      * @return the response view
-     * @throws ExternalAuthenticationException 
-     * @throws IOException 
+     * 
+     * @throws ExternalAuthenticationException ...
+     * @throws IOException ...
      */
     @RequestMapping(value = "/{conversationKey}", method = RequestMethod.GET, headers = "Authorization")
     @Nullable public ModelAndView continueSPNEGO(@PathVariable @Nonnull @NotEmpty final String conversationKey,
@@ -219,8 +221,8 @@ public class SPNEGOAuthnController {
      * @param httpRequest the HTTP request
      * @param httpResponse the HTTP response
      * 
-     * @throws IOException 
-     * @throws ExternalAuthenticationException 
+     * @throws IOException ...
+     * @throws ExternalAuthenticationException ...
      */
     @RequestMapping(value = "/{conversationKey}/error", method = RequestMethod.GET)
     public void handleError(@PathVariable final String conversationKey, @Nonnull final HttpServletRequest httpRequest,
@@ -240,8 +242,8 @@ public class SPNEGOAuthnController {
      * @param httpResponse the HTTP response
      * @param kerberosPrincipal the Kerberos principal to return
      * 
-     * @throws IOException 
-     * @throws ExternalAuthenticationException 
+     * @throws IOException ...
+     * @throws ExternalAuthenticationException ...
      */
     private void finishWithSuccess(@Nonnull @NotEmpty final String key, @Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final KerberosPrincipal kerberosPrincipal)
@@ -267,8 +269,8 @@ public class SPNEGOAuthnController {
      * @param httpResponse the HTTP response
      * @param error the error string/event to return
      * 
-     * @throws IOException 
-     * @throws ExternalAuthenticationException 
+     * @throws IOException ...
+     * @throws ExternalAuthenticationException ...
      */
     private void finishWithError(@Nonnull @NotEmpty final String key, @Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull @NotEmpty final String error)
@@ -289,8 +291,8 @@ public class SPNEGOAuthnController {
      * @param httpResponse the HTTP response
      * @param ex the exception that has been thrown
      * 
-     * @throws IOException 
-     * @throws ExternalAuthenticationException 
+     * @throws IOException ...
+     * @throws ExternalAuthenticationException ...
      */
     private void finishWithException(@Nonnull @NotEmpty final String key, @Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final Exception ex)

@@ -447,7 +447,8 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     }
 
     /**
-     * Assert that :
+     * Assert that:
+     * 
      * <ul>
      * <li>the NameID is not null</li>
      * <li>the NameID value is not null</li>
@@ -455,7 +456,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * <li>the NameID value is the expected value if the format is not transient</li>
      * <li>the NameID name qualifier is the expected name qualifier</li>
      * <li>the NameID SP name qualifier is the expected SP name qualifier</li>
-     * <ul>
+     * </ul>
      * 
      * @param id the NameID
      */

@@ -148,7 +148,11 @@ public class AbstractResolverPluginTest {
         }
     }
 
-    /** Test {@link ResolverPlugin#resolve(AttributeResolutionContext)}. */
+    /**
+     * Test {@link ResolverPlugin#resolve(AttributeResolutionContext)}.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolver() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);

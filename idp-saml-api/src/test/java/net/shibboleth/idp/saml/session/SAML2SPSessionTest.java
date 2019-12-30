@@ -30,7 +30,11 @@ import org.testng.annotations.Test;
 /** {@link SAML2SPSession} unit test. */
 public class SAML2SPSessionTest extends OpenSAMLInitBaseTestCase {
 
-    /** Tests that everything is properly initialized during object construction. */
+    /**
+     * Tests that everything is properly initialized during object construction.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testInstantiation() throws Exception {
         
         NameID nameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);

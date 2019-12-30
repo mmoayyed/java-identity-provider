@@ -119,7 +119,7 @@ public class AbstractComposedMatcherTest {
         /**
          * Constructor.
          * 
-         * @param composedMatchers
+         * @param composedMatchers ...
          */
         public ComposedMatcher(final Collection<Matcher> composedMatchers) {
             super();

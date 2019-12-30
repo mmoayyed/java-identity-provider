@@ -33,8 +33,8 @@ public class AuthnContextDeclRefPrincipalTest extends XMLObjectBaseTestCase {
     /**
      * Tests that everything is properly initialized during object construction.
      *  
-     * @throws MarshallingException
-     * @throws CloneNotSupportedException 
+     * @throws MarshallingException ...
+     * @throws CloneNotSupportedException ...
      */
     @Test public void testInstantiation() throws MarshallingException, CloneNotSupportedException {
         AuthnContextDeclRefPrincipal principal = new AuthnContextDeclRefPrincipal("http://opensaml.org/mydecl");

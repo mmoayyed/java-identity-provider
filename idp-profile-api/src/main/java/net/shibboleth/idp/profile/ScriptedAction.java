@@ -65,7 +65,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @param theScript the script we will evaluate
      * @param extraInfo debugging information
      * 
-     * @deprecated
+     * @deprecated ...
      */
     @Deprecated
     public ScriptedAction(@Nonnull final EvaluableScript theScript, @Nullable final String extraInfo) {

@@ -66,7 +66,11 @@ public class PopulateProfileInterceptorContextTest {
         ActionTestingSupport.assertProceedEvent(event);
     }
 
-    /** Test that the context is properly added. */
+    /**
+     * Test that the context is properly added.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testAction() throws Exception {
         final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertNotNull(interceptorContext);
@@ -78,7 +82,11 @@ public class PopulateProfileInterceptorContextTest {
         Assert.assertEquals(availableFlows.get(2).getId(), "intercept/test3");
     }
 
-    /** Test that the context is properly added. */
+    /**
+     * Test that the context is properly added.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testError() throws Exception {
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);

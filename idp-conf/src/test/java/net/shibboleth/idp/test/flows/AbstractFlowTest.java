@@ -327,9 +327,10 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * Get the {@link Flow} with the given flow ID.
      * 
      * @param flowID the flow ID
+     * 
      * @return the {@link Flow}
      * 
-     * @see {@link FlowDefinitionLocator#getFlowDefinition(String)}
+     * @see FlowDefinitionLocator#getFlowDefinition(String)
      */
     @Nonnull public Flow getFlow(@Nonnull final String flowID) {
         Constraint.isNotNull(flowID, "Flow ID can not be null");

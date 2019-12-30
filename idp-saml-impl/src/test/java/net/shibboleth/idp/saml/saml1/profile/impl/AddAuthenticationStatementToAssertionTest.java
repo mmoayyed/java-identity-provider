@@ -70,13 +70,21 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         action.initialize();
     }
     
-    /** Test that the action errors out properly if there is no authentication context. */
+    /**
+     * Test that the action errors out properly if there is no authentication context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAuthnContext() throws Exception {
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    /** Test that the action errors out properly if there is no relying party context. */
+    /**
+     * Test that the action errors out properly if there is no relying party context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyContext() throws Exception {
         prc.getSubcontext(AuthenticationContext.class, true);
         prc.removeSubcontext(RelyingPartyContext.class);
@@ -85,7 +93,11 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
 
-    /** Test that the action errors out properly if there is no context. */
+    /**
+     * Test that the action errors out properly if there is no context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoContext() throws Exception {
         prc.setOutboundMessageContext(null);
         prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
@@ -95,7 +107,11 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_MSG_CTX);
     }
 
-    /** Test that the action proceeds properly returning no assertions if there is no authentication result. */
+    /**
+     * Test that the action proceeds properly returning no assertions if there is no authentication result.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAuthenticationStatement() throws Exception {
         prc.getSubcontext(AuthenticationContext.class, true);
 
@@ -103,7 +119,11 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    /** Test that the authentication statement is properly added. */
+    /**
+     * Test that the authentication statement is properly added.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testAddAuthenticationStatement() throws Exception {
         final Instant now = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
@@ -145,7 +165,11 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         Assert.assertEquals(authenticationStatement.getSubjectLocality().getIPAddress(), "127.0.0.1");
     }
     
-    /** Test that the authentication statement is properly added with the right method. */
+    /**
+     * Test that the authentication statement is properly added with the right method.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testAddAuthenticationStatementAndMethod() throws Exception {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("Foo"));

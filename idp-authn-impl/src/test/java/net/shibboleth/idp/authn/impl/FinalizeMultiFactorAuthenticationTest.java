@@ -52,7 +52,11 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         action = new FinalizeMultiFactorAuthentication();
     }
 
-    /** Tests no MFA context. */
+    /**
+     * Tests no MFA context.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testNoContext() throws ComponentInitializationException {
         ac.removeSubcontext(mfa);
         action.initialize();
@@ -60,7 +64,11 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
 
-    /** Tests a null result. */
+    /**
+     * Tests a null result.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testNullResult() throws ComponentInitializationException {
         action.setResultMergingStrategy(FunctionSupport.<ProfileRequestContext,AuthenticationResult>constant(null));
         action.initialize();
@@ -68,7 +76,11 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    /** Tests "merge" of a single result. */
+    /**
+     * Tests "merge" of a single result.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testSingleResult() throws ComponentInitializationException {
         action.initialize();
         final Event event = action.execute(src);
@@ -89,7 +101,11 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         Assert.assertSame(merged, prc.getSubcontext(SubjectCanonicalizationContext.class).getSubject());
     }
 
-    /** Tests default merging of results. */
+    /**
+     * Tests default merging of results.
+     * 
+     * @throws ComponentInitializationException ...
+     */
     @Test public void testMergedResults() throws ComponentInitializationException {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo2"));

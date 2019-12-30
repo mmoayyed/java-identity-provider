@@ -59,7 +59,11 @@ public class InitializeRequestedPrincipalContextTest {
         action.initialize();
     }
 
-    /** Test that the action bails if set not to replace. */
+    /**
+     * Test that the action bails if set not to replace.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoReplace() throws Exception {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
         authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
@@ -69,7 +73,11 @@ public class InitializeRequestedPrincipalContextTest {
         Assert.assertEquals(authCtx.getSubcontext(RequestedPrincipalContext.class).getOperator(), "foo");
     }
     
-    /** Test that the action errors out properly if there is no relying party context. */
+    /**
+     * Test that the action errors out properly if there is no relying party context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyContext() throws Exception {
         prc.removeSubcontext(RelyingPartyContext.class);
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
@@ -79,7 +87,11 @@ public class InitializeRequestedPrincipalContextTest {
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
-    /** Test that the action errors out properly if there is no relying party configuration. */
+    /**
+     * Test that the action errors out properly if there is no relying party configuration.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoProfileConfiguration() throws Exception {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
@@ -88,7 +100,11 @@ public class InitializeRequestedPrincipalContextTest {
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
-    /** Test that the action errors out properly if the desired profile configuration is not configured. */
+    /**
+     * Test that the action errors out properly if the desired profile configuration is not configured.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testInvalidProfileConfiguration() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
@@ -100,7 +116,11 @@ public class InitializeRequestedPrincipalContextTest {
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
-    /** Test that the action works with no methods supplied. */
+    /**
+     * Test that the action works with no methods supplied.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoMethods() throws Exception {
         final MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", Collections.<Principal>emptyList());
@@ -120,7 +140,11 @@ public class InitializeRequestedPrincipalContextTest {
         Assert.assertEquals(authCtx.getSubcontext(RequestedPrincipalContext.class).getOperator(), "foo");
     }
     
-    /** Test that the action works with methods supplied. */
+    /**
+     * Test that the action works with methods supplied.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testWithMethods() throws Exception {
         final Principal method = new TestPrincipal("test");
         final MockAuthenticationProfileConfiguration mock =

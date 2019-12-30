@@ -37,9 +37,10 @@ public class Test {
     @Nonnull private final Logger log = LoggerFactory.getLogger(Test.class);
    
     /**
-     * @param args
-     * @throws IOException 
-     * @throws ComponentInitializationException 
+     * @param args ...
+     * 
+     * @throws IOException ...
+     * @throws ComponentInitializationException ...
      */
     public static void main(String[] args) throws IOException, ComponentInitializationException {
 

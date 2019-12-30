@@ -79,7 +79,6 @@ public class PredicatePolicyRuleTest {
 
         private final boolean what;
 
-        /** Constructor. */
         public TestPred(boolean value) {
             what = value;
         }

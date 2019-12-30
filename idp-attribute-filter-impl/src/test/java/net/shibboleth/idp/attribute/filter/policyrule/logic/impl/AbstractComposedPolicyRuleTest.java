@@ -123,7 +123,7 @@ public class AbstractComposedPolicyRuleTest {
         /**
          * Constructor.
          *
-         * @param composedMatchers
+         * @param composedMatchers ...
          */
         public ComposedPolicyRule(final Collection<PolicyRequirementRule> composedMatchers) {
             super();

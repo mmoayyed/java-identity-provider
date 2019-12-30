@@ -67,17 +67,22 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
     }
 
     /**
-     * test the following policy.
-     */
-    /* Javadoc whines.
-     <code>
-      AttributeFilterPolicy id="targettedValueInEPA">
-          <PolicyRequirementRule xsi:type="basic:ANY" /> 
-          <AttributeRule attributeID="eduPersonAffiliation">
-              <PermitValueRule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/>
-          </AttributeRule>
-      <AttributeFilterPolicy/>
-      </code> which should return all values of eduPersonAffiliation when uid has a "jsmith"
+     * Test the following policy.
+     * 
+     * <pre>
+     * &lt;AttributeFilterPolicy id="targettedValueInEPA"&gt;
+     *     &lt;PolicyRequirementRule xsi:type="basic:ANY" /&gt;
+     *     &lt;AttributeRule attributeID="eduPersonAffiliation"&gt;
+     *         &lt;PermitValueRule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/&gt;
+     *     &lt;/AttributeRule&gt;
+     * &lt;/AttributeFilterPolicy&gt;
+     * </pre>
+     * 
+     * which should return all values of eduPersonAffiliation when uid has a "jsmith"
+     *  
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     * @throws AttributeFilterException ...
      */
     @Test public void testTargettedPolicyRequirement() throws ComponentInitializationException, ResolutionException,
             AttributeFilterException {
@@ -125,20 +130,24 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
     }
 
     /**
-     * test the following policy.
-     */
-    /*
-     <code>
-      <AttributeFilterPolicy id="targettedValueInEPA">
-          <PolicyRequirementRule xsi:type="basic:ANY" /> 
-          <AttributeRule attributeID="eduPersonAffiliation">
-              <PermitValueRule xsi:type="basic:Not">
-                  <basic:Rule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/>
-              </PermitValueRule>
-          </AttributeRule>
-      <AttributeFilterPolicy/>
-      </code> which should return all values of eduPersonAffiliation when uid has a "jsmith"
+     * Test the following policy.
      * 
+     * <pre>
+     * &lt;AttributeFilterPolicy id="targettedValueInEPA"&gt;
+     *     &lt;PolicyRequirementRule xsi:type="basic:ANY" /&gt; 
+     *     &lt;AttributeRule attributeID="eduPersonAffiliation"&gt;
+     *         &lt;PermitValueRule xsi:type="basic:Not"&gt;
+     *             &lt;basic:Rule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/&gt;
+     *         &lt;/PermitValueRule&gt;
+     *     &lt;/AttributeRule&gt;
+     * &lt;/AttributeFilterPolicy&gt;
+     * </pre>
+     * 
+     * which should return all values of eduPersonAffiliation when uid has a "jsmith"
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     * @throws AttributeFilterException ...
      */
     @Test public void testTargettedNotPolicyRequirement() throws ComponentInitializationException, ResolutionException,
             AttributeFilterException {
@@ -190,18 +199,22 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
     }
 
     /**
-     * test the following policy.
-     <code>
-        <AttributeFilterPolicy id="targettedValueInEPA">
-        <PolicyRequirementRule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/>
-        <AttributeRule attributeID="eduPersonAffiliation">
-          <PermitValueRule xsi:type="basic:ANY" />
-        </AttributeRul>
-      <AttributeFilterPolicy/>
-     </code>
+     * Test the following policy.
+     * 
+     * <pre>
+     * &lt;AttributeFilterPolicy id="targettedValueInEPA"&gt;
+     *   &lt;PolicyRequirementRule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/&gt;
+     *   &lt;AttributeRule attributeID="eduPersonAffiliation"&gt;
+     *     &lt;PermitValueRule xsi:type="basic:ANY" /&gt;
+     *   &lt;/AttributeRule&gt;
+     * &lt;AttributeFilterPolicy/&gt;
+     * </pre>
      * 
      * which should return all values of eduPersonAffiliation when uid has a "jsmith"
      * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     * @throws AttributeFilterException ...
      */
     @Test public void testTargettedPolicyValue() throws ComponentInitializationException, ResolutionException,
             AttributeFilterException {

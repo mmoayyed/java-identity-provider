@@ -68,7 +68,11 @@ public class AbstractAttributeDefinitionTest {
         Assert.assertFalse(definition.isPreRequested());
     }
 
-    /** Test resolve an attribute. */
+    /**
+     * Test resolve an attribute.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test
     public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();

@@ -56,7 +56,11 @@ public class SelectProfileConfigurationTest {
         action.initialize();        
     }
     
-    /** Test that the action errors out properly if there is no relying party context. */
+    /**
+     * Test that the action errors out properly if there is no relying party context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyContext() throws Exception {
         prc.removeSubcontext(RelyingPartyContext.class);
 
@@ -64,7 +68,11 @@ public class SelectProfileConfigurationTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
     }
 
-    /** Test that the action errors out properly if there is no relying party configuration. */
+    /**
+     * Test that the action errors out properly if there is no relying party configuration.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoRelyingPartyConfiguration() throws Exception {
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
@@ -72,7 +80,11 @@ public class SelectProfileConfigurationTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
-    /** Test that the action errors out properly if the desired profile configuration is not configured. */
+    /**
+     * Test that the action errors out properly if the desired profile configuration is not configured.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testInvalidProfileConfiguration() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
@@ -82,7 +94,11 @@ public class SelectProfileConfigurationTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
     }
 
-    /** Test that the action selects the appropriate profile configuration and proceeds properly. */
+    /**
+     * Test that the action selects the appropriate profile configuration and proceeds properly.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testSelectProfileConfiguration() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();

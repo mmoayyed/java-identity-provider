@@ -111,8 +111,10 @@ public class LDAPDataConnectorTest {
      * 
      * @param builder to build search requests
      * @param strategy to map search results
+     * 
      * @return ldap data connector
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException  ...
      */
     protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder<ExecutableSearchFilter> builder,
             final SearchResultMappingStrategy strategy) throws ComponentInitializationException {
@@ -505,7 +507,12 @@ public class LDAPDataConnectorTest {
         assertEquals(cache.iterator().next(), optional);
     }
     
-    /** See IDP-1077. */
+    /**
+     * See IDP-1077.
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     */
     @Test public void resolveWithCacheCollison() throws ComponentInitializationException, ResolutionException {
         final LDAPDataConnector connector = createLdapDataConnector(null, null);
         final TestCache cache = new TestCache();
@@ -526,7 +533,12 @@ public class LDAPDataConnectorTest {
         assertEquals(cache.size(), 2);
     }
 
-    /** See IDP-573. */
+    /**
+     * See IDP-573.
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     */
     @Test public void resolveEmptyAttribute() throws ComponentInitializationException, ResolutionException {
         final ParameterizedExecutableSearchFilterBuilder builder =
                 newParameterizedExecutableSearchFilterBuilder("(uid={principalName})");

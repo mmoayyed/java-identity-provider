@@ -367,7 +367,12 @@ public class RDBMSDataConnectorTest {
         assertTrue(attrs.get("NAME").getValues().contains(new StringAttributeValue("group2")));
     }
     
-    /** See IDP-573. */
+    /**
+     * See IDP-573.
+     * 
+     * @throws ComponentInitializationException ...
+     * @throws ResolutionException ...
+     */
     @Test public void resolveEmptyAttribute() throws ComponentInitializationException, ResolutionException {
         final RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         connector.initialize();

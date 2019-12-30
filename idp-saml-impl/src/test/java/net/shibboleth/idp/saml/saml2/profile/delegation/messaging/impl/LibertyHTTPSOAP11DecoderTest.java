@@ -52,6 +52,8 @@ public class LibertyHTTPSOAP11DecoderTest extends XMLObjectBaseTestCase {
 
     /**
      * Tests decoding a SOAP 1.1 message.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test
     public void testDecoding() throws Exception {

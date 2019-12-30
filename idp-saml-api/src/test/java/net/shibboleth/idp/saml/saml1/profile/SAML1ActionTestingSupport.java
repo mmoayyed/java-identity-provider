@@ -55,7 +55,8 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.pro
      * @param relyingPartyId the ID of the relying party
      * 
      * @return the constructed subcontext
-     * @throws ComponentInitializationException 
+     * 
+     * @throws ComponentInitializationException ...
      */
     public static RelyingPartyContext buildRelyingPartySubcontext(@Nonnull final BaseContext parent,
             @Nullable final String relyingPartyId) throws ComponentInitializationException {

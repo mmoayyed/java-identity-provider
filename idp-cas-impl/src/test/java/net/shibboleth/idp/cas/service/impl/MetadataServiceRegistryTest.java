@@ -70,7 +70,7 @@ public class MetadataServiceRegistryTest {
     /**
      *  Initialize OpenSAML.
      *
-     * @throws InitializationException
+     * @throws InitializationException ...
      */
     @BeforeSuite
     public void initOpenSAML() throws InitializationException {

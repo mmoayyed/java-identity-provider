@@ -61,7 +61,11 @@ public class FilterAttributesTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
     }
     
-    /** Test that the action proceeds properly if there is no attribute context. */
+    /**
+     * Test that the action proceeds properly if there is no attribute context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAttributeContext() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
@@ -76,7 +80,11 @@ public class FilterAttributesTest {
         ActionTestingSupport.assertProceedEvent(event);
     }
 
-    /** Test that the action proceeds properly if there are no attributes to filter . */
+    /**
+     * Test that the action proceeds properly if there are no attributes to filter.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testNoAttributes() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
@@ -93,7 +101,11 @@ public class FilterAttributesTest {
         ActionTestingSupport.assertProceedEvent(event);
     }
 
-    /** Test that the action filters attributes and proceeds properly while auto-creating a filter context. */
+    /**
+     * Test that the action filters attributes and proceeds properly while auto-creating a filter context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testFilterAttributesAutoCreateFilterContext() throws Exception {
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
@@ -153,7 +165,11 @@ public class FilterAttributesTest {
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));
     }
 
-    /** Test that the action filters attributes and proceeds properly with an existing filter context. */
+    /**
+     * Test that the action filters attributes and proceeds properly with an existing filter context.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testFilterAttributesExistingFilterContext() throws Exception {
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
@@ -216,7 +232,11 @@ public class FilterAttributesTest {
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));
     }
 
-    /** Test that action returns the proper event if the attributes are not able to be filtered. */
+    /**
+     * Test that action returns the proper event if the attributes are not able to be filtered.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testUnableToFilterAttributes() throws Exception {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
@@ -261,7 +281,11 @@ public class FilterAttributesTest {
         Assert.assertTrue(attributeCtx.getIdPAttributes().isEmpty());
     }
     
-    /** Test that action returns the proper event if the attribute configuration is broken */
+    /**
+     * Test that action returns the proper event if the attribute configuration is broken.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testUnableToFindFilter() throws Exception {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
@@ -291,7 +315,7 @@ public class FilterAttributesTest {
         /**
          * Constructor.
          * 
-         * @param attributeId
+         * @param attributeId ...
          */
         public MockUncloneableAttribute(String attributeId) {
             super(attributeId);

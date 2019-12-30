@@ -31,9 +31,12 @@ public class AttributeContextTest {
     
     /** 
      * Test that the attributes from the supplied context cannot be modified
-     * and that there as many as we expected. 
+     * and that there as many as we expected.
+     * 
+     * @param context ...
+     * @param expectedSize ...
      */
-    private void contextAttributes( AttributeContext context, int expectedSize) {
+    private void contextAttributes(AttributeContext context, int expectedSize) {
         Assert.assertEquals(context.getIdPAttributes().size(), expectedSize);
         try {
             context.getIdPAttributes().put("attr", new IdPAttribute("attr") );

@@ -41,7 +41,11 @@ public class AttributeResolverWorkContextTest {
         Assert.assertTrue(context.getResolvedDataConnectors().isEmpty());
     }
 
-    /** Test adding and retrieving attribute definitions. */
+    /**
+     * Test adding and retrieving attribute definitions.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolvedAttributeDefinitions() throws Exception {
         AttributeResolutionContext parent = new AttributeResolutionContext();
         AttributeResolverWorkContext context = new AttributeResolverWorkContext();
@@ -80,7 +84,11 @@ public class AttributeResolverWorkContextTest {
         Assert.assertNull(context.getResolvedIdPAttributeDefinitions().get("bar").resolve(parent));
     }
 
-    /** Test adding and retrieving data connectors. */
+    /**
+     * Test adding and retrieving data connectors.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolvedDataConnectors() throws Exception {
         AttributeResolutionContext parent = new AttributeResolutionContext();
         AttributeResolverWorkContext context = new AttributeResolverWorkContext();

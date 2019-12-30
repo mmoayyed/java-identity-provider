@@ -27,7 +27,11 @@ import org.testng.annotations.Test;
 /** {@link BasicSPSession} unit test. */
 public class BasicSPSessionTest {
 
-    /** Tests that everything is properly initialized during object construction. */
+    /**
+     * Tests that everything is properly initialized during object construction.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testInstantiation() throws Exception {
         final Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time

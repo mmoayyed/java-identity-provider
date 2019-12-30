@@ -196,10 +196,12 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
     } 
     
-    /**Test the proxy parameters.  This will throw an exception because we do not
+    /**
+     * Test the proxy parameters.  This will throw an exception because we do not
      * have a proxy to test against.  It is here to allow hand walking of the code during
      * development and as a placeholder against when we get a proxy gost.
-     * @throws Exception
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test(expectedExceptions={BeanCreationException.class,}, enabled=false) public void proxy() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 

@@ -58,7 +58,11 @@ public class ResolveAttributesTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
     }
     
-    /** Test that the action resolves attributes and proceeds properly. */
+    /**
+     * Test that the action resolves attributes and proceeds properly.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testResolveAttributes() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
@@ -151,7 +155,11 @@ public class ResolveAttributesTest {
         Assert.assertTrue(resolvedAttributeCtx.getIdPAttributes().isEmpty());
     }
 
-    /** Test that action returns the proper event if the attributes are not able to be resolved. */
+    /**
+     * Test that action returns the proper event if the attributes are not able to be resolved.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testUnableToResolveAttributes() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
@@ -176,7 +184,11 @@ public class ResolveAttributesTest {
         Assert.assertNull(resolvedAttributeCtx);
     }
     
-    /** Test that action returns the proper event if the attribute configuration is broken */
+    /**
+     * Test that action returns the proper event if the attribute configuration is broken.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testUnableToFindResolver() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 

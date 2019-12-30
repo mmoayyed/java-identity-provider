@@ -35,7 +35,11 @@ import org.testng.annotations.Test;
 @Test
 public class AuthenticationContextTest {
 
-    /** Tests initiation instant instantiation. */
+    /**
+     * Tests initiation instant instantiation.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testInitiationInstant() throws Exception {
         Instant start = Instant.now();
         // this is here to allow the event's creation time to deviate from the 'start' time
@@ -45,7 +49,11 @@ public class AuthenticationContextTest {
         Assert.assertTrue(ctx.getInitiationInstant().isAfter(start));
     }
 
-    /** Tests mutating forcing authentication. */
+    /**
+     * Tests mutating forcing authentication.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testForcingAuthentication() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertFalse(ctx.isForceAuthn());
@@ -54,7 +62,11 @@ public class AuthenticationContextTest {
         Assert.assertTrue(ctx.isForceAuthn());
     }
 
-    /** Tests active results. */
+    /**
+     * Tests active results.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testActiveResults() throws Exception {
         final AuthenticationResult result = new AuthenticationResult("test", new Subject());
 
@@ -67,7 +79,11 @@ public class AuthenticationContextTest {
         Assert.assertEquals(ctx.getActiveResults().get("test"), result);
     }
     
-    /** Tests potential flow instantiation. */
+    /**
+     * Tests potential flow instantiation.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testPotentialFlows() throws Exception {
         AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertTrue(ctx.getPotentialFlows().isEmpty());
@@ -80,7 +96,11 @@ public class AuthenticationContextTest {
         Assert.assertEquals(ctx.getPotentialFlows().get("test"), descriptor);
     }
 
-    /** Tests mutating attempted flow. */
+    /**
+     * Tests mutating attempted flow.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testAttemptedFlow() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertNull(ctx.getAttemptedFlow());
@@ -91,7 +111,11 @@ public class AuthenticationContextTest {
         Assert.assertEquals(ctx.getAttemptedFlow(), descriptor);
     }
 
-    /** Tests setting completion instant. */
+    /**
+     * Tests setting completion instant.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testCompletionInstant() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertNull(ctx.getCompletionInstant());
@@ -104,7 +128,11 @@ public class AuthenticationContextTest {
         Assert.assertTrue(ctx.getCompletionInstant().isAfter(now));
     }
     
-    /** Tests RequestedPrincipalContext helpers. */
+    /**
+     * Tests RequestedPrincipalContext helpers.
+     * 
+     * @throws Exception if something goes wrong
+     */
     public void testRequestedPrincipalContextHelpers() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();
         ctx.setPrincipalEvalPredicateFactoryRegistry(new PrincipalEvalPredicateFactoryRegistry());

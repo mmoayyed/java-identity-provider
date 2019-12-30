@@ -70,7 +70,11 @@ import net.shibboleth.utilities.java.support.component.DestroyedComponentExcepti
 public class AttributeResolverImplTest {
     private final Logger log = LoggerFactory.getLogger(AttributeResolverImplTest.class);
 
-    /** Test post-instantiation state. */
+    /**
+     * Test post-instantiation state.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void initDestroy() throws Exception {
         final MockAttributeDefinition attrDef = new MockAttributeDefinition("foo", new IdPAttribute("test"));
         final MockDataConnector dataCon = new MockDataConnector("bar", (Map<String, IdPAttribute>) null);
@@ -113,7 +117,11 @@ public class AttributeResolverImplTest {
 
     }
 
-    /** Test getting, setting, overwriting, defensive collection copy. */
+    /**
+     * Test getting, setting, overwriting, defensive collection copy.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void setAttributeDefinitions() throws Exception {
         final ArrayList<AttributeDefinition> definitions = new ArrayList<>();
         definitions.add(new MockAttributeDefinition("foo", new IdPAttribute("test")));
@@ -134,7 +142,11 @@ public class AttributeResolverImplTest {
         }
     }
 
-    /** Test getting, setting, overwriting, defensive collection copy. */
+    /**
+     * Test getting, setting, overwriting, defensive collection copy.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void setDataConnectors() throws Exception {
         final ArrayList<DataConnector> connectors = new ArrayList<>();
         connectors.add(new MockDataConnector("foo", (Map<String, IdPAttribute>) null));
@@ -154,7 +166,11 @@ public class AttributeResolverImplTest {
         }
     }
 
-    /** Test that a simple resolve returns the expected results. */
+    /**
+     * Test that a simple resolve returns the expected results.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolve() throws Exception {
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
@@ -217,7 +233,11 @@ public class AttributeResolverImplTest {
         assertEquals(context.getResolvedIdPAttributes().get(attribute3.getId()), attribute3);
     }
 
-    /** Test that a simple resolve returns the expected results. */
+    /**
+     * Test that a simple resolve returns the expected results.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolveSpecificAttribute() throws Exception {
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
@@ -274,7 +294,11 @@ public class AttributeResolverImplTest {
     }
 
 
-    /** Test that a simple resolve returns the expected results. */
+    /**
+     * Test that a simple resolve returns the expected results.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolveFails() throws Exception {
         log.debug("Log Resolve fails");
         final IdPAttribute attribute = new IdPAttribute("ad1");
@@ -313,7 +337,11 @@ public class AttributeResolverImplTest {
         log.debug("Logged Resolve fails");
     }
 
-    /** Test that a resolve with no definitions returns nothing the expected results. */
+    /**
+     * Test that a resolve with no definitions returns nothing the expected results.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolveEmpty() throws Exception {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
 
@@ -326,8 +354,11 @@ public class AttributeResolverImplTest {
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
-    /** Test that resolve w/ dependencies returns the expected results. */
-
+    /**
+     * Test that resolve w/ dependencies returns the expected results.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolveWithDependencies() throws Exception {
         final MockDataConnector dc1 = new MockDataConnector("dc1", (Map<String, IdPAttribute>) null);
         dc1.initialize();
@@ -628,6 +659,8 @@ public class AttributeResolverImplTest {
     /**
      * Test that after resolution attribute definitions which returned null values don't have their results show up in
      * the resolved attribute set.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void resolveCleanNullAttributes() throws Exception {
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
@@ -646,6 +679,8 @@ public class AttributeResolverImplTest {
     /**
      * Test that after resolution attribute definitions which are marked as dependency only don't have their results
      * show up in the resolved attribute set.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void resolveCleanDependencyOnly() throws Exception {
         final IdPAttribute attribute = new IdPAttribute("ad1");
@@ -667,7 +702,11 @@ public class AttributeResolverImplTest {
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
-    /** Test that after resolution that the values for a resolved attribute are deduped. */
+    /**
+     * Test that after resolution that the values for a resolved attribute are deduped.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolveCleanDuplicateValues() throws Exception {
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(Arrays.asList(new StringAttributeValue("value1"), new StringAttributeValue("value1")));
@@ -688,7 +727,11 @@ public class AttributeResolverImplTest {
         assertEquals(context.getResolvedIdPAttributes().get("ad1").getValues().size(), 1);
     }
     
-    /** Test that after resolution that the values for a resolved attribute are deduped. */
+    /**
+     * Test that after resolution that the values for a resolved attribute are deduped.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void resolveNullValues() throws Exception {
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(Arrays.asList(new EmptyAttributeValue(EmptyType.NULL_VALUE), new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE), null));
@@ -722,6 +765,8 @@ public class AttributeResolverImplTest {
     /**
      * Test that after resolution attribute definitions whose resultant attribute contains no value don't have their
      * results show up in the resolved attribute set.
+     * 
+     * @throws Exception if something goes wrong
      */
     @Test public void resolveCleanEmptyValueAttributes() throws Exception {
         final IdPAttribute attribute = new IdPAttribute("ad1");
@@ -742,7 +787,11 @@ public class AttributeResolverImplTest {
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
     }
 
-    /** Test that validation fails when a plugin depends on a non-existent plugin. */
+    /**
+     * Test that validation fails when a plugin depends on a non-existent plugin.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void badPluginIdInitialize() throws Exception {
         final ResolverDataConnectorDependency dep1 = new ResolverDataConnectorDependency("dc1");
         final MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
@@ -783,7 +832,11 @@ public class AttributeResolverImplTest {
         }
     }
     
-    /** Test that validation fails when a plugin depends on a non-existent plugin. */
+    /**
+     * Test that validation fails when a plugin depends on a non-existent plugin.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void badPluginIdInitializeOld() throws Exception {
         final ResolverDataConnectorDependency dep1 = TestSources.makeDataConnectorDependency("dc1", "test");
         final MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
@@ -824,7 +877,11 @@ public class AttributeResolverImplTest {
         }
     }
 
-    /** Test that validation fails when there are circular dependencies between plugins. */
+    /**
+     * Test that validation fails when there are circular dependencies between plugins.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void circularDependencyInitializeOld() throws Exception {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
         ad1.setAttributeDependencies(Collections.singleton(TestSources.makeAttributeDefinitionDependency("ad1")));
@@ -873,7 +930,11 @@ public class AttributeResolverImplTest {
     }
 
 
-    /** Test that validation fails when there are circular dependencies between plugins. */
+    /**
+     * Test that validation fails when there are circular dependencies between plugins.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void circularDependencyInitialize() throws Exception {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
         ad1.setAttributeDependencies(Collections.singleton(new ResolverAttributeDefinitionDependency("ad1")));
