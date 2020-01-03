@@ -296,7 +296,13 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         postAuthenticationFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the name identifier formats to use.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return the formats to use
+     */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
