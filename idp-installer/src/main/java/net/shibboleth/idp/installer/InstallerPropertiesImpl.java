@@ -63,7 +63,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
 
     /** The LDAP Password (usually associated with a username in ldap.properties). */
-    public static final String LDAP_PASSWORD = "idp.LDAP.Credentials";
+    public static final String LDAP_PASSWORD = "idp.LDAP.credential";
 
     /** The name of a directory to overlay "under" the distribution conf. */
     public static final String CONF_PRE_OVERLAY = "idp.conf.preoverlay";
@@ -493,7 +493,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** {@inheritDoc}. */
     @Override @Nullable public String getLDAPPassword() throws BuildException {
-        return  installerProperties.getProperty(LDAP_PASSWORD);
+        return installerProperties.getProperty(LDAP_PASSWORD);
     }
 
     /** {@inheritDoc}. */
@@ -576,7 +576,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
                     throw new BuildException("No a directory");
                 }
             } else {
-                if (!Files.isDirectory(result)) {
+                if (Files.isDirectory(result)) {
                     log.error("Path '{}' supplied by property '{}' was not a file", result, propName);
                     throw new BuildException("No a file");
                 }                
