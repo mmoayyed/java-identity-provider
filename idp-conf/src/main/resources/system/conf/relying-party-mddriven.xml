@@ -642,9 +642,6 @@
         <property name="postAuthenticationFlowsLookupStrategy">
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="postAuthenticationFlows" />
         </property>
-        <property name="nameIDFormatPrecedenceLookupStrategy">
-            <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="nameIDFormatPrecedence" />
-        </property>
         <property name="forceAuthnPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>

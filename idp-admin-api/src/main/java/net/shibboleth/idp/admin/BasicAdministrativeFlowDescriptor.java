@@ -453,12 +453,6 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
-            @Nullable final ProfileRequestContext profileRequestContext) {
-        return Collections.emptyList();
-    }
-
-    /** {@inheritDoc} */
     public boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext) {
         return forceAuthnPredicate.test(profileRequestContext);
     }

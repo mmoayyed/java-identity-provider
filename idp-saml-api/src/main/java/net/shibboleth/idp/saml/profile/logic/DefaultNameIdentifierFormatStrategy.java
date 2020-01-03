@@ -25,7 +25,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -119,12 +118,20 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
                 profileConfig = relyingPartyCtx.getProfileConfig();
             }
             
-            if (profileConfig != null && profileConfig instanceof AuthenticationProfileConfiguration) {
+            if (profileConfig
+                    instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
                 fromConfig.addAll(
-                        ((AuthenticationProfileConfiguration) profileConfig).getNameIDFormatPrecedence(input));
+                        ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) profileConfig)
+                        .getNameIDFormatPrecedence(input));
+                log.debug("Configuration specifies the following formats: {}", fromConfig);
+            } else if (profileConfig instanceof
+                    net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
+                fromConfig.addAll(
+                        ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) profileConfig)
+                        .getNameIDFormatPrecedence(input));
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
             } else {
-                log.debug("No ProfileConfiguraton available (or not an AuthenticationProfileConfiguration)");
+                log.debug("No ProfileConfiguraton available (or not a BrowserSSOProfileConfiguration)");
             }
         } else {
             log.debug("No RelyingPartyContext or RelyingPartyConfiguration available");

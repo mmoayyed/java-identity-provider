@@ -70,9 +70,6 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** Lookup function to supply defaultAuthenticationContexts property. */
     @Nonnull private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
             defaultAuthenticationContextsLookupStrategy;
-
-    /** Lookup function to supply nameIDFormatPrecedence property. */
-    @Nonnull private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
     
     /** Whether to mandate forced authentication for the request. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
@@ -87,7 +84,6 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(null);
-        nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
         forceAuthnPredicate = Predicates.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
@@ -194,39 +190,6 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     public void setPostAuthenticationFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
         postAuthenticationFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
-            @Nullable final ProfileRequestContext profileRequestContext) {
-        
-        final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
-        if (formats != null) {
-            return List.copyOf(formats);
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Set the name identifier formats to use.
-     * 
-     * @param formats   name identifier formats to use
-     */
-    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final Collection<String> formats) {
-        Constraint.isNotNull(formats, "List of formats cannot be null");
-        
-        nameIDFormatPrecedenceLookupStrategy =
-                FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(formats)));
-    }
-
-    /**
-     * Set a lookup strategy for the name identifier formats to use.
-     *
-     * @param strategy  lookup strategy
-     */
-    public void setNameIDFormatPrecedenceLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        nameIDFormatPrecedenceLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */

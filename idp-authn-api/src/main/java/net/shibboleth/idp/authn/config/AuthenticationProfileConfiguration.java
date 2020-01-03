@@ -74,16 +74,6 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
             @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
-     * Get the name identifier formats to use with this relying party, in order of preference.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return  name identifier formats to use
-     */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getNameIDFormatPrecedence(
-            @Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
      * Get whether the authentication process should include a proof of user presence.
      * 
      * @param profileRequestContext current profile request context
