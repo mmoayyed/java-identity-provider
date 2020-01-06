@@ -19,6 +19,7 @@
     <properties>
         <idp.finalName>shibboleth-identity-provider-${project.version}</idp.finalName>
         <idp.assemblyDirectory>${project.build.directory}/${idp.finalName}</idp.assemblyDirectory>
+        <ant.version>1.10.7</ant.version>
     </properties>
 
     <dependencies>
@@ -50,13 +51,13 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.4</version>
+            <version>${ant.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-launcher</artifactId>
-            <version>1.9.4</version>
+            <version>${ant.version}</version>
             <scope>runtime</scope>
         </dependency>
         <!-- Logging dependencies, per JPAR-57. -->
