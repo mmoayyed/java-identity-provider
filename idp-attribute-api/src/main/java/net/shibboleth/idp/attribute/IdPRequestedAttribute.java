@@ -37,10 +37,24 @@ public final class IdPRequestedAttribute extends IdPAttribute {
     }
 
     /**
-     * Is this attribute marked as required.
+     * Is this attribute marked as required?
      * 
-     * @return Returns the isRequired flag
+     * @return the isRequired flag
+     * 
+     * @since 4.0.0
      */
+    public boolean isRequired() {
+        return isRequired;
+    }
+    
+    /**
+     * Is this attribute marked as required?
+     * 
+     * @return the isRequired flag
+     * 
+     * @deprecated
+     */
+    @Deprecated(forRemoval=true,since="4.0.0")
     public boolean getIsRequired() {
         return isRequired;
     }
@@ -51,7 +65,7 @@ public final class IdPRequestedAttribute extends IdPAttribute {
      * @param required The flag to set.
      */
     public void setRequired(final boolean required) {
-        this.isRequired = required;
+        isRequired = required;
     }
 
 }
