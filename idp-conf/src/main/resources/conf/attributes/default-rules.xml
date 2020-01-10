@@ -52,36 +52,6 @@
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
-                    <prop key="id">eduPersonPrincipalName</prop>
-                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
-                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.6</prop>
-                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrincipalName</prop>
-                </props>
-            </property>
-        </bean>
-
-        <bean parent="shibboleth.TranscodingProperties">
-            <property name="properties">
-                <props merge="true">
-                    <prop key="id">eduPersonScopedAffiliation</prop>
-                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
-                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.9</prop>
-                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonScopedAffiliation</prop>
-                    <prop key="description.en">Affiliation: Type of affiliation with Home Organization</prop>
-                    <prop key="description.it">Type d'affiliation dans l'organisation</prop>
-                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
-                    <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
-                    <prop key="displayName.en">Affiliation</prop>
-                    <prop key="displayName.de">Zugehörigkeit</prop>
-                    <prop key="displayName.it">Tipo di membro</prop>
-                    <prop key="displayName.fr">Affiliation</prop>
-                </props>
-            </property>
-        </bean>
-
-        <bean parent="shibboleth.TranscodingProperties">
-            <property name="properties">
-                <props merge="true">
                     <prop key="id">homePhone</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.20</prop>
@@ -268,20 +238,205 @@
         </bean>
 
         <!-- Schema: inetOrgPerson attributes-->
-        <!--
 
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
-                    <prop key="id"></prop>
+                    <prop key="id">departmentNumber</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
-                    <prop key="saml2.name"></prop>
-                    <prop key="saml1.name"></prop>
+                    <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.2</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:departmentNumber</prop>
                 </props>
             </property>
         </bean>
 
-        -->
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">displayName</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.241</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:displayName</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">employeeNumber</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.3</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:employeeNumber</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">employeeType</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.4</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:employeeType</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">jpegPhoto</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.60</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:jpegPhoto</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">preferredLanguage</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.39</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:preferredLanguage</prop>
+                </props>
+            </property>
+        </bean>
+
+        <!-- Schema: eduPerson attributes -->
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonAffiliation</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.1</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonAffiliation</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonEntitlement</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.7</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonEntitlement</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonNickname</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.2</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonNickname</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonPrimaryAffiliation</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.5</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrimaryAffiliation</prop>
+                </props>
+            </property>
+        </bean>
+
+                <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonPrincipalName</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.6</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrincipalName</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonPrincipalNamePrior</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.12</prop>
+                    <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.12</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonScopedAffiliation</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.9</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonScopedAffiliation</prop>
+                    <prop key="description.en">Affiliation: Type of affiliation with Home Organization</prop>
+                    <prop key="description.it">Type d'affiliation dans l'organisation</prop>
+                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
+                    <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
+                    <prop key="displayName.en">Affiliation</prop>
+                    <prop key="displayName.de">Zugehörigkeit</prop>
+                    <prop key="displayName.it">Tipo di membro</prop>
+                    <prop key="displayName.fr">Affiliation</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonAssurance</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.11</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonAssurance</prop>
+                </props>
+            </property>
+        </bean>
+
+        <!-- Semi-deprecated eduPersonUniqueId, should be phased out in favor of SAML subject-id replacement below. -->
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonUniqueId</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.13</prop>
+                    <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.13</prop>
+                </props>
+            </property>
+        </bean>
+
+        <!-- Schema: SAML Subject ID Attributes -->
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">samlSubjectID</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oasis:names:tc:SAML:attribute:subject-id</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">samlPairwiseID</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oasis:names:tc:SAML:attribute:pairwise-id</prop>
+                </props>
+            </property>
+        </bean>
 
     </list>
     </constructor-arg>
