@@ -253,7 +253,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
         for (final IdPAttribute requestedAttribute : List.copyOf(requestedAttributeList)) {
 
             if (requestedAttribute instanceof IdPRequestedAttribute
-                    && !((IdPRequestedAttribute) requestedAttribute).getIsRequired() && onlyIfRequired) {
+                    && !((IdPRequestedAttribute) requestedAttribute).isRequired() && onlyIfRequired) {
                 log.debug("{} Decoded attribute {} found in metadata, but not required, values not matched",
                         getLogPrefix(), attribute.getId());
                 continue;

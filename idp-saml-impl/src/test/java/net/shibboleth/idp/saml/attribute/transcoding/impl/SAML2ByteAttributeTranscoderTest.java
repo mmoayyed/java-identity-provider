@@ -161,7 +161,7 @@ public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         
         Assert.assertTrue(attr instanceof IdPRequestedAttribute);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
-        Assert.assertTrue(((IdPRequestedAttribute) attr).getIsRequired());
+        Assert.assertTrue(((IdPRequestedAttribute) attr).isRequired());
         Assert.assertTrue(attr.getValues().isEmpty());
     }
     
@@ -320,7 +320,7 @@ public class SAML2ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         
         Assert.assertTrue(attr instanceof IdPRequestedAttribute);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
-        Assert.assertTrue(((IdPRequestedAttribute) attr).getIsRequired());
+        Assert.assertTrue(((IdPRequestedAttribute) attr).isRequired());
         Assert.assertEquals(attr.getValues().size(), 1);
         Assert.assertEquals(((ByteAttributeValue)attr.getValues().get(0)).getValue(), BYTE_ARRAY_1);
     }

@@ -148,18 +148,18 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
         assertEquals(attribute.size(), 1);
         IdPRequestedAttribute attr = IdPRequestedAttribute.class.cast(attribute.iterator().next());
         assertTrue(attr.getValues().isEmpty());
-        assertFalse(attr.getIsRequired());
+        assertFalse(attr.isRequired());
 
         attribute = map.get("dn2");
         assertEquals(attribute.size(), 1);
         attr = IdPRequestedAttribute.class.cast(attribute.iterator().next());
         assertTrue(attr.getValues().isEmpty());
-        assertTrue(attr.getIsRequired());
+        assertTrue(attr.isRequired());
         
         attribute = map.get("eppn");
         assertEquals(attribute.size(), 1);
         attr = IdPRequestedAttribute.class.cast(attribute.iterator().next());
         assertTrue(attr.getValues().isEmpty());
-        assertFalse(attr.getIsRequired());
+        assertFalse(attr.isRequired());
     }
 }

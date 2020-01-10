@@ -162,7 +162,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
         
         Assert.assertTrue(attr instanceof IdPRequestedAttribute);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
-        Assert.assertTrue(((IdPRequestedAttribute) attr).getIsRequired());
+        Assert.assertTrue(((IdPRequestedAttribute) attr).isRequired());
         Assert.assertTrue(attr.getValues().isEmpty());
     }
     
@@ -304,7 +304,7 @@ public class SAML2XMLObjectAttributeTranscoderTest extends OpenSAMLInitBaseTestC
         
         Assert.assertTrue(attr instanceof IdPRequestedAttribute);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
-        Assert.assertTrue(((IdPRequestedAttribute) attr).getIsRequired());
+        Assert.assertTrue(((IdPRequestedAttribute) attr).isRequired());
         Assert.assertEquals(attr.getValues().size(), 1);
 
         final XMLObjectAttributeValue value = (XMLObjectAttributeValue) attr.getValues().get(0);

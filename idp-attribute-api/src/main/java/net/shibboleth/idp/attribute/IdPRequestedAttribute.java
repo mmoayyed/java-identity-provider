@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * IdP Representation of the SAML2 RequestedAttribute.
@@ -56,6 +58,7 @@ public final class IdPRequestedAttribute extends IdPAttribute {
      */
     @Deprecated(forRemoval=true,since="4.0.0")
     public boolean getIsRequired() {
+        DeprecationSupport.warn(ObjectType.METHOD, "getIsRequired", getClass().getName(), "isRequired");
         return isRequired;
     }
 

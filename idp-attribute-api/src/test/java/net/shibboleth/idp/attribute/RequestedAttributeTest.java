@@ -32,9 +32,9 @@ public class RequestedAttributeTest {
         IdPRequestedAttribute attr = new IdPRequestedAttribute("id");
         
         Assert.assertEquals(attr.getId(), "id");
-        Assert.assertFalse(attr.getIsRequired());
+        Assert.assertFalse(attr.isRequired());
         attr.setRequired(true);
-        Assert.assertTrue(attr.getIsRequired());
+        Assert.assertTrue(attr.isRequired());
         
     }
 }

@@ -165,7 +165,7 @@ public class SAML1StringAttributeTranscoderTest extends OpenSAMLInitBaseTestCase
         
         Assert.assertTrue(attr instanceof IdPRequestedAttribute);
         Assert.assertEquals(attr.getId(), ATTR_NAME);
-        Assert.assertFalse(((IdPRequestedAttribute) attr).getIsRequired());
+        Assert.assertFalse(((IdPRequestedAttribute) attr).isRequired());
         Assert.assertTrue(attr.getValues().isEmpty());
     }
     

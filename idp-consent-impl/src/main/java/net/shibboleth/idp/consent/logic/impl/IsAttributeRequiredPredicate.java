@@ -132,7 +132,7 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
             if (requestedAttrs != null) {
                 for (final IdPAttribute requestedAttr : requestedAttrs) {
                     if (requestedAttr instanceof IdPRequestedAttribute
-                            && ((IdPRequestedAttribute) requestedAttr).getIsRequired()) {
+                            && ((IdPRequestedAttribute) requestedAttr).isRequired()) {
                         log.debug("Attribute '{}' is required", input);
                         return true;
                     }

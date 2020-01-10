@@ -106,7 +106,7 @@ public abstract class AbstractSAML2AttributeTranscoder<EncodedType extends IdPAt
         } else if (to.equals(RequestedAttribute.class)) {
             samlAttribute = reqAttributeBuilder.buildObject();
             if (attribute instanceof IdPRequestedAttribute) {
-                ((RequestedAttribute) samlAttribute).setIsRequired(((IdPRequestedAttribute) attribute).getIsRequired());
+                ((RequestedAttribute) samlAttribute).setIsRequired(((IdPRequestedAttribute) attribute).isRequired());
             }
         } else {
             throw new AttributeEncodingException("Unsupported target object type: " + to.getName());
