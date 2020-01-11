@@ -22,7 +22,7 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 
 /**
  * Classpath placeholder for legacy configurations.
- * @deprecated
+ * @deprecated Replaced by api class.  Remove in V5.
  */
 @Deprecated public class FormatExecutableStatementBuilder
         extends net.shibboleth.idp.attribute.resolver.dc.rdbms.FormatExecutableStatementBuilder {
