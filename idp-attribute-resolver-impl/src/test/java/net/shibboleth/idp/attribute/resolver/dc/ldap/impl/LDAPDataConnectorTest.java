@@ -67,6 +67,7 @@ import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 /**
  * Tests for {@link LDAPDataConnector}
  */
+@SuppressWarnings("javadoc")
 public class LDAPDataConnectorTest {
 
     /** The connector name. */

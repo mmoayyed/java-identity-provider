@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link StoredIdDataConnectorParser}.
  */
+@SuppressWarnings("javadoc")
 public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     private void testIt(final PairwiseIdDataConnector connector) throws ComponentInitializationException {

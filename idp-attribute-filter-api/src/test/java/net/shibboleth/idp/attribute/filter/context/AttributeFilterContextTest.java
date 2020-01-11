@@ -28,6 +28,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link AttributeFilterContext}. */
+@SuppressWarnings("javadoc")
 public class AttributeFilterContextTest {
 
     /** Test that post-construction state is what is expected. */

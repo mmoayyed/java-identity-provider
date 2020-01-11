@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParse
 /**
  * Test for {@link ValueMapParser}.
  */
+@SuppressWarnings("javadoc")
 public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
 
     private ValueMap getValueMap(final String fileName) {

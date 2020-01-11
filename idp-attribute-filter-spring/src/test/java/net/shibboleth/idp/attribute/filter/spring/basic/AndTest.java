@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AndMatcherParser}.
  */
+@SuppressWarnings("javadoc")
 public class AndTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {

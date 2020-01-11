@@ -53,6 +53,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Tests for {@link AttributeInMetadataMatcher}
  */
+@SuppressWarnings("javadoc")
 public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
     private SAMLObjectBuilder<AttributeConsumingService> acsBuilder;

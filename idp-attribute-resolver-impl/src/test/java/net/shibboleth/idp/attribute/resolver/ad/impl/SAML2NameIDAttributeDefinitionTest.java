@@ -58,6 +58,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link SAML2NameIDAttributeDefinition}.
  */
+@SuppressWarnings("javadoc")
 public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     /** The name. */

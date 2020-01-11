@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 
 /** {@link AttributeIssuerRegistrationAuthorityPolicyRule} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeIssuerRegistrationAuthorityTest extends BaseMetadataTests {
 
     private static final String REQUESTED_REG_INFO = "http://www.swamid.se/";

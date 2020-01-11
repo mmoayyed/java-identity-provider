@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * Test for {@link ScriptedAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void inline() {

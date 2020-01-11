@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link PrincipalNameRegexpPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class PrincipalNameRegexpPolicyRuleTest {
     
     private PrincipalNameRegexpPolicyRule getMatcher() throws ComponentInitializationException {

@@ -41,6 +41,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 
 /** Test the mapped attribute type. */
+@SuppressWarnings("javadoc")
 public class MappedAttributeTest {
 
     /** The name. */

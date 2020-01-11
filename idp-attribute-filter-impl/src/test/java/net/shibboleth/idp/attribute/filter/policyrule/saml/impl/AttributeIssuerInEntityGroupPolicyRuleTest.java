@@ -27,6 +27,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeIssuerInEntityGroupPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeIssuerInEntityGroupPolicyRuleTest extends BaseMetadataTests {
 
     private AttributeIssuerInEntityGroupPolicyRule getMatcher(String group) throws ComponentInitializationException {

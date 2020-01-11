@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link ResolverPlugin}. */
+@SuppressWarnings("javadoc")
 public class AbstractResolverPluginTest {
 
     /** Test an instantiated object has the proper state. */

@@ -42,6 +42,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
  * Unit test for {@link DataConnector}. This test does not test any methods inherited from
  * {@link ResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
  */
+@SuppressWarnings("javadoc")
 public class AbstractDataConnectorTest {
 
     /** Test instantiation and post-instantiation state. */

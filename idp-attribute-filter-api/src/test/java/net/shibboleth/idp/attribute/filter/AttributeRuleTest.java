@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 /**
  * test some missing code coverage from Attribute Rules.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRuleTest {
 
     @Test public void testGetRules() {

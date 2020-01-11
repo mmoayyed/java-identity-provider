@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 /**
  * Base for the various XX from YY test clases
  */
+@SuppressWarnings("javadoc")
 public class BaseBridgingClassTester {
     
     protected final IdPAttributeValue VALUE1 = new StringAttributeValue("value1");

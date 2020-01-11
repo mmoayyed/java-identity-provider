@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link PredicatePolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class PredicatePolicyRuleTest {
 
     @Test public void trueTest() throws ComponentInitializationException {

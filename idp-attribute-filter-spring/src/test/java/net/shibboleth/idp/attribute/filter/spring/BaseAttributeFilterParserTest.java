@@ -49,6 +49,7 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 /**
  * Basis of all the matcher and rule parser tests.
  */
+@SuppressWarnings("javadoc")
 public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
     private static final String ATTRIBUTE_PATH = "/net/shibboleth/idp/attribute/filter/attribute/";

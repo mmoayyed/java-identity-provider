@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class InboundRuleTest extends BaseAttributeFilterParserTest {
     
-    @Test public void testPolicy() throws ComponentInitializationException {
+    @Test @SuppressWarnings("javadoc") public void testPolicy() throws ComponentInitializationException {
         PolicyRequirementRule policy = getPolicyRule("inbound.xml");
         assertEquals(DirectionPolicyRule.class, policy.getClass());
         assertEquals(((DirectionPolicyRule) policy).getMatchDirection(), Direction.INBOUND);

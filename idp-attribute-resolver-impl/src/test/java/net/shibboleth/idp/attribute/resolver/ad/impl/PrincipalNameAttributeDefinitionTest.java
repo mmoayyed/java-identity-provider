@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link PrincipalNameAttributeDefinition}
  */
+@SuppressWarnings("javadoc")
 public class PrincipalNameAttributeDefinitionTest {
 
     @Test public void nullContext() throws ComponentInitializationException {

@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link PrincipalNamePolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class PrincipalNamePolicyRuleTest {
     
     private PrincipalNamePolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {

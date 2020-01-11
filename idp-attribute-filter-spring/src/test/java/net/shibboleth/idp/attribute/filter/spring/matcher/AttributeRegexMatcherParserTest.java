@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeValueRegexMatcherParser}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
     
     private void testMatcher(final AttributeValueRegexpMatcher what, boolean caseSensitive) {

@@ -40,6 +40,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void policy() throws ComponentInitializationException {

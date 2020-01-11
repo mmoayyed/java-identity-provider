@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link TemplateAttributeDefinitionParser}
  */
+@SuppressWarnings("javadoc")
 public class TemplateAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test(enabled = false) public void noAttr() throws ComponentInitializationException {

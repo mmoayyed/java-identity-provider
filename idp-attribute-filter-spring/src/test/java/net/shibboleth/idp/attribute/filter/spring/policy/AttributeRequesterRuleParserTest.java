@@ -53,6 +53,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * &lt;afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://service.example.edu/shibboleth-sp" /&gt;
  * </pre>
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;

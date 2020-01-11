@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** unit tests for {@link AbstractComposedPolicyRule}. */
+@SuppressWarnings("javadoc")
 public class AbstractComposedPolicyRuleTest {
 
     @Test

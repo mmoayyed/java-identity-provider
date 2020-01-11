@@ -57,6 +57,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 /**
  * Tester for {@link ScopedAttributeDefinition}.
  */
+@SuppressWarnings("javadoc")
 public class ScopedAttributeTest {
 
     /** The name. */

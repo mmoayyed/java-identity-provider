@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link AbstractAttributeResolutionLookupFunction}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeResolutionLookupTest {
     
     @Test public void apply() {

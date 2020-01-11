@@ -36,6 +36,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributeFilterPolicy} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeFilterPolicyTest {
 
     private MockPolicyRequirementRule policyMatcher;

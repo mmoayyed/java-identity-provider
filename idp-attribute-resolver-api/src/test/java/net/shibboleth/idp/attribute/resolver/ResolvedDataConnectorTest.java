@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
  * Largely boilerplate test for {@link ResolvedDataConnector}
  * 
  */
+@SuppressWarnings("javadoc")
 public class ResolvedDataConnectorTest {
 
     private final Map<String, IdPAttribute> resolvedData = Collections.emptyMap();

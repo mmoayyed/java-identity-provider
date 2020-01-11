@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** A data connector that just returns a static collection of attributes. */
+@SuppressWarnings("javadoc")
 @ThreadSafe
 public class MockDataConnector extends AbstractDataConnector {
 

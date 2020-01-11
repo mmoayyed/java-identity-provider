@@ -25,8 +25,8 @@ import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.Princip
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class PrincipalNameRegexRuleParserTest extends BaseAttributeFilterParserTest {
-
 
     @Test public void policy() throws ComponentInitializationException {
 

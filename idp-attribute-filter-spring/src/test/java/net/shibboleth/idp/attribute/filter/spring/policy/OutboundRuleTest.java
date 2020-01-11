@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for Outbound policy Rule.
  */
+@SuppressWarnings("javadoc")
 public class OutboundRuleTest extends BaseAttributeFilterParserTest {
     
     @Test public void testPolicy() throws ComponentInitializationException {

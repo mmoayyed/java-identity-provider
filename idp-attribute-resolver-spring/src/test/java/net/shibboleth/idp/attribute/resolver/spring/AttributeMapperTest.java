@@ -47,6 +47,7 @@ import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** Test transcoder registry population via attribute resolver. */
+@SuppressWarnings("javadoc")
 public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
 
     private GenericApplicationContext pendingTeardownContext = null;

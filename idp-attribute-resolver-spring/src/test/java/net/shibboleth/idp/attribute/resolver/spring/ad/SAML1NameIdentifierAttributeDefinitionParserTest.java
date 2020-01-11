@@ -29,6 +29,7 @@ import net.shibboleth.idp.saml.attribute.resolver.impl.SAML1NameIdentifierAttrib
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class SAML1NameIdentifierAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void defaultCase() {

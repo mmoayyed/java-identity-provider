@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Tests for {@link AbstractRegexpStringMatcher}
  */
+@SuppressWarnings("javadoc")
 public class AbstractRegexpStringMatcherTest {
 
     @Test public void testApply() throws ComponentInitializationException {

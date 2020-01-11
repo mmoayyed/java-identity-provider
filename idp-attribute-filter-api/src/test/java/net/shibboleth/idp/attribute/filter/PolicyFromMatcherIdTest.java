@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link PolicyFromMatcherId}.
  */
+@SuppressWarnings("javadoc")
 public class PolicyFromMatcherIdTest extends BaseBridgingClassTester {
 
     @Test public void all() {

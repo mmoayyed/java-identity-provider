@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeInMetadataRuleParserTest extends  BaseAttributeFilterParserTest {
 
-    @Test public void requested() throws ComponentInitializationException {
+    @SuppressWarnings("javadoc") @Test public void requested() throws ComponentInitializationException {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");

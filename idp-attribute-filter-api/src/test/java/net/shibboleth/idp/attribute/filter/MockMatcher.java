@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** A simple, mock implementation of {@link Matcher}. */
+@SuppressWarnings("javadoc")
 public class MockMatcher extends AbstractIdentifiedInitializableComponent implements Matcher { 
 
     /** ID of the attribute to which this matcher applies. */

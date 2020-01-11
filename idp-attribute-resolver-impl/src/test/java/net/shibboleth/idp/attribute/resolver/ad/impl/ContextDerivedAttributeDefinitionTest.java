@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /** Test for {@link SubjectDerivedAttributeValuesFunction}. */
+@SuppressWarnings("javadoc")
 public class ContextDerivedAttributeDefinitionTest {
 
     /** Simple result. */

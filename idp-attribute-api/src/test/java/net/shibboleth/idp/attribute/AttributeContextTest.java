@@ -46,6 +46,7 @@ public class AttributeContextTest {
         }
     }
     
+    @SuppressWarnings("javadoc")
     @Test public void attributeContext() {
         AttributeContext context = new AttributeContext();
         

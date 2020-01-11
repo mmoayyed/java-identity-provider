@@ -56,6 +56,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinition}.
  */
+@SuppressWarnings("javadoc")
 public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     /** The name. */

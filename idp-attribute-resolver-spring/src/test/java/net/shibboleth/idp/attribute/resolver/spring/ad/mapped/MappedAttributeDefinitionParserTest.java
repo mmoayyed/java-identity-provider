@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttribu
 /**
  * Test for {@link MappedAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     private MappedAttributeDefinition getDefinition(final String fileName) {

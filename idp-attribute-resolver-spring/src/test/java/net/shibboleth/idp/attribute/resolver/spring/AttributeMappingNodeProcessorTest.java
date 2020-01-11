@@ -49,6 +49,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 /**
  * Test for {@link AttributeMappingNodeProcessor}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
 
     private EntityDescriptor entityDescriptor;

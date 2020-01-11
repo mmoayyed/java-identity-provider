@@ -61,6 +61,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  *  <afp:PolicyRequirementRule xsi:type="basic:AttributeValueString" attributeId="uid" value="jsmith" ignoreCase="true"/>
  * </code><br/>
  */
+@SuppressWarnings("javadoc")
 public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;

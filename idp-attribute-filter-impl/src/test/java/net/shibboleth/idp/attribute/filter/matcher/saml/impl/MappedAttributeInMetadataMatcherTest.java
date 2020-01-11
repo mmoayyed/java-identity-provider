@@ -50,6 +50,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Tests for {@link AttributeInMetadataMatcher} using decoded attributes.
  */
+@SuppressWarnings("javadoc")
 public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     
     private SAMLObjectBuilder<AttributeConsumingService> acsBuilder;

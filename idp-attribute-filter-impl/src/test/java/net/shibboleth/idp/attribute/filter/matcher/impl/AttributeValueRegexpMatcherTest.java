@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test For {@link AttributeValueRegexpMatcher}
  */
+@SuppressWarnings("javadoc")
 public class AttributeValueRegexpMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {

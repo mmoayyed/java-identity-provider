@@ -54,6 +54,7 @@ import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /** {@link ScriptedMatcher} unit test. */
 @ThreadSafe
+@SuppressWarnings("javadoc")
 public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns a set that contains the one of values the attribute. */

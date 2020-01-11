@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.logic.AttributeRecipientIdPredicate
 /**
  * Test for {@link AttributeIssuerIdPredicate}, {@link AttributePrincipalPredicate} and {@link AttributeRecipientIdPredicate}.
  */
+@SuppressWarnings("javadoc")
 public class LogicTest {
 
     final private AttributeIssuerIdPredicate aiip = new AttributeIssuerIdPredicate(Collections.singleton("AII"));

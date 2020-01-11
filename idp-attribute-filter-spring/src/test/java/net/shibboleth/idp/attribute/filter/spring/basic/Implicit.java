@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for an implicit rule.
  */
+@SuppressWarnings("javadoc")
 public class Implicit extends BaseAttributeFilterParserTest {
 
     @Test public void implicit() throws ComponentInitializationException {

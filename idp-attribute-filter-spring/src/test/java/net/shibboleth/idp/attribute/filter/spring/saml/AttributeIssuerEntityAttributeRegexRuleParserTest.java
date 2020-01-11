@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeIssuerEntityAttributeRegexRuleParserTest extends  BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
+    @SuppressWarnings("javadoc") @Test public void basic() throws ComponentInitializationException {
         final AttributeIssuerEntityAttributeRegexPolicyRule rule = (AttributeIssuerEntityAttributeRegexPolicyRule) getPolicyRule("issuerEARegex2.xml");
         assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
         assertEquals(rule.getAttributeName(), "urn:example.org:policy");

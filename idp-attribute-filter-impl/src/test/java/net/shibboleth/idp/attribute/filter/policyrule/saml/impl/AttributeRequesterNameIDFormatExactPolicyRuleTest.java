@@ -27,6 +27,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeRequesterNameIDFormatExactPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterNameIDFormatExactPolicyRuleTest extends BaseMetadataTests {
 
     private AttributeRequesterNameIDFormatExactPolicyRule getMatcher(String format) throws ComponentInitializationException {

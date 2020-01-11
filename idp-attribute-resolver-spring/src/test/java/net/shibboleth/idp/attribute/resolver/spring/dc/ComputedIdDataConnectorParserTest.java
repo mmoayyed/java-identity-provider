@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link ComputedIdDataConnectorParser}.
  */
+@SuppressWarnings("javadoc")
 public class ComputedIdDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {

@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link OrPolicyRule} unit test. */
+@SuppressWarnings("javadoc")
 public class OrPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
     @BeforeTest public void setup() throws Exception {

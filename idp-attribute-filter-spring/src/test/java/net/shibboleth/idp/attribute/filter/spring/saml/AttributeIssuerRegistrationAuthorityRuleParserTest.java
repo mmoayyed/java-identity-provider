@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeIssuerRegistrationAuthorityRuleParser}.
  */
-public class AttributeIssuerRegistrationAuthorityRuleParserTest extends BaseAttributeFilterParserTest {
+@SuppressWarnings("javadoc") public class AttributeIssuerRegistrationAuthorityRuleParserTest extends BaseAttributeFilterParserTest {
 
 
     @Test public void silentTrue() throws ComponentInitializationException {

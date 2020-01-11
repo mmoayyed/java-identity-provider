@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for {@link AttributeRule}
  */
+@SuppressWarnings("javadoc")
 public class AttributeValueFilterPolicyTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {

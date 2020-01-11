@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalNameAttribu
  */
 public class PrincipalNameAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void test() {
+    @SuppressWarnings("javadoc") @Test public void test() {
         PrincipalNameAttributeDefinition attrDef =
                 getAttributeDefn("resolver/principalName.xml", PrincipalNameAttributeDefinition.class);
 

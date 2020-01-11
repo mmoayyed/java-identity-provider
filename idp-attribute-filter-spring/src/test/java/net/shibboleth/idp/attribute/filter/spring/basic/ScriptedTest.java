@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.testing.TestSupport;
 /** test for parsing scripted matchers and scripted parsers.
  *
  */
+@SuppressWarnings("javadoc")
 public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;

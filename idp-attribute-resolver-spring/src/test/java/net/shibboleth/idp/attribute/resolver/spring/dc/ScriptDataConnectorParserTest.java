@@ -41,6 +41,7 @@ import net.shibboleth.utilities.java.support.testing.TestSupport;
 /**
  * test for {@link ScriptDataConnectorParser}
  */
+@SuppressWarnings("javadoc")
 public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void resolver() throws ComponentInitializationException, ResolutionException {

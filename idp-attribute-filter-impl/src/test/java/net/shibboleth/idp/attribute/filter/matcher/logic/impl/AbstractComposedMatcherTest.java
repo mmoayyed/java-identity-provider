@@ -41,6 +41,7 @@ import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /** unit tests for {@link AbstractComposedMatcher}. */
+@SuppressWarnings("javadoc")
 public class AbstractComposedMatcherTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {

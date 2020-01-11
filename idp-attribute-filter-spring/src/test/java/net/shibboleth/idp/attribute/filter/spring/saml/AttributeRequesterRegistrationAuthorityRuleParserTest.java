@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeRequesterRegistrationAuthorityPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterRegistrationAuthorityRuleParserTest extends BaseAttributeFilterParserTest {
 
 

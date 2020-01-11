@@ -42,6 +42,7 @@ import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class ProxiedRequesterRuleParserTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;

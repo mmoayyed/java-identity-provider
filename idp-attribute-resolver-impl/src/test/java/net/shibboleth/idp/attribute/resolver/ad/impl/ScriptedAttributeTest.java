@@ -72,6 +72,7 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl}. */
+@SuppressWarnings("javadoc")
 public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     /** The name. */

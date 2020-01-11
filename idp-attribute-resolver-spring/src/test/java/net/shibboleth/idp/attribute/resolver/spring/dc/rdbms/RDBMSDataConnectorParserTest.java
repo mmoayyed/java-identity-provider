@@ -60,6 +60,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConne
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
 /** Test for {@link RDBMSDataConnectorParser}. */
+@SuppressWarnings("javadoc")
 public class RDBMSDataConnectorParserTest {
 
     public static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsStore.sql";

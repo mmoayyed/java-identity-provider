@@ -50,6 +50,7 @@ import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /** Test for {@link HTTPDataConnectorParser}. */
+@SuppressWarnings("javadoc")
 public class HTTPDataConnectorParserTest {
 
     private static final String TEST_URL =

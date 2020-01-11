@@ -49,6 +49,7 @@ import net.shibboleth.utilities.java.support.testing.TestSupport;
  * Tests for {@link ScriptedDataConnector}
  * 
  */
+@SuppressWarnings("javadoc")
 public class ScriptedDataConnectorTest {
 
     private String getScript(String fileName) throws IOException {

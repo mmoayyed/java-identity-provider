@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for ANY matcher or policy Rule.
  */
+@SuppressWarnings("javadoc")
 public class AnyTest extends BaseAttributeFilterParserTest {
     
     @Test public void testMatcher() throws ComponentInitializationException {

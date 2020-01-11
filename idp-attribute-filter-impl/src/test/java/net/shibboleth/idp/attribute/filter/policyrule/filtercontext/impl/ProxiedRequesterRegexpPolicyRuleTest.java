@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link ProxiedRequesterRegexpPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class ProxiedRequesterRegexpPolicyRuleTest {
     
     private ProxiedRequesterRegexpPolicyRule getMatcher() throws ComponentInitializationException {

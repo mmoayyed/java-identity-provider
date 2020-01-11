@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeIssuerInEntityGroupRuleParser}.
  */
-public class AttributeIssuerInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
+@SuppressWarnings("javadoc") public class AttributeIssuerInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
 
     private void testRule(final String propValue, final boolean result) throws ComponentInitializationException {
         final AttributeIssuerInEntityGroupPolicyRule rule = (AttributeIssuerInEntityGroupPolicyRule) getPolicyRule("issuerEG2.xml", contextWithPropertyValue(propValue));

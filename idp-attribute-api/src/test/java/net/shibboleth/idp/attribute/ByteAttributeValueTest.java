@@ -26,6 +26,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ScopedStringAttributeValue}. */
+@SuppressWarnings("javadoc")
 public class ByteAttributeValueTest {
 
     static final byte[] DATA1 = {1,2,3,0xF};

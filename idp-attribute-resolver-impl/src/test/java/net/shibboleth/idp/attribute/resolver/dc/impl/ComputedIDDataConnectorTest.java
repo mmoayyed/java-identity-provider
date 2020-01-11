@@ -56,6 +56,7 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
 /**
  * Test for {@link PairwiseIdDataConnector} with computed store.
  */
+@SuppressWarnings("javadoc")
 public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     /** The attribute name. */

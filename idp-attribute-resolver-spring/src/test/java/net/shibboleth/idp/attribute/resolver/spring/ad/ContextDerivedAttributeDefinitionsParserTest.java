@@ -49,6 +49,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 /**
  * Test for {@link SubjectDerivedAttributeDefinitionParser} and {@link ContextDerivedAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeDefinitionParserTest {
 
     /** Simple result. */

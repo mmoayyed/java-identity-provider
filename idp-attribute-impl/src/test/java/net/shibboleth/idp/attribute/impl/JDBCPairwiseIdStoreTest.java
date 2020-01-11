@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Tests for {@link JDBCPairwiseIdStore}. */
+@SuppressWarnings("javadoc")
 public class JDBCPairwiseIdStoreTest {
 
     private DataSource testSource;

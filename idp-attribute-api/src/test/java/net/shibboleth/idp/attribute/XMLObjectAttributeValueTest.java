@@ -36,6 +36,7 @@ public class XMLObjectAttributeValueTest extends XMLObjectBaseTestCase {
     private XSString xsId2;
     private XSString xsId3;
     
+    /** setup. */
     @BeforeClass
     public void setUp() {
         final XMLObjectBuilder<XSString> builder =

@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.service.ServiceException;
 
 /** Test the attribute resolver service. */
+@SuppressWarnings("javadoc")
 public class AttributeFilterServiceTest {
 
     /** The attributes to be filtered. */

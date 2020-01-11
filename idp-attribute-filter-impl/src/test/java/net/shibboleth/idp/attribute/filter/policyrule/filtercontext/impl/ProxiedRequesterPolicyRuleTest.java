@@ -35,6 +35,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link ProxiedRequesterPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class ProxiedRequesterPolicyRuleTest {
 
     private ProxiedRequesterPolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {

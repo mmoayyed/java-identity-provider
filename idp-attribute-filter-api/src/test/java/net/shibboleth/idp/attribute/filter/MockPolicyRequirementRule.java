@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 
 /** A simple, mock implementation of {@link Matcher}. */
+@SuppressWarnings("javadoc")
 public class MockPolicyRequirementRule extends AbstractIdentifiedInitializableComponent implements
         PolicyRequirementRule {
 

@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDe
 /**
  * Test for {@link PrescopedAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class PrescopedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void resolver() {

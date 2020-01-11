@@ -32,6 +32,7 @@ import org.opensaml.messaging.context.BaseContext;
 /**
  * Strings and such used for testing.
  */
+@SuppressWarnings("javadoc")
 public abstract class DataSources {
 
     public final static String TEST_STRING = "nibbleahappywarthog";

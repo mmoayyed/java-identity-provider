@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link SourceValue}.
  */
+@SuppressWarnings("javadoc")
 public class SourceValueTest {
 
     Logger log = LoggerFactory.getLogger(SourceValueTest.class);

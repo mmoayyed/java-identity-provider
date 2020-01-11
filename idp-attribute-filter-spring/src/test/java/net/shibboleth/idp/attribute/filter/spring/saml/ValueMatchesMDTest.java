@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class ValueMatchesMDTest extends BaseAttributeFilterParserTest {
     
-    @Test public void testMatcher() throws ComponentInitializationException {
+    @SuppressWarnings("javadoc") @Test public void testMatcher() throws ComponentInitializationException {
         Matcher matcher = getMatcher("mdvalue.xml");
         
         assertEquals(matcher.getClass(), AttributeValueMatchesShibMDScope.class);

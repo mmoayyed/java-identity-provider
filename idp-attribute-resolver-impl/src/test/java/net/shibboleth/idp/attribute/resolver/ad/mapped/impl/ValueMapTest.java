@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Tests for {@link ValueMap}.
  */
+@SuppressWarnings("javadoc")
 public class ValueMapTest {
     
     

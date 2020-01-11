@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link ComputedPairwiseIdStore}.
  */
+@SuppressWarnings("javadoc")
 public class ComputedPairwiseIdStoreTest {
 
     /** Value calculated using V2 version. DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */

@@ -41,6 +41,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** Test for {@link SubjectDataConnector}. */
+@SuppressWarnings("javadoc")
 public class SubjectDataConnectorTest {
 
     /** Simple result. */

@@ -29,9 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 
-/**
- *
- */
+@SuppressWarnings("javadoc")
 public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void xmlList() {

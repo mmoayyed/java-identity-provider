@@ -50,6 +50,7 @@ import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 /**
  * Tests for {@link HTTPDataConnector}
  */
+@SuppressWarnings("javadoc")
 public class HTTPDataConnectorTest {
 
     private static final String TEST_CONNECTOR_NAME = "HTTPConnector";

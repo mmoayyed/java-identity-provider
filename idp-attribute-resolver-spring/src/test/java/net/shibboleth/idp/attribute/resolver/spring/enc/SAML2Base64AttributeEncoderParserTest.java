@@ -37,6 +37,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ByteAttributeTran
 /**
  * Test for {@link SAML2Base64AttributeEncoderParser}.
  */
+@SuppressWarnings("javadoc")
 public class SAML2Base64AttributeEncoderParserTest extends BaseEncoderDefinitionParserTest {
 
     protected void testWithProperties(final boolean activation, final Boolean encodeType) {

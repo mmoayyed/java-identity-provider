@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 /**
  * Tests for {@link AbstractStringMatcher}
  */
+@SuppressWarnings("javadoc")
 public class AbstractStringMatcherTest {
 
     @Test public void testSettersGetters() {

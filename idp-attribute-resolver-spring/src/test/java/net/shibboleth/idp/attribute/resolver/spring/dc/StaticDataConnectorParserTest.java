@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorP
 /**
  * test for {@link StaticDataConnectorParser}
  */
+@SuppressWarnings("javadoc")
 public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void simple() {

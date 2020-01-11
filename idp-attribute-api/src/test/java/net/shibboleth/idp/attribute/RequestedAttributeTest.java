@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  */
 public class RequestedAttributeTest {
 
-    @Test public void requestedAttribute(){
+    @SuppressWarnings("javadoc") @Test public void requestedAttribute(){
         IdPRequestedAttribute attr = new IdPRequestedAttribute("id");
         
         Assert.assertEquals(attr.getId(), "id");

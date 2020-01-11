@@ -35,6 +35,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** Test the {@link NotPolicyRule} matcher. */
+@SuppressWarnings("javadoc")
 public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
     @BeforeTest public void setup() throws Exception {

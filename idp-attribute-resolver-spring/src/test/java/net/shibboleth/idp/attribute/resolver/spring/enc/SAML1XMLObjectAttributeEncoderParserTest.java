@@ -37,6 +37,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttribut
 /**
  * Test for {@link SAML1XMLObjectAttributeEncoderParser}.
  */
+@SuppressWarnings("javadoc")
 public class SAML1XMLObjectAttributeEncoderParserTest extends BaseEncoderDefinitionParserTest {
 
     protected void testWithProperties(final boolean activation, final Boolean encodeType) {

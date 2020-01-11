@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class MockValuePredicateMatcher extends AbstractMatcher {
 
     Predicate<IdPAttributeValue> valuePredicate;

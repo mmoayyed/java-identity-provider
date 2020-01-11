@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeScopeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void matcher() throws ComponentInitializationException {
+    @Test @SuppressWarnings("javadoc") public void matcher() throws ComponentInitializationException {
 
         AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml");
         

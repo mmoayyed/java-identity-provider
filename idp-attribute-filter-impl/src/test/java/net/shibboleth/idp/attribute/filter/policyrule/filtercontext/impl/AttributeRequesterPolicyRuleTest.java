@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link AttributeRequesterPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterPolicyRuleTest {
 
     private AttributeRequesterPolicyRule getMatcher(final boolean caseSensitive) throws ComponentInitializationException {

@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 /** {@link ScriptedPolicyRule} unit test. */
 @ThreadSafe
+@SuppressWarnings("javadoc")
 public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns null. */

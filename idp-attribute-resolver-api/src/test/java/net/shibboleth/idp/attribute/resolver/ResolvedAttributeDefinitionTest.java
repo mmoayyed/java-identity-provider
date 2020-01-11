@@ -26,9 +26,9 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 /**
- * Largely boilerplate test for {@link ResolvedAttributeDefinition}
- * 
+ * Largely boilerplate test for {@link ResolvedAttributeDefinition}.
  */
+@SuppressWarnings("javadoc")
 public class ResolvedAttributeDefinitionTest {
 
     @Test public void init() {

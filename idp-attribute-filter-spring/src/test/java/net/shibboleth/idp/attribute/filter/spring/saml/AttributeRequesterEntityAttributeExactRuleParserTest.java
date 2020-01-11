@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
+    @SuppressWarnings("javadoc") @Test public void basic() throws ComponentInitializationException {
         AttributeRequesterEntityAttributeExactPolicyRule rule =
                 (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml");
 

@@ -48,6 +48,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 /**
  * Test for {@link PairwiseIdDataConnector} with JDBC store.
  */
+@SuppressWarnings("javadoc")
 public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql";

@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link AttributeIssuerRegexpPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeIssuerRegexpPolicyRuleTest {
 
     private AttributeIssuerRegexpPolicyRule getMatcher(boolean caseSensitive) throws ComponentInitializationException {

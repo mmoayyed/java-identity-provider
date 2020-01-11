@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** Unit test for {@link IdPAttribute} class. */
+@SuppressWarnings("javadoc")
 public class AttributeTest {
 
     /** Tests that the attribute has its expected state after instantiation. */

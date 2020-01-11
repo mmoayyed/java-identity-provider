@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 
 /**
- * Base class for testing Attribute Encoding Parsers
+ * Base class for testing Attribute Encoding Parsers.
  */
 public abstract class BaseEncoderDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
@@ -90,7 +90,7 @@ public abstract class BaseEncoderDefinitionParserTest extends BaseAttributeDefin
     
     abstract protected void testWithProperties(final boolean activation, final Boolean encodeType);
     
-    @Test public void values() {
+    @SuppressWarnings("javadoc") @Test public void values() {
         testWithProperties(true);
         testWithProperties(false);
     }

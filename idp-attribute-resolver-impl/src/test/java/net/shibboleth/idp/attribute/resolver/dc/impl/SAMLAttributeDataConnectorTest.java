@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for the {@link SAMLAttributeDataConnector}
  */
+@SuppressWarnings("javadoc")
 public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
 
     static final private String PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/entityAttributes.xml";

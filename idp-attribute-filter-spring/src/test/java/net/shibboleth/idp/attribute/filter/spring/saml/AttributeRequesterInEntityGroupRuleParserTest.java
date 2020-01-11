@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeRequesterInEntityGroupRuleParser}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
 
     private void testRule(final String propValue, final boolean result) throws ComponentInitializationException {

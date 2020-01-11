@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 /**
  * Test for {@link SourceValueParser}.
  */
+@SuppressWarnings("javadoc")
 public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
 
     private SourceValue getSourceValue(String fileName) {

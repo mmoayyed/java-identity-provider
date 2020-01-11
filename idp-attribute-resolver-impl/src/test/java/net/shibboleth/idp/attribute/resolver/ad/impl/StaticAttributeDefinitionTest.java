@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 /** Tests for {@link StaticAttributeDefinition}
  *
  */
+@SuppressWarnings("javadoc")
 public class StaticAttributeDefinitionTest {
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {

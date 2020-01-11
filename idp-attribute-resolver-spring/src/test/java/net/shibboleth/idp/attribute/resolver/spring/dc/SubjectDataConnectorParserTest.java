@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.SubjectDataConnector
 /**
  * test for {@link SubjectDataConnectorParser}
  */
+@SuppressWarnings("javadoc")
 public class SubjectDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void simple() {

@@ -37,6 +37,7 @@ import com.google.common.cache.Cache;
  * Code to exercise the ResultCache Parser outwith the DataConnector parsers.
  * There is no actual testing since we cannot look at what is created.
  */
+@SuppressWarnings("javadoc")
 public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
     //
     

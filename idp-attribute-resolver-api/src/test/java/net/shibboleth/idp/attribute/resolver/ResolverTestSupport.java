@@ -28,9 +28,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-/**
- *
- */
+@SuppressWarnings("javadoc")
 public class ResolverTestSupport {
 
     public static final String EPA_ATTRIB_ID = "urn:oid:1.3.6.1.4.1.5923.1.1.1.1";

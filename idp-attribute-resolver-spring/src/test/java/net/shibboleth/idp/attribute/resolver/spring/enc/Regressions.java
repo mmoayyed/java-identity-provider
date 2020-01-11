@@ -36,7 +36,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTr
  */
 public class Regressions extends BaseAttributeDefinitionParserTest {
 
-    @Test public void idp571() {
+    @SuppressWarnings("javadoc") @Test public void idp571() {
         GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         loadFile(ENCODER_FILE_PATH + "resolver/idp-571.xml", context);

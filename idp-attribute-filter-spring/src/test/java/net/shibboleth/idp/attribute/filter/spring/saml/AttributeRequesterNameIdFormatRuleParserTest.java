@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  */
 public class AttributeRequesterNameIdFormatRuleParserTest extends BaseAttributeFilterParserTest {
 
-    @Test public void basic() throws ComponentInitializationException {
+    @SuppressWarnings("javadoc") @Test public void basic() throws ComponentInitializationException {
         final AttributeRequesterNameIDFormatExactPolicyRule rule =
                 (AttributeRequesterNameIDFormatExactPolicyRule) getPolicyRule("requesterNameId2.xml");
 

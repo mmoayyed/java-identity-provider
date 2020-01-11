@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 /**
  * test for {@link NumOfAttributeValuesPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class NumOfAttributeValuesPolicyRuleTest {
 
     private final static String attrId = "attribute";

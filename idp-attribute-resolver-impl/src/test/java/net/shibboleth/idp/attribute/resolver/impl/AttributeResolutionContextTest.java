@@ -37,6 +37,7 @@ import net.shibboleth.idp.attribute.resolver.context.navigate.AttributePrincipal
 import net.shibboleth.idp.attribute.resolver.context.navigate.AttributeRecipientIdLookupFunction;
 
 /** Unit test for {@link AttributeResolutionContext}. */
+@SuppressWarnings("javadoc")
 public class AttributeResolutionContextTest {
     
     static private final String THE_ISSUER = "Issuer"; 

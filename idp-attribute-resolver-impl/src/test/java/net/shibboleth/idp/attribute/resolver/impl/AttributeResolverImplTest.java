@@ -67,6 +67,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 
 /** Test case for {@link AttributeResolverImpl}. */
+@SuppressWarnings("javadoc")
 public class AttributeResolverImplTest {
     private final Logger log = LoggerFactory.getLogger(AttributeResolverImplTest.class);
 

@@ -60,6 +60,7 @@ import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 /**
  * Tests for {@link RDBMSDataConnector}
  */
+@SuppressWarnings("javadoc")
 public class RDBMSDataConnectorTest {
 
     /** The connector name. */

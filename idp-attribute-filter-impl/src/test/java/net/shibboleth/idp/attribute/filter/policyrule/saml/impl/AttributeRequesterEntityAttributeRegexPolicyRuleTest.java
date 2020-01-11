@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeRequesterEntityAttributeRegexPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterEntityAttributeRegexPolicyRuleTest  extends BaseMetadataTests {
 
     private AttributeRequesterEntityAttributeRegexPolicyRule getMatcher() throws ComponentInitializationException {

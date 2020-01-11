@@ -27,6 +27,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test For {@link AttributeScopeStringMatcher}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeScopeStringMatcherTest {
     
     @Test public void testApply() throws ComponentInitializationException {

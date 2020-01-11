@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link NotMatcherParser}.
  */
+@SuppressWarnings("javadoc")
 public class NotTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {

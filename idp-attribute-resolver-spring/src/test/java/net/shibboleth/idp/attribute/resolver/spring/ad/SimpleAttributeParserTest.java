@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void simple() {

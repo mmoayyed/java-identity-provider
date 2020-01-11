@@ -44,6 +44,7 @@ import org.testng.annotations.BeforeClass;
 /**
  * tests for {@link AttributeRequesterEntityAttributeExactPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class BaseMetadataTests extends XMLObjectBaseTestCase {
 
     private EntitiesDescriptor metadata;

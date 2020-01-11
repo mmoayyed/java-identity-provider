@@ -80,6 +80,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 
 
 /** Test for {@link LDAPDataConnectorParser}. */
+@SuppressWarnings("javadoc")
 public class LDAPDataConnectorParserTest {
 
     /** In-memory directory server. */

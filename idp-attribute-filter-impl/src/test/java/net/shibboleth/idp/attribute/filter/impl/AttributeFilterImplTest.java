@@ -42,6 +42,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link AttributeFilter}. */
+@SuppressWarnings("javadoc")
 public class AttributeFilterImplTest {
 
     /**

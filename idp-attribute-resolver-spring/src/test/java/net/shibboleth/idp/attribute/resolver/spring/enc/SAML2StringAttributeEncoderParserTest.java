@@ -37,6 +37,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTr
 /**
  * Test for {@link SAML2StringAttributeEncoderParser}.
  */
+@SuppressWarnings("javadoc")
 public class SAML2StringAttributeEncoderParserTest extends BaseEncoderDefinitionParserTest {
   
     protected void testWithProperties(final boolean activation, final Boolean encodeType) {

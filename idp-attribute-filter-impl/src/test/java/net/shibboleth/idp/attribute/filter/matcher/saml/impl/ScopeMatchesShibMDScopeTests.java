@@ -48,6 +48,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 /**
  * Tests for {@link AttributeScopeMatchesShibMDScope} and {@link AttributeValueMatchesShibMDScope} matchers.
  */
+@SuppressWarnings("javadoc")
 public class ScopeMatchesShibMDScopeTests extends XMLObjectBaseTestCase {
 
     private final static String bothEntityID = "https://both.example.org/idp/shibboleth";

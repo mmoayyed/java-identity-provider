@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 /**
  * Tests for {@link AttributeIssuerPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeIssuerPolicyRuleTest {
 
     private AttributeIssuerPolicyRule getMatcher() throws ComponentInitializationException {

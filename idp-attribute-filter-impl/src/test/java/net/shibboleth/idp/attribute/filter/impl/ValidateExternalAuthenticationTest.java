@@ -51,6 +51,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ValidateExternalAuthentication} unit test using attributes. */
+@SuppressWarnings("javadoc")
 public class ValidateExternalAuthenticationTest extends BaseAuthenticationContextTest {
     
     private ValidateExternalAuthentication action;

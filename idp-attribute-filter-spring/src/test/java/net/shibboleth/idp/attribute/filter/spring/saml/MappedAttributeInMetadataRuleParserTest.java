@@ -34,9 +34,10 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link MappedAttributeInMetadataRuleParser}.
  */
+@SuppressWarnings("javadoc") 
 public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilterParserTest {
 
-     public void test(final String propValue, final boolean metadataSilentResult, final boolean onlyResult) throws ComponentInitializationException {
+    public void test(final String propValue, final boolean metadataSilentResult, final boolean onlyResult) throws ComponentInitializationException {
         GenericApplicationContext context = contextWithPropertyValue(propValue);
         setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");

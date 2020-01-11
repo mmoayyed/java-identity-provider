@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link AttributeRequesterEntityAttributeExactPolicyRule}.
  */
+@SuppressWarnings("javadoc")
 public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMetadataTests {
 
     private AttributeRequesterEntityAttributeExactPolicyRule getMatcher() throws ComponentInitializationException {

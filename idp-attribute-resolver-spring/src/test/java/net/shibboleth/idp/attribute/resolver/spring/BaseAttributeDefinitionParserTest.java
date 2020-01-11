@@ -50,6 +50,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * Note that several helper classes are marked private.  This is purely to discourage accidental use of non validating
  * parsers with no need. 
  */
+@SuppressWarnings("javadoc")
 public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBaseTestCase {
 
     public static final String BEAN_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/";

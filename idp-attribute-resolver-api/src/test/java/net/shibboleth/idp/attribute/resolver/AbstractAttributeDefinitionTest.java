@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link AttributeDefinition}. This test does not test any methods inherited from
  * {@link ResolverPlugin}, those are covered in {@link AbstractResolverPluginTest}.
  */
+@SuppressWarnings("javadoc")
 public class AbstractAttributeDefinitionTest {
 
     /** Tests the state of a newly instantiated object. */
