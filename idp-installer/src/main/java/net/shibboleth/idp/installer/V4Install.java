@@ -312,26 +312,7 @@ public class V4Install extends AbstractInitializableComponent {
                 throw new BuildException("Failed to generate secrets.properties", e);
             }
         } else if (CurrentInstallState.V3_VERSION.equals(currentState.getInstalledVersion())) {
-            log.debug("Detected a V3 to V4 update.  Editing services.properties");
-            final Path servicesProps = conf.resolve("services.properties");
-            if (!Files.exists(servicesProps)) {
-                log.warn("Previous Version V3 but no services.properties?");
-            } else {
-                try {
-                    // Handle services.properties for a 3->4 upgrade.
-                    final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
-                    final File servicesPropsFile = servicesProps.toFile();
-                    propertiesToReWrite.load(new FileInputStream(servicesPropsFile));
-                    propertiesToReWrite.addComment(
-                            "idp.service.attribute.registry.resources modified during v3 upgrade "
-                            + Instant.now().toString());
-                    propertiesToReWrite.replaceProperty("idp.service.attribute.registry.resources",
-                            "shibboleth.LegacyAttributeRegistryResources");
-                    propertiesToReWrite.store(new FileOutputStream(servicesPropsFile));
-                } catch (final IOException e) {
-                    throw new BuildException("Failed to update services.properties", e);
-                }            
-            }
+            log.debug("Detected a V3 to V4 update.");
         }
     }
     // CheckStyle: CyclomaticComplexity|MethodLength ON

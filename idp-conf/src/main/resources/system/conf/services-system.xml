@@ -71,8 +71,8 @@
     </bean>
     <util:list id ="shibboleth.DefaultAttributeRegistryResources">
         <value>%{idp.home}/conf/attribute-registry.xml</value>
+        <value>%{idp.home}/conf/attribute-resolver.xml</value>
         <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
-        <value>%{idp.home}/conf/attributes/default-rules.xml</value>
     </util:list>
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
