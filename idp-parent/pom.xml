@@ -77,6 +77,22 @@
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
+
+        <!--
+            Use version 3.0.1 of the Maven javadoc plugin rather than the
+            (currently) version 3.1.1 managed by java-parent-project.
+            This avoids what looks like an instance of this issue in MJAVADOC:
+
+            https://issues.apache.org/jira/browse/MJAVADOC-620
+
+            This property should be removed when that problem has been addressed,
+            supposedly in plugin version 3.2.0.
+
+            Our case:
+
+            https://issues.shibboleth.net/jira/browse/IDP-1531
+        -->
+        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
     </properties>
 
     <repositories>
