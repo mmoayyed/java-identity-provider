@@ -55,6 +55,10 @@
             <artifactId>velocity-engine-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
