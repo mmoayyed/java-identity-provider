@@ -42,6 +42,7 @@
 
     <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
+    <import resource="audit-system.xml" />
     <import resource="general-authn-system.xml" />
     <import resource="session-manager-system.xml" />
     <import resource="services-system.xml" />

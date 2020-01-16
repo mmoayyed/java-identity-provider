@@ -55,6 +55,23 @@
         </constructor-arg>
     </bean>
     
+    <bean id="shibboleth.ProtocolLookupFunction" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+                var protocol = null;
+                var springContext = input.getSubcontext("net.shibboleth.idp.profile.context.SpringRequestContext");
+                if (springContext != null) {
+                    if (springContext.getRequestContext() != null) {
+                        protocol = springContext.getRequestContext().getActiveFlow().getApplicationContext().getBean('shibboleth.MetadataLookup.Protocol');
+                    }
+                }
+                protocol;
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+    
     <!--
     The actual beans used are in user-space, but they inherit from the maps below. We have to use a
     MapFactoryBean instead of util:map because merging isn't supported by the util:map schema.
@@ -83,8 +100,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
                     </key>
-                    <bean parent="shibboleth.Functions.Constant"
-                        c:target-ref="shibboleth.MetadataLookup.Protocol" />
+                    <ref bean="shibboleth.ProtocolLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -232,8 +248,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
                     </key>
-                    <bean parent="shibboleth.Functions.Constant"
-                        c:target-ref="shibboleth.MetadataLookup.Protocol" />
+                    <ref bean="shibboleth.ProtocolLookupFunction" />
                 </entry>
                 <entry>
                     <key>

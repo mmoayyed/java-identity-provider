@@ -48,8 +48,6 @@
         c:filterService-ref="shibboleth.AttributeFilterService"
         p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
         p:metadataResolver-ref="shibboleth.MetadataResolver" />
-        
-    <import resource="../../conf/audit-system.xml" />
     
     <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext" scope="prototype">
         <property name="fieldExtractors">

@@ -98,9 +98,6 @@
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>
     </bean>
-
-    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
-    <import resource="../../conf/audit-system.xml" />
         
     <bean id="AdminPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.AdminAuditExtractors') ?: getObject('shibboleth.DefaultAdminAuditExtractors')}" />

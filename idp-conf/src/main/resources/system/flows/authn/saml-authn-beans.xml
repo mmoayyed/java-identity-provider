@@ -52,9 +52,6 @@
     <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
 
-    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
-    <import resource="../../conf/audit-system.xml" />
-
     <bean id="PrepareInboundMessageContext"
             class="net.shibboleth.idp.saml.session.impl.PrepareInboundMessageContext" scope="prototype"
             p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext">

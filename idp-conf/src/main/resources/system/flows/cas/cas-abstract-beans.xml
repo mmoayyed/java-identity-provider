@@ -16,9 +16,6 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
-    <import resource="../../conf/audit-system.xml" />
-
     <!-- These are beans that are common to all CAS protocol flows. -->
 
     <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"

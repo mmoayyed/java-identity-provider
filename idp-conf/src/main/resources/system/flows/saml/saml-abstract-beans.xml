@@ -27,9 +27,6 @@
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
-    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
-    <import resource="../../conf/audit-system.xml" />
-
     <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.PostDecodeAuditExtractors') ?: getObject('shibboleth.DefaultPostDecodeAuditExtractors')}" />
 

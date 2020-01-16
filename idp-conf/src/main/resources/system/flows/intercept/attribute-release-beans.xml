@@ -14,7 +14,6 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../conf/audit-system.xml" />
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
     <bean id="AttributeReleaseConsentFunction"
