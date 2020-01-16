@@ -19,9 +19,6 @@ package net.shibboleth.idp.installer;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
 
 import javax.annotation.Nonnull;
 
@@ -67,37 +64,9 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      */
     public void execute() throws BuildException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        backupOld();
         deleteOld();
         copyDist();
         copyBinDocSystem();
-    }
-
-    /** Copy bin, edit-webapp, dist and doc to old-date-time.
-     * @throws BuildException if badness occurs
-     */
-    protected void backupOld() throws BuildException {
-        if (installState.getInstalledVersion() == null) {
-            return;
-        }
-        final SimpleDateFormat fmt = new SimpleDateFormat("'old-'yyyy-MM-dd-HH-mm-ss");
-        final Path backup = installerProps.getTargetDir().resolve(fmt.format(Date.from(Instant.now())));
-        InstallerSupport.createDirectory(backup);
-        backup(installerProps.getTargetDir().resolve("edit-webapp"), backup.resolve("edit-webapp"));
-        backup(installerProps.getTargetDir().resolve("doc"), backup.resolve("doc"));
-        backup(installerProps.getTargetDir().resolve("system"), backup.resolve("system"));
-    }
-
-    /** Helper for the {@link #backupOld()} method.
-     * @param from where from
-     * @param to where to.
-     * @throws BuildException if badness occurs
-     */
-    private void backup(final Path from, final Path to) throws BuildException {
-        log.debug("Backing up from {} to {}", from, to);
-        final Copy copy = InstallerSupport.getCopyTask(from, to);
-        copy.setFailOnError(false);
-        copy.execute();
     }
 
     /** Helper for the {@link #deleteOld()} method.
