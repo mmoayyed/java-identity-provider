@@ -24,6 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.PooledTemplateSearchDnResolver;
+import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -36,6 +37,7 @@ import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapURL;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -144,6 +146,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   /** Trust configuration when using truststore based trust. */
   private CredentialConfig truststoreCredentialConfig;
 
+  /** Whether to disable connection pooling for both binds and searches. */
+  private boolean disablePooling;
+
   /** Wait time for getting a connection from the pool. */
   private Duration blockWaitTime;
 
@@ -238,6 +243,10 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setTruststoreCredentialConfig(final CredentialConfig config) {
     truststoreCredentialConfig = config;
+  }
+
+  public void setDisablePooling(final boolean b) {
+    disablePooling = b;
   }
 
   public void setBlockWaitTime(@Nullable final Duration time) {
@@ -412,21 +421,37 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
       }
     }
     final Authenticator authenticator = new Authenticator();
-    authenticator.setAuthenticationHandler(
-      new PooledBindAuthenticationHandler(
-        new PooledConnectionFactory(createConnectionPool("bind-pool", createConnectionConfig()))));
+    if (disablePooling) {
+      authenticator.setAuthenticationHandler(
+        new BindAuthenticationHandler(new DefaultConnectionFactory(createConnectionConfig())));
+    } else {
+      authenticator.setAuthenticationHandler(
+        new PooledBindAuthenticationHandler(
+          new PooledConnectionFactory(createConnectionPool("bind-pool", createConnectionConfig()))));
+    }
     switch(authenticatorType) {
     case BIND_SEARCH:
-      final PooledTemplateSearchDnResolver bindSearchDnResolver =
-        new PooledTemplateSearchDnResolver(velocityEngine, userFilter);
-      bindSearchDnResolver.setBaseDn(baseDn);
-      bindSearchDnResolver.setSubtreeSearch(subtreeSearch);
-      bindSearchDnResolver.setConnectionFactory(
-        new PooledConnectionFactory(
-          createConnectionPool(
-            "search-pool",
-            createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))))));
-      authenticator.setDnResolver(bindSearchDnResolver);
+      if (disablePooling) {
+        final TemplateSearchDnResolver bindSearchDnResolver =
+          new TemplateSearchDnResolver(velocityEngine, userFilter);
+        bindSearchDnResolver.setBaseDn(baseDn);
+        bindSearchDnResolver.setSubtreeSearch(subtreeSearch);
+        bindSearchDnResolver.setConnectionFactory(
+          new DefaultConnectionFactory(
+            createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential)))));
+        authenticator.setDnResolver(bindSearchDnResolver);
+      } else {
+        final PooledTemplateSearchDnResolver bindSearchDnResolver =
+          new PooledTemplateSearchDnResolver(velocityEngine, userFilter);
+        bindSearchDnResolver.setBaseDn(baseDn);
+        bindSearchDnResolver.setSubtreeSearch(subtreeSearch);
+        bindSearchDnResolver.setConnectionFactory(
+          new PooledConnectionFactory(
+            createConnectionPool(
+              "search-pool",
+              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))))));
+        authenticator.setDnResolver(bindSearchDnResolver);
+      }
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
       break;
     case DIRECT:
@@ -439,16 +464,25 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
       authenticator.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
       break;
     case ANON_SEARCH:
-      final PooledTemplateSearchDnResolver anonSearchDnResolver =
-        new PooledTemplateSearchDnResolver(velocityEngine, userFilter);
-      anonSearchDnResolver.setBaseDn(baseDn);
-      anonSearchDnResolver.setSubtreeSearch(subtreeSearch);
-      anonSearchDnResolver.setConnectionFactory(
-        new PooledConnectionFactory(
-          createConnectionPool(
-            "search-pool",
-            createConnectionConfig())));
-      authenticator.setDnResolver(anonSearchDnResolver);
+      if (disablePooling) {
+        final TemplateSearchDnResolver anonSearchDnResolver =
+          new TemplateSearchDnResolver(velocityEngine, userFilter);
+        anonSearchDnResolver.setBaseDn(baseDn);
+        anonSearchDnResolver.setSubtreeSearch(subtreeSearch);
+        anonSearchDnResolver.setConnectionFactory(new DefaultConnectionFactory(createConnectionConfig()));
+        authenticator.setDnResolver(anonSearchDnResolver);
+      } else {
+        final PooledTemplateSearchDnResolver anonSearchDnResolver =
+          new PooledTemplateSearchDnResolver(velocityEngine, userFilter);
+        anonSearchDnResolver.setBaseDn(baseDn);
+        anonSearchDnResolver.setSubtreeSearch(subtreeSearch);
+        anonSearchDnResolver.setConnectionFactory(
+          new PooledConnectionFactory(
+            createConnectionPool(
+              "search-pool",
+              createConnectionConfig())));
+        authenticator.setDnResolver(anonSearchDnResolver);
+      }
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
       break;
     default:
