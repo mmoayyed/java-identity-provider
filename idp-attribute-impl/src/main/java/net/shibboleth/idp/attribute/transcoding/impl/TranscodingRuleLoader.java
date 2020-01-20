@@ -78,7 +78,12 @@ public class TranscodingRuleLoader {
                 } else {
                     log.debug("Loading rule from property set in file ({})", file);
                     try {
-                        rules.add(TranscodingRule.fromResource(new FileSystemResource(file)));
+                        final TranscodingRule rule = TranscodingRule.fromResource(new FileSystemResource(file));
+                        if (rule.getMap().isEmpty()) {
+                            log.info("Transcoding file {} contained no rules", child);
+                        } else {
+                            rules.add(rule);
+                        }
                     } catch (final IOException e) {
                         log.error("Failed to load rule from file ({})", file, e);
                     }
