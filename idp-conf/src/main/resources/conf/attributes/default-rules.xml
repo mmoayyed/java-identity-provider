@@ -26,6 +26,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.1</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:uid</prop>
+                    <prop key="displayName.en">User ID</prop>
+                    <prop key="displayName.de">Benutzer ID</prop>
+                    <prop key="displayName.fr">ID utilisateur</prop>
+                    <prop key="displayName.it">ID dell'utente</prop>
+                    <prop key="displayName.ja">ユーザID</prop>
+                    <prop key="displayName.pt">User ID</prop>
+                    <prop key="displayName.sv">Användaridentitet</prop>
+                    <prop key="description.en">A unique identifier for a person, mainly used for user identification within the user's home organization.</prop>
+                    <prop key="description.de">Eine eindeutige Nummer für eine Person, welche hauptsächlich zur Identifikation innerhalb der Organisation benutzt wird.</prop>
+                    <prop key="description.fr">Identifiant de connexion d'une personnes sur les systèmes informatiques.</prop>
+                    <prop key="description.it">Identificativo unico della persona, usato per l'identificazione dell'utente all'interno della organizzazione di appartenenza.</prop>
+                    <prop key="description.ja">所属組織内で一意の利用者識別子</prop>
+                    <prop key="description.pt">Identificador do utilizador</prop>
+                    <prop key="description.sv">Användaridentitet: Unik identifierar som används vid lokal inloggning i hemmaorganisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -37,14 +51,21 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.3</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:mail</prop>
-                    <prop key="description.en">E-Mail: Preferred address for e-mail to be sent to this person</prop>
-                    <prop key="description.fr">Address Courriel</prop>
-                    <prop key="description.de">E-Mail Adresse</prop>
-                    <prop key="description.it">E-Mail: l'indirizzo e-mail preferito dall'utente</prop>
                     <prop key="displayName.en">E-mail</prop>
                     <prop key="displayName.de">E-mail</prop>
-                    <prop key="displayName.it">E-mail</prop>
                     <prop key="displayName.fr">Email</prop>
+                    <prop key="displayName.it">E-mail</prop>
+                    <prop key="displayName.ja">メールアドレス</prop>
+                    <prop key="displayName.pt">E-mail</prop>
+                    <prop key="displayName.sv">E-postadress</prop>
+                    <prop key="description.en">E-Mail: Preferred address for e-mail to be sent to this person</prop>
+                    <prop key="description.de">E-Mail Adreße</prop>
+                    <prop key="description.de-ch">E-Mail Adresse</prop>
+                    <prop key="description.fr">Adresse de courrier électronique</prop>
+                    <prop key="description.it">E-Mail: l'indirizzo e-mail preferito dall'utente</prop>
+                    <prop key="description.ja">メールアドレス</prop>
+                    <prop key="description.pt">E-Mail: Endereço de correio electronico</prop>
+                    <prop key="description.sv">E-postadress: E-postadress som används av personen.</prop>
                 </props>
             </property>
         </bean>
@@ -56,6 +77,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.20</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:homePhone</prop>
+                    <prop key="displayName.en">Private phone number</prop>
+                    <prop key="displayName.de">Telefon Privat</prop>
+                    <prop key="displayName.fr">Teléphone personnel</prop>
+                    <prop key="displayName.it">Numero di telefono privato</prop>
+                    <prop key="displayName.ja">自宅電話番号</prop>
+                    <prop key="displayName.pt">Número de telefone privado</prop>
+                    <prop key="displayName.sv">Telefonnummer (hem)</prop>
+                    <prop key="description.en">Private phone number</prop>
+                    <prop key="description.de">Private Telefonnummer</prop>
+                    <prop key="description.fr">Numéro de téléphone de domicile de la personne</prop>
+                    <prop key="description.it">Numero di telefono privato</prop>
+                    <prop key="description.ja">自宅の電話番号</prop>
+                    <prop key="description.pt">Número de telefone privado do utilizador</prop>
+                    <prop key="description.sv">Telefonnummer (hem): Telefonnummer till bostaden.</prop>
                 </props>
             </property>
         </bean>
@@ -67,6 +102,22 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.39</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:homePostalAddress</prop>
+                    <prop key="displayName.en">Home postal address</prop>
+                    <prop key="displayName.de">Heimadreße</prop>
+                    <prop key="displayName.de-ch">Heimadresse</prop>
+                    <prop key="displayName.fr">Adresse personnelle</prop>
+                    <prop key="displayName.it">Indirizzo personale</prop>
+                    <prop key="displayName.ja">自宅住所</prop>
+                    <prop key="displayName.pt">Morada Pessoal</prop>
+                    <prop key="displayName.sv">Postadress (hem)</prop>
+                    <prop key="description.en">Home postal address: Home address of the user</prop>
+                    <prop key="description.de">Heimadreße</prop>
+                    <prop key="description.de-ch">Heimadresse</prop>
+                    <prop key="description.fr">Adresse postale de domicile de la personne</prop>
+                    <prop key="description.it">Indirizzo personale: indirizzo dove abita l'utente</prop>
+                    <prop key="description.ja">自宅の住所</prop>
+                    <prop key="description.pt">Morada Pessoal: Morada do utilizador</prop>
+                    <prop key="description.sv">Postadress (hem): Postadress till bostaden.</prop>
                 </props>
             </property>
         </bean>
@@ -78,6 +129,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.41</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:mobile</prop>
+                    <prop key="displayName.en">Mobile phone number</prop>
+                    <prop key="displayName.de">Telefon Mobil</prop>
+                    <prop key="displayName.fr">Numéro de mobile</prop>
+                    <prop key="displayName.it">Numero di cellulare</prop>
+                    <prop key="displayName.ja">携帯電話番号</prop>
+                    <prop key="displayName.pt">Número de telemóvel</prop>
+                    <prop key="displayName.sv">Telefonnummer (mobil)</prop>
+                    <prop key="description.en">Mobile phone number</prop>
+                    <prop key="description.de">Mobile Telefonnummer</prop>
+                    <prop key="description.fr">Numéro de teléphone mobile</prop>
+                    <prop key="description.it">Numero di cellulare</prop>
+                    <prop key="description.ja">携帯電話の番号</prop>
+                    <prop key="description.pt">Número de telemóvel do utilizador</prop>
+                    <prop key="description.sv">Telefonnummer (mobil): Telefonnummer till mobiltelefon.</prop>
                 </props>
             </property>
         </bean>
@@ -89,6 +154,8 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.42</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:pager</prop>
+                    <prop key="displayName.en">Pager number</prop>
+                    <prop key="description.en">Pager number</prop>
                 </props>
             </property>
         </bean>
@@ -100,6 +167,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.4</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:sn</prop>
+                    <prop key="displayName.en">Surname</prop>
+                    <prop key="displayName.de">Nachname</prop>
+                    <prop key="displayName.fr">Nom de famille</prop>
+                    <prop key="displayName.it">Cognome</prop>
+                    <prop key="displayName.ja">姓</prop>
+                    <prop key="displayName.pt">Nome de Família</prop>
+                    <prop key="displayName.sv">Efternamn</prop>
+                    <prop key="description.en">Surname or family name</prop>
+                    <prop key="description.de">Familienname</prop>
+                    <prop key="description.fr">Nom de famille de l'utilisateur.</prop>
+                    <prop key="description.it">Cognome dell'utilizzatore</prop>
+                    <prop key="description.ja">氏名(姓)の英語表記</prop>
+                    <prop key="description.pt">Nome de Família</prop>
+                    <prop key="description.sv">Efternamn: Efternamn för personen.</prop>
                 </props>
             </property>
         </bean>
@@ -111,6 +192,12 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.7</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:l</prop>
+                    <prop key="displayName.en">Locality name</prop>
+                    <prop key="displayName.de">Ort</prop>
+                    <prop key="displayName.fr">Locality name</prop>
+                    <prop key="description.en">Locality name</prop>
+                    <prop key="description.de">Ort</prop>
+                    <prop key="description.fr">Nom de la localité où réside l'objet</prop>
                 </props>
             </property>
         </bean>
@@ -122,6 +209,8 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.8</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:st</prop>
+                    <prop key="displayName.en">State or province name</prop>
+                    <prop key="description.en">State or province name</prop>
                 </props>
             </property>
         </bean>
@@ -133,10 +222,17 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.9</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:street</prop>
+                    <prop key="displayName.en">Street</prop>
+                    <prop key="displayName.de">Straße</prop>
+                    <prop key="displayName.de-ch">Strasse</prop>
+                    <prop key="displayName.fr">Rue</prop>
+                    <prop key="description.en">Street address</prop>
+                    <prop key="description.de">Strassendreße</prop>
+                    <prop key="description.de-ch">Strassendresse</prop>
+                    <prop key="description.fr">Nom de rue</prop>
                 </props>
             </property>
         </bean>
-
 
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
@@ -145,6 +241,14 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.10</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:o</prop>
+                    <prop key="displayName.en">Organization name</prop>
+                    <prop key="displayName.de">Organisations Name</prop>
+                    <prop key="displayName.fr">Nom de l'organisation</prop>
+                    <prop key="displayName.ja">所属組織名</prop>
+                    <prop key="description.en">Organization name</prop>
+                    <prop key="description.de">Name der Organisation</prop>
+                    <prop key="description.fr">Nom de l'organisation</prop>
+                    <prop key="description.ja">所属組織名の英語表記</prop>
                 </props>
             </property>
         </bean>
@@ -156,6 +260,14 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.11</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:ou</prop>
+                    <prop key="displayName.en">Organizational unit</prop>
+                    <prop key="displayName.de">Organisationseinheit</prop>
+                    <prop key="displayName.fr">Unité organisationnelle</prop>
+                    <prop key="displayName.ja">部門名</prop>
+                    <prop key="description.en">Organizational unit</prop>
+                    <prop key="description.de">Name der Organizationseinheit</prop>
+                    <prop key="description.fr">Nom de l'unité organisationnelle</prop>
+                    <prop key="description.ja">所属部門名の英語表記</prop>
                 </props>
             </property>
         </bean>
@@ -167,6 +279,12 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.12</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:title</prop>
+                    <prop key="displayName.en">Title</prop>
+                    <prop key="displayName.de">Titel</prop>
+                    <prop key="displayName.fr">Title</prop>
+                    <prop key="description.en">Title of a person</prop>
+                    <prop key="description.de">Titel der Person</prop>
+                    <prop key="description.fr">Titre de la personne</prop>
                 </props>
             </property>
         </bean>
@@ -178,6 +296,22 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.16</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:postalAddress</prop>
+                    <prop key="displayName.en">Business postal address</prop>
+                    <prop key="displayName.de">Geschäftsadreße</prop>
+                    <prop key="displayName.de-ch">Geschäftsadresse</prop>
+                    <prop key="displayName.fr">Adresse professionnelle</prop>
+                    <prop key="displayName.it">Indirizzo professionale</prop>
+                    <prop key="displayName.ja">所属組織住所</prop>
+                    <prop key="displayName.pt">Morada</prop>
+                    <prop key="displayName.sv">Postadress (arbete):</prop>
+                    <prop key="description.en">Business postal address: Campus or office address</prop>
+                    <prop key="description.de">Adreße am Arbeitsplatz</prop>
+                    <prop key="description.de-ch">Adresse am Arbeitsplatz</prop>
+                    <prop key="description.fr">Adresse de l'institut, de l'université</prop>
+                    <prop key="description.it">Indirizzo professionale: indirizzo dell'istituto o dell'ufficio</prop>
+                    <prop key="description.ja">所属組織(大学、会社など)の住所</prop>
+                    <prop key="description.pt">Morada da instituição</prop>
+                    <prop key="description.sv">Postadress (arbete): Postadressen för arbetsplatsen</prop>
                 </props>
             </property>
         </bean>
@@ -189,6 +323,14 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.17</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:postalCode</prop>
+                    <prop key="displayName.en">Postal code</prop>
+                    <prop key="displayName.en-us">ZIP code</prop>
+                    <prop key="displayName.de">Postleitzahl</prop>
+                    <prop key="displayName.fr">Code postal</prop>
+                    <prop key="description.en">Postal code</prop>
+                    <prop key="description.en-us">ZIP code</prop>
+                    <prop key="description.de">Postleitzahl</prop>
+                    <prop key="description.fr">Code postal</prop>
                 </props>
             </property>
         </bean>
@@ -200,6 +342,14 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:mace:dir:attribute-def:postOfficeBox</prop>
                     <prop key="saml1.name">urn:oid:2.5.4.18</prop>
+                    <prop key="displayName.en">Postal box</prop>
+                    <prop key="displayName.de">Postfach</prop>
+                    <prop key="displayName.fr">Boite postale</prop>
+                    <prop key="displayName.fr-ch">Case postale</prop>
+                    <prop key="description.en">Postal box identifier</prop>
+                    <prop key="description.de">Postfach</prop>
+                    <prop key="description.fr">Boite postale</prop>
+                    <prop key="description.fr-ch">Case postale</prop>
                 </props>
             </property>
         </bean>
@@ -211,6 +361,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:mace:dir:attribute-def:telephoneNumber</prop>
                     <prop key="saml1.name">urn:oid:2.5.4.20</prop>
+                    <prop key="displayName.en">Business phone number</prop>
+                    <prop key="displayName.de">Telefon Geschäft</prop>
+                    <prop key="displayName.fr">Teléphone professionnel</prop>
+                    <prop key="displayName.it">Numero di telefono dell'ufficio</prop>
+                    <prop key="displayName.ja">所属組織電話番号</prop>
+                    <prop key="displayName.pt">Telefone</prop>
+                    <prop key="displayName.sv">Telefonummer (arbete)</prop>
+                    <prop key="description.en">Business phone number: Office or campus phone number</prop>
+                    <prop key="description.de">Telefonnummer am Arbeitsplatz</prop>
+                    <prop key="description.fr">Teléphone de l'institut, de l'université</prop>
+                    <prop key="description.it">Numero di telefono dell'ufficio</prop>
+                    <prop key="description.ja">所属組織(大学、会社など)の電話番号</prop>
+                    <prop key="description.pt">Número de telefone</prop>
+                    <prop key="description.sv">Telefonummer (arbete): Telefonnummer till arbetsplatsen</prop>
                 </props>
             </property>
         </bean>
@@ -222,6 +386,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.42</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:givenName</prop>
+                    <prop key="displayName.en">Given name</prop>
+                    <prop key="displayName.de">Vorname</prop>
+                    <prop key="displayName.fr">Prénom</prop>
+                    <prop key="displayName.it">Nome</prop>
+                    <prop key="displayName.ja">名</prop>
+                    <prop key="displayName.pt">Nome</prop>
+                    <prop key="displayName.sv">Förnamn</prop>
+                    <prop key="description.en">Given name of a person</prop>
+                    <prop key="description.de">Vorname</prop>
+                    <prop key="description.fr">Prénom de l'utilisateur</prop>
+                    <prop key="description.it">Nome</prop>
+                    <prop key="description.ja">氏名(名)の英語表記</prop>
+                    <prop key="description.pt">Nome</prop>
+                    <prop key="description.sv">Förnamn: Förnamn för personen.</prop>
                 </props>
             </property>
         </bean>
@@ -233,6 +411,12 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.43</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:initials</prop>
+                    <prop key="displayName.en">Initials</prop>
+                    <prop key="displayName.de">Initialen</prop>
+                    <prop key="displayName.fr">Initiales</prop>
+                    <prop key="description.en">Initials</prop>
+                    <prop key="description.de">Die Anfangsbuchstaben</prop>
+                    <prop key="description.fr">L' initiales</prop>
                 </props>
             </property>
         </bean>
@@ -246,6 +430,8 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.2</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:departmentNumber</prop>
+                    <prop key="displayName.en">Department number</prop>
+                    <prop key="description.en">Department number</prop>
                 </props>
             </property>
         </bean>
@@ -257,6 +443,14 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.241</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:displayName</prop>
+                    <prop key="displayName.en">Display Name</prop>
+                    <prop key="displayName.de">Anzeigename</prop>
+                    <prop key="displayName.fr">Nom</prop>
+                    <prop key="displayName.it">Nome</prop>
+                    <prop key="description.en">The name that should appear in white-pages-like applications for this person.</prop>
+                    <prop key="description.de">Anzeigename</prop>
+                    <prop key="description.fr">Nom complet d'affichage</prop>
+                    <prop key="description.it">Nome</prop>
                 </props>
             </property>
         </bean>
@@ -268,6 +462,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.3</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:employeeNumber</prop>
+                    <prop key="displayName.en">Employee number</prop>
+                    <prop key="displayName.de">Mitarbeiter Nummer</prop>
+                    <prop key="displayName.fr">Numéro d'employé</prop>
+                    <prop key="displayName.it">Numero dell'utente</prop>
+                    <prop key="displayName.ja">従業員番号</prop>
+                    <prop key="displayName.pt">Número de empregado</prop>
+                    <prop key="displayName.sv">Anställningsnummer</prop>
+                    <prop key="description.en">Identifies an employee within an organization</prop>
+                    <prop key="description.de">Identifiziert einen Mitarbeiter innerhalb der Organisation</prop>
+                    <prop key="description.fr">Identifie un employé au sein de l'organisation</prop>
+                    <prop key="description.it">Identifica l' utente presso l'organizzazione</prop>
+                    <prop key="description.ja">所属組織内での利用者の従業員番号</prop>
+                    <prop key="description.pt">Número de empregado</prop>
+                    <prop key="description.sv">Anställningsnummer: Unik anställningsidentifierare i hemmaorganisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -279,6 +487,8 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.4</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:employeeType</prop>
+                    <prop key="displayName.en">Employee type</prop>
+                    <prop key="description.en">Employee type</prop>
                 </props>
             </property>
         </bean>
@@ -290,6 +500,8 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.60</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:jpegPhoto</prop>
+                    <prop key="displayName.en">JPEG Photo</prop>
+                    <prop key="description.en">Image of a person in JPEG format</prop>
                 </props>
             </property>
         </bean>
@@ -301,6 +513,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.39</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:preferredLanguage</prop>
+                    <prop key="displayName.en">Preferred Language</prop>
+                    <prop key="displayName.de">Bevorzugte Sprache</prop>
+                    <prop key="displayName.fr">Langue préférée</prop>
+                    <prop key="displayName.it">Lingua preferita</prop>
+                    <prop key="displayName.ja">希望言語</prop>
+                    <prop key="displayName.pt">Língua preferida</prop>
+                    <prop key="displayName.sv">Språkönskemål</prop>
+                    <prop key="description.en">Preferred language: Users preferred language (see RFC1766)</prop>
+                    <prop key="description.de">Bevorzugte Sprache (see RFC1766)</prop>
+                    <prop key="description.fr">Exemple: fr, de, it, en, ... (voir RFC1766)</prop>
+                    <prop key="description.it">Lingua preferita: la lingua preferita dall'utente (cfr. RFC1766)</prop>
+                    <prop key="description.ja">利用者が希望する言語(RFC1766 を参照)</prop>
+                    <prop key="description.pt">Língua preferida: Língua preferida do utilizador (cfr. RFC1766)</prop>
+                    <prop key="description.sv">Språkönskemål: Personens önskade språk (see RFC1766).</prop>
                 </props>
             </property>
         </bean>
@@ -314,6 +540,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.1</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonAffiliation</prop>
+                    <prop key="displayName.en">Affiliation</prop>
+                    <prop key="displayName.de">Zugehörigkeit</prop>
+                    <prop key="displayName.fr">Affiliation</prop>
+                    <prop key="displayName.it">Tipo di membro</prop>
+                    <prop key="displayName.ja">職位</prop>
+                    <prop key="displayName.pt">Tipo de utilizador</prop>
+                    <prop key="displayName.sv">Anknytning</prop>
+                    <prop key="description.en">Affiliation: Type of affiliation with Home Organization</prop>
+                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
+                    <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
+                    <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
+                    <prop key="description.ja">所属組織における職位(faculty，staff，student，memberなど)</prop>
+                    <prop key="description.pt">Tipo de utilizador: tipo de utilizador na organização. Exemplo: Estudante, ...</prop>
+                    <prop key="description.sv">Anknytning: Vilken anknytning personen har till organisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -325,6 +565,20 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.7</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonEntitlement</prop>
+                    <prop key="displayName.en">Entitlement</prop>
+                    <prop key="displayName.de">Berechtigung</prop>
+                    <prop key="displayName.fr">Entitlement</prop>
+                    <prop key="displayName.it">Prerogativa</prop>
+                    <prop key="displayName.ja">権限</prop>
+                    <prop key="displayName.pt">Título</prop>
+                    <prop key="displayName.sv">Rättigheter</prop>
+                    <prop key="description.en">Member of: URI (either URL or URN) that indicates a set of rights to specific resources based on an agreement across the releavant community</prop>
+                    <prop key="description.de">Zeichenkette, die Rechte für spezifischen Ressourcen beschreibt</prop>
+                    <prop key="description.fr">Membre de: URI (soit une URL ou une URN) décrivant un droit spécific d'accès.</prop>
+                    <prop key="description.it">Membro delle seguenti URI (sia URL o URN) che rappresentano diritti specifici d'accesso validi in tutta la communità</prop>
+                    <prop key="description.ja">アクセス権限がある組織のメンバであることを示す URI</prop>
+                    <prop key="description.pt">URI (retractado por um URN ou URL) que indica um conjunto de direitos para recursos específicos. </prop>
+                    <prop key="description.sv">Rättigheter: URI (either URL or URN) som beskriver olika rättigheter till angivna tjänster.</prop>
                 </props>
             </property>
         </bean>
@@ -336,6 +590,15 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.2</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonNickname</prop>
+                    <prop key="displayName.en">Nick name</prop>
+                    <prop key="displayName.de">Übername</prop>
+                    <prop key="displayName.fr">Surnom</prop>
+                    <prop key="displayName.it">Diminutivo</prop>
+                    <prop key="description.en">Person's nickname, or the informal name by which they are accustomed to be hailed.</prop>
+                    <prop key="description.de">Übername einer Person, oder üblicher Rufname zur Begrüßung.</prop>
+                    <prop key="description.de-ch">Übername einer Person, oder üblicher Rufname zur Begrüssung.</prop>
+                    <prop key="description.fr">Nom personnalisable pour un usage informel.</prop>
+                    <prop key="description.it">Diminutivo della persona, o  soprannome.</prop>
                 </props>
             </property>
         </bean>
@@ -347,17 +610,35 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.5</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrimaryAffiliation</prop>
+                    <prop key="displayName.en">Primary affiliation</prop>
+                    <prop key="displayName.de">Primäre Zugehörigkeit</prop>
+                    <prop key="displayName.fr">Affiliation pricipale</prop>
+                    <prop key="displayName.it">Appartenenza principale</prop>
+                    <prop key="description.en">Specifies the person's primary relationship to the institution in broad categories such as student, faculty, staff, alum, etc.</prop>
+                    <prop key="description.de">Spezifiziert der Hauptbeziehung einer Person innerhalb ihrer Organisation in groben Kategorien wie Student, Mitarbeiter, Alumni, etc.</prop>
+                    <prop key="description.fr">Spécifie la relation principale d'une personne avec l'institution selon des majeures catégories comme étudiant, collaborateur, alumni etc.</prop>
+                    <prop key="description.it">Specifica la relazione principale dell persona con l'istituzione secondo le maggiori categorie come studente, collaboratore, alumni, etc.</prop>
                 </props>
             </property>
         </bean>
 
-                <bean parent="shibboleth.TranscodingProperties">
+        <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
                     <prop key="id">eduPersonPrincipalName</prop>
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.6</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrincipalName</prop>
+                    <prop key="displayName.en">Principal Name</prop>
+                    <prop key="displayName.de">Principal Name</prop>
+                    <prop key="displayName.fr">Principal Name</prop>
+                    <prop key="displayName.it">Principal Name</prop>
+                    <prop key="displayName.ja">フェデレーション内のユニークID</prop>
+                    <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
+                    <prop key="description.de">Eindeutige Benützeridentifikation</prop>
+                    <prop key="description.fr">L'identifiant unique de l'utilisateur</prop>
+                    <prop key="description.it">Un ID personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
+                    <prop key="description.ja">フェデレーション内で一意でかつ永続的な利用者識別子</prop>
                 </props>
             </property>
         </bean>
@@ -369,6 +650,8 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.12</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.12</prop>
+                    <prop key="displayName.en">Prior Principal Name</prop>
+                    <prop key="description.en">eduPersonPrincipalName value that was previously associated with the entry.</prop>
                 </props>
             </property>
         </bean>
@@ -380,14 +663,16 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.9</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonScopedAffiliation</prop>
-                    <prop key="description.en">Affiliation: Type of affiliation with Home Organization</prop>
-                    <prop key="description.it">Type d'affiliation dans l'organisation</prop>
-                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
-                    <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
-                    <prop key="displayName.en">Affiliation</prop>
+                    <prop key="displayName.en">Scoped Affiliation</prop>
                     <prop key="displayName.de">Zugehörigkeit</prop>
-                    <prop key="displayName.it">Tipo di membro</prop>
                     <prop key="displayName.fr">Affiliation</prop>
+                    <prop key="displayName.it">Tipo di membro</prop>
+                    <prop key="displayName.ja">スコープ付き職位</prop>
+                    <prop key="description.en">Specifies the person's affiliation within a particular security domain</prop>
+                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
+                    <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
+                    <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
+                    <prop key="description.ja">ドメインスコープ付きの所属組織における職位(faculty@example.ac.jpなど)</prop>
                 </props>
             </property>
         </bean>
@@ -399,6 +684,14 @@
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.11</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonAssurance</prop>
+                    <prop key="displayName.en">Assurance Level</prop>
+                    <prop key="displayName.de">Vertrauensgrad</prop>
+                    <prop key="displayName.fr">Niveau de confiance</prop>
+                    <prop key="displayName.it">Livello di sicurezza</prop>
+                    <prop key="description.en">Set of URIs that assert compliance with specific standards for identity assurance.</prop>
+                    <prop key="description.de">URIs die eine gewisse Zusicherung für spezifische Standards des Vertrauens beinhalten</prop>
+                    <prop key="description.fr">Un ensemble d'URI qui attestent la conformité selon un standard pour les niveaux d'assurance d'identités</prop>
+                    <prop key="description.it">Un insieme di URI che asseriscono l'osservanza dei livelli di sicurezza richiesti</prop>
                 </props>
             </property>
         </bean>
@@ -412,6 +705,20 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.13</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.13</prop>
+                    <prop key="displayName.en">Unique ID</prop>
+                    <prop key="displayName.de">Eindeutige ID</prop>
+                    <prop key="displayName.fr">ID unique</prop>
+                    <prop key="displayName.it">ID unico</prop>
+                    <prop key="displayName.ja">ユニークID</prop>
+                    <prop key="displayName.pt">ID único</prop>
+                    <prop key="displayName.sv">Unik identifierare</prop>
+                    <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
+                    <prop key="description.de">Eindeutige Benützeridentifikation</prop>
+                    <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
+                    <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
+                    <prop key="description.ja">ドメインスコープ付きの所属組織内で一意の利用者識別子(0123456789@example.ac.jpなど)</prop>
+                    <prop key="description.pt">ID único: Identificador pessoal que identifica claramente o utilizador na sua organização</prop>
+                    <prop key="description.sv">Unik identifierare: En unik identifierare för en person, används primärt för att identifiera personen inloggning vid annan organisation än hemmaorganisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -424,6 +731,14 @@
                     <prop key="id">samlSubjectID</prop>
                     <prop key="transcoder">SAML2ScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oasis:names:tc:SAML:attribute:subject-id</prop>
+                    <prop key="displayName.en">Unique ID</prop>
+                    <prop key="displayName.de">Eindeutige ID</prop>
+                    <prop key="displayName.fr">ID unique</prop>
+                    <prop key="displayName.it">ID unico</prop>
+                    <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
+                    <prop key="description.de">Eindeutige Benützeridentifikation</prop>
+                    <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
+                    <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
                 </props>
             </property>
         </bean>
@@ -434,6 +749,14 @@
                     <prop key="id">samlPairwiseID</prop>
                     <prop key="transcoder">SAML2ScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oasis:names:tc:SAML:attribute:pairwise-id</prop>
+                    <prop key="displayName.en">Pairwise ID</prop>
+                    <prop key="displayName.de">Pairwise ID</prop>
+                    <prop key="displayName.fr">Pairwise ID</prop>
+                    <prop key="displayName.it">Pairwise ID</prop>
+                    <prop key="description.en">Pairwise ID: A unique identifier for a person, different for each service provider.</prop>
+                    <prop key="description.de">Pairwise ID: Eindeutige Benützeridentifikation, unterschiedlich pro Service Provider.</prop>
+                    <prop key="description.fr">Pairwise ID: Un identifiant unique de l'utilisateur, différent pour chaque fournisseur de service.</prop>
+                    <prop key="description.it">Pairwise ID: identificativo unico della persona, differente per ogni fornitore di servizio.</prop>
                 </props>
             </property>
         </bean>
