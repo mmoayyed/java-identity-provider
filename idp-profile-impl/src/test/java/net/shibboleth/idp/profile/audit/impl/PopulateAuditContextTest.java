@@ -29,6 +29,7 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -99,7 +100,7 @@ public class PopulateAuditContextTest {
         map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
         
         action.setFieldExtractors(map);
-        action.setFormattingMap(Collections.singletonMap("foo", "%A - %b %%"));
+        action.setFormattingMapParser(new FormattingMapParser(Collections.singletonMap("foo", "%A - %b %%")));
         action.initialize();
         
         final Event event = action.execute(src);

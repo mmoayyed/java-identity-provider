@@ -63,6 +63,10 @@
         </constructor-arg>
     </bean>
 
+    <bean id="TermsOfUseAuditFormattingMapParser"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
+        c:_0-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
+
     <!-- Action beans -->
     
     <bean id="InitializeConsentContext"
@@ -75,7 +79,7 @@
     <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.consent.PreConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultPreConsentAuditExtractors')}"
-        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
+        p:formattingMapParser-ref="TermsOfUseAuditFormattingMapParser" />
 
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
@@ -93,7 +97,7 @@
     <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.consent.ConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultConsentAuditExtractors')}"
-        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
+        p:formattingMapParser-ref="TermsOfUseAuditFormattingMapParser" />
 
     <bean id="WriteConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"

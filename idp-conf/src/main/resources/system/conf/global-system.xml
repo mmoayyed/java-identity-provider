@@ -432,9 +432,13 @@
     
     <!-- Action bean templates. -->
     
+    <bean id="shibboleth.AuditFormattingMapParser"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
+        c:_0-ref="shibboleth.AuditFormattingMap" />
+    
     <bean id="shibboleth.AbstractPopulateAuditContext" abstract="true"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:formattingMapParser-ref="shibboleth.AuditFormattingMapParser"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />

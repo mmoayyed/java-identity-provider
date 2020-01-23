@@ -85,6 +85,10 @@
         class="net.shibboleth.idp.consent.logic.impl.PreferExplicitOrderComparator"
         c:order="#{getObject('shibboleth.consent.attribute-release.AttributeDisplayOrder')}" />
 
+    <bean id="AttributeReleaseAuditFormattingMapParser"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
+        c:_0-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+
     <!-- Action beans -->
 
     <bean id="InitializeConsentContext"
@@ -101,7 +105,7 @@
     <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.consent.PreConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultPreConsentAuditExtractors')}"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+        p:formattingMapParser-ref="AttributeReleaseAuditFormattingMapParser" />
 
     <bean id="PopulateConsentContext"
         class="net.shibboleth.idp.consent.flow.impl.PopulateConsentContext" scope="prototype"
@@ -131,7 +135,7 @@
     <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.consent.ConsentAuditExtractors') ?: getObject('shibboleth.consent.DefaultConsentAuditExtractors')}"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+        p:formattingMapParser-ref="AttributeReleaseAuditFormattingMapParser" />
 
     <bean id="ExtractConsent"
         class="net.shibboleth.idp.consent.flow.impl.ExtractConsent" scope="prototype"

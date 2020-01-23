@@ -36,6 +36,8 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -130,44 +132,21 @@ public class PopulateAuditContext extends AbstractProfileAction {
     }
     
     /**
-     * Set the map of logging category to formatting strings for log entries.
+     * Set the parsed map of logging category to formatting strings for log entries.
      * 
      * <p>A formatting string consists of tokens prefixed by '%' separated by any non-alphanumeric or whitespace.
      * Tokens can contain any letter or number or a hyphen. Anything other than a token, including whitespace, is
      * a literal.</p>
      * 
-     * @param map map of categories to formatting strings
+     * <p>The input class exposes the parsed field data for efficiency.</p>
+     * 
+     * @param parser the parsed map
      */
-    public void setFormattingMap(@Nonnull @NonnullElements final Map<String,String> map) {
+    public void setFormattingMapParser(@Nonnull final FormattingMapParser parser) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(map, "Audit formatting map cannot be null");
+        Constraint.isNotNull(parser, "Parsed audit formatting map cannot be null");
         
-        fieldsToExtract = new HashSet<>(10);
-        
-        for (final String s : map.values()) {
-            final int len = s.length();
-            boolean inToken = false;
-            final StringBuilder field = new StringBuilder();
-            for (int pos = 0; pos < len; ++pos) {
-                final char ch = s.charAt(pos);
-                if (inToken) {
-                    if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
-                        fieldsToExtract.add(field.substring(1));
-                        field.setLength(0);
-                        inToken = false;
-                    }
-                } else if (ch == '%') {
-                    field.setLength(0);
-                    inToken = true;
-                }
-                
-                field.append(ch);
-            }
-            
-            if (field.length() > 0 && inToken) {
-                fieldsToExtract.add(field.substring(1));
-            }
-        }
+        fieldsToExtract = parser.getFieldsToExtract();
     }
 
     /**
@@ -290,4 +269,62 @@ public class PopulateAuditContext extends AbstractProfileAction {
             }
         }
     }
+
+    /**
+     * Parser for the formatting strings that exposes a final set of field labels that are
+     * present in any of the input formatters.
+     * 
+     * @since 4.0.0
+     */
+    public static class FormattingMapParser {
+        
+        /** Set of parsed fields. */
+        @Nonnull @NonnullElements final Set<String> fields;
+        
+        /**
+         * Constructor.
+         *
+         * @param map map of formatters to parse
+         */
+        public FormattingMapParser(@Nonnull @NonnullElements final Map<String,String> map) {
+            final Set<String> fieldsToExtract = new HashSet<>(10);
+            
+            for (final String s : map.values()) {
+                final int len = s.length();
+                boolean inToken = false;
+                final StringBuilder field = new StringBuilder();
+                for (int pos = 0; pos < len; ++pos) {
+                    final char ch = s.charAt(pos);
+                    if (inToken) {
+                        if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
+                            fieldsToExtract.add(field.substring(1));
+                            field.setLength(0);
+                            inToken = false;
+                        }
+                    } else if (ch == '%') {
+                        field.setLength(0);
+                        inToken = true;
+                    }
+                    
+                    field.append(ch);
+                }
+                
+                if (field.length() > 0 && inToken) {
+                    fieldsToExtract.add(field.substring(1));
+                }
+            }
+            
+            fields = Set.copyOf(fieldsToExtract);
+        }
+        
+        /**
+         * Get the parsed set of fields.
+         * 
+         * @return the parsed fields
+         */
+        @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getFieldsToExtract() {
+            return fields;
+        }
+    }
+    
 }
