@@ -138,11 +138,6 @@
             <version>${java-support.version}</version>
         </dependency>
         <dependency>
-            <!-- needed for logback SMTP appender -->
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-api</artifactId>
         </dependency>
@@ -158,6 +153,13 @@
         </dependency>
 
         <!-- Runtime Dependencies -->
+
+        <!-- Needed for logback SMTP appender. -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -274,6 +276,46 @@
                     </archive>
                 </configuration>
              </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <!--
+                                            Ban use of old variants of the Java EE
+                                            component implementations, and of the
+                                            corresponding API modules.
+                                        -->
+                                        <exclude>javax.activation:activation</exclude>
+                                        <exclude>javax.activation:activation-api</exclude>
+                                        <exclude>jakarta.activation:jakarta.activation-api</exclude>
+                                        <exclude>javax.mail:mail</exclude>
+                                        <exclude>com.sun.mail:javax.mail</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <!--
+                                            Allow a harmless case where the dependency will be
+                                            satisfied by another artifact.
+                                        -->
+                                        <include>jakarta.activation:jakarta.activation-api:*:jar:provided</include>
+                                    </includes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
     </build>
