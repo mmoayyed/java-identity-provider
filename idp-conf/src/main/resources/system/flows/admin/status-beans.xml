@@ -26,17 +26,4 @@
         
     <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.Functions.Constant" c:target="status" />
     
-    <util:list id="ServiceCollection">
-        <ref bean="shibboleth.LoggingService" />
-        <ref bean="shibboleth.ReloadableAccessControlService" />
-        <ref bean="shibboleth.MetadataResolverService" />
-        <ref bean="shibboleth.RelyingPartyResolverService" />
-        <ref bean="shibboleth.NameIdentifierGenerationService" />
-        <ref bean="shibboleth.AttributeRegistryService" />
-        <ref bean="shibboleth.AttributeResolverService" />
-        <ref bean="shibboleth.AttributeFilterService" />
-        <ref bean="shibboleth.ReloadableCASServiceRegistry" />
-        <ref bean="shibboleth.ManagedBeanService" />
-    </util:list>
-
 </beans>
