@@ -28,7 +28,7 @@
     <end-state id="Status" view="status">
         <on-entry>
             <evaluate expression="WriteAuditLog" />
-            <evaluate expression="T(org.springframework.beans.factory.BeanFactoryUtils).beansOfTypeIncludingAncestors(flowRequestContext.getActiveFlow().getApplicationContext(), T(net.shibboleth.utilities.java.support.service.AbstractReloadableService)).values()" result="requestScope.services" />            <evaluate expression="ServiceCollection" result="requestScope.services" />
+            <evaluate expression="T(org.springframework.beans.factory.BeanFactoryUtils).beansOfTypeIncludingAncestors(flowRequestContext.getActiveFlow().getApplicationContext(), T(net.shibboleth.utilities.java.support.service.AbstractReloadableService)).values()" result="requestScope.services" />
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.metrics.AttributeResolverGaugeSet')" result="requestScope.attributeResolverGaugeSet" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.metrics.MetadataGaugeSet')" result="requestScope.metadataResolverGaugeSet" />            
