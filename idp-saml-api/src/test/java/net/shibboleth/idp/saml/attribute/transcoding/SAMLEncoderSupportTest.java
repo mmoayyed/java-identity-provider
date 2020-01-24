@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.DecodingException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -92,7 +93,7 @@ public class SAMLEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(str.getValue(), STRING_VALUE);
     }
     
-    @Test public void encodeByteArrayValue() {
+    @Test public void encodeByteArrayValue() throws DecodingException {
         
         try {
             SAMLEncoderSupport.encodeByteArrayValue(null, QNAME, BYTE_ARRAY_VALUE, true);

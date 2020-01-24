@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.saml.attribute.transcoding.SAMLEncoderSupport;
 import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.DecodingException;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -71,14 +72,18 @@ public class SAML1ByteAttributeTranscoder extends AbstractSAML1AttributeTranscod
         if (null == s) {
             return null;
         }
-        
-        final byte[] decoded = Base64Support.decode(s);
-        if (decoded.length == 0) {
-            log.warn("Ignoring non-base64-encoded value");
+                
+        try {
+            final byte[] decoded = Base64Support.decode(s);
+            if (decoded.length == 0) {
+                log.warn("Ignoring non-base64-encoded value");
+                return null;
+            }
+            return ByteAttributeValue.valueOf(decoded);
+        } catch (final DecodingException e) {
+            log.warn("Ignoring non-base64-encoded value: {}",e.getMessage());
             return null;
         }
-        
-        return ByteAttributeValue.valueOf(decoded);
     }
     
 }

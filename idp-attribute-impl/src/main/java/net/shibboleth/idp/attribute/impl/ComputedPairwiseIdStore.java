@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base32Support;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.DecodingException;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -138,7 +139,12 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (newValue != null && !newValue.isEmpty()) {
-            salt = Base64Support.decode(newValue);
+            try {
+                salt = Base64Support.decode(newValue);
+            } catch (final DecodingException e) {
+                //convert back to an illegal argument exception as salt is invalid base64.
+               throw new IllegalArgumentException("Can not decode base64 encoded salt value",e);
+            }
         }
     }
 

@@ -45,6 +45,8 @@ public class ComputedPairwiseIdStoreTest {
     private static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
     private static final String salt2 = "thisisaspecialsalt";
+    
+    private static final String INVALID_BASE64_SALT="AB==";
         
     public static final String COMMON_ATTRIBUTE_VALUE_STRING = "at1-Data";
     
@@ -62,6 +64,12 @@ public class ComputedPairwiseIdStoreTest {
         
         store.setEncodedSalt(Base64Support.encode(salt, false));
         Assert.assertEquals(salt, store.getSalt());
+    }
+    
+    /* test that an invalid base64 string which can not be decoded throws an illegal argument exception*/ 
+    @Test(expectedExceptions = IllegalArgumentException.class) public void testInvalidBase64SaltString() {
+        final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
+        store.setEncodedSalt(INVALID_BASE64_SALT);
     }
 
     @Test(expectedExceptions=IOException.class)

@@ -72,6 +72,9 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
     private final static String ATTR_NAMESPACE = "Namespace";
     private final static byte[] BYTE_ARRAY_1 = {1, 2, 3, 4, 5};
     private final static byte[] BYTE_ARRAY_2 = {4, 3, 2, 1};
+    
+    /** Invalid base64 string as it has invalid trailing digits. */
+    private final static String INVALID_BASE64_TRAILING = "AB==";
 
     @BeforeClass public void setUp() throws ComponentInitializationException {
         
@@ -275,6 +278,22 @@ public class SAML1ByteAttributeTranscoderTest extends OpenSAMLInitBaseTestCase {
         
         final XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
         stringValue.setValue("******");
+        
+        final Attribute samlAttribute = attributeBuilder.buildObject();
+        samlAttribute.setAttributeName(ATTR_NAME);
+        samlAttribute.setAttributeNamespace(ATTR_NAMESPACE);
+        samlAttribute.getAttributeValues().add(stringValue);
+
+        final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(samlAttribute);
+        Assert.assertEquals(rulesets.size(), 1);
+        final TranscodingRule ruleset = rulesets.iterator().next();
+        
+        TranscoderSupport.<Attribute>getTranscoder(ruleset).decode(null, samlAttribute, ruleset);
+    }
+    
+    @Test(expectedExceptions = AttributeDecodingException.class) public void badDecodeInvalidBase64() throws AttributeDecodingException{
+        final XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        stringValue.setValue(INVALID_BASE64_TRAILING);
         
         final Attribute samlAttribute = attributeBuilder.buildObject();
         samlAttribute.setAttributeName(ATTR_NAME);

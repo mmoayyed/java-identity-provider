@@ -29,6 +29,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.DecodingException;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -125,7 +126,13 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
      * @return a pair containing the username and password, respectively, or null
      */
     @Nullable protected Pair<String,String> decodeCredentials(@Nonnull @NotEmpty final String encodedCredentials) {
-        final String decodedUserPass = new String(Base64Support.decode(encodedCredentials), Charsets.US_ASCII);
+        String decodedUserPass = null;
+        try {
+            decodedUserPass = new String(Base64Support.decode(encodedCredentials), Charsets.US_ASCII);
+        } catch (final DecodingException e) {
+            log.warn("{} Credentials could not be base64 decoded: {}",getLogPrefix(),e.getMessage());
+            //nothing else, decodedUserPass remains null.
+        }
 
         if (decodedUserPass != null && decodedUserPass.contains(":")) {
             final String username = decodedUserPass.substring(0, decodedUserPass.indexOf(':'));

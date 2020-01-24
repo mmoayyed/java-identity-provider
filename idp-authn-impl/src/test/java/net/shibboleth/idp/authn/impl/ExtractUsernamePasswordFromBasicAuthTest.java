@@ -78,6 +78,14 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
+    /* Test invalid base64 trailing bits. */
+    @Test public void testInvalidBase64() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic AB==");
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+    }
+    
     @Test public void testValid() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
         
