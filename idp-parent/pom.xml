@@ -295,10 +295,11 @@
                                             component implementations, and of the
                                             corresponding API modules.
                                         -->
+                                        <exclude>jakarta.activation:jakarta.activation-api</exclude>
                                         <exclude>javax.activation:activation</exclude>
                                         <exclude>javax.activation:activation-api</exclude>
-                                        <exclude>jakarta.activation:jakarta.activation-api</exclude>
                                         <exclude>javax.mail:mail</exclude>
+                                        <exclude>javax.xml.bind:jaxb-api</exclude>
                                         <exclude>com.sun.mail:javax.mail</exclude>
                                     </excludes>
                                     <includes>
