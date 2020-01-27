@@ -125,7 +125,7 @@
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
-                    <prop key="id">mobileNumber</prop>
+                    <prop key="id">mobile</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.41</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:mobile</prop>
