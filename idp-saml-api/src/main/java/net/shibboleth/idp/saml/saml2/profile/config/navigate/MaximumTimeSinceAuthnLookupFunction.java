@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.saml2.profile.config.logic;
+package net.shibboleth.idp.saml.saml2.profile.config.navigate;
 
 import java.time.Duration;
 

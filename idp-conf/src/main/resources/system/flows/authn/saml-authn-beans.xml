@@ -330,7 +330,7 @@
             <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.CheckAddressPredicate" />
         </property>
         <property name="maximumTimeSinceAuthn">
-            <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.MaximumTimeSinceAuthnLookupFunction" />
+            <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.MaximumTimeSinceAuthnLookupFunction" />
         </property>
         <property name="signatureRequired">
             <bean parent="shibboleth.Conditions.NOT">
