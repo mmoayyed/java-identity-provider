@@ -782,6 +782,13 @@
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="LDAPProperty" type="resolver:PropertyType"> <!-- Deprecated - Remove in V5. -->
+                        <annotation>
+                            <documentation>
+                                DEPRECATED: LDAP connection properties relevant to the underlying provider being used.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element name="StartTLSTrustCredential" type="sec:X509Credential">
                         <annotation>
                             <documentation>
@@ -1588,6 +1595,7 @@
             <documentation>Supported connection strategies.</documentation>
         </annotation>
         <restriction base="string">
+            <enumeration value="DEFAULT"/> <!-- Deprecated, remove in V5. -->
             <enumeration value="ACTIVE_PASSIVE"/>
             <enumeration value="ROUND_ROBIN"/>
             <enumeration value="RANDOM"/>
@@ -1649,6 +1657,17 @@
                     Note that when this threshold is reach the pool will begin blocking until a connection
                     is available.
                     Default value is 3.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="blockWhenEmpty" type="resolver:string"> <!-- Deprecated - Remove in V5 -->
+            <annotation>
+                <documentation>
+                    DEPRECATED
+                    Whether the pool should block when maxPoolSize objects are in use.
+                    If false, pool will grow beyond the maxPoolSize value.
+                    Note that a properly configured blocking pool will yield better performance.
+                    Default value is true.
                 </documentation>
             </annotation>
         </attribute>

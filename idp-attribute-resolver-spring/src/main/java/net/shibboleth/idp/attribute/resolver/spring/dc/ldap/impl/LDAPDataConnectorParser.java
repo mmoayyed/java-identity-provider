@@ -120,8 +120,15 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      */
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
+        log.debug("{} Parsing XML configuration {}", getLogPrefix(), config);
 
+        final List<Element> oldProperties = ElementSupport.getChildElementsByTagNameNS(config,
+                AttributeResolverNamespaceHandler.NAMESPACE, "LDAPProperty");
+        if (oldProperties != null && !oldProperties.isEmpty()) {
+            // V4 Deprecation
+            DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty", "LDAP Connector", "(none), will be ignored");
+        }
+        
         final V2Parser v2Parser = new V2Parser(config, getLogPrefix());
 
         final BeanDefinitionBuilder connectionFactory =
@@ -290,6 +297,13 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     connectionConfig.addPropertyValue("connectionStrategy", new RandomConnectionStrategy());
                     break;
 
+                case "DEFAULT":
+                    // V4 Deprecation
+                    DeprecationSupport.warn(ObjectType.CONFIGURATION, "connectionStrategy=DEFAULT", "LDAP Connector",
+                            "ACTIVE_PASSIVE");
+                    connectionConfig.addPropertyValue("connectionStrategy", new ActivePassiveConnectionStrategy());
+                    break;
+                    
                 default:
                     connectionConfig.addPropertyValue("connectionStrategy", new ActivePassiveConnectionStrategy());
                     break;
@@ -540,6 +554,13 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             if (null == poolConfigElement) {
                 return null;
             }
+            
+            if (poolConfigElement.hasAttributeNS(null, "blockWhenEmpty")) {
+                // V4 Deprecation
+                DeprecationSupport.warn(ObjectType.ATTRIBUTE, "blockWhenEmpty", "<ConnectionPool>",
+                        "(none), will be ignored");
+            }
+            
             final String blockWaitTime =
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("blockWaitTime"));
             final String expirationTime =
@@ -573,7 +594,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String failFastInitialize =
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("failFastInitialize"));
             if (failFastInitialize != null) {
-                // V4 Deprecations
+                // V4 Deprecation
                 DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "failfastInitialize (on a ConnectionPool element)", 
                         null, "failfastInitialize (on a DataConnector)");
                 pool.addPropertyValue("failFastInitialize", failFastInitialize);
