@@ -12,10 +12,7 @@
   <property name="severity" value="warning"/>
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
-    <module name="JavadocMethod">
-      <property name="allowThrowsTagsForSubclasses" value="true"/>
-      <property name="allowUndeclaredRTE" value="true"/>
-    </module>
+    <module name="JavadocMethod"/>
     <module name="JavadocType">
         <property name="allowUnknownTags" value="true"/>
     </module>
