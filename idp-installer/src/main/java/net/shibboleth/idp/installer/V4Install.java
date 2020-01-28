@@ -481,6 +481,10 @@ public class V4Install extends AbstractInitializableComponent {
          * @throws BuildException if badness occurs
          */
         protected void execute() throws BuildException {
+            if (currentState.getInstalledVersion() != null) {
+                log.debug("Skipping key generation");
+                return;
+            }
             ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
             createdSigning = generateKey("idp-signing");
             createdEncryption = generateKey("idp-encryption");
