@@ -27,7 +27,7 @@
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.1</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:uid</prop>
                     <prop key="displayName.en">User ID</prop>
-                    <prop key="displayName.de">Benutzer ID</prop>
+                    <prop key="displayName.de">Benutzer-ID</prop>
                     <prop key="displayName.fr">ID utilisateur</prop>
                     <prop key="displayName.it">ID dell'utente</prop>
                     <prop key="displayName.ja">ユーザID</prop>
@@ -52,14 +52,14 @@
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.3</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:mail</prop>
                     <prop key="displayName.en">E-mail</prop>
-                    <prop key="displayName.de">E-mail</prop>
+                    <prop key="displayName.de">E-Mail</prop>
                     <prop key="displayName.fr">Email</prop>
                     <prop key="displayName.it">E-mail</prop>
                     <prop key="displayName.ja">メールアドレス</prop>
                     <prop key="displayName.pt">E-mail</prop>
                     <prop key="displayName.sv">E-postadress</prop>
                     <prop key="description.en">E-Mail: Preferred address for e-mail to be sent to this person</prop>
-                    <prop key="description.de">E-Mail Adreße</prop>
+                    <prop key="description.de">E-Mail-Adresse</prop>
                     <prop key="description.de-ch">E-Mail Adresse</prop>
                     <prop key="description.fr">Adresse de courrier électronique</prop>
                     <prop key="description.it">E-Mail: l'indirizzo e-mail preferito dall'utente</prop>
@@ -103,7 +103,7 @@
                     <prop key="saml2.name">urn:oid:0.9.2342.19200300.100.1.39</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:homePostalAddress</prop>
                     <prop key="displayName.en">Home postal address</prop>
-                    <prop key="displayName.de">Heimadreße</prop>
+                    <prop key="displayName.de">Heimatadresse</prop>
                     <prop key="displayName.de-ch">Heimadresse</prop>
                     <prop key="displayName.fr">Adresse personnelle</prop>
                     <prop key="displayName.it">Indirizzo personale</prop>
@@ -111,7 +111,7 @@
                     <prop key="displayName.pt">Morada Pessoal</prop>
                     <prop key="displayName.sv">Postadress (hem)</prop>
                     <prop key="description.en">Home postal address: Home address of the user</prop>
-                    <prop key="description.de">Heimadreße</prop>
+                    <prop key="description.de">Heimatadresse</prop>
                     <prop key="description.de-ch">Heimadresse</prop>
                     <prop key="description.fr">Adresse postale de domicile de la personne</prop>
                     <prop key="description.it">Indirizzo personale: indirizzo dove abita l'utente</prop>
@@ -227,8 +227,8 @@
                     <prop key="displayName.de-ch">Strasse</prop>
                     <prop key="displayName.fr">Rue</prop>
                     <prop key="description.en">Street address</prop>
-                    <prop key="description.de">Strassendreße</prop>
-                    <prop key="description.de-ch">Strassendresse</prop>
+                    <prop key="description.de">Name der Straße</prop>
+                    <prop key="description.de-ch">Strassenadresse</prop>
                     <prop key="description.fr">Nom de rue</prop>
                 </props>
             </property>
@@ -242,7 +242,7 @@
                     <prop key="saml2.name">urn:oid:2.5.4.10</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:o</prop>
                     <prop key="displayName.en">Organization name</prop>
-                    <prop key="displayName.de">Organisations Name</prop>
+                    <prop key="displayName.de">Organisationsname</prop>
                     <prop key="displayName.fr">Nom de l'organisation</prop>
                     <prop key="displayName.ja">所属組織名</prop>
                     <prop key="description.en">Organization name</prop>
@@ -265,7 +265,7 @@
                     <prop key="displayName.fr">Unité organisationnelle</prop>
                     <prop key="displayName.ja">部門名</prop>
                     <prop key="description.en">Organizational unit</prop>
-                    <prop key="description.de">Name der Organizationseinheit</prop>
+                    <prop key="description.de">Name der Organisationseinheit</prop>
                     <prop key="description.fr">Nom de l'unité organisationnelle</prop>
                     <prop key="description.ja">所属部門名の英語表記</prop>
                 </props>
@@ -297,15 +297,14 @@
                     <prop key="saml2.name">urn:oid:2.5.4.16</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:postalAddress</prop>
                     <prop key="displayName.en">Business postal address</prop>
-                    <prop key="displayName.de">Geschäftsadreße</prop>
-                    <prop key="displayName.de-ch">Geschäftsadresse</prop>
+                    <prop key="displayName.de">Geschäftsadresse</prop>
                     <prop key="displayName.fr">Adresse professionnelle</prop>
                     <prop key="displayName.it">Indirizzo professionale</prop>
                     <prop key="displayName.ja">所属組織住所</prop>
                     <prop key="displayName.pt">Morada</prop>
                     <prop key="displayName.sv">Postadress (arbete):</prop>
                     <prop key="description.en">Business postal address: Campus or office address</prop>
-                    <prop key="description.de">Adreße am Arbeitsplatz</prop>
+                    <prop key="description.de">Geschäftliche Adresse</prop>
                     <prop key="description.de-ch">Adresse am Arbeitsplatz</prop>
                     <prop key="description.fr">Adresse de l'institut, de l'université</prop>
                     <prop key="description.it">Indirizzo professionale: indirizzo dell'istituto o dell'ufficio</prop>
@@ -415,7 +414,8 @@
                     <prop key="displayName.de">Initialen</prop>
                     <prop key="displayName.fr">Initiales</prop>
                     <prop key="description.en">Initials</prop>
-                    <prop key="description.de">Die Anfangsbuchstaben</prop>
+                    <prop key="description.de">Anfangsbuchstaben des Namens</prop>
+                    <prop key="description.de-ch">Die Anfangsbuchstaben</prop>
                     <prop key="description.fr">L' initiales</prop>
                 </props>
             </property>
@@ -431,7 +431,9 @@
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.2</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:departmentNumber</prop>
                     <prop key="displayName.en">Department number</prop>
+                    <prop key="displayName.de">Abteilungsnummer</prop>
                     <prop key="description.en">Department number</prop>
+                    <prop key="description.de">Nummer der Abteilung</prop>
                 </props>
             </property>
         </bean>
@@ -463,7 +465,7 @@
                     <prop key="saml2.name">urn:oid:2.16.840.1.113730.3.1.3</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:employeeNumber</prop>
                     <prop key="displayName.en">Employee number</prop>
-                    <prop key="displayName.de">Mitarbeiter Nummer</prop>
+                    <prop key="displayName.de">Mitarbeiternummer</prop>
                     <prop key="displayName.fr">Numéro d'employé</prop>
                     <prop key="displayName.it">Numero dell'utente</prop>
                     <prop key="displayName.ja">従業員番号</prop>
@@ -521,7 +523,7 @@
                     <prop key="displayName.pt">Língua preferida</prop>
                     <prop key="displayName.sv">Språkönskemål</prop>
                     <prop key="description.en">Preferred language: Users preferred language (see RFC1766)</prop>
-                    <prop key="description.de">Bevorzugte Sprache (see RFC1766)</prop>
+                    <prop key="description.de">Bevorzugte Sprache (siehe RFC1766)</prop>
                     <prop key="description.fr">Exemple: fr, de, it, en, ... (voir RFC1766)</prop>
                     <prop key="description.it">Lingua preferita: la lingua preferita dall'utente (cfr. RFC1766)</prop>
                     <prop key="description.ja">利用者が希望する言語(RFC1766 を参照)</prop>
@@ -548,7 +550,8 @@
                     <prop key="displayName.pt">Tipo de utilizador</prop>
                     <prop key="displayName.sv">Anknytning</prop>
                     <prop key="description.en">Affiliation: Type of affiliation with Home Organization</prop>
-                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
+                    <prop key="description.de">Art der Zugehörigkeit zur Heimatorganisation</prop>
+                    <prop key="description.de-ch">Art der Zugehörigkeit zur Heimorganisation</prop>
                     <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
                     <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
                     <prop key="description.ja">所属組織における職位(faculty，staff，student，memberなど)</prop>
@@ -573,7 +576,7 @@
                     <prop key="displayName.pt">Título</prop>
                     <prop key="displayName.sv">Rättigheter</prop>
                     <prop key="description.en">Member of: URI (either URL or URN) that indicates a set of rights to specific resources based on an agreement across the releavant community</prop>
-                    <prop key="description.de">Zeichenkette, die Rechte für spezifischen Ressourcen beschreibt</prop>
+                    <prop key="description.de">Zeichenkette, die Rechte für spezifische Ressourcen beschreibt</prop>
                     <prop key="description.fr">Membre de: URI (soit une URL ou une URN) décrivant un droit spécific d'accès.</prop>
                     <prop key="description.it">Membro delle seguenti URI (sia URL o URN) che rappresentano diritti specifici d'accesso validi in tutta la communità</prop>
                     <prop key="description.ja">アクセス権限がある組織のメンバであることを示す URI</prop>
@@ -591,11 +594,12 @@
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.2</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonNickname</prop>
                     <prop key="displayName.en">Nick name</prop>
-                    <prop key="displayName.de">Übername</prop>
+                    <prop key="displayName.de">Kurzname</prop>
+                    <prop key="displayName.de-ch">Übername</prop>
                     <prop key="displayName.fr">Surnom</prop>
                     <prop key="displayName.it">Diminutivo</prop>
                     <prop key="description.en">Person's nickname, or the informal name by which they are accustomed to be hailed.</prop>
-                    <prop key="description.de">Übername einer Person, oder üblicher Rufname zur Begrüßung.</prop>
+                    <prop key="description.de">Kurzname einer Person, oder üblicher Rufname zur Begrüßung.</prop>
                     <prop key="description.de-ch">Übername einer Person, oder üblicher Rufname zur Begrüssung.</prop>
                     <prop key="description.fr">Nom personnalisable pour un usage informel.</prop>
                     <prop key="description.it">Diminutivo della persona, o  soprannome.</prop>
@@ -630,12 +634,13 @@
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.6</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrincipalName</prop>
                     <prop key="displayName.en">Principal Name</prop>
-                    <prop key="displayName.de">Principal Name</prop>
+                    <prop key="displayName.de">Persönliche ID</prop>
                     <prop key="displayName.fr">Principal Name</prop>
                     <prop key="displayName.it">Principal Name</prop>
                     <prop key="displayName.ja">フェデレーション内のユニークID</prop>
                     <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
-                    <prop key="description.de">Eindeutige Benützeridentifikation</prop>
+                    <prop key="description.de">Eindeutige Benutzeridentifikation</prop>
+                    <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">L'identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un ID personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
                     <prop key="description.ja">フェデレーション内で一意でかつ永続的な利用者識別子</prop>
@@ -669,7 +674,8 @@
                     <prop key="displayName.it">Tipo di membro</prop>
                     <prop key="displayName.ja">スコープ付き職位</prop>
                     <prop key="description.en">Specifies the person's affiliation within a particular security domain</prop>
-                    <prop key="description.de">Art der Zugehörigkeit zur Heimorganisation</prop>
+                    <prop key="description.de">Art der Zugehörigkeit zur Heimatorganisation</prop>
+                    <prop key="description.de-ch">Art der Zugehörigkeit zur Heimorganisation</prop>
                     <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
                     <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
                     <prop key="description.ja">ドメインスコープ付きの所属組織における職位(faculty@example.ac.jpなど)</prop>
@@ -713,7 +719,8 @@
                     <prop key="displayName.pt">ID único</prop>
                     <prop key="displayName.sv">Unik identifierare</prop>
                     <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
-                    <prop key="description.de">Eindeutige Benützeridentifikation</prop>
+                    <prop key="description.de">Eindeutige Benutzeridentifikation</prop>
+                    <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
                     <prop key="description.ja">ドメインスコープ付きの所属組織内で一意の利用者識別子(0123456789@example.ac.jpなど)</prop>
@@ -736,7 +743,8 @@
                     <prop key="displayName.fr">ID unique</prop>
                     <prop key="displayName.it">ID unico</prop>
                     <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
-                    <prop key="description.de">Eindeutige Benützeridentifikation</prop>
+                    <prop key="description.de">Eindeutige Benutzeridentifikation</prop>
+                    <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
                 </props>
@@ -754,7 +762,8 @@
                     <prop key="displayName.fr">Pairwise ID</prop>
                     <prop key="displayName.it">Pairwise ID</prop>
                     <prop key="description.en">Pairwise ID: A unique identifier for a person, different for each service provider.</prop>
-                    <prop key="description.de">Pairwise ID: Eindeutige Benützeridentifikation, unterschiedlich pro Service Provider.</prop>
+                    <prop key="description.de">Pairwise ID: Eindeutige Benutzeridentifikation, unterschiedlich pro Service Provider.</prop>
+                    <prop key="description.de-ch">Pairwise ID: Eindeutige Benützeridentifikation, unterschiedlich pro Service Provider.</prop>
                     <prop key="description.fr">Pairwise ID: Un identifiant unique de l'utilisateur, différent pour chaque fournisseur de service.</prop>
                     <prop key="description.it">Pairwise ID: identificativo unico della persona, differente per ogni fornitore di servizio.</prop>
                 </props>
