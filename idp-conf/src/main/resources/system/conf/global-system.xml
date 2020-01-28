@@ -167,7 +167,7 @@
         
     <bean id="shibboleth.SameSiteCookieFilter"
         class="net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter"
-        p:activationCondition="#{getObject('shibboleth.SameSiteCondition') ?: true}"
+        p:activationCondition-ref="#{'%{idp.cookie.sameSiteCondition:shibboleth.Conditions.FALSE}'.trim()}"
         p:defaultValue="%{idp.cookie.sameSite:None}"
         p:sameSiteCookies="#{getObject('shibboleth.SameSiteCookieMap')}" />
 
