@@ -349,9 +349,8 @@
 
     <bean id="ValidateAssertions" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
         <constructor-arg>
-            <!-- TODO: should invalid be fatal, or let a later action decide what to do? -->
             <bean class="org.opensaml.saml.saml2.profile.impl.ValidateAssertions" scope="prototype"
-                  p:invalidFatal="true"
+                  p:invalidFatal="false"
                   p:httpServletRequest-ref="shibboleth.HttpServletRequest"
                   p:validationContextBuilder-ref="AssertionValidationContextBuilder"
                   p:assertionValidator-ref="AssertionValidator" />
