@@ -276,6 +276,9 @@
                 </property>
 		     </bean>
         </constructor-arg>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.INVALID_MESSAGE" />
+        </property>
     </bean>
 
     <bean id="PopulateDecryptionParameters" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
