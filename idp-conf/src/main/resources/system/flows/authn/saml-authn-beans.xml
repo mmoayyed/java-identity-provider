@@ -335,6 +335,9 @@
         <property name="maximumTimeSinceAuthn">
             <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.MaximumTimeSinceAuthnLookupFunction" />
         </property>
+        <property name="additionalAudiences">
+            <bean class="net.shibboleth.idp.saml.profile.config.navigate.AdditionalAudiencesForAssertionLookupFunction" />
+        </property>
         <property name="signatureRequired">
             <bean parent="shibboleth.Conditions.NOT">
                 <constructor-arg>
