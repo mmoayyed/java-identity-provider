@@ -341,7 +341,7 @@
         <property name="signatureRequired">
             <bean parent="shibboleth.Conditions.NOT">
                 <constructor-arg>
-                    <bean class="org.opensaml.saml.common.profile.logic.InboundMessageSignedPredicate" />
+                    <bean class="org.opensaml.saml.common.profile.logic.InboundMessageSignedPredicate" p:presenceSatisfies="true" />
                 </constructor-arg>
             </bean>
         </property>
