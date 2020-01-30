@@ -270,7 +270,15 @@
                             p:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
                         <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
                             <property name="issuerLookupStrategy">
-                                <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageContextIssuerFunction" />
+                                <bean class="org.opensaml.saml.common.binding.security.impl.MessageContextEntityIDLookup" p:direction="INBOUND" />
+                            </property>
+                        </bean>
+                        <bean class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer" scope="prototype">
+                            <property name="issuerLookupStrategy">
+                                <bean class="org.opensaml.saml.common.binding.security.impl.MessageContextEntityIDLookup" p:direction="INBOUND" />
+                            </property>
+                            <property name="expectedIssuerLookupStrategy">
+                                <bean class="org.opensaml.saml.common.binding.security.impl.MessageContextEntityIDLookup" p:direction="OUTBOUND" />
                             </property>
                         </bean>
                     </list>
