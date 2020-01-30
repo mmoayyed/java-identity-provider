@@ -225,14 +225,6 @@
         </complexContent>
     </complexType>
     
-    <simpleType name="HttpClientCachingType">
-        <restriction base="string">
-            <enumeration value="none"/>
-            <enumeration value="file"/>
-            <enumeration value="memory"/>
-        </restriction>
-    </simpleType>
-
     <complexType name="FilesystemMetadataProvider">
         <annotation>
             <documentation>A metadata provider that reads SAML2 metadata from the filesystem.</documentation>
