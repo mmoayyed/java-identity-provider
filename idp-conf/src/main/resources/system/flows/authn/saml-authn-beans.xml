@@ -245,6 +245,7 @@
                     <list>
                         <bean class="org.opensaml.saml.common.binding.impl.CheckMessageVersionHandler" scope="prototype"
                             p:ignoreMissingOrUnrecognized="true" />
+                        <bean class="org.opensaml.saml.common.binding.security.impl.InResponseToSecurityHandler" scope="prototype" />
                         <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
                             p:protocol-ref="shibboleth.MetadataLookup.Protocol"
                             p:role-ref="shibboleth.MetadataLookup.Role" />
@@ -345,6 +346,7 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="inResponseToRequired" value="true" />
     </bean>
 
     <bean id="ValidateAssertions" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
