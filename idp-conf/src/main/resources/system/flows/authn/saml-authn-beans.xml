@@ -346,6 +346,11 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="requiredConditions">
+            <set>
+                <util:constant static-field="org.opensaml.saml.saml2.core.AudienceRestriction.DEFAULT_ELEMENT_NAME" />
+            </set>
+        </property>
         <property name="inResponseToRequired" value="true" />
         <property name="recipientRequired" value="true" />
         <property name="notOnOrAfterRequired" value="true" />
