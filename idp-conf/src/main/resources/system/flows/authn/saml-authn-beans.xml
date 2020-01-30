@@ -347,6 +347,8 @@
             </bean>
         </property>
         <property name="inResponseToRequired" value="true" />
+        <property name="recipientRequired" value="true" />
+        <property name="notOnOrAfterRequired" value="true" />
     </bean>
 
     <bean id="ValidateAssertions" parent="NestedWebFlowProfileActionAdaptor" scope="prototype">
