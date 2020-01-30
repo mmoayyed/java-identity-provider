@@ -30,6 +30,7 @@ import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
@@ -56,7 +57,7 @@ public final class AttributeContext extends BaseContext {
      * 
      * @return the collection of attributes indexed by attribute ID
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getIdPAttributes() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String, IdPAttribute> getIdPAttributes() {
         return attributes;
     }
 
@@ -82,7 +83,7 @@ public final class AttributeContext extends BaseContext {
      * 
      * @return the collection of attributes indexed by attribute ID
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getUnfilteredIdPAttributes() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String, IdPAttribute> getUnfilteredIdPAttributes() {
         return unfilteredAttributes;
     }
 

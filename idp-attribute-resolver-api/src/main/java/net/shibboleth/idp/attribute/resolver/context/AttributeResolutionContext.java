@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.context;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -277,8 +278,10 @@ public final class AttributeResolutionContext extends BaseContext {
      */
     @Nullable public AttributeResolutionContext setRequestedIdPAttributeNames(
             @Nonnull @NonnullElements final Collection<String> names) {
-        requestedAttributeNames = Set.copyOf(
-                Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null"));
+        requestedAttributeNames = Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null")
+                .stream()
+                .filter(n -> n != null)
+                .collect(Collectors.toCollection(HashSet::new));
         
         return this;
     }
