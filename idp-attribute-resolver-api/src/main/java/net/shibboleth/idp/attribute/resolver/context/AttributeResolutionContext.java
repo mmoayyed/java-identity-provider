@@ -79,7 +79,7 @@ public final class AttributeResolutionContext extends BaseContext {
     /** Constructor. */
     public AttributeResolutionContext() {
         allowCachedResults = true;
-        requestedAttributeNames = Collections.emptySet();
+        requestedAttributeNames = new HashSet<>();
         resolvedAttributes = Collections.emptyMap();
     }
     
