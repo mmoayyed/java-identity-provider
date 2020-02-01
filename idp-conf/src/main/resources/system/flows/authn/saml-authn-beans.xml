@@ -238,6 +238,58 @@
         </constructor-arg>
     </bean>
 
+    <bean id="OutboundSAMLMetadataContextLookup" parent="shibboleth.Functions.Compose">
+        <constructor-arg name="g">
+            <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                  c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLMetadataContext) }" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean parent="shibboleth.Functions.Compose">
+                <constructor-arg name="g">
+                    <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                          c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext) }" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <bean class="org.opensaml.messaging.context.navigate.MessageContextLookup" c:direction="OUTBOUND" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="OutboundEntityIDLookup" parent="shibboleth.Functions.Compose">
+        <constructor-arg name="g">
+            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLEntityIDFunction" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean parent="shibboleth.Functions.Compose">
+                <constructor-arg name="g">
+                    <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                          c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext) }" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <bean class="org.opensaml.messaging.context.navigate.MessageContextLookup" c:direction="OUTBOUND" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="InboundEntityIDLookup" parent="shibboleth.Functions.Compose">
+        <constructor-arg name="g">
+            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLEntityIDFunction" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean parent="shibboleth.Functions.Compose">
+                <constructor-arg name="g">
+                    <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                          c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext) }" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <bean class="org.opensaml.messaging.context.navigate.MessageContextLookup" c:direction="INBOUND" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
     <bean id="HandleResponse" parent="NestedWebFlowMessageHandlerAdaptor" scope="prototype" c:executionDirection="INBOUND">
         <constructor-arg>
             <bean class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain">
@@ -249,12 +301,9 @@
                         <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
                             p:protocol-ref="shibboleth.MetadataLookup.Protocol"
                             p:role-ref="shibboleth.MetadataLookup.Role" />
-                        <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
-                            <property name="roleDescriptorResolver">
-                                <bean class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
-                                      c:mdResolver-ref="shibboleth.MetadataResolver" />
-                            </property>
-                        </bean>
+                        <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype"
+                              p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
+                              p:copyContextStrategy-ref="OutboundSAMLMetadataContextLookup" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype"
                             p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
@@ -268,19 +317,11 @@
                             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
                             p:parser-ref="shibboleth.ParserPool"
                             p:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
-                        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype">
-                            <property name="issuerLookupStrategy">
-                                <bean class="org.opensaml.saml.common.binding.security.impl.MessageContextEntityIDLookup" p:direction="INBOUND" />
-                            </property>
-                        </bean>
-                        <bean class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer" scope="prototype">
-                            <property name="issuerLookupStrategy">
-                                <bean class="org.opensaml.saml.common.binding.security.impl.MessageContextEntityIDLookup" p:direction="INBOUND" />
-                            </property>
-                            <property name="expectedIssuerLookupStrategy">
-                                <bean class="org.opensaml.saml.common.binding.security.impl.MessageContextEntityIDLookup" p:direction="OUTBOUND" />
-                            </property>
-                        </bean>
+                        <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype"
+                            p:issuerLookupStrategy-ref="InboundEntityIDLookup" />
+                        <bean class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer" scope="prototype"
+                            p:issuerLookupStrategy-ref="InboundEntityIDLookup"
+                            p:expectedIssuerLookupStrategy-ref="OutboundEntityIDLookup" />
                     </list>
                 </property>
 		     </bean>
