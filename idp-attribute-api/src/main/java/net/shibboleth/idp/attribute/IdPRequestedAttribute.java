@@ -54,7 +54,7 @@ public final class IdPRequestedAttribute extends IdPAttribute {
      * 
      * @return the isRequired flag
      * 
-     * @deprecated
+     * @deprecated remove in V5
      */
     @Deprecated(forRemoval=true,since="4.0.0")
     public boolean getIsRequired() {
