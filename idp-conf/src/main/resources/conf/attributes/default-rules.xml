@@ -37,7 +37,7 @@
                     <prop key="description.de">Eine eindeutige Nummer für eine Person, welche hauptsächlich zur Identifikation innerhalb der Organisation benutzt wird.</prop>
                     <prop key="description.fr">Identifiant de connexion d'une personnes sur les systèmes informatiques.</prop>
                     <prop key="description.it">Identificativo unico della persona, usato per l'identificazione dell'utente all'interno della organizzazione di appartenenza.</prop>
-                    <prop key="description.ja">所属組織内で一意の利用者識別子</prop>
+                    <prop key="description.ja">所属機関内で一意の利用者識別子</prop>
                     <prop key="description.pt">Identificador do utilizador</prop>
                     <prop key="description.sv">Användaridentitet: Unik identifierar som används vid lokal inloggning i hemmaorganisationen.</prop>
                 </props>
@@ -140,7 +140,7 @@
                     <prop key="description.de">Mobile Telefonnummer</prop>
                     <prop key="description.fr">Numéro de teléphone mobile</prop>
                     <prop key="description.it">Numero di cellulare</prop>
-                    <prop key="description.ja">携帯電話の番号</prop>
+                    <prop key="description.ja">携帯電話の電話番号</prop>
                     <prop key="description.pt">Número de telemóvel do utilizador</prop>
                     <prop key="description.sv">Telefonnummer (mobil): Telefonnummer till mobiltelefon.</prop>
                 </props>
@@ -195,9 +195,11 @@
                     <prop key="displayName.en">Locality name</prop>
                     <prop key="displayName.de">Ort</prop>
                     <prop key="displayName.fr">Locality name</prop>
+                    <prop key="displayName.ja">場所(L)</prop>
                     <prop key="description.en">Locality name</prop>
                     <prop key="description.de">Ort</prop>
                     <prop key="description.fr">Nom de la localité où réside l'objet</prop>
+                    <prop key="description.ja">場所の名前 日本の場合は市区町村名</prop>
                 </props>
             </property>
         </bean>
@@ -210,7 +212,9 @@
                     <prop key="saml2.name">urn:oid:2.5.4.8</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:st</prop>
                     <prop key="displayName.en">State or province name</prop>
+                    <prop key="displayName.ja">都道府県もしくは州や省(ST)</prop>
                     <prop key="description.en">State or province name</prop>
+                    <prop key="description.ja">州名や省名 国によって異なり日本の場合は都道府県名</prop>
                 </props>
             </property>
         </bean>
@@ -226,10 +230,12 @@
                     <prop key="displayName.de">Straße</prop>
                     <prop key="displayName.de-ch">Strasse</prop>
                     <prop key="displayName.fr">Rue</prop>
+                    <prop key="displayName.ja">通り</prop>
                     <prop key="description.en">Street address</prop>
                     <prop key="description.de">Name der Straße</prop>
                     <prop key="description.de-ch">Strassenadresse</prop>
                     <prop key="description.fr">Nom de rue</prop>
+                    <prop key="description.ja">通りおよび番地</prop>
                 </props>
             </property>
         </bean>
@@ -244,11 +250,11 @@
                     <prop key="displayName.en">Organization name</prop>
                     <prop key="displayName.de">Organisationsname</prop>
                     <prop key="displayName.fr">Nom de l'organisation</prop>
-                    <prop key="displayName.ja">所属組織名</prop>
+                    <prop key="displayName.ja">所属機関名</prop>
                     <prop key="description.en">Organization name</prop>
                     <prop key="description.de">Name der Organisation</prop>
                     <prop key="description.fr">Nom de l'organisation</prop>
-                    <prop key="description.ja">所属組織名の英語表記</prop>
+                    <prop key="description.ja">所属機関名称の英語表記</prop>
                 </props>
             </property>
         </bean>
@@ -263,11 +269,11 @@
                     <prop key="displayName.en">Organizational unit</prop>
                     <prop key="displayName.de">Organisationseinheit</prop>
                     <prop key="displayName.fr">Unité organisationnelle</prop>
-                    <prop key="displayName.ja">部門名</prop>
+                    <prop key="displayName.ja">機関内所属名</prop>
                     <prop key="description.en">Organizational unit</prop>
                     <prop key="description.de">Name der Organisationseinheit</prop>
                     <prop key="description.fr">Nom de l'unité organisationnelle</prop>
-                    <prop key="description.ja">所属部門名の英語表記</prop>
+                    <prop key="description.ja">機関内所属名称の英語表記</prop>
                 </props>
             </property>
         </bean>
@@ -282,9 +288,11 @@
                     <prop key="displayName.en">Title</prop>
                     <prop key="displayName.de">Titel</prop>
                     <prop key="displayName.fr">Title</prop>
+                    <prop key="displayName.ja">肩書き</prop>
                     <prop key="description.en">Title of a person</prop>
                     <prop key="description.de">Titel der Person</prop>
                     <prop key="description.fr">Titre de la personne</prop>
+                    <prop key="description.ja">利用者の肩書き</prop>
                 </props>
             </property>
         </bean>
@@ -300,7 +308,7 @@
                     <prop key="displayName.de">Geschäftsadresse</prop>
                     <prop key="displayName.fr">Adresse professionnelle</prop>
                     <prop key="displayName.it">Indirizzo professionale</prop>
-                    <prop key="displayName.ja">所属組織住所</prop>
+                    <prop key="displayName.ja">所属機関住所</prop>
                     <prop key="displayName.pt">Morada</prop>
                     <prop key="displayName.sv">Postadress (arbete):</prop>
                     <prop key="description.en">Business postal address: Campus or office address</prop>
@@ -308,7 +316,7 @@
                     <prop key="description.de-ch">Adresse am Arbeitsplatz</prop>
                     <prop key="description.fr">Adresse de l'institut, de l'université</prop>
                     <prop key="description.it">Indirizzo professionale: indirizzo dell'istituto o dell'ufficio</prop>
-                    <prop key="description.ja">所属組織(大学、会社など)の住所</prop>
+                    <prop key="description.ja">所属機関の住所</prop>
                     <prop key="description.pt">Morada da instituição</prop>
                     <prop key="description.sv">Postadress (arbete): Postadressen för arbetsplatsen</prop>
                 </props>
@@ -326,10 +334,12 @@
                     <prop key="displayName.en-us">ZIP code</prop>
                     <prop key="displayName.de">Postleitzahl</prop>
                     <prop key="displayName.fr">Code postal</prop>
+                    <prop key="displayName.ja">郵便番号</prop>
                     <prop key="description.en">Postal code</prop>
                     <prop key="description.en-us">ZIP code</prop>
                     <prop key="description.de">Postleitzahl</prop>
                     <prop key="description.fr">Code postal</prop>
+                    <prop key="description.ja">郵便番号</prop>
                 </props>
             </property>
         </bean>
@@ -345,10 +355,12 @@
                     <prop key="displayName.de">Postfach</prop>
                     <prop key="displayName.fr">Boite postale</prop>
                     <prop key="displayName.fr-ch">Case postale</prop>
+                    <prop key="displayName.ja">私書箱</prop>
                     <prop key="description.en">Postal box identifier</prop>
                     <prop key="description.de">Postfach</prop>
                     <prop key="description.fr">Boite postale</prop>
                     <prop key="description.fr-ch">Case postale</prop>
+                    <prop key="description.ja">私書箱</prop>
                 </props>
             </property>
         </bean>
@@ -364,14 +376,14 @@
                     <prop key="displayName.de">Telefon Geschäft</prop>
                     <prop key="displayName.fr">Teléphone professionnel</prop>
                     <prop key="displayName.it">Numero di telefono dell'ufficio</prop>
-                    <prop key="displayName.ja">所属組織電話番号</prop>
+                    <prop key="displayName.ja">勤務先電話番号</prop>
                     <prop key="displayName.pt">Telefone</prop>
                     <prop key="displayName.sv">Telefonummer (arbete)</prop>
                     <prop key="description.en">Business phone number: Office or campus phone number</prop>
                     <prop key="description.de">Telefonnummer am Arbeitsplatz</prop>
                     <prop key="description.fr">Teléphone de l'institut, de l'université</prop>
                     <prop key="description.it">Numero di telefono dell'ufficio</prop>
-                    <prop key="description.ja">所属組織(大学、会社など)の電話番号</prop>
+                    <prop key="description.ja">所属機関での利用者の電話番号</prop>
                     <prop key="description.pt">Número de telefone</prop>
                     <prop key="description.sv">Telefonummer (arbete): Telefonnummer till arbetsplatsen</prop>
                 </props>
@@ -413,10 +425,12 @@
                     <prop key="displayName.en">Initials</prop>
                     <prop key="displayName.de">Initialen</prop>
                     <prop key="displayName.fr">Initiales</prop>
+                    <prop key="displayName.ja">イニシャル</prop>
                     <prop key="description.en">Initials</prop>
                     <prop key="description.de">Anfangsbuchstaben des Namens</prop>
                     <prop key="description.de-ch">Die Anfangsbuchstaben</prop>
                     <prop key="description.fr">L' initiales</prop>
+                    <prop key="description.ja">イニシャル</prop>
                 </props>
             </property>
         </bean>
@@ -449,10 +463,12 @@
                     <prop key="displayName.de">Anzeigename</prop>
                     <prop key="displayName.fr">Nom</prop>
                     <prop key="displayName.it">Nome</prop>
+                    <prop key="displayName.ja">表示名</prop>
                     <prop key="description.en">The name that should appear in white-pages-like applications for this person.</prop>
                     <prop key="description.de">Anzeigename</prop>
                     <prop key="description.fr">Nom complet d'affichage</prop>
                     <prop key="description.it">Nome</prop>
+                    <prop key="description.ja">アプリケーションでの表示に用いられる英字氏名</prop>
                 </props>
             </property>
         </bean>
@@ -475,7 +491,7 @@
                     <prop key="description.de">Identifiziert einen Mitarbeiter innerhalb der Organisation</prop>
                     <prop key="description.fr">Identifie un employé au sein de l'organisation</prop>
                     <prop key="description.it">Identifica l' utente presso l'organizzazione</prop>
-                    <prop key="description.ja">所属組織内での利用者の従業員番号</prop>
+                    <prop key="description.ja">所属機関における利用者の従業員番号</prop>
                     <prop key="description.pt">Número de empregado</prop>
                     <prop key="description.sv">Anställningsnummer: Unik anställningsidentifierare i hemmaorganisationen.</prop>
                 </props>
@@ -554,7 +570,7 @@
                     <prop key="description.de-ch">Art der Zugehörigkeit zur Heimorganisation</prop>
                     <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
                     <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
-                    <prop key="description.ja">所属組織における職位(faculty，staff，student，memberなど)</prop>
+                    <prop key="description.ja">所属機関における職位(faculty，staff，student，memberなど)</prop>
                     <prop key="description.pt">Tipo de utilizador: tipo de utilizador na organização. Exemplo: Estudante, ...</prop>
                     <prop key="description.sv">Anknytning: Vilken anknytning personen har till organisationen.</prop>
                 </props>
@@ -572,14 +588,14 @@
                     <prop key="displayName.de">Berechtigung</prop>
                     <prop key="displayName.fr">Entitlement</prop>
                     <prop key="displayName.it">Prerogativa</prop>
-                    <prop key="displayName.ja">権限</prop>
+                    <prop key="displayName.ja">資格情報</prop>
                     <prop key="displayName.pt">Título</prop>
                     <prop key="displayName.sv">Rättigheter</prop>
                     <prop key="description.en">Member of: URI (either URL or URN) that indicates a set of rights to specific resources based on an agreement across the releavant community</prop>
                     <prop key="description.de">Zeichenkette, die Rechte für spezifische Ressourcen beschreibt</prop>
                     <prop key="description.fr">Membre de: URI (soit une URL ou une URN) décrivant un droit spécific d'accès.</prop>
                     <prop key="description.it">Membro delle seguenti URI (sia URL o URN) che rappresentano diritti specifici d'accesso validi in tutta la communità</prop>
-                    <prop key="description.ja">アクセス権限がある組織のメンバであることを示す URI</prop>
+                    <prop key="description.ja">特定のアプリケーションもしくはコミュニティ内の複数リソースへのアクセス権限を持つことを示すURI(URLもしくはURN)</prop>
                     <prop key="description.pt">URI (retractado por um URN ou URL) que indica um conjunto de direitos para recursos específicos. </prop>
                     <prop key="description.sv">Rättigheter: URI (either URL or URN) som beskriver olika rättigheter till angivna tjänster.</prop>
                 </props>
@@ -598,11 +614,13 @@
                     <prop key="displayName.de-ch">Übername</prop>
                     <prop key="displayName.fr">Surnom</prop>
                     <prop key="displayName.it">Diminutivo</prop>
+                    <prop key="displayName.ja">ニックネーム</prop>
                     <prop key="description.en">Person's nickname, or the informal name by which they are accustomed to be hailed.</prop>
                     <prop key="description.de">Kurzname einer Person, oder üblicher Rufname zur Begrüßung.</prop>
                     <prop key="description.de-ch">Übername einer Person, oder üblicher Rufname zur Begrüssung.</prop>
                     <prop key="description.fr">Nom personnalisable pour un usage informel.</prop>
                     <prop key="description.it">Diminutivo della persona, o  soprannome.</prop>
+                    <prop key="description.ja">利用者のニックネームもしくは通称</prop>
                 </props>
             </property>
         </bean>
@@ -618,10 +636,12 @@
                     <prop key="displayName.de">Primäre Zugehörigkeit</prop>
                     <prop key="displayName.fr">Affiliation pricipale</prop>
                     <prop key="displayName.it">Appartenenza principale</prop>
+                    <prop key="displayName.ja">主要職位</prop>
                     <prop key="description.en">Specifies the person's primary relationship to the institution in broad categories such as student, faculty, staff, alum, etc.</prop>
                     <prop key="description.de">Spezifiziert der Hauptbeziehung einer Person innerhalb ihrer Organisation in groben Kategorien wie Student, Mitarbeiter, Alumni, etc.</prop>
                     <prop key="description.fr">Spécifie la relation principale d'une personne avec l'institution selon des majeures catégories comme étudiant, collaborateur, alumni etc.</prop>
                     <prop key="description.it">Specifica la relazione principale dell persona con l'istituzione secondo le maggiori categorie come studente, collaboratore, alumni, etc.</prop>
+                    <prop key="description.ja">所属機関における主要な職位(faculty，staff，student，memberなど)</prop>
                 </props>
             </property>
         </bean>
@@ -637,13 +657,13 @@
                     <prop key="displayName.de">Persönliche ID</prop>
                     <prop key="displayName.fr">Principal Name</prop>
                     <prop key="displayName.it">Principal Name</prop>
-                    <prop key="displayName.ja">フェデレーション内のユニークID</prop>
+                    <prop key="displayName.ja">プリンシパルID</prop>
                     <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
                     <prop key="description.de">Eindeutige Benutzeridentifikation</prop>
                     <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">L'identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un ID personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
-                    <prop key="description.ja">フェデレーション内で一意でかつ永続的な利用者識別子</prop>
+                    <prop key="description.ja">フェデレーション内で一意かつ永続的な利用者識別子</prop>
                 </props>
             </property>
         </bean>
@@ -678,7 +698,7 @@
                     <prop key="description.de-ch">Art der Zugehörigkeit zur Heimorganisation</prop>
                     <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
                     <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
-                    <prop key="description.ja">ドメインスコープ付きの所属組織における職位(faculty@example.ac.jpなど)</prop>
+                    <prop key="description.ja">セキュリティドメインのスコープが付いた所属機関における職位</prop>
                 </props>
             </property>
         </bean>
@@ -694,10 +714,12 @@
                     <prop key="displayName.de">Vertrauensgrad</prop>
                     <prop key="displayName.fr">Niveau de confiance</prop>
                     <prop key="displayName.it">Livello di sicurezza</prop>
+                    <prop key="displayName.ja">保証レベル</prop>
                     <prop key="description.en">Set of URIs that assert compliance with specific standards for identity assurance.</prop>
                     <prop key="description.de">URIs die eine gewisse Zusicherung für spezifische Standards des Vertrauens beinhalten</prop>
                     <prop key="description.fr">Un ensemble d'URI qui attestent la conformité selon un standard pour les niveaux d'assurance d'identités</prop>
                     <prop key="description.it">Un insieme di URI che asseriscono l'osservanza dei livelli di sicurezza richiesti</prop>
+                    <prop key="description.ja">IDの保証レベルに関して特定の基準に準拠していることを示すURI</prop>
                 </props>
             </property>
         </bean>
@@ -723,7 +745,7 @@
                     <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
-                    <prop key="description.ja">ドメインスコープ付きの所属組織内で一意の利用者識別子(0123456789@example.ac.jpなど)</prop>
+                    <prop key="description.ja">フェデレーション内で一意で永続的かつ難読化された利用者識別子(後継はサブジェクトID)</prop>
                     <prop key="description.pt">ID único: Identificador pessoal que identifica claramente o utilizador na sua organização</prop>
                     <prop key="description.sv">Unik identifierare: En unik identifierare för en person, används primärt för att identifiera personen inloggning vid annan organisation än hemmaorganisationen.</prop>
                 </props>
@@ -742,11 +764,13 @@
                     <prop key="displayName.de">Eindeutige ID</prop>
                     <prop key="displayName.fr">ID unique</prop>
                     <prop key="displayName.it">ID unico</prop>
+                    <prop key="displayName.ja">サブジェクトID</prop>
                     <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
                     <prop key="description.de">Eindeutige Benutzeridentifikation</prop>
                     <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
+                    <prop key="description.ja">フェデレーション内で一意で永続的かつ難読化された利用者識別子(eduPersonUniqueIdの後継)</prop>
                 </props>
             </property>
         </bean>
@@ -761,11 +785,13 @@
                     <prop key="displayName.de">Pairwise ID</prop>
                     <prop key="displayName.fr">Pairwise ID</prop>
                     <prop key="displayName.it">Pairwise ID</prop>
+                    <prop key="displayName.ja">ペアワイズID</prop>
                     <prop key="description.en">Pairwise ID: A unique identifier for a person, different for each service provider.</prop>
                     <prop key="description.de">Pairwise ID: Eindeutige Benutzeridentifikation, unterschiedlich pro Service Provider.</prop>
                     <prop key="description.de-ch">Pairwise ID: Eindeutige Benützeridentifikation, unterschiedlich pro Service Provider.</prop>
                     <prop key="description.fr">Pairwise ID: Un identifiant unique de l'utilisateur, différent pour chaque fournisseur de service.</prop>
                     <prop key="description.it">Pairwise ID: identificativo unico della persona, differente per ogni fornitore di servizio.</prop>
+                    <prop key="description.ja">フェデレーション内で一意かつSP毎に送出される値が異なる利用者識別子(eduPersonTargetedIDの後継)</prop>
                 </props>
             </property>
         </bean>
