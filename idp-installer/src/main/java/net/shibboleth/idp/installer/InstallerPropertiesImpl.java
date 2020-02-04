@@ -101,14 +101,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** The the key size to generate.  */
     public static final String KEY_SIZE = "idp.keysize";
 
-    /** Mode to set on conf files. */
-    public static final String MODE_CONF = "idp.conf.filemode";
-
     /** Mode to set on credential *key files. */
     public static final String MODE_CREDENTIAL_KEYS = "idp.conf.credentials.filemode";
 
     /** Group to set on files in the credential and conf directories. */
-    public static final String GROUP_CONF_CREDENTIALS = "idp.conf.group";
+    public static final String GROUP_CONF_CREDENTIALS = "idp.conf.credentials.group";
 
     /** Do we do any chgrp/chmod work? */
     public static final String PERFORM_SET_MODE = "idp.conf.setmode";
@@ -166,9 +163,6 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** whether to tidy up. */
     private boolean setGroupAndMode = true;
-
-    /** conf all file mode. */
-    private String confFileMode;
 
     /** credentials key file mode. */
     private String credentialsKeyFileMode;
@@ -445,14 +439,6 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public String getConfFileMode() {
-        if (confFileMode ==null) {
-            confFileMode = installerProperties.getProperty(MODE_CONF, "600");
-        }
-        return confFileMode;
-    }
-
-    /** {@inheritDoc} */
     @Override @Nonnull public String getCredentialsKeyFileMode() {
         if (credentialsKeyFileMode == null) {
             credentialsKeyFileMode = installerProperties.getProperty(MODE_CREDENTIAL_KEYS, "600");
@@ -461,7 +447,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public String getConfCredentialsGroup() {
+    @Override @Nullable public String getCredentialsGroup() {
         return installerProperties.getProperty(GROUP_CONF_CREDENTIALS);
     }
 

@@ -430,14 +430,14 @@ public class V4Install extends AbstractInitializableComponent {
         if (installerProps.isSetGroupAndMode()) {
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("bin"), "755", "**/*.sh");
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("system"), "444", "**/*");
-            InstallerSupport.setMode(installerProps.getTargetDir().resolve("credentials"),
-                    installerProps.getCredentialsKeyFileMode(), "**/*.key");
-            InstallerSupport.setMode(installerProps.getTargetDir().resolve("conf"),
-                    installerProps.getConfFileMode(), "**/*");
-            final String group = installerProps.getConfCredentialsGroup();
-            if (group != null) {
-                InstallerSupport.setGroup(installerProps.getTargetDir().resolve("credentials"), group, "**/*");
-                InstallerSupport.setGroup(installerProps.getTargetDir().resolve("conf"), group, "**/*");
+            InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist"), "444", "**/*");
+            if (currentState.getInstalledVersion() == null) {
+                InstallerSupport.setMode(installerProps.getTargetDir().resolve("credentials"),
+                        installerProps.getCredentialsKeyFileMode(), "**/*");
+                final String group = installerProps.getCredentialsGroup();
+                if (group != null) {
+                    InstallerSupport.setGroup(installerProps.getTargetDir().resolve("credentials"), group, "**/*");
+                }
             }
         }
     }

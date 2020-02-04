@@ -40,12 +40,7 @@ public interface InstallerProperties extends InitializableComponent {
      * @return do we not tidy up?*/
     public boolean isNoTidy();
 
-    /** Mode to set all files in conf.
-    * @return the mode
-    */
-    @Nonnull public String getConfFileMode();
-
-    /** Mode to set on key files in credentials.
+    /** Mode to set on all files in credentials.
     * @return the mode
     */
     @Nonnull public String getCredentialsKeyFileMode();
@@ -53,7 +48,7 @@ public interface InstallerProperties extends InitializableComponent {
     /** Group to set on all files in credentials and conf.
     * @return the mode or null if none to be set
     */
-    @Nullable public String getConfCredentialsGroup();
+    @Nullable public String getCredentialsGroup();
 
     /** Do we set the mode?
     * @return do we the mode
