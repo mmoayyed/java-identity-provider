@@ -373,7 +373,7 @@ public class V4Install extends AbstractInitializableComponent {
     protected void deleteSpuriousFiles() throws BuildException {
         for (final Path p : currentState.getPathsToBeDeleted()) {
             if (!Files.exists(p)) {
-                log.debug("File to be deleted did exist?");
+                log.trace("File to be deleted {} was not created", p.getFileName());
             } else {
                 try {
                     Files.delete(p);
