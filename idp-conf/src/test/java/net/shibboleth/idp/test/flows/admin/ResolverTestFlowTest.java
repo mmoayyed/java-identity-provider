@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.impl.ResolverTestRequestDecoder;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -58,13 +59,13 @@ public class ResolverTestFlowTest extends AbstractFlowTest {
     }
 
     /**
-     * Test the resolvertest flow.
+     * Test the resolvertest flow using SAML 1.1.
      * 
      * @throws Exception if an error occurs
      */
-    @Test(enabled=false) public void testSAML2ResolverTestFlow() throws Exception {
+    @Test public void testSAML1ResolverTestFlow() throws Exception {
 
-        buildRequest("urn:oasis:names:TC:SAML:2.0:protocol");
+        buildRequest(SAMLConstants.SAML11P_NS);
 
         overrideEndStateOutput(FLOW_ID, "ResponseView");
 
@@ -73,11 +74,34 @@ public class ResolverTestFlowTest extends AbstractFlowTest {
         final String responseBody = response.getContentAsString();
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "ResponseView");
+        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"urn:mace:dir:attribute-def:eduPersonPrincipalName\""));
+        assertTrue(responseBody.contains("<saml1:AttributeValue Scope=\"example.org\">jdoe</saml1:AttributeValue>"));
+    }
+
+    /**
+     * Test the resolvertest flow using SAML 2.0.
+     * 
+     * @throws Exception if an error occurs
+     */
+    @Test public void testSAML2ResolverTestFlow() throws Exception {
+
+        buildRequest(SAMLConstants.SAML20P_NS);
+
+        overrideEndStateOutput(FLOW_ID, "ResponseView");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ResponseView");
+        assertTrue(responseBody.contains("<saml2:Attribute FriendlyName=\"eduPersonPrincipalName\" Name=\"urn:oid:1.3.6.1.4.1.5923.1.1.1.6\" NameFormat=\"urn:oasis:names:tc:SAML:2.0:attrname-format:uri\">"));
         assertTrue(responseBody.contains("<saml2:AttributeValue>jdoe@example.org</saml2:AttributeValue>"));
     }
 
     /**
      * Build the {@link MockHttpServletRequest}.
+     * 
+     * @param protocol optional protocol parameter
      */
     private void buildRequest(@Nullable final String protocol) {
         request.setMethod("GET");
