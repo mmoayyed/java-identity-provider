@@ -653,6 +653,7 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.6</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrincipalName</prop>
+                    <prop key="saml1.encodeType">false</prop>
                     <prop key="displayName.en">Principal Name</prop>
                     <prop key="displayName.de">Persönliche ID</prop>
                     <prop key="displayName.fr">Principal Name</prop>
@@ -675,6 +676,7 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.12</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.12</prop>
+                    <prop key="saml1.encodeType">false</prop>
                     <prop key="displayName.en">Prior Principal Name</prop>
                     <prop key="description.en">eduPersonPrincipalName value that was previously associated with the entry.</prop>
                 </props>
@@ -688,6 +690,7 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.9</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonScopedAffiliation</prop>
+                    <prop key="saml1.encodeType">false</prop>
                     <prop key="displayName.en">Scoped Affiliation</prop>
                     <prop key="displayName.de">Zugehörigkeit</prop>
                     <prop key="displayName.fr">Affiliation</prop>
@@ -733,6 +736,7 @@
                     <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.13</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.13</prop>
+                    <prop key="saml1.encodeType">false</prop>
                     <prop key="displayName.en">Unique ID</prop>
                     <prop key="displayName.de">Eindeutige ID</prop>
                     <prop key="displayName.fr">ID unique</prop>

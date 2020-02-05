@@ -97,7 +97,6 @@ public class SAML2ScopedStringAttributeTranscoderTest extends OpenSAMLInitBaseTe
         final Map<String,Object> ruleset1 = new HashMap<>();
         ruleset1.put(AttributeTranscoderRegistry.PROP_ID, ATTR_NAME);
         ruleset1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
-        ruleset1.put(SAML2AttributeTranscoder.PROP_ENCODE_TYPE, true);
         ruleset1.put(SAML2AttributeTranscoder.PROP_NAME, ATTR_NAME);
         ruleset1.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, ATTR_NAMEFORMAT);
         ruleset1.put(SAML2AttributeTranscoder.PROP_FRIENDLY_NAME, ATTR_FRIENDLYNAME);
@@ -223,6 +222,9 @@ public class SAML2ScopedStringAttributeTranscoderTest extends OpenSAMLInitBaseTe
                 "Attribute Value not inside <AttributeValue/>");
 
         Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
+
+        // xsi:type should be present because encodeType should default on for inline-syntax scope
+        Assert.assertEquals(child.getSchemaType(), XSString.TYPE_NAME, "xsi:type was wrong");
 
         final XSString childAsString = (XSString) child;
 

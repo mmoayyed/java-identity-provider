@@ -67,15 +67,15 @@ public class SAML2ScopedStringAttributeTranscoder extends AbstractSAML2Attribute
             @Nonnull final IdPAttribute attribute, @Nonnull final TranscodingRule rule,
             @Nonnull final ScopedStringAttributeValue value) throws AttributeEncodingException {
                 
-        final Boolean encodeType = rule.getOrDefault(PROP_ENCODE_TYPE, Boolean.class, Boolean.TRUE);
-
         final String scopeType = rule.getOrDefault(PROP_SCOPE_TYPE, String.class, "inline");
         
         if ("attribute".equals(scopeType)) {
+            final Boolean encodeType = rule.getOrDefault(PROP_ENCODE_TYPE, Boolean.class, Boolean.FALSE);
             final String scopeAttributeName = rule.getOrDefault(PROP_SCOPE_ATTR_NAME, String.class, "Scope");
             return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
                     AttributeValue.DEFAULT_ELEMENT_NAME, value, scopeAttributeName, encodeType);
         } else if ("inline".equals(scopeType)) {
+            final Boolean encodeType = rule.getOrDefault(PROP_ENCODE_TYPE, Boolean.class, Boolean.TRUE);
             final String scopeDelimiter = rule.getOrDefault(PROP_SCOPE_DELIMITER, String.class, "@");
             return SAMLEncoderSupport.encodeScopedStringValueInline(
                     attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value, scopeDelimiter, encodeType);
