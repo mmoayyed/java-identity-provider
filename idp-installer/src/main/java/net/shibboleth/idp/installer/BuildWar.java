@@ -50,9 +50,6 @@ public final class BuildWar extends AbstractInitializableComponent {
     /** Properties for the job. */
     private final InstallerProperties installerProps;
 
-    /** Current Install. */
-    private final CurrentInstallState currentState;
-
     /** Constructor.
      * @param props The environment for the work.
      * @param installState  Where we are right now.
@@ -61,7 +58,6 @@ public final class BuildWar extends AbstractInitializableComponent {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
         installerProps = props;
-        currentState = installState;
     }
 
     /** Method to do the work of building the war.
