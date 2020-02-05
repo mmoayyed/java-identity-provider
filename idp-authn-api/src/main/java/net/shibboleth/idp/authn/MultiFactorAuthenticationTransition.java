@@ -124,7 +124,7 @@ public class MultiFactorAuthenticationTransition {
      * @param flowId fully-qualified flow ID to run
      */
     public void setNextFlow(@Nullable @NotEmpty final String flowId) {
-        setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", flowId));
+        setNextFlowStrategyMap(Collections.singletonMap("proceed", flowId));
     }
 
     /**
@@ -138,7 +138,7 @@ public class MultiFactorAuthenticationTransition {
     public void setNextFlowStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         Constraint.isNotNull(strategy, "Flow strategy function cannot be null");
         
-        setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", strategy));
+        setNextFlowStrategyMap(Collections.singletonMap("proceed", strategy));
     }
 
 }

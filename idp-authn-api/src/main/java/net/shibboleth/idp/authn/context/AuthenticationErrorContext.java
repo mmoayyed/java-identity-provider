@@ -27,13 +27,9 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A context that holds information about authentication failures.
@@ -65,15 +61,18 @@ public final class AuthenticationErrorContext extends BaseContext {
      * 
      * @return  immutable list of exceptions
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Exception> getExceptions() {
-        return ImmutableList.copyOf(exceptions);
+    @Nonnull @NonnullElements @Live public List<Exception> getExceptions() {
+        return exceptions;
     }
     
     /**
      * Add an exception to the list.
      * 
      * @param e exception to add
+     * 
+     * @deprecated
      */
+    @Deprecated(forRemoval=true, since="4.0.0")
     public void addException(@Nonnull final Exception e) {
         Constraint.isNotNull(e, "Exception cannot be null");
         

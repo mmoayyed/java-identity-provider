@@ -434,9 +434,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
 
-        final AuthenticationErrorContext errorCtx =
-                authenticationContext.getSubcontext(AuthenticationErrorContext.class, true);
-        errorCtx.addException(e);
+        authenticationContext.getSubcontext(AuthenticationErrorContext.class, true).getExceptions().add(e);
 
         handleError(profileRequestContext, authenticationContext, e.getMessage(), eventId);
     }
