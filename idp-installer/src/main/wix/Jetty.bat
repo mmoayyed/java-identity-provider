@@ -129,16 +129,6 @@ if ERRORLEVEL 1 goto done
 REM TODO extract the Main-Class (via Properties) from start.jar 
 set JETTY_CLASS=org.eclipse.jetty.start.Main
 
-REM compile Jetty and procrun contents as well as the merge module for x86
-
-"%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dJettyClass=%JETTY_CLASS% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs MergeModule.wxs procrun.wxs -dmsitype=x86 -ext WixFirewallExtension
-if ERRORLEVEL 1 goto done
-
-REM link for x86
-
-"%WIX%/BIN/LIGHT" -nologo -out Jetty-x86.msm jetty_contents.wixobj procrun.wixobj mergemodule.wixobj -ext WixFirewallExtension  -sw1072
-if ERRORLEVEL 1 goto done
-
 Rem tidy
 del *.wixobj *.wixpdb
 
