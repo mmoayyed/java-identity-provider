@@ -87,8 +87,8 @@ public class V4Install extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         keyManager.initialize();
-        if (metadataGenerator != null) {
-            log.warn("No MetadataGenerator configured");
+        if (metadataGenerator == null) {
+            log.warn("No MetadataGenerator configured.");
         }
     }
 
@@ -389,11 +389,12 @@ public class V4Install extends AbstractInitializableComponent {
      */
     protected void generateMetadata() throws BuildException {
         if (metadataGenerator == null) {
+            log.debug("No Metadata generator specified.");
             return;
         }
 
         final Path parentDir = installerProps.getTargetDir().resolve("metadata");
-        final Path metadataFile = parentDir.resolve("idp-metadata");
+        final Path metadataFile = parentDir.resolve("idp-metadata.xml");
         if (Files.exists(metadataFile)) {
             log.debug("Metadata file {} exists", metadataFile.toString());
             return;
