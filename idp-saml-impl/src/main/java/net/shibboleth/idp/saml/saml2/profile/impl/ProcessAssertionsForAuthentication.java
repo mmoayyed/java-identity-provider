@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -87,15 +90,26 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
         samlContextLookupStrategy = new ChildContextLookup<>(SAMLAuthnContext.class).compose(
                 new ChildContextLookup<>(AuthenticationContext.class));
         
-        //TODO replace with better default logic based on Scott review and SP behavior
-        authnAssertionSelectionStrategy = assertions -> {
-            return assertions.get(0);
-        };
+        // Get the Assertion containing the earliest child AuthnStatement#SessionNotOnOrAfter,
+        // with null values converted to Instant.MAX and therefore having the lowest precedence.
+        authnAssertionSelectionStrategy = assertions -> assertions.stream()
+                .filter(Objects::nonNull)
+                // Sort with key extractor which extracts the lowest-valued AuthnStatement#SessionNotOnOrAfter value,
+                // or Instant.Max if all are null
+                .sorted(Comparator.<Assertion,Instant>comparing(assertion -> assertion.getAuthnStatements().stream()
+                        .filter(Objects::nonNull)
+                        .map(AuthnStatement::getSessionNotOnOrAfter)
+                        .filter(Objects::nonNull)
+                        .sorted()
+                        .findFirst().orElse(Instant.MAX)))
+                .findFirst().orElse(null);
             
-        //TODO replace with better default logic based on Scott review and SP behavior 
-        authnStatementSelectionStrategy = assertion -> {
-            return assertion.getAuthnStatements().get(0);
-        };
+        // Get the AuthnStatement with the earliest SessionNotOnOrAfter, with null values having lowest precedence.
+        authnStatementSelectionStrategy = assertion -> assertion.getAuthnStatements().stream()
+                    .filter(Objects::nonNull)
+                    .sorted(Comparator.comparing(AuthnStatement::getSessionNotOnOrAfter,
+                            Comparator.nullsLast(Comparator.naturalOrder())))
+                    .findFirst().orElse(null);
     }
 
     /**
