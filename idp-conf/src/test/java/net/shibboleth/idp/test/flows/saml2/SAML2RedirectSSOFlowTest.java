@@ -25,6 +25,7 @@ import java.util.zip.DeflaterOutputStream;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.opensaml.core.xml.io.MarshallingException;
@@ -89,8 +90,9 @@ public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
      * @return DEFLATE compressed message
      * @throws MarshallingException if there is a problem marshalling the XMLObject
      * @throws IOException if an I/O error has occurred
+     * @throws EncodingException if the message can not be base64 encoded
      */
-    @Nonnull public String encodeMessage(@Nonnull final SAMLObject message) throws MarshallingException, IOException {
+    @Nonnull public String encodeMessage(@Nonnull final SAMLObject message) throws MarshallingException, IOException, EncodingException {
         final Element domMessage = XMLObjectSupport.marshall(message);
         final String messageXML = SerializeSupport.nodeToString(domMessage);
 

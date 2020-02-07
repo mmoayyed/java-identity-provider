@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base32Support;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.DecodingException;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -268,6 +269,9 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         } catch (final NoSuchAlgorithmException e) {
             log.error("Digest algorithm {} is not supported", algorithm);
             throw new IOException("Digest algorithm was not supported, unable to compute ID", e);
+        } catch (final EncodingException e) {
+            log.error("Unable to {} encode digest",encoding);
+            throw new IOException("Unable to either base64 or base32 encode digest, unable to compute ID", e);
         }
         
         return pid;

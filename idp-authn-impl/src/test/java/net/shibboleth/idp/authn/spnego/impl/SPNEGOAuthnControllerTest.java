@@ -42,6 +42,7 @@ import net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.ietf.jgss.GSSContext;
@@ -57,6 +58,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -64,14 +66,21 @@ public class SPNEGOAuthnControllerTest {
 
     private static final String TEST_CONVERSATION_KEY = "e1s1";
 
-    private static final String NTLMSSP_HEADER_DATA = Base64Support.encode(new byte[] {(byte) 0x4E, (byte) 0x54,
-            (byte) 0x4C, (byte) 0x4D, (byte) 0x53, (byte) 0x53, (byte) 0x50}, false);
+    private static String NTLMSSP_HEADER_DATA;
 
-    private static final String NEGOTIATE_HEADER_DATA = Base64Support.encode("testdata".getBytes(), false);
+    private static String NEGOTIATE_HEADER_DATA;
 
     private SPNEGOAuthnController controller = new SPNEGOAuthnController();
 
     private GSSContextAcceptor mockGSSContextAcceptor;
+    
+    
+    @BeforeClass
+    public void init() throws EncodingException {        
+        NTLMSSP_HEADER_DATA = Base64Support.encode(new byte[] {(byte) 0x4E, (byte) 0x54,
+             (byte) 0x4C, (byte) 0x4D, (byte) 0x53, (byte) 0x53, (byte) 0x50}, false);
+        NEGOTIATE_HEADER_DATA = Base64Support.encode("testdata".getBytes(), false);
+    }
 
     private SPNEGOAuthnController mockedGSSController = new SPNEGOAuthnController() {
         @Override

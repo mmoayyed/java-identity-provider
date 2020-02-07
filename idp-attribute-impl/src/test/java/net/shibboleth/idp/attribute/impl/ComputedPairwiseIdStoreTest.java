@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore.Encoding;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -57,7 +58,7 @@ public class ComputedPairwiseIdStoreTest {
     }
 
     @Test
-    public void testSaltSetters() throws ComponentInitializationException {
+    public void testSaltSetters() throws ComponentInitializationException, EncodingException {
         final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
         store.setSalt(salt);
         Assert.assertEquals(salt, store.getSalt());

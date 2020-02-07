@@ -29,6 +29,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.SAMLEncoderSupport;
 import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.DecodingException;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -59,8 +60,12 @@ public class SAML1ByteAttributeTranscoder extends AbstractSAML1AttributeTranscod
                 
         final Boolean encodeType = rule.getOrDefault(PROP_ENCODE_TYPE, Boolean.class, Boolean.TRUE);
 
-        return SAMLEncoderSupport.encodeByteArrayValue(attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(),
-                encodeType);
+        try {
+            return SAMLEncoderSupport.encodeByteArrayValue(attribute, AttributeValue.DEFAULT_ELEMENT_NAME, 
+                    value.getValue(), encodeType);
+        } catch (final EncodingException e) {
+            throw new AttributeEncodingException("Attribtue value could not be encoded",e);
+        }
     }
 
     /** {@inheritDoc} */

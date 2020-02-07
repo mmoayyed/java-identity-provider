@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.commons.codec.binary.Hex;
@@ -77,8 +78,9 @@ public final class ByteAttributeValue implements IdPAttributeValue {
      * Gets this value as a Base64-encoded string.
      * 
      * @return a Base64-encoded string
+     * @throws EncodingException on failure to base64 encode byte value
      */
-    @Nonnull public String toBase64() {
+    @Nonnull public String toBase64() throws EncodingException {
         return Base64Support.encode(value, Base64Support.UNCHUNKED);
     }
 

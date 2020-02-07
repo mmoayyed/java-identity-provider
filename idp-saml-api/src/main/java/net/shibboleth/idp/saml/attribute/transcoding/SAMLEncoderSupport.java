@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
@@ -98,9 +99,11 @@ public final class SAMLEncoderSupport {
      * @param withType whether to include xsi:type
      * 
      * @return the attribute value element or null if the given value was null or empty
+     * @throws EncodingException if the byte array can not be base64 encoded.
      */
     @Nullable public static XMLObject encodeByteArrayValue(@Nonnull final IdPAttribute attribute,
-            @Nonnull final QName attributeValueElementName, @Nullable final byte[] value, final boolean withType) {
+            @Nonnull final QName attributeValueElementName, @Nullable final byte[] value, final boolean withType) 
+                    throws EncodingException {
         Constraint.isNotNull(attribute, "Attribute cannot be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 

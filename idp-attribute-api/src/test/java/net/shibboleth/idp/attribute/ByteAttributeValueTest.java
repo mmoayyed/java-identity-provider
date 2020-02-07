@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.DecodingException;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -69,7 +70,7 @@ public class ByteAttributeValueTest {
         Assert.assertFalse(value3.equals(value2));
     }
 
-    @Test public void toHexStringBase64() throws DecodingException {
+    @Test public void toHexStringBase64() throws DecodingException, EncodingException {
         ByteAttributeValue value = new ByteAttributeValue(DATA1);
         
         value.toString();
