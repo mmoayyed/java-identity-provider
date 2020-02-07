@@ -376,7 +376,7 @@
                     <prop key="displayName.de">Telefon Geschäft</prop>
                     <prop key="displayName.fr">Teléphone professionnel</prop>
                     <prop key="displayName.it">Numero di telefono dell'ufficio</prop>
-                    <prop key="displayName.ja">勤務先電話番号</prop>
+                    <prop key="displayName.ja">所属機関内電話番号</prop>
                     <prop key="displayName.pt">Telefone</prop>
                     <prop key="displayName.sv">Telefonummer (arbete)</prop>
                     <prop key="description.en">Business phone number: Office or campus phone number</prop>
