@@ -50,7 +50,7 @@ public class RelyingPartyMapJAASLoginConfigStrategy
     /** Logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(RelyingPartyMapJAASLoginConfigStrategy.class);
 
-    /** Map holding the relying party -> JAAS config name mappings. */
+    /** Map holding the relying party to JAAS config name mappings. */
     @Nonnull private Map<String, String> relyingPartyMap;
 
     /** The default JAAS config name to use when no specific mapping configured. */
