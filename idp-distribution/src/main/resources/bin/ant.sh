@@ -24,6 +24,10 @@ if [ -z "$JAVACMD" ] ; then
     JAVACMD=java
   fi
 fi
+
+if [ -z "$INSTALL_LOG_FILE" ] ; then
+    INSTALL_LOG_FILE=$ANT_HOME/install-log.xml
+fi
  
 if [ ! -x "$JAVACMD" ] ; then
   echo "Error: JAVA_HOME is not defined correctly."
@@ -82,4 +86,5 @@ if $cygwin; then
   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
 fi
-$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -f "${ANT_HOME}/build.xml" "$@"
+
+$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" -Dlogback.configurationFile=$INSTALL_LOG_FILE $ANT_OPTS org.apache.tools.ant.Main -e -f "${ANT_HOME}/build.xml" "$@"

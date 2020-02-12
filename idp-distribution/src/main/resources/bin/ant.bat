@@ -12,6 +12,10 @@ if "%ANT_HOME:~-1%" NEQ "\" (
 set ANT_HOME=%ANT_HOME:~0,-1%
 :nostrip
 
+if not defined INSTALL_LOG_FILE (
+   set INSTALL_LOG_FILE=%ANT_HOME%\install-log.xml
+)
+
 REM We need a JVM
 if not defined JAVA_HOME  (
   echo Error: JAVA_HOME is not defined.
@@ -31,4 +35,4 @@ if not exist %JAVACMD% (
 REM add in the dependency .jar files
 set LOCALCLASSPATH=%ANT_HOME%\..\bin\lib\*;%ANT_HOME%\..\webapp\WEB-INF\lib\*;%ANT_HOME%\..\dist\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
 
-%JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -f "%ANT_HOME%/build.xml" %*
+%JAVACMD% -cp "%LOCALCLASSPATH%" -Dlogback.configurationFile=%INSTALL_LOG_FILE% -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -f "%ANT_HOME%/build.xml" %*
