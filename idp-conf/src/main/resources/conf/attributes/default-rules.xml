@@ -31,15 +31,11 @@
                     <prop key="displayName.fr">ID utilisateur</prop>
                     <prop key="displayName.it">ID dell'utente</prop>
                     <prop key="displayName.ja">ユーザID</prop>
-                    <prop key="displayName.pt">User ID</prop>
-                    <prop key="displayName.sv">Användaridentitet</prop>
                     <prop key="description.en">A unique identifier for a person, mainly used for user identification within the user's home organization.</prop>
                     <prop key="description.de">Eine eindeutige Nummer für eine Person, welche hauptsächlich zur Identifikation innerhalb der Organisation benutzt wird.</prop>
                     <prop key="description.fr">Identifiant de connexion d'une personnes sur les systèmes informatiques.</prop>
                     <prop key="description.it">Identificativo unico della persona, usato per l'identificazione dell'utente all'interno della organizzazione di appartenenza.</prop>
                     <prop key="description.ja">所属機関内で一意の利用者識別子</prop>
-                    <prop key="description.pt">Identificador do utilizador</prop>
-                    <prop key="description.sv">Användaridentitet: Unik identifierar som används vid lokal inloggning i hemmaorganisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -56,16 +52,12 @@
                     <prop key="displayName.fr">Email</prop>
                     <prop key="displayName.it">E-mail</prop>
                     <prop key="displayName.ja">メールアドレス</prop>
-                    <prop key="displayName.pt">E-mail</prop>
-                    <prop key="displayName.sv">E-postadress</prop>
                     <prop key="description.en">E-Mail: Preferred address for e-mail to be sent to this person</prop>
                     <prop key="description.de">E-Mail-Adresse</prop>
                     <prop key="description.de-ch">E-Mail Adresse</prop>
                     <prop key="description.fr">Adresse de courrier électronique</prop>
                     <prop key="description.it">E-Mail: l'indirizzo e-mail preferito dall'utente</prop>
                     <prop key="description.ja">メールアドレス</prop>
-                    <prop key="description.pt">E-Mail: Endereço de correio electronico</prop>
-                    <prop key="description.sv">E-postadress: E-postadress som används av personen.</prop>
                 </props>
             </property>
         </bean>
@@ -82,15 +74,11 @@
                     <prop key="displayName.fr">Teléphone personnel</prop>
                     <prop key="displayName.it">Numero di telefono privato</prop>
                     <prop key="displayName.ja">自宅電話番号</prop>
-                    <prop key="displayName.pt">Número de telefone privado</prop>
-                    <prop key="displayName.sv">Telefonnummer (hem)</prop>
                     <prop key="description.en">Private phone number</prop>
                     <prop key="description.de">Private Telefonnummer</prop>
                     <prop key="description.fr">Numéro de téléphone de domicile de la personne</prop>
                     <prop key="description.it">Numero di telefono privato</prop>
                     <prop key="description.ja">自宅の電話番号</prop>
-                    <prop key="description.pt">Número de telefone privado do utilizador</prop>
-                    <prop key="description.sv">Telefonnummer (hem): Telefonnummer till bostaden.</prop>
                 </props>
             </property>
         </bean>
@@ -108,16 +96,12 @@
                     <prop key="displayName.fr">Adresse personnelle</prop>
                     <prop key="displayName.it">Indirizzo personale</prop>
                     <prop key="displayName.ja">自宅住所</prop>
-                    <prop key="displayName.pt">Morada Pessoal</prop>
-                    <prop key="displayName.sv">Postadress (hem)</prop>
                     <prop key="description.en">Home postal address: Home address of the user</prop>
                     <prop key="description.de">Heimatadresse</prop>
                     <prop key="description.de-ch">Heimadresse</prop>
                     <prop key="description.fr">Adresse postale de domicile de la personne</prop>
                     <prop key="description.it">Indirizzo personale: indirizzo dove abita l'utente</prop>
                     <prop key="description.ja">自宅の住所</prop>
-                    <prop key="description.pt">Morada Pessoal: Morada do utilizador</prop>
-                    <prop key="description.sv">Postadress (hem): Postadress till bostaden.</prop>
                 </props>
             </property>
         </bean>
@@ -134,15 +118,11 @@
                     <prop key="displayName.fr">Numéro de mobile</prop>
                     <prop key="displayName.it">Numero di cellulare</prop>
                     <prop key="displayName.ja">携帯電話番号</prop>
-                    <prop key="displayName.pt">Número de telemóvel</prop>
-                    <prop key="displayName.sv">Telefonnummer (mobil)</prop>
                     <prop key="description.en">Mobile phone number</prop>
                     <prop key="description.de">Mobile Telefonnummer</prop>
                     <prop key="description.fr">Numéro de teléphone mobile</prop>
                     <prop key="description.it">Numero di cellulare</prop>
                     <prop key="description.ja">携帯電話の電話番号</prop>
-                    <prop key="description.pt">Número de telemóvel do utilizador</prop>
-                    <prop key="description.sv">Telefonnummer (mobil): Telefonnummer till mobiltelefon.</prop>
                 </props>
             </property>
         </bean>
@@ -172,15 +152,11 @@
                     <prop key="displayName.fr">Nom de famille</prop>
                     <prop key="displayName.it">Cognome</prop>
                     <prop key="displayName.ja">姓</prop>
-                    <prop key="displayName.pt">Nome de Família</prop>
-                    <prop key="displayName.sv">Efternamn</prop>
                     <prop key="description.en">Surname or family name</prop>
                     <prop key="description.de">Familienname</prop>
                     <prop key="description.fr">Nom de famille de l'utilisateur.</prop>
                     <prop key="description.it">Cognome dell'utilizzatore</prop>
                     <prop key="description.ja">氏名(姓)の英語表記</prop>
-                    <prop key="description.pt">Nome de Família</prop>
-                    <prop key="description.sv">Efternamn: Efternamn för personen.</prop>
                 </props>
             </property>
         </bean>
@@ -309,16 +285,12 @@
                     <prop key="displayName.fr">Adresse professionnelle</prop>
                     <prop key="displayName.it">Indirizzo professionale</prop>
                     <prop key="displayName.ja">所属機関住所</prop>
-                    <prop key="displayName.pt">Morada</prop>
-                    <prop key="displayName.sv">Postadress (arbete):</prop>
                     <prop key="description.en">Business postal address: Campus or office address</prop>
                     <prop key="description.de">Geschäftliche Adresse</prop>
                     <prop key="description.de-ch">Adresse am Arbeitsplatz</prop>
                     <prop key="description.fr">Adresse de l'institut, de l'université</prop>
                     <prop key="description.it">Indirizzo professionale: indirizzo dell'istituto o dell'ufficio</prop>
                     <prop key="description.ja">所属機関の住所</prop>
-                    <prop key="description.pt">Morada da instituição</prop>
-                    <prop key="description.sv">Postadress (arbete): Postadressen för arbetsplatsen</prop>
                 </props>
             </property>
         </bean>
@@ -377,15 +349,11 @@
                     <prop key="displayName.fr">Teléphone professionnel</prop>
                     <prop key="displayName.it">Numero di telefono dell'ufficio</prop>
                     <prop key="displayName.ja">所属機関内電話番号</prop>
-                    <prop key="displayName.pt">Telefone</prop>
-                    <prop key="displayName.sv">Telefonummer (arbete)</prop>
                     <prop key="description.en">Business phone number: Office or campus phone number</prop>
                     <prop key="description.de">Telefonnummer am Arbeitsplatz</prop>
                     <prop key="description.fr">Teléphone de l'institut, de l'université</prop>
                     <prop key="description.it">Numero di telefono dell'ufficio</prop>
                     <prop key="description.ja">所属機関での利用者の電話番号</prop>
-                    <prop key="description.pt">Número de telefone</prop>
-                    <prop key="description.sv">Telefonummer (arbete): Telefonnummer till arbetsplatsen</prop>
                 </props>
             </property>
         </bean>
@@ -402,15 +370,11 @@
                     <prop key="displayName.fr">Prénom</prop>
                     <prop key="displayName.it">Nome</prop>
                     <prop key="displayName.ja">名</prop>
-                    <prop key="displayName.pt">Nome</prop>
-                    <prop key="displayName.sv">Förnamn</prop>
                     <prop key="description.en">Given name of a person</prop>
                     <prop key="description.de">Vorname</prop>
                     <prop key="description.fr">Prénom de l'utilisateur</prop>
                     <prop key="description.it">Nome</prop>
                     <prop key="description.ja">氏名(名)の英語表記</prop>
-                    <prop key="description.pt">Nome</prop>
-                    <prop key="description.sv">Förnamn: Förnamn för personen.</prop>
                 </props>
             </property>
         </bean>
@@ -485,15 +449,11 @@
                     <prop key="displayName.fr">Numéro d'employé</prop>
                     <prop key="displayName.it">Numero dell'utente</prop>
                     <prop key="displayName.ja">従業員番号</prop>
-                    <prop key="displayName.pt">Número de empregado</prop>
-                    <prop key="displayName.sv">Anställningsnummer</prop>
                     <prop key="description.en">Identifies an employee within an organization</prop>
                     <prop key="description.de">Identifiziert einen Mitarbeiter innerhalb der Organisation</prop>
                     <prop key="description.fr">Identifie un employé au sein de l'organisation</prop>
                     <prop key="description.it">Identifica l' utente presso l'organizzazione</prop>
                     <prop key="description.ja">所属機関における利用者の従業員番号</prop>
-                    <prop key="description.pt">Número de empregado</prop>
-                    <prop key="description.sv">Anställningsnummer: Unik anställningsidentifierare i hemmaorganisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -536,15 +496,11 @@
                     <prop key="displayName.fr">Langue préférée</prop>
                     <prop key="displayName.it">Lingua preferita</prop>
                     <prop key="displayName.ja">希望言語</prop>
-                    <prop key="displayName.pt">Língua preferida</prop>
-                    <prop key="displayName.sv">Språkönskemål</prop>
                     <prop key="description.en">Preferred language: Users preferred language (see RFC1766)</prop>
                     <prop key="description.de">Bevorzugte Sprache (siehe RFC1766)</prop>
                     <prop key="description.fr">Exemple: fr, de, it, en, ... (voir RFC1766)</prop>
                     <prop key="description.it">Lingua preferita: la lingua preferita dall'utente (cfr. RFC1766)</prop>
                     <prop key="description.ja">利用者が希望する言語(RFC1766 を参照)</prop>
-                    <prop key="description.pt">Língua preferida: Língua preferida do utilizador (cfr. RFC1766)</prop>
-                    <prop key="description.sv">Språkönskemål: Personens önskade språk (see RFC1766).</prop>
                 </props>
             </property>
         </bean>
@@ -563,16 +519,12 @@
                     <prop key="displayName.fr">Affiliation</prop>
                     <prop key="displayName.it">Tipo di membro</prop>
                     <prop key="displayName.ja">職位</prop>
-                    <prop key="displayName.pt">Tipo de utilizador</prop>
-                    <prop key="displayName.sv">Anknytning</prop>
                     <prop key="description.en">Affiliation: Type of affiliation with Home Organization</prop>
                     <prop key="description.de">Art der Zugehörigkeit zur Heimatorganisation</prop>
                     <prop key="description.de-ch">Art der Zugehörigkeit zur Heimorganisation</prop>
                     <prop key="description.fr">Type d'affiliation dans l'organisation</prop>
                     <prop key="description.it">Tipo di membro: Tipo di lavoro svolto per l'organizzazione</prop>
                     <prop key="description.ja">所属機関における職位(faculty，staff，student，memberなど)</prop>
-                    <prop key="description.pt">Tipo de utilizador: tipo de utilizador na organização. Exemplo: Estudante, ...</prop>
-                    <prop key="description.sv">Anknytning: Vilken anknytning personen har till organisationen.</prop>
                 </props>
             </property>
         </bean>
@@ -589,15 +541,11 @@
                     <prop key="displayName.fr">Entitlement</prop>
                     <prop key="displayName.it">Prerogativa</prop>
                     <prop key="displayName.ja">資格情報</prop>
-                    <prop key="displayName.pt">Título</prop>
-                    <prop key="displayName.sv">Rättigheter</prop>
                     <prop key="description.en">Member of: URI (either URL or URN) that indicates a set of rights to specific resources based on an agreement across the releavant community</prop>
                     <prop key="description.de">Zeichenkette, die Rechte für spezifische Ressourcen beschreibt</prop>
                     <prop key="description.fr">Membre de: URI (soit une URL ou une URN) décrivant un droit spécific d'accès.</prop>
                     <prop key="description.it">Membro delle seguenti URI (sia URL o URN) che rappresentano diritti specifici d'accesso validi in tutta la communità</prop>
                     <prop key="description.ja">特定のアプリケーションもしくはコミュニティ内の複数リソースへのアクセス権限を持つことを示すURI(URLもしくはURN)</prop>
-                    <prop key="description.pt">URI (retractado por um URN ou URL) que indica um conjunto de direitos para recursos específicos. </prop>
-                    <prop key="description.sv">Rättigheter: URI (either URL or URN) som beskriver olika rättigheter till angivna tjänster.</prop>
                 </props>
             </property>
         </bean>
@@ -742,16 +690,12 @@
                     <prop key="displayName.fr">ID unique</prop>
                     <prop key="displayName.it">ID unico</prop>
                     <prop key="displayName.ja">ユニークID</prop>
-                    <prop key="displayName.pt">ID único</prop>
-                    <prop key="displayName.sv">Unik identifierare</prop>
                     <prop key="description.en">A unique identifier for a person, mainly for inter-institutional user identification.</prop>
                     <prop key="description.de">Eindeutige Benutzeridentifikation</prop>
                     <prop key="description.de-ch">Eindeutige Benützeridentifikation</prop>
                     <prop key="description.fr">Identifiant unique de l'utilisateur</prop>
                     <prop key="description.it">Un identificativo personale che identifica chiaramente l'utente in seno alla sua organizzazione</prop>
                     <prop key="description.ja">フェデレーション内で一意で永続的かつ難読化された利用者識別子(後継はサブジェクトID)</prop>
-                    <prop key="description.pt">ID único: Identificador pessoal que identifica claramente o utilizador na sua organização</prop>
-                    <prop key="description.sv">Unik identifierare: En unik identifierare för en person, används primärt för att identifiera personen inloggning vid annan organisation än hemmaorganisationen.</prop>
                 </props>
             </property>
         </bean>
