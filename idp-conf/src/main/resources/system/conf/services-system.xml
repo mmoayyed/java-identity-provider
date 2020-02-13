@@ -69,11 +69,16 @@
 	           p:namingRegistry="#{'%{idp.service.attribute.registry.namingRegistry:shibboleth.DefaultNamingRegistry}'.trim()}" />
 	    </constructor-arg>
     </bean>
-    <util:list id ="shibboleth.DefaultAttributeRegistryResources">
-        <value>%{idp.home}/conf/attribute-registry.xml</value>
-        <value>%{idp.home}/conf/attribute-resolver.xml</value>
-        <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
-    </util:list>
+
+    <bean id ="shibboleth.DefaultAttributeRegistryResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{'%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim()}" >
+        <property name="secondList">
+            <util:list >
+                <value>%{idp.home}/conf/attribute-registry.xml</value>
+                <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
