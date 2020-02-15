@@ -161,8 +161,9 @@ public class V4Install extends AbstractInitializableComponent {
             final Properties vers = new Properties();
             vers.setProperty(InstallerSupport.VERSION_NAME, currentVersion);
             vers.setProperty(InstallerSupport.PREVIOUS_VERSION_NAME, installedVersion==null?"":installedVersion);
-            final OutputStream out = new FileOutputStream(versFile.toFile());
-            vers.store(out, "Version file written at " + Instant.now());
+            try(final OutputStream out = new FileOutputStream(versFile.toFile())) {
+                vers.store(out, "Version file written at " + Instant.now());
+            }
         } catch (final IOException e) {
             log.error("Couldn't write version file: {}", e.getMessage());
             throw new BuildException("Couldn't write versioning information", e);
@@ -227,14 +228,20 @@ public class V4Install extends AbstractInitializableComponent {
                     if (!installerProps.isNoTidy()) {
                         mergeFile.deleteOnExit();
                     }
-                    replacements.load(new FileInputStream(mergeFile));
+                    try (final FileInputStream stream = new FileInputStream(mergeFile)) {
+                        replacements.load(stream);
+                    }
                 } else {
                     replacements = getIdPReplacements(sealerCreated);
                     log.debug("Creating {} from {} and {}", target, source, replacements.keySet());
                 }
-                propertiesToReWrite.load(new FileInputStream(source.toFile()));
+                try (final FileInputStream stream = new FileInputStream(source.toFile())) {
+                    propertiesToReWrite.load(stream);
+                }
                 propertiesToReWrite.replaceProperties(replacements);
-                propertiesToReWrite.store(new FileOutputStream(target.toFile()));
+                try (final FileOutputStream stream = new FileOutputStream(target.toFile())) {
+                    propertiesToReWrite.store(stream);
+                }
             } catch (final IOException e) {
                 throw new BuildException("Failed to generate idp.properties", e);
             }
@@ -259,10 +266,16 @@ public class V4Install extends AbstractInitializableComponent {
                 if (!installerProps.isNoTidy()) {
                     mergeFile.deleteOnExit();
                 }
-                replacements.load(new FileInputStream(mergeFile));
-                propertiesToReWrite.load(new FileInputStream(source.toFile()));
+                try (final FileInputStream stream = new FileInputStream(mergeFile)) {
+                    replacements.load(stream);
+                }
+                try (final FileInputStream stream = new FileInputStream(source.toFile())) {
+                    propertiesToReWrite.load(stream);
+                }
                 propertiesToReWrite.replaceProperties(replacements);
-                propertiesToReWrite.store(new FileOutputStream(target.toFile()));
+                try (final FileOutputStream stream = new FileOutputStream(target.toFile())) {
+                    propertiesToReWrite.store(stream);
+                }
             } catch (final IOException e) {
                 throw new BuildException("Failed to generate ldap.properties", e);
             }

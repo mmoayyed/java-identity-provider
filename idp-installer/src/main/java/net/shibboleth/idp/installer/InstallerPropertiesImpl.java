@@ -241,8 +241,8 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
             /* The file specified in the system file idp.property.file (if present). */
             final File idpPropertyFile = file.toFile();
-            try {
-                installerProperties.load(new FileInputStream(idpPropertyFile));
+            try(final FileInputStream stream = new FileInputStream(idpPropertyFile)) {
+                installerProperties.load(stream);
             } catch (final IOException e) {
                 log.error("Could not load {}: {}", file.toAbsolutePath(), e.getMessage());
                 throw new ComponentInitializationException(e);

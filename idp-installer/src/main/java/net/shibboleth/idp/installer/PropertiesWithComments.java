@@ -149,29 +149,30 @@ public final class PropertiesWithComments {
      * @throws IOException if readline fails
      */
     public void load(final InputStream input) throws IOException {
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        contents = new ArrayList<>();
-        properties = new HashMap<>();
-
-        String s = reader.readLine();
-
-        while (s != null) {
-            final String what = StringSupport.trimOrNull(s);
-            if (what == null) {
-                contents.add("");
-            } else if (what.startsWith("#")) {
-                if (what.contains("=")) {
-                    addCommentedProperty(s, true);
+        try(final BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            contents = new ArrayList<>();
+            properties = new HashMap<>();
+    
+            String s = reader.readLine();
+    
+            while (s != null) {
+                final String what = StringSupport.trimOrNull(s);
+                if (what == null) {
+                    contents.add("");
+                } else if (what.startsWith("#")) {
+                    if (what.contains("=")) {
+                        addCommentedProperty(s, true);
+                    } else {
+                        contents.add(what);
+                    }
                 } else {
-                    contents.add(what);
+    
+                    addCommentedProperty(s, false);
                 }
-            } else {
-
-                addCommentedProperty(s, false);
+                s = reader.readLine();
             }
-            s = reader.readLine();
+            loadedData = true;
         }
-        loadedData = true;
     }
 
     /**

@@ -270,6 +270,11 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
             writer.flush();
             writer.close();
         } catch (final IOException e) {
+            try {
+                writer.close();
+            } catch (final IOException e1) {
+                // Ignore
+            }
             throw new BuildException(e);
         }
     }
