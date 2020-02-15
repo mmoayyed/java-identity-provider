@@ -94,23 +94,24 @@ public class CollectionSerializer extends AbstractInitializableComponent impleme
             @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key,
             @Nonnull @NotEmpty final String value, @Nullable final Long expiration) throws IOException {
 
-        final JsonReader reader = readerFactory.createReader(new StringReader(value));
-        final JsonStructure st = reader.read();
-        if (!(st instanceof JsonArray)) {
-            throw new IOException("Found invalid data structure");
-        }
-
-        final Collection<String> collection = new ArrayList<>();
-
-        for (final JsonValue arrayValue : (JsonArray) st) {
-            if (arrayValue.getValueType().equals(ValueType.STRING)) {
-                collection.add(((JsonString) arrayValue).getString());
+        try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
+            final JsonStructure st = reader.read();
+            if (!(st instanceof JsonArray)) {
+                throw new IOException("Found invalid data structure");
             }
-        }
 
-        log.debug("Deserialized context '{}' key '{}' value '{}' expiration '{}' as '{}'", new Object[] {context, key,
-                value, expiration, collection,});
-        return collection;
+            final Collection<String> collection = new ArrayList<>();
+
+            for (final JsonValue arrayValue : (JsonArray) st) {
+                if (arrayValue.getValueType().equals(ValueType.STRING)) {
+                    collection.add(((JsonString) arrayValue).getString());
+                }
+            }
+
+            log.debug("Deserialized context '{}' key '{}' value '{}' expiration '{}' as '{}'", new Object[] {context, key,
+                    value, expiration, collection,});
+            return collection;
+        }
     }
 
 }

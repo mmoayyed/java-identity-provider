@@ -101,9 +101,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
     @Override @Nonnull @NotEmpty public String serialize(@Nonnull final StorageBackedIdPSession instance)
             throws IOException {
 
-        try {
-            final StringWriter sink = new StringWriter(128);
-            final JsonGenerator gen = jsonProvider.createGenerator(sink);
+        try (final StringWriter sink = new StringWriter(128);
+                final JsonGenerator gen = jsonProvider.createGenerator(sink)) {
+            
             gen.writeStartObject().write(CREATION_INSTANT_FIELD, instance.getCreationInstant().toEpochMilli())
                     .write(PRINCIPAL_NAME_FIELD, instance.getPrincipalName());
 
@@ -158,8 +158,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             throw new IOException("IdPSession objects must have an expiration");
         }
 
-        try {
-            final JsonReader reader = jsonProvider.createReader(new StringReader(value));
+        try (final JsonReader reader = jsonProvider.createReader(new StringReader(value))) {
             final JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {
                 throw new IOException("Found invalid data structure while parsing IdPSession");

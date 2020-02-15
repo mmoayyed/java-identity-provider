@@ -80,16 +80,17 @@ public class TransientIdParameters {
     public TransientIdParameters(@Nonnull @NotEmpty final String encoded) throws IOException {
         Constraint.isNotNull(StringSupport.trimOrNull(encoded), "encoded data must not be null or empty");
 
-        final JsonReader reader = Json.createReader(new StringReader(encoded));
-        final JsonStructure st = reader.read();
+        try (final JsonReader reader = Json.createReader(new StringReader(encoded))) {
+            final JsonStructure st = reader.read();
 
-        if (!(st instanceof JsonObject)) {
-            throw new IOException("Found invalid data structure while parsing IdPSession");
+            if (!(st instanceof JsonObject)) {
+                throw new IOException("Found invalid data structure while parsing IdPSession");
+            }
+            final JsonObject jsonObj = (JsonObject) st;
+
+            principal = jsonObj.getString(PRINCIPAL_FIELD);
+            attributeRecipient = jsonObj.getString(ATTRIBUTE_RECIPIENT_FIELD);
         }
-        final JsonObject jsonObj = (JsonObject) st;
-
-        principal = jsonObj.getString(PRINCIPAL_FIELD);
-        attributeRecipient = jsonObj.getString(ATTRIBUTE_RECIPIENT_FIELD);
     }
 
     /**
@@ -117,9 +118,7 @@ public class TransientIdParameters {
      * @throws IOException if encoding failed
      */
     @Nonnull public String encode() throws IOException {
-        try {
-            final StringWriter sink = new StringWriter(128);
-            final JsonGenerator gen = Json.createGenerator(sink);
+        try (final StringWriter sink = new StringWriter(128); final JsonGenerator gen = Json.createGenerator(sink)) {
             gen.writeStartObject().write(ATTRIBUTE_RECIPIENT_FIELD, getAttributeRecipient())
                     .write(PRINCIPAL_FIELD, getPrincipal());
             gen.writeEnd().close();
