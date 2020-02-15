@@ -71,7 +71,9 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final SPSession instance) throws IOException {
-        try (final StringWriter sink = new StringWriter(128); final JsonGenerator gen = Json.createGenerator(sink)) {
+        try {
+            final StringWriter sink = new StringWriter(128);
+            final JsonGenerator gen = Json.createGenerator(sink);
             gen.writeStartObject()
                 .write(SERVICE_ID_FIELD, instance.getId())
                 .write(CREATION_INSTANT_FIELD, instance.getCreationInstant().toEpochMilli());
@@ -96,7 +98,8 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             throw new IOException("SPSession objects must have an expiration");
         }
 
-        try (final JsonReader reader = Json.createReader(new StringReader(value))) {
+        try {
+            final JsonReader reader = Json.createReader(new StringReader(value));
             final JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {
                 throw new IOException("Found invalid data structure while parsing SPSession");
