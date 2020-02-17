@@ -65,7 +65,7 @@
         class="net.shibboleth.idp.metrics.impl.HTTPReporter"
         c:registry-ref="shibboleth.metrics.MetricRegistry"
         c:filter="#{null}"
-        p:httpClient-ref="shibboleth.NonCachingHttpClient" />
+        p:httpClient-ref="shibboleth.InternalHttpClient" />
     
     <!-- Some predefined metric sets, only created if installed by user. -->
     

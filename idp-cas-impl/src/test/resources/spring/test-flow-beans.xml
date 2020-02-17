@@ -144,9 +144,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.NonCachingHttpClient"
-          lazy-init="true"
-          class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+    <bean id="shibboleth.InternalHttpClient" parent="shibboleth.HttpClientFactory" lazy-init="true"
           p:connectionDisregardTLSCertificate="false"
           p:connectionTimeout="PT1M"
           p:connectionRequestTimeout="PT1M"
@@ -159,7 +157,7 @@
           class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
           factory-method="buildTLSSocketFactory" />
 
-    <bean id="proxyHttpClient" parent="shibboleth.NonCachingHttpClient"
+    <bean id="proxyHttpClient" parent="shibboleth.InternalHttpClient"
           p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactory" />
 
     <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"

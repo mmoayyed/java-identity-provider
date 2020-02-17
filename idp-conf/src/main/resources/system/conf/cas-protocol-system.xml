@@ -36,7 +36,7 @@
 
     <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
 
-    <bean id="proxyHttpClient" parent="shibboleth.NonCachingHttpClient"
+    <bean id="proxyHttpClient" parent="shibboleth.InternalHttpClient"
           p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactory" />
 
     <bean id="proxyHttpSecurity" class="org.opensaml.security.httpclient.HttpClientSecurityParameters">

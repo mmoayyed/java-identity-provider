@@ -178,7 +178,7 @@
         class="org.opensaml.messaging.handler.impl.URLEvaluatingMessageChannelSecurity" scope="prototype"
         p:URLLookup-ref="SOAPClient.DestinationURILookup" />
         
-    <bean id="SOAPClient.HttpClient" parent="shibboleth.NonCachingHttpClient"
+    <bean id="SOAPClient.HttpClient" parent="shibboleth.InternalHttpClient"
         p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLS" />
         
     <bean id="SOAPClient.ClientTLSPredicate"
