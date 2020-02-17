@@ -120,11 +120,11 @@ public class IdPPropertiesApplicationContextInitializer
             appendPropertySource(applicationContext, resource.toString(), properties);
 
         } else if (isFailFast(applicationContext)) {
-            log.error("Unable to find '{}' at well known location '{}'", getSearchTarget(), getSearchLocation());
+            log.error("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
             throw new ConstraintViolationException(
-                    "Unable to find '" + getSearchTarget() + "' at well known location");
+                    "Unable to find '" + getSearchTarget() + "' at '" + searchLocation + "'");
         } else {
-            log.warn("Unable to find '{}' at well known location '{}'", getSearchTarget(), getSearchLocation());
+            log.warn("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
         }
     }
 
