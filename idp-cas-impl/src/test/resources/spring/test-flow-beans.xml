@@ -144,7 +144,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.InternalHttpClient" parent="shibboleth.HttpClientFactory" lazy-init="true"
+    <bean id="shibboleth.InternalHttpClient" class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
           p:connectionDisregardTLSCertificate="false"
           p:connectionTimeout="PT1M"
           p:connectionRequestTimeout="PT1M"
