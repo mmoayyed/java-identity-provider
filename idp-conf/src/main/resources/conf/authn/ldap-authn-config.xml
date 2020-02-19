@@ -27,6 +27,6 @@
     <bean id="shibboleth.authn.LDAP.truststore" parent="shibboleth.KeystoreResourceCredentialConfig"
         p:truststore="%{idp.authn.LDAP.trustStore:undefined}" />
         
-    <bean id="shibboleth.authn.LDAP.authenticator" parent="shibboleth.LDAPAuthenticationFactory" />
+    <bean id="shibboleth.authn.LDAP.authenticator" parent="shibboleth.LDAPAuthenticationFactory" lazy-init="true" />
 
 </beans>
