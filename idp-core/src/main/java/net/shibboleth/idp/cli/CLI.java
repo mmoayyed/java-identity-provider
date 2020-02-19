@@ -71,7 +71,8 @@ public final class CLI {
                 errorAndExit("Argument class was not of the correct type");
             }
             argObject = (CommandLineArguments) obj;
-            final JCommander jc = new JCommander(argObject, args);
+            final JCommander jc = new JCommander(argObject);
+            jc.parse(args);
             if (argObject.isUsage()) {
                 jc.usage();
                 return;
