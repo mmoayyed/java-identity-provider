@@ -26,10 +26,15 @@
                 Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
         </EncryptionMethod>
         <metadata:Entity>https://sp.example.org/sp/shibboleth</metadata:Entity>
+        <metadata:Entity>https://sp3.example.org/sp/shibboleth</metadata:Entity>
+        <metadata:Entity>https://sp4.example.org/sp/shibboleth</metadata:Entity>
+        <metadata:ConditionScript language="javascript">
+            <metadata:Script>input.getEntityID().equals("https://sp3.example.org/sp/shibboleth");</metadata:Script>
+        </metadata:ConditionScript>
     </metadata:MetadataFilter>
 
     <EntitiesDescriptor Name="ukgroup">
-    	<EntityDescriptor ID="uk001502"
+    	<EntityDescriptor
     		entityID="https://sp.example.org/sp/shibboleth">
     		<SPSSODescriptor
     			protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
@@ -41,7 +46,7 @@
     		</SPSSODescriptor>
     	</EntityDescriptor>
 
-        <EntityDescriptor ID="uk001503"
+        <EntityDescriptor
             entityID="https://sp2.example.org/sp/shibboleth">
             <SPSSODescriptor
                 protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
@@ -49,6 +54,18 @@
                 <AssertionConsumerService
                     Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
                     Location="https://sp2.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
+                    index="5" />
+            </SPSSODescriptor>
+        </EntityDescriptor>
+
+        <EntityDescriptor
+            entityID="https://sp4.example.org/sp/shibboleth">
+            <SPSSODescriptor
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    
+                <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                    Location="https://sp4.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
                     index="5" />
             </SPSSODescriptor>
         </EntityDescriptor>

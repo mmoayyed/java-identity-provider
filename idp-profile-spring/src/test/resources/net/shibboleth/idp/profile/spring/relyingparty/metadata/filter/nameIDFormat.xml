@@ -10,6 +10,7 @@
 	<metadata:MetadataFilter xsi:type="metadata:NameIDFormat" removeExistingFormats="true">
         <metadata:Format>foo</metadata:Format>
         <metadata:Entity>https://sp.example.org/sp/shibboleth</metadata:Entity>
+        <metadata:Entity>https://sp4.example.org/sp/shibboleth</metadata:Entity>
         <metadata:Format>bar</metadata:Format>
         <metadata:Entity>https://sp2.example.org/sp/shibboleth</metadata:Entity>
     </metadata:MetadataFilter>

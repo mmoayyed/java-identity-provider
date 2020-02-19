@@ -44,6 +44,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.ManagedMap;
+import org.springframework.beans.factory.support.ManagedSet;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -67,7 +68,7 @@ public class AlgorithmFilterParser extends AbstractSingleBeanDefinitionParser {
         return AlgorithmFilter.class;
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
@@ -83,11 +84,36 @@ public class AlgorithmFilterParser extends AbstractSingleBeanDefinitionParser {
         // Accumulate objects to attach as rule values.
         final List<XMLObject> accumulator = new ArrayList<>();
 
+        // Accumulated map of predicates to objects to attach to inject into filter.
         final ManagedMap<Object, ManagedList<XMLObject>> ruleMap = new ManagedMap<>();
 
+        // Acumulation of entityIDs to use in the next automated Predicate.
+        // Interrupting a sequence of <Entity> elements will end the accumulation.
+        ManagedSet<String> entitySet = new ManagedSet<>();
+        
         Element child = ElementSupport.getFirstChildElement(element);
 
         while (child != null) {
+            
+            if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE, "Entity")) {
+                // Add to the active entity set.
+                entitySet.add(ElementSupport.getElementContentAsString(child));
+                child = ElementSupport.getNextSiblingElement(child);
+                continue;
+                
+            } else if (!entitySet.isEmpty()) {
+                // "Commit" the current entity set as a single condition against the current accumulator.
+                // Then reset the entity set. Use a new object rather than clearing to ensure no cross-contamination.
+                final BeanDefinitionBuilder entityIdBuilder =
+                        BeanDefinitionBuilder.genericBeanDefinition(EntityIdPredicate.class);
+                entityIdBuilder.addConstructorArgValue(entitySet);
+                final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
+                forRule.addAll(accumulator);
+                ruleMap.put(entityIdBuilder.getBeanDefinition(), forRule);
+                
+                entitySet = new ManagedSet<>();
+            }
+            
             if (ElementSupport.isElementNamed(child, DigestMethod.DEFAULT_ELEMENT_NAME)) {
                 try {
                     accumulator.add(digestUnmarshaller.unmarshall(child));
@@ -106,14 +132,6 @@ public class AlgorithmFilterParser extends AbstractSingleBeanDefinitionParser {
                 } catch (final UnmarshallingException e) {
                     log.error("Error unmarshalling EncryptionMethod element", e);
                 }
-            } else if (ElementSupport
-                    .isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE, "Entity")) {
-                final BeanDefinitionBuilder entityIdBuilder =
-                        BeanDefinitionBuilder.genericBeanDefinition(EntityIdPredicate.class);
-                entityIdBuilder.addConstructorArgValue(ElementSupport.getElementContentAsString(child));
-                final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
-                forRule.addAll(accumulator);
-                ruleMap.put(entityIdBuilder.getBeanDefinition(), forRule);
             } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
                     "ConditionRef")) {
                 final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
@@ -126,12 +144,23 @@ public class AlgorithmFilterParser extends AbstractSingleBeanDefinitionParser {
                 ruleMap.put(ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition(),
                         forRule);
             }
+            
             child = ElementSupport.getNextSiblingElement(child);
         }
 
+        // Do a final check and commit for a non-empty entity set.
+        if (!entitySet.isEmpty()) {
+            final BeanDefinitionBuilder entityIdBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(EntityIdPredicate.class);
+            entityIdBuilder.addConstructorArgValue(entitySet);
+            final ManagedList<XMLObject> forRule = new ManagedList<>(accumulator.size());
+            forRule.addAll(accumulator);
+            ruleMap.put(entityIdBuilder.getBeanDefinition(), forRule);
+        }
+        
         builder.addPropertyValue("rules", ruleMap);
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {

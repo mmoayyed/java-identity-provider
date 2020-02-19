@@ -70,9 +70,26 @@ public class AlgorithmFilterParserTest extends AbstractMetadataParserTest {
         
         EntityIdCriterion crit = new EntityIdCriterion("https://sp.example.org/sp/shibboleth");
         EntityDescriptor entity = resolver.resolveSingle(new CriteriaSet(crit));
-        Assert.assertNotNull(entity);
+        validate(entity);
 
-        Extensions exts = entity.getExtensions();
+        crit = new EntityIdCriterion("https://sp4.example.org/sp/shibboleth");
+        entity = resolver.resolveSingle(new CriteriaSet(crit));
+        if (entity != null) {
+            validate(entity);
+        }
+
+        crit = new EntityIdCriterion("https://sp2.example.org/sp/shibboleth");
+        entity = resolver.resolveSingle(new CriteriaSet(crit));
+        Assert.assertNotNull(entity);
+        final Extensions exts = entity.getExtensions();
+        if (exts != null) {
+            Assert.assertTrue(exts.getUnknownXMLObjects(DigestMethod.DEFAULT_ELEMENT_NAME).isEmpty());
+            Assert.assertTrue(exts.getUnknownXMLObjects(SigningMethod.DEFAULT_ELEMENT_NAME).isEmpty());
+        }
+    }
+    
+    private void validate(final EntityDescriptor entity) {
+        final Extensions exts = entity.getExtensions();
         Assert.assertNotNull(exts);
         
         List<XMLObject> extElements = exts.getUnknownXMLObjects(DigestMethod.DEFAULT_ELEMENT_NAME);
@@ -106,15 +123,6 @@ public class AlgorithmFilterParserTest extends AbstractMetadataParserTest {
                 assertEquals(((MGF) mgfs.get(0)).getAlgorithm(), EncryptionConstants.ALGO_ID_MGF1_SHA256);
             }
         }        
-
-        crit = new EntityIdCriterion("https://sp2.example.org/sp/shibboleth");
-        entity = resolver.resolveSingle(new CriteriaSet(crit));
-        Assert.assertNotNull(entity);
-        exts = entity.getExtensions();
-        if (exts != null) {
-            Assert.assertTrue(exts.getUnknownXMLObjects(DigestMethod.DEFAULT_ELEMENT_NAME).isEmpty());
-            Assert.assertTrue(exts.getUnknownXMLObjects(SigningMethod.DEFAULT_ELEMENT_NAME).isEmpty());
-        }
     }
-    
+
 }
