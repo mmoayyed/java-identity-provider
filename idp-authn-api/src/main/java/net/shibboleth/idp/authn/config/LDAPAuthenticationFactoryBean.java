@@ -51,6 +51,7 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
@@ -134,6 +135,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   /** Whether to use LDAPS for connections. */
   private boolean useSSL;
 
+  /** Whether to use the allow-all hostname verifier. */
+  private boolean checkTLSNames;
+
   /** Wait time for connects. */
   private Duration connectTimeout;
 
@@ -208,6 +212,11 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   /** Whether to use account state data as defined by the EDirectory schema. */
   private boolean isEDirectory;
+  
+  /** Constructor. */
+  public LDAPAuthenticationFactoryBean() {
+    checkTLSNames = true;
+  }
 
   public void setAuthenticatorType(@Nonnull @NotEmpty final String type) {
     authenticatorType = AuthenticatorType.fromLabel(type);
@@ -227,6 +236,10 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setUseSSL(final boolean b) {
     useSSL = b;
+  }
+  
+  public void setCheckTLSNames(final boolean b) {
+      checkTLSNames = b;
   }
 
   public void setConnectTimeout(@Nullable final Duration timeout) {
@@ -346,6 +359,11 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     case JVM:
     default:
       break;
+    }
+    
+    if (!checkTLSNames) {
+        log.warn("LDAP Authenticator configured to bypass TLS hostname checking!");
+        config.setHostnameVerifier(new AllowAnyHostnameVerifier());
     }
     return config;
   }
