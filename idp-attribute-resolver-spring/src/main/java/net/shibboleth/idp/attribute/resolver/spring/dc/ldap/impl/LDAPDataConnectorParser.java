@@ -47,6 +47,7 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,6 +261,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 connectionConfig.addPropertyValue("responseTimeout", Duration.ofSeconds(3));
             }
             final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
+            
+            final Boolean checkTLSNames = AttributeSupport.getAttributeValueAsBoolean(
+                    configElement.getAttributeNodeNS(null, "checkTLSNames"));
+            if (checkTLSNames != null && !checkTLSNames) {
+                log.warn("{} TLS server certificate name checking is disabled!", getLogPrefix());
+                sslConfig.addPropertyValue("hostnameVerifier", new AllowAnyHostnameVerifier());
+            }
+            
             sslConfig.addPropertyValue("credentialConfig", createCredentialConfig(parserContext));
             connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());
             final BeanDefinitionBuilder connectionInitializer =

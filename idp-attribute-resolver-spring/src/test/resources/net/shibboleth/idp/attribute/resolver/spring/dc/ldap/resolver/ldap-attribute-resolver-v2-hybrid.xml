@@ -4,7 +4,7 @@
 
     <DataConnector id="myLDAP" xsi:type="LDAPDirectory" ldapURL="ldap://localhost:10389"
         baseDN="ou=people,dc=shibboleth,dc=net" principal="cn=Directory Manager" principalCredential="password"
-        useStartTLS="true" searchTimeLimit="PT7S"
+        useStartTLS="true" checkTLSNames="false" searchTimeLimit="PT7S"
         executableSearchBuilderRef="filter" mappingStrategyRef="mappings" validatorRef="validator" noRetryDelay="PT5M"
         connectTimeout="PT2S" responseTimeout="PT4S">
         <StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security"
