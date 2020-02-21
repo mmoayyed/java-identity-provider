@@ -48,6 +48,7 @@ import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
+import org.ldaptive.ssl.CertificateHostnameVerifier;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,11 +263,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
             
-            final Boolean checkTLSNames = AttributeSupport.getAttributeValueAsBoolean(
-                    configElement.getAttributeNodeNS(null, "checkTLSNames"));
-            if (checkTLSNames != null && !checkTLSNames) {
-                log.warn("{} TLS server certificate name checking is disabled!", getLogPrefix());
-                sslConfig.addPropertyValue("hostnameVerifier", new AllowAnyHostnameVerifier());
+            final String disableHostnameVerification =
+                    configElement.getAttributeNS(null, "disableHostnameVerification");
+            if (disableHostnameVerification != null) {
+                final BeanDefinitionBuilder verifier =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildHostnameVerifier");
+                verifier.addConstructorArgValue(disableHostnameVerification);
+                verifier.addConstructorArgValue(getLogPrefix());
+                sslConfig.addPropertyValue("hostnameVerifier", verifier.getBeanDefinition());
             }
             
             sslConfig.addPropertyValue("credentialConfig", createCredentialConfig(parserContext));
@@ -771,6 +775,16 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final SearchValidator validator = new SearchValidator();
             validator.setSearchRequest(searchRequest);
             return validator;
+        }
+        
+        @Nullable public static CertificateHostnameVerifier buildHostnameVerifier(
+                @Nullable final String disableHostnameVerification, @Nullable final String logPrefix) {
+            if (disableHostnameVerification != null && Boolean.valueOf(disableHostnameVerification)) {
+                LoggerFactory.getLogger(LDAPDataConnectorParser.class).warn(
+                        "{} TLS server certificate name checking is disabled!", logPrefix);
+                return new AllowAnyHostnameVerifier();
+            }
+            return null;
         }
 
         /**

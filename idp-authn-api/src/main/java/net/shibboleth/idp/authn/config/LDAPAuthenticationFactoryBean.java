@@ -136,7 +136,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   private boolean useSSL;
 
   /** Whether to use the allow-all hostname verifier. */
-  private boolean checkTLSNames;
+  private boolean disableHostnameVerification;
 
   /** Wait time for connects. */
   private Duration connectTimeout;
@@ -212,11 +212,6 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   /** Whether to use account state data as defined by the EDirectory schema. */
   private boolean isEDirectory;
-  
-  /** Constructor. */
-  public LDAPAuthenticationFactoryBean() {
-    checkTLSNames = true;
-  }
 
   public void setAuthenticatorType(@Nonnull @NotEmpty final String type) {
     authenticatorType = AuthenticatorType.fromLabel(type);
@@ -238,8 +233,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     useSSL = b;
   }
   
-  public void setCheckTLSNames(final boolean b) {
-      checkTLSNames = b;
+  public void setDisableHostnameVerification(final boolean b) {
+      disableHostnameVerification = b;
   }
 
   public void setConnectTimeout(@Nullable final Duration timeout) {
@@ -361,7 +356,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
       break;
     }
     
-    if (!checkTLSNames) {
+    if (disableHostnameVerification) {
         log.warn("LDAP Authenticator configured to bypass TLS hostname checking!");
         config.setHostnameVerifier(new AllowAnyHostnameVerifier());
     }

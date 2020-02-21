@@ -974,10 +974,10 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="checkTLSNames" type="resolver:string">
+                <attribute name="disableHostnameVerification" type="resolver:string">
                     <annotation>
                         <documentation>
-                            Whether to do hostname/certificate checking during TLS. Defaults to true.
+                            Whether to disable hostname/certificate checking during TLS. Defaults to false.
                         </documentation>
                     </annotation>
                 </attribute>
