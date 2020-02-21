@@ -30,4 +30,17 @@
         <value>http://shibboleth.net/ns/profiles/mdquery</value>
     </util:list>
 
+    <util:map id="shibboleth.AuditFieldReplacementMap">
+        <entry key="urn:oasis:names:tc:SAML:1.0:am:password" value="password" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" value="password" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" value="password" />
+        <entry key="urn:mace:shibboleth:1.0:nameIdentifier" value="transient" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" value="transient" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" value="persistent" />
+        <entry key="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" value="emailAddress" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:status:Success" value="Success" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:status:Requester" value="Requester" />
+        <entry key="urn:oasis:names:tc:SAML:2.0:status:Responder" value="Responder" />
+    </util:map>
+
 </beans>
