@@ -37,7 +37,7 @@ public final class SAMLAuditFields {
 
     /** Request binding field. */
     @Nonnull @NotEmpty public static final String REQUEST_BINDING = "b";
-
+    
     /** Response binding field. */
     @Nonnull @NotEmpty public static final String RESPONSE_BINDING = "bb";
     
@@ -47,6 +47,15 @@ public final class SAMLAuditFields {
     /** Name identifier Format field. */
     @Nonnull @NotEmpty public static final String NAMEID_FORMAT = "f";
     
+    /** NameID SPNameQualifier field. @since 4.0.0 */
+    @Nonnull @NotEmpty public static final String SP_NAME_QUALIFIER = "SPQ";
+
+    /** Name identifier Format field. */
+    @Nonnull @NotEmpty public static final String NAMEIDPOLICY_FORMAT = "pf";
+    
+    /** NameID SPNameQualifier field. @since 4.0.0 */
+    @Nonnull @NotEmpty public static final String NAMEIDPOLICY_SP_NAME_QUALIFIER = "PSPQ";
+
     /** Assertion ID field. */
     @Nonnull @NotEmpty public static final String ASSERTION_ID = "i";
 

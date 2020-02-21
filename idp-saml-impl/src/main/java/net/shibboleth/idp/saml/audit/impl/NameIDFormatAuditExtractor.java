@@ -34,11 +34,11 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link Function} that returns the Name Identifier Format from an assertion in a response. */
+/** {@link Function} that returns the Name Identifier Format from a SAML Subject. */
 public class NameIDFormatAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
-    @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
+    @Nonnull private final Function<ProfileRequestContext,SAMLObject> messageLookupStrategy;
     
     /**
      * Constructor.
@@ -46,13 +46,13 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
      * @param strategy lookup strategy for message
      */
     public NameIDFormatAuditExtractor(@Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
-        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
+        messageLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        SAMLObject msg = responseLookupStrategy.apply(input);
+        SAMLObject msg = messageLookupStrategy.apply(input);
         if (msg != null) {
             
             // Step down into ArtifactResponses.
@@ -77,6 +77,7 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
                 }
 
             } else if (msg instanceof AuthnRequest) {
+                
                 if (((AuthnRequest) msg).getSubject() != null &&
                         ((AuthnRequest) msg).getSubject().getNameID() != null) {
                     return ((AuthnRequest) msg).getSubject().getNameID().getFormat();
@@ -91,6 +92,19 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
                         return format;
                     }
                 }
+            } else if (msg instanceof org.opensaml.saml.saml2.core.SubjectQuery) {
+
+                if (((org.opensaml.saml.saml2.core.SubjectQuery) msg).getSubject() != null &&
+                        ((org.opensaml.saml.saml2.core.SubjectQuery) msg).getSubject().getNameID() != null) {
+                    return ((org.opensaml.saml.saml2.core.SubjectQuery) msg).getSubject().getNameID().getFormat();
+                }
+            } else if (msg instanceof org.opensaml.saml.saml1.core.SubjectQuery) {
+
+                if (((org.opensaml.saml.saml1.core.SubjectQuery) msg).getSubject() != null &&
+                        ((org.opensaml.saml.saml1.core.SubjectQuery) msg).getSubject().getNameIdentifier() != null) {
+                    return ((org.opensaml.saml.saml1.core.SubjectQuery)
+                            msg).getSubject().getNameIdentifier().getFormat();
+                }
                 
             } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion) {
                 return apply((org.opensaml.saml.saml2.core.Assertion) msg);
@@ -101,7 +115,7 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
         
         return null;
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|ReturnCount ON
 
     /**
      * Apply function to an assertion.

@@ -236,6 +236,54 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEIDPOLICY_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDPolicyFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEIDPOLICY_SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDPolicySPNameQualifierAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
@@ -308,7 +356,7 @@
                         <constructor-arg name="f">
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
-                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
                         </constructor-arg>
                     </bean>
                 </entry>
@@ -329,6 +377,54 @@
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.FORCE_AUTHN"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.ForceAuthnAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEIDPOLICY_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDPolicyFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEIDPOLICY_SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDPolicySPNameQualifierAuditExtractor">
                         <constructor-arg>
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.AuthnRequest"
@@ -450,6 +546,18 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ENCRYPTION"/>
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
@@ -558,6 +666,18 @@
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
                         <constructor-arg>
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.SAMLObject"
@@ -916,6 +1036,18 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SESSION_INDEX"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.SessionIndexAuditExtractor">
@@ -979,6 +1111,30 @@
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.NameIDAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
                         <constructor-arg>
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.SAMLObject"
