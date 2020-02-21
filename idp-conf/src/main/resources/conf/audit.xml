@@ -11,11 +11,10 @@
     default-destroy-method="destroy">
 
     <!--
-    This bean defines a mapping between audit log categories and formatting strings. The default entry is
-    for compatibility with V2 audit logging.
+    This bean defines a mapping between audit log categories and formatting strings.
     -->
     <util:map id="shibboleth.AuditFormattingMap">
-        <entry key="Shibboleth-Audit" value="%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i|%XX|%X" />
+        <entry key="Shibboleth-Audit" value="%a|%ST|%T|%u|%SP|%i|%ac|%t|%attr|%n|%f|%SSO|%XX|%X|%b|%bb|%e|%S|%SS|%s|%UA" />
     </util:map>
 
     <!-- Override the format of date/time fields in the log and/or convert to default time zone. -->
