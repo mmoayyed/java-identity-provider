@@ -38,7 +38,7 @@ ConfigureAd = LCase(msiProperties(5))
 if ConfigureAd = "true" then
    AdDomain = LCase(msiProperties(6))
    AdUser = LCase(msiProperties(7))
-   AdPass = LCase(msiProperties(8))
+   AdPass = msiProperties(8)
    AdUseGC = LCase(msiProperties(9))
 end if
 
