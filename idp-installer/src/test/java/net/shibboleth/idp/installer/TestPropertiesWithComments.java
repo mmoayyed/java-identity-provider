@@ -26,15 +26,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 /**
  * test for {@link PropertiesWithComments}.
  */
+@SuppressWarnings("javadoc")
 public class TestPropertiesWithComments {
 
     // We use a File to aid scrutabiloty in testing
@@ -58,7 +62,7 @@ public class TestPropertiesWithComments {
 
 
     @Test public void testReplaceValues() throws FileNotFoundException, IOException {
-        final PropertiesWithComments pwc = new PropertiesWithComments();
+        final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("a", "b"));
 
         pwc.load(getInputStream());
 
@@ -79,6 +83,30 @@ public class TestPropertiesWithComments {
         Assert.assertEquals(p.getProperty("yy"), "123321");
         Assert.assertEquals(p.getProperty("q"), "elephants");
         
+    }
+
+    @Test public void testBlackList() throws IOException {
+        final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("x", "a", "b"));
+
+        pwc.load(getInputStream());
+
+        pwc.replaceProperty("c", "new C");
+        try {
+            pwc.replaceProperty("a", "new C");
+            fail("Property Replacement with black listed name worked");
+        } catch (ConstraintViolationException e) {
+            // OK
+        }
+
+        Properties p = new Properties(1);
+        p.setProperty("b", "new b");
+        try {
+            pwc.replaceProperties(p);
+            fail("Property Replacement with black listed name failed");
+        } catch (ConstraintViolationException e) {
+            // OK
+        }
+
     }
 
     @Test public void testReplaceNamesFail() throws FileNotFoundException, IOException {

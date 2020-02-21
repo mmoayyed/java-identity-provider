@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -205,6 +206,13 @@ public class V4Install extends AbstractInitializableComponent {
      */
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
+        final Set<String> blackList = Set.of(
+                "idp.sealer.storePassword",
+                "idp.sealer.keyPassword",
+                "idp.authn.LDAP.bindDNCredential",
+                "idp.attribute.resolver.LDAP.bindDNCredential",
+                "idp.persistentId.salt");
+
         final Path conf = installerProps.getTargetDir().resolve("conf");
         final Path dstConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
         if (!currentState.isIdPPropertiesPresent()) {
@@ -219,7 +227,7 @@ public class V4Install extends AbstractInitializableComponent {
                 if (!Files.exists(source)) {
                     throw new BuildException("missing idp.properties in dist");
                 }
-                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
+                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(blackList);
                 final Properties replacements;
                 if (mergePath != null) {
                     log.debug("Creating {} from {} and {}", target, source, mergePath);
@@ -260,7 +268,7 @@ public class V4Install extends AbstractInitializableComponent {
                     throw new BuildException("missing ldap.properties in dist");
                 }
                 log.debug("Creating {} from {} and {}", target, source, ldapMergePath);
-                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments();
+                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(blackList);
                 final Properties replacements = new Properties();
                 final File mergeFile = ldapMergePath.toFile();
                 if (!installerProps.isNoTidy()) {

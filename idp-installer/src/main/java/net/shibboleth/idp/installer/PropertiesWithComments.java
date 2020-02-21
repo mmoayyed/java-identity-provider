@@ -26,14 +26,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -56,6 +59,9 @@ public final class PropertiesWithComments {
     /** Name Replacement info. */
     private final Properties nameReplacement;
 
+    /**  BlackListed property names. */
+    @Nonnull private final Set<String> blacklistedNames;
+
     /** Have we loaded data?.
      *
      * We cannot load the replacement names after the file load.
@@ -64,6 +70,14 @@ public final class PropertiesWithComments {
 
     /** Legacy Constructor. */
     public PropertiesWithComments() {
+        this(Collections.emptySet());
+    }
+
+    /** Constructor.
+     * @param blacklist names to warn on.
+     */
+    public PropertiesWithComments(@Nonnull final Set<String> blacklist) {
+        blacklistedNames = Set.copyOf(blacklist);
         nameReplacement = new Properties();
     }
 
@@ -218,6 +232,8 @@ public final class PropertiesWithComments {
      */
     public boolean replaceProperty(final String propName, final String newPropValue) {
 
+        Constraint.isFalse(blacklistedNames.contains(propName),
+                "property '" + propName + "' cannot be replaced");
         CommentedProperty p = properties.get(propName);
         if (null != p) {
             p.setValue(newPropValue);
