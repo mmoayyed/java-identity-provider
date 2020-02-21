@@ -62,7 +62,7 @@ public class TestPropertiesWithComments {
 
 
     @Test public void testReplaceValues() throws FileNotFoundException, IOException {
-        final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("a", "b"));
+        final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("a", "b", "q"));
 
         pwc.load(getInputStream());
 
@@ -81,7 +81,7 @@ public class TestPropertiesWithComments {
         Assert.assertEquals(p.getProperty("p"), "321");
         Assert.assertEquals(p.getProperty("nn"), "123");
         Assert.assertEquals(p.getProperty("yy"), "123321");
-        Assert.assertEquals(p.getProperty("q"), "elephants");
+        Assert.assertEquals(p.getProperty("q"), "elephants"); // "q" was blacklisted to be changed but is OK to be there
         
     }
 
