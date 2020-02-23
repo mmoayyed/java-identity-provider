@@ -32,6 +32,7 @@ import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationRequest;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
@@ -111,7 +112,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     }
     
     @BeforeMethod
-    protected void setUp() throws ComponentInitializationException {
+    protected void setUp() throws ComponentInitializationException, EncodingException {
         servletContext = new MockServletContext();
         servletContext.setContextPath("/idp");
         servletRequest = new MockHttpServletRequest(servletContext);
@@ -433,7 +434,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         return acs;
     }
     
-    private SPSSODescriptor buildSPSSODescriptor() {
+    private SPSSODescriptor buildSPSSODescriptor() throws EncodingException {
         SPSSODescriptor spSSODescriptor = (SPSSODescriptor) XMLObjectSupport.buildXMLObject(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
         
         for (PublicKey publicKey : publicKeys) {
