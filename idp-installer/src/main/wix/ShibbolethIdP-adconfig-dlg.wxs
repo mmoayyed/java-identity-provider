@@ -50,7 +50,7 @@
 
                 <Control Id="ADDescriptionLine3" Type="Text" X="25" Y="111" Height="18" Width="320" Text="In order to resolve attributes, the IdP needs a username/password for Active Directory" />
 
-                <Control Id="ADDescriptionLine4" Type="Text" X="25" Y="131" Height="18" Width="150" Text="Username (no domain)" />
+                <Control Id="ADDescriptionLine4" Type="Text" X="25" Y="131" Height="18" Width="150" Text="User Principal Name (UPN)" />
                 <Control Id="ADUser" Type="Edit" X="185" Y="131" Height="18" Width="150" Property="AD_USER" Text="[AD_USER]" />
 
 

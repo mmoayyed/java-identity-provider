@@ -166,7 +166,7 @@ if ConfigureAd = "true" then
         LDAPFile.Writeline "idp.authn.LDAP.ldapURL=ldap://" & AdDomain & ":" & LDAPPort
         LDAPFile.Writeline "idp.authn.LDAP.baseDN=" & LDAPSearchPath
         LDAPFile.Writeline "idp.authn.LDAP.userFilter= (sAMAccountName={user})"
-        LDAPFile.Writeline "idp.authn.LDAP.bindDN=" & AdUser & "@" & AdDomain
+        LDAPFile.Writeline "idp.authn.LDAP.bindDN=" & AdUser
         LDAPFile.Writeline "idp.attribute.resolver.LDAP.searchFilter= (sAMAccountName=$resolutionContext.principal)"
         LDAPFile.Writeline "idp.authn.LDAP.dnFormat= %s@" & AdDomain
         LDAPFile.Close
