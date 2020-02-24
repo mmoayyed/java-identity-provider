@@ -116,7 +116,7 @@ public class HTTPDataConnectorTest {
     @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
             throws Exception {
         final HttpClientBuilder clientBuilder = new HttpClientBuilder();
-        clientBuilder.setTLSSocketFactory(HTTPMetadataResolverTest.buildTrustEngineSocketFactory());
+        clientBuilder.setTLSSocketFactory(HTTPMetadataResolverTest.buildSocketFactory());
         connector.setHttpClient(clientBuilder.buildClient());
 
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();

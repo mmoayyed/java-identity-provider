@@ -22,8 +22,8 @@ import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.cert.CertificateException;
 
-import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +88,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
                         "https://localhost:8443",
                         "src/test/resources/credentials/nobody-2.p12",
                         200,
-                        new CredentialException(),
+                        new CertificateException(),
                 },
 
                 // Untrusted cert signed by commercial CA that appears in default system truststore
@@ -96,7 +96,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
                         "https://localhost:8443",
                         "src/test/resources/credentials/idp-1371.p12",
                         200,
-                        new CredentialException(),
+                        new CertificateException(),
                 },
         };
     }
