@@ -67,7 +67,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        builder.addPropertyValue("requestURLBuilder", getRequestURLBuilder(element));
+        builder.addPropertyValue("requestURLBuilder", getRequestURLBuilder(element, builder));
 
     }
 
@@ -75,9 +75,11 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
      * Build and return an instance of the {@link java.util.function.Function} used as the request URL builder.
      * 
      * @param element the parent metadata provider element
+     * @param parentBuilder metadata provider element's bean builder
      * @return the function
      */
-    protected BeanDefinition getRequestURLBuilder(final Element element) {
+    // Checkstyle: MethodLength OFF
+    protected BeanDefinition getRequestURLBuilder(final Element element, final BeanDefinitionBuilder parentBuilder) {
         // Note: we have to do this BeanDefinitionBuilder business b/c for the template one, we need to
         // inject the VelocityEngine. Otherwise would be easier to just return the Function directly.
 
@@ -138,6 +140,9 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
             if (secondaryURLBuildersRef != null) {
                 builder.addConstructorArgReference(secondaryURLBuildersRef);
             }
+            if (!element.hasAttributeNS(null, "supportedContentTypes")) {
+                parentBuilder.addPropertyValue("supportedContentTypes", "application/samlmetadata+xml");
+            }
             return builder.getBeanDefinition();
         }
 
@@ -146,6 +151,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
                 BeanDefinitionBuilder.genericBeanDefinition(HTTPEntityIDRequestURLBuilder.class);
         return builder.getBeanDefinition();
     }
+    // Checkstyle: MethodLength ON
 
     /**
      * Parse the 'encodingStyle' attributes for Template element types.
