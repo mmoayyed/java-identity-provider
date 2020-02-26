@@ -581,6 +581,12 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ENCRYPTION_ALGORITHM"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.EncryptionAlgorithmAuditExtractor" />
+                </entry>
             </map>
         </property>
     </bean>

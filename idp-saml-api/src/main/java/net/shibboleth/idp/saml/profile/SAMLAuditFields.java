@@ -107,6 +107,9 @@ public final class SAMLAuditFields {
     /** Encryption field. */
     @Nonnull @NotEmpty public static final String ENCRYPTION = "X";
 
+    /** Encryption algorithm field. */
+    @Nonnull @NotEmpty public static final String ENCRYPTION_ALGORITHM = "XA";
+
     /** Constructor. */
     private SAMLAuditFields() {
 

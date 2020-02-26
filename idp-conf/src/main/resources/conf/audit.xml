@@ -14,7 +14,7 @@
     This bean defines a mapping between audit log categories and formatting strings.
     -->
     <util:map id="shibboleth.AuditFormattingMap">
-        <entry key="Shibboleth-Audit" value="%a|%ST|%T|%u|%SP|%i|%ac|%t|%attr|%n|%f|%SSO|%XX|%X|%b|%bb|%e|%S|%SS|%s|%UA" />
+        <entry key="Shibboleth-Audit" value="%a|%ST|%T|%u|%SP|%i|%ac|%t|%attr|%n|%f|%SSO|%XX|%XA|%b|%bb|%e|%S|%SS|%s|%UA" />
     </util:map>
 
     <!-- Override the format of date/time fields in the log and/or convert to default time zone. -->
@@ -40,6 +40,12 @@
         <entry key="urn:oasis:names:tc:SAML:2.0:status:Success" value="Success" />
         <entry key="urn:oasis:names:tc:SAML:2.0:status:Requester" value="Requester" />
         <entry key="urn:oasis:names:tc:SAML:2.0:status:Responder" value="Responder" />
+        <entry key="http://www.w3.org/2009/xmlenc11#aes128-gcm" value="AES128-GCM" />
+        <entry key="http://www.w3.org/2009/xmlenc11#aes192-gcm" value="AES192-GCM" />
+        <entry key="http://www.w3.org/2009/xmlenc11#aes256-gcm" value="AES256-GCM" />
+        <entry key="http://www.w3.org/2001/04/xmlenc#aes128-cbc" value="AES128-CBC" />
+        <entry key="http://www.w3.org/2001/04/xmlenc#aes192-cbc" value="AES192-CBC" />
+        <entry key="http://www.w3.org/2001/04/xmlenc#aes256-cbc" value="AES256-CBC" />
     </util:map>
 
 </beans>
