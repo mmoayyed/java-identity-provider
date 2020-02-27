@@ -30,7 +30,6 @@ public class FileCachingHttpClientFactoryBean
      *
      */
     public FileCachingHttpClientFactoryBean() {
-        super();
         final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
         stringBuilder.append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
         setUserAgent(stringBuilder.toString());

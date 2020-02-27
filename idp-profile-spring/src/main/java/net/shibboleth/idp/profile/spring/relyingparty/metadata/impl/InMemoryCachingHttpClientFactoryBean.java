@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
+import org.apache.http.client.HttpClient;
+
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
@@ -28,13 +30,12 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 @Deprecated(forRemoval=true, since="4.0.0")
 public class InMemoryCachingHttpClientFactoryBean 
         extends net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean {
-    
-    /**
-     * Constructor.
-     */
-    public InMemoryCachingHttpClientFactoryBean() {
-        DeprecationSupport.warn(ObjectType.BEAN, "shibboleth.MemoryCachingHttpClient", null,
-                "shibboleth.MemoryCachingHttpClientFactory");        
-    }
 
+    /** {@inheritDoc} */
+    public synchronized HttpClient getObject() throws Exception {
+        DeprecationSupport.warnOnce(ObjectType.BEAN, "shibboleth.MemoryCachingHttpClient", null,
+                "shibboleth.MemoryCachingHttpClientFactory");        
+        return super.getObject();
+    }
+    
 }

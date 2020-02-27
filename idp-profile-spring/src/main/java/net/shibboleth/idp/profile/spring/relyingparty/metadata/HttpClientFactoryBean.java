@@ -29,7 +29,6 @@ public class HttpClientFactoryBean extends net.shibboleth.ext.spring.factory.Htt
      *
      */
     public HttpClientFactoryBean() {
-        super();
         final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
         stringBuilder.append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
         setUserAgent(stringBuilder.toString());
