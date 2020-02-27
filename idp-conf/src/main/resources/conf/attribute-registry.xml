@@ -16,11 +16,14 @@
     The system comes preconfigured to load rules directly from resource files
     configured in services.xml so they're monitored for changes.
     
-    You can add mappings here, add more XML resource files,
-    or drop property files into the directory noted below.
+    You can add mappings here, add more XML resource files, or drop property
+    files into the directory noted below, but they won't be monitored for changes
+    themselves.
     -->
 
     <!-- Default directory for custom mappings. -->
-    <bean parent="shibboleth.TranscodingRuleLoader" c:_0="%{idp.home}/conf/attributes/custom" />
+    <bean parent="shibboleth.TranscodingRuleLoader"
+        c:dir="%{idp.home}/conf/attributes/custom"
+        c:extensions="#{{'.txt', '.props', '.rule'}}" />
    
 </beans>
