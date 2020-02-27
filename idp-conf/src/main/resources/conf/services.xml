@@ -9,43 +9,7 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
                                
-    <!-- Advanced configuration of services from HTTP.
-    
-      To use an HTTP resource you first need to configure the Apache HttpClient which will be used
-      to communicate with the web server.  Any HttpClient can be used, but two Factory Beans allow simple
-      configuration of in-memory or file-based caching clients.
-      
-      Examples are:
-      
-        A resource which will be supplied from an in-memory cache for as long as the file on the webserver does not change.  
-        If the webserver becomes unavailable the resource will be unavailable.
-         
-        <bean id="inMemoryResource" class="net.shibboleth.ext.spring.resource.HTTPResource"
-              c:client-ref="shibboleth.MemoryCachingHttpClient" 
-              c:url="http://example.org/path/to/file.xml" />
-              
-        Two resources which will be supplied from an on disk cache (suitable for multiple or large files) for as long 
-        as the file on the webserver does not change.  If the webserver becomes unavailable the last used contents
-        of the file will be returned (even if that was in a previous IdP lifetime).
-        
-        <bean id="fileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
-              c:client-ref="shibboleth.FileCachingHttpClient" 
-              c:url="http://example.org/path/to/file.xml"
-              c:backingFile="/var/shibboleth/caches/resourcecache/file.xml"/>
-       
-        <bean id="otherFileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
-              c:client-ref="shibboleth.FileCachingHttpClient" 
-              c:url="http://another.server.example.org/path/to/different/file.xml"
-              c:backingFile="/var/shibboleth/caches/resourcecache/differentFile.xml"/>
-              
-        In all cases you should review the "idp.httpclient.*" properties defined in services.properties
-    -->
-    
-    <!--
-    Otherwise by default we look at resources whose names are derived from %{idp.home}. Services not configured
-    using native Spring syntax also need to load the property-placeholder file in order to pull settings from
-    property sources.
-    -->
+    <!-- By default we look at resources whose names are derived from %{idp.home}. -->
 
     <!-- This set of resources supports a native Spring relying-party.xml file. -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
@@ -63,6 +27,10 @@
         <value>%{idp.home}/conf/attribute-resolver.xml</value>
     </util:list>
 
+    <!--
+    This is suitable for new installs but will usually produce duplicate Attribute
+    output if a legacy resolver file is used that contains AttributeEncoders.
+    -->
     <util:list id ="shibboleth.AttributeRegistryResources">
         <value>%{idp.home}/conf/attribute-registry.xml</value>
         <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
