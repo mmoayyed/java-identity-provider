@@ -82,7 +82,7 @@ public class TranscodingRuleLoader {
                     } catch (final IOException e) {
                         log.error("Failed to load rules from directory ({})", file, e);
                     }
-                } else if (!extensions.isEmpty() &&
+                } else if (extensions == null || extensions.isEmpty() ||
                         PredicateSupport.anyMatch((String ext) -> file.getName().endsWith(ext)).test(extensions)) {
                     log.debug("Loading rule from property set in file ({})", file);
                     try {
