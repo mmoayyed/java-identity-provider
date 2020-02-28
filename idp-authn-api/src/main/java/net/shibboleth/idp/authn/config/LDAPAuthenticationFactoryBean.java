@@ -18,9 +18,6 @@
 package net.shibboleth.idp.authn.config;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.PooledTemplateSearchDnResolver;
@@ -40,6 +37,8 @@ import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
+import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
@@ -192,6 +191,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   /** Whether to return the LDAP entry even if the user BIND fails. */
   private boolean resolveEntryOnFailure;
 
+  /** Whether to resolve the user entry with the bind credentials. */
+  private boolean resolveEntryWithBindDn;
+
   /** Velocity engine used to materialize the LDAP filter. */
   private VelocityEngine velocityEngine;
 
@@ -206,6 +208,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   /** Whether to use the password expiration control with the BIND operation. See draft-vchu-ldap-pwd-policy. */
   private boolean usePasswordExpiration;
+
+  /** Whether to use account state data as defined by active directory diagnostic messages. */
+  private boolean isActiveDirectory;
 
   /** Whether to use account state data as defined by the FreeIPA directory schema. */
   private boolean isFreeIPA;
@@ -309,6 +314,10 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     resolveEntryOnFailure = b;
   }
 
+  public void setResolveEntryWithBindDn(final boolean b) {
+    resolveEntryWithBindDn = b;
+  }
+
   public void setVelocityEngine(final VelocityEngine engine) {
     velocityEngine = engine;
   }
@@ -327,6 +336,10 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setUsePasswordExpiration(final boolean b) {
     usePasswordExpiration = b;
+  }
+
+  public void setActiveDirectory(final boolean b) {
+    isActiveDirectory = b;
   }
 
   public void setFreeIPA(final boolean b) {
@@ -461,7 +474,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         bindSearchDnResolver.setConnectionFactory(
           new PooledConnectionFactory(
             createConnectionPool(
-              "search-pool",
+              "dn-search-pool",
               createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))))));
         authenticator.setDnResolver(bindSearchDnResolver);
       }
@@ -492,7 +505,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         anonSearchDnResolver.setConnectionFactory(
           new PooledConnectionFactory(
             createConnectionPool(
-              "search-pool",
+              "dn-search-pool",
               createConnectionConfig())));
         authenticator.setDnResolver(anonSearchDnResolver);
       }
@@ -501,21 +514,36 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     default:
       break;
     }
-    final List<String> retAttrs = new ArrayList<>();
+
+    if (resolveEntryWithBindDn) {
+      if (disablePooling) {
+        final SearchEntryResolver searchEntryResolver = new SearchEntryResolver();
+        searchEntryResolver.setConnectionFactory(
+          new DefaultConnectionFactory(
+            createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential)))));
+        authenticator.setEntryResolver(searchEntryResolver);
+      } else {
+        final PooledSearchEntryResolver searchEntryResolver = new PooledSearchEntryResolver();
+        searchEntryResolver.setConnectionFactory(
+          new PooledConnectionFactory(
+            createConnectionPool(
+              "entry-search-pool",
+              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))))));
+        authenticator.setEntryResolver(searchEntryResolver);
+      }
+    }
+
     if (usePasswordPolicy) {
       authenticator.setAuthenticationRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
       authenticator.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
     } else if (usePasswordExpiration) {
       authenticator.setAuthenticationResponseHandlers(new PasswordExpirationAuthenticationResponseHandler());
+    } else if (isActiveDirectory) {
+      authenticator.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
     } else if (isEDirectory) {
-      retAttrs.addAll(Arrays.asList(EDirectoryAuthenticationResponseHandler.ATTRIBUTES));
       authenticator.setAuthenticationResponseHandlers(new EDirectoryAuthenticationResponseHandler());
     } else if (isFreeIPA) {
-      retAttrs.addAll(Arrays.asList(FreeIPAAuthenticationResponseHandler.ATTRIBUTES));
       authenticator.setAuthenticationResponseHandlers(new FreeIPAAuthenticationResponseHandler());
-    }
-    if (!retAttrs.isEmpty()) {
-      authenticator.setReturnAttributes(retAttrs.toArray(new String[0]));
     }
     return authenticator;
   }
