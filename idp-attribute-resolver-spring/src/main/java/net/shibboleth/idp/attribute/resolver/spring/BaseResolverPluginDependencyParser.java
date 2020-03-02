@@ -42,7 +42,7 @@ public abstract class BaseResolverPluginDependencyParser extends AbstractSingleB
             @Nonnull final BeanDefinitionBuilder builder) {
 
         final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
-        log.info("Parsing configuration for {} with pluginId: {}", config.getLocalName(), pluginId);
+        log.debug("Parsing configuration for {} with pluginId: {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);
     }
 

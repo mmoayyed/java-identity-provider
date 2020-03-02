@@ -61,7 +61,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
-        log.info("Parsing configuration for {} plugin with id: {}", config.getLocalName(), id);
+        log.debug("Parsing configuration for {} plugin with id: {}", config.getLocalName(), id);
         builder.addPropertyValue("id", id);
         if (null != id) {
             defnId = id;
