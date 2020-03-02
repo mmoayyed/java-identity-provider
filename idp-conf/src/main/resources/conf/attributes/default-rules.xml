@@ -143,7 +143,7 @@
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
-                    <prop key="id">surname</prop>
+                    <prop key="id">sn</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.4</prop>
                     <prop key="saml1.name">urn:mace:dir:attribute-def:sn</prop>
