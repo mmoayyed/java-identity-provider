@@ -47,7 +47,7 @@
                 title="$logoutTitle">$htmlEncoder.encodeForHTML($serviceName)</li>
         #end
     </ol>
-    <script src="$request.getContextPath()/js/jquery-3.3.1.min.js"></script>
+    <script src="$request.getContextPath()/js/jquery-3.4.1.min.js"></script>
     <script>
     <!--
         function check_status() {
