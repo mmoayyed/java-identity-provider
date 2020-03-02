@@ -184,10 +184,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(aliases, "Alias collection cannot be null");
         
-        propertyAliases = StringSupport.normalizeStringCollection(aliases)
-                .stream()
-                .map(s -> s + (s.endsWith("/") ? propertyName : '/' + propertyName))
-                .collect(Collectors.toUnmodifiableList());
+        propertyAliases = List.copyOf(StringSupport.normalizeStringCollection(aliases));
     }
     
     /**
@@ -246,6 +243,12 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         } else if (propertyAliases == null) {
             propertyAliases = Collections.emptyList();
         }
+        
+        // Now attach the property name to the end of the alias list entries.
+        propertyAliases = propertyAliases.stream()
+                .map(s -> s + (s.endsWith("/") ? propertyName : '/' + propertyName))
+                .collect(Collectors.toUnmodifiableList());
+        
     }
 
     // Checkstyle: CyclomaticComplexity|MethodLength OFF    
