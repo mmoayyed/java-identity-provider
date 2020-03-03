@@ -1,66 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-    This file is an EXAMPLE configuration file. While the configuration
-    presented in this example file is semi-functional, it isn't very
-    interesting. It is here only as a starting point for your deployment
-    process.
+<!--
+    This file is an EXAMPLE configuration file containing lots of commented
+    example attributes, encoders, and a couple of example data connectors.
+     
+    Not all attribute definitions or data connectors are demonstrated, but
+    a variety of LDAP attributes, some common to Shibboleth deployments and
+    many not, are included.
     
-    Very few attribute definitions and data connectors are demonstrated,
-    and use of LDAP is assumed, with the LDAP configuration primarily
-    supplied from the ldap.properties file.
-
-    Attribute-resolver-full.xml contains more examples of attributes,
-    encoders, and data connectors. Deployers should refer to the Shibboleth
-    documentation for a complete list of components and their options.
+    Deployers should refer to the Identity Provider 3 documentation
+    
+    https://wiki.shibboleth.net/confluence/display/IDP30/AttributeResolverConfiguration
+     
+    for a complete list of components and their options.
 -->
 <AttributeResolver
         xmlns="urn:mace:shibboleth:2.0:resolver"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
     <!-- ========================================== -->
     <!--      Attribute Definitions                 -->
     <!-- ========================================== -->
 
-    <!--
-    The EPPN is the "standard" federated username in higher ed.
-    For guidelines on the implementation of this attribute, refer
-    to the Shibboleth and eduPerson documentation. Above all, do
-    not expose a value for this attribute without considering the
-    long term implications. 
-    -->
-    <AttributeDefinition id="eduPersonPrincipalName" xsi:type="Prescoped" >
+    <!-- Simple attributes are exported directly from the LDAP connector. -->
+
+    <!-- eduPerson attributes requiring post-lookup manipulation -->
+<!-- 
+
+    <AttributeDefinition xsi:type="Prescoped" id="eduPersonPrincipalName">
         <InputDataConnector ref="myLDAP" attributeNames="eduPersonPrincipalName"/>
     </AttributeDefinition>
 
-    <!--
-    The uid is the closest thing to a "standard" LDAP attribute
-    representing a local username, but you should generally *never*
-    expose uid to federated services, as it is rarely globally unique.
-    -->
-    <AttributeDefinition id="uid" xsi:type="Simple" >
-        <InputDataConnector ref="myLDAP" attributeNames="uid"/>
+    <AttributeDefinition xsi:type="Prescoped" id="eduPersonPrincipalNamePrior">
+        <InputDataConnector ref="myLDAP" attributeNames="eduPersonPrincipalNamePrior"/>
     </AttributeDefinition>
 
-    <!--
-    In the rest of the world, the email address is the standard identifier,
-    despite the problems with that practice. Consider making the EPPN value
-    the same as your official email addresses whenever possible.
-    -->
-    <AttributeDefinition id="mail" xsi:type="Simple" >
-        <InputDataConnector ref="myLDAP" attributeNames="mail"/>
+    <AttributeDefinition xsi:type="Scoped" id="eduPersonScopedAffiliation" scope="%{idp.scope}">
+        <InputDataConnector ref="myLDAP" attributeNames="eduPersonAffiliation"/>
     </AttributeDefinition>
-        
+-->
+
+    <!-- Schema: SAML Subject ID Attributes -->
+<!--
+    <AttributeDefinition xsi:type="Scoped" id="samlSubjectID" scope="%{idp.scope}">
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}"/>
+    </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Scoped" id="samlPairwiseID" scope="%{idp.scope}">
+        <InputDataConnector ref="computed" attributeNames="computedId"/>
+    </AttributeDefinition>
+-->
+
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
-    
-    <!--
-    Example LDAP Connector
-    
-    The connectivity details can be specified in ldap.properties to
-    share them with your authentication settings if desired.
-    -->
+
+    <!-- Example LDAP Connector -->
+
     <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
         ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
         baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
@@ -69,13 +65,14 @@
         useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
         connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
         trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
-        responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}">
+        responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
+        exportAttributes="mail displayName sn givenName departmentNumber employeeNumber eduPersonEntitlement eduPersonAssurance">
         <FilterTemplate>
             <![CDATA[
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
         </FilterTemplate>
-	    <ConnectionPool
+        <ConnectionPool
             minPoolSize="%{idp.pool.LDAP.minSize:3}"
             maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
             blockWaitTime="%{idp.pool.LDAP.blockWaitTime:PT3S}"
@@ -83,5 +80,19 @@
             validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
             expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
     </DataConnector>
+
+    <!-- DataConector for pairwise-id (example depends on saml-nameid.properties). -->
+
+<!-- 
+    <DataConnector id="computed" xsi:type="ComputedId"
+	    generatedAttributeID="computedId"
+	    salt="%{idp.persistentId.salt}"
+	    algorithm="%{idp.persistentId.algorithm:SHA}"
+        encoding="%{idp.persistentId.encoding:BASE32}">
+	    
+        <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}" />
+        
+	</DataConnector>
+-->
 
 </AttributeResolver>
