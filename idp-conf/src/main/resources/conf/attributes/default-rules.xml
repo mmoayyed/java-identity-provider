@@ -29,6 +29,19 @@
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
+                    <prop key="id">cn</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:2.5.4.3</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:cn</prop>
+                    <prop key="displayName.en">Common name</prop>
+                    <prop key="description.en">Common name of a person</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
                     <prop key="id">givenName</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:2.5.4.42</prop>
@@ -605,6 +618,45 @@
         <bean parent="shibboleth.TranscodingProperties">
             <property name="properties">
                 <props merge="true">
+                    <prop key="id">eduPersonOrgDN</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.3</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonOrgDN</prop>
+                    <prop key="displayName.en">Organization distinguished name</prop>
+                    <prop key="description.en">Distinguished name (DN) of the directory entry representing the institution with which the person is associated.</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonOrgUnitDN</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.4</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonOrgUnitDN</prop>
+                    <prop key="displayName.en">Organization unit distinguished name</prop>
+                    <prop key="description.en">Distinguished name(s) (DN) of the directory entries representing the person's Organizational Unit(s).</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonOrcid</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.16</prop>
+                    <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.16</prop>
+                    <prop key="displayName.en">ORCID</prop>
+                    <prop key="description.en">ORCID researcher identifier(s) belonging to a person.</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
                     <prop key="id">eduPersonPrimaryAffiliation</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.5</prop>
@@ -619,6 +671,19 @@
                     <prop key="description.fr">Spécifie la relation principale d'une personne avec l'institution selon des majeures catégories comme étudiant, collaborateur, alumni etc.</prop>
                     <prop key="description.it">Specifica la relazione principale dell persona con l'istituzione secondo le maggiori categorie come studente, collaboratore, alumni, etc.</prop>
                     <prop key="description.ja">所属機関における主要な職位(faculty，staff，student，memberなど)</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonPrimaryOrgUnitDN</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.8</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:eduPersonPrimaryOrgUnitDN</prop>
+                    <prop key="displayName.en">Primary organization unit distinguished name</prop>
+                    <prop key="description.en">Distinguished name (DN) of the directory entry representing the person's primary Organizational Unit.</prop>
                 </props>
             </property>
         </bean>
