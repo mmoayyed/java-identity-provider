@@ -226,6 +226,15 @@
         c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext) }"
         c:createContext="true" />
 
+    <!-- Lookup for prerequested attributes' AttributeContext. -->        
+    <bean id="shibboleth.ChildLookup.PreRequestedAttributeContext" parent="shibboleth.Functions.Compose">
+        <constructor-arg ref="shibboleth.ChildLookup.AttributeContext"/>
+        <constructor-arg>
+            <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                c:type="#{ T(net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext) }" />
+        </constructor-arg>
+    </bean>        
+
     <!-- Wiring for proxy login flows to locate nested PRC. -->
     <bean id="shibboleth.ChildLookup.ProxyProfileRequestContext" parent="shibboleth.Functions.Compose">
         <constructor-arg>
