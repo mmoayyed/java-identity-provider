@@ -3,8 +3,6 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
     abstract="true" parent="saml.abstract">
 
-    <!-- https://wiki.shibboleth.net/confluence/display/IDP30/SAML+1.1+Browser+SSO -->
-
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     
     <action-state id="InitializeProfileRequestContext">
