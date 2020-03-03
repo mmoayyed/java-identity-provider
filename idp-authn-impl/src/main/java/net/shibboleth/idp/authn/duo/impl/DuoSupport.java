@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,7 +130,7 @@ public final class DuoSupport {
         final String ikey = duo.getIntegrationKey();
         final String skey = duo.getSecretKey();
         final int sigVersion = 2;
-        final String date = RFC_2822_DATE_FORMAT.format(LocalDateTime.now());
+        final String date = RFC_2822_DATE_FORMAT.format(ZonedDateTime.now());
         final String canon = canonRequest(request, date, sigVersion);
         final String sig = Util.hmacSign(skey, canon);
 
