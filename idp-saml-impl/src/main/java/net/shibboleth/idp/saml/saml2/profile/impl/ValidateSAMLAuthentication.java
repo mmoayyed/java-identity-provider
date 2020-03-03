@@ -208,7 +208,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            recordFailure();
             return false;
         }
         
@@ -216,7 +215,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         if (samlAuthnContext == null) {
             log.debug("{} No SAMLAuthnContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
-            recordFailure();
             return false;
         }
 
@@ -224,17 +222,14 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         if (rpContext == null) {
             log.error("{} Unable to locate RelyingPartyContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-            recordFailure();
             return false;
         } else if (rpContext.getProfileConfig() == null) {
             log.error("{} Unable to locate profile configuration", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
-            recordFailure();
             return false;
         } else if (!(rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration)) {
             log.error("{} Not a SAML 2 profile configuration", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
-            recordFailure();
             return false;
         }
         

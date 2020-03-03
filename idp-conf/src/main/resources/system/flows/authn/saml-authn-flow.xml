@@ -91,7 +91,9 @@
 
     <global-transitions>
         <!-- Route everything out as a graceful failure to allow subsequent options to run. -->
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="ReselectFlow" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="ReselectFlow">
+            <evaluate expression="T(org.opensaml.core.metrics.MetricsSupport).getMetricRegistry().counter('net.shibboleth.idp.authn.saml.failures').inc()" />
+        </transition>
     </global-transitions>
 
     <bean-import resource="saml-authn-beans.xml" />
