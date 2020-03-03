@@ -177,7 +177,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
         
         samlAuthnContext = samlContextLookupStrategy.apply(profileRequestContext);
         if (samlAuthnContext == null) {
-            log.debug("{} No SAMLAuthnContext available within authentication context", getLogPrefix());
+            log.info("{} No SAMLAuthnContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
             return false;
         }
@@ -204,7 +204,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
                 .filter(selector)
                 .collect(Collectors.toList());
         if (assertions.isEmpty()) {
-            log.debug("{} No valid SAML Assertions meeting the criteria for authentication were found", getLogPrefix());
+            log.info("{} No valid SAML Assertions suitable for authentication were found", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
             return;
         }
@@ -219,7 +219,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
             authnAssertion = authnAssertionSelectionStrategy.apply(assertions);
         }
         if (authnAssertion == null) {
-            log.debug("{} Could not select a single valid SAML Assertion for authentication", getLogPrefix());
+            log.info("{} Could not select a single valid SAML Assertion for authentication", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
             return;
         }
@@ -234,7 +234,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
             log.debug("{} Attempting to select from multiple AuthnStatements for authentication", getLogPrefix());
             authnStatement = authnStatementSelectionStrategy.apply(authnAssertion);
             if (authnStatement == null) {
-                log.debug("{} Could not select a single AuthnStatement for authentication", getLogPrefix());
+                log.info("{} Could not select a single AuthnStatement for authentication", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
                 return;
             }
