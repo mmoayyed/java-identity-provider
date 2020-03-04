@@ -43,7 +43,7 @@ public class NonFailFastValidator implements Validator {
     public NonFailFastValidator(@Nullable final Validator validator) {
         // V4 deprecation.  Remove the class in V5
         DeprecationSupport.warnOnce(ObjectType.CLASS, "NonFailFastValidator", null, 
-                "failFast on the dataConnector or p:throwValidateError on the contained Validator");
+                "failFastInitialize on DataConnector or p:throwValidateError on the contained Validator");
         embeddedValidator = validator;
         if (embeddedValidator != null) {
             embeddedValidator.setThrowValidateError(false);
