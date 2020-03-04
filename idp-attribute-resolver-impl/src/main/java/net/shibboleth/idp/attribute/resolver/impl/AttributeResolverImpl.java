@@ -524,7 +524,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /**
-     * Helper function to collect attributes and their data & metadata from suitable data connectors.
+     * Helper function to collect attributes and their data &amp; metadata from suitable data connectors.
      * @param resolvedAttributes bucket to collect attributes into
      * @param resolutionContext the context we are working in
      * @param workContext context to extract attributes from
