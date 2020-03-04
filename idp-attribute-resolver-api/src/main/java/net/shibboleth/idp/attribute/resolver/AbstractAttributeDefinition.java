@@ -27,13 +27,11 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -142,37 +140,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
                     resolvedAttribute.getValues());
         }
 
-        if (resolutionContext.getTranscoderRegistry() != null) {
-            ServiceableComponent<AttributeTranscoderRegistry> component = null;
-            try {
-                component = resolutionContext.getTranscoderRegistry().getServiceableComponent();
-                if (component != null) {
-                    
-                    if (resolvedAttribute.getDisplayNames().isEmpty()) {
-                        resolvedAttribute.setDisplayNames(
-                                component.getComponent().getDisplayNames(resolvedAttribute));
-                        log.trace("{} associated display names with the resolved attribute: {}", getLogPrefix(),
-                                resolvedAttribute.getDisplayNames());
-                    }
-
-                    if (resolvedAttribute.getDisplayDescriptions().isEmpty()) {
-                        resolvedAttribute.setDisplayDescriptions(
-                                component.getComponent().getDescriptions(resolvedAttribute));
-                        log.trace("{} associated descriptions with the resolved attribute: {}", getLogPrefix(),
-                                resolvedAttribute.getDisplayDescriptions());
-                    }
-
-                } else {
-                    log.warn("No transcoder registry available, unable to attach displayName/description metadata");
-                }
-            } finally {
-                if (component != null) {
-                    component.unpinComponent();
-                }
-            }
-        } else {
-            log.debug("No transcoder registry supplied, unable to attach displayName/description metadata");
-        }
+        addDisplayInformation(resolutionContext, resolvedAttribute);
 
         return resolvedAttribute;
     }

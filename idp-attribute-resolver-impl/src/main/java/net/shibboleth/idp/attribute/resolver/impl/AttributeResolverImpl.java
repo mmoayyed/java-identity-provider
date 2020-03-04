@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -525,13 +524,14 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /**
-     * Helper function to collect attributes from suitabl data connectors.
+     * Helper function to collect attributes and their data & metadata from suitable data connectors.
      * @param resolvedAttributes bucket to collect attributes into
+     * @param resolutionContext the context we are working in
      * @param workContext context to extract attributes from
      */
-    // CheckStyle: CyclomaticComplexit OFF
     private void collectExportingDataConnectors(final Map<String, IdPAttribute> resolvedAttributes,
-            final AttributeResolverWorkContext workContext) {
+           final AttributeResolutionContext resolutionContext,
+           final AttributeResolverWorkContext workContext) {
 
         for (final ResolvedDataConnector dataConnector: workContext.getResolvedDataConnectors().values()) {
 
@@ -557,20 +557,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 }
                 final IdPAttribute newAttr = new IdPAttribute(attribute.getId());
                 newAttr.setValues(values);
-                if (attribute.getDisplayNames().size() > 0) {
-                    newAttr.setDisplayNames(attribute.getDisplayNames());
-                } else {
-                    newAttr.setDisplayNames(Map.of(Locale.getDefault(),
-                            dataConnector.getId() + "/" + attribute.getId()));
-                }
-                if (attribute.getDisplayDescriptions().size() > 0) {
-                    newAttr.setDisplayDescriptions(attribute.getDisplayDescriptions());
-                }
+                dataConnector.addDisplayInformation(resolutionContext, newAttr);
                 resolvedAttributes.put(attribute.getId(), newAttr);
             }
         }
     }
-    // CheckStyle: CyclomaticComplexit ON
 
     /**
      * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
@@ -595,7 +586,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         collectResolvedAttributes(resolvedAttributes, workContext, false) ;
 
-        collectExportingDataConnectors(resolvedAttributes, workContext);
+        collectExportingDataConnectors(resolvedAttributes, resolutionContext, workContext);
 
         resolutionContext.setResolvedIdPAttributes(resolvedAttributes.values());
     }

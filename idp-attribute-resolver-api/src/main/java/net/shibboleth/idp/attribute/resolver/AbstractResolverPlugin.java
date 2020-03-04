@@ -36,15 +36,19 @@ import org.springframework.beans.factory.DisposableBean;
 
 import com.google.common.base.Predicates;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Base class for all {@link ResolverPlugin}s.
@@ -60,6 +64,9 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions = true;
+
+    /** Whether we add DisplayInformation to derived attributes.  */
+    private boolean suppressDisplayInformation;
 
     /** Strategy to get the {@link ProfileRequestContext}. */
     @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> profileContextStrategy;
@@ -80,6 +87,25 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         dataConnectorDependencies = Collections.emptySet(); 
     }
 
+    /** Does this plugin allow addition of Display Information?
+     * @return whether we are suppressing
+     *  */
+    public boolean isSuppressDisplayInformation() {
+        return suppressDisplayInformation;
+    }
+
+    /**
+     * Set whether we suppress addition of Display Information.
+     *
+     * @param what true if we suppress the addition.
+     */
+    public void setSuppressDisplayInformation(final boolean what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        suppressDisplayInformation = what;
+    }
+
     /** {@inheritDoc} */
     @Override public boolean isPropagateResolutionExceptions() {
         return propagateResolutionExceptions;
@@ -97,6 +123,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
         propagateResolutionExceptions = propagate;
     }
+
 
     /**
      * Gets the mechanism to find out the {@link ProfileRequestContext}.
@@ -258,6 +285,51 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         }
     }
 
+    /** Look at the resolution context for an attribute registry and use it to garnish the
+     * attribute.
+     *
+     * Controllable via the {@link AbstractResolverPlugin#isSuppressDisplayInformation()} method.
+     * @param resolutionContext where to get the registry from
+     * @param attribute what to garnish
+     */
+    public void addDisplayInformation(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final IdPAttribute attribute) {
+
+        if (isSuppressDisplayInformation()) {
+            log.trace("{} no display information added", getLogPrefix());
+        } else  if (resolutionContext.getTranscoderRegistry() != null) {
+            ServiceableComponent<AttributeTranscoderRegistry> component = null;
+            try {
+                component = resolutionContext.getTranscoderRegistry().getServiceableComponent();
+                if (component != null) {
+
+                    if (attribute.getDisplayNames().isEmpty()) {
+                        attribute.setDisplayNames(
+                                component.getComponent().getDisplayNames(attribute));
+                        log.trace("{} associated display names with the resolved attribute: {}", getLogPrefix(),
+                                attribute.getDisplayNames());
+                    }
+
+                    if (attribute.getDisplayDescriptions().isEmpty()) {
+                        attribute.setDisplayDescriptions(
+                                component.getComponent().getDescriptions(attribute));
+                        log.trace("{} associated descriptions with the resolved attribute: {}", getLogPrefix(),
+                                attribute.getDisplayDescriptions());
+                    }
+
+                } else {
+                    log.warn("No transcoder registry available, unable to attach displayName/description metadata");
+                }
+            } finally {
+                if (component != null) {
+                    component.unpinComponent();
+                }
+            }
+        } else {
+            log.debug("No transcoder registry supplied, unable to attach displayName/description metadata");
+        }
+    }
+
     /** {@inheritDoc} */
     @Override protected void doDestroy() {
         activationCondition = Predicates.alwaysFalse();
@@ -343,4 +415,10 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         }
     }
 
+    /**
+     * Return a string which is to be prepended to all log messages.
+     *
+     * @return a log prefix
+     */
+    @Nonnull @NotEmpty protected abstract String getLogPrefix();
 }
