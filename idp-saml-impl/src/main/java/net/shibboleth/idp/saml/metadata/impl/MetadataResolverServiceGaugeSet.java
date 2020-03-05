@@ -44,6 +44,7 @@ import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
@@ -118,6 +119,25 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
                 });
         
         getMetricMap().put(
+                MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "error"),
+                new Gauge<Map<String,String>>() {
+                    public Map<String,String> getValue() {
+                        return valueGetter(new BiConsumer<Builder<String,String>, MetadataResolver>() {
+                            public void accept(final Builder<String,String> mapBuilder,
+                                    final MetadataResolver resolver) {
+                                if (resolver instanceof RefreshableMetadataResolver
+                                        && ((RefreshableMetadataResolver) resolver)
+                                            .getLastFailureCause() != null) {
+                                    mapBuilder.put(resolver.getId(),
+                                            extractErrorMessage(
+                                                    ((RefreshableMetadataResolver) resolver).getLastFailureCause()));
+                                }
+                            };
+                        });
+                    }
+                });
+
+        getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
                 new Gauge<Map<String,Instant>>() {
                     public Map<String,Instant> getValue() {
@@ -137,6 +157,37 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
 // Checkstyle: MethodLength ON
 
     /**
+     * Extract the error message to report out.
+     *
+     * @param t the throwable to process
+     *
+     * @return the error message string to report out
+     */
+    private String extractErrorMessage(final Throwable t) {
+        Throwable source = null;
+
+        // These are often wrapping the real error, so use the cause as the source if available
+        if (ResolverException.class.isInstance(t) && t.getCause() != null) {
+            source = t.getCause();
+        } else {
+            source = t;
+        }
+
+        if (source.getMessage() != null) {
+            return source.getClass().getName() + ": " + source.getMessage();
+        }
+
+        Throwable cause = source.getCause();
+        while (cause != null) {
+            if (cause.getMessage() != null) {
+                return cause.getClass().getName() + ": " + cause.getMessage();
+            }
+            cause = cause.getCause();
+        }
+        return source.getClass().getName() + ": <Detailed error message not specified>";
+    }
+
+    /**
      * Helper Function for map construction.
      * 
      * <p>
@@ -144,11 +195,12 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
      * add each appropriate the value to the map.
      * </p>
      * 
+     * @param <T> the type of value being reported out
      * @param consume the thing which does checking and adding the building
      * @return an appropriate map
      */
-    private Map<String,Instant> valueGetter(final BiConsumer<Builder<String,Instant>, MetadataResolver> consume) {
-        final Builder<String,Instant> mapBuilder = ImmutableMap.builder();
+    private <T> Map<String,T> valueGetter(final BiConsumer<Builder<String,T>, MetadataResolver> consume) {
+        final Builder<String,T> mapBuilder = ImmutableMap.builder();
         final ServiceableComponent<?> component = getService().getServiceableComponent();
         if (component != null) {
             try {
