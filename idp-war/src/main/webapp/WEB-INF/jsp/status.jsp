@@ -69,6 +69,7 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
     	final Gauge<Map<String,Instant>> updates = (Gauge<Map<String,Instant>>) metrics.getMetrics().get("net.shibboleth.idp.metadata.update");
     	final Gauge<Map<String,Instant>> successes = (Gauge<Map<String,Instant>>) metrics.getMetrics().get("net.shibboleth.idp.metadata.successfulRefresh");
     	final Gauge<Map<String,Instant>> rootValids = (Gauge<Map<String,Instant>>) metrics.getMetrics().get("net.shibboleth.idp.metadata.rootValidUntil");
+    	final Gauge<Map<String,String>> errors = (Gauge<Map<String,String>>) metrics.getMetrics().get("net.shibboleth.idp.metadata.error");
     	
 		Set<Entry<String, Instant>> entrySet = refreshes.getValue().entrySet();
     	if (entrySet.isEmpty()) {
@@ -82,6 +83,7 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
             final Instant lastUpdate = updates == null ? null : updates.getValue().get(resolverId);
 			final Instant lastSuccessfulRefresh = successes == null ? null : successes.getValue().get(resolverId);
 			final Instant rootValidUntil = rootValids == null ? null : rootValids.getValue().get(resolverId);
+		    final String lastError = errors == null ? null : errors.getValue().get(resolverId);
  
             out.println("\tmetadata source: " + resolverId);
             if (lastRefresh != null) {
@@ -92,6 +94,9 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
             }
             if (lastUpdate != null) {
                 out.println("\tlast update: " + dateTimeFormatter.format(lastUpdate));
+            }
+            if (lastError != null) {
+                out.println("\tlast error: " + lastError);
             }
             if (rootValidUntil != null) {
                 out.println("\troot validUntil: " + dateTimeFormatter.format(rootValidUntil));
