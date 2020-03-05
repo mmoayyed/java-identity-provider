@@ -99,7 +99,6 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
                     }
                 });
                 
-        //TODO v4.0.0 - Switch to use RefreshableMetadataResolver when new methods promoted up
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
                 new Gauge<Map<String,Instant>>() {
@@ -118,7 +117,6 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet<M
                     }
                 });
         
-        //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted up
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
                 new Gauge<Map<String,Instant>>() {
