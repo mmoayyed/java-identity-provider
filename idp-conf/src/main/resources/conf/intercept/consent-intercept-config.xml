@@ -54,9 +54,7 @@
     </util:list>
 
     <util:list id="shibboleth.consent.attribute-release.BlacklistedAttributeIDs">
-        <value>transientId</value>
-        <value>persistentId</value>
-        <value>eduPersonTargetedID</value>
+        <value>samlPairwiseID</value>
     </util:list>
 
     <!-- 
