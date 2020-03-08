@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -59,16 +61,16 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     private final Logger log = LoggerFactory.getLogger(ProcessAssertionsForAuthentication.class);
     
     /** The resolver for the response to be processed. */
-    @Nonnull private Function<ProfileRequestContext, Response> responseResolver;
+    @NonnullAfterInit private Function<ProfileRequestContext, Response> responseResolver;
     
     /** Lookup strategy to locate the SAML context. */
-    @Nonnull private Function<ProfileRequestContext,SAMLAuthnContext> samlContextLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,SAMLAuthnContext> samlContextLookupStrategy;
     
     /** Selection strategy for multiple valid authn Assertions. */
-    @Nonnull private Function<List<Assertion>,Assertion> authnAssertionSelectionStrategy;
+    @NonnullAfterInit private Function<List<Assertion>,Assertion> authnAssertionSelectionStrategy;
     
     /** Selection strategy for multiple AuthnStatements. */
-    @Nonnull private Function<Assertion,AuthnStatement> authnStatementSelectionStrategy;
+    @NonnullAfterInit private Function<Assertion,AuthnStatement> authnStatementSelectionStrategy;
     
     /** The Response to process. */
     private Response response;
@@ -119,9 +121,9 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setAuthnAssertionSelectionStrategy(@Nonnull final Function<List<Assertion>, Assertion> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        authnAssertionSelectionStrategy = Constraint.isNotNull(strategy, 
-                "The Assertion selection strategy may not be null");
+        authnAssertionSelectionStrategy = strategy;
     }
     
     /**
@@ -131,9 +133,9 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setAuthnStatementSelectionStrategy(@Nonnull final Function<Assertion, AuthnStatement> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        authnStatementSelectionStrategy = Constraint.isNotNull(strategy, 
-                "The AuthnStatement selection strategy may not be null");
+        authnStatementSelectionStrategy = strategy;
     }
     
     /**
@@ -143,8 +145,9 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setResponseResolver(@Nonnull final Function<ProfileRequestContext, Response> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        responseResolver = Constraint.isNotNull(strategy, "The Response resolver strategy may not be null");
+        responseResolver = strategy;
     }
     
     /**
@@ -155,8 +158,27 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     public void setSAMLAuthnContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLAuthnContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        samlContextLookupStrategy = Constraint.isNotNull(strategy, "SAMLAuthnContext lookup strategy may not be null");
+        samlContextLookupStrategy = strategy;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (authnAssertionSelectionStrategy == null) {
+            throw new ComponentInitializationException("Authentication Assertion selection strategy cannot be null");
+        }
+        if (authnStatementSelectionStrategy == null) {
+            throw new ComponentInitializationException("AuthnStatement selection strategy cannot be null");
+        }
+        if (responseResolver == null) {
+            throw new ComponentInitializationException("Response resolver cannot be null");
+        }
+        if (samlContextLookupStrategy == null) {
+            throw new ComponentInitializationException("SAMLAuthnContext lookup strategy cannot be null");
+        }
     }
 
     /** {@inheritDoc} */
