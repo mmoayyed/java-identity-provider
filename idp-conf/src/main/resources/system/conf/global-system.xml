@@ -77,21 +77,6 @@
                 </entry>
                 <entry key="idp.consent.userStorageKey" value="idp.consent.attribute-release.userStorageKey" />
                 <entry key="idp.consent.userStorageKeyAttribute" value="idp.consent.attribute-release.userStorageKeyAttribute" />
-                <entry key="idp.httpclient.memorycaching.maxCacheEntries">
-                    <null/>
-                </entry>
-                <entry key="idp.httpclient.memorycaching.maxCacheEntrySize">
-                    <null/>
-                </entry>
-                <entry key="idp.httpclient.filecaching.maxCacheEntries">
-                    <null/>
-                </entry>
-                <entry key="idp.httpclient.filecaching.maxCacheEntrySize">
-                    <null/>
-                </entry>
-                <entry key="idp.httpclient.filecaching.cacheDirectory">
-                    <null/>
-                </entry>
              </map>
         </property>
         <property name="deadProperties">
