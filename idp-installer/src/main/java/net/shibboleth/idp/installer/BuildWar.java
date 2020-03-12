@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.installer;
 
+import java.io.File;
 import java.nio.file.Path;
 
 import org.apache.tools.ant.BuildException;
@@ -89,7 +90,11 @@ public final class BuildWar extends AbstractInitializableComponent {
         log.info("Overlay from {} to {}", editWebApp, webAppTmp);
         overlay.execute();
 
-        warFile.toFile().delete();
+        final File warFileFile = warFile.toFile();
+        if (warFileFile.exists() && !warFile.toFile().delete()) {
+            log.warn("Could not delete old war file: {}", warFile);
+            log.warn("Fix and rerun the build command");
+        }
         final Jar jarTask = InstallerSupport.createJarTask(webAppTmp, warFile);
         log.info("Creating war file {}", warFile);
         jarTask.execute();
