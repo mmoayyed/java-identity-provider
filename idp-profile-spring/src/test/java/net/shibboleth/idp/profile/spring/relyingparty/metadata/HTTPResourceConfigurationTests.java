@@ -57,7 +57,7 @@ public class HTTPResourceConfigurationTests {
         MockPropertySource propSource = new MockPropertySource("localProperties");
         propSource.setProperty(PROP_RESOURCE_URL, RepositorySupport.buildHTTPResourceURL(REPO_IDP, DOC_XML, false));
         
-        final Path p = Files.createTempDirectory("HTTPResourceTest");
+        final Path p = Files.createTempDirectory("HTTPResourceConfigurationTests");
         theDir = p.toFile();
         
         globalContext = new GenericApplicationContext();
@@ -101,6 +101,7 @@ public class HTTPResourceConfigurationTests {
             }
             f.delete();
         }
+        dir.delete();
     }
 
     
