@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 @Ignore
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "javadoc"})
 public class MetadataFailFastTest extends AbstractFailFastTest {
     private static int uniquifier;
 

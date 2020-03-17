@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 /**
  * Test for parser for NameIDFormat filter
  */
+@SuppressWarnings("javadoc")
 public class NameIDFormatFilterParserTest extends AbstractMetadataParserTest {
 
     @Test

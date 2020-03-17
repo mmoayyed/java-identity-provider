@@ -26,6 +26,7 @@ import org.opensaml.security.trust.impl.ChainingTrustEngine;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ChainingTrustEngineTest extends AbstractSecurityParserTest {
     
     private ChainingTrustEngine<?> lookup(String file) throws IOException {

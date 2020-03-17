@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
 /**
  * test for xsi:type="security:StaticPKIXX509CredentialParser".
  */
+@SuppressWarnings("javadoc")
 public class StaticPKIXX509CredentialParserTest extends AbstractSecurityParserTest {
 
     @Test public void certPath() throws IOException, ResolverException {

@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 /**
  * Test for NodeProcessingMetadataFilter parser.
  */
+@SuppressWarnings("javadoc")
 public class NodeProcessingTest extends AbstractMetadataParserTest {
 
     @Test public void empty() throws IOException {

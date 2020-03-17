@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 /**
  * Base class for testing metadata providers.
  */
+@SuppressWarnings("javadoc")
 public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/metadata/";

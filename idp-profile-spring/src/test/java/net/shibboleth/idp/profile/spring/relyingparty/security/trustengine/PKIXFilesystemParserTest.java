@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 /**
  * test for parsing of filesystem backed ValidationInfo
  */
+@SuppressWarnings("javadoc")
 public class PKIXFilesystemParserTest extends AbstractSecurityParserTest {
 
     private BasicPKIXValidationInformation lookup(String file) throws IOException {

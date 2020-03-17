@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 /**
  *
  */
+@SuppressWarnings("javadoc")
 public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataParserTest {
     
     private File sourceDirectory;

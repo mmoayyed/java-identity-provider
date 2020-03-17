@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 /**
  * test for parser for SignatureValidation filter
  */
+@SuppressWarnings("javadoc")
 public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void correctSig() throws IOException, ResolverException {

@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void entity() throws Exception {

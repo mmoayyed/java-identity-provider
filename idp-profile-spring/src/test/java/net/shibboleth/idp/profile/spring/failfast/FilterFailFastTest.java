@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "javadoc"})
 public class FilterFailFastTest extends AbstractFailFastTest {
     @Test public void workingFilter() throws IOException {
         

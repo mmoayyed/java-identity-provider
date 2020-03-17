@@ -44,6 +44,7 @@ import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class AlgorithmFilterParserTest extends AbstractMetadataParserTest {
     
     @Test

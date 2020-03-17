@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 /**
  * test parsing X509 Filesystem Credentials
  */
+@SuppressWarnings("javadoc")
 public class X509FilesystemParserTest extends AbstractSecurityParserTest {
 
     private BasicX509Credential lookup(String file) throws IOException {

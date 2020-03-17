@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 
+@SuppressWarnings("javadoc")
 public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
     private static final String PROP_MDURL = "metadataURL";

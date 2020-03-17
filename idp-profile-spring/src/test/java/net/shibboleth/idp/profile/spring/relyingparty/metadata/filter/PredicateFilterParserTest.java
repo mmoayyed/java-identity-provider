@@ -42,6 +42,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 /**
  * Test for parser for PredicateFilter filter.
  */
+@SuppressWarnings("javadoc")
 public class PredicateFilterParserTest extends AbstractMetadataParserTest {
 
     @Test(expectedExceptions=BeanDefinitionStoreException.class)

@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 /**
  * test for parser for SchemaValidation filter
  */
+@SuppressWarnings("javadoc")
 public class SchemaValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {

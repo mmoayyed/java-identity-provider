@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 /**
  * test for parsing of inline ValidationInfo
  */
+@SuppressWarnings("javadoc")
 public class PKIXInlineParserTest extends AbstractSecurityParserTest {
 
     private BasicPKIXValidationInformation lookup(String file) throws IOException {

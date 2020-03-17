@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.repository.RepositorySupport;
  * This test mirrors the online documentation for the HTTPResource as well as the inline example in services.xml.
  * 
  */
+@SuppressWarnings("javadoc")
 public class HTTPResourceConfigurationTests {
     
     private static final String PROP_RESOURCE_URL = "resourceURL";

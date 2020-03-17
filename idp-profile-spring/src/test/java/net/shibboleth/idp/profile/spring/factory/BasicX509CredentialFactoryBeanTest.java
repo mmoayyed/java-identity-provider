@@ -28,6 +28,7 @@ import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 /**
  *
  */
+@SuppressWarnings("javadoc")
 public class BasicX509CredentialFactoryBeanTest {
 
     @Test public void bean() {

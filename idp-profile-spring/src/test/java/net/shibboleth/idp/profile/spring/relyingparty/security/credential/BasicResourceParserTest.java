@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 /**
  * test parsing Basic File System and Resource Credentials
  */
+@SuppressWarnings("javadoc")
 public class BasicResourceParserTest extends AbstractSecurityParserTest {
 
     @Test public void publicOnly() throws IOException {

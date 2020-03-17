@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 /**
  * Test for StaticExplicitKey factory bean.
  */
+@SuppressWarnings("javadoc")
 public class StaticExplicitKeyFactoryBeanTest extends AbstractSecurityParserTest {
  
     static private String TESTPATH = "trustengine/staticExplicitNative.xml";

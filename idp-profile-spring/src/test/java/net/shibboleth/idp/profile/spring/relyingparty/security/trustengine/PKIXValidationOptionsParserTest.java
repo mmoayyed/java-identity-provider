@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link PKIXValidationOptionsParser}.
  */
+@SuppressWarnings("javadoc")
 public class PKIXValidationOptionsParserTest extends AbstractSecurityParserTest {
     
     

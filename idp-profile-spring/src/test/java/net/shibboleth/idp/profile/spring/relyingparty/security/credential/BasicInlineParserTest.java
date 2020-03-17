@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 /**
  * test parsing Basic Inline Credentials
  */
+@SuppressWarnings("javadoc")
 public class BasicInlineParserTest extends AbstractSecurityParserTest {
 
     @Test public void publicOnly() throws IOException {

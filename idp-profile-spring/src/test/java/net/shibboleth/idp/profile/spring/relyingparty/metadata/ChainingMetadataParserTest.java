@@ -27,6 +27,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void chain() throws ResolverException, IOException {

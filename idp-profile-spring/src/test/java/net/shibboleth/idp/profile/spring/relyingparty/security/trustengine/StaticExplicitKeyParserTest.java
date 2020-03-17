@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 /**
  * test for  xsi:type="security:StaticExplicitKeySignature".
  */
+@SuppressWarnings("javadoc")
 public class StaticExplicitKeyParserTest extends AbstractSecurityParserTest {
  
     @Test public void simple() throws IOException, ResolverException {

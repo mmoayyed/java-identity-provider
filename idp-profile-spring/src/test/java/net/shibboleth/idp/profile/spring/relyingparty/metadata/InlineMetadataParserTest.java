@@ -38,6 +38,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void entity() throws ResolverException, IOException {

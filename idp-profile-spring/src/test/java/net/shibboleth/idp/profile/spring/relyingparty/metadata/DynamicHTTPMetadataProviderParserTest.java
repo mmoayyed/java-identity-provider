@@ -46,6 +46,7 @@ import com.google.common.collect.Lists;
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
+@SuppressWarnings("javadoc")
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
     private static final String PROP_MDURL = "metadataURL";

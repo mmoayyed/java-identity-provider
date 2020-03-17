@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 /**
  *
  */
+@SuppressWarnings("javadoc")
 public class RelyingPartyIdPredicateTest {
     
     private boolean testCandidate(final RelyingPartyIdPredicate rpIdPredicate, final String rpId) {

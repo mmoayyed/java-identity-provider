@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 /**
  * test for parser for EntityRoleWhileList filter
  */
+@SuppressWarnings("javadoc")
 public class EntityRoleFilterParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {

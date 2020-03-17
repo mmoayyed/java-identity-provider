@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 /**
  * test parsing X509 Inline Credentials
  */
+@SuppressWarnings("javadoc")
 public class X509InlineParserTest extends AbstractSecurityParserTest {
 
     @Test public void certOnly() throws IOException {

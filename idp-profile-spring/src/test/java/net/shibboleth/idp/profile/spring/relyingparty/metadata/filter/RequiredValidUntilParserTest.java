@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 /**
  * test for parser for RequiredValidUntil filter
  */
+@SuppressWarnings("javadoc")
 public class RequiredValidUntilParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {

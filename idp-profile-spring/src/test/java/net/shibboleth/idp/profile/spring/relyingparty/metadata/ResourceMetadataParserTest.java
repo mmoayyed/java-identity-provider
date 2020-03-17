@@ -22,6 +22,7 @@ import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     
     @Test public void ref() throws Exception {

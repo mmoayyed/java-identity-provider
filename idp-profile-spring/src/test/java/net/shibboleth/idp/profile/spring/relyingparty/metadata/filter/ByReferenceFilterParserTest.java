@@ -33,6 +33,7 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ByReferenceFilterParserTest extends AbstractMetadataParserTest {
     
     @Test

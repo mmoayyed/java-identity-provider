@@ -27,9 +27,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-/**
- *
- */
+@SuppressWarnings("javadoc")
 public class EmptyChainService extends AbstractMetadataParserTest {
 
     @Test public void setup() throws IOException {

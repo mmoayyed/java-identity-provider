@@ -47,6 +47,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
  * Base class for testing metadata providers.
  */
 @Ignore
+@SuppressWarnings({"javadoc"})
 public class AbstractFailFastTest extends OpenSAMLInitBaseTestCase {
 
     private String workspaceDirName;

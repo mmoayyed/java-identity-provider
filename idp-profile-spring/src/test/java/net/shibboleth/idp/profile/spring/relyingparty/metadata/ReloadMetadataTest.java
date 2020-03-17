@@ -39,6 +39,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ReloadMetadataTest extends AbstractMetadataParserTest {
 
     private ReloadableService<MetadataResolver> service;

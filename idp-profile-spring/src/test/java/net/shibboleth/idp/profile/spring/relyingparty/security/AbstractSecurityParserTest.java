@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the University Corporation for Advanced Internet Development,
  * Inc. (UCAID) under one or more contributor license agreements.  See the
@@ -33,6 +34,7 @@ import org.testng.annotations.BeforeSuite;
 /**
  * Base mechanics for Security parser tests
  */
+@SuppressWarnings("javadoc")
 public class AbstractSecurityParserTest {
 
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/security/";
