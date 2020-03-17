@@ -54,6 +54,7 @@ public class ChainingTrustEngineFactory extends
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override protected ChainingTrustEngine<?> doCreateInstance() throws Exception {
         final List<TrustEngine<?>> list = new ArrayList<>(engines.size());
 
