@@ -73,7 +73,7 @@
         <idwsfconsumer.version>2.0.0</idwsfconsumer.version>
         <java-support.version>8.0.0</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
-        <opensaml.version>4.0.0</opensaml.version>
+        <opensaml.version>4.0.1-SNAPSHOT</opensaml.version>
         <spring-extensions.version>6.0.0</spring-extensions.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.url}java-identity-provider/${project.version}/</idp-parent.site.url>
