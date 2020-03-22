@@ -3,8 +3,8 @@
     <PermitValueRule xsi:type="Script">
         <Script>
         <![CDATA[
-            importPackage(Packages.java.util);
-            x = new HashSet();
+            hs = Java.type("java.util.HashSet");
+            x = new hs();
             x.add(attribute.getValues().iterator().next());
             x;
         ]]>

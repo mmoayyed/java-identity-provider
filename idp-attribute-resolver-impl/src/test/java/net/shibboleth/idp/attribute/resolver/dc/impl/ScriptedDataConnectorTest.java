@@ -43,7 +43,6 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
-import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /**
  * Tests for {@link ScriptedDataConnector}
@@ -53,12 +52,7 @@ import net.shibboleth.utilities.java.support.testing.TestSupport;
 public class ScriptedDataConnectorTest {
 
     private String getScript(String fileName) throws IOException {
-        final String name;
-        if (TestSupport.isJavaV8OrLater()) {
-            name = "/net/shibboleth/idp/attribute/resolver/impl/dc/v8/" + fileName;
-        } else {
-            name = "/net/shibboleth/idp/attribute/resolver/impl/dc/" + fileName;
-        }
+        final String name = "/net/shibboleth/idp/attribute/resolver/impl/dc/" + fileName;
         return StringSupport.inputStreamToString(getClass().getResourceAsStream(name), null);
     }
 

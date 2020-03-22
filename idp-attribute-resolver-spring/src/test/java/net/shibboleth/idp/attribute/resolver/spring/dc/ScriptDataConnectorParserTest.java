@@ -36,7 +36,6 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParse
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /**
  * test for {@link ScriptDataConnectorParser}
@@ -46,11 +45,7 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
 
     @Test public void resolver() throws ComponentInitializationException, ResolutionException {
 
-        if (TestSupport.isJavaV8OrLater()) {
-            testConnector("resolver/scriptedAttributes-8.xml");
-        } else {
-            testConnector("resolver/scriptedAttributes.xml");
-        }
+        testConnector("resolver/scriptedAttributes.xml");
     }
 
 

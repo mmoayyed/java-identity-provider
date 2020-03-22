@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link SpringExpressionContextLookupFunction}.
  */
+@SuppressWarnings("javadoc")
 public class SpringExpressionContextLookupFunctionTest {
 
     

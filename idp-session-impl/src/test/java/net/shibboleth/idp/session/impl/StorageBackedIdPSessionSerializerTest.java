@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 
+import org.opensaml.storage.impl.MemoryStorageService;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
@@ -32,14 +37,9 @@ import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.testing.TestSupport;
-
-import org.opensaml.storage.impl.MemoryStorageService;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
+@SuppressWarnings("javadoc")
 public class StorageBackedIdPSessionSerializerTest {
 
     private static final String DATAPATH = "/net/shibboleth/idp/session/impl/";
@@ -140,7 +140,7 @@ public class StorageBackedIdPSessionSerializerTest {
         session.doAddSPSession(new BasicSPSession("baz", Instant.ofEpochMilli(INSTANT), exp));
         
         // String s = serializer.serialize(session);
-        String s2 = fileToString(DATAPATH + "complexIdPSession." + (TestSupport.isJavaV8OrLater() ? "jdk8" : "json"));
+        String s2 = fileToString(DATAPATH + "complexIdPSession.jdk8"); // .json is rhino ordering
         // TODO: this comparison depends on Set order, so needs revisit.
         // Assert.assertEquals(s, s2);
         

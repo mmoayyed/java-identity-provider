@@ -1,2 +1,0 @@
-bool = Java.type("java.lang.Boolean");
-new bool(false);

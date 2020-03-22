@@ -1,7 +1,0 @@
-load('nashorn:mozilla_compat.js')
-importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
-
-is_Staff = memberOf != null && memberOf.getValues().contains("CN=All-Staff,OU=Groups and Resources,DC=EXAMPLE,DC=ORG");
-
-if (is_Staff) { eduPersonAffiliation.getValues().add("staff"); };
-if (is_Staff) { eduPersonAffiliation.getValues().add("member"); };

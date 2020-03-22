@@ -36,6 +36,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link SpringStatusMessageLookupFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class SpringStatusMessageLookupFunctionTest {
 
     private MockRequestContext springRequestContext;

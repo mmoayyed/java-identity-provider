@@ -26,42 +26,24 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.utilities.java.support.testing.TestSupport;
-
 /**
  *
  */
+@SuppressWarnings("javadoc")
 public class ScriptedFunctionTest {
     
-    static final String STRING_RETURN_7 = "new java.lang.String(\"String\");";
-    static final String STRING_RETURN_8 = "JavaString=Java.type(\"java.lang.String\"); new JavaString(\"String\");";
-    static final String INTEGER_RETURN_7 = "new java.lang.Integer(37);";
-    static final String INTEGER_RETURN_8 = "JavaInteger=Java.type(\"java.lang.Integer\"); new JavaInteger(37);";
-    
-    private String stringReturn() {
-        if (TestSupport.isJavaV8OrLater()) {
-            return STRING_RETURN_8;
-        }
-        return STRING_RETURN_7;
-    }
-    
-    private String integerReturn() {
-        if (TestSupport.isJavaV8OrLater()) {
-            return INTEGER_RETURN_8;
-        }
-        return INTEGER_RETURN_7;
-    }
-
-    
+    static final String STRING_RETURN = "JavaString=Java.type(\"java.lang.String\"); new JavaString(\"String\");";
+    static final String INTEGER_RETURN = "JavaInteger=Java.type(\"java.lang.Integer\"); new JavaInteger(37);";
+       
     @Test public void simpleScript() throws ScriptException {
         final ProfileRequestContext prc = new ProfileRequestContext();
         
-        final Object string = ScriptedContextLookupFunction.inlineScript(stringReturn()).apply(prc);
+        final Object string = ScriptedContextLookupFunction.inlineScript(STRING_RETURN).apply(prc);
 
         String s = (String) string;
         Assert.assertEquals(s, "String");
         
-        final Integer integer = (Integer) ScriptedContextLookupFunction.inlineScript(integerReturn()).apply(prc);
+        final Integer integer = (Integer) ScriptedContextLookupFunction.inlineScript(INTEGER_RETURN).apply(prc);
         Assert.assertEquals(integer.intValue(), 37);
     }
     
@@ -80,22 +62,22 @@ public class ScriptedFunctionTest {
     @Test public void withType() throws ScriptException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final ProfileRequestContext prc = new ProfileRequestContext();
 
-        final ScriptedContextLookupFunction<ProfileRequestContext> script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
+        final ScriptedContextLookupFunction<ProfileRequestContext> script1 = ScriptedContextLookupFunction.inlineScript(STRING_RETURN, Object.class);
         
         final String string = (String) script1.apply(prc);
         Assert.assertEquals(string, "String");
         
-        Assert.assertEquals(ScriptedContextLookupFunction.inlineScript(stringReturn(), String.class).apply(prc), "String");
+        Assert.assertEquals(ScriptedContextLookupFunction.inlineScript(STRING_RETURN, String.class).apply(prc), "String");
         
-        Assert.assertNull(ScriptedContextLookupFunction.inlineScript(stringReturn(), Integer.class).apply(prc));
+        Assert.assertNull(ScriptedContextLookupFunction.inlineScript(STRING_RETURN, Integer.class).apply(prc));
         
-        final Integer integer = (Integer) ScriptedContextLookupFunction.inlineScript(integerReturn()).apply(prc);
+        final Integer integer = (Integer) ScriptedContextLookupFunction.inlineScript(INTEGER_RETURN).apply(prc);
         Assert.assertEquals(integer.intValue(), 37);
         
     }
 
     @Test public void messageContext() throws ScriptException {
-        final ScriptedContextLookupFunction<MessageContext> script1 = ScriptedContextLookupFunction.inlineMessageContextScript(stringReturn(), Object.class);
+        final ScriptedContextLookupFunction<MessageContext> script1 = ScriptedContextLookupFunction.inlineMessageContextScript(STRING_RETURN, Object.class);
         
         Assert.assertEquals(script1.apply(new MessageContext()), "String");
         Assert.assertEquals(script1.apply(null), "String");

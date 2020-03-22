@@ -50,7 +50,6 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
-import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /** {@link ScriptedMatcher} unit test. */
 @ThreadSafe
@@ -79,55 +78,31 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         nullReturnScript = new EvaluableScript("JavaScript", "null;");
 
-        if (!TestSupport.isJavaV8OrLater()) {
-            returnOneValueScript =
-                    new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                            .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
+        returnOneValueScript =
+                new EvaluableScript("JavaScript", new StringBuilder()
+                        .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+                        .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
+                        .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
 
-            invalidReturnObjectScript = new EvaluableScript("JavaScript", "new java.lang.String();");
+        invalidReturnObjectScript =
+                new EvaluableScript("JavaScript", "load('nashorn:mozilla_compat.js');new java.lang.String();");
 
-            addedValuesScript =
-                    new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
-                            .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
-                            .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));")
-                            .append("x;").toString());
-            prcscScript =
-                    new EvaluableScript(
-                            "JavaScript",
-                            new StringBuilder("importPackage(Packages.net.shibboleth.idp.attribute);")
-                                    .append("x = new java.util.HashSet(1);\n")
-                                    .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
-                                    .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
-                                    .append("x;").toString());
-        } else {
+        addedValuesScript =
+                new EvaluableScript("JavaScript", new StringBuilder()
+                        .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+                        .append("importPackage(Packages.net.shibboleth.idp.attribute);")
+                        .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
+                        .append("x.add(new StringAttributeValue(\"a\"));").append("x;").toString());
+        prcscScript =
+                new EvaluableScript(
+                        "JavaScript",
+                        new StringBuilder("HashSet = Java.type(\"java.util.HashSet\");\n")
+                                .append("StringAttributeValue = Java.type(\"net.shibboleth.idp.attribute.StringAttributeValue\");\n")
+                                .append("x = new HashSet(1);\n")
+                                .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
+                                .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
+                                .append("x;").toString());
 
-            returnOneValueScript =
-                    new EvaluableScript("JavaScript", new StringBuilder()
-                            .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
-                            .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                            .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
-
-            invalidReturnObjectScript =
-                    new EvaluableScript("JavaScript", "load('nashorn:mozilla_compat.js');new java.lang.String();");
-
-            addedValuesScript =
-                    new EvaluableScript("JavaScript", new StringBuilder()
-                            .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
-                            .append("importPackage(Packages.net.shibboleth.idp.attribute);")
-                            .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
-                            .append("x.add(new StringAttributeValue(\"a\"));").append("x;").toString());
-            prcscScript =
-                    new EvaluableScript(
-                            "JavaScript",
-                            new StringBuilder("HashSet = Java.type(\"java.util.HashSet\");\n")
-                                    .append("StringAttributeValue = Java.type(\"net.shibboleth.idp.attribute.StringAttributeValue\");\n")
-                                    .append("x = new HashSet(1);\n")
-                                    .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
-                                    .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
-                                    .append("x;").toString());
-
-        }
     }
 
     @Test public void testGetMatcher() throws Exception {

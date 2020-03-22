@@ -1,9 +1,5 @@
+load('nashorn:mozilla_compat.js')
 importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
- 
-// Create attribute to be returned from definition DO NOT DO FOR NASHORHN/JDK8
-if (null == eduPersonAffiliation) {
-    eduPersonAffiliation = new BasicAttribute("eduPersonAffiliation");
-}
  
 // Add at least one value
 eduPersonAffiliation.getValues().add("affiliate");

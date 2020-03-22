@@ -1,9 +1,10 @@
-importClass(Packages.java.util.HashSet);
-importClass(Packages.net.shibboleth.utilities.java.support.httpclient.HttpClientSupport);
-importPackage(Packages.net.shibboleth.idp.attribute);
-
+var HttpClientSupport = Java.type("net.shibboleth.utilities.java.support.httpclient.HttpClientSupport");
 var body = HttpClientSupport.toString(response.getEntity(), "UTF-8", 1024);
 var result = JSON.parse(body);
+
+var IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
+var StringValue = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+var HashSet = Java.type("java.util.HashSet");
 
 for (var i=0; i<result.length; i++) {
 
@@ -11,7 +12,7 @@ for (var i=0; i<result.length; i++) {
     var values = new HashSet();
     
     for (var j=0; j<result[i].values.length; j++) {
-        values.add(new StringAttributeValue(result[i].values[j]));
+        values.add(new StringValue(result[i].values[j]));
     }
     
     attr.setValues(values);

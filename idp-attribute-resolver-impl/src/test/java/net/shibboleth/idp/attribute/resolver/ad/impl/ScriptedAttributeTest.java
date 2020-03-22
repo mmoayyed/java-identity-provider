@@ -69,7 +69,6 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
-import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl}. */
 @SuppressWarnings("javadoc")
@@ -86,20 +85,13 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     private static Logger log = LoggerFactory.getLogger(ScriptedAttributeTest.class);
 
-    private String fileNameToPath(final String fileName, final boolean isV8Capable) {
-        if (TestSupport.isJavaV8OrLater() && !isV8Capable) {
-            return "/net/shibboleth/idp/attribute/resolver/impl/ad/jdk8/" + fileName;
-        }
+    private String fileNameToPath(final String fileName) {
         return "/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
     }
 
-    private String getScript(final String fileName, final boolean isV8Capable) throws IOException {
-        return StringSupport.inputStreamToString(getClass().getResourceAsStream(fileNameToPath(fileName, isV8Capable)),
-                null);
-    }
-
     private String getScript(final String fileName) throws IOException {
-        return getScript(fileName, true);
+        return StringSupport.inputStreamToString(getClass().getResourceAsStream(fileNameToPath(fileName)),
+                null);
     }
 
     /**
@@ -215,7 +207,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simple2.script", false)));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simple2.script")));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -237,7 +229,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("nullValue.script", false)));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("nullValue.script")));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -258,7 +250,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("logging.script", false)));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("logging.script")));
         attr.initialize();
 
         final IdPAttribute val = attr.resolve(generateContext());
@@ -278,7 +270,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simpleWithPredef.script", false)));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simpleWithPredef.script")));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -302,7 +294,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             // OK
         }
 
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(failingScript, v8Safe)));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(failingScript)));
         attr.initialize();
 
         return attr;
@@ -316,8 +308,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         } catch (final ResolutionException ex) {
             log.trace("Successful exception", ex);
         } catch (final RuntimeException ex) {
-            if (TestSupport.isJavaV8OrLater() && (ex.getCause() instanceof ResolutionException)) {
-                // nashhorn wraps exceptions
+            if (ex.getCause() instanceof ResolutionException) {
                 log.trace("Successful exception", ex);
             } else {
                 throw ex;
@@ -330,10 +321,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         failureTest("fail1.script", "Unknown method", true);
         failureTest("fail2.script", "Bad output type", true);
-        if (!TestSupport.isJavaV8OrLater()) {
-            // nashhorn is much more forgiving - and we tested for most of this in fails2
-            assertNull(buildTest("fail3.script", true).resolve(generateContext()), "returns nothing");
-        }
 
         failureTest("fail4.script", "getValues, then getNativeAttributes", true);
         failureTest("fail5.script", "getNativeAttributes, then getValues", true);
@@ -483,7 +470,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("context.script", false)));
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("context.script")));
         scripted.setDataConnectorDependencies(ds);
         scripted.initialize();
 
@@ -528,7 +515,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript, false)));
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript)));
         scripted.setDataConnectorDependencies(ds);
 
         final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
@@ -648,7 +635,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final EntityAttributes obj;
 
         public Locator(final String file) {
-            obj = (EntityAttributes) unmarshallElement(fileNameToPath(file, true));
+            obj = (EntityAttributes) unmarshallElement(fileNameToPath(file));
         }
 
         /** {@inheritDoc} */
