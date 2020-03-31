@@ -41,7 +41,6 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 /**
@@ -51,17 +50,20 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 @SuppressWarnings("javadoc")
 public class ScriptedDataConnectorTest {
 
-    private String getScript(String fileName) throws IOException {
+    private EvaluableScript getScript(String fileName) throws IOException, ComponentInitializationException {
         final String name = "/net/shibboleth/idp/attribute/resolver/impl/dc/" + fileName;
-        return StringSupport.inputStreamToString(getClass().getResourceAsStream(name), null);
+        final EvaluableScript es = new EvaluableScript();
+        es.setEngineName("javascript");
+        es.setScript(getClass().getResourceAsStream(name));
+        es.initialize();
+        return es;
     }
 
     @Test(expectedExceptions=ResolutionException.class)
     public void error() throws ComponentInitializationException, ScriptException, IOException, ResolutionException {
         final ScriptedDataConnector connector = new ScriptedDataConnector();
         connector.setId("Scripted");
-        final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("error.js"));
-        connector.setScript(definitionScript);
+        connector.setScript(getScript("error.js"));
 
         connector.initialize();
 
@@ -75,8 +77,7 @@ public class ScriptedDataConnectorTest {
 
         final ScriptedDataConnector connector = new ScriptedDataConnector();
         connector.setId("Scripted");
-        final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("scriptedConnector.js"));
-        connector.setScript(definitionScript);
+        connector.setScript(getScript("scriptedConnector.js"));
 
         connector.initialize();
 
@@ -131,8 +132,7 @@ public class ScriptedDataConnectorTest {
         attribute.setValues(Collections.singletonList((IdPAttributeValue)new StringAttributeValue("bar")));
         connector.setCustomObject(attribute);
         
-        final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("custom.js"));
-        connector.setScript(definitionScript);
+        connector.setScript(getScript("custom.js"));
 
         connector.initialize();
 

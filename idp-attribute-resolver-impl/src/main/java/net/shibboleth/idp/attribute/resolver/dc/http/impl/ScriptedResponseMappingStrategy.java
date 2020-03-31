@@ -294,7 +294,10 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
     @Nonnull static ScriptedResponseMappingStrategy resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setEngineName(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedResponseMappingStrategy(script);
         }
     }
@@ -322,7 +325,10 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
      */
     @Nonnull static ScriptedResponseMappingStrategy inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedResponseMappingStrategy(script);
     }
 

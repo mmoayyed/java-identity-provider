@@ -146,7 +146,10 @@ public class ScriptedAction extends AbstractProfileAction {
     static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
             throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setEngineName(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedAction(script);
         }
     }
@@ -173,7 +176,10 @@ public class ScriptedAction extends AbstractProfileAction {
      */
     static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+                script.setEngineName(engineName);
+                script.setScript(scriptSource);
+                script.initializeWithScriptException();
         return new ScriptedAction(script);
     }
 
@@ -185,8 +191,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      */
     static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedAction(script);
+        return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 
     /**

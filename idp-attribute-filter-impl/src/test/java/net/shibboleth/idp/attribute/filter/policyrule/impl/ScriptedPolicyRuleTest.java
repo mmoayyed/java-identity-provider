@@ -74,19 +74,40 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
         filterContext = new AttributeFilterContext();
 
-        nullReturnScript = new EvaluableScript("JavaScript", "null;");
+        nullReturnScript = new EvaluableScript();
+        nullReturnScript.setEngineName("JavaScript");
+        nullReturnScript.setScript("null;");
+        nullReturnScript.initialize();
 
-        invalidReturnObjectScript = new EvaluableScript("JavaScript", "new java.lang.String();");
+        invalidReturnObjectScript = new EvaluableScript();
+        invalidReturnObjectScript.setEngineName("JavaScript");
+        invalidReturnObjectScript.setScript("load('nashorn:mozilla_compat.js');new java.lang.String();");
+        invalidReturnObjectScript.initialize();
 
-        trueReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(true);");
+        trueReturnScript = new EvaluableScript();
+        trueReturnScript.setEngineName("JavaScript");
+        trueReturnScript.setScript("new java.lang.Boolean(true);");
+        trueReturnScript.initialize();
 
-        falseReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(false);");
-        
-        prcReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(profileContext.getClass().getName().equals(\"org.opensaml.profile.context.ProfileRequestContext\"));");
-        
-        customReturnScript = new EvaluableScript("JavaScript", "custom;");
-        
-        scReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(subjects[0].getPrincipals().iterator().next().getName().equals(\"FOO\"));");
+        falseReturnScript = new EvaluableScript();
+        falseReturnScript.setEngineName("JavaScript");
+        falseReturnScript.setScript("new java.lang.Boolean(false);");
+        falseReturnScript.initialize();
+
+        prcReturnScript = new EvaluableScript();
+        prcReturnScript.setEngineName("JavaScript");
+        prcReturnScript.setScript("new java.lang.Boolean(profileContext.getClass().getName().equals(\"org.opensaml.profile.context.ProfileRequestContext\"));");
+        prcReturnScript.initialize();
+
+        customReturnScript = new EvaluableScript();
+        customReturnScript.setEngineName("JavaScript");
+        customReturnScript.setScript("custom;");
+        customReturnScript.initialize();
+
+        scReturnScript = new EvaluableScript();
+        scReturnScript.setEngineName("JavaScript");
+        scReturnScript.setScript("new java.lang.Boolean(subjects[0].getPrincipals().iterator().next().getName().equals(\"FOO\"));");
+        scReturnScript.initialize();
     }
 
     @Test public void testNullArguments() throws Exception {

@@ -89,9 +89,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         return "/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
     }
 
-    private String getScript(final String fileName) throws IOException {
-        return StringSupport.inputStreamToString(getClass().getResourceAsStream(fileNameToPath(fileName)),
-                null);
+    private EvaluableScript getScript(String fileName) throws ComponentInitializationException, IOException {
+        EvaluableScript es = new EvaluableScript ();
+        es.setEngineName(SCRIPT_LANGUAGE);
+        es.setScript(getClass().getResourceAsStream(fileNameToPath(fileName)));
+        es.initialize();
+        return es;
     }
 
     /**
@@ -112,7 +115,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simple.script")));
+        attr.setScript(getScript("simple.script"));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -141,7 +144,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("subjects.script")));
+        attr.setScript(getScript("subjects.script"));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -176,7 +179,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("custom.script")));
+        attr.setScript(getScript("custom.script"));
         attr.setCustomObject(test.getValues().get(0));
         attr.initialize();
         assertNotNull(attr.getScript());
@@ -207,7 +210,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simple2.script")));
+        attr.setScript(getScript("simple2.script"));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -229,7 +232,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("nullValue.script")));
+        attr.setScript(getScript("nullValue.script"));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -250,7 +253,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("logging.script")));
+        attr.setScript(getScript("logging.script"));
         attr.initialize();
 
         final IdPAttribute val = attr.resolve(generateContext());
@@ -270,7 +273,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simpleWithPredef.script")));
+        attr.setScript(getScript("simpleWithPredef.script"));
         attr.initialize();
         assertNotNull(attr.getScript());
 
@@ -294,7 +297,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             // OK
         }
 
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(failingScript)));
+        attr.setScript(getScript(failingScript));
         attr.initialize();
 
         return attr;
@@ -353,7 +356,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         ds.add(TestSources.makeAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
+        scripted.setScript(getScript("attributes.script"));
         scripted.setAttributeDependencies(ds);
         scripted.initialize();
 
@@ -402,7 +405,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
+        scripted.setScript(getScript("attributes.script"));
         scripted.setDataConnectorDependencies(Collections.singleton(depend));
         scripted.initialize();
 
@@ -424,7 +427,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes2.script")));
+        scripted.setScript(getScript("attributes2.script"));
         scripted.setAttributeDependencies(ds);
         scripted.initialize();
 
@@ -470,7 +473,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("context.script")));
+        scripted.setScript(getScript("context.script"));
         scripted.setDataConnectorDependencies(ds);
         scripted.initialize();
 
@@ -515,7 +518,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript)));
+        scripted.setScript(getScript(exampleScript));
         scripted.setDataConnectorDependencies(ds);
 
         final Set<DataConnector> dataDefinitions = Collections.singleton((DataConnector) connector);
@@ -587,7 +590,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId("scripted");
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContext.script")));
+        scripted.setScript(getScript("requestContext.script"));
         scripted.initialize();
 
         final IdPAttribute result = scripted.resolve(generateContext());
@@ -604,7 +607,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId("scripted");
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContextUnimplemented.script")));
+        scripted.setScript(getScript("requestContextUnimplemented.script"));
         scripted.initialize();
 
         final IdPAttribute result = scripted.resolve(generateContext());

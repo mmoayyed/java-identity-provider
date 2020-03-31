@@ -147,7 +147,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
             @Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource,
             @Nullable final Class<?> outputType) throws ScriptException, IOException {
         try (InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setEngineName(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedContextLookupFunction<>(ProfileRequestContext.class, script, resource.getDescription(),
                 outputType);
         }
@@ -195,7 +198,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     public static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedContextLookupFunction<>(ProfileRequestContext.class, script, "Inline");
     }
 
@@ -212,7 +218,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     public static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource,
             @Nullable final Class<?> outputType) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedContextLookupFunction<>(ProfileRequestContext.class, script, "Inline", outputType);
     }
 
@@ -226,8 +235,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     @Nonnull
     public static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedContextLookupFunction<>(ProfileRequestContext.class, script, "Inline");
+        return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 
     /**
@@ -241,8 +249,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     @Nonnull
     public static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String scriptSource, @Nullable final Class<?> outputType) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedContextLookupFunction<>(ProfileRequestContext.class, script, "Inline", outputType);
+        return inlineScript(DEFAULT_ENGINE, scriptSource, outputType);
     }
 
     /**
@@ -276,7 +283,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
             @Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource,
             @Nullable final Class<?> outputType) throws ScriptException, IOException {
         try (InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setEngineName(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedContextLookupFunction<>(MessageContext.class, script, resource.getDescription(),
                     outputType);
         }
@@ -323,7 +333,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     public static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedContextLookupFunction<>(MessageContext.class, script, "Inline");
     }
 
@@ -340,7 +353,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     public static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource,
             @Nullable final Class<?> outputType) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedContextLookupFunction<>(MessageContext.class, script, "Inline", outputType);
     }
 
@@ -354,8 +370,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     @Nonnull
     public static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedContextLookupFunction<>(MessageContext.class, script, "Inline");
+        return inlineMessageContextScript(DEFAULT_ENGINE, scriptSource);
     }
 
     /**
@@ -369,8 +384,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     @Nonnull
     public static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String scriptSource, @Nullable final Class<?> outputType) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedContextLookupFunction<>(MessageContext.class, script, "Inline", outputType);
+        return inlineMessageContextScript(DEFAULT_ENGINE, scriptSource, outputType);
     }
 
 }

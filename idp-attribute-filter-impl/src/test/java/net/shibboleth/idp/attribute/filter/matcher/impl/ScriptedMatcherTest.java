@@ -73,33 +73,42 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         filterContext = new AttributeFilterContext();
 
-        nullReturnScript = new EvaluableScript("JavaScript", "null;");
+        nullReturnScript = new EvaluableScript();
+        nullReturnScript.setEngineName("JavaScript");
+        nullReturnScript.setScript("null;");
+        nullReturnScript.initialize();
 
-        returnOneValueScript =
-                new EvaluableScript("JavaScript", new StringBuilder()
-                        .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
-                        .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
-                        .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
+        returnOneValueScript = new EvaluableScript();
+        returnOneValueScript.setEngineName("JavaScript");
+        returnOneValueScript.setScript(new StringBuilder()
+             .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+             .append("filterContext.getPrefilteredIdPAttributes();").append("x = new HashSet();")
+             .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
+        returnOneValueScript.initialize();
 
-        invalidReturnObjectScript =
-                new EvaluableScript("JavaScript", "load('nashorn:mozilla_compat.js');new java.lang.String();");
+        invalidReturnObjectScript = new EvaluableScript();
+        invalidReturnObjectScript.setEngineName("JavaScript");
+        invalidReturnObjectScript.setScript("load('nashorn:mozilla_compat.js');new java.lang.String();");
+        invalidReturnObjectScript.initialize();
 
-        addedValuesScript =
-                new EvaluableScript("JavaScript", new StringBuilder()
-                        .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
-                        .append("importPackage(Packages.net.shibboleth.idp.attribute);")
-                        .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
+        addedValuesScript = new EvaluableScript();
+        addedValuesScript.setEngineName("JavaScript");
+        addedValuesScript.setScript(new StringBuilder()
+             .append("load('nashorn:mozilla_compat.js');importPackage(Packages.java.util);")
+             .append("importPackage(Packages.net.shibboleth.idp.attribute);")
+             .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
                         .append("x.add(new StringAttributeValue(\"a\"));").append("x;").toString());
-        prcscScript =
-                new EvaluableScript(
-                        "JavaScript",
-                        new StringBuilder("HashSet = Java.type(\"java.util.HashSet\");\n")
-                                .append("StringAttributeValue = Java.type(\"net.shibboleth.idp.attribute.StringAttributeValue\");\n")
-                                .append("x = new HashSet(1);\n")
-                                .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
-                                .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
-                                .append("x;").toString());
+        addedValuesScript.initialize();
 
+        prcscScript = new EvaluableScript();
+        prcscScript.setEngineName("JavaScript");
+        prcscScript.setScript(new StringBuilder("HashSet = Java.type(\"java.util.HashSet\");\n")
+             .append("StringAttributeValue = Java.type(\"net.shibboleth.idp.attribute.StringAttributeValue\");\n")
+             .append("x = new HashSet(1);\n")
+             .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
+             .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
+             .append("x;").toString());
+        prcscScript.initialize();
     }
 
     @Test public void testGetMatcher() throws Exception {
@@ -165,8 +174,11 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
     
     @Test public void custom() throws Exception {
+        final EvaluableScript script = new EvaluableScript();
+        script.setScript("custom;");
+        script.initialize();
+        final ScriptedMatcher matcher = newScriptedMatcher(script);
         
-        final ScriptedMatcher matcher = newScriptedMatcher(new EvaluableScript("custom;"));
         final Set<IdPAttributeValue> custom = Collections.singleton(attribute.getValues().get(0));
         matcher.setId("Test");
         matcher.setCustomObject(custom);

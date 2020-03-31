@@ -83,7 +83,10 @@ public class ScriptedPredicate
     public static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setEngineName(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedPredicate(script, resource.getDescription());
         }
     }
@@ -110,7 +113,10 @@ public class ScriptedPredicate
      */
     public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedPredicate(script, "Inline");
     }
 
@@ -122,8 +128,7 @@ public class ScriptedPredicate
      * @throws ScriptException if the compile fails
      */
     public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedPredicate(script, "Inline");
+        return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 
 }
