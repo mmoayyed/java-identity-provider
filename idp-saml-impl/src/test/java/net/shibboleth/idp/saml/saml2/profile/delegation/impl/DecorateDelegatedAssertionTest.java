@@ -41,7 +41,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
 
 import org.openliberty.xmltooling.disco.MetadataAbstract;
 import org.openliberty.xmltooling.disco.ProviderID;
@@ -79,6 +78,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Diff;
 
 import com.google.common.base.Predicates;
 
@@ -361,7 +362,11 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         assertion.releaseDOM();
         assertion.releaseChildrenDOM(true);
         Assert.assertNotSame(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
-        XMLAssertTestNG.assertXMLEqual(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
+        
+        final Diff diff = DiffBuilder.compare(origAssertionDOM).withTest(currentAssertionDOM)
+                .checkForIdentical()
+                .build();
+        Assert.assertFalse(diff.hasDifferences(), diff.toString());
     }
     
     private void testDecoratedAssertion() throws MarshallingException {
@@ -369,7 +374,11 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         assertion.releaseDOM();
         assertion.releaseChildrenDOM(true);
         Assert.assertNotSame(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
-        XMLAssertTestNG.assertXMLNotEqual(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
+
+        final Diff diff = DiffBuilder.compare(origAssertionDOM).withTest(currentAssertionDOM)
+                .checkForIdentical()
+                .build();
+        Assert.assertTrue(diff.hasDifferences(), diff.toString());
         
         // SubjectConfirmation
         Assert.assertNotNull(assertion.getSubject().getSubjectConfirmations());

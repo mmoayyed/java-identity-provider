@@ -30,6 +30,8 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Diff;
 
 import com.google.common.base.Predicates;
 
@@ -40,10 +42,9 @@ import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
 
 /**
- *
+ * Unit test for {@link AddAuthnStatementToAssertionFromInboundAssertionToken} action.
  */
 public class AddAuthnStatementToAssertionFromInboundAssertionTokenTest extends OpenSAMLInitBaseTestCase {
     
@@ -83,11 +84,15 @@ public class AddAuthnStatementToAssertionFromInboundAssertionTokenTest extends O
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
         
-        Assertion newAssertion = ((Response)prc.getOutboundMessageContext().getMessage()).getAssertions().get(0);
+        final Assertion newAssertion = ((Response)prc.getOutboundMessageContext().getMessage()).getAssertions().get(0);
         Assert.assertFalse(newAssertion.getAuthnStatements().isEmpty());
-        XMLAssertTestNG.assertXMLEqual(
-                XMLObjectSupport.marshall(delegatedAuthnStatement).getOwnerDocument(),
-                XMLObjectSupport.marshall(newAssertion.getAuthnStatements().get(0)).getOwnerDocument());
+        
+        final Diff diff = DiffBuilder.compare(
+                XMLObjectSupport.marshall(delegatedAuthnStatement)).withTest(
+                        XMLObjectSupport.marshall(newAssertion.getAuthnStatements().get(0)))
+                .checkForIdentical()
+                .build();
+        Assert.assertFalse(diff.hasDifferences(), diff.toString());
     }
     
     @Test
