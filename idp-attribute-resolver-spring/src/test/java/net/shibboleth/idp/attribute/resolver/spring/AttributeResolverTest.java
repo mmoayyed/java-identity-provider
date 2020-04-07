@@ -42,8 +42,8 @@ import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -71,7 +71,6 @@ import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** A work in progress to test the attribute resolver service. */
-@SuppressWarnings("javadoc")
 public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */
@@ -106,10 +105,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         pendingTeardownContext = context;
     }
 
-    @BeforeTest public void setupDataConnectors() throws LDAPException {
-
-        System.setProperty("org.ldaptive.provider", "org.ldaptive.provider.unboundid.UnboundIDProvider");
-        
+    @BeforeClass public void setupDataConnectors() throws LDAPException {
         // LDAP
         final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10391));
@@ -127,10 +123,8 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     /**
      * Shutdown the in-memory directory server.
      */
-    @AfterTest public void teardownDataConnectors() {
+    @AfterClass public void teardownDataConnectors() {
         directoryServer.shutDown(true);
-        
-        System.clearProperty("org.ldaptive.provider");
     }
     
     private ReloadableService<AttributeResolver> getResolver(final String file) {

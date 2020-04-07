@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.DurablePairwiseIdStore;
@@ -48,7 +48,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 /**
  * Test for {@link PairwiseIdDataConnector} with JDBC store.
  */
-@SuppressWarnings("javadoc")
 public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql";
@@ -57,7 +56,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private DataSource testSource;
 
-    @BeforeTest public void setupSource() throws SQLException, IOException {
+    @BeforeClass public void setupSource() throws SQLException, IOException {
 
         testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
     }

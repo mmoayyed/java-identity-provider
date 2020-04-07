@@ -42,7 +42,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
@@ -60,7 +60,6 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConne
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
 /** Test for {@link RDBMSDataConnectorParser}. */
-@SuppressWarnings("javadoc")
 public class RDBMSDataConnectorParserTest {
 
     public static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsStore.sql";
@@ -90,7 +89,7 @@ public class RDBMSDataConnectorParserTest {
      * @throws ClassNotFoundException if the database driver cannot be found
      * @throws SQLException if the database cannot be initialized
      */
-    @BeforeTest public void setupDatabaseServer() throws ClassNotFoundException, SQLException {
+    @BeforeClass public void setupDatabaseServer() throws ClassNotFoundException, SQLException {
 
         datasource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "RDBMSDataConnectorStore");
         DatabaseTestingSupport.InitializeDataSourceFromFile(DATA_FILE, datasource);

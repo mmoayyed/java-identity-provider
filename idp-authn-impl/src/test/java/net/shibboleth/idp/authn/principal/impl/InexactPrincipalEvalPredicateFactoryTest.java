@@ -21,10 +21,9 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** {@link InexactPrincipalEvalPredicateFactory} unit test. */
@@ -40,7 +39,7 @@ public class InexactPrincipalEvalPredicateFactoryTest {
     private UsernamePrincipal bar;
     private UsernamePrincipal baz;
     
-    @BeforeTest public void setUp() throws Exception {
+    @BeforeClass public void setUp() throws Exception {
         // Note that foo matches bar and bar2, but not itself.
         // This would be a fit for the SAML "better" operator.
         factory = new InexactPrincipalEvalPredicateFactory();

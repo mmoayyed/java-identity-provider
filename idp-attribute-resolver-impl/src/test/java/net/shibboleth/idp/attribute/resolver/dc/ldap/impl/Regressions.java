@@ -26,8 +26,8 @@ import java.util.Map;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -50,7 +50,6 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMapping
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-@SuppressWarnings("javadoc")
 public class Regressions {
     
     /** The connector name. */
@@ -72,7 +71,7 @@ public class Regressions {
      * 
      * @throws LDAPException if the in-memory directory server cannot be created
      */
-    @BeforeTest public void setupDirectoryServer() throws LDAPException {
+    @BeforeClass public void setupDirectoryServer() throws LDAPException {
 
         final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10390));
@@ -87,7 +86,7 @@ public class Regressions {
     /**
      * Shutdown the in-memory directory server.
      */
-    @AfterTest public void teardownDirectoryServer() {
+    @AfterClass public void teardownDirectoryServer() {
         directoryServer.shutDown(true);
     }
 

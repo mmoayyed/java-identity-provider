@@ -23,7 +23,7 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import org.opensaml.storage.impl.MemoryStorageService;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -44,7 +44,7 @@ public class SimpleTicketServiceTest {
 
     private SimpleTicketService ticketService;
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() throws Exception {
         final MemoryStorageService ss = new MemoryStorageService();
         ss.setId("shibboleth.StorageService");

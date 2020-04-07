@@ -17,11 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -51,8 +47,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
@@ -80,7 +76,6 @@ import net.shibboleth.idp.saml.impl.TestSources;
 
 
 /** Test for {@link LDAPDataConnectorParser}. */
-@SuppressWarnings("javadoc")
 public class LDAPDataConnectorParserTest {
 
     /** In-memory directory server. */
@@ -107,7 +102,7 @@ public class LDAPDataConnectorParserTest {
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws GeneralSecurityException if the startTLS keystore or truststore cannot be loaded
      */
-    @BeforeTest public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
+    @BeforeClass public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
         final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         final SSLUtil sslUtil =
                 new SSLUtil(new KeyStoreKeyManager(
@@ -127,7 +122,7 @@ public class LDAPDataConnectorParserTest {
     /**
      * Shutdown the in-memory directory server.
      */
-    @AfterTest public void teardownDirectoryServer() {
+    @AfterClass public void teardownDirectoryServer() {
         directoryServer.shutDown(true);
     }
 

@@ -26,7 +26,7 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
@@ -37,10 +37,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link OrPolicyRule} unit test. */
-@SuppressWarnings("javadoc")
 public class OrPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
-    @BeforeTest public void setup() throws Exception {
+    @BeforeClass public void setup() throws Exception {
         super.setUp();
     }
 

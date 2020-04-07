@@ -27,7 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
@@ -46,7 +46,6 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 /** {@link ScriptedPolicyRule} unit test. */
 @ThreadSafe
-@SuppressWarnings("javadoc")
 public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns null. */
@@ -70,7 +69,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     /** A script that returns the custom object. */
     private EvaluableScript customReturnScript;
 
-    @BeforeTest public void setup() throws Exception {
+    @BeforeClass public void setup() throws Exception {
         super.setUp();
 
         filterContext = new AttributeFilterContext();

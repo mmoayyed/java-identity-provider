@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.security.impl.RandomIdentifierGener
 import org.apache.commons.codec.binary.Base32;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.core.io.ClassPathResource;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -65,7 +65,7 @@ public class EncodingTicketServiceTest {
         }
     }
 
-    @BeforeTest
+    @BeforeClass
     public void setUp() throws Exception {
         final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
         strategy.setKeystoreResource(ResourceHelper.of(new ClassPathResource("credentials/sealer.jks")));

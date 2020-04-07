@@ -22,7 +22,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.fail;
 
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
@@ -35,10 +35,9 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** Test the {@link NotPolicyRule} matcher. */
-@SuppressWarnings("javadoc")
 public class NotPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
-    @BeforeTest public void setup() throws Exception {
+    @BeforeClass public void setup() throws Exception {
         super.setUp();
     }
 

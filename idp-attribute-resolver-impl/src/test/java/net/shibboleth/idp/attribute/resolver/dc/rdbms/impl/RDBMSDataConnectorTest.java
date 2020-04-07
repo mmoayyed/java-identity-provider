@@ -34,7 +34,7 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -60,7 +60,6 @@ import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 /**
  * Tests for {@link RDBMSDataConnector}
  */
-@SuppressWarnings("javadoc")
 public class RDBMSDataConnectorTest {
 
     /** The connector name. */
@@ -82,8 +81,7 @@ public class RDBMSDataConnectorTest {
      * @throws ClassNotFoundException if the database driver cannot be found
      * @throws SQLException if the database cannot be initialized
      */
-    @BeforeTest public void setupDatabaseServer() throws ClassNotFoundException, SQLException {
-
+    @BeforeClass public void setupDatabaseServer() throws ClassNotFoundException, SQLException {
         datasource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "RDBMSDataConnectorStore");
         DatabaseTestingSupport.InitializeDataSourceFromFile(DATA_FILE, datasource);
     }

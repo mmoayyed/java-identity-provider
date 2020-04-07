@@ -26,8 +26,8 @@ import java.security.GeneralSecurityException;
 import javax.sql.DataSource;
 
 import org.springframework.mock.env.MockPropertySource;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
@@ -47,7 +47,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 @Ignore
-@SuppressWarnings({"unchecked", "javadoc"})
+@SuppressWarnings({"unchecked"})
 public class AttributeResolverFailFastTest extends AbstractFailFastTest {
     
     protected String getPath() {
@@ -57,12 +57,10 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
     private InMemoryDirectoryServer directoryServer;
     private DataSource datasource;
 
-    @BeforeTest(enabled = false) public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
+    @BeforeClass(enabled = false) public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
         //
         // LDAP
         //
-        System.setProperty("org.ldaptive.provider", "org.ldaptive.provider.unboundid.UnboundIDProvider");
-        
         final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         final SSLUtil sslUtil =
                 new SSLUtil(new KeyStoreKeyManager(
@@ -86,11 +84,10 @@ public class AttributeResolverFailFastTest extends AbstractFailFastTest {
 
     }
     
-    @AfterTest public void teardownDirectoryServer() {
+    @AfterClass public void teardownDirectoryServer() {
         if (directoryServer != null) {
             directoryServer.shutDown(true);
         }
-        System.clearProperty("org.ldaptive.provider");
     }
 
     public void workingAttributeResolver(final String file, final MockPropertySource props) throws IOException {

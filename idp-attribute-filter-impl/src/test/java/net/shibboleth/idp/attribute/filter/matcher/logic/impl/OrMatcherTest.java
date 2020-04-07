@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
@@ -47,10 +47,9 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link OrMatcher} unit test. */
-@SuppressWarnings("javadoc")
 public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
-    @BeforeTest public void setup() throws Exception {
+    @BeforeClass public void setup() throws Exception {
         super.setUp();
     }
 

@@ -29,11 +29,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -52,8 +51,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 /** {@link ScriptedMatcher} unit test. */
-@ThreadSafe
-@SuppressWarnings("javadoc")
 public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns a set that contains the one of values the attribute. */
@@ -71,7 +68,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     /** A script that returns a set containing the prc name. */
     private EvaluableScript prcscScript;
 
-    @BeforeTest public void setup() throws Exception {
+    @BeforeClass public void setup() throws Exception {
         super.setUp();
 
         filterContext = new AttributeFilterContext();

@@ -77,10 +77,8 @@ import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionPars
 import org.springframework.webflow.test.MockExternalContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 
 import com.google.common.net.HttpHeaders;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -222,8 +220,10 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /**
      * Initialize XMLObject support classes.
+     * @throws IOException 
+     * @throws LDAPException 
      */
-    @BeforeClass public void initializeXMLObjectSupport() {
+    @BeforeClass public void initializeXMLObjectSupport() throws LDAPException, IOException {
         parserPool = XMLObjectProviderRegistrySupport.getParserPool();
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
@@ -236,7 +236,8 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws IOException if the LDIF resource cannot be imported
      */
-    @BeforeTest public void setupDirectoryServer() throws LDAPException, IOException {
+    @BeforeMethod
+    public void setupDirectoryServer() throws LDAPException, IOException {
         directoryServer =
                 new InMemoryDirectory(new ClassPathResource(LDIF_FILE), 10389, new ClassPathResource(KEYSTORE_FILE));
         directoryServer.start();
@@ -247,7 +248,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * 
      * Always run this method to avoid starting the server multiple times when tests fail.
      */
-    @AfterTest(alwaysRun = true) public void teardownDirectoryServer() {
+    @AfterMethod(alwaysRun = true) public void teardownDirectoryServer() {
         if (directoryServer != null) {
             directoryServer.stop();
         }

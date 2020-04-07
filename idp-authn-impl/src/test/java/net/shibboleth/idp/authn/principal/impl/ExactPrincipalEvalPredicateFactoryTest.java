@@ -21,10 +21,9 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** {@link ExactPrincipalEvalPredicateFactory} unit test. */
@@ -39,7 +38,7 @@ public class ExactPrincipalEvalPredicateFactoryTest {
     private UsernamePrincipal foo;
     private UsernamePrincipal bar;
     
-    @BeforeTest public void setUp() throws Exception {
+    @BeforeClass public void setUp() throws Exception {
         factory = new ExactPrincipalEvalPredicateFactory();
         foo = new UsernamePrincipal("foo");
         bar = new UsernamePrincipal("bar");

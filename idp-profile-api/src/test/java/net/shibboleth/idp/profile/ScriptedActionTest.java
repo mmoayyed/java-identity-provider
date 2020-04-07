@@ -25,7 +25,7 @@ import org.opensaml.profile.action.EventIds;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ScriptedAction}. */
@@ -33,7 +33,7 @@ public class ScriptedActionTest {
 
     private RequestContext rc;
     
-    @BeforeTest
+    @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
     }

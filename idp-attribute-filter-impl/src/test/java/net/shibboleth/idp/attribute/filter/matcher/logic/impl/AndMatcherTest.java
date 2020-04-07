@@ -32,7 +32,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -46,10 +46,9 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link AndMatcher} unit test. */
-@SuppressWarnings("javadoc")
 public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
-    @BeforeTest public void setup() throws Exception {
+    @BeforeClass public void setup() throws Exception {
         super.setUp();
     }
 
