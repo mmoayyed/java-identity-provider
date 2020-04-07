@@ -149,9 +149,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
-        bindingDescriptorsLookupStrategy =
-                FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(
-                        Collections.<BindingDescriptor>emptyList());
+        bindingDescriptorsLookupStrategy = FunctionSupport.constant(Collections.emptyList());
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
