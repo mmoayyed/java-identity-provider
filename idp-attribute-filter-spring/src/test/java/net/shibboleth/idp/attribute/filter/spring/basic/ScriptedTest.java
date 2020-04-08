@@ -47,9 +47,10 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     private Map<String, IdPAttribute> epaUid;
     
-    private String getScript() {
-        return "scripted.xml";
-    }
+    private final String NASHORN_SCRIPT = "scripted.xml";
+
+    private final String RHINO_SCRIPT = "scripted-rhino.xml";
+
 
     @BeforeClass public void setupAttributes() throws ComponentInitializationException, ResolutionException {
 
@@ -57,12 +58,21 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(getScript());
+        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(NASHORN_SCRIPT);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
         assertEquals(rule.matches(filterContext), Tristate.FALSE);
     }
+    
+    @Test public void policyRhino() throws ComponentInitializationException {
+        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(RHINO_SCRIPT);
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
+        assertEquals(rule.matches(filterContext), Tristate.FALSE);
+    }
+
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void policyNotFound() throws ComponentInitializationException {
 
@@ -70,7 +80,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
     
     @Test public void matcher()  throws ComponentInitializationException {
-        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(getScript());
+        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(NASHORN_SCRIPT);
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -78,12 +88,23 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         assertEquals(x.size(), 1);
         String val = ((StringAttributeValue) x.iterator().next()).getValue();
         assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));
-        
     }
+    
+    @Test public void matcherRhino()  throws ComponentInitializationException {
+        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(RHINO_SCRIPT);
+        
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        filterContext.setPrefilteredIdPAttributes(epaUid.values());
+        Set<IdPAttributeValue> x = matcher.getMatchingValues(epaUid.get("uid"), filterContext);
+        assertEquals(x.size(), 1);
+        String val = ((StringAttributeValue) x.iterator().next()).getValue();
+        assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));
+    }
+
     
     @Test public void customMatcher() throws ComponentInitializationException {
         
-        final ScriptedMatcher what = (ScriptedMatcher) getMatcher(getScript());
+        final ScriptedMatcher what = (ScriptedMatcher) getMatcher(NASHORN_SCRIPT);
         
         assertNull(what.getCustomObject());
         
@@ -91,7 +112,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     @Test public void customPolicy() throws ComponentInitializationException {
         
-        final ScriptedPolicyRule what = (ScriptedPolicyRule) getPolicyRule(getScript());
+        final ScriptedPolicyRule what = (ScriptedPolicyRule) getPolicyRule(NASHORN_SCRIPT);
         
         final Map<?,?> custom = (Map<?,?>) what.getCustomObject();
      
