@@ -70,7 +70,6 @@ public class BuildAuthenticationContextAction
 
         final AuthenticationContext ac = new AuthenticationContext();
         ac.setForceAuthn(request.isRenew());
-        ac.setIsPassive(false);
 
         final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
 
@@ -78,6 +77,10 @@ public class BuildAuthenticationContextAction
             if (config != null) {
                 ac.setForceAuthn(config.isForceAuthn(profileRequestContext));
             }
+        }
+        
+        if (!ac.isForceAuthn()) {
+            ac.setIsPassive(request.isGateway());
         }
         
         if (config != null) {

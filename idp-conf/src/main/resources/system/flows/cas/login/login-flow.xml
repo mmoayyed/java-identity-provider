@@ -6,9 +6,6 @@
       parent="cas.abstract">
 
     <action-state id="InitializeLogin">
-        <on-entry>
-            <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
-        </on-entry>
         <evaluate expression="InitializeProfileRequestContext"/>
         <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="PopulateMetricContext" />
@@ -25,7 +22,6 @@
     </subflow-state>
 
     <action-state id="ContinueLogin">
-        <evaluate expression="PopulateSessionContext"/>
         <evaluate expression="BuildRelyingPartyContext" />
         <evaluate expression="BuildSAMLMetadataContext" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
@@ -39,34 +35,14 @@
 
     <decision-state id="CheckInboundInterceptContext">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
-            then="CheckAuthenticationRequired"
+            then="AuthenticationSetup"
             else="DoInboundInterceptSubflow" />
     </decision-state>
 
     <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="CheckAuthenticationRequired" />
+        <transition on="proceed" to="AuthenticationSetup" />
     </subflow-state>
-
-    <decision-state id="CheckAuthenticationRequired">
-        <if test="flowScope.serviceTicketRequest.gateway"
-            then="CheckForExistingSession"
-            else="AuthenticationSetup" />
-    </decision-state>
-
-    <decision-state id="CheckForExistingSession">
-        <on-entry>
-            <set name="flowScope.sessionContext" value="SessionContextLookup.apply(opensamlProfileRequestContext)" />
-        </on-entry>
-        <if test="sessionContext != null and sessionContext.idPSession.authenticationResults.size() > 0"
-            then="CheckResolveAttributes"
-            else="PrepareForReturnToService" />
-    </decision-state>
-
-    <action-state id="PrepareForReturnToService">
-        <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
-        <transition to="CheckOutboundInterceptContext" />
-    </action-state>
 
     <action-state id="AuthenticationSetup">
         <evaluate expression="BuildAuthenticationContext"/>
@@ -77,29 +53,21 @@
 
     <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="CheckResolveAttributes">
-            <evaluate result="flowScope.hasAuthenticationContext" expression="true" />
-        </transition>
+        <transition on="proceed" to="CheckResolveAttributes" />
+        <transition on="NoPassive" to="PassiveFailureReturnToService" />
         <transition on="RestartAuthentication" to="AuthenticationSetup" />
     </subflow-state>
 
+    <action-state id="PassiveFailureReturnToService">
+        <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
+        <transition to="CheckOutboundInterceptContext" />
+    </action-state>
+
     <decision-state id="CheckResolveAttributes">
         <if test="LoginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes(opensamlProfileRequestContext)"
-            then="CheckForSubjectContext"
+            then="ResolveAttributes"
             else="GrantServiceTicket" />
     </decision-state>
-
-    <decision-state id="CheckForSubjectContext">
-        <if test="SubjectContextLookup.apply(opensamlProfileRequestContext) == null"
-            then="PopulateSubjectContext"
-            else="ResolveAttributes" />
-    </decision-state>
-
-    <action-state id="PopulateSubjectContext">
-        <evaluate expression="PopulateSubjectContext" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ResolveAttributes" />
-    </action-state>
 
     <action-state id="ResolveAttributes">
         <evaluate expression="ResolveAttributes" />

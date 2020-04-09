@@ -37,19 +37,9 @@
           class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction" scope="prototype"
           c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
-    <bean id="PopulateSessionContext"
-          class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
-          p:activationCondition="%{idp.session.enabled:true}"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-          p:sessionResolver-ref="shibboleth.SessionManager" />
-
     <bean id="LoginConfigLookup"
           class="net.shibboleth.idp.cas.config.ConfigLookupFunction" scope="prototype"
           c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />
-
-    <bean id="SubjectContextLookup"
-          class="org.opensaml.messaging.context.navigate.ChildContextLookup" scope="prototype"
-          c:type="net.shibboleth.idp.authn.context.SubjectContext" />
 
     <bean id="PopulatePostAuthnInterceptContext"
           class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"

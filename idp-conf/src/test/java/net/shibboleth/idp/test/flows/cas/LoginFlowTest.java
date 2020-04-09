@@ -48,6 +48,8 @@ import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.net.HttpHeaders;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -83,7 +85,7 @@ public class LoginFlowTest extends AbstractFlowTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        setPostAuthenticationFlows(Collections.<String>emptyList());
+        setPostAuthenticationFlows(Collections.emptyList());
     }
 
 
@@ -93,6 +95,22 @@ public class LoginFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("service", service);
         externalContext.getMockRequestParameterMap().put("gateway", "true");
 
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        assertEquals(result.getOutcome().getId(), "RedirectToService");
+        final String url = externalContext.getExternalRedirectUrl();
+        assertTrue(url.contains(service + "?ticket=ST-"));
+    }
+
+    @Test
+    public void testGatewayNoSessionNoAuth() throws Exception {
+        final String service = "https://gateway.example.org/";
+        externalContext.getMockRequestParameterMap().put("service", service);
+        externalContext.getMockRequestParameterMap().put("gateway", "true");
+
+        // Have to remove the basic-auth creds or a passive login will succeed.
+        request.removeHeader(HttpHeaders.AUTHORIZATION);
+        
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         assertEquals(result.getOutcome().getId(), "RedirectToService");
