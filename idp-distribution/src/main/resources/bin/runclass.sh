@@ -8,15 +8,16 @@ declare LIBDIR
 
 LOCATION=$(dirname $0)
 
-if [ -z "$JAVA_HOME" ] ; then
-  echo "ERROR: JAVA_HOME environment variable is not set."
-  exit 1
-else
-  if [ -x "$JAVA_HOME/jre/sh/java" ] ; then 
-    # IBM's JDK on AIX uses strange locations for the executables
-    JAVACMD=$JAVA_HOME/jre/sh/java
+if [ -z "$JAVACMD" ] ; then 
+  if [ -n "$JAVA_HOME"  ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then 
+      # IBM's JDK on AIX uses strange locations for the executables
+      JAVACMD=$JAVA_HOME/jre/sh/java
+    else
+      JAVACMD=$JAVA_HOME/bin/java
+    fi
   else
-    JAVACMD=$JAVA_HOME/bin/java
+    JAVACMD=$(which java)
   fi
 fi
 
@@ -39,12 +40,14 @@ LOCALCLASSPATH="$LOCATION/../dist/webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="$LOCATION/../edit-webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="$LOCATION/lib/*":$LOCALCLASSPATH
 
-if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
-  LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/tools.jar
-fi
+if [ -n "$JAVA_HOME" ] ; then
+  if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
+    LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/tools.jar
+  fi
 
-if [ -f "$JAVA_HOME/lib/classes.zip" ] ; then
-  LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/classes.zip
+  if [ -f "$JAVA_HOME/lib/classes.zip" ] ; then
+    LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/classes.zip
+  fi
 fi
 
 "$JAVACMD" '-classpath' "$LOCALCLASSPATH" -Dnet.shibboleth.idp.cli.baseURL=$IDP_BASE_URL "$@"
