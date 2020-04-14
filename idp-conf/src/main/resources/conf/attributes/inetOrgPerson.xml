@@ -447,8 +447,8 @@
                 <props merge="true">
                     <prop key="id">telephoneNumber</prop>
                     <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
-                    <prop key="saml2.name">urn:mace:dir:attribute-def:telephoneNumber</prop>
-                    <prop key="saml1.name">urn:oid:2.5.4.20</prop>
+                    <prop key="saml2.name">urn:oid:2.5.4.20</prop>
+                    <prop key="saml1.name">urn:mace:dir:attribute-def:telephoneNumber</prop>
                     <prop key="displayName.en">Business phone number</prop>
                     <prop key="displayName.de">Telefon Geschäft</prop>
                     <prop key="displayName.fr">Teléphone professionnel</prop>
