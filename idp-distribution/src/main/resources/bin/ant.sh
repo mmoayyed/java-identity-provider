@@ -21,7 +21,7 @@ if [ -z "$JAVACMD" ] ; then
       JAVACMD=$JAVA_HOME/bin/java
     fi
   else
-    JAVACMD=java
+    JAVACMD=$(which java)
   fi
 fi
 
@@ -63,12 +63,6 @@ if [ -n "$JAVA_HOME" ] ; then
       done
     fi
   fi
-
-else
-  echo "Warning: JAVA_HOME environment variable is not set."
-  echo "  If build fails because sun.* classes could not be found"
-  echo "  you will need to set the JAVA_HOME environment variable"
-  echo "  to the installation directory of java."
 fi
 
 # supply JIKESPATH to Ant as jikes.class.path
