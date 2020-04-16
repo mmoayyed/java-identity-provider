@@ -17,13 +17,17 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 
+import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -38,12 +42,14 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * <p>This is a native SWF action in order to access conversation scope.</p>
  * 
+ * <p>Optionally saves off query parameters from request into a {@link ScratchContext}.</p> 
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post RequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY) != null
  */
 @ThreadSafe
 public final class InitializeProfileRequestContext extends AbstractProfileAction {
-
+    
     /** The profile ID to initialize the context to. */
     @Nullable private String profileId;
 
@@ -52,6 +58,9 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     
     /** Whether this is a browser-based profile request. */
     private boolean browserProfile;
+    
+    /** Whether to capture and store off query parameters. */
+    private boolean captureQueryParameters;
     
     /**
      * Set the profile ID to populate into the context.
@@ -78,16 +87,31 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     /**
      * Set whether the request is browser-based, defaults to false.
      * 
-     * @param browser   true iff the request is browser based
+     * @param browser flag to set
      */
     public void setBrowserProfile(final boolean browser) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         browserProfile = browser;
     }
+
+    /**
+     * Set whether to capture incoming query parameters in a {@link ScratchContext},
+     * defaults to false.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.1.0
+     */
+    public void setCaptureQueryParameters(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        captureQueryParameters = flag;
+    }
     
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("unchecked")
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
 
         // We have to override execute() because the profile request context doesn't exist yet.
@@ -106,6 +130,14 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         prc.setBrowserProfile(browserProfile);
 
         springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, prc);
+        
+        if (captureQueryParameters) {
+            final HttpServletRequest request = getHttpServletRequest();
+            if (request != null) {
+                ((Map<Object,Object>) prc.getSubcontext(ScratchContext.class, true).getMap()).putAll(
+                        request.getParameterMap());
+            }
+        }
 
         return ActionSupport.buildProceedEvent(this);
     }

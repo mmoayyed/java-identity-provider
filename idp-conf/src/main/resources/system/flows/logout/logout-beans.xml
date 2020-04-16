@@ -22,9 +22,11 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:profileId="http://shibboleth.net/ns/profiles/logout"
         p:loggingId="%{idp.service.logging.logout:Logout}"
-        p:browserProfile="true" />
+        p:browserProfile="true"
+        p:captureQueryParameters="%{idp.logout.preserveQuery:false}" />
 
     <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
