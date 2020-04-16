@@ -103,7 +103,7 @@
             <evaluate expression="PopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
             <evaluate expression="PublishProtocolResponse" />
-            <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
+            <set name="flashScope.xmlContentEscaper" value="T(com.google.common.xml.XmlEscapers).xmlContentEscaper()" />
         </on-entry>
     </end-state>
 

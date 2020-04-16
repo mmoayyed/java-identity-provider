@@ -1,14 +1,14 @@
 #include("cas/header.vm")
   <cas:authenticationSuccess>
-    <cas:user>$escapeUtils.escapeXml($ticketValidationResponse.userName)</cas:user>
+    <cas:user>$xmlContentEscaper.escape($ticketValidationResponse.userName)</cas:user>
     #if($ticketValidationResponse.pgtIou)
-      <cas:proxyGrantingTicket>$escapeUtils.escapeXml($ticketValidationResponse.pgtIou)</cas:proxyGrantingTicket>
+      <cas:proxyGrantingTicket>$xmlContentEscaper.escape($ticketValidationResponse.pgtIou)</cas:proxyGrantingTicket>
     #end
     #if(!$ticketValidationResponse.attributes.isEmpty())
       <cas:attributes>
         #foreach($attr in $ticketValidationResponse.attributes)
           #foreach($value in $$attr.values)
-            <cas:$escapeUtils.escapeXml($attr.name)>$escapeUtils.escapeXml($value)</cas:$escapeUtils.escapeXml($attr.name)>
+            <cas:$xmlContentEscaper.escape($attr.name)>$xmlContentEscaper.escape($value)</cas:$xmlContentEscaper.escape($attr.name)>
           #end
         #end
       </cas:attributes>
@@ -16,7 +16,7 @@
     #if($ticketValidationResponse.proxies.size() > 0)
       <cas:proxies>
         #foreach($proxy in $ticketValidationResponse.proxies)
-          <cas:proxy>$escapeUtils.escapeXml($proxy)</cas:proxy>
+          <cas:proxy>$xmlContentEscaper.escape($proxy)</cas:proxy>
         #end
       </cas:proxies>
     #end
