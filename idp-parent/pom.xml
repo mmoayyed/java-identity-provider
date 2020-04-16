@@ -129,11 +129,6 @@
             <artifactId>metrics-core</artifactId>
         </dependency>
         <dependency>
-            <!-- needed for logback SMTP appender -->
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>janino</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.shibboleth.utilities</groupId>
             <artifactId>java-support</artifactId>
             <version>${java-support.version}</version>
@@ -155,13 +150,6 @@
 
         <!-- Runtime Dependencies -->
 
-        <!-- Needed for logback SMTP appender. -->
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${spring.groupId}</groupId>
@@ -172,11 +160,6 @@
             <artifactId>java-support</artifactId>
             <version>${java-support.version}</version>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-legacy</artifactId>
             <scope>test</scope>
         </dependency>
 
