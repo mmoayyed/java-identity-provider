@@ -19,9 +19,9 @@ package net.shibboleth.idp.ui.csrf.impl;
 
 import java.util.UUID;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import junit.framework.Assert;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**

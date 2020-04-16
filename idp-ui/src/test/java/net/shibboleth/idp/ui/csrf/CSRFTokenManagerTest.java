@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.ui.csrf;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import junit.framework.Assert;
 import net.shibboleth.idp.ui.csrf.impl.SimpleCSRFToken;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
