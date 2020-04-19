@@ -48,12 +48,12 @@ public class ACSUIInfo {
     private final Predicate<LocalizedName> nullLanguageString = new Predicate<>() {
         public boolean test(final LocalizedName u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("String with value {} in AssertionConsumerService" +
+                LOG.warn("String with value {} in <AttributeConsumingService/>" +
                " has no language associated, ignoring", u.getValue());
                 return false;
             } 
             if (u.getValue() == null) {
-                LOG.warn("Ignoring empty string in AssertionConsumerService", u.getValue());
+                LOG.warn("Ignoring empty string in <AttributeConsumingService/>", u.getValue());
                 return false;
             }
             return true;
