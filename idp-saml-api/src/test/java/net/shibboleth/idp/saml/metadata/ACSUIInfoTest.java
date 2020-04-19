@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.metadata;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Locale;
 
@@ -31,16 +32,26 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 /**
  * test for the {@link ACSUIInfo}.
  */
+@SuppressWarnings("javadoc")
 public class ACSUIInfoTest extends XMLObjectBaseTestCase {
-    
+
     @Test public void test() throws XMLParserException, UnmarshallingException {
-    
+
         final AttributeConsumingService acs = unmarshallElement("/ACSUIInfo.xml", true);
         final ACSUIInfo info = new ACSUIInfo(acs); 
-        
+
         assertEquals(info.getServiceNames().size(), 2);
         assertEquals(info.getServiceNames().get(Locale.forLanguageTag("en")), "ServiceName");
+        assertEquals(info.getServiceDescriptions().size(), 1);        
+    }
+
+    @Test public void testBad() throws XMLParserException, UnmarshallingException {
+
+        final AttributeConsumingService acs = unmarshallElement("/ACSUIInfoBad.xml", true);
+        final ACSUIInfo info = new ACSUIInfo(acs); 
+
+        assertTrue(info.getServiceNames().isEmpty());
         assertEquals(info.getServiceDescriptions().size(), 1);
-        
+
     }
 }

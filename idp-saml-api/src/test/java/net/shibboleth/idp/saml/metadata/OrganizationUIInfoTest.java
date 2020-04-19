@@ -31,6 +31,7 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 /**
  * test for the {@link OrganizationUIInfo}.
  */
+@SuppressWarnings("javadoc")
 public class OrganizationUIInfoTest extends XMLObjectBaseTestCase {
     
     @Test public void test() throws XMLParserException, UnmarshallingException {

@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 /**
  * test for the {@link IdPUIInfo}.
  */
+@SuppressWarnings("javadoc")
 public class IdPUIInfoTest extends XMLObjectBaseTestCase {
     
     @Test public void test() {

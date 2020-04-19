@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeConsumingService xmlns="urn:oasis:names:tc:SAML:2.0:metadata" index="1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+    <ServiceName xml:lang="fr"></ServiceName>
+    <ServiceName xml:lang="">ServiceName</ServiceName>
+    <ServiceDescription >ServiceDesc</ServiceDescription>
+    <ServiceDescription xml:lang="de">ServiceDesc</ServiceDescription>
+    <RequestedAttribute Name="a"></RequestedAttribute>
+</AttributeConsumingService>

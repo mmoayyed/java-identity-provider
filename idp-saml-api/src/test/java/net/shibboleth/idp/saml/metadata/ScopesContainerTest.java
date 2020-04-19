@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for the {@link ScopesContainer}.
  */
+@SuppressWarnings("javadoc")
 public class ScopesContainerTest {
 
     @Test public void empty() {
