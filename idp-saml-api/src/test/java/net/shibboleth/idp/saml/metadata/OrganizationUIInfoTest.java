@@ -35,14 +35,25 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 public class OrganizationUIInfoTest extends XMLObjectBaseTestCase {
     
     @Test public void test() throws XMLParserException, UnmarshallingException {
-    
+
         final Organization acs = unmarshallElement("/OrganizationUIInfo.xml", true);
         final OrganizationUIInfo info = new OrganizationUIInfo(acs); 
-        
+
         assertEquals(info.getOrganizationNames().size(), 2);
         assertEquals(info.getOrganizationNames().get(Locale.forLanguageTag("en")), "org");
         assertEquals(info.getOrganizationDisplayNames().size(), 1);
         assertEquals(info.getOrganizationUrls().size(), 1);
-        
     }
+
+    @Test public void testBad() throws XMLParserException, UnmarshallingException {
+
+        final Organization acs = unmarshallElement("/OrganizationUIInfoBad.xml", true);
+        final OrganizationUIInfo info = new OrganizationUIInfo(acs); 
+
+        assertEquals(info.getOrganizationNames().size(), 1);
+        assertEquals(info.getOrganizationNames().get(Locale.forLanguageTag("en")), "OrgName");
+        assertEquals(info.getOrganizationDisplayNames().size(), 1);
+        assertEquals(info.getOrganizationUrls().size(), 1);
+    }
+
 }

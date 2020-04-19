@@ -52,7 +52,11 @@ public class OrganizationUIInfo {
     private final Predicate<LocalizedName> nullLanguageString = new Predicate<>() {
         public boolean test(final LocalizedName u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("String with value {} has no language associated, ignoring", u.getValue());
+                LOG.warn("String with value {} in <Organization> has no language associated, ignoring.", u.getValue());
+                return false;
+            }
+            if (u.getValue()== null) {
+                LOG.warn("Ignoring empty string in <Organization/>");
                 return false;
             }
             return true;
@@ -63,7 +67,11 @@ public class OrganizationUIInfo {
     private final Predicate<LocalizedURI> nullLanguageURL = new Predicate<>() {
         public boolean test(final LocalizedURI u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("URI with value {} has no language associated, ignoring", u.getURI());
+                LOG.warn("URI with value {} in <Organization> has no language associated, ignoring.", u.getURI());
+                return false;
+            }
+            if (u.getURI() == null) {
+                LOG.warn("Ignoring empty URUI in <Organization/>", u.getURI());
                 return false;
             }
             return true;

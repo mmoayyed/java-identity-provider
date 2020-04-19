@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Organization xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:SAML:2.0:metadata
+http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd" >
+	<OrganizationName xml:lang="">org</OrganizationName>
+	<OrganizationName xml:lang="fr"></OrganizationName>
+    <OrganizationName xml:lang="en">OrgName</OrganizationName>
+    <OrganizationName >ODN</OrganizationName>
+    <OrganizationDisplayName xml:lang="en">odn</OrganizationDisplayName>
+    <OrganizationDisplayName >odn</OrganizationDisplayName>
+    <OrganizationDisplayName xml:lang="">odn</OrganizationDisplayName>
+    <OrganizationDisplayName xml:lang="fr"></OrganizationDisplayName>
+    <OrganizationURL xml:lang="en">url</OrganizationURL>
+    <OrganizationURL >url</OrganizationURL>
+    <OrganizationURL xml:lang="">url</OrganizationURL>
+    <OrganizationURL xml:lang="fr"></OrganizationURL>
+</Organization>
