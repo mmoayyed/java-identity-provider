@@ -70,9 +70,14 @@ public class IdPUIInfo {
     private final Predicate<LocalizedURI> nullLanguageURL = new Predicate<>() {
         public boolean test(final LocalizedURI u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("URI with value {} has no language associated, ignoring", u.getURI());
+                LOG.warn("URI with value {} in <IdpUIInfo/> has no language associated, ignoring", u.getURI());
                 return false;
             }
+            if (u.getURI() == null) {
+                LOG.warn("Ignoring empty URUI in <IdpUIInfo/>", u.getURI());
+                return false;
+            }
+
             return true;
         }
     };
@@ -81,7 +86,11 @@ public class IdPUIInfo {
     private final Predicate<LocalizedName> nullLanguageString = new Predicate<>() {
         public boolean test(final LocalizedName u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("String with value {} has no language associated, ignoring", u.getValue());
+                LOG.warn("String with value {} in <IdpUIInfo/> has no language associated, ignoring", u.getValue());
+                return false;
+            }
+            if (u.getValue()== null) {
+                LOG.warn("Ignoring empty string in <IdpUIInfo/>");
                 return false;
             }
             return true;
@@ -92,7 +101,8 @@ public class IdPUIInfo {
     private final Predicate<Keywords> nullLanguageKeyword = new Predicate<>() {
         public boolean test(final Keywords u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("String with value {} has no language associated, ignoring", u.getKeywords().toString());
+                LOG.warn("Keyword with value {} in <IdpUIInfo/> has no language associated, ignoring",
+                        u.getKeywords().toString());
                 return false;
             }
             return true;
@@ -145,6 +155,10 @@ public class IdPUIInfo {
         final List<Logo> noLocaleLogo = new ArrayList<>();
         final Map<Locale, List<Logo>> withLocaleLogo = new HashMap<>();
         for (final Logo logo : uiInfo.getLogos()) {
+            if (logo.getURI() == null) {
+                LOG.warn("IdpUIInfo has Logo with null URL, ignoring");
+                continue;
+            }
             if (logo.getXMLLang() != null) {
                 final Locale l = Locale.forLanguageTag(logo.getXMLLang());
                 if (withLocaleLogo.get(l) == null) {

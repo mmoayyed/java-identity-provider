@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UIInfo xmlns="urn:oasis:names:tc:SAML:metadata:ui" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:SAML:metadata:ui http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-ui/v1.0/cs01/xsd/sstc-saml-metadata-ui-v1.0.xsd">
+  
+  <DisplayName xml:lang="en-us">Dn</DisplayName>
+  <DisplayName xml:lang="">Dn</DisplayName>
+  <DisplayName xml:lang="Fr"></DisplayName>
+  <DisplayName >Dn</DisplayName>
+  
+  <Description xml:lang="fr">Desc</Description>
+  <Description xml:lang="en"></Description>
+  <Description xml:lang="">D</Description>
+  <Description >Desc</Description>
+  
+  <Keywords xml:lang="en">a s r</Keywords>
+  <Keywords >a r s</Keywords>
+  <Keywords xml:lang="">a s t</Keywords>
+  <Keywords xml:lang="fr"></Keywords>
+  
+  <InformationURL xml:lang="fr">infoURL</InformationURL>
+  <InformationURL xml:lang="">infoURL</InformationURL>
+  <InformationURL >infoURL</InformationURL>
+  <InformationURL xml:lang="en"></InformationURL>
+  
+  <Logo height="100" width="110">Logo1</Logo>
+  <Logo height="100" width="110"/>
+  <Logo height="10" width="12" xml:lang="">Logo2</Logo>
+  <Logo height="10" width="12" xml:lang="en">Logo3</Logo>
+  <Logo height="10" width="12" xml:lang="fr"></Logo>
+  
+  <PrivacyStatementURL xml:lang="fr">privateURL</PrivacyStatementURL>
+  <PrivacyStatementURL xml:lang="">privateURL</PrivacyStatementURL>
+  <PrivacyStatementURL >privateURL</PrivacyStatementURL>
+</UIInfo>

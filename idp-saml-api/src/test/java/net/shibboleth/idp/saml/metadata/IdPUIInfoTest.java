@@ -31,12 +31,12 @@ import org.testng.annotations.Test;
  */
 @SuppressWarnings("javadoc")
 public class IdPUIInfoTest extends XMLObjectBaseTestCase {
-    
+
     @Test public void test() {
-    
+
         final UIInfo samluiinfo = unmarshallElement("/UIInfo.xml");
         final IdPUIInfo uiInfo = new IdPUIInfo(samluiinfo);
-        
+
         assertEquals(uiInfo.getDisplayNames().size(), 2);
         assertNotNull(uiInfo.getDisplayNames().get(Locale.forLanguageTag("en-us")));
         assertEquals(uiInfo.getDescriptions().size(), 1);
@@ -46,6 +46,18 @@ public class IdPUIInfoTest extends XMLObjectBaseTestCase {
         assertEquals(uiInfo.getNonLocaleLogos().size(), 1);
         assertEquals(uiInfo.getInformationURLs().size(), 1);
         assertEquals(uiInfo.getPrivacyStatementURLs().size(), 1);
-        
+    }
+    @Test public void testBad() {
+
+        final UIInfo samluiinfo = unmarshallElement("/UIInfoBad.xml");
+        final IdPUIInfo uiInfo = new IdPUIInfo(samluiinfo);
+
+        assertEquals(uiInfo.getDisplayNames().size(), 1);
+        assertEquals(uiInfo.getDescriptions().size(), 1);
+        assertEquals(uiInfo.getKeywords().size(), 2); // one of which empty
+        assertEquals(uiInfo.getLocaleLogos().size(), 1); 
+        assertEquals(uiInfo.getNonLocaleLogos().size(), 2);
+        assertEquals(uiInfo.getInformationURLs().size(), 1);
+        assertEquals(uiInfo.getPrivacyStatementURLs().size(), 1);
     }
 }
