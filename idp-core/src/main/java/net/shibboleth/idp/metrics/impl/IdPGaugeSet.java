@@ -28,11 +28,12 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.springframework.context.support.ApplicationObjectSupport;
 
@@ -85,9 +86,28 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
                 });
     }
     
+    /**
+     * Set the names of properties to expose as metrics.
+     * 
+     * @param properties properties to expose
+     */
+    public void setExposedProperties(@Nullable @NonnullElements final Set<String> properties) {
+        if (properties != null) {
+            for (final String property : properties) {
+                gauges.put(
+                        MetricRegistry.name(DEFAULT_METRIC_NAME, "properties", property),
+                        new Gauge<String>() {
+                            public String getValue() {
+                                return getApplicationContext().getEnvironment().getProperty(property);
+                            }
+                        });
+            }
+        }
+    }
+    
     /** {@inheritDoc} */
     public Map<String,Metric> getMetrics() {
-        return Collections.unmodifiableMap(gauges);
+        return Map.copyOf(gauges);
     }
 
     /** {@inheritDoc} */
