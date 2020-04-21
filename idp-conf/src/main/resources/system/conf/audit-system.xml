@@ -816,7 +816,7 @@
                     <bean parent="shibboleth.Functions.Compose">
                         <constructor-arg name="g">
                             <bean class="net.shibboleth.ext.spring.util.SpringExpressionFunction"
-                                p:inputType="org.opensaml.messaging.context.MessageContext" p:outputType="java.net.URI"
+                                p:inputType="org.opensaml.messaging.context.MessageContext" p:outputType="java.net.URI" p:hideExceptions="true"
                                 c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).getEndpointURL(#input) : null" />
                         </constructor-arg>
                         <constructor-arg name="f" ref="shibboleth.MessageContextLookup.Outbound"/>
