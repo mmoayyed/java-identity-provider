@@ -178,8 +178,43 @@
         </property>
 
     </bean>
+    
+    <!-- KeyInfoGeneration machinery. Former gets injected into the signing and encryption configs. -->
+    <bean id="NamedKeyInfoGeneratorManager"
+        class="org.opensaml.xmlsec.keyinfo.NamedKeyInfoGeneratorManager"
+        p:useDefaultManager="true" />
+    <bean id="DefaultKeyInfoGeneratorManager"
+        factory-bean="NamedKeyInfoGeneratorManager"
+        factory-method="getDefaultManager" />
+        
+    <!-- These install two default generator managers, for Credential and X509Credential. -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+        p:targetObject-ref="DefaultKeyInfoGeneratorManager"
+        p:targetMethod="registerFactory">
+        <property name="arguments">
+            <list>
+                <ref bean="%{idp.security.basicKeyInfoFactory:shibboleth.BasicKeyInfoGeneratorFactory}" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+        p:targetObject-ref="DefaultKeyInfoGeneratorManager"
+        p:targetMethod="registerFactory">
+        <property name="arguments">
+            <list>
+                <ref bean="%{idp.security.x509KeyInfoFactory:shibboleth.X509KeyInfoGeneratorFactory}" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- The default generators, overrideable by inheriting from them and then setting the two properties. -->
+    <bean id="shibboleth.BasicKeyInfoGeneratorFactory" class="org.opensaml.xmlsec.keyinfo.impl.BasicKeyInfoGeneratorFactory"
+        p:emitPublicKeyValue="true"
+        p:emitKeyNames="true"  />
+    <bean id="shibboleth.X509KeyInfoGeneratorFactory" class="org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory"
+        p:emitEntityCertificate="true" />
 
-    <!-- Convenience beans for directly injecting SHA-1 or SHA-256 usage.  -->
+    <!-- Convenience beans for directly injecting SHA-256 or SHA-1 usage.  -->
     
     <bean id="shibboleth.SecurityConfiguration.SHA256" parent="shibboleth.DefaultSecurityConfiguration" lazy-init="true"
         p:signatureSigningConfiguration-ref="shibboleth.SigningConfiguration.SHA256" />
@@ -190,7 +225,8 @@
     <!-- Actual signing configurations for SHA-256 and SHA-1. -->
     
     <bean id="shibboleth.SigningConfiguration.SHA256" parent="shibboleth.BasicSignatureSigningConfiguration"
-            p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
+            p:signingCredentials-ref="shibboleth.DefaultSigningCredential"
+            p:keyInfoGeneratorManager-ref="NamedKeyInfoGeneratorManager">
         <property name="signatureAlgorithms">
             <list>
                 <util:constant
@@ -208,7 +244,8 @@
     </bean>
 
     <bean id="shibboleth.SigningConfiguration.SHA1" parent="shibboleth.BasicSignatureSigningConfiguration"
-            p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
+            p:signingCredentials-ref="shibboleth.DefaultSigningCredential"
+            p:keyInfoGeneratorManager-ref="NamedKeyInfoGeneratorManager">
         <property name="signatureAlgorithms">
             <list>
                 <util:constant
@@ -235,7 +272,8 @@
 
     <!-- Actual encryption configurations for AES-CBC and AES-GCM. -->
 
-    <bean id="shibboleth.EncryptionConfiguration.CBC" parent="shibboleth.BasicEncryptionConfiguration">
+    <bean id="shibboleth.EncryptionConfiguration.CBC" parent="shibboleth.BasicEncryptionConfiguration"
+            p:keyTransportKeyInfoGeneratorManager-ref="NamedKeyInfoGeneratorManager">
         <property name="dataEncryptionAlgorithms">
             <list>
                 <util:constant
@@ -250,7 +288,8 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.EncryptionConfiguration.GCM" parent="shibboleth.BasicEncryptionConfiguration">
+    <bean id="shibboleth.EncryptionConfiguration.GCM" parent="shibboleth.BasicEncryptionConfiguration"
+            p:keyTransportKeyInfoGeneratorManager-ref="NamedKeyInfoGeneratorManager">
         <property name="dataEncryptionAlgorithms">
             <list>
                 <util:constant
@@ -296,7 +335,7 @@
     <bean id="shibboleth.ExplicitKeyX509TrustEngine"
         class="org.opensaml.security.trust.impl.ExplicitKeyTrustEngine"
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
-    <!-- Backward compatibility, remove in 4.0. -->
+    <!-- Backward compatibility, remove in 5.0. -->
     <alias name="shibboleth.ExplicitKeyX509TrustEngine" alias="shibboleth.ExplicitX509TrustEngine" />
 
     <bean id="shibboleth.PKIXX509TrustEngine"
