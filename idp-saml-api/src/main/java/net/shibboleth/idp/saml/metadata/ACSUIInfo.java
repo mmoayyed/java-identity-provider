@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 public class ACSUIInfo {
     
     /** logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ACSUIInfo.class);
+    @Nonnull private static final Logger LOG = LoggerFactory.getLogger(ACSUIInfo.class);
     
     /** The Service Names as a map from locale to actual value.*/ 
     @Nonnull @Unmodifiable private final Map<Locale, String> serviceNames;
@@ -48,12 +48,13 @@ public class ACSUIInfo {
     private final Predicate<LocalizedName> nullLanguageString = new Predicate<>() {
         public boolean test(final LocalizedName u) {
             if (u.getXMLLang() == null) {
-                LOG.warn("String with value {} in <AttributeConsumingService/>" +
-               " has no language associated, ignoring", u.getValue());
+                LOG.warn("<{}> with value {} in <AttributeConsumingService>" +
+               " has no language associated, ignoring", u.getElementQName().getLocalPart(), u.getValue());
                 return false;
             } 
             if (u.getValue() == null) {
-                LOG.warn("Ignoring empty string in <AttributeConsumingService/>", u.getValue());
+                LOG.warn("Ignoring empty <{}> element in <AttributeConsumingService>",
+                        u.getElementQName().getLocalPart(), u.getValue());
                 return false;
             }
             return true;
