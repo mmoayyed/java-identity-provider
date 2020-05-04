@@ -186,7 +186,7 @@
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
 
-    <!-- Allow intended methods by using an empty auth-constraint. -->
+    <!-- Allow intended methods by using an absent auth-constraint. -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Non-API Content</web-resource-name>
@@ -197,6 +197,19 @@
             <http-method>POST</http-method>
         </web-resource-collection>
         <!-- no auth-constraint tag here -->
+    </security-constraint>
+
+    <!-- Disallow other methods by using an empty auth-constraint. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Non-API Content</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method-omission>GET</http-method-omission>
+            <http-method-omission>HEAD</http-method-omission>
+            <http-method-omission>OPTIONS</http-method-omission>
+            <http-method-omission>POST</http-method-omission>
+        </web-resource-collection>
+        <authn-constraint/>
     </security-constraint>
 
     <!-- Allow any HTTP methods to the API flows. -->
