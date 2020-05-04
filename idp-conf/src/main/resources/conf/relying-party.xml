@@ -61,7 +61,7 @@
         for SAML 2 SSO without encryption. This is a common "vendor" scenario.
         -->
         <!--
-        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
+        <bean id="ExampleSP" parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
             <property name="profileConfigurations">
                 <list>
                     <bean parent="SAML2.SSO" p:encryptAssertions="false" />
