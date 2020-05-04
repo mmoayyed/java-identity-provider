@@ -25,7 +25,10 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -72,11 +75,14 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
     }
 
-    @Test public void bad() {
+    @Test public void bad() throws ResolutionException {
         try {
-            getAttributeDefn("resolver/scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);
+            final ScriptedAttributeDefinition  attrdef =  getAttributeDefn("resolver/scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);
+            AttributeResolutionContext arc = new AttributeResolutionContext();
+            arc.getSubcontext(AttributeResolverWorkContext.class, true);
+            attrdef.resolve(arc);
             fail("Bad script worked?");
-        } catch (BeanDefinitionStoreException | BeanCreationException e) {
+        } catch (BeanDefinitionStoreException | BeanCreationException | ResolutionException e) {
             // OK
         }
     }
