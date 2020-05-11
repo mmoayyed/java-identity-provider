@@ -24,6 +24,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public final class PluginVersion implements Comparable<PluginVersion>{
 
+    /** arbitrary maximum (to help hashing and sanity). */
+    private static final int MAX_VNO = 10000;
+
     /** Major version. */
     private int major;
     
@@ -37,7 +40,8 @@ public final class PluginVersion implements Comparable<PluginVersion>{
      * Constructor.
      *
      * @param version what to build from 
-     * @throws NumberFormatException if it doesn't fit a 1.2.3 format.
+     * @throws NumberFormatException if it doesn't fit a 1.2.3 format or if the values are
+     * out of range
      */
     public PluginVersion(final String version) throws NumberFormatException {
         
@@ -48,13 +52,13 @@ public final class PluginVersion implements Comparable<PluginVersion>{
         
         final String[] components  = versionStr.split("\\.|\\+|-");
         if (components.length >= 1) {
-            major = Integer.parseInt(components[0]);
+            major = parseValue(components[0]);
         }
         if (components.length >= 2) {
-            minor = Integer.parseInt(components[1]);
+            minor = parseValue(components[1]);
         }
         if (components.length >= 3) {
-            patch = Integer.parseInt(components[2]);
+            patch = parseValue(components[2]);
         }
     }
     
@@ -63,12 +67,22 @@ public final class PluginVersion implements Comparable<PluginVersion>{
      *
      * @param maj Major Version 
      * @param min Minor Version 
-     * @param pat Patch Version 
+     * @param pat Patch Version
+     * @throws NumberFormatException if the values are out of range
      */
-    public PluginVersion(final int maj, final int min, final int pat) {
+    public PluginVersion(final int maj, final int min, final int pat) throws NumberFormatException {
         major = maj;
+        if (maj < 0 || maj >= MAX_VNO) {
+            throw new NumberFormatException("Improbably version number : " + maj);
+        }
         minor = min;
+        if (min < 0 || min >= MAX_VNO) {
+            throw new NumberFormatException("Improbably version number : " + min);
+        }
         patch = pat;
+        if (pat < 0 || pat >= MAX_VNO) {
+            throw new NumberFormatException("Improbably version number : " + pat);
+        }
     }
 
     /** Get the major version.
@@ -98,7 +112,21 @@ public final class PluginVersion implements Comparable<PluginVersion>{
         return major == 0 && minor ==0 && patch == 0;
     }
     
-
+    /** Helper function for the constructor.
+     *
+     * Parse a string into an int with a range check.
+     * @param valueAsString what to parse
+     * @return the value as an int
+     * @throws NumberFormatException if {@link Integer#parseInt(String, int)} does
+     * or if the value is less than 0 or > {@link #MAX_VNO}.
+     */
+    private int parseValue(final String valueAsString) throws NumberFormatException{
+        final int value = Integer.parseInt(valueAsString);
+        if (value < 0 || value >= MAX_VNO) {
+            throw new NumberFormatException("Improbably version number : " + value);
+        }
+        return value;
+    }
 
     /** {@inheritDoc} */
     public boolean equals(final Object obj) {
@@ -111,10 +139,17 @@ public final class PluginVersion implements Comparable<PluginVersion>{
     
     /** {@inheritDoc} */
     public int hashCode() {
-        return Integer.valueOf(major*100000 + minor*1000 +patch).hashCode();
+        long l = major*MAX_VNO*MAX_VNO;
+        l += minor * MAX_VNO;
+        l += patch;
+        return Long.hashCode(l);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     * {@inheritDoc} */
     public int compareTo(final PluginVersion other) {
         if (major == other.major) {
             if (minor == other.minor) {

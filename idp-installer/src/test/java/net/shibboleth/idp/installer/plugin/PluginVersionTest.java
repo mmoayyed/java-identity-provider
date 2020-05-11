@@ -66,6 +66,29 @@ public final class PluginVersionTest {
         failParse("1.jo");
         failParse("");
         failParse("XXXX");
+        failParse("-1");
+        failParse("1.-1");
+        failParse("1.1.-1");
+        failParse("10001.99.0");
+
+        try {
+            new PluginVersion(1,2,-1);
+            fail("Bad version not caught");
+        } catch (NumberFormatException ex) {
+            // OK
+        }
+        try {
+            new PluginVersion(10000,2,0);
+            fail("Bad version not caught");
+        } catch (NumberFormatException ex) {
+            // OK
+        }
+        try {
+            new PluginVersion(1, 10000,2);
+            fail("Bad version not caught");
+        } catch (NumberFormatException ex) {
+            // OK
+        }
     }
 
     @Test public void compareTest() {
@@ -77,5 +100,4 @@ public final class PluginVersionTest {
         assertTrue(new PluginVersion(4,1,0).compareTo(new PluginVersion(4,2,1)) < 0);
         assertTrue(new PluginVersion(4,1,0).compareTo(new PluginVersion(4,1,1)) < 0);
     }
-
 }
