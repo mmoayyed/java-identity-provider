@@ -45,6 +45,9 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.referral.SearchReferralHandler;
+import org.ldaptive.sasl.DigestMd5Config;
+import org.ldaptive.sasl.GssApiConfig;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
@@ -286,12 +289,17 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 connectionInitializer.addPropertyValue("bindCredential", credential.getBeanDefinition());
             }
             if (authenticationType != null) {
+                // V4 Deprecation
+                DeprecationSupport.warn(ObjectType.ATTRIBUTE, "authenticationType", "<LDAPDirectory>",
+                    "<SaslConfig>");
                 final Mechanism mechanism = Mechanism.valueOf(authenticationType);
                 if (mechanism != null) {
                     final SaslConfig config = new SaslConfig();
                     config.setMechanism(mechanism);
                     connectionInitializer.addPropertyValue("bindSaslConfig", config);
                 }
+            } else {
+                connectionInitializer.addPropertyValue("bindSaslConfig", createSaslConfig());
             }
             if (principal != null || principalCredential != null || authenticationType != null) {
                 connectionConfig.addPropertyValue("connectionInitializer", connectionInitializer.getBeanDefinition());
@@ -659,6 +667,73 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
+         * Creates a new sasl config bean definition from a v2 XML configuration.
+         *
+         * @return sasl config bean definition
+         */
+        @Nullable protected BeanDefinition createSaslConfig() {
+            final List<Element> saslConfigElements = ElementSupport.getChildElementsByTagNameNS(configElement,
+                    AttributeResolverNamespaceHandler.NAMESPACE, "SaslConfig");
+
+            if (saslConfigElements.isEmpty()) {
+                return null;
+            } else if (saslConfigElements.size() > 1) {
+                log.warn("{} Only one <SaslConfig> element can be specified; "+
+                        "only the first has been consulted.", getLogPrefix());
+            }
+            final Element saslConfigElement = saslConfigElements.get(0);
+            final String mechanism = AttributeSupport.getAttributeValue(saslConfigElement, new QName("mechanism"));
+            final String authorizationId = AttributeSupport.getAttributeValue(
+                    saslConfigElement, new QName("authorizationId"));
+            final String realm = AttributeSupport.getAttributeValue(saslConfigElement, new QName("realm"));
+            final List<Element> saslProperties = ElementSupport.getChildElementsByTagNameNS(saslConfigElement,
+                    AttributeResolverNamespaceHandler.NAMESPACE, "SASLProperty");
+
+            final BeanDefinitionBuilder saslConfig;
+            if ("DIGEST_MD5".equals(mechanism)) {
+                saslConfig = BeanDefinitionBuilder.genericBeanDefinition(DigestMd5Config.class);
+                if (realm != null) {
+                    saslConfig.addPropertyValue("realm", realm);
+                }
+            } else if ("GSSAPI".equals(mechanism)) {
+                saslConfig = BeanDefinitionBuilder.genericBeanDefinition(GssApiConfig.class);
+                if (realm != null) {
+                    saslConfig.addPropertyValue("realm", realm);
+                }
+            } else {
+                saslConfig = BeanDefinitionBuilder.genericBeanDefinition(SaslConfig.class);
+                saslConfig.addPropertyValue("mechanism", mechanism);
+            }
+            if (authorizationId != null) {
+                saslConfig.addPropertyValue("authorizationId", authorizationId);
+            }
+
+            if (!saslProperties.isEmpty()) {
+                for (final Element property : saslProperties) {
+                    final String name = AttributeSupport.getAttributeValue(property, null, "name");
+                    final String value = AttributeSupport.getAttributeValue(property, null, "value");
+                    if ("javax.security.sasl.qop".equals(name)) {
+                        if ("auth".equalsIgnoreCase(value)) {
+                            saslConfig.addPropertyValue("qualityOfProtection", "AUTH");
+                        } else if ("auth-int".equalsIgnoreCase(value)) {
+                            saslConfig.addPropertyValue("qualityOfProtection", "AUTH_INT");
+                        } else if ("auth-conf".equalsIgnoreCase(value)) {
+                            saslConfig.addPropertyValue("qualityOfProtection", "AUTH_CONF");
+                        } else {
+                            saslConfig.addPropertyValue("qualityOfProtection", value);
+                        }
+                    } else if ("javax.security.sasl.strength".equals(name)) {
+                        saslConfig.addPropertyValue("securityStrength", value);
+                    } else if ("javax.security.sasl.server.authentication".equals(name)) {
+                        saslConfig.addPropertyValue("mutualAuthentication", value);
+                    }
+                }
+            }
+
+            return saslConfig.getBeanDefinition();
+        }
+
+        /**
          * Create the result mapping strategy. See {@link net.shibboleth.idp.attribute.resolver.dc.MappingStrategy}.
          * 
          * @return mapping strategy
@@ -806,5 +881,4 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             return handlers;
         }
     }
-
 }

@@ -26,9 +26,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.unboundid.asn1.ASN1OctetString;
+import com.unboundid.ldap.listener.InMemoryRequestHandler;
+import com.unboundid.ldap.listener.InMemorySASLBindHandler;
+import com.unboundid.ldap.sdk.BindResult;
+import com.unboundid.ldap.sdk.Control;
+import com.unboundid.ldap.sdk.DN;
+import com.unboundid.ldap.sdk.LDAPResult;
+import com.unboundid.ldap.sdk.ResultCode;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
@@ -38,6 +47,11 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.sasl.DigestMd5Config;
+import org.ldaptive.sasl.Mechanism;
+import org.ldaptive.sasl.QualityOfProtection;
+import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -113,6 +127,20 @@ public class LDAPDataConnectorParserTest {
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, 10389,
                 sslUtil.createSSLSocketFactory()));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
+        config.addSASLBindHandler(new InMemorySASLBindHandler() {
+            @Override
+            public String getSASLMechanismName() {
+                return "DIGEST-MD5";
+            }
+
+            @Override
+            public BindResult processSASLBind(final InMemoryRequestHandler handler, final int messageID,
+                                              final DN bindDN, final ASN1OctetString credentials,
+                                              final List<Control> controls) {
+              // return success for all digest MD5 bind requests
+              return new BindResult(new LDAPResult(messageID, ResultCode.SUCCESS));
+            }
+        });
         directoryServer = new InMemoryDirectoryServer(config);
         directoryServer.importFromLDIF(true,
                 "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldapDataConnectorTest.ldif");
@@ -321,6 +349,29 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(attrs.get("homephone"));
         assertNotNull(attrs.get("mail"));
         assertNotNull(attrs.get("entryDN"));
+    }
+
+    @Test public void v2SaslConfig() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-sasl.xml"});
+        assertNotNull(dataConnector);
+        assertTrue(dataConnector.isFailFastInitialize());
+        assertEquals(dataConnector.getNoRetryDelay(), Duration.ZERO);
+
+        final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
+        assertNotNull(connFactory);
+        final ConnectionConfig connConfig = connFactory.getConnectionConfig();
+        assertNotNull(connConfig);
+        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        assertNotNull(connInitializer);
+        final SaslConfig saslConfig = connInitializer.getBindSaslConfig();
+        assertNotNull(saslConfig);
+        assertEquals(saslConfig.getMechanism(), Mechanism.DIGEST_MD5);
+        assertEquals(saslConfig.getAuthorizationId(), "authzID");
+        assertEquals(saslConfig.getMutualAuthentication(), Boolean.TRUE);
+        assertEquals(saslConfig.getQualityOfProtection(), QualityOfProtection.AUTH_INT);
+        assertEquals(saslConfig.getSecurityStrength(), SecurityStrength.HIGH);
+        assertEquals(((DigestMd5Config) saslConfig).getRealm(), "shibboleth.net");
     }
 
     @Test public void springConfig() throws Exception {

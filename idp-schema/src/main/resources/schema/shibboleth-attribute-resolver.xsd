@@ -806,6 +806,7 @@
                         </annotation>
                     </element>
                     <element name="ConnectionPool" type="resolver:LdapPoolConfigType"/>
+                    <element name="SaslConfig" type="resolver:SaslConfigType"/>
                     <element name="Column" type="resolver:ColumnType"/>
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
                     <element name="ResultCacheBean" type="string"/>
@@ -1609,7 +1610,7 @@
         </restriction>
     </simpleType>
 
-    <simpleType name="AuthenticationType">
+    <simpleType name="AuthenticationType"><!-- Deprecated, remove in V5. -->
         <annotation>
             <documentation>Supported authentication types.</documentation>
         </annotation>
@@ -1623,6 +1624,36 @@
             <enumeration value="GSSAPI"/>
         </restriction>
     </simpleType>
+
+    <complexType name="SaslConfigType">
+        <choice maxOccurs="unbounded" minOccurs="0">
+            <element name="SASLProperty" type="resolver:PropertyType">
+                <annotation>
+                    <documentation>
+                        SASL configuration properties.
+                        Common properties include javax.security.sasl.qop, javax.security.sasl.strength, javax.security.sasl.server.authentication.
+                    </documentation>
+                </annotation>
+            </element>
+        </choice>
+        <attribute name="mechanism" type="resolver:string">
+            <annotation>
+                <documentation>
+                    The SASL mechanism. Common values values are EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="authorizationId" type="resolver:string">
+            <annotation>
+                <documentation>SASL authorization ID.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="realm" type="resolver:string">
+            <annotation>
+                <documentation>The SASL realm.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
 
     <simpleType name="SearchScopeType">
         <annotation>
