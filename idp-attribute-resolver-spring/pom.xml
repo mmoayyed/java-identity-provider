@@ -191,6 +191,19 @@
             <scope>test</scope>
         </dependency>
 
+	<dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+	    <groupId>org.graalvm.sdk</groupId>
+	    <artifactId>graal-sdk</artifactId>
+	    <version>${graalvm.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Managed Dependencies -->
     </dependencies>
 
