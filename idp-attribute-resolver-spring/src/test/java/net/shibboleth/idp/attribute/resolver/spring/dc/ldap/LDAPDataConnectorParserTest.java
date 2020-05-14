@@ -47,6 +47,7 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.referral.SearchReferralHandler;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
@@ -233,6 +234,7 @@ public class LDAPDataConnectorParserTest {
         assertEquals(searchExecutor.getBaseDn(), "");
         assertNull(searchExecutor.getSearchFilter());
         assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(3));
+        assertNull(searchExecutor.getReferralHandler());
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
@@ -372,6 +374,31 @@ public class LDAPDataConnectorParserTest {
         assertEquals(saslConfig.getQualityOfProtection(), QualityOfProtection.AUTH_INT);
         assertEquals(saslConfig.getSecurityStrength(), SecurityStrength.HIGH);
         assertEquals(((DigestMd5Config) saslConfig).getRealm(), "shibboleth.net");
+    }
+
+    @Test public void v2ReferralConfig() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-referral.xml"});
+        assertNotNull(dataConnector);
+        assertTrue(dataConnector.isFailFastInitialize());
+        assertEquals(dataConnector.getNoRetryDelay(), Duration.ZERO);
+
+        final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
+        assertNotNull(connFactory);
+        final ConnectionConfig connConfig = connFactory.getConnectionConfig();
+        assertNotNull(connConfig);
+        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        assertNotNull(connInitializer);
+        final SaslConfig saslConfig = connInitializer.getBindSaslConfig();
+        assertNull(saslConfig);
+
+        final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
+        assertNotNull(searchExecutor);
+        assertEquals(searchExecutor.getBaseDn(), "");
+        assertNull(searchExecutor.getSearchFilter());
+        assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(3));
+        final SearchReferralHandler referralHandler = (SearchReferralHandler) searchExecutor.getReferralHandler();
+        assertNotNull(referralHandler);
     }
 
     @Test public void springConfig() throws Exception {
@@ -540,6 +567,7 @@ public class LDAPDataConnectorParserTest {
         assertEquals(searchExecutor.getBaseDn(), "ou=people,dc=shibboleth,dc=net");
         assertNull(searchExecutor.getSearchFilter());
         assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(7));
+        assertNull(searchExecutor.getReferralHandler());
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);

@@ -872,6 +872,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="followReferrals" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether search referrals and search references should be followed.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="useStartTLS" type="resolver:string">
                     <annotation>
                         <documentation>

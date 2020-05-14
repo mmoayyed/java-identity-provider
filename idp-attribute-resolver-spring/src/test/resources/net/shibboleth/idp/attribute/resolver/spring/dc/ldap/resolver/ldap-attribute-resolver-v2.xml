@@ -78,7 +78,7 @@
             ]]>
         </FilterTemplate>
         
-                <ConnectionPool
+        <ConnectionPool
             minPoolSize="5"
             maxPoolSize="10"
             blockWaitTime="PT5S"

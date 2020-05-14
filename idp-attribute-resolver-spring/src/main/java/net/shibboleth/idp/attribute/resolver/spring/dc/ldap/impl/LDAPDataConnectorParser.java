@@ -472,6 +472,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String baseDn = AttributeSupport.getAttributeValue(configElement, new QName("baseDN"));
             final String searchScope = AttributeSupport.getAttributeValue(configElement, new QName("searchScope"));
             final String derefAliases = AttributeSupport.getAttributeValue(configElement, new QName("derefAliases"));
+            final String followReferrals =
+                    AttributeSupport.getAttributeValue(configElement, new QName("followReferrals"));
             final String searchTimeLimit =
                     AttributeSupport.getAttributeValue(configElement, new QName("searchTimeLimit"));
             final String maxResultSize = AttributeSupport.getAttributeValue(configElement, new QName("maxResultSize"));
@@ -488,6 +490,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             if (derefAliases != null) {
                 searchExecutor.addPropertyValue("derefAliases", derefAliases);
+            }
+            if (followReferrals != null) {
+                final BeanDefinitionBuilder handler =
+                    BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildReferralHandler");
+                handler.addConstructorArgValue(followReferrals);
+                searchExecutor.addPropertyValue("referralHandler", handler.getBeanDefinition());
             }
             if (searchTimeLimit != null) {
                 searchExecutor.addPropertyValue("timeLimit", searchTimeLimit);
@@ -879,6 +887,21 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 handlers.add(entryHandler);
             }
             return handlers;
+        }
+
+        /**
+         * Returns a search referral handler or null if followReferrals is false.
+         *
+         * @param followReferrals whether to create a search referral handler
+         *
+         * @return  search referral handler or null
+         */
+        @Nonnull public static SearchReferralHandler buildReferralHandler(
+                @Nullable final String followReferrals) {
+            if (followReferrals != null && Boolean.valueOf(followReferrals)) {
+                return new SearchReferralHandler();
+            }
+            return null;
         }
     }
 }
