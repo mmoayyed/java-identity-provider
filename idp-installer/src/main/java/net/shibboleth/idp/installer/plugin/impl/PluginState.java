@@ -199,22 +199,28 @@ public final class PluginState extends AbstractInitializableComponent {
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         
-        for (final Resource parent:plugin.getUpdateResources()) {
-           
-            log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(), parent.getDescription());
-            if (!parent.exists()) {
-                log.info("Plugin {}: {} could not be located", plugin.getPluginId(), parent.getDescription());
-                continue;
-            }
-            
-            if (populate(parent)) { 
-                log.debug("Plugin {}: PluginState populated from {}", plugin.getPluginId(), parent.getDescription());
-                if (myVersionInfo == null) {
-                    log.error("Plugin {} : Could not find version {} in descriptions at {}",
-                            plugin.getPluginId(), myPluginVersion, parent.getDescription());
+        try {
+            for (final Resource parent:plugin.getUpdateResources()) {
+               
+                log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(), parent.getDescription());
+                if (!parent.exists()) {
+                    log.info("Plugin {}: {} could not be located", plugin.getPluginId(), parent.getDescription());
+                    continue;
                 }
-                return;
+                
+                if (populate(parent)) { 
+                    log.debug("Plugin {}: PluginState populated from {}",
+                            plugin.getPluginId(), parent.getDescription());
+                    if (myVersionInfo == null) {
+                        log.error("Plugin {} : Could not find version {} in descriptions at {}",
+                                plugin.getPluginId(), myPluginVersion, parent.getDescription());
+                    }
+                    return;
+                }
             }
+        } catch (final IOException e) {
+            throw new ComponentInitializationException("Could not locate Update Resource for "
+                        + plugin.getPluginId(), e);
         }
         log.warn("Plugin {}: No available servers found.");
         throw new ComponentInitializationException("Could not locate information for " + plugin.getPluginId());
