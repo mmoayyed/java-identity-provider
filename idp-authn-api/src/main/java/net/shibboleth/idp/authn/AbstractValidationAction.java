@@ -399,21 +399,27 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     @Nonnull protected abstract Subject populateSubject(@Nonnull final Subject subject);
     
     /**
-     * Record a successful authentication attempt against the configured counter.
+     * Record a successful authentication attempt against the configured counter. Records
+     * nothing if the metrics registry is not installed into the runtime.
      * 
      * @since 3.3.0
      */
     protected void recordSuccess() {
-        MetricsSupport.getMetricRegistry().counter(getMetricName() + ".successes").inc();
+        if (MetricsSupport.getMetricRegistry() != null) {
+            MetricsSupport.getMetricRegistry().counter(getMetricName() + ".successes").inc();
+        }
     }
     
     /**
-     * Record a failed authentication attempt against the configured counter.
+     * Record a failed authentication attempt against the configured counter. Records
+     * nothing if the metrics registry is not installed into the runtime.
      * 
      * @since 3.3.0
      */
     protected void recordFailure() {
-        MetricsSupport.getMetricRegistry().counter(getMetricName() + ".failures").inc();
+        if (MetricsSupport.getMetricRegistry() != null) {
+            MetricsSupport.getMetricRegistry().counter(getMetricName() + ".failures").inc();
+        }
     }
     
     /**
