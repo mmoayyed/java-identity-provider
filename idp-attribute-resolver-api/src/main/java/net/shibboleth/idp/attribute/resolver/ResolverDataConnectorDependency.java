@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-
-import org.bouncycastle.util.Arrays;
 
 import java.util.Objects;
 
