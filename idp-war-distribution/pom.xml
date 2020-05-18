@@ -37,6 +37,18 @@
             <artifactId>logback-core</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Support for logback SMTP appender. -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Support for logback evaluator filter. -->
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- IDP-1205 - Support for JVM metrics -->
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
