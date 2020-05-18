@@ -68,13 +68,6 @@
             <artifactId>logback-core</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Support for JVM metrics, per IDP-1205. -->
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-jvm</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         
         <!-- Test Dependencies -->
 
