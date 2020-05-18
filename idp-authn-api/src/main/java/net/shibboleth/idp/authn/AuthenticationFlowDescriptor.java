@@ -256,11 +256,22 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     public void setDiscoveryRequired(final boolean flag) {
         discoveryRequired = flag;
     }
+    
+    /**
+     * Get condition controlling whether results from this flow should be reused for SSO.
+     * 
+     * @return condition
+     * 
+     * @since 4.0.1
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getReuseCondition() {
+        return reuseCondition;
+    }
 
     /**
      * Set condition controlling whether results from this flow should be reused for SSO.
      * 
-     * <p>Defaults to {@link Predicates#alwaysTrue()}.</p>
+     * <p>Defaults to {@link ProxyCountPredicate}.</p>
      * 
      * @param condition condition to set
      * 

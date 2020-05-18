@@ -34,7 +34,9 @@ import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
@@ -54,9 +56,13 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.jaas.LdapPrincipal;
+import org.opensaml.profile.RequestContextBuilder;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /** {@link DefaultAuthenticationResultSerializer} unit test. */
 public class DefaultAuthenticationResultSerializerTest {
@@ -73,8 +79,14 @@ public class DefaultAuthenticationResultSerializerTest {
     
     private DefaultAuthenticationResultSerializer serializer;
     
-    @BeforeMethod public void setUp() {
+    private AuthenticationFlowDescriptor flowDescriptor;
+    
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         serializer = new DefaultAuthenticationResultSerializer();
+        flowDescriptor = new AuthenticationFlowDescriptor();
+        flowDescriptor.setId("test");
+        flowDescriptor.setResultSerializer(serializer);
+        flowDescriptor.setReuseCondition(Predicates.alwaysTrue());
     }
 
     @Test public void testInvalid() throws Exception {
@@ -110,43 +122,62 @@ public class DefaultAuthenticationResultSerializerTest {
     
     @Test public void testSimple() throws Exception {
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         result.getAdditionalData().put("foo", "bar");
         result.getAdditionalData().put("frobnitz", "zorkmid");
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         
-        serializer.serialize(result);
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+        
+        flowDescriptor.serialize(result);
         final String s2 = fileToString(DATAPATH + "simpleAuthenticationResult.json");
         // assertEquals(s, s2); 
         
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
         
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
         assertEquals(result.getAdditionalData(), result2.getAdditionalData());
+        assertTrue(result2.getReuseCondition().test(prc));
     }
 
     @Test public void testComplex() throws Exception {
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         result.getSubject().getPrincipals().add(new TestPrincipal("foo"));
         result.getSubject().getPrincipals().add(new TestPrincipal("bar"));
         
-        String s = serializer.serialize(result);
-        String s2 = fileToString(DATAPATH + "complexAuthenticationResult.json");
+        final String s = flowDescriptor.serialize(result);
+        final String s2 = fileToString(DATAPATH + "complexAuthenticationResult.json");
         assertEquals(s, s2);
-        
-        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
+
         
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
+        assertTrue(result2.getReuseCondition().test(prc));
     }
 
     @Test public void testCreds() throws Exception {
@@ -176,39 +207,59 @@ public class DefaultAuthenticationResultSerializerTest {
         serializer.setPrincipalSerializers(Collections.singletonList(pwSerializer));
         serializer.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
+        flowDescriptor.initialize();
+        
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         result.getSubject().getPrivateCredentials().add(new PasswordPrincipal("bar"));
-        
-        final String s = serializer.serialize(result);
-        
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s, ACTIVITY);
+
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+
+        final String s = flowDescriptor.serialize(result);
+                
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
         
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
+        assertTrue(result2.getReuseCondition().test(prc));
     }
 
     @Test public void testSymbolic() throws Exception {
         serializer.getGenericPrincipalSerializer().setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         result.getSubject().getPrincipals().add(new TestPrincipal("foo"));
         result.getSubject().getPrincipals().add(new TestPrincipal("bar"));
         
-        final String s = serializer.serialize(result);
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+
+        final String s = flowDescriptor.serialize(result);
         final String s2 = fileToString(DATAPATH + "symbolicAuthenticationResult.json");
         assertEquals(s, s2);
         
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
+
         
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
+        assertTrue(result2.getReuseCondition().test(prc));
     }
     
 
@@ -216,8 +267,9 @@ public class DefaultAuthenticationResultSerializerTest {
         final LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
         serializer.setPrincipalSerializers(Collections.singletonList(lpSerializer));
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         final LdapEntry entry = new LdapEntry(SortBehavior.SORTED);
         entry.setDn("uid=1234,ou=people,dc=shibboleth,dc=net");
         final LdapAttribute givenName = new LdapAttribute(SortBehavior.SORTED);
@@ -230,11 +282,18 @@ public class DefaultAuthenticationResultSerializerTest {
                 new LdapAttribute("mail", "bob@shibboleth.net"));
         result.getSubject().getPrincipals().add(new LdapPrincipal("bob", entry));
 
-        final String s = serializer.serialize(result);
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+
+        final String s = flowDescriptor.serialize(result);
         final String s2 = fileToString(DATAPATH + "LDAPAuthenticationResult.json");
         assertEquals(s, s2);
 
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
 
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
@@ -243,14 +302,16 @@ public class DefaultAuthenticationResultSerializerTest {
         assertEquals(
                 ((LdapPrincipal) result.getSubject().getPrincipals().iterator().next()).getLdapEntry(),
                 ((LdapPrincipal) result2.getSubject().getPrincipals().iterator().next()).getLdapEntry());
+        assertTrue(result2.getReuseCondition().test(prc));
     }
 
     @Test public void testIdPAttribute() throws Exception {
         final IdPAttributePrincipalSerializer attrSerializer = new IdPAttributePrincipalSerializer();
         serializer.setPrincipalSerializers(Collections.singletonList(attrSerializer));
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         final IdPAttributePrincipal prin = new IdPAttributePrincipal(new IdPAttribute("foo"));
         prin.getAttribute().setValues(List.of(new StringAttributeValue("bar"),
                 new ScopedStringAttributeValue("bar2", "scope"), EmptyAttributeValue.ZERO_LENGTH,
@@ -258,16 +319,25 @@ public class DefaultAuthenticationResultSerializerTest {
         
         result.getSubject().getPrincipals().add(prin);
 
-        final String s = serializer.serialize(result);
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+        
+        final String s = flowDescriptor.serialize(result);
         final String s2 = fileToString(DATAPATH + "IdPAttributeAuthenticationResult.json");
         assertEquals(s, s2);
 
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
+                
 
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
+        assertTrue(result2.getReuseCondition().test(prc));
         
         final IdPAttribute attribute =
                 ((IdPAttributePrincipal) result2.getSubject().getPrincipals().iterator().next()).getAttribute();
@@ -282,50 +352,76 @@ public class DefaultAuthenticationResultSerializerTest {
         final ProxyAuthenticationPrincipalSerializer proxySerializer = new ProxyAuthenticationPrincipalSerializer();
         serializer.setPrincipalSerializers(Collections.singletonList(proxySerializer));
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         final ProxyAuthenticationPrincipal prin = new ProxyAuthenticationPrincipal(List.of("foo","bar","baz"));
         prin.setProxyCount(10);
         prin.getAudiences().add("zorkmid");
         result.getSubject().getPrincipals().add(prin);
 
-        final String s = serializer.serialize(result);
+        final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+
+        final String s = flowDescriptor.serialize(result);
         final String s2 = fileToString(DATAPATH + "ProxyAuthenticationResult.json");
         assertEquals(s, s2);
 
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
+                
 
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
+        assertTrue(result2.getReuseCondition().test(prc));
         
         final ProxyAuthenticationPrincipal prin2 = (ProxyAuthenticationPrincipal)result2.getSubject().getPrincipals().iterator().next(); 
         assertEquals(prin.getAuthorities(), prin2.getAuthorities());
         assertEquals(prin.getProxyCount(), prin2.getProxyCount());
         assertEquals(prin.getAudiences(), prin2.getAudiences());
+        assertTrue(result2.getReuseCondition().test(prc));
     }
 
     @Test public void testNestedAuthenticationResult() throws Exception {
         serializer.initialize();
+        flowDescriptor.initialize();
         
-        final AuthenticationResult result = createResult("test", new Subject());
-        final AuthenticationResult nested = createResult("nested", new Subject());
+        final AuthenticationResult result = createResult(flowDescriptor, new Subject());
+        
+        final AuthenticationFlowDescriptor nestedDescriptor = new AuthenticationFlowDescriptor();
+        nestedDescriptor.setId("nested");
+        nestedDescriptor.setResultSerializer(serializer);
+        nestedDescriptor.initialize();
+        
+        final AuthenticationResult nested = createResult(nestedDescriptor, new Subject());
         nested.setLastActivityInstant(INSTANT);
         nested.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         
         result.getSubject().getPrincipals().add(new AuthenticationResultPrincipal(nested));
 
-        final String s = serializer.serialize(result);
+        final ProfileRequestContext prc = getProfileRequestContext(List.of(flowDescriptor, nestedDescriptor));
+        assertTrue(result.getReuseCondition().test(prc));
+
+        final String s = flowDescriptor.serialize(result);
         final String s2 = fileToString(DATAPATH + "NestedAuthenticationResult.json");
         assertEquals(s, s2);
 
-        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = flowDescriptor.deserialize(1, CONTEXT, KEY, s2,
+                Instant.ofEpochMilli(ACTIVITY)
+                    .plus(flowDescriptor.getInactivityTimeout())
+                    .plus(AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)
+                    .toEpochMilli());
 
         assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
         assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
         assertEquals(result.getSubject(), result2.getSubject());
+        assertTrue(result2.getReuseCondition().test(prc));
         
         final AuthenticationResult nested2 =
                 ((AuthenticationResultPrincipal) result2.getSubject().getPrincipals().iterator().next()).getAuthenticationResult();
@@ -333,13 +429,23 @@ public class DefaultAuthenticationResultSerializerTest {
         assertEquals(nested.getAuthenticationInstant(), nested2.getAuthenticationInstant());
         assertEquals(nested.getLastActivityInstant(), nested2.getLastActivityInstant());
         assertEquals(nested.getSubject(), nested2.getSubject());
+        assertTrue(nested2.getReuseCondition().test(prc));
     }
 
-    private AuthenticationResult createResult(String flowId, Subject subject) {
-        final AuthenticationResult result = new AuthenticationResult(flowId, subject);
+    private AuthenticationResult createResult(AuthenticationFlowDescriptor flow, Subject subject) {
+        final AuthenticationResult result = flow.newAuthenticationResult(subject);
         result.setAuthenticationInstant(INSTANT);
         result.setLastActivityInstant(Instant.ofEpochMilli(ACTIVITY));
         return result;
+    }
+    
+    private ProfileRequestContext getProfileRequestContext(final List<AuthenticationFlowDescriptor> flows) {
+        final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, true);
+        for (final AuthenticationFlowDescriptor flow : flows) {
+            ac.getAvailableFlows().put(flow.getId(), flow);
+        }
+        return prc;
     }
     
     private String fileToString(String pathname) throws URISyntaxException, IOException {

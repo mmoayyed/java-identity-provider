@@ -32,6 +32,7 @@ import javax.security.auth.Subject;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -41,6 +42,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
@@ -94,7 +96,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         authenticationInstant = Instant.now();
         lastActivityInstant = authenticationInstant;
         additionalData = new HashMap<>();
-        reuseCondition = Predicates.alwaysTrue();
+        reuseCondition = new DescriptorReusePredicate();
     }
 
     /**
@@ -316,4 +318,29 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         }
     }
     
+    /**
+     * Inner class that delegates reuse condition evaluation to the underlying {@link AuthenticationFlowDescriptor}.
+     */
+    class DescriptorReusePredicate extends ProxyRestrictionReusePredicate {
+
+        /** {@inheritDoc} */
+        public boolean test(@Nullable final ProfileRequestContext input) {
+            if (input != null) {
+                final AuthenticationContext ac = input.getSubcontext(AuthenticationContext.class);
+                if (ac != null) {
+                    final AuthenticationFlowDescriptor flow = ac.getAvailableFlows().get(authenticationFlowId);
+                    if (flow != null) {
+                        if (flow.getReuseCondition().test(input)) {
+                             if (flow.isProxyRestrictionsEnforced()) {
+                                 return super.test(input);
+                             }
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        }
+        
+    }
 }
