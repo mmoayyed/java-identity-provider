@@ -28,7 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.Security;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -47,6 +49,8 @@ public class TrustStoreTest {
     
     @BeforeClass public void setup() throws IOException {
         dir = Files.createTempDirectory("TrustStoreTest");
+        Files.createDirectories(dir.resolve("credentials").resolve(pluginId));
+        Security.addProvider(new BouncyCastleProvider());
     }
     
     @AfterClass public void teardown() throws IOException {
@@ -81,12 +85,15 @@ public class TrustStoreTest {
         }
     }
     
-    @Test public void signaturePresentTest() throws ComponentInitializationException, IOException {
+    private void populateKeyStore() throws IOException {
         try (final InputStream trustStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/keys.txt");
-             final OutputStream outStream = Files.newOutputStream(dir.resolve("credentials").resolve(pluginId).resolve("truststore.asc"))) {
-            trustStream.transferTo(outStream);           
+                final OutputStream outStream = Files.newOutputStream(dir.resolve("credentials").resolve(pluginId).resolve("truststore.asc"))) {
+           trustStream.transferTo(outStream);
         }
-        
+    }
+
+    @Test public void signaturePresentTest() throws ComponentInitializationException, IOException {
+        populateKeyStore();
         final TrustStore ts = new TrustStore();
         ts.setIdpHome(dir.toString());
         ts.setPluginId(pluginId);
@@ -97,4 +104,41 @@ public class TrustStoreTest {
         }        
     }
 
+    @Test public void signingTest()  throws ComponentInitializationException, IOException {
+        populateKeyStore();
+        final TrustStore ts = new TrustStore();
+        ts.setIdpHome(dir.toString());
+        ts.setPluginId(pluginId);
+        ts.initialize();
+        try( final InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc");
+               final InputStream badSigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc.bad");
+               final InputStream dataStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico");
+               final InputStream dataStream2 = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico")) {
+
+            Signature badSig = TrustStore.signatureOf(badSigStream);
+            assertTrue(ts.contains(badSig));
+            assertFalse(ts.checkSignature(dataStream, badSig));
+            assertTrue(ts.checkSignature(dataStream2, TrustStore.signatureOf(sigStream)));
+         }
+    }
+
+    @Test public void loadSave() throws IOException, ComponentInitializationException {
+        populateKeyStore();
+        final Signature signature;
+        try( final InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc")) {
+            signature = TrustStore.signatureOf(sigStream);
+        }
+        TrustStore ts = new TrustStore();
+        ts.setIdpHome(dir.toString());
+        ts.setPluginId(pluginId);
+        ts.initialize();
+        assertTrue(ts.contains(signature));
+        ts.saveStore();
+
+        ts = new TrustStore();
+        ts.setIdpHome(dir.toString());
+        ts.setPluginId(pluginId);
+        ts.initialize();
+        assertTrue(ts.contains(signature));
+    }
 }

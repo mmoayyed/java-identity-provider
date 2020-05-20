@@ -23,11 +23,15 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 
+import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
 import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
@@ -36,12 +40,14 @@ import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
  * Code to handle (load, update, check) the trust store for an individual plugin.
@@ -50,7 +56,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 public final class TrustStore extends AbstractInitializableComponent {
 
     /** logger. */
-    @NonnullAfterInit private final Logger log = LoggerFactory.getLogger(TrustStore.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TrustStore.class);
     
     /** Where the IdP is installed.  */
     @NonnullAfterInit private String idpHome;
@@ -71,6 +77,7 @@ public final class TrustStore extends AbstractInitializableComponent {
      * @param what The id to set.
      */
     public void setPluginId(final String what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         pluginId = what;
     }
     
@@ -78,6 +85,7 @@ public final class TrustStore extends AbstractInitializableComponent {
      * @param what The idpHome to set.
      */
     public void setIdpHome(final String what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idpHome = what;
     }
 
@@ -89,11 +97,26 @@ public final class TrustStore extends AbstractInitializableComponent {
      */
     protected void loadStore() throws IOException {
         try (final InputStream in = Files.newInputStream(store);
-             final InputStream in2 = PGPUtil.getDecoderStream(in)) {
-            keyRings = new PGPPublicKeyRingCollection(in2, new JcaKeyFingerprintCalculator());
-            } catch (final PGPException e) {
-                throw new IOException("Bad keystore", e);
+             final InputStream decoded = PGPUtil.getDecoderStream(in)) {
+            final ArrayList<PGPPublicKeyRing> listr = new ArrayList<>();
+
+            PGPObjectFactory pgpFact = new PGPObjectFactory(decoded, new JcaKeyFingerprintCalculator());
+            Object obj;
+            while ((obj = pgpFact.nextObject()) != null) {
+                // Inner loop - when new factories return nothing we are done
+                do {
+                    if (!(obj instanceof PGPPublicKeyRing)) {
+                        throw new IOException(obj.getClass().getName() + " found where PGPPublicKeyRing expected");
+                    }
+                    listr.add((PGPPublicKeyRing) obj);
+                    obj = pgpFact.nextObject();
+                } while (obj != null);
+                pgpFact = new PGPObjectFactory(decoded, new JcaKeyFingerprintCalculator());
             }
+            keyRings = new PGPPublicKeyRingCollection(listr);
+        } catch (final PGPException e) {
+            throw new IOException("Error reading key ring", e);
+        }
     }
 
 
@@ -109,20 +132,44 @@ public final class TrustStore extends AbstractInitializableComponent {
         } catch (final PGPException e) {
             throw new IOException("Bad keystore", e);
         }
-        saveStore();
+        saveStoreInternal();
     }
-    
+
     /** Save the store to its designated location.
-     *  
+     *
      * @throws IOException from {@link Files#newOutputStream(Path, java.nio.file.OpenOption...)} and
      * from {@link PGPPublicKeyRingCollection#encode(OutputStream)}
      */
     public void saveStore() throws IOException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        saveStoreInternal();
+    }
+
+    /** Save the store to its designated location.
+     *
+     * @throws IOException from {@link Files#newOutputStream(Path, java.nio.file.OpenOption...)} and
+     * from {@link PGPPublicKeyRingCollection#encode(OutputStream)}
+     */
+    public void saveStoreInternal() throws IOException {
         if (Files.exists(store)) {
             Files.copy(store, backup, StandardCopyOption.REPLACE_EXISTING);
         }
-        try (final OutputStream out = Files.newOutputStream(store)) {
-            keyRings.encode(out);            
+        try (final OutputStream outStream = Files.newOutputStream(store)) {
+            final Iterator<PGPPublicKeyRing> kit = keyRings.getKeyRings();
+            while (kit.hasNext()) {
+                final PGPPublicKey kr = kit.next().getPublicKey();
+
+                final StringBuffer comment = new StringBuffer().append("\n\r");
+                final Iterator<String> sit = kr.getUserIDs();
+                if (sit.hasNext()) {
+                    comment .append(sit.next()).append('\t');
+                }
+                comment.append("id\t").append(String.format("%X", (int) kr.getKeyID())).append("\n\r");
+                outStream.write(comment.toString().getBytes());
+                try (OutputStream armed = new ArmoredOutputStream(outStream)) {
+                    kr.encode(armed);
+                }
+            }
         }
     }
     
@@ -140,17 +187,42 @@ public final class TrustStore extends AbstractInitializableComponent {
      * @return whether it is there
      */
     public boolean contains(final Signature signature) {
-        
+
         final PGPSignature sig = signature.getSignature();
-        
-        for (final PGPPublicKeyRing keyRing : keyRings) {
-            for (final PGPPublicKey key : keyRing) {
-                if (sig.getKeyID() == key.getKeyID()) {
-                    return true;
-                }
-            }
+
+        log.debug("Looking for key with Id {}", sig.toString());
+
+        try {
+            return keyRings.getPublicKey(sig.getKeyID()) != null;
+        } catch (final PGPException e) {
+            log.warn("Error looking for key {}", signature.toString(), e);
+            return false;
         }
-        return false;
+    }
+
+    /** Run a signature check over the streams.
+     * @param input what to check
+     * @param signature what to check with
+     * @return whether it passed or not
+     * @throws IOException if we get an error reading the stream
+     */
+    public boolean checkSignature(final InputStream input, final Signature signature) throws IOException {
+        try {
+            final PGPSignature pgpSignature = signature.getSignature();
+            final PGPPublicKey pubKey = keyRings.getPublicKey(pgpSignature.getKeyID());
+            pgpSignature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pubKey);
+
+            final byte[] buffer = new byte[1024];
+            int count = input.read(buffer);
+            while (count > 0) {
+                pgpSignature.update(buffer, 0, count);
+                count = input.read(buffer);
+            }
+            return pgpSignature.verify();
+        } catch (final PGPException e) {
+            log.warn("Error thrown during signature check", e);
+            return false;
+        }
     }
     
     /** {@inheritDoc} */
@@ -197,6 +269,10 @@ public final class TrustStore extends AbstractInitializableComponent {
         
         /** What we are hiding. */
         @Nonnull private PGPSignature signature;
+
+        /** printable key. */
+        @Nonnull private String keyId;
+
         
         protected Signature(final @Nonnull InputStream input) throws IOException {
             try (final InputStream sigStream =  PGPUtil.getDecoderStream(input)) {
@@ -209,10 +285,16 @@ public final class TrustStore extends AbstractInitializableComponent {
                     throw new IOException("Provided file was not a signature");
                 }
             }
+            keyId = String.format("%X", (int)signature.getKeyID());
         }
 
         protected PGPSignature getSignature() {
             return signature;
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return keyId;
         }
     }
 }
