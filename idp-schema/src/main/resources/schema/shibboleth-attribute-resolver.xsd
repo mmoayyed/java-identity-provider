@@ -851,6 +851,7 @@
                 <attribute name="authenticationType" type="resolver:AuthenticationType">
                     <annotation>
                         <documentation>
+                            DEPRECATED
                             The LDAP authentication type. Acceptable values are ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI.
                             Default value is SIMPLE.
                         </documentation>
@@ -1760,7 +1761,7 @@
             <annotation>
                 <documentation>
                     Ldap compare filter to use for connection validation.
-                    Used in conjuction with validateDN to perform a compare.
+                    Used in conjunction with validateDN to perform a compare.
                     Default value is (objectClass=*).
                 </documentation>
             </annotation>

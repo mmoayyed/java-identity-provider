@@ -40,6 +40,7 @@ import com.unboundid.ldap.sdk.LDAPResult;
 import com.unboundid.ldap.sdk.ResultCode;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.pool.BlockingConnectionPool;
@@ -140,6 +141,20 @@ public class LDAPDataConnectorParserTest {
                                               final List<Control> controls) {
               // return success for all digest MD5 bind requests
               return new BindResult(new LDAPResult(messageID, ResultCode.SUCCESS));
+            }
+        });
+        config.addSASLBindHandler(new InMemorySASLBindHandler() {
+            @Override
+            public String getSASLMechanismName() {
+                return "EXTERNAL";
+            }
+
+            @Override
+            public BindResult processSASLBind(final InMemoryRequestHandler handler, final int messageID,
+                                              final DN bindDN, final ASN1OctetString credentials,
+                                              final List<Control> controls) {
+                // return success for all EXTERNAL bind requests
+                return new BindResult(new LDAPResult(messageID, ResultCode.SUCCESS));
             }
         });
         directoryServer = new InMemoryDirectoryServer(config);
@@ -366,6 +381,8 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(connConfig);
         final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
         assertNotNull(connInitializer);
+        assertEquals(connInitializer.getBindDn(), "manager@shibboleth.net");
+        assertEquals(connInitializer.getBindCredential().getString(), "password");
         final SaslConfig saslConfig = connInitializer.getBindSaslConfig();
         assertNotNull(saslConfig);
         assertEquals(saslConfig.getMechanism(), Mechanism.DIGEST_MD5);
@@ -374,6 +391,30 @@ public class LDAPDataConnectorParserTest {
         assertEquals(saslConfig.getQualityOfProtection(), QualityOfProtection.AUTH_INT);
         assertEquals(saslConfig.getSecurityStrength(), SecurityStrength.HIGH);
         assertEquals(((DigestMd5Config) saslConfig).getRealm(), "shibboleth.net");
+    }
+
+    @Test public void v2AuthenticationTypeConfig() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-authenticationType.xml"});
+        assertNotNull(dataConnector);
+        assertTrue(dataConnector.isFailFastInitialize());
+        assertEquals(dataConnector.getNoRetryDelay(), Duration.ZERO);
+
+        final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
+        assertNotNull(connFactory);
+        final ConnectionConfig connConfig = connFactory.getConnectionConfig();
+        assertNotNull(connConfig);
+        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        assertNotNull(connInitializer);
+        assertEquals(connInitializer.getBindDn(), "manager@shibboleth.net");
+        assertEquals(connInitializer.getBindCredential().getString(), "password");
+        final SaslConfig saslConfig = connInitializer.getBindSaslConfig();
+        assertNotNull(saslConfig);
+        assertEquals(saslConfig.getMechanism(), Mechanism.DIGEST_MD5);
+        assertEquals(saslConfig.getAuthorizationId(), "");
+        assertNull(saslConfig.getMutualAuthentication());
+        assertNull(saslConfig.getQualityOfProtection());
+        assertNull(saslConfig.getSecurityStrength());
     }
 
     @Test public void v2ReferralConfig() throws Exception {
@@ -399,6 +440,26 @@ public class LDAPDataConnectorParserTest {
         assertEquals(searchExecutor.getTimeLimit(), Duration.ofSeconds(3));
         final SearchReferralHandler referralHandler = (SearchReferralHandler) searchExecutor.getReferralHandler();
         assertNotNull(referralHandler);
+    }
+
+    @Test public void v2SaslExternalConfig() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-external.xml"});
+        assertNotNull(dataConnector);
+        assertTrue(dataConnector.isFailFastInitialize());
+        assertEquals(dataConnector.getNoRetryDelay(), Duration.ZERO);
+
+        final DefaultConnectionFactory connFactory = (DefaultConnectionFactory) dataConnector.getConnectionFactory();
+        assertNotNull(connFactory);
+        final ConnectionConfig connConfig = connFactory.getConnectionConfig();
+        assertNotNull(connConfig);
+        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        assertNotNull(connInitializer);
+        assertNull(connInitializer.getBindDn());
+        assertNull(connInitializer.getBindCredential());
+        final SaslConfig saslConfig = connInitializer.getBindSaslConfig();
+        assertNotNull(saslConfig);
+        assertEquals(saslConfig.getMechanism(), Mechanism.EXTERNAL);
     }
 
     @Test public void springConfig() throws Exception {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+                   ldapURL="ldap://localhost:10389"
+                   failFastInitialize="true">
+        <FilterTemplate>
+            <![CDATA[
+                (uid=${resolutionContext.principal})
+            ]]>
+        </FilterTemplate>
+        <SaslConfig mechanism="EXTERNAL" />
+    </DataConnector>
+
+</AttributeResolver>

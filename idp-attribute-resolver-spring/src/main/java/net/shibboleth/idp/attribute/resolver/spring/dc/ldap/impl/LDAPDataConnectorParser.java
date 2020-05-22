@@ -288,20 +288,32 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 credential.addConstructorArgValue(principalCredential);
                 connectionInitializer.addPropertyValue("bindCredential", credential.getBeanDefinition());
             }
+            BeanDefinition saslConfig = null;
             if (authenticationType != null) {
                 // V4 Deprecation
                 DeprecationSupport.warn(ObjectType.ATTRIBUTE, "authenticationType", "<LDAPDirectory>",
                     "<SaslConfig>");
                 final Mechanism mechanism = Mechanism.valueOf(authenticationType);
-                if (mechanism != null) {
-                    final SaslConfig config = new SaslConfig();
-                    config.setMechanism(mechanism);
-                    connectionInitializer.addPropertyValue("bindSaslConfig", config);
+                if ("ANONYMOUS".equals(authenticationType)) {
+                    log.warn("{} Ignoring unsupported authenticationType {}. " +
+                            "Do not set bind credentials for anonymous authentication", getLogPrefix(), mechanism);
+                } else if ("STRONG".equals(authenticationType)) {
+                    log.warn("{} Ignoring unsupported authenticationType {}.", getLogPrefix(), mechanism);
+                } else if ("SIMPLE".equals(authenticationType)) {
+                    log.warn("{} Ignoring unsupported authenticationType {}. " +
+                            "Set bind credentials for simple authentication", getLogPrefix(), mechanism);
+                } else {
+                    final BeanDefinitionBuilder saslConfigBuilder =
+                            BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildSaslConfig");
+                    saslConfigBuilder.addConstructorArgValue(authenticationType);
+                    saslConfig = saslConfigBuilder.getBeanDefinition();
+                    connectionInitializer.addPropertyValue("bindSaslConfig", saslConfig);
                 }
             } else {
-                connectionInitializer.addPropertyValue("bindSaslConfig", createSaslConfig());
+                saslConfig = createSaslConfig();
+                connectionInitializer.addPropertyValue("bindSaslConfig", saslConfig);
             }
-            if (principal != null || principalCredential != null || authenticationType != null) {
+            if (principal != null || principalCredential != null || saslConfig != null) {
                 connectionConfig.addPropertyValue("connectionInitializer", connectionInitializer.getBeanDefinition());
             }
             final String connectionStrategy = AttributeSupport.getAttributeValue(
@@ -902,6 +914,19 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 return new SearchReferralHandler();
             }
             return null;
+        }
+
+        /**
+         * Returns a SASL configuration for the supplied mechanism.
+         *
+         * @param mechanism SASL mechanism
+         *
+         * @return  SASL config
+         */
+        @Nonnull public static SaslConfig buildSaslConfig(@Nonnull final String mechanism) {
+            final SaslConfig config = new SaslConfig();
+            config.setMechanism(Mechanism.valueOf(mechanism));
+            return config;
         }
     }
 }
