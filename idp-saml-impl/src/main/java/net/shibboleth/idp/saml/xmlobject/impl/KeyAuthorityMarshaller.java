@@ -17,20 +17,15 @@
 
 package net.shibboleth.idp.saml.xmlobject.impl;
 
-import java.util.Map.Entry;
-
 import javax.annotation.concurrent.ThreadSafe;
-import javax.xml.namespace.QName;
-
-import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.core.xml.io.MarshallingException;
-import org.w3c.dom.Attr;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
 /** Marshaller for {@link KeyAuthority}. */
 @ThreadSafe
@@ -45,16 +40,7 @@ public class KeyAuthorityMarshaller extends AbstractXMLObjectMarshaller {
                     .toString());
         }
 
-        Attr attr;
-        for (final Entry<QName, String> entry : keyAuthority.getUnknownAttributes().entrySet()) {
-            attr = AttributeSupport.constructAttribute(domElement.getOwnerDocument(), entry.getKey());
-            attr.setValue(entry.getValue());
-            domElement.setAttributeNodeNS(attr);
-            if (XMLObjectProviderRegistrySupport.isIDAttribute(entry.getKey())
-                    || keyAuthority.getUnknownAttributes().isIDAttribute(entry.getKey())) {
-                attr.getOwnerElement().setIdAttributeNode(attr, true);
-            }
-        }
-
+        XMLObjectSupport.marshallAttributeMap(keyAuthority.getUnknownAttributes(), domElement);
     }
+
 }
