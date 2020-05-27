@@ -292,7 +292,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             if (authenticationType != null) {
                 // V4 Deprecation
                 DeprecationSupport.warn(ObjectType.ATTRIBUTE, "authenticationType", "<LDAPDirectory>",
-                    "<SaslConfig>");
+                    "<SASLConfig>");
                 final Mechanism mechanism = Mechanism.valueOf(authenticationType);
                 if ("ANONYMOUS".equals(authenticationType)) {
                     log.warn("{} Ignoring unsupported authenticationType {}. " +
@@ -693,12 +693,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nullable protected BeanDefinition createSaslConfig() {
             final List<Element> saslConfigElements = ElementSupport.getChildElementsByTagNameNS(configElement,
-                    AttributeResolverNamespaceHandler.NAMESPACE, "SaslConfig");
+                    AttributeResolverNamespaceHandler.NAMESPACE, "SASLConfig");
 
             if (saslConfigElements.isEmpty()) {
                 return null;
             } else if (saslConfigElements.size() > 1) {
-                log.warn("{} Only one <SaslConfig> element can be specified; "+
+                log.warn("{} Only one <SASLConfig> element can be specified; "+
                         "only the first has been consulted.", getLogPrefix());
             }
             final Element saslConfigElement = saslConfigElements.get(0);

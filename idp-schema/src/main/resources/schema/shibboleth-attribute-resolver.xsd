@@ -806,7 +806,7 @@
                         </annotation>
                     </element>
                     <element name="ConnectionPool" type="resolver:LdapPoolConfigType"/>
-                    <element name="SaslConfig" type="resolver:SaslConfigType"/>
+                    <element name="SASLConfig" type="resolver:SaslConfigType"/>
                     <element name="Column" type="resolver:ColumnType"/>
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
                     <element name="ResultCacheBean" type="string"/>

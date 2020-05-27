@@ -13,13 +13,13 @@
                 (uid=${resolutionContext.principal})
             ]]>
         </FilterTemplate>
-        <SaslConfig mechanism="DIGEST_MD5"
+        <SASLConfig mechanism="DIGEST_MD5"
                     authorizationId="authzID"
                     realm="shibboleth.net">
             <SASLProperty name="javax.security.sasl.qop" value="AUTH-INT"/>
             <SASLProperty name="javax.security.sasl.strength" value="HIGH"/>
             <SASLProperty name="javax.security.sasl.server.authentication" value="true"/>
-        </SaslConfig>
+        </SASLConfig>
     </DataConnector>
 
 </AttributeResolver>

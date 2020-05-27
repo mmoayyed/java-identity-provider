@@ -11,7 +11,7 @@
                 (uid=${resolutionContext.principal})
             ]]>
         </FilterTemplate>
-        <SaslConfig mechanism="EXTERNAL" />
+        <SASLConfig mechanism="EXTERNAL" />
     </DataConnector>
 
 </AttributeResolver>
