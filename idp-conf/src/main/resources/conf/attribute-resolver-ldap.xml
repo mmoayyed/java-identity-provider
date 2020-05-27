@@ -74,10 +74,12 @@
             blockWaitTime="%{idp.pool.LDAP.blockWaitTime:PT3S}"
             validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
             validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
+            validateDN="%{idp.pool.LDAP.validateDN:}"
+            validateFilter="%{idp.pool.LDAP.validateFilter:(objectClass=*)}"
             expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
     </DataConnector>
 
-    <!-- DataConector for pairwise-id (example depends on saml-nameid.properties). -->
+    <!-- DataConnector for pairwise-id (example depends on saml-nameid.properties). -->
 
 <!-- 
     <DataConnector id="computed" xsi:type="ComputedId"

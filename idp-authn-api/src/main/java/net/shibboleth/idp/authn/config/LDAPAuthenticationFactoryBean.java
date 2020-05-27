@@ -28,11 +28,15 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 
 import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.BindRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapURL;
+import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.auth.FormatDnResolver;
@@ -45,8 +49,10 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationRequestHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
+import org.ldaptive.pool.BindPassivator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.pool.Passivator;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
@@ -119,6 +125,33 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     }
   }
 
+  /** Enum that defines an LDAP pool passivator. Labels maps to values in ldap.properties. */
+  public enum PassivatorType {
+    NONE("none"),
+    BIND("bind"),
+    ANONYMOUS_BIND("anonymousBind");
+
+    /** Label for this type. */
+    private final String label;
+
+    PassivatorType(final String s) {
+      label = s;
+    }
+
+    public String label() {
+      return label;
+    }
+
+    public static PassivatorType fromLabel(final String s) {
+      for (PassivatorType pt : PassivatorType.values()) {
+        if (pt.label().equals(s)) {
+          return pt;
+        }
+      }
+      return null;
+    }
+  }
+
   /** Type of authenticator to configure. */
   private AuthenticatorType authenticatorType;
 
@@ -169,6 +202,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   /** Period at which to validate periodically. */
   private Duration validatePeriod;
+
+  /** DN to perform connection pool validation against. */
+  private String validateDn;
+
+  /** Filter to execute against {@link #validateDn}. */
+  private String validateFilter;
+
+  /** Type of passivator to configure for the bind pool. */
+  private PassivatorType bindPoolPassivatorType;
 
   /** Period at which to check and enforce the idle time. */
   private Duration prunePeriod;
@@ -284,6 +326,18 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setValidatePeriod(@Nullable final Duration period) {
     validatePeriod = period;
+  }
+
+  public void setValidateDn(final String dn) {
+    validateDn = dn;
+  }
+
+  public void setValidateFilter(final String filter) {
+    validateFilter = filter;
+  }
+
+  public void setBindPoolPassivatorType(@Nonnull @NotEmpty final String type) {
+    bindPoolPassivatorType = PassivatorType.fromLabel(type);
   }
 
   public void setPrunePeriod(@Nullable final Duration period) {
@@ -414,6 +468,36 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
    * @return new blocking connection pool
    */
   protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config) {
+    return createConnectionPool(name, config, new SearchValidator());
+  }
+
+  /**
+   * Returns a new blocking connection pool using the supplied search validator.
+   *
+   * @param name of the connection pool
+   * @param config to assign to the pool
+   * @param validator pool validator
+   *
+   * @return new blocking connection pool
+   */
+  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config,
+                                                        final SearchValidator validator) {
+    return createConnectionPool(name, config, validator, null);
+  }
+
+  /**
+   * Returns a new blocking connection pool using the supplied search validator and passivator type. Note that a {@link
+   * PassivatorType#BIND} uses the configured {@link #bindDn} and {@link #bindDnCredential}.
+   *
+   * @param name of the connection pool
+   * @param config to assign to the pool
+   * @param validator pool validator
+   * @param passivator pool passivator
+   *
+   * @return new blocking connection pool
+   */
+  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config,
+                                                        final SearchValidator validator, final Passivator passivator) {
     final PoolConfig poolConfig = new PoolConfig();
     poolConfig.setMinPoolSize(minPoolSize);
     poolConfig.setMaxPoolSize(maxPoolSize);
@@ -425,11 +509,44 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     pool.setBlockWaitTime(blockWaitTime);
     pool.setPoolConfig(poolConfig);
     pool.setPruneStrategy(new IdlePruneStrategy(prunePeriod, idleTime));
-    pool.setValidator(new SearchValidator());
+    pool.setValidator(validator);
+    pool.setPassivator(passivator);
     pool.setFailFastInitialize(false);
     pool.setConnectionFactory(new DefaultConnectionFactory(config));
     pool.initialize();
     return pool;
+  }
+
+  protected SearchValidator createSearchValidator(final String baseDn, final String filter) {
+    final SearchRequest searchRequest = new SearchRequest();
+    searchRequest.setReturnAttributes("1.1");
+    searchRequest.setSearchScope(SearchScope.OBJECT);
+    searchRequest.setSizeLimit(1);
+    if (baseDn != null) {
+      searchRequest.setBaseDn(baseDn);
+    } else {
+      searchRequest.setBaseDn("");
+    }
+    final SearchFilter searchFilter = new SearchFilter();
+    if (filter != null) {
+      searchFilter.setFilter(filter);
+    } else {
+      searchFilter.setFilter("(objectClass=*)");
+    }
+    searchRequest.setSearchFilter(searchFilter);
+    return new SearchValidator(searchRequest);
+  }
+
+  protected Passivator createPoolPassivator(final PassivatorType type) {
+    switch(type) {
+      case BIND:
+        return new BindPassivator(new BindRequest(bindDn, new Credential(bindDnCredential)));
+      case ANONYMOUS_BIND:
+        return new BindPassivator();
+      case NONE:
+      default:
+        return null;
+    }
   }
 
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
@@ -453,7 +570,12 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     } else {
       authenticator.setAuthenticationHandler(
         new PooledBindAuthenticationHandler(
-          new PooledConnectionFactory(createConnectionPool("bind-pool", createConnectionConfig()))));
+          new PooledConnectionFactory(
+            createConnectionPool(
+              "bind-pool",
+              createConnectionConfig(),
+              createSearchValidator(validateDn, validateFilter),
+              createPoolPassivator(bindPoolPassivatorType)))));
     }
     switch(authenticatorType) {
     case BIND_SEARCH:
@@ -475,7 +597,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
           new PooledConnectionFactory(
             createConnectionPool(
               "dn-search-pool",
-              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))))));
+              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))),
+              createSearchValidator(validateDn, validateFilter))));
         authenticator.setDnResolver(bindSearchDnResolver);
       }
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
@@ -506,7 +629,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
           new PooledConnectionFactory(
             createConnectionPool(
               "dn-search-pool",
-              createConnectionConfig())));
+              createConnectionConfig(),
+              createSearchValidator(validateDn, validateFilter))));
         authenticator.setDnResolver(anonSearchDnResolver);
       }
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
@@ -528,7 +652,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
           new PooledConnectionFactory(
             createConnectionPool(
               "entry-search-pool",
-              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))))));
+              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))),
+              createSearchValidator(validateDn, validateFilter))));
         authenticator.setEntryResolver(searchEntryResolver);
       }
     }
