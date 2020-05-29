@@ -7,7 +7,7 @@
 	id="dynamicMDQ" xsi:type="metadata:DynamicHTTPMetadataProvider" >
     
         <metadata:MetadataQueryProtocol secondaryURLBuildersRef="metadata.MDQ.secondaryURLBuilders">
-            http://shibboleth.net:9000
+            http://test.shibboleth.net:9000
         </metadata:MetadataQueryProtocol>
 
 </metadata:MetadataProvider>

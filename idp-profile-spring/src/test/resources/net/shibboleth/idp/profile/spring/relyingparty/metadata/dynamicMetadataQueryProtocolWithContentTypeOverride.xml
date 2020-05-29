@@ -8,7 +8,7 @@
     supportedContentTypes="application/xml test/foo" >
 
         <metadata:MetadataQueryProtocol>
-            http://shibboleth.net:9000
+            http://test.shibboleth.net:9000
         </metadata:MetadataQueryProtocol>
 
 </metadata:MetadataProvider>
