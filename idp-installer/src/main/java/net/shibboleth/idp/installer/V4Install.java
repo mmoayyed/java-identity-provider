@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
@@ -34,7 +35,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
-import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
