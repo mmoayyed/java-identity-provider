@@ -47,6 +47,9 @@ public final class IdPAuditFields {
     /** Session ID field. */
     @Nonnull @NotEmpty public static final String SESSION_ID = "s";
 
+    /** Hashed session ID field. */
+    @Nonnull @NotEmpty public static final String HASHED_SESSION_ID = "HASHEDs";
+
     /** Remote address field. */
     @Nonnull @NotEmpty public static final String REMOTE_ADDR = "a";
 

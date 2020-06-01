@@ -40,8 +40,8 @@
     <bean id="shibboleth.UsernameHasher" parent="shibboleth.Functions.Compose">
         <constructor-arg name="g">
             <bean class="net.shibboleth.utilities.java.support.codec.StringDigester"
-                c:algorithm="#{'%{idp.fticks.algorithm:SHA-256}'.trim()}" c:format="HEX_LOWER"
-                p:salt="%{idp.fticks.salt:}" p:requireSalt="true" />
+                c:algorithm="#{'%{idp.fticks.algorithm:%{idp.audit.hashAlgorithm:SHA-256}}'.trim()}" c:format="HEX_LOWER"
+                p:salt="%{idp.fticks.salt:%{idp.audit.salt:}}" p:requireSalt="true" />
         </constructor-arg>
         <constructor-arg name="f">
             <bean parent="shibboleth.Functions.Compose">
@@ -50,6 +50,25 @@
                 </constructor-arg>
                 <constructor-arg name="f">
                     <ref bean="shibboleth.ChildLookup.SubjectContext" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <!-- Reusable bean for extracting a session id and hashing it. -->
+    <bean id="shibboleth.SessionIDHasher" parent="shibboleth.Functions.Compose">
+        <constructor-arg name="g">
+            <bean class="net.shibboleth.utilities.java.support.codec.StringDigester"
+                c:algorithm="#{'%{idp.fticks.algorithm:%{idp.audit.hashAlgorithm:SHA-256}}'.trim()}" c:format="HEX_LOWER"
+                p:salt="%{idp.fticks.salt:%{idp.audit.salt:}}" p:requireSalt="true" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean parent="shibboleth.Functions.Compose">
+                <constructor-arg name="g">
+                    <bean class="net.shibboleth.idp.session.context.navigate.SessionContextIDLookupFunction" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.SessionContext" />
                 </constructor-arg>
             </bean>
         </constructor-arg>
@@ -777,6 +796,12 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_SESSION_ID"/>
+                    </key>
+                    <ref bean="shibboleth.SessionIDHasher" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
                     </key>
                     <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor">
@@ -1077,6 +1102,12 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_SESSION_ID"/>
+                    </key>
+                    <ref bean="shibboleth.SessionIDHasher" />
+                </entry>
             </map>
         </property>
     </bean>
@@ -1111,6 +1142,12 @@
                             <ref bean="shibboleth.ChildLookup.SessionContext" />
                         </constructor-arg>
                     </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_SESSION_ID"/>
+                    </key>
+                    <ref bean="shibboleth.SessionIDHasher" />
                 </entry>
                 <entry>
                     <key>
@@ -1202,6 +1239,12 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_SESSION_ID"/>
+                    </key>
+                    <ref bean="shibboleth.SessionIDHasher" />
+                </entry>
             </map>
         </property>
     </bean>
@@ -1290,6 +1333,12 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_SESSION_ID"/>
+                    </key>
+                    <ref bean="shibboleth.SessionIDHasher" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
                     </key>
                     <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
@@ -1342,6 +1391,12 @@
                             <ref bean="shibboleth.ChildLookup.SessionContext" />
                         </constructor-arg>
                     </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_SESSION_ID"/>
+                    </key>
+                    <ref bean="shibboleth.SessionIDHasher" />
                 </entry>
                 <entry>
                     <key>
