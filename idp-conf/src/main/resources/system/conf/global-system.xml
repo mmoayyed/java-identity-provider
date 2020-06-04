@@ -77,6 +77,7 @@
                 </entry>
                 <entry key="idp.consent.userStorageKey" value="idp.consent.attribute-release.userStorageKey" />
                 <entry key="idp.consent.userStorageKeyAttribute" value="idp.consent.attribute-release.userStorageKeyAttribute" />
+                <entry key="idp.persistentId.store" value="idp.persistentId.generator" />
              </map>
         </property>
         <property name="deadProperties">
