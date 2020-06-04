@@ -221,8 +221,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     public void setTransactionRetries(@NonNegative final int retries) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        transactionRetry = (int) Constraint.isGreaterThanOrEqual(0, retries,
-                "Timeout must be greater than or equal to 0");
+        transactionRetry = Constraint.isGreaterThanOrEqual(0, retries, "Timeout must be greater than or equal to 0");
     }
 
     /**
