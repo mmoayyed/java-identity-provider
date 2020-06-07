@@ -253,6 +253,15 @@ public final class InstallerSupport {
      * @throws BuildException if badness occurs
      */
     public static void deleteTree(final Path where) throws BuildException {
+        deleteTree(where, null);
+    }
+
+    /** Delete the tree.
+     * @param where where
+     * @param excludes wildcards to exclude
+     * @throws BuildException if badness occurs
+     */
+    public static void deleteTree(final Path where, final String excludes) throws BuildException {
         if (!Files.exists(where)) {
             log.debug("Directory {} does not exist. Skipping delete.", where);
             return;
@@ -264,8 +273,17 @@ public final class InstallerSupport {
         log.debug("Deleting tree {}", where);
         final Delete delete = new Delete();
         delete.setProject(ANT_PROJECT);
-        delete.setDir(where.toFile());
         delete.setFailOnError(false);
+        delete.setIncludeEmptyDirs(true);
+        if (excludes != null) {
+            final FileSet set = new FileSet();
+            set.setExcludes(excludes);
+            set.setIncludes("**/**");
+            set.setDir(where.toFile());
+            delete.addFileset(set);
+        } else {
+            delete.setDir(where.toFile());
+        }
         // Logic for setVerbose is inverted
         // https://bz.apache.org/bugzilla/show_bug.cgi?id=63887
         delete.setVerbose(!log.isDebugEnabled());

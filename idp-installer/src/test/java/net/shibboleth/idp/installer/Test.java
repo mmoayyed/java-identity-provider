@@ -46,9 +46,9 @@ public class Test {
 
         System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\v4install");
         System.setProperty(InstallerPropertiesImpl.SOURCE_DIR,
-                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT");
+                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.1.0-SNAPSHOT");
         System.setProperty(InstallerPropertiesImpl.ANT_BASE_DIR,
-                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.0.0-SNAPSHOT\\bin");
+                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.1.0-SNAPSHOT\\bin");
         System.setProperty(InstallerPropertiesImpl.KEY_STORE_PASSWORD, "p1");
         System.setProperty(InstallerPropertiesImpl.SEALER_PASSWORD, "p1");
         System.setProperty(InstallerPropertiesImpl.HOST_NAME, "machine.org.uk");

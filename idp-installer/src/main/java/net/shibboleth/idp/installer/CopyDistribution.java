@@ -71,8 +71,9 @@ public final class CopyDistribution extends AbstractInitializableComponent {
 
     /** Helper for the {@link #deleteOld()} method.
      * @param what what to delete
+     * @param excludes what to exclude
      */
-    private void delete(final Path what) {
+    private void delete(final Path what, final String excludes) {
         if (!Files.exists(what)) {
             log.debug("{} doesn't exist, nothing to delete", what);
         } else if (!Files.isDirectory(what)) {
@@ -80,7 +81,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
             throw new BuildException("Corrupt install - not a directory");
         } else {
             log.debug("Deleting {} ", what);
-            InstallerSupport.deleteTree(what);
+            InstallerSupport.deleteTree(what, excludes);
         }
     }
 
@@ -89,14 +90,14 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void deleteOld() {
-        delete(installerProps.getTargetDir().resolve("bin").resolve("lib"));
-        delete(installerProps.getTargetDir().resolve("dist"));
-        delete(installerProps.getTargetDir().resolve("doc"));
+        delete(installerProps.getTargetDir().resolve("bin").resolve("lib"), null);
+        delete(installerProps.getTargetDir().resolve("dist"), "edit-webapp-*/**");
+        delete(installerProps.getTargetDir().resolve("doc"), null);
         final Path system = installerProps.getTargetDir().resolve("system");
         if (Files.exists(system)) {
             InstallerSupport.setReadOnly(system, false);
         }
-        delete(system);
+        delete(system, null);
     }
 
     /** Helper for the {@link #copyDist()} and

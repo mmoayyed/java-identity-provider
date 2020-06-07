@@ -18,7 +18,11 @@
 package net.shibboleth.idp.installer;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
@@ -61,6 +65,40 @@ public final class BuildWar extends AbstractInitializableComponent {
         installerProps = props;
     }
 
+    /** Method to do a single overlay into webapp.
+     *
+     * @param from Where to copy from.
+     * @param webAppTo Where to copy to.
+     * @throws BuildException if unexpected badness occurs.
+     */
+    private void overlayWebapp(final Path from, final Path webAppTo) throws BuildException {
+        final Copy overlay = InstallerSupport.getCopyTask(from, webAppTo);
+        overlay.setOverwrite(true);
+        overlay.setPreserveLastModified(true);
+        overlay.setFailOnError(true);
+        overlay.setVerbose(log.isDebugEnabled());
+        log.info("Overlay from {} to {}", from, webAppTo);
+        overlay.execute();
+    }
+
+    /** Enumerate all the plugin webapps and deal with them.
+     * @param parent the 'dist' folder
+     * @param to target
+     * @throws BuildException as badness occurrs
+     */
+    private void overlayPluginWebapps(final Path parent, final Path to) throws BuildException {
+        final FileSystem fs = parent.getFileSystem();
+        final PathMatcher folderMatcher = fs.getPathMatcher("glob:edit-webapp-*");
+        try {
+            Files.list(parent).
+                filter(Files::isDirectory).
+                filter(e -> folderMatcher.matches(e.getFileName())).
+                forEach(e -> overlayWebapp(e, to));
+        } catch (final IOException e) {
+            throw new BuildException(e);
+        }
+    }
+
     /** Method to do the work of building the war.
      * @throws BuildException if unexpected badness occurs.
      */
@@ -73,7 +111,8 @@ public final class BuildWar extends AbstractInitializableComponent {
         InstallerSupport.deleteTree(target.resolve("webpapp"));
         final Path webAppTmp =target.resolve("webpapp.tmp");
         InstallerSupport.deleteTree(webAppTmp);
-        final Path distWebApp =  target.resolve("dist").resolve("webapp");
+        final Path dist = target.resolve("dist");
+        final Path distWebApp =  dist.resolve("webapp");
         final Copy initial = InstallerSupport.getCopyTask(distWebApp, webAppTmp);
         initial.setPreserveLastModified(true);
         initial.setFailOnError(true);
@@ -81,14 +120,8 @@ public final class BuildWar extends AbstractInitializableComponent {
         log.info("Initial populate from {} to {}", distWebApp, webAppTmp);
         initial.execute();
 
-        final Path editWebApp = target.resolve("edit-webapp");
-        final Copy overlay = InstallerSupport.getCopyTask(editWebApp, webAppTmp);
-        overlay.setOverwrite(true);
-        overlay.setPreserveLastModified(true);
-        overlay.setFailOnError(true);
-        overlay.setVerbose(log.isDebugEnabled());
-        log.info("Overlay from {} to {}", editWebApp, webAppTmp);
-        overlay.execute();
+        overlayPluginWebapps(dist, webAppTmp);
+        overlayWebapp(target.resolve("edit-webapp"), webAppTmp);
 
         final File warFileFile = warFile.toFile();
         if (warFileFile.exists() && !warFile.toFile().delete()) {
