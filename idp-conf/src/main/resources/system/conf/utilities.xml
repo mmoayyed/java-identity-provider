@@ -41,6 +41,13 @@
         class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="not" abstract="true" />
     <bean id="shibboleth.Conditions.OR"
         class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="or" abstract="true" />
+
+    <bean id="shibboleth.BiConditions.AND"
+        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="and" abstract="true" />
+    <bean id="shibboleth.BiConditions.NOT"
+        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="not" abstract="true" />
+    <bean id="shibboleth.BiConditions.OR"
+        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="or" abstract="true" />
     
     <bean id="shibboleth.Conditions.BrowserProfile"
         class="org.opensaml.profile.logic.BrowserProfilePredicate" />
@@ -51,11 +58,15 @@
     <bean id="shibboleth.Conditions.Expression"
         class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
 
+    <bean id="shibboleth.Functions.Constant"
+        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant" abstract="true" />
     <bean id="shibboleth.Functions.Compose"
         class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="compose" abstract="true" />
 
-    <bean id="shibboleth.Functions.Constant"
-        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant" abstract="true" />
+    <bean id="shibboleth.BiFunctions.Constant"
+        class="net.shibboleth.utilities.java.support.logic.BiFunctionSupport" factory-method="constant" abstract="true" />
+    <bean id="shibboleth.BiFunctions.Compose"
+        class="net.shibboleth.utilities.java.support.logic.BiFunctionSupport" factory-method="compose" abstract="true" />
 
     <bean id="shibboleth.Functions.Scripted"
         class="net.shibboleth.utilities.java.support.logic.ScriptedFunction" abstract="true" />
