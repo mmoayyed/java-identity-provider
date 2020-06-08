@@ -176,8 +176,6 @@
     <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
 
-    <bean id="shibboleth.EndpointResolver" class="org.opensaml.saml.common.binding.impl.DefaultEndpointResolver" />
-
     <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"

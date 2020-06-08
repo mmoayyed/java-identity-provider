@@ -138,6 +138,10 @@
             p:encoderBeanId="shibboleth.Encoders.IDWSFSOAPEncoder" />
     </util:list>
 
+    <!-- Global bean used in all the SAML flows for endpoint resolution. -->
+    <bean id="shibboleth.EndpointResolver" class="org.opensaml.saml.common.binding.impl.DefaultEndpointResolver"
+        p:inMetadataOrder="%{idp.bindings.inMetadataOrder:true}" />
+
     <!--
     These are the actual MessageEncoder beans that implement the outgoing binding requirements.
     There is generally never any reason to change these. The init-method is being nulled below to
