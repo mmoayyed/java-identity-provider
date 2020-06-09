@@ -18,7 +18,16 @@
         p:enabled="%{idp.service.metadata.enableByReferenceFilters:true}" />
     
     <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
-        c:service-ref="shibboleth.AttributeRegistryService" />
+        p:nodeProcessors="#{getObject('shibboleth.MetadataNodeProcessors') ?: getObject('shibboleth.DefaultMetadataNodeProcessors')}" />
+        
+    <util:list id="shibboleth.DefaultMetadataNodeProcessors">
+        <bean class="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" />
+        <bean class="net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor" />
+        <bean class="net.shibboleth.idp.saml.metadata.impl.ScopesNodeProcessor" />
+        <bean class="net.shibboleth.idp.saml.metadata.impl.UIInfoNodeProcessor" />
+        <bean class="net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor"
+            c:_0-ref="shibboleth.AttributeRegistryService" />
+    </util:list>
     
     <!-- Signature Validation Criteria  -->
     
