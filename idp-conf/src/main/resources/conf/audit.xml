@@ -14,7 +14,7 @@
     This bean defines a mapping between audit log categories and formatting strings.
     -->
     <util:map id="shibboleth.AuditFormattingMap">
-        <entry key="Shibboleth-Audit" value="%a|%ST|%T|%HASHEDu|%SP|%i|%ac|%t|%attr|%n|%f|%SSO|%XX|%XA|%b|%bb|%e|%S|%SS|%HASHEDs|%UA" />
+        <entry key="Shibboleth-Audit" value="%a|%ST|%T|%HASHEDu|%SP|%i|%ac|%t|%attr|%n|%f|%SSO|%XX|%XA|%b|%bb|%e|%S|%SS|%s|%UA" />
     </util:map>
 
     <!-- Override the format of date/time fields in the log and/or convert to default time zone. -->
