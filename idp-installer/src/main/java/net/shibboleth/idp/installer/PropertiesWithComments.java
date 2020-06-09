@@ -60,7 +60,7 @@ public final class PropertiesWithComments {
     private final Properties nameReplacement;
 
     /**  BlackListed property names. */
-    @Nonnull private final Set<String> blacklistedNames;
+    @Nonnull private final Set<String> unreplacableNames;
 
     /** Have we loaded data?.
      *
@@ -74,10 +74,10 @@ public final class PropertiesWithComments {
     }
 
     /** Constructor.
-     * @param blacklist names to warn on.
+     * @param unreplacable names to warn on.
      */
-    public PropertiesWithComments(@Nonnull final Set<String> blacklist) {
-        blacklistedNames = Set.copyOf(blacklist);
+    public PropertiesWithComments(@Nonnull final Set<String> unreplacable) {
+        unreplacableNames = Set.copyOf(unreplacable);
         nameReplacement = new Properties();
     }
 
@@ -232,7 +232,7 @@ public final class PropertiesWithComments {
      */
     public boolean replaceProperty(final String propName, final String newPropValue) {
 
-        Constraint.isFalse(blacklistedNames.contains(propName),
+        Constraint.isFalse(unreplacableNames.contains(propName),
                 "property '" + propName + "' cannot be replaced");
         CommentedProperty p = properties.get(propName);
         if (null != p) {

@@ -206,7 +206,7 @@ public class V4Install extends AbstractInitializableComponent {
      */
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
-        final Set<String> blackList = Set.of(
+        final Set<String> doNotReplaceList = Set.of(
                 "idp.sealer.storePassword",
                 "idp.sealer.keyPassword",
                 "idp.authn.LDAP.bindDNCredential",
@@ -227,7 +227,7 @@ public class V4Install extends AbstractInitializableComponent {
                 if (!Files.exists(source)) {
                     throw new BuildException("missing idp.properties in dist");
                 }
-                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(blackList);
+                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(doNotReplaceList);
                 final Properties replacements;
                 if (mergePath != null) {
                     log.debug("Creating {} from {} and {}", target, source, mergePath);
@@ -268,7 +268,7 @@ public class V4Install extends AbstractInitializableComponent {
                     throw new BuildException("missing ldap.properties in dist");
                 }
                 log.debug("Creating {} from {} and {}", target, source, ldapMergePath);
-                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(blackList);
+                final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(doNotReplaceList);
                 final Properties replacements = new Properties();
                 final File mergeFile = ldapMergePath.toFile();
                 if (!installerProps.isNoTidy()) {

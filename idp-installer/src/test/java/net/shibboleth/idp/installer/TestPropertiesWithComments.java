@@ -85,7 +85,7 @@ public class TestPropertiesWithComments {
         
     }
 
-    @Test public void testBlackList() throws IOException {
+    @Test public void testUnreplaceableList() throws IOException {
         final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("x", "a", "b"));
 
         pwc.load(getInputStream());
@@ -93,7 +93,7 @@ public class TestPropertiesWithComments {
         pwc.replaceProperty("c", "new C");
         try {
             pwc.replaceProperty("a", "new C");
-            fail("Property Replacement with black listed name worked");
+            fail("Property Replacement with unreplaceable name worked");
         } catch (ConstraintViolationException e) {
             // OK
         }
