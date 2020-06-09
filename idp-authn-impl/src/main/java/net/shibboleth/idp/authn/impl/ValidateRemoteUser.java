@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -64,11 +63,11 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
     
-    /** A whitelist of usernames to accept. */
-    @Nonnull @NonnullElements private Set<String> whitelistedUsernames;
+    /** Usernames to accept. */
+    @Nonnull @NonnullElements private Set<String> allowedUsernames;
 
-    /** A blacklist of usernames to deny. */
-    @Nonnull @NonnullElements private Set<String> blacklistedUsernames;
+    /** Usernames to deny. */
+    @Nonnull @NonnullElements private Set<String> deniedUsernames;
 
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
@@ -78,31 +77,31 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     
     /** Constructor. */
     public ValidateRemoteUser() {
-        whitelistedUsernames = Collections.emptySet();
-        blacklistedUsernames = Collections.emptySet();
+        allowedUsernames = Collections.emptySet();
+        deniedUsernames = Collections.emptySet();
         setMetricName(DEFAULT_METRIC_NAME);
     }
     
     /**
-     * Set the whitelisted usernames.
+     * Set the allowed usernames.
      * 
-     * @param whitelist whitelist to set
+     * @param allowed usernames to allow
      */
-    public void setWhitelistedUsernames(@Nonnull @NonnullElements final Collection<String> whitelist) {
+    public void setAllowedUsernames(@Nullable @NonnullElements final Collection<String> allowed) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        whitelistedUsernames = new HashSet<>(StringSupport.normalizeStringCollection(whitelist));
+        allowedUsernames = Set.copyOf(StringSupport.normalizeStringCollection(allowed));
     }
 
     /**
-     * Set the blacklisted usernames.
+     * Set the denied usernames.
      * 
-     * @param blacklist blacklist to set
+     * @param denied usernames to deny
      */
-    public void setBlacklistedUsernames(@Nonnull @NonnullElements final Collection<String> blacklist) {
+    public void setDeniedUsernames(@Nullable @NonnullElements final Collection<String> denied) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        blacklistedUsernames = new HashSet<>(StringSupport.normalizeStringCollection(blacklist));
+        deniedUsernames = Set.copyOf(StringSupport.normalizeStringCollection(denied));
     }
 
     /**
@@ -166,16 +165,16 @@ public class ValidateRemoteUser extends AbstractValidationAction {
      */
     private boolean isAuthenticated(@Nonnull @NotEmpty final String username) {
         
-        if (!whitelistedUsernames.isEmpty() && !whitelistedUsernames.contains(username)) {
-            // Not in whitelist. Only accept if a regexp applies.
+        if (!allowedUsernames.isEmpty() && !allowedUsernames.contains(username)) {
+            // Not in allowed set. Only accept if a regexp applies.
             if (matchExpression == null) {
                 return false;
             }
             return matchExpression.matcher(username).matches();
         }
         
-        // In whitelist (or none). Check blacklist, and if necessary a regexp.
-        return !blacklistedUsernames.contains(username)
+        // In allowed set (or none). Check deny set, and if necessary a regexp.
+        return !deniedUsernames.contains(username)
                 && (matchExpression == null || matchExpression.matcher(username).matches());
     }
 

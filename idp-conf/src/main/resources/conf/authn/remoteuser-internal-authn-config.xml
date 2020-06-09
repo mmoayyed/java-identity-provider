@@ -41,19 +41,19 @@
         -->
     </util:list>
     
-    <!-- Uncomment/configure to install username whitelist, blacklist, and/or match expressions. -->
+    <!-- Uncomment/configure to install username allow set, deny set, and/or match expressions. -->
     
-    <util:list id="shibboleth.authn.RemoteUser.whitelistedUsernames">
+    <util:set id="shibboleth.authn.RemoteUser.allowedUsernames">
         <!--
         <value>goodguy</value>
         -->
-    </util:list>
+    </util:set>
 
-    <util:list id="shibboleth.authn.RemoteUser.blacklistedUsernames">
+    <util:set id="shibboleth.authn.RemoteUser.deniedUsernames">
         <!--
         <value>badguy</value>
         -->
-    </util:list>
+    </util:set>
     
     <!--
     <bean id="shibboleth.authn.RemoteUser.matchExpression" class="java.util.regex.Pattern" factory-method="compile"

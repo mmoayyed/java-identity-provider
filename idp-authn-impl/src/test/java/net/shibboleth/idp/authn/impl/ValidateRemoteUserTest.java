@@ -44,8 +44,8 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
         super.setUp();
         
         action = new ValidateRemoteUser();
-        action.setWhitelistedUsernames(Arrays.asList("bar", "baz"));
-        action.setBlacklistedUsernames(Arrays.asList("foo"));
+        action.setAllowedUsernames(Arrays.asList("bar", "baz"));
+        action.setDeniedUsernames(Arrays.asList("foo"));
         action.setMatchExpression(Pattern.compile("^ba(r|z|n)$"));
         action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
         action.initialize();
@@ -99,7 +99,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
                 UsernamePrincipal.class).iterator().next().getName(), "baz");
     }
 
-    @Test public void testBlacklist() throws ComponentInitializationException {
+    @Test public void testDenyist() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
