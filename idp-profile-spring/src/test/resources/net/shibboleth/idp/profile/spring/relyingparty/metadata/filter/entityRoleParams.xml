@@ -6,7 +6,7 @@
 
 	id="requiredValidUntil" xsi:type="metadata:InlineMetadataProvider">
 	
-	<metadata:MetadataFilter xsi:type="metadata:EntityRoleWhiteList" removeEmptyEntitiesDescriptors="false" removeRolelessEntityDescriptors="false">
+	<metadata:MetadataFilter xsi:type="metadata:EntityRole" removeEmptyEntitiesDescriptors="false" removeRolelessEntityDescriptors="false">
 	   <metadata:RetainedRole>metadata:qname1</metadata:RetainedRole>
        <metadata:RetainedRole>qname2</metadata:RetainedRole>
 	</metadata:MetadataFilter>

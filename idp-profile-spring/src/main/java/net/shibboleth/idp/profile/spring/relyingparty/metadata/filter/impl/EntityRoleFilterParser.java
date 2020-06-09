@@ -34,13 +34,18 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for a &lt;EntityRoleWhiteList&gt; filter.
+ * Parser for a &lt;EntityRolet&gt; filter.
  */
 public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
-            "EntityRoleWhiteList");
+            "EntityRole");
+
+    /** Deprecated Element name. */
+    @Deprecated(forRemoval=true, since="4.1.0")
+    @Nonnull public static final QName DEPRECATED_TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "EntityRoleWhiteList");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
@@ -50,6 +55,7 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
+        
         final List<QName> retainedRoles = new ArrayList<>();
         final List<Element> retainedRoleElems =
                 ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,

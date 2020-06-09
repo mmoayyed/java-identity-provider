@@ -918,10 +918,10 @@
         </complexContent>
     </complexType>
 
-    <complexType name="EntityRoleWhiteList">
+    <complexType name="EntityRole">
         <annotation>
             <documentation>
-                A filter that removes roles from an EntityDescriptor that do not appear in the filter's whitelist.
+                A filter that removes roles from an EntityDescriptor that do not appear in the filter's RetainedRoles.
                 Optionally an EntityDescriptor may be completely removed if it does not contain at least one role after
                 the filter. EntitiesDescriptors may be removed if they do not contain at least one entity or entities
                 descriptor after the filtering.
@@ -957,6 +957,17 @@
                     </annotation>
                 </attribute>
             </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="EntityRoleWhiteList">
+        <annotation>
+            <documentation>
+                DEPRECATED name for EntityRole filter.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:EntityRole" />
         </complexContent>
     </complexType>
     

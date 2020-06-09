@@ -35,27 +35,26 @@ import org.testng.annotations.Test;
 /**
  * test for parser for EntityRoleWhileList filter
  */
-@SuppressWarnings("javadoc")
 public class EntityRoleFilterParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityRole.xml");
+        final MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityRole.xml");
 
         final EntityRoleFilter filter = (EntityRoleFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getRemoveEmptyEntitiesDescriptors(), true);
         Assert.assertEquals(filter.getRemoveRolelessEntityDescriptors(), true);
-        Assert.assertEquals(filter.getRoleWhiteList().size(), 0);
+        Assert.assertEquals(filter.getRetainedRoles().size(), 0);
     }
 
     @Test public void param() throws IOException {
-        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityRoleParams.xml");
+        final MetadataResolver resolver = getBean(MetadataResolver.class, "filter/entityRoleParams.xml");
 
         final EntityRoleFilter filter = (EntityRoleFilter) resolver.getMetadataFilter();
         Assert.assertEquals(filter.getRemoveEmptyEntitiesDescriptors(), false);
         Assert.assertEquals(filter.getRemoveRolelessEntityDescriptors(), false);
-        final List<QName> roles = filter.getRoleWhiteList();
+        final List<QName> roles = filter.getRetainedRoles();
         Assert.assertEquals(roles.size(), 2);
-        QName r1 = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "qname1");
+        final QName r1 = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "qname1");
         Assert.assertTrue(r1.equals(roles.get(0)));
         Assert.assertTrue(roles.contains(QNameSupport.constructQName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "qname1", null)));
         Assert.assertTrue(roles.contains(QNameSupport.constructQName(SAMLConstants.SAML20MD_NS, "qname2", null)));

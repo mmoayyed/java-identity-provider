@@ -23,6 +23,7 @@ import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.AlgorithmFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.ByReferenceParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.DeprecatedEntityRoleFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntitiesDescriptorNameParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntityAttributesFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntityRoleFilterParser;
@@ -35,6 +36,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.Schem
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationParser;
 
 /** Namespace handler for <code>urn:mace:shibboleth:2.0:metadata</code>. */
+@SuppressWarnings("removal")
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Metadata provider element name. */
@@ -68,6 +70,8 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(EntityAttributesFilterParser.TYPE_NAME, new EntityAttributesFilterParser());
         registerBeanDefinitionParser(NameIDFormatFilterParser.TYPE_NAME, new NameIDFormatFilterParser());
         registerBeanDefinitionParser(EntityRoleFilterParser.TYPE_NAME, new EntityRoleFilterParser());
+        registerBeanDefinitionParser(DeprecatedEntityRoleFilterParser.TYPE_NAME,
+                new DeprecatedEntityRoleFilterParser());
         registerBeanDefinitionParser(PredicateFilterParser.TYPE_NAME, new PredicateFilterParser());
         registerBeanDefinitionParser(SchemaValidationParser.TYPE_NAME, new SchemaValidationParser());
         registerBeanDefinitionParser(SignatureValidationParser.TYPE_NAME, new SignatureValidationParser());

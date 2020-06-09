@@ -6,7 +6,7 @@
 
 	id="requiredValidUntil" xsi:type="metadata:InlineMetadataProvider">
 	
-	<metadata:MetadataFilter xsi:type="metadata:EntityRoleWhiteList"/>
+	<metadata:MetadataFilter xsi:type="metadata:EntityRole"/>
 	
 	<EntityDescriptor ID="uk001502"
 		entityID="https://sp.example.org/sp/shibboleth">
