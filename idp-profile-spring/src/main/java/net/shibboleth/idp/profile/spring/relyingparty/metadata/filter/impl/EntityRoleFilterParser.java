@@ -42,11 +42,6 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
     @Nonnull public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "EntityRole");
 
-    /** Deprecated Element name. */
-    @Deprecated(forRemoval=true, since="4.1.0")
-    @Nonnull public static final QName DEPRECATED_TYPE_NAME =
-            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "EntityRoleWhiteList");
-
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
         return EntityRoleFilter.class;
