@@ -42,7 +42,7 @@
     Get the public key certificate from the party publishing the metadata, and validate
     it with them via some out of band mechanism (e.g., a fingerprint on a secure page).
 
-    The EntityRoleWhiteList saves memory by only loading metadata from SAML roles
+    The EntityRole filter saves memory by only loading metadata from SAML roles
     that the IdP needs to interoperate with.
     -->
     
