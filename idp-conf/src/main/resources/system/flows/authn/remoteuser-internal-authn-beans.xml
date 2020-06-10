@@ -19,6 +19,15 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <import resource="../../../conf/authn/remoteuser-internal-authn-config.xml" />
+
+    <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="remoteuser-internal-authn-config.xml">
+        <constructor-arg index="0">
+            <map>
+                <entry key="shibboleth.authn.RemoteUser.whitelistedUsernames" value="shibboleth.authn.RemoteUser.allowedUsernames" />
+                <entry key="shibboleth.authn.RemoteUser.blacklistedUsernames" value="shibboleth.authn.RemoteUser.deniedUsernames" />
+            </map>
+        </constructor-arg>
+    </bean>
     
     <bean id="ExtractRemoteUser" class="net.shibboleth.idp.authn.impl.ExtractRemoteUser" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
