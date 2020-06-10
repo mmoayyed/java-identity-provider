@@ -43,19 +43,19 @@
     <!-- Attribute Release configuration -->
 
     <!--
-    Attribute release whitelist, blacklist, and match expressions to determine 
+    Attribute release control sets and match expressions to determine 
     whether consent should be obtained for an attribute based on the attribute ID.
     -->
     
-    <util:list id="shibboleth.consent.attribute-release.WhitelistedAttributeIDs">
+    <util:set id="shibboleth.consent.attribute-release.PromptedAttributeIDs">
         <!--
         <value>mail</value>
         -->
-    </util:list>
+    </util:set>
 
-    <util:list id="shibboleth.consent.attribute-release.BlacklistedAttributeIDs">
+    <util:set id="shibboleth.consent.attribute-release.IgnoredAttributeIDs">
         <value>samlPairwiseID</value>
-    </util:list>
+    </util:set>
 
     <!-- 
     <bean id="shibboleth.consent.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 

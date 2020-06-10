@@ -40,41 +40,41 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public class AttributePredicate extends AbstractInitializableComponent implements Predicate<IdPAttribute> {
 
-    /** Whitelist of attribute IDs to allow. */
-    @Nonnull @NonnullElements private Set<String> whitelistedAttributeIds;
+    /** Set of attribute IDs for which to prompt for consent. */
+    @Nonnull @NonnullElements private Set<String> promptedAttributeIds;
 
-    /** Blacklist of attribute IDs to deny. */
-    @Nonnull @NonnullElements private Set<String> blacklistedAttributeIds;
+    /** Set of attribute IDs to ignore for consent. */
+    @Nonnull @NonnullElements private Set<String> ignoredAttributeIds;
 
     /** Regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
 
     /** Constructor. */
     public AttributePredicate() {
-        whitelistedAttributeIds = Collections.emptySet();
-        blacklistedAttributeIds = Collections.emptySet();
+        promptedAttributeIds = Collections.emptySet();
+        ignoredAttributeIds = Collections.emptySet();
     }
 
     /**
-     * Set the whitelisted attribute IDs.
+     * Set the attribute IDs for which to prompt for consent.
      * 
-     * @param whitelist whitelisted attribute IDs
+     * @param prompted prompted attribute IDs
      */
-    public void setWhitelistedAttributeIds(@Nonnull @NonnullElements final Collection<String> whitelist) {
+    public void setPromptedAttributeIds(@Nonnull @NonnullElements final Collection<String> prompted) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        whitelistedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(whitelist));
+        promptedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(prompted));
     }
 
     /**
-     * Set the blacklisted attribute IDs.
+     * Set the attribute IDs to ignore for consent.
      * 
-     * @param blacklist blacklisted attribute IDs
+     * @param ignored ignored attribute IDs
      */
-    public void setBlacklistedAttributeIds(@Nonnull @NonnullElements final Collection<String> blacklist) {
+    public void setIgnoredAttributeIds(@Nonnull @NonnullElements final Collection<String> ignored) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        blacklistedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(blacklist));
+        ignoredAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(ignored));
     }
 
     /**
@@ -101,16 +101,16 @@ public class AttributePredicate extends AbstractInitializableComponent implement
 
         final String attributeId = input.getId();
 
-        if (!whitelistedAttributeIds.isEmpty() && !whitelistedAttributeIds.contains(attributeId)) {
-            // Not in whitelist. Only accept if a regexp applies.
+        if (!promptedAttributeIds.isEmpty() && !promptedAttributeIds.contains(attributeId)) {
+            // Not in prompted set. Only prompt if a regexp applies.
             if (matchExpression == null) {
                 return false;
             }
             return matchExpression.matcher(attributeId).matches();
         }
         
-        // In whitelist (or none). Check blacklist, and if necessary a regexp.
-        return !blacklistedAttributeIds.contains(attributeId)
+        // In prompted set (or none). Check unprompted set, and if necessary a regexp.
+        return !ignoredAttributeIds.contains(attributeId)
                 && (matchExpression == null || matchExpression.matcher(attributeId).matches());
     }
 

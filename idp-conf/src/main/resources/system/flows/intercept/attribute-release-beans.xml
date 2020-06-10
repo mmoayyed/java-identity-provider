@@ -16,6 +16,15 @@
 
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
+    <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="consent-intercept-config.xml">
+        <constructor-arg index="0">
+            <map>
+                <entry key="shibboleth.consent.attribute-release.WhitelistedAttributeIDs" value="shibboleth.consent.attribute-release.PromptedAttributeIDs" />
+                <entry key="shibboleth.consent.attribute-release.BlacklistedAttributeIDs" value="shibboleth.consent.attribute-release.IgnoredAttributeIDs" />
+            </map>
+        </constructor-arg>
+    </bean>
+
     <bean id="AttributeReleaseConsentFunction"
         class="net.shibboleth.idp.consent.logic.impl.AttributeReleaseConsentFunction" scope="prototype" />
 
@@ -32,8 +41,8 @@
     <!-- Predicate used to determine if consent should be obtained for an attribute. -->
     <bean id="AttributePredicate"
         class="net.shibboleth.idp.consent.logic.impl.AttributePredicate"
-        p:whitelistedAttributeIds-ref="shibboleth.consent.attribute-release.WhitelistedAttributeIDs"
-        p:blacklistedAttributeIds-ref="shibboleth.consent.attribute-release.BlacklistedAttributeIDs"
+        p:promptedAttributeIds="#{getObject('shibboleth.consent.attribute-release.PromptedAttributeIDs') ?: getObject('shibboleth.consent.attribute-release.WhitelistedAttributeIDs')}"
+        p:ignoredAttributeIds="#{getObject('shibboleth.consent.attribute-release.IgnoredAttributeIDs') ?: getObject('shibboleth.consent.attribute-release.BlacklistedAttributeIDs')}"
         p:attributeIdMatchExpression="#{getObject('shibboleth.consent.attribute-release.MatchExpression')}" />
 
     <!-- Functions to return a storage key consisting of the user identifier. -->

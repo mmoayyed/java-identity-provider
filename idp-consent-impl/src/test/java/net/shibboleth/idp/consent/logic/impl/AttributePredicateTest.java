@@ -45,13 +45,13 @@ public class AttributePredicateTest {
     }
 
     @Test public void testWhitelist() {
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
         Assert.assertTrue(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
     }
 
     @Test public void testBlacklist() {
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute1"));
         Assert.assertFalse(p.test(attribute1));
         Assert.assertTrue(p.test(attribute2));
     }
@@ -63,18 +63,18 @@ public class AttributePredicateTest {
     }
 
     @Test public void testWhitelistAndBlacklist() {
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute1"));
         Assert.assertFalse(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
 
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute2"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute2"));
         Assert.assertTrue(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
     }
 
     @Test public void testWhitelistAndMatchExpression() {
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
         Assert.assertTrue(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
@@ -85,7 +85,7 @@ public class AttributePredicateTest {
     }
 
     @Test public void testBlacklistAndMatchExpression() {
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
         Assert.assertFalse(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
@@ -96,26 +96,26 @@ public class AttributePredicateTest {
     }
 
     @Test public void testWhitelistAndBlacklistAndMatchExpression() {
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
         Assert.assertFalse(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
 
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute2"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute2"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*1"));
         Assert.assertTrue(p.test(attribute1));
         Assert.assertFalse(p.test(attribute2));
 
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute1"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute1"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*2"));
         Assert.assertFalse(p.test(attribute1));
         Assert.assertTrue(p.test(attribute2));
 
-        p.setWhitelistedAttributeIds(Arrays.asList("attribute1"));
-        p.setBlacklistedAttributeIds(Arrays.asList("attribute2"));
+        p.setPromptedAttributeIds(Arrays.asList("attribute1"));
+        p.setIgnoredAttributeIds(Arrays.asList("attribute2"));
         p.setAttributeIdMatchExpression(Pattern.compile(".*2"));
         Assert.assertFalse(p.test(attribute1));
         Assert.assertTrue(p.test(attribute2));
