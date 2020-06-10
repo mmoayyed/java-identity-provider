@@ -276,11 +276,22 @@
     </bean>
 
     <!-- Parent beans for Signature/Encryption/TLS/HttpClientSecurity Configuration objects. -->
-        
+
+    <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="global.xml">
+        <constructor-arg index="0">
+            <map>
+                <entry key="shibboleth.SignatureWhitelist" value="shibboleth.IncludedSignatureAlgorithms" />
+                <entry key="shibboleth.SignatureBlacklist" value="shibboleth.ExcludedSignatureAlgorithms" />
+                <entry key="shibboleth.EncryptionWhitelist" value="shibboleth.IncludedEncryptionAlgorithms" />
+                <entry key="shibboleth.EncryptionBlacklist" value="shibboleth.ExcludedEncryptionAlgorithms" />
+            </map>
+        </constructor-arg>
+    </bean>
+    
     <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"
         class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
+        p:whitelistedAlgorithms="#{getObject('shibboleth.IncludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.ExcludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureBlacklist')}" />
     
     <bean id="shibboleth.BasicClientTLSValidationConfiguration" abstract="true"
         class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration" />
@@ -290,18 +301,18 @@
     
     <bean id="shibboleth.BasicSignatureSigningConfiguration" abstract="true"
         class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
+        p:whitelistedAlgorithms="#{getObject('shibboleth.IncludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.ExcludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureBlacklist')}" />
     
     <bean id="shibboleth.BasicEncryptionConfiguration" abstract="true"
         class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
+        p:whitelistedAlgorithms="#{getObject('shibboleth.IncludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.ExcludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionBlacklist')}" />
 
     <bean id="shibboleth.BasicDecryptionConfiguration" abstract="true"
         class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
-        p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
-        p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
+        p:whitelistedAlgorithms="#{getObject('shibboleth.IncludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.ExcludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionBlacklist')}" />
 
     <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
     
