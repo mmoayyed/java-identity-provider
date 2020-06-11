@@ -49,7 +49,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Perform processing of a SAML 2 Response's Assertions that have been validated by earlier actions
