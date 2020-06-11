@@ -118,7 +118,7 @@ public final class PluginVersion implements Comparable<PluginVersion>{
      * @param valueAsString what to parse
      * @return the value as an int
      * @throws NumberFormatException if {@link Integer#parseInt(String, int)} does
-     * or if the value is less than 0 or > {@link #MAX_VNO}.
+     * or if the value is less than 0 or &gt; {@link #MAX_VNO}.
      */
     private int parseValue(final String valueAsString) throws NumberFormatException{
         final int value = Integer.parseInt(valueAsString);
