@@ -39,8 +39,8 @@
         <property name="signatureValidationConfigurations">
             <list>
                 <bean parent="shibboleth.BasicSignatureValidationConfiguration" 
-                    p:whitelistedAlgorithms="#{getObject('shibboleth.IncludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureWhitelist')}"
-                    p:blacklistedAlgorithms="#{getObject('shibboleth.ExcludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureBlacklist')}" />
+                    p:includedAlgorithms="#{getObject('shibboleth.IncludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureWhitelist')}"
+                    p:excludedAlgorithms="#{getObject('shibboleth.ExcludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureBlacklist')}" />
             </list>
         </property>
     </bean>
