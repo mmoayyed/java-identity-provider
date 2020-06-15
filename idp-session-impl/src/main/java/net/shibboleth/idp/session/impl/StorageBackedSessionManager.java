@@ -70,7 +70,7 @@ import com.google.common.collect.ImmutableList;
  * {@link StorageService} for persistence and lifecycle management of data.
  * 
  * <p>
- * The storage layout here is to store most data in a context named for the session ID. Within that context, the master
+ * The storage layout here is to store most data in a context named for the session ID. Within that context, the
  * {@link IdPSession} record lives under a key called "_session", with an expiration based on the session timeout value
  * plus a configurable amount of "slop" to prevent premature disappearance in case of logout.
  * </p>
@@ -86,8 +86,8 @@ import com.google.common.collect.ImmutableList;
  * </p>
  * 
  * <p>
- * For cross-referencing, lists of flow and service IDs are tracked within the master "_session" record, so adding
- * either requires an update to the master record plus the creation of a new one. Post-creation, there are no updates to
+ * For cross-referencing, lists of flow and service IDs are tracked within the "_session" record, so adding
+ * either requires an update to that record plus the creation of a new one. Post-creation, there are no updates to
  * the AuthenticationResult or SPSession records, but the expiration of the result records can be updated to reflect
  * activity updates.
  * </p>
@@ -109,8 +109,8 @@ import com.google.common.collect.ImmutableList;
 public class StorageBackedSessionManager extends AbstractIdentifiableInitializableComponent implements SessionManager,
         SessionResolver {
 
-    /** Storage key of master session records. */
-    @Nonnull @NotEmpty public static final String SESSION_MASTER_KEY = "_session";
+    /** Storage key of primary session records. */
+    @Nonnull @NotEmpty public static final String SESSION_PRIMARY_KEY = "_session";
 
     /** Default cookie name for session tracking. */
     @Nonnull @NotEmpty protected static final String DEFAULT_COOKIE_NAME = "shib_idp_session";
@@ -535,7 +535,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         newSession.doBindToAddress(remoteAddr);
 
         try {
-            if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
+            if (!storageService.create(sessionId, SESSION_PRIMARY_KEY, newSession, serializer,
                     newSession.getCreationInstant().plus(sessionTimeout).plus(sessionSlop).toEpochMilli())) {
                 throw new SessionException("A duplicate session ID was generated, unable to create session");
             }
@@ -812,9 +812,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         try {
             final StorageRecord<StorageBackedIdPSession> sessionRecord =
-                    storageService.read(sessionId, SESSION_MASTER_KEY);
+                    storageService.read(sessionId, SESSION_PRIMARY_KEY);
             if (sessionRecord != null) {
-                return sessionRecord.getValue(serializer, sessionId, SESSION_MASTER_KEY);
+                return sessionRecord.getValue(serializer, sessionId, SESSION_PRIMARY_KEY);
             }
             log.debug("Primary lookup failed for session ID {}", sessionId);
         } catch (final IOException e) {

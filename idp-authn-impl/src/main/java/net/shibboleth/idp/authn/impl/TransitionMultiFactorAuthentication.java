@@ -42,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An authentication action that acts as the master evaluation step regulating execution
- * of transitions between MFA stages.
+ * An authentication action that acts as the driver regulating execution of transitions
+ * between MFA stages.
  * 
  * <p>This is the heart of the MFA processing sequence, and runs after the
  * {@link MultiFactorAuthenticationContext} has been populated. It uses the current/previous

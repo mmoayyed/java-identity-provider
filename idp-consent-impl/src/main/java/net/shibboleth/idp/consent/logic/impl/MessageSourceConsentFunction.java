@@ -43,7 +43,7 @@ import org.springframework.context.NoSuchMessageException;
  * Function that returns a consent object whose id and value are resolved from a lookup function
  * and {@link MessageSource}.
  * 
- * <p>The lookup function's return value is a master key, mapped via the {@link MessageSource} to an ID.
+ * <p>The lookup function's return value is a key, mapped via the {@link MessageSource} to an ID.
  * A suffix is attached to the ID to obtain the message key of the value.</p>
  */
 public class MessageSourceConsentFunction extends AbstractInitializableComponent

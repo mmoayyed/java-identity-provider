@@ -85,17 +85,17 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         
         final Instant exp =
                 instant.plus(sessionManager.getSessionTimeout()).plus(sessionManager.getSessionSlop());
-        log.debug("Updating expiration of master record for session {} to {}", getId(), exp);
+        log.debug("Updating expiration of primary record for session {} to {}", getId(), exp);
         
         try {
             sessionManager.getStorageService().updateExpiration(
-                    getId(), StorageBackedSessionManager.SESSION_MASTER_KEY, exp.toEpochMilli());
+                    getId(), StorageBackedSessionManager.SESSION_PRIMARY_KEY, exp.toEpochMilli());
             super.setLastActivityInstant(instant);
         } catch (final IOException e) {
             if (!sessionManager.isMaskStorageFailure()) {
                 throw new SessionException("Exception updating expiration of session record", e);
             }
-            log.error("Exception updating expiration of master record for session {}", getId(), e);
+            log.error("Exception updating expiration of primary record for session {}", getId(), e);
         }
     }
     
@@ -159,7 +159,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             if (!sessionManager.isMaskStorageFailure()) {
                 throw new SessionException("Exception updating address binding of session record", e);
             }
-            log.error("Exception updating address binding of master record for session {}", getId(), e);
+            log.error("Exception updating address binding of primary record for session {}", getId(), e);
         }
     }
 
@@ -233,7 +233,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
             final AuthenticationResult prev = super.addAuthenticationResult(result);
             if (prev == null) {
-                // If no previous record, the add operation changed the master record, requiring an update.
+                // If no previous record, the add operation changed the primary record, requiring an update.
                 int attempts = 10;
                 boolean success = writeToStorage();
                 while (!success && attempts-- > 0) {
@@ -300,7 +300,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                         result.getAuthenticationFlowId(), e);
             }
             
-            // Try and update the master record with the updated flow list.
+            // Try and update the primary record with the updated flow list.
             try {
                 int attempts = 10;
                 boolean success = writeToStorage();
@@ -413,7 +413,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 }
                 final SPSession prev = super.addSPSession(spSession);
                 if (prev == null) {
-                    // If no previous record, the add operation changed the master record, requiring an update.
+                    // If no previous record, the add operation changed the primary record, requiring an update.
                     int attempts = 10;
                     boolean success = writeToStorage();
                     while (!success && attempts-- > 0) {
@@ -462,7 +462,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 }
             }
             
-            // Try and update the master record with the updated service session list.
+            // Try and update the primary record with the updated service session list.
             try {
                 int attempts = 10;
                 boolean success = writeToStorage();
@@ -728,7 +728,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     }
     
     /**
-     * Update the master session record based on the current contents of this object.
+     * Update the primary session record based on the current contents of this object.
      * 
      * @return true iff the update succeeds, false iff a version mismatch resulted in overwrite of this object
      * @throws IOException if an error occurs trying to perform an update
@@ -738,7 +738,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             final Instant exp = getLastActivityInstant().plus(sessionManager.getSessionTimeout()).plus(
                     sessionManager.getSessionSlop());
             final Long ver = sessionManager.getStorageService().updateWithVersion(version, getId(),
-                    StorageBackedSessionManager.SESSION_MASTER_KEY, this, sessionManager.getStorageSerializer(),
+                    StorageBackedSessionManager.SESSION_PRIMARY_KEY, this, sessionManager.getStorageSerializer(),
                     exp.toEpochMilli());
             if (ver == null) {
                 log.error("Record for session {} has disappeared from backing store", getId());
@@ -750,13 +750,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             // The record has changed underneath. We need to deserialize the session back into the
             // same object by passing ourselves as the target object to a new serializer instance.
             final StorageRecord<StorageBackedIdPSession> record =
-                    sessionManager.getStorageService().read(getId(), StorageBackedSessionManager.SESSION_MASTER_KEY);
+                    sessionManager.getStorageService().read(getId(), StorageBackedSessionManager.SESSION_PRIMARY_KEY);
             if (record == null) {
                 log.error("Record for session {} has disappeared from backing store", getId());
                 throw new IOException("Unable to update session, record disappeared");
             }
             record.getValue(new StorageBackedIdPSessionSerializer(sessionManager, this),
-                    getId(), StorageBackedSessionManager.SESSION_MASTER_KEY);
+                    getId(), StorageBackedSessionManager.SESSION_PRIMARY_KEY);
             return false;
         }
     }
