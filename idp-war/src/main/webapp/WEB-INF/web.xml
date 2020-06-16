@@ -209,7 +209,7 @@
             <http-method-omission>OPTIONS</http-method-omission>
             <http-method-omission>POST</http-method-omission>
         </web-resource-collection>
-        <authn-constraint/>
+        <auth-constraint/>
     </security-constraint>
 
     <!-- Allow any HTTP methods to the API flows. -->
