@@ -1,0 +1,61 @@
+ <flow xmlns="http://www.springframework.org/schema/webflow"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+       parent="intercept.abstract">
+
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
+    <on-start>
+        <evaluate expression="WarningConditionMap.entrySet().iterator()" result="flowScope.WarningIterator" />
+    </on-start>
+
+    <decision-state id="CheckIterator">
+        <if test="WarningIterator.hasNext()" then="CheckCondition" else="proceed" />
+    </decision-state>
+
+    <!-- If the condition is true, we don't need to notify, otherwise check cookie to see if we do. -->
+    <decision-state id="CheckCondition">
+        <on-entry>
+            <evaluate expression="WarningIterator.next()" result="flowScope.WarningEntry" />
+            <evaluate expression="WarningCookiePrefix + WarningEntry.getKey()" result="flowScope.WarningCookieName" />        
+        </on-entry>
+        <if test="WarningEntry.getValue().getFirst().test(opensamlProfileRequestContext)"
+            then="CheckCookie" else="ShouldUnsetCookie" />
+    </decision-state>
+
+    <decision-state id="ShouldUnsetCookie">
+        <if test="WarningCookieManager.getCookieValue(WarningCookieName, null) != null"
+            then="UnsetCookie" else="CheckIterator" />
+    </decision-state>
+
+    <action-state id="UnsetCookie">
+        <evaluate expression="WarningCookieManager.unsetCookie(WarningCookieName)" />
+        <transition to="CheckIterator" />
+    </action-state>
+
+    <decision-state id="CheckCookie">
+        <if test="T(java.lang.System).currentTimeMillis() - T(java.lang.Long).parseLong(WarningCookieManager.getCookieValue(WarningCookieName, '0')) > WarningEntry.getValue().getSecond().toMillis()"
+            then="DisplayWarningView" else="CheckIterator" />
+    </decision-state>
+
+    <view-state id="DisplayWarningView" view="intercept/#{WarningEntry.getKey()}">
+    	<attribute name="csrf_excluded" value="true" type="boolean"/>
+        <on-render>
+            <evaluate expression="WarningCookieManager.addCookie(WarningCookieName, T(java.lang.Long).toString(T(java.lang.System).currentTimeMillis()))" />
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
+        </on-render>
+        
+        <transition to="CheckIterator" />
+    </view-state>
+
+    <end-state id="proceed" />
+
+    <bean-import resource="warning-beans.xml" />
+
+</flow>

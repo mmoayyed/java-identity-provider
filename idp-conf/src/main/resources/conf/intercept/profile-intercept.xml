@@ -35,6 +35,8 @@
                 <bean id="intercept/impersonate" parent="shibboleth.InterceptFlow" />
                 
                 <bean id="intercept/external" parent="shibboleth.InterceptFlow" />
+                
+                <bean id="intercept/warning" parent="shibboleth.InterceptFlow" />
             </list>
         </property>
     </bean>

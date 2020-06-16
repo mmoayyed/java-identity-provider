@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!--
+    The map keys are the names of view templates to render if the condition evaluates to true.
+    
+    The values are of type Pair<Predicate<ProfileRequestContext>,Duration>. The condition determines whether
+    the warning is displayed, and the duration is the interval between warnings.
+    -->
+    <util:map id="shibboleth.warning.ConditionMap">
+        <!--
+        <entry key="warn-one">
+            <bean parent="shibboleth.Pair">
+                <constructor-arg index="0">
+                    <bean parent="shibboleth.Conditions.TRUE" />
+                </constructor-arg>
+                <constructor-arg index="1">
+                    <bean class="java.time.Duration" factory-method="parse" c:_0="PT8H" />
+                </constructor-arg>
+            </bean>
+        </entry>
+        <entry key="warn-two">
+            <bean parent="shibboleth.Pair">
+                <constructor-arg index="0">
+                    <bean parent="shibboleth.Conditions.TRUE" />
+                </constructor-arg>
+                <constructor-arg index="1">
+                    <bean class="java.time.Duration" factory-method="parse" c:_0="PT0S" />
+                </constructor-arg>
+            </bean>
+        </entry>
+        -->
+    </util:map>
+
+    <!-- Prefix of cookie name to track when user was last warned. -->
+    <bean id="shibboleth.warning.NotifyCookiePrefix" class="java.lang.String" c:_0="shib_idp_warn_" />
+    
+</beans>
