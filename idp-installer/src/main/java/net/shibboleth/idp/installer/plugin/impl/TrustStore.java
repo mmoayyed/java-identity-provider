@@ -59,7 +59,7 @@ public final class TrustStore extends AbstractInitializableComponent {
     @Nonnull private final Logger log = LoggerFactory.getLogger(TrustStore.class);
     
     /** Where the IdP is installed.  */
-    @NonnullAfterInit private String idpHome;
+    @NonnullAfterInit private Path idpHome;
     
     /** The plugin this is the trust store for. */
     @NonnullAfterInit private String pluginId;
@@ -84,7 +84,7 @@ public final class TrustStore extends AbstractInitializableComponent {
     /** Set the IdPHome.
      * @param what The idpHome to set.
      */
-    public void setIdpHome(final String what) {
+    public void setIdpHome(final Path what) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idpHome = what;
     }
@@ -237,13 +237,12 @@ public final class TrustStore extends AbstractInitializableComponent {
             throw new ComponentInitializationException("Plugin IN not set up");
         }
         
-        final Path home = Path.of(idpHome);
-        if (!Files.exists(home)) {
+        if (!Files.exists(idpHome)) {
             throw new ComponentInitializationException("IdP home '" + idpHome + "' does not exist");
         }
 
         try {
-            final Path parent = home.resolve("credentials").resolve(pluginId);
+            final Path parent = idpHome.resolve("credentials").resolve(pluginId);
             if (!Files.exists(parent)) {
                 log.info("Plugin {}: Trust store folder does not exist, creating", pluginId);
                 Files.createDirectories(parent);
