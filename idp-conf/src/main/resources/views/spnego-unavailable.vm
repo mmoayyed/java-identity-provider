@@ -17,7 +17,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>#springMessageText("idp.title", "Web Login Sevice") - #springMessageText("${eventKey}.title", "Error")</title>
+    <title>#springMessageText("idp.title", "Web Login Service") - #springMessageText("${eventKey}.title", "Error")</title>
     <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
   </head>
   
@@ -26,7 +26,7 @@
       <div class="container">
         <header>
           <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
-          <h3>#springMessageText("idp.title", "Web Login Sevice") - #springMessage("idp.title.suffix", "Error")</h3>
+          <h3>#springMessageText("idp.title", "Web Login Service") - #springMessage("idp.title.suffix", "Error")</h3>
         </header>
                 
         <div class="content">
