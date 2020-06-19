@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <import resource="admin-abstract-beans.xml" />
+
+    <!-- Profile ID for flow. -->    
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/hello" />
+    
+    <!-- Default operation/resource suppliers for access checks. -->
+
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="hello" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy"
+        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
+        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+        c:outputType="#{T(java.lang.String)}"
+        c:expression="'subject/' + #custom.apply(#input)">
+        <property name="customObject">
+            <bean parent="shibboleth.Functions.Compose"
+                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        </property>    
+    </bean>
+    
+    <!--  Work beans. -->
+    
+    <bean id="ScriptedAction" class="net.shibboleth.idp.profile.ScriptedAction" factory-method="resourceScript" scope="prototype">
+        <constructor-arg>
+            <bean class="net.shibboleth.ext.spring.resource.ConditionalResource"
+                c:_0="%{idp.home}/conf/admin/hello-world.js"
+                p:defaultContent="null;" />
+        </constructor-arg>
+    </bean>
+
+</beans>

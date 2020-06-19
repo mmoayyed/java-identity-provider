@@ -1,0 +1,48 @@
+##
+## Velocity Template for Hello World page.
+##
+## Velocity context will contain the following properties
+## flowRequestContext - the Spring Web Flow RequestContext
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## profileRequestContext - root of context tree
+## subjectContext - ProfileRequestContext -> SubjectContext
+## environment - Spring Environment object for property resolution
+## custom - arbitrary object injected by deployer
+##
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>#springMessageText("idp.title", "Web Login Service") - #springMessageText("hello-world.title", "Hello World")</title>
+    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+  </head>
+  
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <header>
+          <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
+          <h3>#springMessageText("idp.title", "Web Login Service")</h3>
+        </header>
+                
+        <div class="content">
+          <p>#springMessageText("hello-world.greeting", "Greetings"), $encoder.encodeForHTML($subjectContext.getPrincipalName())</p>
+          
+        </div>
+
+        <header>
+          <h3><a href="$request.getContextPath()/profile/admin/hello">#springMessageText("hello-world.reload", "Reload the Page")</a></h3>
+        </header>
+      </div>
+
+      <footer>
+        <div class="container container-footer">
+          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

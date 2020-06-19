@@ -41,18 +41,6 @@
             c:id="http://shibboleth.net/ns/profiles/mdquery"
             p:loggingId="MetadataQuery"
             p:policyName="AccessByIPAddress" />
-
-        <!-- REST AccountLockoutManager Access -->
-        <bean parent="shibboleth.AdminFlow"
-            c:id="http://shibboleth.net/ns/profiles/lockout-manager"
-            p:loggingId="Lockout"
-            p:policyName="AccessByIPAddress" />
-
-        <!-- REST StorageService Access -->
-        <bean parent="shibboleth.AdminFlow"
-            c:id="http://shibboleth.net/ns/profiles/storage"
-            p:loggingId="Storage"
-            p:policyName="AccessByIPAddress" />
     
         <!-- REST Interface to Metrics -->
         <bean parent="shibboleth.AdminFlow"
@@ -60,6 +48,29 @@
             p:loggingId="Metrics"
             p:policyNameLookupStrategy-ref="shibboleth.metrics.AccessPolicyStrategy" />
 
+        <!-- Hello World -->
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/hello"
+            p:loggingId="Hello"
+            p:authenticated="true"
+            p:policyName="AccessByAdminUser" />
+
+        <!-- REST AccountLockoutManager Access -->
+        <!--
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/lockout-manager"
+            p:loggingId="Lockout"
+            p:policyName="AccessByIPAddress" />
+        -->
+        
+        <!-- REST StorageService Access -->
+        <!--
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/storage"
+            p:loggingId="Storage"
+            p:policyName="AccessByIPAddress" />
+        -->
+        
         <!-- Attended Startup Unlock -->
         <!--
         <bean parent="shibboleth.OneTimeAdminFlow"
