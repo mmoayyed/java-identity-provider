@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -40,6 +39,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.codec.StringDigester;
 import net.shibboleth.utilities.java.support.codec.StringDigester.OutputFormat;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -60,7 +60,7 @@ import com.google.common.base.Strings;
  * 
  * @since 4.0.0
  */
-@ThreadSafe
+@ThreadSafeAfterInit
 public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredentialValidator {
     
     /** Class logger. */

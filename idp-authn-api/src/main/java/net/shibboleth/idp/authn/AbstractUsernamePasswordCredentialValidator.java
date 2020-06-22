@@ -36,6 +36,7 @@ import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -52,6 +53,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 4.0.0
  */
+@ThreadSafeAfterInit
 public abstract class AbstractUsernamePasswordCredentialValidator extends AbstractCredentialValidator {
 
     /** Default prefix for metrics. */
@@ -220,6 +222,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final UsernamePasswordContext upContext = usernamePasswordContextLookupStrategy.apply(authenticationContext);
         if (upContext == null) {
