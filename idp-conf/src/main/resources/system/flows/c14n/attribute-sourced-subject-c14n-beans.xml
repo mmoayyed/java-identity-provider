@@ -24,6 +24,7 @@
             c:resolverService-ref="shibboleth.AttributeResolverService"
             p:attributesToResolve-ref="shibboleth.c14n.attribute.AttributesToResolve"
             p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
+            p:resolutionLabel="c14n/attribute"
             p:principalNameLookupStrategy="#{getObject('shibboleth.c14n.attribute.PrincipalNameLookupStrategy')}">
         <property name="attributeContextCreationStrategy">
             <bean parent="shibboleth.Functions.Compose"
