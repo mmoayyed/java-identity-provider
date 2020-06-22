@@ -62,6 +62,8 @@
         connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
         trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
         responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
+        noResultIsError="true"
+        multipleResultsIsError="true"
         exportAttributes="mail displayName sn givenName departmentNumber employeeNumber eduPersonEntitlement eduPersonAssurance">
         <FilterTemplate>
             <![CDATA[
