@@ -529,6 +529,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param resolutionContext the context we are working in
      * @param workContext context to extract attributes from
      */
+    // CheckStyle: CyclomaticComplexity OFF
     private void collectExportingDataConnectors(final Map<String, IdPAttribute> resolvedAttributes,
            final AttributeResolutionContext resolutionContext,
            final AttributeResolverWorkContext workContext) {
@@ -539,7 +540,12 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 continue;
             }
 
-            for (final IdPAttribute attribute:dataConnector.getResolvedAttributes().values()) {
+            final Map<String, IdPAttribute> resolved = dataConnector.getResolvedAttributes();
+            if (resolved == null || resolved.isEmpty()) {
+                continue;
+            }
+
+           for (final IdPAttribute attribute:resolved.values()) {
                 if (!dataConnector.isExportAllAttributes() &&
                     !dataConnector.getExportAttributes().contains(attribute.getId())) {
                     continue;
@@ -562,6 +568,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             }
         }
     }
+    // CheckStyle: CyclomaticComplexity ON
 
     /**
      * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
