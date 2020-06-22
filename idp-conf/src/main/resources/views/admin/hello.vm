@@ -8,6 +8,7 @@
 ## response - HttpServletResponse
 ## profileRequestContext - root of context tree
 ## subjectContext - ProfileRequestContext -> SubjectContext
+## attributeContext - ProfileRequestContext -> AttributeContext
 ## environment - Spring Environment object for property resolution
 ## custom - arbitrary object injected by deployer
 ##
@@ -29,8 +30,20 @@
         </header>
                 
         <div class="content">
-          <p>#springMessageText("hello-world.greeting", "Greetings"), $encoder.encodeForHTML($subjectContext.getPrincipalName())</p>
-          
+          <h4>#springMessageText("hello-world.greeting", "Greetings"), <em>$encoder.encodeForHTML($subjectContext.getPrincipalName())</em></h4>
+          #if ($attributeContext && !$attributeContext.getUnfilteredIdPAttributes().isEmpty())
+            <br/>
+            <h4>Attributes:</h4>
+            #foreach ($a in $attributeContext.getUnfilteredIdPAttributes())
+              #if (!$a.getValues().isEmpty())
+                <br/>
+                <h5>$encoder.encodeForHTML($a.getId())</h5>
+                  #foreach ($v in $a.getValues())
+                    <blockquote>$encoder.encodeForHTML($v.getDisplayValue())</blockquote>
+                  #end
+              #end
+            #end
+          #end
         </div>
 
         <header>

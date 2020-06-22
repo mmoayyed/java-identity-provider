@@ -53,6 +53,7 @@
             c:id="http://shibboleth.net/ns/profiles/hello"
             p:loggingId="Hello"
             p:authenticated="true"
+            p:resolveAttributes="true"
             p:policyName="AccessByAdminUser" />
 
         <!-- REST AccountLockoutManager Access -->
