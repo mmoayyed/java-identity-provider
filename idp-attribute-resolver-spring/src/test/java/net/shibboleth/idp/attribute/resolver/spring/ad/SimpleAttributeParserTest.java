@@ -21,6 +21,7 @@ import static org.testng.Assert.*;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -35,6 +36,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.logic.ResolutionLabelPredicate;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -119,10 +122,10 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         placeholderConfig.setPropertySources(propertySources);
         context.addBeanFactoryPostProcessor(placeholderConfig);
 
-        AttributeDefinition attr = getAttributeDefn("resolver/relyingParties.xml", SimpleAttributeDefinition.class, context);
-        RelyingPartyIdPredicate pre = (RelyingPartyIdPredicate) attr.getActivationCondition();
-        ProfileRequestContext prc = new ProfileRequestContext();
-        RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
+        final AttributeDefinition attr = getAttributeDefn("resolver/relyingParties.xml", SimpleAttributeDefinition.class, context);
+        final RelyingPartyIdPredicate pre = (RelyingPartyIdPredicate) attr.getActivationCondition();
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        final RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
         rpContext.setRelyingPartyId("p1");
         assertTrue(pre.test(prc));
         rpContext.setRelyingPartyId("p2 p3");
@@ -130,4 +133,74 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         rpContext.setRelyingPartyId("p3");
         assertTrue(pre.test(prc));
     }
+
+    @Test public void resolutionPhases() throws ComponentInitializationException {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("prop1", "p1");
+        mockEnvVars.setProperty("prop2", "p2 p3");
+        mockEnvVars.setProperty("prop3", "");
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
+        placeholderConfig.setPropertySources(propertySources);
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+
+        final AttributeDefinition attr = getAttributeDefn("resolver/resolutionPhases.xml", SimpleAttributeDefinition.class, context);
+        final ResolutionLabelPredicate pre = (ResolutionLabelPredicate) attr.getActivationCondition();
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        final AttributeResolutionContext resContext = prc.getSubcontext(AttributeResolutionContext.class, true);
+        resContext.setResolutionLabel("p1");
+        assertTrue(pre.test(prc));
+        resContext.setResolutionLabel("p2 p3");
+        assertFalse(pre.test(prc));
+        resContext.setResolutionLabel("p3");
+        assertTrue(pre.test(prc));
+    }
+    
+    @Test public void phasesAndParties() throws ComponentInitializationException {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("prop1", "p1");
+        mockEnvVars.setProperty("prop2", "p2 p3");
+        mockEnvVars.setProperty("prop3", "");
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
+        placeholderConfig.setPropertySources(propertySources);
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+
+        final AttributeDefinition attr = getAttributeDefn("resolver/phasesAndParties.xml", SimpleAttributeDefinition.class, context);
+        final Predicate<ProfileRequestContext> pre = attr.getActivationCondition();
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        final RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
+        final AttributeResolutionContext resContext = prc.getSubcontext(AttributeResolutionContext.class, true);
+        
+        rpContext.setRelyingPartyId("p1");
+        assertFalse(pre.test(prc));
+        rpContext.setRelyingPartyId("p2 p3");
+        assertFalse(pre.test(prc));
+        rpContext.setRelyingPartyId("p3");
+        assertFalse(pre.test(prc));
+        
+        rpContext.setRelyingPartyId(null);
+        
+        resContext.setResolutionLabel("p1");
+        assertFalse(pre.test(prc));
+        resContext.setResolutionLabel("p2 p3");
+        assertFalse(pre.test(prc));
+        resContext.setResolutionLabel("p3");
+        assertFalse(pre.test(prc));
+        
+        rpContext.setRelyingPartyId("p3");
+        resContext.setResolutionLabel("p3");
+        assertTrue(pre.test(prc));
+    }
+
 }

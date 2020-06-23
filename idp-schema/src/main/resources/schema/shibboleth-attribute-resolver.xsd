@@ -3,7 +3,7 @@
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
 	xmlns:sec="urn:mace:shibboleth:2.0:security"
 	targetNamespace="urn:mace:shibboleth:2.0:resolver"
-	elementFormDefault="qualified" version="4.0">
+	elementFormDefault="qualified" version="4.1">
 
     <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
@@ -201,16 +201,24 @@
         <attribute name="activationConditionRef" type="resolver:string">
             <annotation>
                 <documentation>
-                    A reference to a predicate to decide whether this plugin is applicable
-                    Mutually exclusive with relyingParties
+                    A reference to a predicate to decide whether this plugin is applicable.
+                    Mutually exclusive with relyingParties and resolutionPhases.
                 </documentation>
             </annotation>
         </attribute>
         <attribute name="relyingParties" type="resolver:string">
             <annotation>
                 <documentation>
-                    A (space separated) list of entities for which this plugin is to be active
-                    Mutually exclusive with activationConditionRef
+                    A (space separated) list of entities for which this plugin is to be active.
+                    Mutually exclusive with activationConditionRef.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="resolutionPhases" type="resolver:string">
+            <annotation>
+                <documentation>
+                    A (space separated) list of resolution "phases" for which this plugin is to be active.
+                    Mutually exclusive with activationConditionRef.
                 </documentation>
             </annotation>
         </attribute>
