@@ -23,7 +23,7 @@
   
   <body>
     <div class="wrapper">
-      <div class="container">
+      <div class="container" style="width: 100%">
         <header>
           <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
           <h3>#springMessageText("idp.title", "Web Login Service")</h3>
@@ -31,6 +31,18 @@
                 
         <div class="content">
           <h4>#springMessageText("hello-world.greeting", "Greetings"), <em>$encoder.encodeForHTML($subjectContext.getPrincipalName())</em></h4>
+          <br/>
+          <h4>Authenticated By</h4>
+          #foreach ($result in $subjectContext.getAuthenticationResults().entrySet())
+            <blockquote>$encoder.encodeForHTML($result.getKey())</blockquote>
+          #end
+          <br/>
+          <h4>Java Principals in Subjects</h4>
+          #foreach ($s in $subjectContext.getSubjects())
+            #foreach ($p in $s.getPrincipals())
+              <blockquote>$encoder.encodeForHTML($p)<blockquote>
+            #end
+          #end
           #if ($attributeContext && !$attributeContext.getUnfilteredIdPAttributes().isEmpty())
             <br/>
             <h4>Attributes:</h4>
