@@ -202,7 +202,7 @@
             <annotation>
                 <documentation>
                     A reference to a predicate to decide whether this plugin is applicable.
-                    Mutually exclusive with relyingParties and resolutionPhases.
+                    Mutually exclusive with [exclude]relyingParties and [exclude]resolutionPhases.
                 </documentation>
             </annotation>
         </attribute>
@@ -214,10 +214,26 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="excludeRelyingParties" type="resolver:string">
+            <annotation>
+                <documentation>
+                    A (space separated) list of entities for which this plugin is to be inactive.
+                    Mutually exclusive with activationConditionRef.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="resolutionPhases" type="resolver:string">
             <annotation>
                 <documentation>
                     A (space separated) list of resolution "phases" for which this plugin is to be active.
+                    Mutually exclusive with activationConditionRef.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="excludeResolutionPhases" type="resolver:string">
+            <annotation>
+                <documentation>
+                    A (space separated) list of resolution "phases" for which this plugin is to be inactive.
                     Mutually exclusive with activationConditionRef.
                 </documentation>
             </annotation>

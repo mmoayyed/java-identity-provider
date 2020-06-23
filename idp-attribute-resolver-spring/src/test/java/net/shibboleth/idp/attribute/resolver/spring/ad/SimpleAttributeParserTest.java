@@ -134,6 +134,33 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         assertTrue(pre.test(prc));
     }
 
+    @Test public void excludeRelyingParties() throws ComponentInitializationException {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("prop1", "p1");
+        mockEnvVars.setProperty("prop2", "p2 p3");
+        mockEnvVars.setProperty("prop3", "");
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
+        placeholderConfig.setPropertySources(propertySources);
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+
+        final AttributeDefinition attr = getAttributeDefn("resolver/excludeRelyingParties.xml", SimpleAttributeDefinition.class, context);
+        final Predicate<ProfileRequestContext> pre = attr.getActivationCondition();
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        final RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class, true);
+        rpContext.setRelyingPartyId("p1");
+        assertFalse(pre.test(prc));
+        rpContext.setRelyingPartyId("p2 p3");
+        assertTrue(pre.test(prc));
+        rpContext.setRelyingPartyId("p3");
+        assertFalse(pre.test(prc));
+    }
+
     @Test public void resolutionPhases() throws ComponentInitializationException {
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
@@ -160,7 +187,34 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         resContext.setResolutionLabel("p3");
         assertTrue(pre.test(prc));
     }
-    
+
+    @Test public void excludeResolutionPhases() throws ComponentInitializationException {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
+        mockEnvVars.setProperty("prop1", "p1");
+        mockEnvVars.setProperty("prop2", "p2 p3");
+        mockEnvVars.setProperty("prop3", "");
+        propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
+
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
+        placeholderConfig.setPropertySources(propertySources);
+        context.addBeanFactoryPostProcessor(placeholderConfig);
+
+        final AttributeDefinition attr = getAttributeDefn("resolver/excludeResolutionPhases.xml", SimpleAttributeDefinition.class, context);
+        final Predicate<ProfileRequestContext> pre = attr.getActivationCondition();
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        final AttributeResolutionContext resContext = prc.getSubcontext(AttributeResolutionContext.class, true);
+        resContext.setResolutionLabel("p1");
+        assertFalse(pre.test(prc));
+        resContext.setResolutionLabel("p2 p3");
+        assertTrue(pre.test(prc));
+        resContext.setResolutionLabel("p3");
+        assertFalse(pre.test(prc));
+    }
+
     @Test public void phasesAndParties() throws ComponentInitializationException {
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.logic.ResolutionLabelPredicate;
@@ -57,7 +58,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         return defnId;
     }
 
-// Checkstyle: CyclomaticComplexity|MethodLength OFF
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
@@ -72,38 +73,18 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         builder.setDestroyMethodName("destroy");
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
-            if (config.hasAttributeNS(null, "relyingParties") || config.hasAttributeNS(null, "resolutionPhases")) {
-                log.warn("relyingParties/resolutionPhases ignored, using activationConditionRef");
+            if (config.hasAttributeNS(null, "relyingParties") ||
+                    config.hasAttributeNS(null, "resolutionPhases") ||
+                    config.hasAttributeNS(null, "excludeRelyingParties") ||
+                    config.hasAttributeNS(null, "excludeResolutionPhases")) {
+                log.warn("relyingParties/resolutionPhases and variants ignored, using activationConditionRef");
             }
             builder.addPropertyReference("activationCondition",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
         } else {
-            BeanDefinitionBuilder rpBuilder = null;
-            BeanDefinitionBuilder phasesBuilder = null;
-            if (config.hasAttributeNS(null, "relyingParties")) {
-                rpBuilder = BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
-                rpBuilder.setFactoryMethod("fromCandidates");
-                rpBuilder.addConstructorArgValue(
-                        SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
-            }
-            
-            if (config.hasAttributeNS(null, "resolutionPhases")) {
-                phasesBuilder = BeanDefinitionBuilder.genericBeanDefinition(ResolutionLabelPredicate.class);
-                phasesBuilder.addConstructorArgValue(
-                        SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "resolutionPhases")));
-            }
-
-            if (rpBuilder != null && phasesBuilder != null) {
-                final BeanDefinitionBuilder andBuilder =
-                        BeanDefinitionBuilder.genericBeanDefinition(PredicateSupport.class);
-                andBuilder.setFactoryMethod("and");
-                andBuilder.addConstructorArgValue(rpBuilder.getBeanDefinition());
-                andBuilder.addConstructorArgValue(phasesBuilder.getBeanDefinition());
-                builder.addPropertyValue("activationCondition", andBuilder.getBeanDefinition());
-            } else if (rpBuilder != null) {
-                builder.addPropertyValue("activationCondition", rpBuilder.getBeanDefinition());
-            } else if (phasesBuilder != null) {
-                builder.addPropertyValue("activationCondition", phasesBuilder.getBeanDefinition());
+            final BeanDefinitionBuilder condition = getActivationCondition(config);
+            if (condition != null) {
+                builder.addPropertyValue("activationCondition", condition.getBeanDefinition());
             }
         }
 
@@ -136,7 +117,73 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         builder.addPropertyValue("dataConnectorDependencies", 
                 SpringSupport.parseCustomElements(dataConnectorDependencyElements, parserContext, builder));
     }
-// Checkstyle: CyclomaticComplexity|MethodLength ON
+    
+    /**
+     * Get the effective activation condition to inject.
+     * 
+     * @param config configuration element
+     * 
+     * @return condition bean definition builder, or null
+     */
+    @Nullable protected BeanDefinitionBuilder getActivationCondition(@Nonnull final Element config) {
+        
+        BeanDefinitionBuilder rpBuilder = null;
+        BeanDefinitionBuilder phasesBuilder = null;
+        
+        if (config.hasAttributeNS(null, "relyingParties")) {
+            if (config.hasAttributeNS(null, "excludeRelyingParties")) {
+                log.warn("excludeRelyingParties ignored, using relyingParties");
+            }
+            rpBuilder = BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
+            rpBuilder.setFactoryMethod("fromCandidates");
+            rpBuilder.addConstructorArgValue(
+                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "relyingParties")));
+        } else if (config.hasAttributeNS(null, "excludeRelyingParties")) {
+            final BeanDefinitionBuilder unnegated =
+                    BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
+            unnegated.setFactoryMethod("fromCandidates");
+            unnegated.addConstructorArgValue(
+                    SpringSupport.getAttributeValueAsList(
+                            config.getAttributeNodeNS(null, "excludeRelyingParties")));
+            rpBuilder = BeanDefinitionBuilder.genericBeanDefinition(PredicateSupport.class);
+            rpBuilder.setFactoryMethod("not");
+            rpBuilder.addConstructorArgValue(unnegated.getBeanDefinition());
+        }
+        
+        if (config.hasAttributeNS(null, "resolutionPhases")) {
+            if (config.hasAttributeNS(null, "excludeResolutionPhases")) {
+                log.warn("excludeResolutionPhases ignored, using resolutionPhases");
+            }
+            phasesBuilder = BeanDefinitionBuilder.genericBeanDefinition(ResolutionLabelPredicate.class);
+            phasesBuilder.addConstructorArgValue(
+                    SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "resolutionPhases")));
+        } else if (config.hasAttributeNS(null, "excludeResolutionPhases")) {
+            final BeanDefinitionBuilder unnegated =
+                    BeanDefinitionBuilder.genericBeanDefinition(ResolutionLabelPredicate.class);
+            unnegated.addConstructorArgValue(
+                    SpringSupport.getAttributeValueAsList(
+                            config.getAttributeNodeNS(null, "excludeResolutionPhases")));
+            phasesBuilder = BeanDefinitionBuilder.genericBeanDefinition(PredicateSupport.class);
+            phasesBuilder.setFactoryMethod("not");
+            phasesBuilder.addConstructorArgValue(unnegated.getBeanDefinition());
+        }
+
+        if (rpBuilder != null && phasesBuilder != null) {
+            final BeanDefinitionBuilder andBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(PredicateSupport.class);
+            andBuilder.setFactoryMethod("and");
+            andBuilder.addConstructorArgValue(rpBuilder.getBeanDefinition());
+            andBuilder.addConstructorArgValue(phasesBuilder.getBeanDefinition());
+            return andBuilder;
+        } else if (rpBuilder != null) {
+            return rpBuilder;
+        } else if (phasesBuilder != null) {
+            return phasesBuilder;
+        }
+        
+        return null;
+    }
+// Checkstyle: CyclomaticComplexity ON
     
     /** Controls parsing of Dependencies. 
      * 
