@@ -219,7 +219,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         final boolean timerStarted = startTimer(resolutionContext);
         try {
-            log.debug("{} Initiating attribute resolution", logPrefix);
+            log.debug("{} Initiating attribute resolution with label: {}", logPrefix,
+                    resolutionContext.getResolutionLabel());
 
             if (!preRequestedAttributes.isEmpty()) {
                 log.debug("Resolving pre-requested Attributes");

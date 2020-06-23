@@ -40,6 +40,7 @@ import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFu
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -247,6 +248,13 @@ public final class ResolveAttributes extends AbstractProfileAction {
             return false;
         }
 
+        if (resolutionLabel == null) {
+            final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
+            if (springContext != null && springContext.getRequestContext() != null) {
+                resolutionLabel = springContext.getRequestContext().getActiveFlow().getId();
+            }
+        }
+        
         return true;
     }
 
@@ -309,7 +317,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     private void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeResolutionContext resolutionContext) {
-        
+
         resolutionContext
             .setResolutionLabel(resolutionLabel)
             .setTranscoderRegistry(transcoderRegistry);
