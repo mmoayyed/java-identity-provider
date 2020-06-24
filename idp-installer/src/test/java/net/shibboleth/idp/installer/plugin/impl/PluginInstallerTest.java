@@ -32,10 +32,10 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest {
 
-    @Test(enabled=false) public void TestListing() throws ComponentInitializationException, IOException {
+    @Test public void TestListing() throws ComponentInitializationException, IOException {
         PluginInstaller inst = new PluginInstaller();
         inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-        inst.setPluginId("net.shibboleth.plugins.scripting.nashorn");
+        inst.setPluginId("net.shibboleth.idp.plugin.scripting.nashorn");
         inst.initialize();
         List<PluginDescription> plugins = inst.getInstalledPlugins();
         assertEquals(plugins.get(0).getPluginId(), "org.example.Plugin");
