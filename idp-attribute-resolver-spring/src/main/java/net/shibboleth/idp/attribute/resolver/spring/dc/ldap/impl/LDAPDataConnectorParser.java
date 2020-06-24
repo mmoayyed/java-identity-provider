@@ -691,6 +691,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          *
          * @return sasl config bean definition
          */
+        //CheckStyle: CyclomaticComplexity OFF
         @Nullable protected BeanDefinition createSaslConfig() {
             final List<Element> saslConfigElements = ElementSupport.getChildElementsByTagNameNS(configElement,
                     AttributeResolverNamespaceHandler.NAMESPACE, "SASLConfig");
@@ -752,6 +753,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             return saslConfig.getBeanDefinition();
         }
+        //CheckStyle: CyclomaticComplexity ON
 
         /**
          * Create the result mapping strategy. See {@link net.shibboleth.idp.attribute.resolver.dc.MappingStrategy}.

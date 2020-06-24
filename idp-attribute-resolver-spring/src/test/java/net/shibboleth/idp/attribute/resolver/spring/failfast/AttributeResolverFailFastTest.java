@@ -47,7 +47,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 @Ignore
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked", "javadoc"})
 public class AttributeResolverFailFastTest extends AbstractFailFastTest {
     
     protected String getPath() {

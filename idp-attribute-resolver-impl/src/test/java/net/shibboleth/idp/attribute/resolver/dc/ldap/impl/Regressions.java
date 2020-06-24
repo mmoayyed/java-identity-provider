@@ -50,6 +50,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMapping
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class Regressions {
     
     /** The connector name. */

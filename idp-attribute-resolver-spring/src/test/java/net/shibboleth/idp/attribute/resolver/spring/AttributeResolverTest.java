@@ -71,6 +71,7 @@ import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /** A work in progress to test the attribute resolver service. */
+@SuppressWarnings("javadoc")
 public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     /** Class logger. */

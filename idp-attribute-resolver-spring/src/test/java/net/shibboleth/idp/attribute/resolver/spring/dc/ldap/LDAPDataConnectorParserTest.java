@@ -17,7 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -30,17 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.unboundid.asn1.ASN1OctetString;
-import com.unboundid.ldap.listener.InMemoryRequestHandler;
-import com.unboundid.ldap.listener.InMemorySASLBindHandler;
-import com.unboundid.ldap.sdk.BindResult;
-import com.unboundid.ldap.sdk.Control;
-import com.unboundid.ldap.sdk.DN;
-import com.unboundid.ldap.sdk.LDAPResult;
-import com.unboundid.ldap.sdk.ResultCode;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.pool.BlockingConnectionPool;
@@ -62,17 +57,25 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.listener.InMemoryRequestHandler;
+import com.unboundid.ldap.listener.InMemorySASLBindHandler;
+import com.unboundid.ldap.sdk.BindResult;
+import com.unboundid.ldap.sdk.Control;
+import com.unboundid.ldap.sdk.DN;
 import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.LDAPResult;
+import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
@@ -92,6 +95,7 @@ import net.shibboleth.idp.saml.impl.TestSources;
 
 
 /** Test for {@link LDAPDataConnectorParser}. */
+@SuppressWarnings("javadoc")
 public class LDAPDataConnectorParserTest {
 
     /** In-memory directory server. */
