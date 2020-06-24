@@ -19,7 +19,9 @@ package net.shibboleth.idp.installer.plugin.impl;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
@@ -32,14 +34,34 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest {
 
-    @Test public void TestListing() throws ComponentInitializationException, IOException {
-        PluginInstaller inst = new PluginInstaller();
-        inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-        inst.setPluginId("net.shibboleth.idp.plugin.scripting.nashorn");
-        inst.initialize();
-        List<PluginDescription> plugins = inst.getInstalledPlugins();
-        assertEquals(plugins.get(0).getPluginId(), "org.example.Plugin");
+    @Test public void testListing() throws ComponentInitializationException, IOException {
+        
+        try (final PluginInstaller inst = new PluginInstaller()) {
+            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.initialize();
+            List<PluginDescription> plugins = inst.getInstalledPlugins();
+            assertEquals(plugins.get(0).getPluginId(), "org.example.Plugin");
+        }
     }
+    
+    @Test public void testUnpackZip() throws ComponentInitializationException, IOException {
+        try (final PluginInstaller inst = new PluginInstaller()) {
+            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.initialize();
+            final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
+            inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.zip");
+        }
+    }
+    
+    @Test public void testUnpackTgz() throws ComponentInitializationException, IOException {
+        try (final PluginInstaller inst = new PluginInstaller()) {
+            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.initialize();
+            final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
+            inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
+        }
+    }
+
     
     public static class Wibble extends PluginDescription {
 

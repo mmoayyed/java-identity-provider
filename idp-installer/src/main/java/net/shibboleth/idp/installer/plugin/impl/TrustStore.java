@@ -234,7 +234,7 @@ public final class TrustStore extends AbstractInitializableComponent {
         }
         
         if (pluginId == null) {
-            throw new ComponentInitializationException("Plugin IN not set up");
+            throw new ComponentInitializationException("Plugin Id not set up");
         }
         
         if (!Files.exists(idpHome)) {
