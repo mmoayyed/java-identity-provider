@@ -1,5 +1,5 @@
 ##
-## Velocity Template for expiring password view
+## Velocity Template for impersonation view
 ##
 ## Velocity context will contain the following properties
 ## flowExecutionUrl - the form action location
