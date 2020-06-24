@@ -1,0 +1,4 @@
+##
+## Velocity template to add the CSRF token as a query parameter.
+##
+#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end
