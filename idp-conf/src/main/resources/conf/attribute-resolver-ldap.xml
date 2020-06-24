@@ -64,6 +64,7 @@
         responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
         noResultIsError="true"
         multipleResultsIsError="true"
+        excludeResolutionPhases="c14n/attribute"
         exportAttributes="mail displayName sn givenName departmentNumber employeeNumber eduPersonEntitlement eduPersonAssurance">
         <FilterTemplate>
             <![CDATA[
@@ -85,6 +86,7 @@
 
 <!-- 
     <DataConnector id="computed" xsi:type="ComputedId"
+        excludeResolutionPhases="c14n/attribute"
 	    generatedAttributeID="computedId"
 	    salt="%{idp.persistentId.salt}"
 	    algorithm="%{idp.persistentId.algorithm:SHA}"
