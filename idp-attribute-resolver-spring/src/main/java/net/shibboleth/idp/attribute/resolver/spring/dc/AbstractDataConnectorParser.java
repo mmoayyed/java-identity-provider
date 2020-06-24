@@ -28,7 +28,9 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorFactoryBean;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -150,6 +152,8 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             if (config.hasAttributeNS(null, ATTR_EXPORT_NAMES)) {
                 log.warn("{} {} overrides {}", getLogPrefix(), ATTR_EXPORT_ALL, ATTR_EXPORT_NAMES);
             }
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "exportAllAttributes", null,
+                    "exportAttributes=\"attr1, attr2,...\"");
             builder.addPropertyValue("exportAllAttributes",
                     StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_EXPORT_ALL)));
         } else if (config.hasAttributeNS(null, ATTR_EXPORT_NAMES)) {

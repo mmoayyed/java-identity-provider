@@ -39,7 +39,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
@@ -62,6 +64,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     @Nonnull private Duration noRetryDelay;
 
     /** Do we release all attributes?. */
+    @Deprecated(since = "4.1.0", forRemoval = true)
     private boolean exportAllAttributes;
 
     /** Which named attributes do we release?. */
@@ -133,6 +136,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      *
      * @param what whether we export all attributes
      */
+    @Deprecated(since = "4.1.0", forRemoval = true)
     public void setExportAllAttributes(final boolean what) {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -142,6 +146,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * {@inheritDoc}
      */
+    @Deprecated(since = "4.1.0", forRemoval = true)
     @Override public boolean isExportAllAttributes() {
         return exportAllAttributes;
     }
