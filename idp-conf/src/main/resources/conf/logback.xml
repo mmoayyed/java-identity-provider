@@ -14,7 +14,7 @@
 
     <!-- Location and retention. -->
     
-    <variable name="idp.logfiles" value="c:/users/rdw/desktop/logs" />
+    <variable name="idp.logfiles" value="${idp.home}/logs" />
     <variable name="idp.loghistory" value="${idp.loghistory:-180}" />
     
     <!-- Much higher performance if you operate on DEBUG. -->
