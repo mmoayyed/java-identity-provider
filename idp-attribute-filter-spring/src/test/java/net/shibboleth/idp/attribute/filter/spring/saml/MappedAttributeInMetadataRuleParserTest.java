@@ -46,15 +46,15 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
         rule.initialize();
         AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) rule.getMatcher();
 
+        assertTrue(matcher.getId().endsWith(":PermitRule"));
         assertEquals(matcher.getMatchIfMetadataSilent(), metadataSilentResult);
         assertTrue(matcher.getOnlyIfRequired());
-        assertTrue(matcher.getId().endsWith(":PermitRule"));
 
         final PolicyFromMatcher policyRule = (PolicyFromMatcher) getPolicyRuleFromAttributeFilterPolicy(context);
         matcher = (AttributeInMetadataMatcher) policyRule.getMatcher();
+        assertTrue(matcher.getId().endsWith(":PRR"));
         assertTrue(matcher.getMatchIfMetadataSilent());
         assertEquals(matcher.getOnlyIfRequired(), onlyResult);
-        assertTrue(matcher.getId().endsWith(":PRR"));
      }
 
      public void test(final String propValue, final boolean result) throws ComponentInitializationException {

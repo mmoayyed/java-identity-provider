@@ -885,7 +885,7 @@
                 </attribute>
                 <attribute name="objectStrategyRef" type="afp:string">
                     <annotation>
-                        <documentation>Reference to locate XMLObject source of mapped attributes.</documentation>
+                        <documentation>DEPRECATED, ignored</documentation>
                     </annotation>
                 </attribute>
             </extension>
