@@ -131,7 +131,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 AttributeResolverNamespaceHandler.NAMESPACE, "LDAPProperty");
         if (oldProperties != null && !oldProperties.isEmpty()) {
             // V4 Deprecation
-            DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty", "LDAP Connector", "(none), will be ignored");
+            DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty", "LDAP Connector",
+                    "(replacement depends on property)");
         }
         
         final V2Parser v2Parser = new V2Parser(config, getLogPrefix());
