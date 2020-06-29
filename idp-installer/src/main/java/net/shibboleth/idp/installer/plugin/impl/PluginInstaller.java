@@ -31,8 +31,11 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -48,9 +51,13 @@ import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -75,9 +82,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Where we have downloaded. */
     private Path downloadDirectory;
     
-    /** Our TrustStore. */
-    private TrustStore trustStore;
-      
+    /** The callback before we install a certificate into the TrustStore. */
+    @Nonnull private Predicate<String> acceptCert = Predicates.alwaysFalse();
+
+    /** The actual distribution. */
+    private Path distribution;
+
     /** set IdP Home.
      * @param home Where we are working from
      */
@@ -90,7 +100,14 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     public void setPluginId( @Nonnull @NotEmpty final String id) {
         pluginId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Plugin id should be be non-null");
-    }    
+    }
+
+    /** Set the acceptCert predicate.
+     * @param what what to set.
+     */
+    public void setAcceptCert(final Predicate<String> what) {
+        acceptCert = Constraint.isNotNull(what, "Accept Cert Preducate should be non-null");
+    }
 
     /** Install the plugin from the provided URL.  Involves downloading
      *  the file and then doing a {@link #installPlugin(Path, String)}.
@@ -109,18 +126,31 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * <li>Install from the folder</li></ul>
      * @param base the directory where the files are
      * @param fileName the name
+     * @throws BuildException if badness is detected.
      */
-    public  void installPlugin(@Nonnull final Path base, 
-                               @Nonnull @NotEmpty final String fileName) {
-        unpack(base, fileName);
+    public  void installPlugin(@Nonnull final Path base,
+                               @Nonnull @NotEmpty final String fileName) throws BuildException {
+        if (!Files.exists(base.resolve(fileName))) {
+            log.error("Could not find distribution {}", base.resolve(fileName));
+            throw new BuildException("Could not find distribution");
+        }
+        if (!Files.exists(base.resolve(fileName + ".asc"))) {
+            log.error("Could not find distribution {}", base.resolve(fileName + ".asc"));
+            throw new BuildException("Could not find signature for distribution");
+        }
 
+        unpack(base, fileName);
+        setupPluginId();
+        checkSignature(base, fileName);
+        //doInstall();
     }
-    
-    /** Method to unpack a zip or tgz file into out {{@link #unpackDirectory}. 
+
+    /** Method to unpack a zip or tgz file into out {{@link #unpackDirectory}.
      * @param base Where the zip/tgz file is
      * @param fileName the name.
      * @throws BuildException if badness is detected.
      */
+    // CheckStyle:  CyclomaticComplexity OFF
     private void unpack(final Path base, final String fileName) throws BuildException {
         Constraint.isNull(unpackDirectory, "cannot unpack multiple times");
         try {
@@ -136,7 +166,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                         continue;
                     }
                     final File output = unpackDirectory.resolve(entry.getName()).toFile();
-                    log.debug("Unpacking {} to {}", entry.getName(), output);
+                    log.trace("Unpacking {} to {}", entry.getName(), output);
                     if (entry.isDirectory()) {
                         if (!output.isDirectory() && !output.mkdirs()) {
                             log.error("Failed to create directory {}", output);
@@ -154,10 +184,21 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     }
                 }
             }
+            final Iterator<Path> contents = Files.newDirectoryStream(unpackDirectory).iterator();
+            if (!contents.hasNext()) {
+                log.error("No contents unpacked from {}", fullName);
+                throw new BuildException("Distro was empty");
+            }
+            distribution = contents.next();
+            if (contents.hasNext()) {
+                log.error("Too many packages in distributions {}", fullName);
+                throw new BuildException("Too many packages in distributions");
+            }
         } catch (final IOException e) {
             throw new BuildException(e);
         }
     }
+    // CheckStyle:  CyclomaticComplexity OFF
     
     /** does the file name end in .zip?
      * @param fileName the name to consider
@@ -190,6 +231,74 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             return new ZipArchiveInputStream(inStream);
         }
         return new TarArchiveInputStream(new GzipCompressorInputStream(inStream));
+    }
+
+    /** Look into the distribution and suck out the plugin id.
+     * @throws BuildException if badness is detected.
+     */
+    private void setupPluginId() throws BuildException {
+        final File propertyFile = distribution.resolve("bootstrap").resolve("id.property").toFile();
+        if (!propertyFile.exists()) {
+            log.error("Could not locate identity of plugin at {}", propertyFile);
+            throw new BuildException("Could not locate identity of plugin");
+        }
+        try (final InputStream inStream = new BufferedInputStream(new FileInputStream(propertyFile))) {
+            final Properties idProperties = new Properties();
+            idProperties.load(inStream);
+            final String id = StringSupport.trimOrNull(idProperties.getProperty("pluginid"));
+            if (id == null) {
+                log.error("identity property file {} did not contain 'pluginid' property", propertyFile);
+                throw new BuildException("No property in ID file");
+            }
+            setPluginId(id);
+        } catch (final IOException e) {
+            log.error("Could not load plugin identity at {}", propertyFile, e);
+            throw new BuildException(e);
+        }
+    }
+
+    /** Check the signature of the plugin.
+     * @param base Where the zip/tgz file is
+     * @param fileName the name.
+     * @throws BuildException if badness is detected.
+     */
+    private void checkSignature(final Path base, final String fileName) throws BuildException {
+        try (final InputStream sigStream = new BufferedInputStream(
+                new FileInputStream(base.resolve(fileName + ".asc").toFile()))) {
+            final TrustStore trust = new TrustStore();
+            trust.setIdpHome(idpHome);
+            trust.setPluginId(pluginId);
+            trust.initialize();
+            final Signature sig = TrustStore.signatureOf(sigStream);
+            if (!trust.contains(sig)) {
+                log.info("TrustStore does not contain signature {}", sig);
+                final File certs = distribution.resolve("bootstrap").resolve("keys.txt").toFile();
+                if (!certs.exists()) {
+                    log.info("No embedded keys file, signature check fails");
+                    throw new BuildException("No Certificate found to check signiture o distribution");
+                }
+                try (final InputStream keysStream = new BufferedInputStream(
+                        new FileInputStream(certs))) {
+                    trust.importCertificateFromStream(sig, keysStream, acceptCert);
+                }
+                if (!trust.contains(sig)) {
+                    log.info("Certificate not added to Trust Store");
+                    throw new BuildException("Could not check signature of distribution");
+                }
+            }
+
+            try (final InputStream distroStream = new BufferedInputStream(
+                new FileInputStream(base.resolve(fileName).toFile()))) {
+                if (!trust.checkSignature(distroStream, sig)) {
+                    log.info("Signature checked for {} failed", fileName);
+                    throw new BuildException("Signature check failed");
+                }
+            }
+
+        } catch (final ComponentInitializationException | IOException e) {
+            log.error("Could not manage truststore for [{}, {}] ", idpHome, pluginId, e);
+            throw new BuildException(e);
+        }
     }
 
     /**

@@ -21,10 +21,15 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Security;
 import java.util.List;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
@@ -32,6 +37,12 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest {
+
+    @BeforeClass public void setup() throws IOException {
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
 
     @Test public void testListing() throws ComponentInitializationException, IOException {
         
@@ -55,6 +66,7 @@ public class PluginInstallerTest {
     @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setAcceptCert(Predicates.alwaysTrue());
             inst.initialize();
             final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
             inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");

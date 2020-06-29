@@ -50,7 +50,9 @@ public class TrustStoreTest {
     @BeforeClass public void setup() throws IOException {
         dir = Files.createTempDirectory("TrustStoreTest");
         Files.createDirectories(dir.resolve("credentials").resolve(pluginId));
-        Security.addProvider(new BouncyCastleProvider());
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
     }
     
     @AfterClass public void teardown() throws IOException {
