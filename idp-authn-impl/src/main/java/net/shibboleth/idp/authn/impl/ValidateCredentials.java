@@ -157,18 +157,6 @@ public class ValidateCredentials extends AbstractValidationAction implements War
         super.handleError(profileRequestContext, authenticationContext, e, eventId);
     }
     
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        return true;
-    }
-
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override

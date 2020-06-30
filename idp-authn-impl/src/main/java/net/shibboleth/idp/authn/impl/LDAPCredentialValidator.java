@@ -159,7 +159,6 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
                 return populateSubject(usernamePasswordContext, response);
             }
             
-            log.info("{} Login by '{}' failed", getLogPrefix(), username);
             authenticationContext.getSubcontext(
                     LDAPResponseContext.class, true).setAuthenticationResponse(response);
             if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
@@ -179,10 +178,10 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
                 final LdapException e =
                         new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
                         response.getControls(), response.getReferralURLs(), response.getMessageId());
-                log.warn("{} Login by {} produced exception", getLogPrefix(), username, e);
                 throw e;
             }
         } catch (final LdapException e) {
+            log.info("{} Login by '{}' failed", getLogPrefix(), username, e);
             if (errorHandler != null) {
                 errorHandler.handleError(profileRequestContext, authenticationContext, e, eventToSignal);
             }
