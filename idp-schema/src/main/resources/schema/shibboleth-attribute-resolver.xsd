@@ -638,6 +638,28 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="Decrypted">
+        <annotation>
+            <documentation>An attribute definition involving an encrypted (DataSealed) attribute</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <choice maxOccurs="unbounded" minOccurs="0">
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
+                </choice>
+                <attribute name="dataSealerRef" type="resolver:string">
+                    <annotation>
+                        <documentation>Value to use for the decryption key</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="SubjectDerivedAttribute">
         <annotation>

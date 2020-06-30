@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML2NameIDAttribute
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScopedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.DecryptedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TemplateAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
@@ -93,6 +94,8 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new ScriptedAttributeDefinitionParser());
         registerBeanDefinitionParser(SimpleAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new SimpleAttributeDefinitionParser());
+        registerBeanDefinitionParser(DecryptedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new DecryptedAttributeDefinitionParser());        
         registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new TemplateAttributeDefinitionParser());
         registerBeanDefinitionParser(SourceValueParser.TYPE_NAME_RESOLVER, new SourceValueParser());

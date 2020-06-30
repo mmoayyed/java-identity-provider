@@ -18,13 +18,11 @@
 package net.shibboleth.idp.saml.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -47,8 +45,8 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -121,33 +119,43 @@ public final class TestSources {
     }
 
     /**
+     * Create a static connector with provided attributes and values.
+     * 
+     * @param attributes the objects to populate it with
+     * @return The connector
+     * @throws ComponentInitializationException if we cannot initialized (unlikely)
+     */
+    public static DataConnector populatedStaticConnector(@Nonnull @NonnullElements final List<IdPAttribute> attributes)
+            throws ComponentInitializationException {
+
+        final StaticDataConnector connector = new StaticDataConnector();
+        connector.setId(STATIC_CONNECTOR_NAME);
+        connector.setValues(attributes);
+        connector.initialize();
+
+        return connector;
+    }
+
+    /**
      * Create a static connector with known attributes and values.
      * 
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
-        IdPAttribute attr;
-        Set<IdPAttribute> attributeSet;
+        List<IdPAttribute> attributeSet = new ArrayList<>(2);
 
-        attributeSet = new LazySet<>();
-
-        attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
-        attr.setValues(Arrays.asList(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
+        IdPAttribute attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        attr.setValues(List.of(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
                 new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING)));
         attributeSet.add(attr);
 
         attr = new IdPAttribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
-        attr.setValues(Arrays.asList(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
+        attr.setValues(List.of(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
                 new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1])));
         attributeSet.add(attr);
-
-        StaticDataConnector connector = new StaticDataConnector();
-        connector.setId(STATIC_CONNECTOR_NAME);
-        connector.setValues(attributeSet);
-        connector.initialize();
-
-        return connector;
+        
+        return populatedStaticConnector(attributeSet);
     }
 
     /**
@@ -159,11 +167,11 @@ public final class TestSources {
     public static AttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
         return populatedStaticAttribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
-
+    
     public static AttributeDefinition populatedStaticAttribute(String attributeName,
             int attributeValuesCount) throws ComponentInitializationException {
-        IdPAttribute attr;
-        List<IdPAttributeValue> valuesList = new ArrayList<>();
+        
+        final List<IdPAttributeValue> valuesList = new ArrayList<>();
 
         if (attributeValuesCount > 0) {
             valuesList.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
@@ -174,12 +182,25 @@ public final class TestSources {
         for (int i = 2; i < attributeValuesCount; i++) {
             valuesList.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING + i));
         }
-        attr = new IdPAttribute(attributeName);
+        final IdPAttribute attr = new IdPAttribute(attributeName);
         attr.setValues(valuesList);
 
-        StaticAttributeDefinition definition = new StaticAttributeDefinition();
-        definition.setId(attributeName);
-        definition.setValue(attr);
+        return populatedStaticAttribute(attr);
+    }
+
+    /**
+     * Create a static attribute with known attribute.
+     * 
+     * @param attribute the input attribute
+     * @return the attribute definition
+     * @throws ComponentInitializationException if we cannot initialized (unlikely)
+     */
+    public static AttributeDefinition populatedStaticAttribute(@Nonnull final IdPAttribute attribute)
+            throws ComponentInitializationException {
+        
+        final StaticAttributeDefinition definition = new StaticAttributeDefinition();
+        definition.setId(attribute.getId());
+        definition.setValue(attribute);
         definition.initialize();
         return definition;
     }

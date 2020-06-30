@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
@@ -28,6 +29,11 @@
         <InputAttributeDefinition ref="simpleEPE" />
         <InputAttributeDefinition ref="eduPersonAffiliation" />
     </AttributeDefinition>
+
+    <AttributeDefinition xsi:type="Decrypted" id="decryptedOne" dataSealerRef="encryptedAttribute.DataSealer">
+    <InputDataConnector ref="staticEncrypted" attributeNames="encryptedOne"/>
+    </AttributeDefinition>
+
 
     <!-- Schema: Core schema attributes-->
     
@@ -202,14 +208,21 @@
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
 
+    <DataConnector id="staticEncrypted" xsi:type="Static">
+        <Attribute id="encryptedOne">
+        <!-- plaintext: Hello World -->
+            <Value>AAdzZWNyZXQxfrZRV23BOWmQMLc4mNEbYRxwgcY+z2Y8gm+0duysPsTsMJwa66gqhwM18uFw/PsGtcBYClwLmfs8fLIFP0lNAG7jpQ==</Value>
+        </Attribute>
+    </DataConnector>
+
     <!-- Example Relational Database Connector -->
 
     <DataConnector id="myDB" xsi:type="RelationalDatabase">
         <SimpleManagedConnection
-	        jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
-	        jdbcURL="jdbc:hsqldb:mem:myTestDB"
-	        jdbcUserName="SA"
-	        jdbcPassword="" />
+            jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
+            jdbcURL="jdbc:hsqldb:mem:myTestDB"
+            jdbcUserName="SA"
+            jdbcPassword="" />
         <QueryTemplate>
             <![CDATA[ 
                 SELECT * FROM student WHERE userid = '$resolutionContext.principal'

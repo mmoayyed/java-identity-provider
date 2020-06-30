@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -53,6 +54,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 
 import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.config.StringToDurationConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -66,6 +68,8 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.DataSealer;
+import net.shibboleth.utilities.java.support.security.DataSealerException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -160,6 +164,37 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         helper(false);
     }
 
+    /**
+     * Not actually a test, just a convenience method for encrypting a value to put into the test data.
+     * @throws DataSealerException 
+     * @throws ComponentInitializationException 
+     */
+    @Test(enabled=false)
+    private void dumpEncryptedString() throws DataSealerException {
+        final String inputFile ="net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml";
+
+        final GenericApplicationContext context = new GenericApplicationContext();
+        context.getBeanFactory().addBeanPostProcessor(new IdentifiableBeanPostProcessor());
+        setTestContext(context);
+        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
+
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        context.setDisplayName("ApplicationContext: ");
+        service.setConverters(Set.of(new StringToDurationConverter(), new StringToResourceConverter()));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+        
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(inputFile);
+        context.refresh();
+
+        final DataSealer sealer = context.getBean("encryptedAttribute.DataSealer", DataSealer.class);
+        log.info("Encrypted string is {}", sealer.wrap("Hello World"));
+    }
+    
     private void helper(final boolean stripNulls) throws ComponentInitializationException, ServiceException, ResolutionException {
 
         final String inputFile;
@@ -195,7 +230,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         final Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
         log.debug("resolved attributes '{}'", resolvedAttributes);
 
-        assertEquals(resolvedAttributes.size(), 14);
+        assertEquals(resolvedAttributes.size(), 15);
 
         // Static
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
@@ -204,6 +239,11 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         
         assertEquals(values.size(), expectedEPAValues);
         assertTrue(values.contains(new StringAttributeValue("member")));
+
+        attribute = resolvedAttributes.get("decryptedOne");
+        assertNotNull(attribute);
+        values = attribute.getValues();
+        assertTrue(values.contains(new StringAttributeValue("Hello World")));
         
         // Broken (case 665)
         attribute =  resolvedAttributes.get("broken");

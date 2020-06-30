@@ -6,7 +6,10 @@
         xmlns:context="http://www.springframework.org/schema/context"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                            
+        default-init-method="initialize"
+        default-destroy-method="destroy">
     
     <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
@@ -21,7 +24,19 @@
             </props>
         </property>
     </bean>
-    
+   
+     <bean id="encryptedAttribute.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer">
+        <property name="keyStrategy">
+            <bean class="net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy"
+                p:keyAlias="secret"
+                p:keystoreResource="classpath:/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.jks"
+                p:keyVersionResource="classpath:/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.kver"
+                p:keystorePassword="password"
+                p:keyPassword="kpassword"
+                p:updateInterval="PT0S" />
+        </property>
+    </bean>
+   
     <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
         class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
