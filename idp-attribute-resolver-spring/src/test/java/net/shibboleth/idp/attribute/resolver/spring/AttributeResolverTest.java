@@ -166,7 +166,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     /**
      * Not actually a test, just a convenience method for encrypting a value to put into the test data.
-     * @throws DataSealerException from {@link DataSealer#wrap(String, java.time.Instant)}
+     * @throws DataSealerException from {@link DataSealer#wrap(String)}
      */
     @Test(enabled=false)
     private void dumpEncryptedString() throws DataSealerException {
