@@ -21,6 +21,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.security.Security;
 import java.util.List;
 
@@ -73,7 +74,16 @@ public class PluginInstallerTest {
         }
     }
 
-    
+    @Test(enabled = false) public void testDownload() throws ComponentInitializationException, IOException {
+        try (final PluginInstaller inst = new PluginInstaller()) {
+            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setAcceptCert(Predicates.alwaysTrue());
+            inst.initialize();
+            final URL url = new URL("http://iis.steadingsoftware.net/plugins/");
+            inst.installPlugin(url,"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
+        }
+    }
+
     public static class Wibble extends PluginDescription {
 
         /** {@inheritDoc} */

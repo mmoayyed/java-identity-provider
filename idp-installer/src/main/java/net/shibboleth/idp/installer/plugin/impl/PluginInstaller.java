@@ -18,8 +18,10 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,20 +49,24 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 
+import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  *  The class where the heavy lifting of managing a plugin happens. 
@@ -88,6 +94,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** The actual distribution. */
     private Path distribution;
 
+    /** What to use to download things. */
+    private HttpClient httpClient;
+
     /** set IdP Home.
      * @param home Where we are working from
      */
@@ -109,17 +118,25 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         acceptCert = Constraint.isNotNull(what, "Accept Cert Preducate should be non-null");
     }
 
+    /** Set the httpClient.
+     * @param what what to set.
+     */
+    public void setHttpClient(final HttpClient what) {
+        httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
+    }
+
     /** Install the plugin from the provided URL.  Involves downloading
      *  the file and then doing a {@link #installPlugin(Path, String)}.
      * @param baseURL where we get the files from
      * @param fileName the name
+     * @throws BuildException if badness is detected.
      */
     public void installPlugin(@Nonnull final URL baseURL,
-                              @Nonnull @NotEmpty final String fileName) {
-        //download(baseURL, fileName);
+                              @Nonnull @NotEmpty final String fileName) throws BuildException {
+        download(baseURL, fileName);
         installPlugin(downloadDirectory, fileName);
     }
-    
+
     /** Install the plugin from a local path.
      * <ul><li> Check signature</li>
      * <li>Unpack to temp folder</li>
@@ -128,8 +145,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param fileName the name
      * @throws BuildException if badness is detected.
      */
-    public  void installPlugin(@Nonnull final Path base,
-                               @Nonnull @NotEmpty final String fileName) throws BuildException {
+    public void installPlugin(@Nonnull final Path base,
+                              @Nonnull @NotEmpty final String fileName) throws BuildException {
         if (!Files.exists(base.resolve(fileName))) {
             log.error("Could not find distribution {}", base.resolve(fileName));
             throw new BuildException("Could not find distribution");
@@ -145,6 +162,47 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         //doInstall();
     }
 
+    /** Method to download a zip file to the {{@link #downloadDirectory}.
+     * @param baseURL Where the zip/tgz and signature file is
+     * @param fileName the name.
+     * @throws BuildException if badness is detected.
+     */
+    private void download(final URL baseURL, final String fileName) throws BuildException {
+        if (httpClient == null) {
+            log.debug("No HttpClient built, creating default builder");
+            try {
+                httpClient = new HttpClientBuilder().buildClient();
+            } catch (final Exception e) {
+                log.error("Could not create HttpClient", e);
+                throw new BuildException(e);
+            }
+        }
+        try {
+            downloadDirectory = Files.createTempDirectory("plugin-installer-download");
+            final Resource baseResource = new HTTPResource(httpClient, baseURL);
+            download(baseResource, fileName);
+            download(baseResource, fileName + ".asc");
+        } catch (final IOException e) {
+            log.error("Error in download", e);
+            throw new BuildException(e);
+        }
+    }
+
+    /** Download helper method.
+     * @param baseResource where to go for the file
+     * @param fileName the file name
+     * @throws IOException as required
+     */
+    private void download(final Resource baseResource, final String fileName) throws IOException {
+        final Resource fileResource = baseResource.createRelativeResource(fileName);
+        final Path filePath = downloadDirectory.resolve(fileName);
+        log.debug("Downloading from {} to {}", fileResource.getDescription(), filePath);
+        try (final OutputStream fileOut = new BufferedOutputStream(
+                new FileOutputStream(filePath.toFile()))) {
+            fileResource.getInputStream().transferTo(fileOut);
+        }
+    }
+
     /** Method to unpack a zip or tgz file into out {{@link #unpackDirectory}.
      * @param base Where the zip/tgz file is
      * @param fileName the name.
@@ -154,7 +212,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void unpack(final Path base, final String fileName) throws BuildException {
         Constraint.isNull(unpackDirectory, "cannot unpack multiple times");
         try {
-            unpackDirectory = Files.createTempDirectory("plugin-installer");
+            unpackDirectory = Files.createTempDirectory("plugin-installer-unpack");
             
             final Path fullName = base.resolve(fileName);
             try (final ArchiveInputStream inStream = getStreamFor(fullName, isZip(fileName))) {
@@ -355,7 +413,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             log.error("Couldn't delete {}", directory, e);
         }
     }
-
+    
     /** {@inheritDoc} */
     public void close() {
         deleteTree(downloadDirectory);
