@@ -46,6 +46,22 @@ public final class PluginSupport {
 
     /** Property Name for support level inside {@link #VERSION_INFO_PATH}. */
     @Nonnull public static final String SUPPORT_LEVEL = "support.level";
+
+    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
+    public static final int SUPPORT_LEVEL_CURRENT = 0;
+
+    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
+    public static final int SUPPORT_LEVEL_OUT_OF_DATE = 1;
+
+    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
+    public static final int SUPPORT_LEVEL_UNSUPPORTED = 2;
+
+    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
+    public static final int SUPPORT_LEVEL_SECADV = 3;
+
+    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
+    public static final int SUPPORT_LEVEL_WITHDRAWN = 4;
+
     
     /** Class logger. */
     @Nonnull private static Logger log = LoggerFactory.getLogger(PluginSupport.class);
