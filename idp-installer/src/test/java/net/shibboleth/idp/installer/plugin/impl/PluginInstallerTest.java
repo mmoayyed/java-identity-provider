@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.resource.Resource;
 
@@ -84,7 +85,7 @@ public class PluginInstallerTest {
         }
     }
 
-    public static class Wibble extends PluginDescription {
+    public static class Wibble extends AbstractPluginDescription {
 
         /** {@inheritDoc} */
         public String getPluginId() {

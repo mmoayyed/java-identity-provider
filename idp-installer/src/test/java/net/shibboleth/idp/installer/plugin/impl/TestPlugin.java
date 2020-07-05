@@ -23,13 +23,13 @@ import java.util.List;
 import org.springframework.core.io.ClassPathResource;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import net.shibboleth.utilities.java.support.plugin.PluginDescription;
+import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
 import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  *
  */
-public class TestPlugin extends PluginDescription {
+public class TestPlugin extends AbstractPluginDescription {
 
     /** {@inheritDoc} */
     @Override
