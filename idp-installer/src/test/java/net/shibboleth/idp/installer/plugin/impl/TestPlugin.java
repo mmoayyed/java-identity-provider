@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.installer.plugin.impl;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  *
@@ -40,9 +40,13 @@ public class TestPlugin extends AbstractPluginDescription {
 
     /** {@inheritDoc} */
     @Override
-    public List<Resource> getUpdateResources() {
+    public List<URL> getUpdateURLs() {
         ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/installer/plugin/");
-        return Collections.singletonList(ResourceHelper.of(resource));
+        try {
+            return Collections.singletonList(resource.getURL());
+        } catch (IOException e) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     /** {@inheritDoc} */

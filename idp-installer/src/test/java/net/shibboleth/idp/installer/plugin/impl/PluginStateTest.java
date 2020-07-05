@@ -20,18 +20,18 @@ package net.shibboleth.idp.installer.plugin.impl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  * Tests for {@link PluginState}.
@@ -80,12 +80,15 @@ public class PluginStateTest {
     @Test
     public void testMulti() throws IOException, Exception {
 
-        Resource res = new HTTPResource(new HttpClientBuilder().buildClient(), "http://example.org/dir");
-        
         final PluginDescription simple = new TestPlugin() {
-            /** {@inheritDoc} */
-            public List<Resource> getUpdateResources() {
-                return List.of(res, super.getUpdateResources().get(0));
+            @Override
+            public java.util.List<URL> getUpdateURLs() {
+                try {
+                    return List.of(new URL("http://example.org/dir"), super.getUpdateURLs().get(0));
+                } catch (final MalformedURLException e) {
+                    fail(e.toString());
+                    return super.getUpdateURLs();
+                }
             }
         };
         

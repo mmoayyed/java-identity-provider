@@ -18,6 +18,7 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +27,13 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
+import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.plugin.PluginSupport;
 import net.shibboleth.idp.installer.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -36,10 +41,10 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  * A class which will answer questions about a plugin state as of now
@@ -58,13 +63,16 @@ public final class PluginState extends AbstractInitializableComponent {
     
     /** The support information. */
     @Nonnull private final Map<PluginVersion, VersionInfo> versionInfo = new HashMap<>();
-    
+
     /** My support information. */
     @NonnullAfterInit private VersionInfo myVersionInfo;
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PluginState.class);
     
+    /** The HttpClient to use.*/
+    @NonnullAfterInit private HttpClient httpClient;
+
     /**
      * Constructor.
      *
@@ -76,6 +84,14 @@ public final class PluginState extends AbstractInitializableComponent {
                 plugin.getMinorVersion(), plugin.getPatchVersion());
     }
     
+    /** Set the client.
+     * @param what what to set.
+     */
+    public void setHttpClient(@Nonnull final HttpClient what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        httpClient = Constraint.isNotNull(what, "HttpClient must be non null");
+    }
+
     /** Given a version find out more.
      * @param parentResource the root we are looking at
      * @param version the version in question.
@@ -93,8 +109,8 @@ public final class PluginState extends AbstractInitializableComponent {
         }
         
         try {
-            final Resource details = parentResource.createRelativeResource(version + "/")
-                    .createRelativeResource(PluginSupport.VERSION_INFO_PATH);
+            final Resource details = parentResource.createRelative(version + "/")
+                    .createRelative(PluginSupport.VERSION_INFO_PATH);
             detailsProps.load(details.getInputStream());
         } catch (final IOException e) {
             log.warn("Could not find details description {}, version {} ", plugin.getPluginId(), version, e);
@@ -164,7 +180,7 @@ public final class PluginState extends AbstractInitializableComponent {
         final Resource pluginIdResource;
         try {
             pluginIdResource = 
-                    parentResource.createRelativeResource(plugin.getPluginId() + "/");
+                    parentResource.createRelative(plugin.getPluginId() + "/");
             if (!pluginIdResource.exists()) {
                 log.debug("Plugin {}: directory at {} could not be found",
                         plugin.getPluginId(), parentResource.getDescription());
@@ -177,7 +193,7 @@ public final class PluginState extends AbstractInitializableComponent {
         }
         try {
             final Resource versionsResource =
-                    pluginIdResource.createRelativeResource(PluginSupport.AVAILABLE_VERSIONS_PATH);
+                    pluginIdResource.createRelative(PluginSupport.AVAILABLE_VERSIONS_PATH);
             final Properties versionsProps = new Properties(1);
             versionsProps.load(versionsResource.getInputStream());
             final String name = plugin.getPluginId() + PluginSupport.AVAILABLE_VERSIONS_PROPERTY_SUFFIX;
@@ -200,30 +216,48 @@ public final class PluginState extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         
         try {
-            for (final Resource parent:plugin.getUpdateResources()) {
-               
-                log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(), parent.getDescription());
-                if (!parent.exists()) {
-                    log.info("Plugin {}: {} could not be located", plugin.getPluginId(), parent.getDescription());
+            if (httpClient == null) {
+                httpClient = new HttpClientBuilder().buildClient();
+            }
+            for (final URL url: plugin.getUpdateURLs()) {
+                final Resource parentResource;
+                if ("file".equals(url.getProtocol())) {
+                    // Kludge to allow classpath backed files
+                    parentResource = new FileSystemResource(url.getPath());
+                } else {
+                    parentResource = new HTTPResource(httpClient, url);
+                }
+
+                log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(),
+                        parentResource.getDescription());
+                if (!parentResource.exists()) {
+                    log.info("Plugin {}: {} could not be located", plugin.getPluginId(),
+                            parentResource.getDescription());
                     continue;
                 }
                 
-                if (populate(parent)) { 
+                if (populate(parentResource)) {
                     log.debug("Plugin {}: PluginState populated from {}",
-                            plugin.getPluginId(), parent.getDescription());
+                            plugin.getPluginId(), parentResource.getDescription());
                     if (myVersionInfo == null) {
                         log.error("Plugin {} : Could not find version {} in descriptions at {}",
-                                plugin.getPluginId(), myPluginVersion, parent.getDescription());
+                                plugin.getPluginId(), myPluginVersion, parentResource.getDescription());
                     }
                     return;
                 }
             }
+            log.error("Plugin {}: No available servers found.");
+            throw new ComponentInitializationException("Could not locate information for " + plugin.getPluginId());
+
         } catch (final IOException e) {
             throw new ComponentInitializationException("Could not locate Update Resource for "
                         + plugin.getPluginId(), e);
+        } catch (final Exception e) {
+            throw new ComponentInitializationException("Could not initialize http client for "
+                    + plugin.getPluginId(), e);
+        } finally {
+            super.doInitialize();
         }
-        log.warn("Plugin {}: No available servers found.");
-        throw new ComponentInitializationException("Could not locate information for " + plugin.getPluginId());
     }
     
     /** Get the current support level for this version.
@@ -289,8 +323,8 @@ public final class PluginState extends AbstractInitializableComponent {
      * @param idPVersion the version as a {@link PluginVersion}
      * @return whether it is supported.
      */
-    protected boolean isSupportedWithIdPVersion(final VersionInfo pluginVersionInfo, final PluginVersion idPVersion) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+    protected static boolean isSupportedWithIdPVersion(final VersionInfo pluginVersionInfo,
+            final PluginVersion idPVersion) {
         final int maxCompare = idPVersion.compareTo(pluginVersionInfo.getMaxSupported()); 
         
         if (maxCompare >= 0) {
@@ -326,7 +360,7 @@ public final class PluginState extends AbstractInitializableComponent {
         
         /** support level. */
         private final int supportLevel;
-        
+
         /**
          * Constructor.
          *

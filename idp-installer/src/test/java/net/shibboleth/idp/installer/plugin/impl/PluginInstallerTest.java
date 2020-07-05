@@ -35,7 +35,6 @@ import com.google.common.base.Predicates;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest {
@@ -94,20 +93,17 @@ public class PluginInstallerTest {
         }
 
         /** {@inheritDoc} */
-        public List<Resource> getUpdateResources() throws IOException {
-            // TODO Auto-generated method stub
+        public List<URL> getUpdateURLs() throws IOException {
             return null;
         }
 
         /** {@inheritDoc} */
         public int getMajorVersion() {
-            // TODO Auto-generated method stub
             return 0;
         }
 
         /** {@inheritDoc} */
         public int getMinorVersion() {
-            // TODO Auto-generated method stub
             return 0;
         }
         
