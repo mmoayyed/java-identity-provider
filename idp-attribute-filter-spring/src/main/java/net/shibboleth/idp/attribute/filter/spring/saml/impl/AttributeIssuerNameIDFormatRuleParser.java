@@ -20,35 +20,21 @@ package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterNameIDFormatExactPolicyRule;
+import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerNameIDFormatExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
 
 /**
- * Parser for {@link AttributeRequesterNameIDFormatExactPolicyRule}.
+ * Parser for {@link AttributeIssuerNameIDFormatExactPolicyRule}.
  */
-public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRuleParser {
+public class AttributeIssuerNameIDFormatRuleParser extends AbstractNameIDFormatRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
-            "NameIDFormatExactMatch");
+            "IssuerNameIDFormatExactMatch");
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Class<AttributeRequesterNameIDFormatExactPolicyRule> getNativeBeanClass() {
-        return AttributeRequesterNameIDFormatExactPolicyRule.class;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
-
-        builder.addPropertyValue("nameIdFormat", 
-                StringSupport.trimOrNull(element.getAttributeNS(null, "nameIdFormat")));
+    @Override @Nonnull protected Class<AttributeIssuerNameIDFormatExactPolicyRule> getNativeBeanClass() {
+        return AttributeIssuerNameIDFormatExactPolicyRule.class;
     }
 
 }

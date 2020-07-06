@@ -3,7 +3,7 @@
         xmlns:afp="urn:mace:shibboleth:2.0:afp"
         xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
         targetNamespace="urn:mace:shibboleth:2.0:afp"
-        version="3.3.0"
+        version="4.1.0"
         elementFormDefault="qualified">
 
     <import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
@@ -705,6 +705,18 @@
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute requester supports a specified
+                NameID format.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:NameIDFormatExactMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IssuerNameIDFormatExactMatch">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if the attribute issuer supports a specified
                 NameID format.
             </documentation>
         </annotation>

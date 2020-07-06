@@ -28,11 +28,11 @@ import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Checks if the attribute requester supports the required NameID format. */
-public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractNameIDFormatExactPolicyRule {
+/** Checks if the attribute issuer supports the required NameID format. */
+public class AttributeIssuerNameIDFormatExactPolicyRule extends AbstractNameIDFormatExactPolicyRule {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterNameIDFormatExactPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeIssuerNameIDFormatExactPolicyRule.class);
 
     /**
      * Gets the SSO role descriptor for the entity to be checked.
@@ -42,7 +42,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractNameI
      * @return the SSO role descriptor of the entity or null if the entity does not have such a descriptor
      */
     @Nullable protected SSODescriptor getEntitySSODescriptor(@Nonnull final AttributeFilterContext filterContext) {
-        final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
+        final SAMLMetadataContext metadataContext = filterContext.getIssuerMetadataContext();
 
         if (null == metadataContext) {
             log.debug("{} No requester metadata context found", getLogPrefix());

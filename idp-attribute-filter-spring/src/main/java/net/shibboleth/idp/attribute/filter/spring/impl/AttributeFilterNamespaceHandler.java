@@ -46,11 +46,12 @@ import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataR
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerInEntityGroupRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerNameIDFormatRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeExactRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterInEntityGroupRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIdFormatRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIDFormatRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.ScopeMatchesShibMDScopeParser;
@@ -141,8 +142,11 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(AttributeIssuerEntityAttributeRegexRuleParser.SCHEMA_TYPE,
                 new AttributeIssuerEntityAttributeRegexRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE,
-                new AttributeRequesterNameIdFormatRuleParser());
+        registerBeanDefinitionParser(AttributeRequesterNameIDFormatRuleParser.SCHEMA_TYPE,
+                new AttributeRequesterNameIDFormatRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerNameIDFormatRuleParser.SCHEMA_TYPE,
+                new AttributeIssuerNameIDFormatRuleParser());
 
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
                 new AttributeRequesterInEntityGroupRuleParser());

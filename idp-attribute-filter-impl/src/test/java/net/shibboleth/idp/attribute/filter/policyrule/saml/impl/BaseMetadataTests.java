@@ -22,7 +22,6 @@ import java.util.Collections;
 
 import net.shibboleth.ext.spring.service.MockApplicationContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
@@ -41,9 +40,6 @@ import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.annotations.BeforeClass;
 
-/**
- * tests for {@link AttributeRequesterEntityAttributeExactPolicyRule}.
- */
 @SuppressWarnings("javadoc")
 public class BaseMetadataTests extends XMLObjectBaseTestCase {
 

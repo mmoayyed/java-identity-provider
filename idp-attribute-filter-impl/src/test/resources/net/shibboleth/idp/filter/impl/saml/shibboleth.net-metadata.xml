@@ -78,6 +78,7 @@
             </KeyDescriptor>
             
             <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+            <NameIDFormat>https://example.org/foo</NameIDFormat>
 
             <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.shibboleth.net/idp/profile/SAML2/POST/SSO"/>
             
@@ -317,6 +318,57 @@ NtrvvBkq2tvnd6wm1DJNDzZQB/nRpCadwp4a64Qa0XJiGCoxFUvkd1+RSHqbBsEF
             <alg:SigningMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
             <alg:SigningMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
         </Extensions>
+        
+        <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            
+            <Extensions>
+                <shibmd:Scope regexp="false">shibboleth.net</shibmd:Scope>
+                
+                <mdui:UIInfo>
+                    <mdui:DisplayName xml:lang="en">Shibboleth.net</mdui:DisplayName>
+                    <mdui:Description xml:lang="en">An identity provider hosted and used by the developers of Shibboleth.</mdui:Description>
+                    <mdui:Logo height="82" width="64">https://discovery.shibboleth.net/images/gryphon_64x82.png</mdui:Logo>
+                </mdui:UIInfo>
+            </Extensions>
+            
+            <KeyDescriptor>
+                <ds:KeyInfo>
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                            MIIDNDCCAhygAwIBAgIVAKyBWnv1/h1U11C7kHvV33FIrEsJMA0GCSqGSIb3DQEB
+                            BQUAMB0xGzAZBgNVBAMTEmlkcC5zaGliYm9sZXRoLm5ldDAeFw0xMDEyMjkwMDA5
+                            MTlaFw0zMDEyMjkwMDA5MTlaMB0xGzAZBgNVBAMTEmlkcC5zaGliYm9sZXRoLm5l
+                            dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjWAdpUx/82FUzrRMfA
+                            M63PkZZYCm3RnT3eiL+DeJcbGdcEJx/o+32vgHXJgJOBt14YdVam5GErIYgk4SGq
+                            5Z5RYl0PpQn6HQG/9prGnYCu6p5zfb0557o51Eh8TcVehS6Y2ruyCjAF0jgVMwh5
+                            /0Oh8EE9wG93pSpm70DAiiaTVCb8WoT1aZYtxbBmmuH10bU+wge/NMmaHuVAe599
+                            pyezFIL4FoI2g+1Q6nG4Yl1Z07I81tTApXKVMWRt/4/M3m2D7PUMOQ9qsxthp2L/
+                            LovIeNo0bTyeW290T2Y/JRZhKOgeDqkhuu82DPri2Vm5G/unB69KfRB7CF9QWIc3
+                            y80CAwEAAaNrMGkwSAYDVR0RBEEwP4ISaWRwLnNoaWJib2xldGgubmV0hilodHRw
+                            czovL2lkcC5zaGliYm9sZXRoLm5ldC9pZHAvc2hpYmJvbGV0aDAdBgNVHQ4EFgQU
+                            3uZ32tKXJBzPCTp2dtHSLV0FvGgwDQYJKoZIhvcNAQEFBQADggEBAAYXYuzp0UTj
+                            3yLRvUCbEtaw9b80+weOELkVv3WFY3QAG8pIKEblrMMtzrzLFWZwYwwMZDab/HnH
+                            egmgjZBthrOedEmoJ+OHRmIiS8zdZxVGEadJhTUaeIkO6kwK7Ht3nQePoiXV7TI5
+                            +A9SpmZGoukC85Za4wGDw4xWGs5t5l6tBuuV+1s0oC6T8ih5n/NyThfpbihSW0d7
+                            iBfSUickgpoM2BLM3FCnbO8HOsX1rGV4ypG9ZGDDvr2jrzalXXmc05gSlL2qd9ce
+                            Q1M+9vavusPCqlj2zZf2/HfzhyiFcb/OgA0oTFWW2ynXji6UarIV5QaPoi/XmGmx
+                            BXD36HfGBXk= </ds:X509Certificate>
+                    </ds:X509Data>
+
+                </ds:KeyInfo>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+                <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+            </KeyDescriptor>
+
+            <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.shibboleth.net/idp/profile/SAML2/POST/SSO"/>
+            
+            <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://idp.shibboleth.net/idp/profile/SAML2/POST-SimpleSign/SSO"/>
+            
+            <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.shibboleth.net/idp/profile/SAML2/Redirect/SSO"/>
+        </IDPSSODescriptor>
         
         <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:1.0:protocol urn:oasis:names:tc:SAML:2.0:protocol">
             

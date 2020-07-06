@@ -15,26 +15,26 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.saml;
+package net.shibboleth.idp.attribute.filter.spring.saml.impl;
 
-import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
+import javax.annotation.Nonnull;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterNameIDFormatExactPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIdFormatRuleParser;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 /**
- * test for {@link AttributeRequesterNameIdFormatRuleParser}.
+ * Parser for {@link AttributeRequesterNameIDFormatExactPolicyRule}.
  */
-public class AttributeRequesterNameIdFormatRuleParserTest extends BaseAttributeFilterParserTest {
+public class AttributeRequesterNameIDFormatRuleParser extends AbstractNameIDFormatRuleParser {
 
-    @SuppressWarnings("javadoc") @Test public void basic() throws ComponentInitializationException {
-        final AttributeRequesterNameIDFormatExactPolicyRule rule =
-                (AttributeRequesterNameIDFormatExactPolicyRule) getPolicyRule("requesterNameId2.xml");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(BaseFilterParser.NAMESPACE,
+            "NameIDFormatExactMatch");
 
-        assertEquals(rule.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<AttributeRequesterNameIDFormatExactPolicyRule> getNativeBeanClass() {
+        return AttributeRequesterNameIDFormatExactPolicyRule.class;
     }
+
 }
