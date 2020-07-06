@@ -80,7 +80,7 @@
         <property name="password" value="" />
     </bean>
 
-    <jdbc:initialize-database data-source="testbed.JDBCDataSource">
+    <jdbc:initialize-database data-source="testbed.JDBCDataSource" ignore-failures="ALL">
         <jdbc:script location="classpath:/test/test-jdbc.sql"/>
     </jdbc:initialize-database>
     

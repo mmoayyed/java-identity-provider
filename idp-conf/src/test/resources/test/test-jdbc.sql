@@ -1,3 +1,4 @@
+DROP TABLE shibpid;
 CREATE TABLE shibpid (
 	localEntity VARCHAR(100) NOT NULL, 
 	peerEntity VARCHAR(100) NOT NULL,
