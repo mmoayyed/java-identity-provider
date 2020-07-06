@@ -66,7 +66,23 @@
         p:encoding="#{ T(net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore.Encoding).%{idp.persistentId.encoding:BASE64} }" />
 
     <bean id="shibboleth.StoredPersistentIdGenerator" parent="shibboleth.JDBCPersistentIdStore" lazy-init="true"
-        p:dataSource="#{getObject('%{idp.persistentId.dataSource:undefined}'.trim())}" />
+            p:dataSource="#{getObject('%{idp.persistentId.dataSource:undefined}'.trim())}"
+            p:queryTimeout="%{idp.persistentId.queryTimeout:PT5S}"
+            p:transactionRetries="%{idp.persistentId.transactionRetries:3}"
+            p:verifyDatabase="%{idp.persistentId.verifyDatabase:true}"
+            p:tableName="#{'%{idp.persistentId.tableName:shibpid}'.trim()}"
+            p:localEntityColumn="#{'%{idp.persistentId.localEntityColumn:localEntity}'.trim()}"
+            p:peerEntityColumn="#{'%{idp.persistentId.peerEntityColumn:peerEntity}'.trim()}"
+            p:principalNameColumn="#{'%{idp.persistentId.principalNameColumn:principalName}'.trim()}"
+            p:sourceIdColumn="#{'%{idp.persistentId.sourceIdColumn:localId}'.trim()}"
+            p:persistentIdColumn="#{'%{idp.persistentId.persistentIdColumn:persistentId}'.trim()}"
+            p:peerProvidedIdColumn="#{'%{idp.persistentId.peerProvidedIdColumn:peerProvidedId}'.trim()}"
+            p:createTimeColumn="#{'%{idp.persistentId.createTimeColumn:creationDate}'.trim()}"
+            p:deactivationTimeColumn="#{'%{idp.persistentId.deactivationTimeColumn:deactivationDate}'.trim()}">
+        <property name="retryableErrors">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.persistentId.retryableErrors:}'.trim()}" />
+        </property>
+    </bean>    
     
     <!-- Parent bean for users to configure a custom ID store rather than a data source only. -->
     <bean id="shibboleth.JDBCPersistentIdStore" abstract="true"

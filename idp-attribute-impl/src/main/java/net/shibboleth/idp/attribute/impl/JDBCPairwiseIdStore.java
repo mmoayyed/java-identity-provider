@@ -27,7 +27,6 @@ import java.sql.Types;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +43,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -147,7 +148,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     /** Constructor. */
     public JDBCPairwiseIdStore() {
         transactionRetry = 3;
-        retryableErrors = Arrays.asList("23000", "23505");
+        retryableErrors = List.of("23000", "23505");
         queryTimeout = Duration.ofSeconds(5);
         verifyDatabase = true;
         
@@ -221,7 +222,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     public void setTransactionRetries(@NonNegative final int retries) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        transactionRetry = Constraint.isGreaterThanOrEqual(0, retries, "Timeout must be greater than or equal to 0");
+        transactionRetry = Constraint.isGreaterThanOrEqual(0, retries, "Retries must be greater than or equal to 0");
     }
 
     /**
@@ -230,7 +231,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
      * 
      * @return retryable messages
      */
-    @Nonnull @NonnullElements public Collection<String> getRetryableErrors() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getRetryableErrors() {
         return retryableErrors;
     }
     
@@ -243,7 +244,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     public void setRetryableErrors(@Nullable @NonnullElements final Collection<String> errors) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        retryableErrors = new ArrayList<>(StringSupport.normalizeStringCollection(errors));
+        retryableErrors = List.copyOf(StringSupport.normalizeStringCollection(errors));
     }
     
     /**
