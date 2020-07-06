@@ -74,4 +74,14 @@
         <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
     </util:list>
     
+        <bean id="testbed.JDBCDataSource" class="org.hsqldb.jdbc.JDBCDataSource">
+        <property name="url" value="jdbc:hsqldb:mem:Mock" />
+        <property name="user" value="SA" />
+        <property name="password" value="" />
+    </bean>
+
+    <jdbc:initialize-database data-source="testbed.JDBCDataSource">
+        <jdbc:script location="classpath:/test/test-jdbc.sql"/>
+    </jdbc:initialize-database>
+    
 </beans>
