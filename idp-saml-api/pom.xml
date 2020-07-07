@@ -93,10 +93,10 @@
             <artifactId>spring-webflow</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>net.shibboleth.ext</groupId>
-			<artifactId>spring-extensions</artifactId>
-		</dependency>
+	<dependency>
+	    <groupId>net.shibboleth.ext</groupId>
+	    <artifactId>spring-extensions</artifactId>
+	</dependency>
         
         <!-- Provided Dependencies -->
 
@@ -129,6 +129,17 @@
             <scope>test</scope>
         </dependency>
 
+	<dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+	    <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>

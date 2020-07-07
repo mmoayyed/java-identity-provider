@@ -89,12 +89,17 @@
             <artifactId>spring-webflow</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>org.cryptacular</groupId>
-			<artifactId>cryptacular</artifactId>
-		</dependency>
+	<dependency>
+	    <groupId>org.cryptacular</groupId>
+	    <artifactId>cryptacular</artifactId>
+	</dependency>
         
         <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Runtime Dependencies -->
 
@@ -118,7 +123,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Managed Dependencies -->
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <scm>

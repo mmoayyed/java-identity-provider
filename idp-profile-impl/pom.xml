@@ -88,6 +88,11 @@
         </dependency>
         
         <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Runtime Dependencies -->
 
@@ -172,6 +177,19 @@
             <artifactId>spring-extensions</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+
+	<dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+	    <groupId>net.shibboleth.utilities</groupId>
+	    <artifactId>java-support</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
         </dependency>
     </dependencies>
 

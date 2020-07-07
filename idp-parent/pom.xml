@@ -98,46 +98,14 @@
         </repository>
     </repositories>
 
-    <!-- Dependencies which are required by every single project module should go here and will be inherited by all modules. -->
     <dependencies>
-        <!-- Compile Dependencies -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
+	<!-- This file should contain NO Dependencies.  See IDP-1620. -->
 
         <!-- Provided Dependencies -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-            <version>${java-support.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 
@@ -146,7 +114,7 @@
         used by all project modules. -->
     <dependencyManagement>
         <dependencies>
-            <!-- Compile Dependencies -->
+	    <!-- Import Dependencies:  OpenSAML -->
             <dependency>
                 <groupId>${opensaml.groupId}</groupId>
                 <artifactId>opensaml-bom</artifactId>
@@ -161,6 +129,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- Compile Dependencies -->
+
             <dependency>
                 <groupId>net.shibboleth.utilities</groupId>
                 <artifactId>java-support</artifactId>
@@ -171,6 +142,7 @@
                 <artifactId>spring-extensions</artifactId>
                 <version>${spring-extensions.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>${spring-webflow.groupId}</groupId>
                 <artifactId>spring-webflow</artifactId>
@@ -182,6 +154,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+<!--            <dependency>
+		<groupId>${spring.groupId}</groupId>
+		<artifactId>spring-context-support</artifactId>
+		<version>${spring.version}</version>
+            </dependency> -->
 
             <!-- Provided Dependencies -->
 
@@ -207,6 +184,14 @@
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+		<groupId>net.shibboleth.utilities</groupId>
+		<artifactId>java-support</artifactId>
+		<version>${java-support.version}</version>
+		<type>test-jar</type>
+		<scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

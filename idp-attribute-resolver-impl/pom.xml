@@ -20,23 +20,23 @@
         <automatic.module.name>net.shibboleth.idp.attribute.resolver.impl</automatic.module.name>
     </properties>
 
-	<dependencies>
-		<!-- Compile Dependencies -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>idp-attribute-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>idp-attribute-resolver-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>idp-attribute-impl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependencies>
+	<!-- Compile Dependencies -->
+	<dependency>
+	    <groupId>${project.groupId}</groupId>
+	    <artifactId>idp-attribute-api</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>${project.groupId}</groupId>
+	    <artifactId>idp-attribute-resolver-api</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>${project.groupId}</groupId>
+	    <artifactId>idp-attribute-impl</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-authn-api</artifactId>
@@ -53,7 +53,7 @@
             <version>${project.version}</version>
         </dependency>
 
-		<!--  We only need openSAML because of the legacy Contexts we need for scripting -->
+	<!--  We only need openSAML because of the legacy Contexts we need for scripting -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
@@ -80,35 +80,35 @@
             <artifactId>spring-extensions</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity-engine-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.ldaptive</groupId>
-			<artifactId>ldaptive</artifactId>
-		</dependency>
+	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpcore</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.velocity</groupId>
+	    <artifactId>velocity-engine-core</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>commons-codec</groupId>
+	    <artifactId>commons-codec</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.ldaptive</groupId>
+	    <artifactId>ldaptive</artifactId>
+	</dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>
 
-		<!-- Provided Dependencies -->
+	<!-- Provided Dependencies -->
 
-		<!-- Runtime Dependencies -->
-		<!-- Test Dependencies -->
+	<!-- Runtime Dependencies -->
+	<!-- Test Dependencies -->
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -118,13 +118,13 @@
             <scope>test</scope>
         </dependency>
 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>idp-attribute-resolver-api</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+	    <groupId>${project.groupId}</groupId>
+	    <artifactId>idp-attribute-resolver-api</artifactId>
+	    <version>${project.version}</version>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+	</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-impl</artifactId>
@@ -132,63 +132,70 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+	
+	<dependency>
+	    <groupId>${project.groupId}</groupId>
+	    <artifactId>idp-saml-impl</artifactId>
+	    <version>${project.version}</version>
+	    <scope>test</scope>
+	</dependency>
 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>idp-saml-impl</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${opensaml.groupId}</groupId>
-			<artifactId>opensaml-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- We need this even if mvn dependency:analyze says we don't - this 
-				provides the implementations of the SAML interfaces and by definition cannot 
-				be found via dependency analysis -->
-			<groupId>${opensaml.groupId}</groupId>
-			<artifactId>opensaml-saml-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${opensaml.groupId}</groupId>
-			<artifactId>opensaml-storage-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+	    <groupId>${opensaml.groupId}</groupId>
+	    <artifactId>opensaml-core</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+	</dependency>
+	<dependency>
+	    <!-- We need this even if mvn dependency:analyze says we don't - this 
+		 provides the implementations of the SAML interfaces and by definition cannot 
+		 be found via dependency analysis -->
+	    <groupId>${opensaml.groupId}</groupId>
+	    <artifactId>opensaml-saml-impl</artifactId>
+	    <scope>test</scope>
+	</dependency>
+	<dependency>
+	    <groupId>${opensaml.groupId}</groupId>
+	    <artifactId>opensaml-storage-impl</artifactId>
+	    <scope>test</scope>
+	</dependency>
         <dependency>
             <groupId>net.shibboleth.ext</groupId>
             <artifactId>spring-extensions</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.unboundid</groupId>
-			<artifactId>unboundid-ldapsdk</artifactId>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+	    <groupId>org.hsqldb</groupId>
+	    <artifactId>hsqldb</artifactId>
+	    <scope>test</scope>
+	</dependency>
+	<dependency>
+	    <groupId>com.unboundid</groupId>
+	    <artifactId>unboundid-ldapsdk</artifactId>
+	    <scope>test</scope>
+	</dependency>
 
-		<dependency>
-			<groupId>${opensaml.groupId}</groupId>
-			<artifactId>opensaml-profile-api</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+	    <groupId>${opensaml.groupId}</groupId>
+	    <artifactId>opensaml-profile-api</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+	</dependency>
 
-		<dependency>
-			<groupId>${opensaml.groupId}</groupId>
-			<artifactId>opensaml-saml-impl</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+	    <groupId>${opensaml.groupId}</groupId>
+	    <artifactId>opensaml-saml-impl</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+	</dependency>
+
+        <dependency>
+	    <groupId>net.shibboleth.utilities</groupId>
+	    <artifactId>java-support</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+        </dependency>
 	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
 	<dependency>
             <groupId>org.graalvm.js</groupId>

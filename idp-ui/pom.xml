@@ -83,7 +83,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Managed Dependencies -->
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <scm>

@@ -78,10 +78,20 @@
         </dependency>
 
         <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
+	<dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+	    <scope>test</scope>
+        </dependency>
 	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
 	<dependency>
             <groupId>org.graalvm.js</groupId>

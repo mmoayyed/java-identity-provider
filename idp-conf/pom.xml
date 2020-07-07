@@ -152,6 +152,26 @@
             <artifactId>janino</artifactId>
             <scope>test</scope>
         </dependency>
+	
+	<dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+	    <groupId>net.shibboleth.utilities</groupId>
+	    <artifactId>java-support</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
 	<dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
@@ -164,7 +184,7 @@
 	    <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Managed Dependencies -->
+
     </dependencies>
 
     <scm>

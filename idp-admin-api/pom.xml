@@ -47,12 +47,16 @@
         </dependency>
 
         <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
 
-        <!-- Managed Dependencies -->
     </dependencies>
 
     <scm>

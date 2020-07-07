@@ -136,6 +136,11 @@
             <artifactId>jakarta.json-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Runtime Dependencies -->
         <dependency>
@@ -225,11 +230,13 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+	
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
+	
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
@@ -240,7 +247,20 @@
             <artifactId>xmlunit-matchers</artifactId>
             <scope>test</scope>
         </dependency>
-                
+
+	<dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+	    <groupId>net.shibboleth.utilities</groupId>
+	    <artifactId>java-support</artifactId>
+	    <type>test-jar</type>
+	    <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <scm>

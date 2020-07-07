@@ -71,6 +71,11 @@
             <artifactId>jakarta.json-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Runtime Dependencies -->
         <dependency>
@@ -123,7 +128,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Managed Dependencies -->
     </dependencies>
 
     <scm>
