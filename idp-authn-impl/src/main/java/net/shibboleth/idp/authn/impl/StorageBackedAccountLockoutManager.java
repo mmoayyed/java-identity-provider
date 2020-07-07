@@ -124,7 +124,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         maxAttemptsLookupStrategy = FunctionSupport.constant(
-                (int) Constraint.isGreaterThan(0, attempts, "Attempts must be greater than zero"));
+                Constraint.isGreaterThan(0, attempts, "Attempts must be greater than zero"));
     }
     
     /**

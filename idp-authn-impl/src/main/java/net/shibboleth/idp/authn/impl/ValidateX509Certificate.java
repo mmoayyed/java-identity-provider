@@ -137,13 +137,13 @@ public class ValidateX509Certificate extends AbstractValidationAction {
                     log.warn("{} Trust engine failed to validate X.509 certificate", getLogPrefix());
                     handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                             AuthnEventIds.INVALID_CREDENTIALS);
-                    recordFailure();
+                    recordFailure(profileRequestContext);
                     return;
                 }
             } catch (final SecurityException e) {
                 log.error("{} Exception raised by trust engine", getLogPrefix(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-                recordFailure();
+                recordFailure(profileRequestContext);
                 return;
             }
         } else {
@@ -152,7 +152,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
 
         log.info("{} Login by '{}' succeeded", getLogPrefix(),
                 ((X509Certificate) certContext.getCertificate()).getSubjectX500Principal().getName());
-        recordSuccess();
+        recordSuccess(profileRequestContext);
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }

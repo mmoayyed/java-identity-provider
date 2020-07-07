@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +35,7 @@ import net.shibboleth.idp.authn.CredentialValidator;
 import net.shibboleth.idp.authn.CredentialValidator.ErrorHandler;
 import net.shibboleth.idp.authn.CredentialValidator.WarningHandler;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -64,7 +66,7 @@ public class ValidateCredentials extends AbstractValidationAction implements War
     
     /** Ordered list of validators. */
     @Nonnull @NonnullElements private List<CredentialValidator> credentialValidators;
-    
+        
     /** Whether all validators must succeed. */
     private boolean requireAll;
 
@@ -195,7 +197,7 @@ public class ValidateCredentials extends AbstractValidationAction implements War
                     return;
                 }
             } catch (final Exception e) {
-                recordFailure();
+                recordFailure(profileRequestContext);
                 if (requireAll) {
                     super.handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
                     errorSignaled = true;
@@ -252,9 +254,36 @@ public class ValidateCredentials extends AbstractValidationAction implements War
      * @param profileRequestContext current profile request context
      */
     protected void recordSuccess(@Nonnull final ProfileRequestContext profileRequestContext) {
-        recordSuccess();
+        // Need to do this first because the superclass's method will call the cleanup hook.
         if (lockoutManager != null) {
-            lockoutManager.clear(profileRequestContext);
+            if (!lockoutManager.clear(profileRequestContext)) {
+                log.warn("{} Failed to clear lockout state", getLogPrefix());
+            }
+        }
+        super.recordSuccess(profileRequestContext);
+    }
+
+    /**
+     * A default cleanup hook that removes the {@link UsernamePasswordContext} from the tree.
+     * 
+     * It also "clears" the password field, but this won't be useful until we get off the String type.
+     * 
+     * @since 4.1.0
+     */
+    public static class UsernamePasswordCleanupHook implements Consumer<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        public void accept(@Nullable final ProfileRequestContext input) {
+            if (input != null) {
+                final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
+                if (authnCtx != null) {
+                    final UsernamePasswordContext upCtx = authnCtx.getSubcontext(UsernamePasswordContext.class);
+                    if (upCtx != null) {
+                        upCtx.setPassword(null);
+                        authnCtx.removeSubcontext(upCtx);
+                    }
+                }
+            }
         }
     }
 

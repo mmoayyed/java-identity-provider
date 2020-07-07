@@ -73,7 +73,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     
     /** {@inheritDoc} */
     @Override
-    public void setId(final String id) {
+    public synchronized void setId(final String id) {
         super.setId(id);
     }
     

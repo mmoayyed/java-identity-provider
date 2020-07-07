@@ -144,7 +144,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         if (extContext == null) {
             log.debug("{} No ExternalAuthenticationContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return false;
         }
         
@@ -161,14 +161,14 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             log.info("{} External authentication produced exception", getLogPrefix(), extContext.getAuthnException());
             handleError(profileRequestContext, authenticationContext, extContext.getAuthnException(),
                     AuthnEventIds.AUTHN_EXCEPTION);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return;
         } else if (extContext.getAuthnError() != null) {
             log.info("{} External authentication produced error message: {}", getLogPrefix(),
                     extContext.getAuthnError());
             handleError(profileRequestContext, authenticationContext, extContext.getAuthnError(),
                     AuthnEventIds.AUTHN_EXCEPTION);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return;
         }
         
@@ -196,11 +196,11 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         if (!checkUsername(extContext.getSubject())) {
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return;
         }
         
-        recordSuccess();
+        recordSuccess(profileRequestContext);
         
         if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
             final ProxyAuthenticationPrincipal proxied =

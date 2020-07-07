@@ -148,12 +148,12 @@ public class ValidateRemoteUser extends AbstractValidationAction {
         if (!isAuthenticated(usernameContext.getUsername())) {
             log.info("{} User '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return;
         }
 
         log.info("{} Validated user '{}'", getLogPrefix(), usernameContext.getUsername());
-        recordSuccess();
+        recordSuccess(profileRequestContext);
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
     

@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -86,6 +87,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     
     /** Indicates whether to clear any existing {@link AuthenticationErrorContext} before execution. */
     private boolean clearErrorContext;
+    
+    /** A cleanup hook to execute after successful validation. */
+    @Nullable private Consumer<ProfileRequestContext> cleanupHook;
     
     /** Error messages associated with a specific error condition token. */
     @Nonnull @NonnullElements private Map<String,Collection<String>> classifiedMessages;
@@ -204,6 +208,30 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         resultCachingPredicate = predicate;
+    }
+    
+    /**
+     * Get the cleanup hook to execute after successful validation.
+     * 
+     * @return cleanup hook
+     * 
+     * @since 4.1.0
+     */
+    @Nullable public Consumer<ProfileRequestContext> getCleanupHook() {
+        return cleanupHook;
+    }
+    
+    /**
+     * Set the cleanup hook to execute after successful validation.
+     * 
+     * @param hook cleanup hook
+     * 
+     * @since 4.1.0
+     */
+    public void setCleanupHook(@Nullable final Consumer<ProfileRequestContext> hook) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        cleanupHook = hook;
     }
     
     /**
@@ -403,7 +431,10 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * nothing if the metrics registry is not installed into the runtime.
      * 
      * @since 3.3.0
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.1.0", forRemoval=true)
     protected void recordSuccess() {
         if (MetricsSupport.getMetricRegistry() != null) {
             MetricsSupport.getMetricRegistry().counter(getMetricName() + ".successes").inc();
@@ -415,11 +446,41 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * nothing if the metrics registry is not installed into the runtime.
      * 
      * @since 3.3.0
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.1.0", forRemoval=true)
     protected void recordFailure() {
         if (MetricsSupport.getMetricRegistry() != null) {
             MetricsSupport.getMetricRegistry().counter(getMetricName() + ".failures").inc();
         }
+    }
+    
+    /**
+     * Record a successful authentication attempt against the configured counter. Records
+     * nothing if the metrics registry is not installed into the runtime.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @since 4.1.0
+     */
+    protected void recordSuccess(@Nonnull final ProfileRequestContext profileRequestContext) {
+        recordSuccess();
+        if (cleanupHook != null) {
+            cleanupHook.accept(profileRequestContext);
+        }
+    }
+    
+    /**
+     * Record a failed authentication attempt against the configured counter. Records
+     * nothing if the metrics registry is not installed into the runtime.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @since 4.1.0
+     */
+    protected void recordFailure(@Nonnull final ProfileRequestContext profileRequestContext) {
+        recordFailure();
     }
     
     /**

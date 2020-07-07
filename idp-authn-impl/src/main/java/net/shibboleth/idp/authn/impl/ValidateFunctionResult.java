@@ -106,23 +106,23 @@ public class ValidateFunctionResult extends AbstractValidationAction {
         if (result == null) {
             log.info("{} Authentication by function failed", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
-            recordFailure();
+            recordFailure(profileRequestContext);
         } else if (result instanceof String) {
             log.info("{} Validated user via name '{}'", getLogPrefix(), result);
-            recordSuccess();
+            recordSuccess(profileRequestContext);
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } else if (result instanceof Principal) {
             log.info("{} Validated user via Principal '{}'", getLogPrefix(), result);
-            recordSuccess();
+            recordSuccess(profileRequestContext);
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } else if (result instanceof Subject) {
             log.info("{} Validated user via Subject", getLogPrefix());
-            recordSuccess();
+            recordSuccess(profileRequestContext);
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } else {
             log.info("{} Authentication by function failed, result type was invalid", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
-            recordFailure();
+            recordFailure(profileRequestContext);
         }
     }
     

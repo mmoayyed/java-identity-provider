@@ -89,7 +89,6 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     /** Constructor. */
     public AbstractUsernamePasswordCredentialValidator() {
         usernamePasswordContextLookupStrategy = new ChildContextLookup<>(UsernamePasswordContext.class);
-        removeContextAfterValidation = true;
 
         transforms = Collections.emptyList();
         
@@ -138,7 +137,10 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * <p>Defaults to true</p>
      * 
      * @return whether to remove the context after successful validation
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.1.0", forRemoval=true)
     public boolean removeContextAfterValidation() {
         return removeContextAfterValidation;
     }
@@ -148,7 +150,10 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * successfully validated.
      * 
      * @param flag  flag to set
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.1.0", forRemoval=true)
     public void setRemoveContextAfterValidation(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
@@ -295,7 +300,8 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         if (savePasswordToCredentialSet) {
             subject.getPrivateCredentials().add(new PasswordPrincipal(usernamePasswordContext.getPassword()));
         }
-        
+
+        // This is migrating out to the validation action, leaving code here for now but we won't use it.
         if (removeContextAfterValidation) {
             usernamePasswordContext.getParent().removeSubcontext(usernamePasswordContext);
             usernamePasswordContext.setPassword(null);
