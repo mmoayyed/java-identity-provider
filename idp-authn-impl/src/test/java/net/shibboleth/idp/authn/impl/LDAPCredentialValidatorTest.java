@@ -473,8 +473,6 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
-        
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
 
@@ -515,8 +513,6 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
@@ -559,8 +555,6 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
-
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
 
@@ -598,8 +592,6 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
-
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
 
@@ -627,7 +619,6 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setAuthenticator(authenticator);
-        validator.setRemoveContextAfterValidation(false);
         validator.initialize();
         
         action.initialize();
@@ -636,8 +627,6 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        
-        Assert.assertNotNull(ac.getSubcontext(UsernamePasswordContext.class));
     }
 
     private void doExtract() throws Exception {

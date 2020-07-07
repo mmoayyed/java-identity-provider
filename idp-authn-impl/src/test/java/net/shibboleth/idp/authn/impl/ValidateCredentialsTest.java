@@ -111,7 +111,6 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         final LDAPCredentialValidator ldap = new LDAPCredentialValidator();
         ldap.setId("ldap");
         ldap.setAuthenticator(authenticator);
-        ldap.setRemoveContextAfterValidation(false);
         ldap.initialize();
 
         final HTPasswdCredentialValidator htpasswd = new HTPasswdCredentialValidator();
@@ -241,6 +240,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
+        action.setCleanupHook(new ValidateCredentials.UsernamePasswordCleanupHook());
         action.initialize();
 
         doExtract();
@@ -302,6 +302,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         action.setRequireAll(true);
+        action.setCleanupHook(new ValidateCredentials.UsernamePasswordCleanupHook());
         action.initialize();
 
         doExtract();

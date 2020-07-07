@@ -202,7 +202,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -225,7 +224,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -247,7 +245,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL2");
@@ -269,7 +266,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL3");
@@ -282,7 +278,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        validator.setRemoveContextAfterValidation(false);
         validator.initialize();
         
         action.initialize();
@@ -292,7 +287,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -309,9 +303,9 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+        rpc.setRequestedPrincipals(Collections.singletonList(new TestPrincipal("test1")));
 
-        validator.setSupportedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+        validator.setSupportedPrincipals(Collections.singletonList(new TestPrincipal("test1")));
         validator.initialize();
         
         action.initialize();
@@ -321,7 +315,6 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");

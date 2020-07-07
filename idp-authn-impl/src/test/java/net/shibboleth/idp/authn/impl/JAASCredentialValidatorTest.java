@@ -289,7 +289,6 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -305,7 +304,6 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.setLoginConfigType("JavaLoginConfig");
         validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config")));
-        validator.setRemoveContextAfterValidation(false);
         validator.initialize();
         
         action.initialize();
@@ -315,7 +313,6 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -348,7 +345,6 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -376,7 +372,6 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
@@ -401,7 +396,6 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
         
         Assert.assertNotNull(ac.getAuthenticationResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
