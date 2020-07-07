@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -591,7 +592,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                             if (cookieName.equals(cookie.getName())) {
                                 final IdPSession session = lookupBySessionId(cookie.getValue());
                                 if (session != null) {
-                                    return ImmutableList.of(session);
+                                    return Collections.singletonList(session);
                                 }
                             }
                         }
@@ -605,9 +606,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             if (sessionIdCriterion != null) {
                 final IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
                 if (session != null) {
-                    return ImmutableList.of(session);
+                    return Collections.singletonList(session);
                 }
-                return ImmutableList.of();
+                return Collections.emptyList();
             }
 
             final SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
@@ -866,7 +867,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         if (sessionList == null) {
             log.debug("Secondary lookup failed on service ID {} and key {}", serviceId, serviceKey);
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
 
         final ImmutableList.Builder<IdPSession> builder = ImmutableList.builder();

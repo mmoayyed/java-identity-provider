@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.List;
+
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
@@ -31,12 +33,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-
 /** {@link PopulateSubjectCanonicalizationContext} unit test and base class for further action tests. */
 public class PopulateSubjectCanonicalizationContextTest {
 
-    protected ImmutableList<SubjectCanonicalizationFlowDescriptor> c14nFlows;
+    protected List<SubjectCanonicalizationFlowDescriptor> c14nFlows;
 
     protected RequestContext src;
     
@@ -47,13 +47,13 @@ public class PopulateSubjectCanonicalizationContextTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(new Subject());
 
-        c14nFlows = ImmutableList.of(new SubjectCanonicalizationFlowDescriptor(),
+        c14nFlows = List.of(new SubjectCanonicalizationFlowDescriptor(),
                 new SubjectCanonicalizationFlowDescriptor(), new SubjectCanonicalizationFlowDescriptor());
         c14nFlows.get(0).setId("test1");
         c14nFlows.get(1).setId("test2");
         c14nFlows.get(2).setId("test3");
 
-        PopulateSubjectCanonicalizationContext action = new PopulateSubjectCanonicalizationContext();
+        final PopulateSubjectCanonicalizationContext action = new PopulateSubjectCanonicalizationContext();
         action.setAvailableFlows(c14nFlows);
         action.initialize();
 
@@ -68,7 +68,7 @@ public class PopulateSubjectCanonicalizationContextTest {
     @Test public void testAction() throws Exception {
         
         ActionTestingSupport.assertProceedEvent(prc);
-        SubjectCanonicalizationContext c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        final SubjectCanonicalizationContext c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
         Assert.assertNotNull(c14nCtx);
 
         Assert.assertEquals(c14nCtx.getPotentialFlows().size(), 3);

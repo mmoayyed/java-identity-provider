@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -37,8 +38,6 @@ import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableList;
 
 /** {@link SelectAuthenticationFlow} unit test. */
 public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest {
@@ -161,7 +160,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = new AuthenticationResult("test1", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test1"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         
@@ -181,7 +180,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         active1.getSubject().getPrincipals().add(new TestPrincipal("test1"));
         active3.getSubject().getPrincipals().add(new TestPrincipal("test3"));
         authCtx.setActiveResults(Arrays.asList(active1, active3));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         
@@ -241,7 +240,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "test3");
@@ -263,7 +262,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = new AuthenticationResult("test3", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         
@@ -284,7 +283,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
         authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
         
         action = new SelectAuthenticationFlow();
         action.setFavorSSO(true);

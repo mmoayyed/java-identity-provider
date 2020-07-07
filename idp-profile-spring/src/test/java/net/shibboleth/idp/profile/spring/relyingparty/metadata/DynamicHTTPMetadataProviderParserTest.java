@@ -22,6 +22,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -40,8 +41,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -251,7 +250,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicMetadataQueryProtocol.xml", "beans.xml");
         
-        Assert.assertEquals(resolver.getSupportedContentTypes(), Lists.newArrayList("application/samlmetadata+xml"));
+        Assert.assertEquals(resolver.getSupportedContentTypes(), Collections.singletonList("application/samlmetadata+xml"));
 
         final String entityID = "https://foo1.example.org/idp/shibboleth";
         
@@ -267,7 +266,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class,
                 "dynamicMetadataQueryProtocolWithContentTypeOverride.xml", "beans.xml");
 
-        Assert.assertEquals(resolver.getSupportedContentTypes(), Lists.newArrayList("application/xml", "test/foo"));
+        Assert.assertEquals(resolver.getSupportedContentTypes(), List.of("application/xml", "test/foo"));
 
         // Note we can't actually execute the request as the test MDQ server only supports application/samlmetadata+xml
     }

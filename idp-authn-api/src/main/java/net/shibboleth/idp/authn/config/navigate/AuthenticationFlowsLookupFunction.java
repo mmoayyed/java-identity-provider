@@ -32,8 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * A function that returns {@link AuthenticationProfileConfiguration#getAuthenticationFlows}()
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
@@ -51,8 +49,7 @@ public class AuthenticationFlowsLookupFunction extends AbstractRelyingPartyLooku
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof AuthenticationProfileConfiguration) {
-                return ImmutableList.<String>copyOf(
-                        ((AuthenticationProfileConfiguration) pc).getAuthenticationFlows(input));
+                return ((AuthenticationProfileConfiguration) pc).getAuthenticationFlows(input);
             }
         }
         

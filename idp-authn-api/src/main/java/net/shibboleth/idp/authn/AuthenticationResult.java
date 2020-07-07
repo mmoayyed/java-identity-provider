@@ -42,12 +42,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Describes an act of authentication.
@@ -106,7 +103,8 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
      * @param principal a Principal identifying the authenticated entity
      */
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
-        this(flowId, new Subject(false, ImmutableSet.of(Constraint.isNotNull(principal, "Principal cannot be null")),
+        this(flowId, new Subject(false,
+                Collections.singleton(Constraint.isNotNull(principal, "Principal cannot be null")),
                 Collections.emptySet(), Collections.emptySet()));
     }
     
