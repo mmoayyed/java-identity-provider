@@ -110,17 +110,8 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.shibboleth.utilities</groupId>
             <artifactId>java-support</artifactId>
-            <version>${java-support.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-messaging-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
@@ -170,7 +161,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>net.shibboleth.utilities</groupId>
+                <artifactId>java-support</artifactId>
+                <version>${java-support.version}</version>
+            </dependency>
             <dependency>
                 <groupId>net.shibboleth.ext</groupId>
                 <artifactId>spring-extensions</artifactId>
