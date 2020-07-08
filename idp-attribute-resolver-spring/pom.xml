@@ -74,6 +74,10 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
         </dependency>
         <dependency>
@@ -91,6 +95,11 @@
         </dependency>
 
         <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
             <exclusions>
@@ -100,14 +109,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
         </dependency>
+
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
+
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
@@ -115,6 +127,16 @@
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+
+	<dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+	</dependency>
+
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->

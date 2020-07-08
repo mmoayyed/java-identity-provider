@@ -45,6 +45,10 @@
         
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
         </dependency>
         <dependency>
@@ -58,6 +62,11 @@
         </dependency>
 
         <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+        </dependency>
+
+        <dependency>
           <groupId>${spring.groupId}</groupId>
           <artifactId>spring-beans</artifactId>
         </dependency>
@@ -68,6 +77,16 @@
         <dependency>
           <groupId>${spring.groupId}</groupId>
           <artifactId>spring-context</artifactId>
+        </dependency>
+
+	<dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+	</dependency>
+
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->
@@ -133,6 +152,7 @@
             <scope>test</scope>
         </dependency>
 
+	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
         <dependency>
 	    <groupId>net.shibboleth.utilities</groupId>
 	    <artifactId>java-support</artifactId>
@@ -140,7 +160,6 @@
 	    <scope>test</scope>
         </dependency>
 
-	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
 	<dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>

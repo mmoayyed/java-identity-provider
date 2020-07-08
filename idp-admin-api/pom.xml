@@ -46,12 +46,22 @@
             <artifactId>opensaml-saml-api</artifactId>
         </dependency>
 
-        <!-- Provided Dependencies -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
+	<dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+	</dependency>
+
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+        </dependency>
+
+        <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
 

@@ -60,11 +60,19 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -84,10 +92,16 @@
             <artifactId>spring-extensions</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+        </dependency>
+
+	<dependency>
+	    <groupId>commons-codec</groupId>
+	    <artifactId>commons-codec</artifactId>
+	</dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -100,7 +114,8 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-        <dependency>
+
+	<dependency>
           <groupId>com.github.jasminb</groupId>
           <artifactId>jsonapi-converter</artifactId>
         </dependency>
@@ -135,27 +150,39 @@
             <artifactId>velocity-engine-core</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.apache.httpcomponents</groupId>
-        	<artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.apache.httpcomponents</groupId>
-        	<artifactId>httpcore</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
         </dependency>
+
         <dependency>
-        	<groupId>org.cryptacular</groupId>
-        	<artifactId>cryptacular</artifactId>
+            <groupId>org.cryptacular</groupId>
+            <artifactId>cryptacular</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.duosecurity</groupId>
             <artifactId>DuoWeb</artifactId>
             <version>${duoweb.version}</version>
         </dependency>
 
+	<dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+	</dependency>
+
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!-- DEPRECATED - remove in V5 -->
         <dependency>
             <groupId>joda-time</groupId>

@@ -53,7 +53,11 @@
             <version>${project.version}</version>
         </dependency>
 
-	<!--  We only need openSAML because of the legacy Contexts we need for scripting -->
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+        </dependency>
+	<!--  We only need the rest of OpenSAML because of the legacy Contexts we need for scripting -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
@@ -80,6 +84,11 @@
             <artifactId>spring-extensions</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+        </dependency>
+
 	<dependency>
 	    <groupId>org.apache.httpcomponents</groupId>
 	    <artifactId>httpclient</artifactId>
@@ -92,17 +101,35 @@
 	    <groupId>org.apache.velocity</groupId>
 	    <artifactId>velocity-engine-core</artifactId>
 	</dependency>
+
 	<dependency>
 	    <groupId>commons-codec</groupId>
 	    <artifactId>commons-codec</artifactId>
 	</dependency>
+
 	<dependency>
 	    <groupId>org.ldaptive</groupId>
 	    <artifactId>ldaptive</artifactId>
 	</dependency>
+
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+
+	<dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+	</dependency>
+
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
 	<!-- Provided Dependencies -->

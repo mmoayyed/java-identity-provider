@@ -29,11 +29,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-attribute-resolver-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>idp-session-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -98,6 +93,20 @@
 	    <artifactId>spring-extensions</artifactId>
 	</dependency>
         
+        <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+        </dependency>
+
+	<dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+	</dependency>
+
+	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
@@ -123,12 +132,14 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <!-- Needed despite what dependency:analyze says -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- Needed despite what dependency:analyze says -->
 	<dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
