@@ -26,81 +26,88 @@
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
-        <!-- These are declared for STS tooling support in Eclipse. -->
+        <!-- These are declared for STS tooling support in Eclipse. Considering removal. -->
+        <!--
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-impl</artifactId>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-admin-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-authn-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-cas-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-session-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-api</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-ui</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-consent-impl</artifactId>
             <version>${project.version}</version>
-            <optional>true</optional>
+            <scope>runtime</scope>
         </dependency>
+        -->
 
         <!-- Test Dependencies -->
         <dependency>
             <groupId>com.unboundid</groupId>
             <artifactId>unboundid-ldapsdk</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,6 +128,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-admin-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-attribute-filter-spring</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -133,7 +146,31 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-authn-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-cas-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-consent-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-spring</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-session-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -152,39 +189,39 @@
             <artifactId>janino</artifactId>
             <scope>test</scope>
         </dependency>
-	
-	<dependency>
+    
+        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-	    <groupId>net.shibboleth.utilities</groupId>
-	    <artifactId>java-support</artifactId>
-	    <type>test-jar</type>
-	    <scope>test</scope>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
         </dependency>
 
-	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
-	<dependency>
+        <!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
+        <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
             <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-	    <groupId>org.graalvm.sdk</groupId>
-	    <artifactId>graal-sdk</artifactId>
-	    <version>${graalvm.version}</version>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <scm>
