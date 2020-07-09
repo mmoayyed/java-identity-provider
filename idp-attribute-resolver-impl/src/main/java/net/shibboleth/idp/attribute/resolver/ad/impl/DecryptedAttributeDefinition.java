@@ -45,7 +45,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An {@link AttributeDefinition} that creates an attribute whose values are the
- * values of all its dependencies.
+ * decrypted values of its dependencies.
+ * 
+ * Empty values are copied through and non-string values are ignored.
+ * 
+ * @since 4.1.0
  */
 @ThreadSafe
 public class DecryptedAttributeDefinition extends AbstractAttributeDefinition {
