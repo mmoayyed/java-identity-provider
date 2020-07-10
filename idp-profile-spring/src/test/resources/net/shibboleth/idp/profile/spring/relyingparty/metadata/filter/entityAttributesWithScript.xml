@@ -2,15 +2,11 @@
 <metadata:MetadataProvider xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
 	xmlns:metadata="urn:mace:shibboleth:2.0:metadata"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
-                       urn:oasis:names:tc:SAML:2.0:assertion http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd
-                       urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
-
+                       urn:oasis:names:tc:SAML:2.0:assertion http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd"
 	failFastInitialization="false" requireValidMetadata="false"
-
-	id="entityAttributes" xsi:type="metadata:InlineMetadataProvider">
+	id="entityAttributes" xsi:type="metadata:ResourceBackedMetadataProvider" resourceRef="MetadataResource">
     
 	<metadata:MetadataFilter xsi:type="metadata:EntityAttributes">
         <metadata:AttributeFilterScript>
@@ -26,46 +22,5 @@
             <metadata:Script>input.getEntityID().equals("https://sp.example.org/sp/shibboleth");</metadata:Script>
         </metadata:ConditionScript>
     </metadata:MetadataFilter>
-
-    <EntitiesDescriptor Name="ukgroup">
-    	<EntityDescriptor ID="uk001502"
-    		entityID="https://sp.example.org/sp/shibboleth">
-            <Extensions>
-                <mdattr:EntityAttributes>
-                    <saml:Attribute Name="http://macedir.org/entity-category"
-                        NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                        <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
-                    </saml:Attribute>
-                </mdattr:EntityAttributes>
-            </Extensions>
-    		<SPSSODescriptor
-    			protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
     
-    			<AssertionConsumerService
-    				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
-    				Location="https://sp.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
-    				index="5" />
-    		</SPSSODescriptor>
-    	</EntityDescriptor>
-
-        <EntityDescriptor ID="uk001503"
-            entityID="https://sp2.example.org/sp/shibboleth">
-            <Extensions>
-                <mdattr:EntityAttributes>
-                    <saml:Attribute Name="http://macedir.org/entity-category"
-                        NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-                        <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
-                    </saml:Attribute>
-                </mdattr:EntityAttributes>
-            </Extensions>
-            <SPSSODescriptor
-                protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
-    
-                <AssertionConsumerService
-                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
-                    Location="https://sp2.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
-                    index="5" />
-            </SPSSODescriptor>
-        </EntityDescriptor>
-    </EntitiesDescriptor>
 </metadata:MetadataProvider>

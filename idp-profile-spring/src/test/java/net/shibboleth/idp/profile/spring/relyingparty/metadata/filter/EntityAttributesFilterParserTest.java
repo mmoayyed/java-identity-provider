@@ -44,12 +44,12 @@ public class EntityAttributesFilterParserTest extends AbstractMetadataParserTest
 
     @Test
     public void testFilterScript() throws ResolverException, IOException {
-        doTest("filter/entityAttributesWithScript.xml");
+        doTest("filter/entityAttributesWithScript.xml", "filter/entityAttributesBeans.xml");
     }
 
     @Test
     public void testFilterScriptResource() throws ResolverException, IOException {
-        doTest("filter/entityAttributesWithScriptResource.xml");
+        doTest("filter/entityAttributesWithScriptResource.xml", "filter/entityAttributesBeans.xml");
     }
 
     private void doTest(final String... files) throws ResolverException, IOException {
@@ -71,7 +71,9 @@ public class EntityAttributesFilterParserTest extends AbstractMetadataParserTest
         Assert.assertNotNull(extTags);
         Assert.assertEquals(extTags.getAttributes().size(), 2);
         Assert.assertEquals(extTags.getAttributes().get(0).getName(), "foo");
+        Assert.assertEquals(extTags.getAttributes().get(0).getAttributeValues().size(), 2);
         Assert.assertEquals(extTags.getAttributes().get(1).getName(), "bar");
+        Assert.assertEquals(extTags.getAttributes().get(1).getAttributeValues().size(), 1);
 
         key = new EntityIdCriterion("https://sp2.example.org/sp/shibboleth");
         entity = resolver.resolveSingle(new CriteriaSet(key));

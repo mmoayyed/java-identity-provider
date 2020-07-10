@@ -8,7 +8,17 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 
     default-init-method="initialize" default-destroy-method="destroy" default-lazy-init="true">
-    
-    <bean id="predicate.AlwaysFalse" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
                 
+    <bean id="predicate.NotRandS" class="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+        c:_0="!#input.getName().equals('http://macedir.org/entity-category')" />
+                
+    <bean id="MetadataResource" class="org.springframework.core.io.ClassPathResource"
+        c:_0="net/shibboleth/idp/profile/spring/relyingparty/metadata/filter/entityAttributesMetadata.xml" />
+
+    <bean id="shibboleth.ParserPool"
+        class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+        p:maxPoolSize="100"
+        p:coalescing="true" p:ignoreComments="true"
+        p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+    
 </beans>
