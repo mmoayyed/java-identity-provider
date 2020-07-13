@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.Security;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicates;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
@@ -39,13 +40,15 @@ import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest {
 
+    private final Logger log = LoggerFactory.getLogger(PluginInstallerTest.class);
+
     @BeforeClass public void setup() throws IOException {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
     }
 
-    @Test public void testListing() throws ComponentInitializationException, IOException {
+    @Test(enabled = false) public void testListing() throws ComponentInitializationException, IOException {
         
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
@@ -58,16 +61,17 @@ public class PluginInstallerTest {
     @Test(enabled = false) public void testUnpackZip() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setAcceptCert(new LoggingAcceptor());
             inst.initialize();
-            final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
-            inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.zip");
+            final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\rhino-dist\\target");
+            inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-rhino-0.0.1-SNAPSHOT.zip");
         }
     }
     
     @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-            inst.setAcceptCert(Predicates.alwaysTrue());
+            inst.setAcceptCert(new LoggingAcceptor());
             inst.initialize();
             final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
             inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
@@ -77,7 +81,7 @@ public class PluginInstallerTest {
     @Test(enabled = false) public void testDownload() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-            inst.setAcceptCert(Predicates.alwaysTrue());
+            inst.setAcceptCert(new LoggingAcceptor());
             inst.initialize();
             final URL url = new URL("http://iis.steadingsoftware.net/plugins/");
             inst.installPlugin(url,"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
@@ -107,5 +111,14 @@ public class PluginInstallerTest {
             return 0;
         }
         
+    }
+
+    public class LoggingAcceptor implements Predicate<String> {
+
+        /** {@inheritDoc} */
+        public boolean test(String what) {
+            log.debug("Accepting the cetrtificate {}", what);
+            return true;
+        }
     }
 }

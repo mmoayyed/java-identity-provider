@@ -51,15 +51,19 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
+import net.shibboleth.idp.installer.BuildWar;
+import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
@@ -88,6 +92,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Where we have downloaded. */
     private Path downloadDirectory;
     
+    /** The plugin's story about itself. */
+    private PluginDescription description;
+
     /** The callback before we install a certificate into the TrustStore. */
     @Nonnull private Predicate<String> acceptCert = Predicates.alwaysFalse();
 
@@ -159,7 +166,140 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         unpack(base, fileName);
         setupPluginId();
         checkSignature(base, fileName);
-        //doInstall();
+        getDescription();
+
+        final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
+        deleteTree(myWebApp);
+        installWebapp(myWebApp);
+        installFiles();
+        downloadExternals();
+
+        final BuildWar builder = new BuildWar(idpHome);
+        try {
+            builder.initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new BuildException(e);
+        }
+        builder.execute();
+    }
+
+    /** Download any files that should not be shipped.
+     * @throws BuildException if badness is detected.
+     */
+    private void downloadExternals() throws BuildException {
+        try {
+            for (final Pair<URL, Path> pair : description.getExternalFilePathsToCopy()) {
+                final Path to = idpHome.resolve(pair.getSecond());
+                if (Files.exists(to)) {
+                    log.warn("{} exists, not copied", to);
+                    continue;
+                }
+                buildHttpClient();
+                createParent(to);
+                log.debug("Copying from {} to {}", pair.getFirst(), to);
+                final Resource from  = new HTTPResource(httpClient, pair.getFirst());
+                try (final InputStream in = new BufferedInputStream(from.getInputStream());
+                     final OutputStream out =  new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
+
+                    in.transferTo(out);
+
+                } catch (final IOException e) {
+                    log.error("Could not copy from {} to {}",  from, to, e);
+                    throw new BuildException(e);
+                }
+            }
+        } catch (final IOException e) {
+            throw new BuildException(e);
+        }
+    }
+
+    /** Get hold of the {@link PluginDescription} for this plugin.
+     * @throws BuildException if badness is happens.
+     */
+    private void getDescription() throws BuildException {
+        final List<URL> urls = new ArrayList<>();
+        final Path libDir = distribution.resolve("edit-webapp").resolve("WEB-INF").resolve("lib");
+
+        try {
+            for (final Path jar : Files.newDirectoryStream(libDir)) {
+                urls.add(jar.toUri().toURL());
+            }
+           try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
+
+               final ServiceLoader<PluginDescription> plugins = ServiceLoader.load(PluginDescription.class, loader);
+               for (final PluginDescription plugin:plugins) {
+                   log.debug("Found Service announcing itself as {}", plugin.getPluginId() );
+                   if (pluginId.equals(plugin.getPluginId())) {
+                       description = plugin;
+                       return;
+                   }
+               }
+           }
+           log.error("Could not locate description for {} in distribution {}", pluginId, libDir);
+           throw new BuildException("Could not locate PluginDescription");
+        } catch (final IOException e) {
+            log.error("Could not get description of {} from {}", pluginId, libDir, e);
+            throw new BuildException(e);
+        }
+    }
+
+    /** Copy the files the distribution tells us to.
+     * @throws BuildException if badness is happens.
+     */
+    private void installFiles() throws BuildException {
+        for (final Path p : description.getFilePathsToCopy()) {
+            final Path from = distribution.resolve(p);
+            final Path to = idpHome.resolve(p);
+            if (Files.exists(to)) {
+                log.debug("File {} exists, skipping", to);
+                continue;
+            }
+            if (!Files.exists(from)) {
+                log.warn("Source File {} does not exists, skipping", from);
+                continue;
+            }
+            try {
+                createParent(to);
+                log.debug("Copying from {} to {}", from, to);
+                try (final InputStream in = new BufferedInputStream(new FileInputStream(from.toFile()));
+                     final OutputStream out =  new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
+                    in.transferTo(out);
+                }
+            } catch (final IOException e) {
+                log.error("Could not copy from {} to {}",  from, to, e);
+                throw new BuildException(e);
+            }
+        }
+    }
+
+    /** If the parent dir of the provided path doesn't exist, create it.
+     * @param file where the file will go
+     * @throws IOException if the directory couldn't be created
+     * @throws BuildException if the parent wasnt a directory
+     */
+    private void createParent(final Path file) throws IOException, BuildException {
+        final Path parent = file.resolve("..");
+        if (!Files.exists(parent)) {
+            log.debug("Creating parent directory {}", parent);
+            Files.createDirectories(parent);
+        } else if (!Files.isDirectory(parent)) {
+            log.error("{} exists and is not a directory", parent);
+            throw new BuildException("Parent of target file was not a directory");
+        } else {
+            log.trace("Parent directory {} existed", parent);
+        }  
+    }
+
+    /** Copy the webapp folder from the distribution to the per plugin
+     * location inside dist.
+     * @param myWebApp Where to put it.
+     * @throws BuildException if badness is detected.
+     */
+    private void installWebapp(final Path myWebApp) throws BuildException {
+        final Path from = distribution.resolve("edit-webapp");
+        log.debug("Copying distribution from {} to {}", from, myWebApp);
+        final Copy copy = InstallerSupport.getCopyTask(from, myWebApp);
+        copy.execute();
     }
 
     /** Method to download a zip file to the {{@link #downloadDirectory}.
@@ -168,15 +308,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if badness is detected.
      */
     private void download(final URL baseURL, final String fileName) throws BuildException {
-        if (httpClient == null) {
-            log.debug("No HttpClient built, creating default builder");
-            try {
-                httpClient = new HttpClientBuilder().buildClient();
-            } catch (final Exception e) {
-                log.error("Could not create HttpClient", e);
-                throw new BuildException(e);
-            }
-        }
+        buildHttpClient();
         try {
             downloadDirectory = Files.createTempDirectory("plugin-installer-download");
             final Resource baseResource = new HTTPResource(httpClient, baseURL);
@@ -185,6 +317,19 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         } catch (final IOException e) {
             log.error("Error in download", e);
             throw new BuildException(e);
+        }
+    }
+
+    /** Build the Http Client if it doesn't exist. */
+    private void buildHttpClient() {
+        if (httpClient == null) {
+            log.debug("No HttpClient built, creating default");
+            try {
+                httpClient = new HttpClientBuilder().buildClient();
+            } catch (final Exception e) {
+                log.error("Could not create HttpClient", e);
+                throw new BuildException(e);
+            }
         }
     }
 
@@ -256,7 +401,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new BuildException(e);
         }
     }
-    // CheckStyle:  CyclomaticComplexity OFF
+    // CheckStyle:  CyclomaticComplexity ON
     
     /** does the file name end in .zip?
      * @param fileName the name to consider
@@ -390,9 +535,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param directory what to delete
      */
     private void deleteTree(@Nullable final Path directory) {
-        if (directory == null) {
+        if (directory == null || !Files.exists(directory)) {
             return;
         }
+        log.debug("Deleting directory {}", directory);
         try {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override 

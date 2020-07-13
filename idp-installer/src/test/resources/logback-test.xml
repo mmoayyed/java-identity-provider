@@ -3,6 +3,7 @@
 <configuration>
 
     <logger name="org" level="INFO"/>
+    <logger name="net.shibboleth.idp.installer" level="TRACE"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
