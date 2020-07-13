@@ -24,6 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 
+import javax.annotation.Nonnull;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Jar;
@@ -32,7 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Code to build the war file during an install or on request.
@@ -52,18 +56,26 @@ public final class BuildWar extends AbstractInitializableComponent {
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(BuildWar.class);
 
-    /** Properties for the job. */
-    private final InstallerProperties installerProps;
+    /** Location of the install for the job. */
+    private final Path targetDir;
 
     /** Constructor.
      * @param props The environment for the work.
      * @param installState  Where we are right now.
      */
-    public BuildWar(final InstallerProperties props, final CurrentInstallState installState) {
+    public BuildWar(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
-        installerProps = props;
+        targetDir = props.getTargetDir();
     }
+
+    /** Constructor.
+     * @param idpHome Where to install to.
+     */
+    public BuildWar(final Path idpHome) {
+        targetDir = Constraint.isNotNull(idpHome, "IdPHome should not be null");
+    }
+
 
     /** Method to do a single overlay into webapp.
      *
@@ -104,14 +116,13 @@ public final class BuildWar extends AbstractInitializableComponent {
      */
     public void execute() throws BuildException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final Path target = installerProps.getTargetDir();
-        final Path warFile = target.resolve("war").resolve("idp.war");
+        final Path warFile = targetDir.resolve("war").resolve("idp.war");
 
         log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), Version.getVersion());
-        InstallerSupport.deleteTree(target.resolve("webpapp"));
-        final Path webAppTmp =target.resolve("webpapp.tmp");
+        InstallerSupport.deleteTree(targetDir.resolve("webpapp"));
+        final Path webAppTmp =targetDir.resolve("webpapp.tmp");
         InstallerSupport.deleteTree(webAppTmp);
-        final Path dist = target.resolve("dist");
+        final Path dist = targetDir.resolve("dist");
         final Path distWebApp =  dist.resolve("webapp");
         final Copy initial = InstallerSupport.getCopyTask(distWebApp, webAppTmp);
         initial.setPreserveLastModified(true);
@@ -121,7 +132,7 @@ public final class BuildWar extends AbstractInitializableComponent {
         initial.execute();
 
         overlayPluginWebapps(dist, webAppTmp);
-        overlayWebapp(target.resolve("edit-webapp"), webAppTmp);
+        overlayWebapp(targetDir.resolve("edit-webapp"), webAppTmp);
 
         final File warFileFile = warFile.toFile();
         if (warFileFile.exists() && !warFile.toFile().delete()) {
@@ -132,5 +143,13 @@ public final class BuildWar extends AbstractInitializableComponent {
         log.info("Creating war file {}", warFile);
         jarTask.execute();
         InstallerSupport.deleteTree(webAppTmp);
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (!Files.exists(targetDir)) {
+            throw new ComponentInitializationException("Target Dir " + targetDir + " does not exist");
+        }
     }
 }
