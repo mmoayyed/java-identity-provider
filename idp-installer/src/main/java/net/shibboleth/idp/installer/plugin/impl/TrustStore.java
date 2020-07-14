@@ -209,7 +209,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
                 log.info("Provided certificate stream did not contain a certificate for {}", sigForCert);
                 return;
             }
-            final StringBuilder builder = new StringBuilder("Certificate:\t").
+            final StringBuilder builder = new StringBuilder("Signature:\t").
                     append(sigForCert.toString()).
                     append("\nFingerPrint:\t").
                     append(new String(Hex.encode(cert.getFingerprint())));
@@ -219,7 +219,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
             }
             builder.append('\n');
             final String certInfo = builder.toString();
-            log.debug("Asking to import certificate\n {}", certInfo);
+            log.debug("Asking to import certificate\n{}", certInfo);
             if (!accept.test(certInfo)) {
                 log.info("Certificate import barred by user");
                 return;

@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.security.Security;
 import java.util.List;
 import java.util.function.Predicate;
@@ -33,6 +34,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
 import net.shibboleth.utilities.java.support.plugin.PluginDescription;
@@ -41,6 +43,20 @@ import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 public class PluginInstallerTest {
 
     private final Logger log = LoggerFactory.getLogger(PluginInstallerTest.class);
+    
+    private final Predicate<String> loggingAcceptCert = new  Predicate<>() {
+        public boolean test(String what) {
+            log.debug("Accepting the certificate\n{}", what);
+            return true;
+        }
+    };
+
+    private final Predicate<Pair<URL, Path>> loggingAcceptDownLoad = new  Predicate<>() {
+        public boolean test(Pair<URL, Path> what) {
+            log.debug("Accepting the download from {} to {}", what.getFirst(), what.getSecond());
+            return true;
+        }
+    };
 
     @BeforeClass public void setup() throws IOException {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -61,7 +77,8 @@ public class PluginInstallerTest {
     @Test(enabled = false) public void testUnpackZip() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-            inst.setAcceptCert(new LoggingAcceptor());
+            inst.setAcceptCert(loggingAcceptCert);
+            inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
             final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\rhino-dist\\target");
             inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-rhino-0.0.1-SNAPSHOT.zip");
@@ -71,7 +88,8 @@ public class PluginInstallerTest {
     @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-            inst.setAcceptCert(new LoggingAcceptor());
+            inst.setAcceptCert(loggingAcceptCert);
+            inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
             final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
             inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
@@ -81,7 +99,8 @@ public class PluginInstallerTest {
     @Test(enabled = false) public void testDownload() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
-            inst.setAcceptCert(new LoggingAcceptor());
+            inst.setAcceptCert(loggingAcceptCert);
+            inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
             final URL url = new URL("http://iis.steadingsoftware.net/plugins/");
             inst.installPlugin(url,"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
@@ -113,12 +132,4 @@ public class PluginInstallerTest {
         
     }
 
-    public class LoggingAcceptor implements Predicate<String> {
-
-        /** {@inheritDoc} */
-        public boolean test(String what) {
-            log.debug("Accepting the cetrtificate {}", what);
-            return true;
-        }
-    }
 }

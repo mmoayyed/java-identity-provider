@@ -98,6 +98,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** The callback before we install a certificate into the TrustStore. */
     @Nonnull private Predicate<String> acceptCert = Predicates.alwaysFalse();
 
+    /** The callback before we download a file. */
+    @Nonnull private Predicate<Pair<URL,Path>> acceptDownload = Predicates.alwaysFalse();
+
     /** The actual distribution. */
     private Path distribution;
 
@@ -114,15 +117,22 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Set the plugin in.
      * @param id The pluginId to set.
      */
-    public void setPluginId( @Nonnull @NotEmpty final String id) {
+    public void setPluginId(@Nonnull @NotEmpty final String id) {
         pluginId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Plugin id should be be non-null");
     }
 
     /** Set the acceptCert predicate.
      * @param what what to set.
      */
-    public void setAcceptCert(final Predicate<String> what) {
-        acceptCert = Constraint.isNotNull(what, "Accept Cert Preducate should be non-null");
+    public void setAcceptCert(@Nonnull final Predicate<String> what) {
+        acceptCert = Constraint.isNotNull(what, "Accept Certificate Predicate should be non-null");
+    }
+
+    /** Set the acceptCert predicate.
+     * @param what what to set.
+     */
+    public void setAcceptDownload(@Nonnull final Predicate<Pair<URL,Path>> what) {
+        acceptDownload  = Constraint.isNotNull(what, "Accept Download Predicate should be non-null");
     }
 
     /** Set the httpClient.
@@ -167,6 +177,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         setupPluginId();
         checkSignature(base, fileName);
         getDescription();
+        log.info("Installing Plugin {} version {}.{}.{}", pluginId,
+                description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
+
+        if (!description.getAdditionalPropertyFiles().isEmpty()) {
+            log.error("Additional property files not supported");
+            throw new BuildException("Uninstallable plugin");
+        }
+        if (!description.getPropertyMerges().isEmpty()) {
+            log.error("Prroperty merges not supported");
+            throw new BuildException("Uninstallable plugin");
+        }
 
         final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
         deleteTree(myWebApp);
@@ -192,6 +213,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 final Path to = idpHome.resolve(pair.getSecond());
                 if (Files.exists(to)) {
                     log.warn("{} exists, not copied", to);
+                    continue;
+                }
+                if (!acceptDownload.test(new Pair<>(pair.getFirst(), to))) {
+                    log.info("Did not download {} to {}", pair.getFirst(), to);
                     continue;
                 }
                 buildHttpClient();
