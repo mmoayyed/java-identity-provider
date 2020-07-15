@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * Publuc information for handling plugins.
+ * A set of APIs of general use in building IdP plugins.
  */
 
-package net.shibboleth.idp.installer.plugin;
+package net.shibboleth.idp.plugin;

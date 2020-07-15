@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin.impl;
+package net.shibboleth.idp.plugin;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -29,9 +29,8 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.installer.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 
 /**
  * Tests for {@link PluginState}.

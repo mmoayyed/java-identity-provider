@@ -34,10 +34,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.plugin.AbstractPluginDescription;
+import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
-import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest {

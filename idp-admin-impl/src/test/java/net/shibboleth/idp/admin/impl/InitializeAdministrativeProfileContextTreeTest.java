@@ -42,6 +42,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link InitializeAdministrativeProfileContextTree} unit test. */
+@SuppressWarnings("javadoc")
 public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInitBaseTestCase {
 
     private RequestContext src;

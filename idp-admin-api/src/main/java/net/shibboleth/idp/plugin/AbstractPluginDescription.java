@@ -15,56 +15,49 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin.impl;
+package net.shibboleth.idp.plugin;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.core.io.ClassPathResource;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.plugin.AbstractPluginDescription;
+import com.google.common.annotations.Beta;
+
+import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
- *
+ * A base class {@link PluginDescription} which defaults many common settings.
  */
-public class TestPlugin extends AbstractPluginDescription {
-
+@Beta
+public abstract class AbstractPluginDescription implements PluginDescription {
+    
     /** {@inheritDoc} */
-    @Override
-    public String getPluginId() {
-        // TODO Auto-generated method stub
-        return "net.shibboleth.plugin.test";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<URL> getUpdateURLs() {
-        ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/installer/plugin/");
-        try {
-            return Collections.singletonList(resource.getURL());
-        } catch (IOException e) {
-            return Collections.EMPTY_LIST;
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getMajorVersion() {
-        return 1;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getMinorVersion() {
-        return 2;
+    @Nonnull public List<String> getAdditionalPropertyFiles() {
+        return Collections.emptyList();
     }
     
+    /** {@inheritDoc} */
+    @Nonnull public List<Path> getFilePathsToCopy() {
+        return Collections.emptyList();
+    }
+    
+    /** {@inheritDoc} */
+    @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException {
+        return Collections.emptyList();
+    }
 
     /** {@inheritDoc} */
-    @Override
-    public int getPatchVersion() {
-        return 3;
+    @Nonnull public List<Pair<Path, List<String>>> getPropertyMerges() {
+        return Collections.emptyList();
+    }
+    
+    /** {@inheritDoc} */
+    @Nonnegative public int getPatchVersion() {
+        return 0;
     }
 }

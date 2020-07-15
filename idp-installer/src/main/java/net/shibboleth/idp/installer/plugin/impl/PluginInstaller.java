@@ -61,6 +61,7 @@ import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
+import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -68,7 +69,6 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
 

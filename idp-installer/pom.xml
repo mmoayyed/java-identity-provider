@@ -33,6 +33,16 @@
             <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-admin-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-admin-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>${project.groupId}</groupId>

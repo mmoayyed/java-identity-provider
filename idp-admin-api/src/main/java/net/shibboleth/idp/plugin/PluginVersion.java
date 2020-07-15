@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin;
+package net.shibboleth.idp.plugin;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
