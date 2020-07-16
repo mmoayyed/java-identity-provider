@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.binding.convert.ConversionExecutionException;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
@@ -114,13 +113,22 @@ import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.ViewScope;
 import org.springframework.webflow.security.SecurityRule;
 
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.context.FilesystemGenericWebApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+
 /**
  * 
- * This code is copied verbatim from org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder
+ * This code is extended from org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder
+ * in order to customize the Spring {@link ApplicationContext} used for flow configuration.
+ * 
+ * The only method changed is {@link #createFlowApplicationContext(Resource[])}, but it's private
+ * and there are too many threads pulled by anything but a wholesale duplication of this class.
  * 
  * Builds a runtime {@link Flow} definition object from a {@link FlowModel}.
  *
  * @author Keith Donald
+ * @author Scott Cantor
  */
 public class FlowModelFlowBuilder extends AbstractFlowBuilder {
 
@@ -338,11 +346,13 @@ public class FlowModelFlowBuilder extends AbstractFlowBuilder {
         ApplicationContext parent = getContext().getApplicationContext();
         GenericApplicationContext flowContext;
         if (parent instanceof WebApplicationContext) {
-            GenericWebApplicationContext webContext = new GenericWebApplicationContext();
+            // Shibboleth change - Use our override of GenericWebApplicationContext.
+            GenericWebApplicationContext webContext = new FilesystemGenericWebApplicationContext();
             webContext.setServletContext(((WebApplicationContext) parent).getServletContext());
             flowContext = webContext;
         } else {
-            flowContext = new GenericApplicationContext();
+            // Shibboleth change - Use our override of GenericApplicationContext.
+            flowContext = new FilesystemGenericApplicationContext();
         }
         flowContext.setDisplayName("Flow ApplicationContext [" + getContext().getFlowId() + "]");
         flowContext.setParent(parent);
@@ -351,7 +361,7 @@ public class FlowModelFlowBuilder extends AbstractFlowBuilder {
         flowContext.getBeanFactory().registerScope("view", new ViewScope());
         flowContext.getBeanFactory().registerScope("flow", new FlowScope());
         flowContext.getBeanFactory().registerScope("conversation", new ConversationScope());
-
+        
         // Ensure the current ClassLoader is used, or otherwise setting the ResourceLoader would suppress it
         ClassLoader classLoaderToUse = flowContext.getClassLoader();
         flowContext.setClassLoader(classLoaderToUse);
@@ -359,8 +369,15 @@ public class FlowModelFlowBuilder extends AbstractFlowBuilder {
         Resource flowResource = flowModelHolder.getFlowModelResource();
         flowContext.setResourceLoader(new FlowRelativeResourceLoader(flowResource));
 
+        // Shibboleth change - override the property placeholder syntax.
+        flowContext.getEnvironment().setPlaceholderPrefix("%{");
+        flowContext.getEnvironment().setPlaceholderSuffix("}");
+
         AnnotationConfigUtils.registerAnnotationConfigProcessors(flowContext);
-        new XmlBeanDefinitionReader(flowContext).loadBeanDefinitions(resources);
+        
+        // Shibboleth change - Use our document reader instead, which fixes import resolution.
+        new SchemaTypeAwareXMLBeanDefinitionReader(flowContext).loadBeanDefinitions(resources);
+        
         registerFlowBeans(flowContext.getBeanFactory());
         registerMessageSource(flowContext, flowResource);
 

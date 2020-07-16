@@ -20,45 +20,83 @@ package net.shibboleth.idp.profile.spring.factory;
 import java.io.IOException;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import net.shibboleth.ext.spring.resource.ConditionalResourceResolver;
+
 /**
- * This code is copied verbatim from org.springframework.webflow.engine.builder.model.FlowRelativeResourceLoader
+ * This code is extended from org.springframework.webflow.engine.builder.model.FlowRelativeResourceLoader
+ * with modifications to support proper lookup of resources via both filesystem and classpath along with
+ * custom protocol-specific loaders.
  * 
- * A resource loader that loads other resources relative to a Flow definition resource. Allows for easy loading of
- * flow-relative resources using the standard {@link ResourceLoader} interface.
- * 
- * @author Keith Donald
+ * This fills a gap for cases where the Spring {@link ResourceLoader} itself is fully replaced, versus
+ * relying solely on customized behavior in the Spring contexts themselves.
  */
-class FlowRelativeResourceLoader implements ResourceLoader {
+class FlowRelativeResourceLoader extends DefaultResourceLoader {
 
-	private Resource flowResource;
+    /** Flow resource for relative lookup. */
+    private Resource flowResource;
 
-	public FlowRelativeResourceLoader(Resource resource) {
-		this.flowResource = resource;
-	}
+    /**
+     * Constructor.
+     *
+     * @param resource flow resource for relative lookup
+     */
+    public FlowRelativeResourceLoader(final Resource resource) {
+        flowResource = resource;
+        getProtocolResolvers().add(new ConditionalResourceResolver());
+    }
 
-	public ClassLoader getClassLoader() {
-		return flowResource.getClass().getClassLoader();
-	}
+    public ClassLoader getClassLoader() {
+        return flowResource.getClass().getClassLoader();
+    }
 
-	public Resource getResource(String location) {
-		if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-			return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
-		} else {
-			return createFlowRelativeResource(location);
-		}
-	}
+    /** {@inheritDoc} */
+    @Override
+    public Resource getResource(final String location) {
+        
+        final Resource r = super.getResource(location);
+        if (r.exists()) {
+            return r;
+        }
+        
+        if (location.startsWith(CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()),
+                    getClassLoader());
+        }
+        return createFlowRelativeResource(location);
+    }
 
-	private Resource createFlowRelativeResource(String location) {
-		try {
-			return flowResource.createRelative(location);
-		} catch (IOException e) {
-			IllegalArgumentException iae = new IllegalArgumentException(
-					"Unable to access a flow relative resource at location '" + location + "'");
-			iae.initCause(e);
-			throw iae;
-		}
-	}
+    private Resource createFlowRelativeResource(final String location) {
+        try {
+            return flowResource.createRelative(location);
+        } catch (final IOException e) {
+            final IllegalArgumentException iae = new IllegalArgumentException(
+                    "Unable to access a flow relative resource at location '" + location + "'");
+            iae.initCause(e);
+            throw iae;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Overrides the standard behavior of path-only resources and treats them as file paths if the path exists. Note
+     * that this differs from the ordinary Spring contexts that default to file paths because paths are treated as
+     * absolute if they are in fact absolute.
+     * </p>
+     */
+    @Override
+    protected Resource getResourceByPath(final String path) {
+        final Resource r = new FileSystemResource(path);
+        if (r.exists()) {
+            return r;
+        }
+        return super.getResourceByPath(path);
+    }
+    
 }
