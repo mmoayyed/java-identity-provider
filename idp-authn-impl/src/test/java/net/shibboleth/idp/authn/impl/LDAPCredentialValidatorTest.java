@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -49,6 +50,7 @@ import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.ext.PasswordPolicyAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.jaas.LdapPrincipal;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -464,6 +466,50 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setAuthenticator(authenticator);
+        validator.initialize();
+        
+        action.initialize();
+
+        doExtract();
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNull(aec);
+
+        AuthenticationResult result = ac.getAuthenticationResult();
+        Assert.assertNotNull(result);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(),
+                AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+
+        UsernamePrincipal up = result.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+        Assert.assertNotNull(up);
+        Assert.assertEquals(up.getName(), "PETER_THE_PRINCIPAL");
+        LdapPrincipal lp = result.getSubject().getPrincipals(LdapPrincipal.class).iterator().next();
+        Assert.assertNotNull(lp);
+        Assert.assertEquals(lp.getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertNotNull(lp.getLdapEntry());
+    }
+
+    @Test public void testComputedAndAuthorized() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "change");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        
+        validator.setAuthenticator(authenticator);
+        validator.setPasswordLookupStrategy(
+                new Function<ProfileRequestContext,char[]>() {
+                    public char[] apply(final ProfileRequestContext input) {
+                        return (input.getSubcontext(
+                                AuthenticationContext.class).getSubcontext(
+                                        UsernamePasswordContext.class).getPassword() + "it").toCharArray();
+                    }
+                });
         validator.initialize();
         
         action.initialize();

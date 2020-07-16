@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
@@ -64,6 +66,9 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
     /** Attributes to return from authentication. */
     @Nullable private String[] returnAttributes;
     
+    /** Optional strategy for obtaining/transforming the password. */
+    @Nullable private Function<ProfileRequestContext,char[]> passwordLookupStrategy;
+    
     /**
      * Returns the authenticator.
      * 
@@ -103,6 +108,17 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
 
         returnAttributes = attributes;
     }
+    
+    /**
+     * Set a strategy function to produce the password to bind with.
+     * 
+     * @param strategy strategy function
+     */
+    public void setPasswordLookupStrategy(@Nullable final Function<ProfileRequestContext,char[]> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        passwordLookupStrategy = strategy;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -136,9 +152,11 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
             log.debug("{} Attempting to authenticate user {}", getLogPrefix(), username);
             final VelocityContext context = new VelocityContext();
             context.put("usernamePasswordContext", usernamePasswordContext);
-            final AuthenticationRequest request =
-                    new AuthenticationRequest(new User(username, context),
-                            new Credential(usernamePasswordContext.getPassword()), returnAttributes);
+            final char[] password = passwordLookupStrategy != null ?
+                    passwordLookupStrategy.apply(profileRequestContext) :
+                        usernamePasswordContext.getPassword().toCharArray();
+            final AuthenticationRequest request = new AuthenticationRequest(
+                    new User(username, context), new Credential(password), returnAttributes);
             final AuthenticationResponse response = authenticator.authenticate(request);
             log.trace("{} Authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
