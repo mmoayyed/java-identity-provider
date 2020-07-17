@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -319,11 +320,24 @@ public class FlowModelFlowBuilder extends AbstractFlowBuilder {
     // internal helpers
 
     private void initLocalFlowContext() {
-        Resource[] contextResources = parseContextResources(getFlowModel().getBeanImports());
+        String[] contextResources = parseContextResources(getFlowModel().getBeanImports());
         GenericApplicationContext flowContext = createFlowApplicationContext(contextResources);
         setLocalContext(new LocalFlowBuilderContext(getContext(), flowContext));
     }
 
+    /* Shibboleth change - pull out the resources as Strings and let the regular Spring logic resolve them */
+    private String[] parseContextResources(List<BeanImportModel> beanImports) {
+        if (beanImports != null && !beanImports.isEmpty()) {
+            final String[] resources = new String[beanImports.size()];
+            return beanImports.stream()
+                    .map(BeanImportModel::getResource)
+                    .collect(Collectors.toUnmodifiableList())
+                    .toArray(resources);
+        }
+        return new String[0];
+    }
+    
+    /*
     private Resource[] parseContextResources(List<BeanImportModel> beanImports) {
         if (beanImports != null && !beanImports.isEmpty()) {
             Resource flowResource = flowModelHolder.getFlowModelResource();
@@ -341,8 +355,9 @@ public class FlowModelFlowBuilder extends AbstractFlowBuilder {
             return new Resource[0];
         }
     }
+    */
 
-    private GenericApplicationContext createFlowApplicationContext(Resource[] resources) {
+    private GenericApplicationContext createFlowApplicationContext(String[] resources) {
         ApplicationContext parent = getContext().getApplicationContext();
         GenericApplicationContext flowContext;
         if (parent instanceof WebApplicationContext) {
