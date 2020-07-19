@@ -119,12 +119,12 @@ import net.shibboleth.ext.spring.context.FilesystemGenericWebApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 
 /**
- * 
- * This code is extended from org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder
+ * This code is extended from {@link org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder}
  * in order to customize the Spring {@link ApplicationContext} used for flow configuration.
  * 
- * The only method changed is {@link #createFlowApplicationContext(Resource[])}, but it's private
- * and there are too many threads pulled by anything but a wholesale duplication of this class.
+ * The only method changed is {@link #createFlowApplicationContext(String[])} (parameter changed
+ * from {@link Resource[]}, but it's private and there are too many threads pulled by anything
+ * but a wholesale duplication of this class.
  * 
  * Builds a runtime {@link Flow} definition object from a {@link FlowModel}.
  *
