@@ -17,22 +17,11 @@
         <property name="sourceMap">
             <map>
                 <!-- Abstract base flow for admin flows. -->
-                <entry key="admin.abstract" value="../system/flows/admin/admin-abstract-flow.xml"/>
+                <entry key="admin.abstract" value="classpath:/net/shibboleth/idp/admin/flows/admin-abstract-flow.xml"/>
                 
-                <!-- Status flow (location is for backward compatibility). -->
-                <entry key="status" value="../system/flows/admin/status-flow.xml" />
-        
-                <!-- Administrative and debugging flows. -->
-                <entry key="admin/hello" value="../system/flows/admin/hello-flow.xml" />
-                <entry key="admin/resolvertest" value="../system/flows/admin/resolvertest-flow.xml" />
-                <entry key="admin/reload-service" value="../system/flows/admin/reload-service-flow.xml" />
-                <entry key="admin/reload-metadata" value="../system/flows/admin/reload-metadata-flow.xml" />
-                <entry key="admin/lockout" value="../system/flows/admin/lockout-flow.xml" />
-                <entry key="admin/mdquery" value="../system/flows/admin/mdquery-flow.xml" />
-                <entry key="admin/metrics" value="../system/flows/admin/metrics-flow.xml" />
-                <entry key="admin/storage" value="../system/flows/admin/storage-flow.xml" />
-                <entry key="admin/unlock-keys" value="../system/flows/admin/unlock-keys-flow.xml" />
-                
+                <!-- Status flow (extra location is for backward compatibility). -->
+                <entry key="status" value="classpath:/META-INF/net/shibboleth/idp/flows/admin/status/status-flow.xml" />
+                        
                 <!-- Proprietary logout flow. -->
                 <entry key="Logout" value="../system/flows/logout/logout-flow.xml" />
         
@@ -169,7 +158,7 @@
                     <null/>
                 </entry>
                 
-                <!-- Load plugin-defined flows from well-known classpath location. -->
+                <!-- Load plugin-defined flows from well-known classpath locations. -->
                 <entry key="classpath*:/META-INF/net/shibboleth/idp/flows/**/*-flow.xml"
                     value="/META-INF/net/shibboleth/idp/flows" />
             </map>

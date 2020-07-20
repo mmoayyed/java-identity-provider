@@ -15,32 +15,13 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <import resource="admin-abstract-beans.xml" />
-
     <!-- Profile ID for flow. -->    
-    <bean id="shibboleth.AdminProfileId" class="java.lang.String"
-        c:_0="http://shibboleth.net/ns/profiles/metrics" />
-
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/status" />
+    
     <!-- Default operation/resource suppliers for access checks. -->
     
     <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="read" />
         
-    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
-        c:outputType="#{T(java.lang.String)}"
-        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('metricId')" />
-
-    <!-- Work beans. -->
-
-    <bean id="OutputMetrics"
-        class="net.shibboleth.idp.admin.impl.OutputMetrics" scope="prototype"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-        p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter"
-        p:metricRegistry-ref="shibboleth.metrics.MetricRegistry"
-        p:metricFilterMap-ref="shibboleth.metrics.MetricGroups"
-        p:allowedOrigin="#{getObject('shibboleth.metrics.AllowedOrigin')}"
-        p:JSONPCallbackName="#{getObject('shibboleth.metrics.JSONPCallback')}"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}" />
-        
-    <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
-
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.Functions.Constant" c:target="status" />
+    
 </beans>

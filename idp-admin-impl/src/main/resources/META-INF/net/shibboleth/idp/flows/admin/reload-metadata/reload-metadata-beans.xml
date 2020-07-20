@@ -15,35 +15,27 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <import resource="admin-abstract-beans.xml" />
-
     <!-- Profile ID for flow. -->    
-    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/hello" />
-    
-    <!-- Default operation/resource suppliers for access checks. -->
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String"
+        c:_0="http://shibboleth.net/ns/profiles/reload-metadata" />
 
-    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="hello" />
+    <!-- Default operation/resource suppliers for access checks. -->
+    
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="reload" />
         
     <bean id="shibboleth.AdminResourceLookupStrategy"
         class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
         c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="'subject/' + #custom.apply(#input)">
-        <property name="customObject">
-            <bean parent="shibboleth.Functions.Compose"
-                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
-                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
-        </property>    
-    </bean>
-    
-    <!--  Work beans. -->
-    
-    <bean id="ScriptedAction" class="net.shibboleth.idp.profile.ScriptedAction" factory-method="resourceScript" scope="prototype">
-        <constructor-arg>
-            <bean class="net.shibboleth.ext.spring.resource.ConditionalResource"
-                c:_0="%{idp.home}/conf/admin/hello-world.js"
-                p:defaultContent="null;" />
-        </constructor-arg>
-    </bean>
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('resolverId')" />
+
+    <!-- Work beans. -->
+
+    <bean id="ReloadMetadata"
+        class="net.shibboleth.idp.saml.profile.impl.ReloadMetadata" scope="prototype"
+        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:metadataResolver-ref="shibboleth.MetadataResolverService" />
+        
+    <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
 </beans>

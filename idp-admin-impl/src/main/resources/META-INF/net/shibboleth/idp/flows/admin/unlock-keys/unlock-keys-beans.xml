@@ -15,30 +15,24 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <import resource="admin-abstract-beans.xml" />
-
     <!-- Profile ID for flow. -->    
-    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/storage" />
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/unlock-keys" />
     
     <!-- Default operation/resource suppliers for access checks. -->
 
-    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
-        c:outputType="#{T(java.lang.String)}"
-        c:expression="#custom.getMethod()"
-        p:customObject-ref="shibboleth.HttpServletRequest" />
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="unlock" />
         
-    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
-        c:outputType="#{T(java.lang.String)}"
-        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('context')" />
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.Functions.Constant" c:target="keys" />
     
     <!--  Work beans. -->
-    
-    <bean id="DoStorageOperation" class="net.shibboleth.idp.admin.impl.DoStorageOperation" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-        p:objectMapper-ref="shibboleth.JSONObjectMapper" />
         
-    <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
-    
-    
+    <bean id="UnlockDataSealers" class="net.shibboleth.idp.admin.impl.UnlockDataSealers" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:keyStrategies="#{getObject('shibboleth.unlock-keys.KeyStrategies')}" />
+
+    <bean id="UnlockPrivateKeys" class="net.shibboleth.idp.admin.impl.UnlockPrivateKeys" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:credentials="#{getObject('shibboleth.unlock-keys.Credentials')}"
+        p:keyResources="#{getObject('shibboleth.unlock-keys.PrivateKeys')}" />
+        
 </beans>

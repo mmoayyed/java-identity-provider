@@ -15,28 +15,28 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <import resource="admin-abstract-beans.xml" />
-
     <!-- Profile ID for flow. -->    
-    <bean id="shibboleth.AdminProfileId" class="java.lang.String"
-        c:_0="http://shibboleth.net/ns/profiles/reload-service-configuration" />
-
-    <!-- Default operation/resource suppliers for access checks. -->
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/storage" />
     
-    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="reload" />
-        
-    <bean id="shibboleth.AdminResourceLookupStrategy"
-        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
-        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+    <!-- Default operation/resource suppliers for access checks. -->
+
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('serviceId')" />
-
-    <!-- Work beans. -->
-
-    <bean id="ReloadServiceConfiguration"
-        class="net.shibboleth.idp.profile.impl.ReloadServiceConfiguration" scope="prototype"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+        c:expression="#custom.getMethod()"
+        p:customObject-ref="shibboleth.HttpServletRequest" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
+        c:outputType="#{T(java.lang.String)}"
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('context')" />
+    
+    <!--  Work beans. -->
+    
+    <bean id="DoStorageOperation" class="net.shibboleth.idp.admin.impl.DoStorageOperation" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:objectMapper-ref="shibboleth.JSONObjectMapper" />
         
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
-
+    
+    
 </beans>
