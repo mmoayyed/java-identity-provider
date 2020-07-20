@@ -123,8 +123,8 @@ import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
  * in order to customize the Spring {@link ApplicationContext} used for flow configuration.
  * 
  * The only method changed is {@link #createFlowApplicationContext(String[])} (parameter changed
- * from {@link Resource[]}, but it's private and there are too many threads pulled by anything
- * but a wholesale duplication of this class.
+ * from {@link Resource}, but it's private and there are too many threads pulled by anything
+ * but a wholesale duplication of this class).
  * 
  * Builds a runtime {@link Flow} definition object from a {@link FlowModel}.
  *
