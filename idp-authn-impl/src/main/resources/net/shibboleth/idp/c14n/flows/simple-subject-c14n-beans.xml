@@ -12,18 +12,16 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../../conf/c14n/x500-subject-c14n-config.xml" />
+    <import resource="%{idp.home}/conf/c14n/simple-subject-c14n-config.xml" />
 
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
-    <bean id="X500SubjectCanonicalization"
-        class="net.shibboleth.idp.authn.impl.X500SubjectCanonicalization" scope="prototype"
-        p:subjectAltNameTypes-ref="shibboleth.c14n.x500.SubjectAltNameTypes"
-        p:objectIds-ref="shibboleth.c14n.x500.ObjectIDs"
-        p:lowercase-ref="shibboleth.c14n.x500.Lowercase"
-        p:uppercase-ref="shibboleth.c14n.x500.Uppercase"
-        p:trim-ref="shibboleth.c14n.x500.Trim"
-        p:transforms-ref="shibboleth.c14n.x500.Transforms" />
+    <bean id="SimpleSubjectCanonicalization"
+        class="net.shibboleth.idp.authn.impl.SimpleSubjectCanonicalization" scope="prototype"
+        p:lowercase-ref="shibboleth.c14n.simple.Lowercase"
+        p:uppercase-ref="shibboleth.c14n.simple.Uppercase"
+        p:trim-ref="shibboleth.c14n.simple.Trim"
+        p:transforms-ref="shibboleth.c14n.simple.Transforms" />
     
 </beans>

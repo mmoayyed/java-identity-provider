@@ -93,29 +93,29 @@
                 <entry key="authn/Discovery" value="classpath:/net/shibboleth/idp/authn/flows/discovery-flow.xml" />
           
                 <!-- Main flow for subject c14n. -->
-                <entry key="c14n.events" value="../conf/c14n/subject-c14n-events-flow.xml" />
-                <entry key="c14n.abstract" value="../system/flows/c14n/subject-c14n-abstract-flow.xml" />
-                <entry key="c14n" value="../system/flows/c14n/subject-c14n-flow.xml" />
+                <entry key="c14n.events" value="%{idp.home}/conf/c14n/subject-c14n-events-flow.xml" />
+                <entry key="c14n.abstract" value="classpath:/net/shibboleth/idp/c14n/flows/subject-c14n-abstract-flow.xml" />
+                <entry key="c14n" value="classpath:/net/shibboleth/idp/c14n/flows/subject-c14n-flow.xml" />
         
                 <!-- Standard post-login C14N methods. -->
-                <entry key="c14n/simple" value="../system/flows/c14n/simple-subject-c14n-flow.xml" />
-                <entry key="c14n/x500" value="../system/flows/c14n/x500-subject-c14n-flow.xml" />
-                <entry key="c14n/attribute" value="../system/flows/c14n/attribute-sourced-subject-c14n-flow.xml" />
+                <entry key="c14n/simple" value="classpath:/net/shibboleth/idp/c14n/flows/simple-subject-c14n-flow.xml" />
+                <entry key="c14n/x500" value="classpath:/net/shibboleth/idp/c14n/flows/x500-subject-c14n-flow.xml" />
+                <entry key="c14n/attribute" value="classpath:/net/shibboleth/idp/c14n/flows/attribute-sourced-subject-c14n-flow.xml" />
         
                 <!--
                 Standard SAML C14N methods, including one supporting legacy use of the attribute resolver.
                 These all map to the same flow, and they derive the bean ID of an action to run based on the
                 flow id after the slash.
                 -->
-                <entry key="c14n/SAML2Transient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2CryptoTransient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2Persistent" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2Transform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2ProxyTransform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML1Transient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML1CryptoTransient" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML1Transform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/LegacyPrincipalConnector" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2Transient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2CryptoTransient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2Persistent" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2Transform" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2ProxyTransform" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML1Transient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML1CryptoTransient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML1Transform" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/LegacyPrincipalConnector" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
         
                 <!-- Main interceptor flow. -->
                 <entry key="intercept.events" value="%{idp.home}/conf/intercept/intercept-events-flow.xml" />
