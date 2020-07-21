@@ -153,8 +153,8 @@
                 <entry key="cas/logout" value="../system/flows/logout/logout-flow.xml" />
         
                 <!-- Client storage flows. -->
-                <entry key="client-storage/read" value="../system/flows/client-storage/client-storage-read-flow.xml" />
-                <entry key="client-storage/write" value="../system/flows/client-storage/client-storage-write-flow.xml" />
+                <entry key="client-storage/read" value="classpath:/net/shibboleth/idp/session/flows/client-storage-read-flow.xml" />
+                <entry key="client-storage/write" value="classpath:/net/shibboleth/idp/session/flows/client-storage-write-flow.xml" />
             </map>
         </property>
     </bean>
