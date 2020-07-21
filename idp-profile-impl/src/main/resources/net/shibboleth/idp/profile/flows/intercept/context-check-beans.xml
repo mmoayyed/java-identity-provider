@@ -18,6 +18,6 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../../conf/intercept/context-check-intercept-config.xml" />
+    <import resource="%{idp.home}/conf/intercept/context-check-intercept-config.xml" />
 
 </beans>

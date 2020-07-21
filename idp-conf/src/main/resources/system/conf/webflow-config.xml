@@ -34,10 +34,10 @@
                 <entry key="admin/unlock-keys" value="classpath:/net/shibboleth/idp/admin/flows/unlock-keys-flow.xml" />
                         
                 <!-- Proprietary logout flow. -->
-                <entry key="Logout" value="classpath:/net/shibboleth/idp/profile/flows/logout-flow.xml" />
+                <entry key="Logout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-flow.xml" />
         
                 <!-- Logout propagation driver flow. -->
-                <entry key="PropagateLogout" value="classpath:/net/shibboleth/idp/profile/flows/logout-propagation-flow.xml" />
+                <entry key="PropagateLogout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-propagation-flow.xml" />
         
                 <!-- Logout propagation delegate flows. -->
                 <entry key="logoutprop/cas" value="../system/flows/logout/propagation/cas-flow.xml" />
@@ -117,20 +117,20 @@
                 <entry key="c14n/SAML1Transform" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
                 <entry key="c14n/LegacyPrincipalConnector" value="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
         
-                <!-- Main intercept flow. -->
-                <entry key="intercept.events" value="../conf/intercept/intercept-events-flow.xml" />
-                <entry key="intercept.abstract" value="../system/flows/intercept/intercept-abstract-flow.xml" />
-                <entry key="intercept" value="../system/flows/intercept/intercept-flow.xml" />
+                <!-- Main interceptor flow. -->
+                <entry key="intercept.events" value="%{idp.home}/conf/intercept/intercept-events-flow.xml" />
+                <entry key="intercept.abstract" value="classpath:/net/shibboleth/idp/profile/flows/intercept/intercept-abstract-flow.xml" />
+                <entry key="intercept" value="classpath:/net/shibboleth/idp/profile/flows/intercept/intercept-flow.xml" />
         
-                <!-- Built-in intercept flows. -->
-                <entry key="intercept/context-check" value="../system/flows/intercept/context-check-flow.xml" />
-                <entry key="intercept/expiring-password" value="../system/flows/intercept/expiring-password-flow.xml" />
-                <entry key="intercept/terms-of-use" value="../system/flows/intercept/terms-of-use-flow.xml" />
-                <entry key="intercept/attribute-release" value="../system/flows/intercept/attribute-release-flow.xml" />
-                <entry key="intercept/attribute-release-query" value="../system/flows/intercept/attribute-release-query-flow.xml" />
-                <entry key="intercept/impersonate" value="../system/flows/intercept/impersonate-flow.xml" />
-                <entry key="intercept/external" value="../system/flows/intercept/external-flow.xml" />
-                <entry key="intercept/warning" value="../system/flows/intercept/warning-flow.xml" />
+                <!-- Built-in interceptor flows. -->
+                <entry key="intercept/terms-of-use" value="classpath:/net/shibboleth/idp/consent/flows/terms-of-use-flow.xml" />
+                <entry key="intercept/attribute-release" value="classpath:/net/shibboleth/idp/consent/flows/attribute-release-flow.xml" />
+                <entry key="intercept/attribute-release-query" value="classpath:/net/shibboleth/idp/consent/flows/attribute-release-query-flow.xml" />
+                <entry key="intercept/context-check" value="classpath:/net/shibboleth/idp/profile/flows/intercept/context-check-flow.xml" />
+                <entry key="intercept/expiring-password" value="classpath:/net/shibboleth/idp/profile/flows/intercept/expiring-password-flow.xml" />
+                <entry key="intercept/impersonate" value="classpath:/net/shibboleth/idp/profile/flows/intercept/impersonate-flow.xml" />
+                <entry key="intercept/external" value="classpath:/net/shibboleth/idp/profile/flows/intercept/external-flow.xml" />
+                <entry key="intercept/warning" value="classpath:/net/shibboleth/idp/profile/flows/intercept/warning-flow.xml" />
         
                 <!-- Inbound security processing of SAML messages, implemented as intercept flows. -->
                 <entry key="security-policy.abstract" value="../system/flows/saml/security-abstract-flow.xml" />

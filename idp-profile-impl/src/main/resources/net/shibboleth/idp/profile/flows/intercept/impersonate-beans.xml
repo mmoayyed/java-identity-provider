@@ -18,7 +18,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../../conf/intercept/impersonate-intercept-config.xml" />
+    <import resource="%{idp.home}/conf/intercept/impersonate-intercept-config.xml" />
 
     <bean id="CheckGeneralAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
