@@ -18,10 +18,13 @@
 package net.shibboleth.idp.profile.spring.factory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -206,8 +209,20 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
                 throw new IllegalStateException(
                         "An I/O Exception occurred resolving the flow location pattern '" + pattern.getKey() + "'", e);
             }
+            
+            // Establish baseline of registered flows. 
+            final Set<String> existingFlows = new HashSet<>();
+            Arrays.stream(flowRegistry.getFlowDefinitionIds()).forEachOrdered(existingFlows::add);
+            
             for (final FlowDefinitionResource resource : resources) {
+                if (existingFlows.contains(resource.getId())) {
+                    throw new IllegalStateException("Illegal attempt to register pre-existing flow ID '" +
+                            resource.getId() + "'" + "via resource: " + resource.getPath());
+                }
                 registerFlow(resource, flowRegistry);
+                
+                // Update running tracker.
+                existingFlows.add(resource.getId());
             }
         }
     }

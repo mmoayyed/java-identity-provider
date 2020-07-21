@@ -18,9 +18,20 @@
             <map>
                 <!-- Abstract base flow for admin flows. -->
                 <entry key="admin.abstract" value="classpath:/net/shibboleth/idp/admin/flows/admin-abstract-flow.xml"/>
-                
+
                 <!-- Status flow (extra location is for backward compatibility). -->
-                <entry key="status" value="classpath:/META-INF/net/shibboleth/idp/flows/admin/status/status-flow.xml" />
+                <entry key="status" value="classpath:/net/shibboleth/idp/admin/flows/status-flow.xml" />
+
+                <!-- Administrative and debugging flows. -->
+                <entry key="admin/hello" value="classpath:/net/shibboleth/idp/admin/flows/hello-flow.xml" />
+                <entry key="admin/resolvertest" value="classpath:/net/shibboleth/idp/admin/flows/resolvertest-flow.xml" />
+                <entry key="admin/reload-service" value="classpath:/net/shibboleth/idp/admin/flows/reload-service-flow.xml" />
+                <entry key="admin/reload-metadata" value="classpath:/net/shibboleth/idp/admin/flows/reload-metadata-flow.xml" />
+                <entry key="admin/lockout" value="classpath:/net/shibboleth/idp/admin/flows/lockout-flow.xml" />
+                <entry key="admin/mdquery" value="classpath:/net/shibboleth/idp/admin/flows/mdquery-flow.xml" />
+                <entry key="admin/metrics" value="classpath:/net/shibboleth/idp/admin/flows/metrics-flow.xml" />
+                <entry key="admin/storage" value="classpath:/net/shibboleth/idp/admin/flows/storage-flow.xml" />
+                <entry key="admin/unlock-keys" value="classpath:/net/shibboleth/idp/admin/flows/unlock-keys-flow.xml" />
                         
                 <!-- Proprietary logout flow. -->
                 <entry key="Logout" value="../system/flows/logout/logout-flow.xml" />
