@@ -24,7 +24,7 @@
     <bean id="shibboleth.authn.MFA.TransitionMapStrategy" parent="shibboleth.Functions.Constant"
         c:target-ref="shibboleth.authn.MFA.TransitionMap" />
 
-    <import resource="../../../conf/authn/mfa-authn-config.xml" />
+    <import resource="%{idp.home}/conf/authn/mfa-authn-config.xml" />
 
     <bean id="PopulateMultiFactorAuthenticationContext" scope="prototype"
         class="net.shibboleth.idp.authn.impl.PopulateMultiFactorAuthenticationContext"

@@ -38,7 +38,7 @@
         class="net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy" />
 
     <!-- Can override one or more of the beans above. -->
-    <import resource="../../../conf/authn/duo-authn-config.xml" />
+    <import resource="%{idp.home}/conf/authn/duo-authn-config.xml" />
 
     <alias name="shibboleth.authn.Duo.UsernameLookupStrategy" alias="CanonicalUsernameStrategy" />
 

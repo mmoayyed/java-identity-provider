@@ -24,7 +24,7 @@
     <bean id="shibboleth.authn.SAML.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target-ref="shibboleth.authn.SAML.externalAuthnPath" />
 
-    <import resource="../../../conf/authn/saml-authn-config.xml" />
+    <import resource="%{idp.home}/conf/authn/saml-authn-config.xml" />
     
     <!-- Parent beans for indirecting into nested PRC. -->
     

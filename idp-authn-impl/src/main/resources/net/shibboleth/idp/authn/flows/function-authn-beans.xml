@@ -18,7 +18,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../../conf/authn/function-authn-config.xml" />
+    <import resource="%{idp.home}/conf/authn/function-authn-config.xml" />
             
     <bean id="ValidateFunctionResult" class="net.shibboleth.idp.authn.impl.ValidateFunctionResult" scope="prototype"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Function.addDefaultPrincipals') ?: true}"

@@ -11,25 +11,24 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
-       
+
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.X509.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
-        c:target-ref="shibboleth.authn.X509.externalAuthnPath" />
-
-    <import resource="../../../conf/authn/x509-authn-config.xml" />
-
-    <bean id="ValidateExternalAuthentication"
-        class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
-        p:metricName="net.shibboleth.idp.authn.x509"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: true}"
-        p:classifiedMessages-ref="shibboleth.authn.X509.ClassifiedMessageMap"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
+    <import resource="%{idp.home}/conf/authn/ipaddress-authn-config.xml" />
+    
+    <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:trim="true"
+        p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
+        
+    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
+        p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') ?: true}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"

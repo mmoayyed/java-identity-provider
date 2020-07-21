@@ -18,7 +18,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../../conf/authn/remoteuser-internal-authn-config.xml" />
+    <import resource="%{idp.home}/conf/authn/remoteuser-internal-authn-config.xml" />
 
     <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="remoteuser-internal-authn-config.xml">
         <constructor-arg index="0">

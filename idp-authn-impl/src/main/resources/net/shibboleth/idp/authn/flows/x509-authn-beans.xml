@@ -11,23 +11,24 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
-    
+       
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../../conf/authn/x509-internal-authn-config.xml" />
-    
-    <bean id="ExtractX509CertificateFromRequest"
-        class="net.shibboleth.idp.authn.impl.ExtractX509CertificateFromRequest" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
-        
-    <bean id="ValidateX509Certificate"
-        class="net.shibboleth.idp.authn.impl.ValidateX509Certificate" scope="prototype"
-        p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}"
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="shibboleth.authn.X509.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+        c:target-ref="shibboleth.authn.X509.externalAuthnPath" />
+
+    <import resource="%{idp.home}/conf/authn/x509-authn-config.xml" />
+
+    <bean id="ValidateExternalAuthentication"
+        class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
+        p:metricName="net.shibboleth.idp.authn.x509"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: true}"
+        p:classifiedMessages-ref="shibboleth.authn.X509.ClassifiedMessageMap"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"

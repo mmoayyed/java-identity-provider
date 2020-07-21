@@ -18,20 +18,20 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="../../../conf/authn/ipaddress-authn-config.xml" />
-    
-    <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:trim="true"
-        p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
-        
-    <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-        p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') ?: true}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="shibboleth.authn.discoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
+        c:target-ref="shibboleth.authn.discoveryURL" />
 
-    <bean id="PopulateSubjectCanonicalizationContext"
-        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
-        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+    <import resource="%{idp.home}/conf/authn/discovery-config.xml" />
+
+    <bean id="DiscoveryProfileRequestFunction" lazy-init="true"
+        class="net.shibboleth.idp.authn.proxy.impl.DiscoveryProfileRequestFunction"
+        p:discoveryURLLookupStrategy-ref="shibboleth.authn.discoveryURLStrategy" />
+
+    <!-- Action beans. -->
+
+    <bean id="ExtractDiscoveryResponse"
+        class="net.shibboleth.idp.authn.proxy.impl.ExtractDiscoveryResponse" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
 </beans>

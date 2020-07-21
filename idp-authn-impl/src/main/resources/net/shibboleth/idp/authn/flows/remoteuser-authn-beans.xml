@@ -11,7 +11,7 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
-
+       
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
@@ -19,19 +19,21 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.discoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
-        c:target-ref="shibboleth.authn.discoveryURL" />
+    <bean id="shibboleth.authn.RemoteUser.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+        c:target-ref="shibboleth.authn.RemoteUser.externalAuthnPath" />
+    
+    <import resource="%{idp.home}/conf/authn/remoteuser-authn-config.xml" />
 
-    <import resource="../../../conf/authn/discovery-config.xml" />
+    <bean id="ValidateExternalAuthentication"
+        class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
+        p:metricName="net.shibboleth.idp.authn.remoteuser"
+        p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: true}"
+        p:classifiedMessages-ref="shibboleth.authn.RemoteUser.ClassifiedMessageMap"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}" />
 
-    <bean id="DiscoveryProfileRequestFunction" lazy-init="true"
-        class="net.shibboleth.idp.authn.proxy.impl.DiscoveryProfileRequestFunction"
-        p:discoveryURLLookupStrategy-ref="shibboleth.authn.discoveryURLStrategy" />
-
-    <!-- Action beans. -->
-
-    <bean id="ExtractDiscoveryResponse"
-        class="net.shibboleth.idp.authn.proxy.impl.ExtractDiscoveryResponse" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
 </beans>
