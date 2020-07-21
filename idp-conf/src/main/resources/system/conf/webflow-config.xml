@@ -34,10 +34,10 @@
                 <entry key="admin/unlock-keys" value="classpath:/net/shibboleth/idp/admin/flows/unlock-keys-flow.xml" />
                         
                 <!-- Proprietary logout flow. -->
-                <entry key="Logout" value="../system/flows/logout/logout-flow.xml" />
+                <entry key="Logout" value="classpath:/net/shibboleth/idp/profile/flows/logout-flow.xml" />
         
                 <!-- Logout propagation driver flow. -->
-                <entry key="PropagateLogout" value="../system/flows/logout/logout-propagation-flow.xml" />
+                <entry key="PropagateLogout" value="classpath:/net/shibboleth/idp/profile/flows/logout-propagation-flow.xml" />
         
                 <!-- Logout propagation delegate flows. -->
                 <entry key="logoutprop/cas" value="../system/flows/logout/propagation/cas-flow.xml" />
