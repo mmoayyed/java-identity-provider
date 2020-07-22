@@ -39,7 +39,7 @@ public class TestPlugin extends AbstractPluginDescription {
     /** {@inheritDoc} */
     @Override
     public List<URL> getUpdateURLs() {
-        ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/plugin/");
+        ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/plugin/plugins.props");
         try {
             return Collections.singletonList(resource.getURL());
         } catch (IOException e) {

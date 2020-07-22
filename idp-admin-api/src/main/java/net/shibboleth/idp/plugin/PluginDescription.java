@@ -83,8 +83,8 @@ public interface PluginDescription {
      */
     @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException;
 
-    /** Return the places to look for updates for this plugin package.
-     * The format of the paths below this point is fixed.
+    /** Return the places to look for information for this plugin package.
+     * The format of the (property) file at this location is fixed.
      * 
      * @return Zero or more URLs
      * @throws IOException if the resource construction failed.

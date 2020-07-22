@@ -29,39 +29,39 @@ import net.shibboleth.idp.Version;
  */
 public final class PluginSupport {
     
-    /** Where (relatively) to find available versions. */
-    @Nonnull public static final String AVAILABLE_VERSIONS_PATH = "versions.properties";
-
-    /** Where (relatively) to find available versions. */
-    @Nonnull public static final String VERSION_INFO_PATH = "version.details.properties";
-
-    /** Property Name for available versions inside {@link #AVAILABLE_VERSIONS_PATH}. */
+    /** Property Name suffix for available versions inside {@link PluginDescription#getUpdateURLs()}. */
     @Nonnull public static final String AVAILABLE_VERSIONS_PROPERTY_SUFFIX = ".versions";
 
-    /** Property Name for max supported IdP version inside {@link #VERSION_INFO_PATH}. */
-    @Nonnull public static final String MAX_IDP_VERSION = "idp.version.max";
-    
-    /** Property Name for minimum supported IdP version inside {@link #VERSION_INFO_PATH}. */
-    @Nonnull public static final String MIN_IDP_VERSION = "idp.version.min";
+    /** Property Name for Download directory {@link PluginDescription#getUpdateURLs()}. */
+    @Nonnull public static final String DOWNLOAD_URL_INTERFIX = ".downloadURL.";
 
-    /** Property Name for support level inside {@link #VERSION_INFO_PATH}. */
-    @Nonnull public static final String SUPPORT_LEVEL = "support.level";
+    /** Property Name for download name {@link PluginDescription#getUpdateURLs()}. */
+    @Nonnull public static final String BASE_NAME_INTERFIX = ".baseName.";
 
-    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
-    public static final int SUPPORT_LEVEL_CURRENT = 0;
+    /** Property Name for max supported IdP version inside inside {@link PluginDescription#getUpdateURLs()}. */
+    @Nonnull public static final String MAX_IDP_VERSION_INTERFIX = ".idpVersionMax.";
 
-    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
-    public static final int SUPPORT_LEVEL_OUT_OF_DATE = 1;
+    /** Property Name for minimum supported IdP version inside inside {@link PluginDescription#getUpdateURLs()}. */
+    @Nonnull public static final String MIN_IDP_VERSION_INTERFIX = ".idpVersionMin.";
 
-    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
-    public static final int SUPPORT_LEVEL_UNSUPPORTED = 2;
+    /** Property Name for support level inside inside {@link PluginDescription#getUpdateURLs()}. */
+    @Nonnull public static final String SUPPORT_LEVEL_INTERFIX = ".supportLevel.";
 
-    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
-    public static final int SUPPORT_LEVEL_SECADV = 3;
-
-    /** Value for support level inside {@link #VERSION_INFO_PATH}. */
-    public static final int SUPPORT_LEVEL_WITHDRAWN = 4;
-
+    /** Value for support level pointed to by {@link #SUPPORT_LEVEL_INTERFIX}.*/
+    public static enum SupportLevel {
+        /** The current release. */
+        Current,
+        /** Still working but a new version is available. */
+        OutOfDate,
+        /** Out of Support. */
+        Unsupported,
+        /** Security alerts against this plugin. */
+        Secadv,
+        /** Withdrawn. */
+        Withdrawn,
+        /** Nothing published. */
+        Unknown
+    }
     
     /** Class logger. */
     @Nonnull private static Logger log = LoggerFactory.getLogger(PluginSupport.class);

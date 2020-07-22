@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -95,6 +96,6 @@ public class PluginStateTest {
         state.initialize();
         
         assertEquals(state.getAvailableVersions().size(), 3);
-        assertEquals(state.getSupportLevel(),1);
+        assertEquals(state.getSupportLevel(), SupportLevel.OutOfDate);
     }
 }

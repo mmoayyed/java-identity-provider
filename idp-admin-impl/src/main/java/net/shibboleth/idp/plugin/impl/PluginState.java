@@ -18,6 +18,7 @@
 package net.shibboleth.idp.plugin.impl;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
@@ -36,9 +38,11 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.idp.plugin.PluginSupport;
+import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -63,6 +67,9 @@ public class PluginState extends AbstractInitializableComponent {
     
     /** The support information. */
     @Nonnull private final Map<PluginVersion, VersionInfo> versionInfo = new HashMap<>();
+    
+    /** The Download information. */
+    @Nonnull private final Map<PluginVersion, Pair<URL,String>> downloadInfo = new HashMap<>();
 
     /** My support information. */
     @NonnullAfterInit private VersionInfo myVersionInfo;
@@ -84,7 +91,30 @@ public class PluginState extends AbstractInitializableComponent {
                 plugin.getMinorVersion(), plugin.getPatchVersion());
     }
     
-    
+    /** Get the base URL for this version.
+     * @param version which version
+     * @return the base URL
+     */
+    @Nullable public URL getUpdateURL(final PluginVersion version) {
+        final Pair<URL, String> p = downloadInfo.get(version);
+        if (p == null) {
+            return null;
+        }
+        return p.getFirst();
+    }
+
+    /** Get the base Name for this version.
+     * @param version which version
+     * @return the base name
+     */
+    @Nullable public String getUpdateBaseName(final PluginVersion version) {
+        final Pair<URL, String> p = downloadInfo.get(version);
+        if (p == null) {
+            return null;
+        }
+        return p.getSecond();
+    }
+
     /** Set the client.
      * @param what what to set.
      */
@@ -94,13 +124,12 @@ public class PluginState extends AbstractInitializableComponent {
     }
 
     /** Given a version find out more.
-     * @param parentResource the root we are looking at
+     * @param props the property files for this plugin we are looking at
      * @param version the version in question.
      * @return true if we processed everything OK.
      */
     // Checkstyle: CyclomaticComplexity OFF
-    private boolean handleAvailableVersion(final Resource parentResource, final String version) {
-        final Properties detailsProps = new Properties(3);
+    private boolean handleAvailableVersion(final  Properties props, final String version) {
         final PluginVersion theVersion = new PluginVersion(version);
         if (theVersion.getMajor() == 0 && theVersion.getMinor() == 0 && theVersion.getPatch() == 0) {
             log.warn("Plugin {}: improbable version {}", plugin.getPluginId(), version);
@@ -108,64 +137,78 @@ public class PluginState extends AbstractInitializableComponent {
         if (versionInfo.containsKey(theVersion)) {
             log.warn("Plugin {}: Duplicate version {}", plugin.getPluginId(), version);
         }
-        
-        try {
-            final Resource details = parentResource.createRelative(version + "/")
-                    .createRelative(PluginSupport.VERSION_INFO_PATH);
-            detailsProps.load(details.getInputStream());
-        } catch (final IOException e) {
-            log.warn("Could not find details description {}, version {} ", plugin.getPluginId(), version, e);
-            return false;
-        }
-        log.debug("Plugin {}: Version details : {}", plugin.getPluginId(), detailsProps);
-        final String maxVersionInfo = StringSupport.trimOrNull(detailsProps.getProperty(PluginSupport.MAX_IDP_VERSION));
+
+        final String maxVersionInfo = StringSupport.trimOrNull(
+                props.getProperty(plugin.getPluginId() + PluginSupport.MAX_IDP_VERSION_INTERFIX + version));
         if (maxVersionInfo == null) {
-            log.warn("Plugin {}: Could not find max idp version for version {} ", plugin.getPluginId(), version);
+            log.warn("Plugin {}, Version {} : Could not find max idp version.", plugin.getPluginId(), version);
             return false;
         }
-        final String minVersionInfo = StringSupport.trimOrNull(detailsProps.getProperty(PluginSupport.MIN_IDP_VERSION));
+
+        final String minVersionInfo = StringSupport.trimOrNull(
+                props.getProperty(plugin.getPluginId() + PluginSupport.MIN_IDP_VERSION_INTERFIX + version));
         if (minVersionInfo == null) {
-            log.warn("Plugin {}: Could not find min idp version for version {} ", plugin.getPluginId(), version);
+            log.warn("Plugin {}, Version {} : Could not find min idp version.", plugin.getPluginId(), version);
             return false;
         }
-        final String supportLevel = StringSupport.trimOrNull(detailsProps.getProperty(PluginSupport.SUPPORT_LEVEL));
-        if (supportLevel == null) {
-            log.warn("Plugin {}: Could not find support level for {}, version {} ", plugin.getPluginId(), version);
-            return false;
+
+        final String supportLevelString = StringSupport.trimOrNull(
+                props.getProperty(plugin.getPluginId()+ PluginSupport.SUPPORT_LEVEL_INTERFIX + version));
+        PluginSupport.SupportLevel supportLevel;
+        if (supportLevelString == null) {
+            log.debug("Plugin {}, Version {} : Could not find support level for {}.", plugin.getPluginId(), version);
+            supportLevel = SupportLevel.Unknown;
+        } else {
+            try {
+                supportLevel = Enum.valueOf(SupportLevel.class, supportLevelString);
+            } catch (final IllegalArgumentException e) {
+                log.warn("Plugin {}, Version {} : Invalid support level {}.",
+                        plugin.getPluginId(), version, supportLevelString);
+                supportLevel = SupportLevel.Unknown;
+            }
         }
+
         log.debug("Plugin {}: MaxIdP {}, MinIdP {}, Support Level {}", 
                 plugin.getPluginId(), maxVersionInfo, minVersionInfo, supportLevel);
         final VersionInfo info; 
-        try {
-            info = new VersionInfo(
-                new PluginVersion(maxVersionInfo),
-                new PluginVersion(minVersionInfo),
-                Integer.parseInt(supportLevel));
-        } catch (final NumberFormatException e) {
-            log.warn("Plugin {}: version {}: Could not parse version info",
-                    plugin.getPluginId(), version, e);
-            return false;
-        }
+        info = new VersionInfo(new PluginVersion(maxVersionInfo), new PluginVersion(minVersionInfo), supportLevel);
         versionInfo.put(theVersion, info);
         if (myPluginVersion.equals(theVersion)) {
             myVersionInfo = info;
+        }
+        final String downloadURL =  StringSupport.trimOrNull(
+                props.getProperty(plugin.getPluginId() + PluginSupport.DOWNLOAD_URL_INTERFIX + version));
+        final String baseName =  StringSupport.trimOrNull(
+                props.getProperty(plugin.getPluginId() + PluginSupport.BASE_NAME_INTERFIX + version));
+        if (baseName != null && downloadURL != null) {
+            try {
+                final URL url = new URL(downloadURL);
+                downloadInfo.put(theVersion, new Pair<>(url, baseName));
+                log.trace("Plugin {}, version {} : Added download URL {}  baseName {} for {}",
+                        plugin.getPluginId(), theVersion, url, baseName);
+            } catch (final MalformedURLException e) {
+               log.warn("Plugin {}, version {} : download URL '{}' could not be constructed",
+                       plugin.getPluginId(), theVersion, downloadURL, e);
+            }
+        } else {
+            log.info("Plugin {}, version {} : no download information present", plugin.getPluginId(), theVersion);
         }
         return true;
     }
     // Checkstyle: CyclomaticComplexity ON
 
     /** Given a list of versions find out more.
-     * @param parentResource the root we are looking at
+     * @param props the property files for this plugin we are looking at
      * @param availableVersions a space delimited array of versions
      * @return true if we processed everything OK.
      */
-    private boolean handleAvailableVersions(final Resource parentResource, final String availableVersions) {
+    private boolean handleAvailableVersions(final Properties props, final String availableVersions) {
         final String[] versions = SPACE_CONTAINING.split(availableVersions, 0);
 
         log.debug("Plugin {}: available versions : {} ", plugin.getPluginId(), availableVersions);
         for (final String version:versions) {
             log.debug("Plugin {} : considering {}", plugin.getPluginId(), version);
-            if (!handleAvailableVersion(parentResource, version)) {
+            if (!handleAvailableVersion(props, version)) {
                 return false;
            }
         }
@@ -173,42 +216,27 @@ public class PluginState extends AbstractInitializableComponent {
     }
     
     /** (try to) populate the information about this plugin.
-     * @param parentResource where to start looking
+     * @param propertyResource where to start looking
      * @return whether it worked
      */
-    protected boolean populate(@Nonnull final Resource parentResource) {
+    protected boolean populate(@Nonnull final Resource propertyResource) {
         
-        final Resource pluginIdResource;
         try {
-            pluginIdResource = 
-                    parentResource.createRelative(plugin.getPluginId() + "/");
-            if (!pluginIdResource.exists()) {
-                log.debug("Plugin {}: directory at {} could not be found",
-                        plugin.getPluginId(), parentResource.getDescription());
-                return false;
-            }
-        } catch (final IOException e) {
-            log.info("Plugin{}: problems open directory at {}",
-                        plugin.getPluginId(), parentResource.getDescription(), e);
-            return false;
-        }
-        try {
-            final Resource versionsResource =
-                    pluginIdResource.createRelative(PluginSupport.AVAILABLE_VERSIONS_PATH);
-            final Properties versionsProps = new Properties(1);
-            versionsProps.load(versionsResource.getInputStream());
+            final Properties props = new Properties();
+            log.info("Loading properties from {}", propertyResource.getDescription());
+            props.load(propertyResource.getInputStream());
             final String name = plugin.getPluginId() + PluginSupport.AVAILABLE_VERSIONS_PROPERTY_SUFFIX;
-            final String availableVersions = StringSupport.trim(versionsProps.getProperty(name));
-            if (availableVersions.length() == 0) {
+            final String availableVersions = StringSupport.trim(props.getProperty(name));
+            if (availableVersions == null) {
                 log.warn("Plugin {}: Could not find {} property in {}", 
-                        plugin.getPluginId(), name, parentResource.getDescription());
+                        plugin.getPluginId(), name, propertyResource.getDescription());
                 return false;
             }
-            return handleAvailableVersions(pluginIdResource, availableVersions);
+            return handleAvailableVersions(props, availableVersions);
         } catch (final IOException e) {
             // INFO - not being there is not a failure
             log.info("Plugin {}: Could not find description {}", 
-                    plugin.getPluginId(), parentResource.getDescription(), e);
+                    plugin.getPluginId(), propertyResource.getDescription(), e);
             return false;
         }
     }
@@ -221,38 +249,40 @@ public class PluginState extends AbstractInitializableComponent {
                 httpClient = new HttpClientBuilder().buildClient();
             }
             for (final URL url: plugin.getUpdateURLs()) {
-                final Resource parentResource;
+                final Resource propertyResource;
                 if ("file".equals(url.getProtocol())) {
                     // Kludge to allow classpath backed files
-                    parentResource = new FileSystemResource(url.getPath());
+                    propertyResource = new FileSystemResource(url.getPath());
                 } else {
-                    parentResource = new HTTPResource(httpClient, url);
+                    propertyResource = new HTTPResource(httpClient, url);
                 }
 
                 log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(),
-                        parentResource.getDescription());
-                if (!parentResource.exists()) {
+                        propertyResource.getDescription());
+                if (!propertyResource.exists()) {
                     log.info("Plugin {}: {} could not be located", plugin.getPluginId(),
-                            parentResource.getDescription());
+                            propertyResource.getDescription());
                     continue;
                 }
                 
-                if (populate(parentResource)) {
+                if (populate(propertyResource)) {
                     log.debug("Plugin {}: PluginState populated from {}",
-                            plugin.getPluginId(), parentResource.getDescription());
+                            plugin.getPluginId(), propertyResource.getDescription());
                     if (myVersionInfo == null) {
                         log.error("Plugin {} : Could not find version {} in descriptions at {}",
-                                plugin.getPluginId(), myPluginVersion, parentResource.getDescription());
+                                plugin.getPluginId(), myPluginVersion, propertyResource.getDescription());
                     }
                     return;
                 }
             }
-            log.error("Plugin {}: No available servers found.");
+            log.error("Plugin {}: No available servers found.", plugin.getPluginId());
             throw new ComponentInitializationException("Could not locate information for " + plugin.getPluginId());
 
         } catch (final IOException e) {
             throw new ComponentInitializationException("Could not locate Update Resource for "
                         + plugin.getPluginId(), e);
+        } catch (final ComponentInitializationException e) {
+            throw e;
         } catch (final Exception e) {
             throw new ComponentInitializationException("Could not initialize http client for "
                     + plugin.getPluginId(), e);
@@ -264,7 +294,7 @@ public class PluginState extends AbstractInitializableComponent {
     /** Get the current support level for this version.
      * @return the level
      */
-    public int getSupportLevel() {
+    public SupportLevel getSupportLevel() {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         return myVersionInfo.getSupportLevel();
     }
@@ -360,7 +390,7 @@ public class PluginState extends AbstractInitializableComponent {
         private final PluginVersion minSupported; 
         
         /** support level. */
-        private final int supportLevel;
+        private final SupportLevel supportLevel;
 
         /**
          * Constructor.
@@ -369,7 +399,7 @@ public class PluginState extends AbstractInitializableComponent {
          * @param min support level
          * @param support support level
          */
-        VersionInfo(final PluginVersion max, final PluginVersion min, final int support) {
+        VersionInfo(final PluginVersion max, final PluginVersion min, final SupportLevel support) {
             maxSupported = max;
             minSupported = min;
             supportLevel = support;
@@ -392,7 +422,7 @@ public class PluginState extends AbstractInitializableComponent {
         /** get support level.
          * @return Returns the supportLevel.
          */
-        public int getSupportLevel() {
+        public SupportLevel getSupportLevel() {
             return supportLevel;
         }
     }
