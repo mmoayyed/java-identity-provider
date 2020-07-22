@@ -77,6 +77,9 @@ import net.shibboleth.utilities.java.support.resource.Resource;
  */
 public final class PluginInstaller extends AbstractInitializableComponent implements AutoCloseable {
 
+    /** Where we cannot install. */
+    private static List<String> disallowedPaths = List.of("dist", "system", "webapp");
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PluginInstaller.class);
 
@@ -100,7 +103,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** The callback before we download a file. */
     @Nonnull private Predicate<Pair<URL,Path>> acceptDownload = Predicates.alwaysFalse();
-
+    
     /** The actual distribution. */
     private Path distribution;
 
@@ -273,6 +276,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void installFiles() throws BuildException {
         for (final Path p : description.getFilePathsToCopy()) {
+            for (final String disallowedPath : disallowedPaths) {
+                if (p.startsWith(disallowedPath)) {
+                    log.error("Path {} contained disallowed location", p);
+                    throw new BuildException("Copy to banned location");
+                }
+            }
+
             final Path from = distribution.resolve(p);
             final Path to = idpHome.resolve(p);
             if (Files.exists(to)) {
