@@ -41,34 +41,34 @@
         
                 <!-- Logout propagation delegate flows. -->
                 <entry key="logoutprop/cas" value="../system/flows/logout/propagation/cas-flow.xml" />
-                <entry key="logoutprop/saml2" value="../system/flows/logout/propagation/saml2-flow.xml" />
+                <entry key="logoutprop/saml2" value="classpath:/net/shibboleth/idp/saml/flows/logout/saml2-logoutprop-flow.xml" />
         
                 <!-- Abstract flows underpinning SAML profiles. -->
-                <entry key="saml.abstract" value="../system/flows/saml/saml-abstract-flow.xml" />
-                <entry key="saml1.sso.abstract" value="../system/flows/saml/saml1/sso-abstract-flow.xml" />
-                <entry key="saml2.sso.abstract" value="../system/flows/saml/saml2/sso-abstract-flow.xml" />
-                <entry key="saml2.slo.front.abstract" value="../system/flows/saml/saml2/slo-front-abstract-flow.xml" />
+                <entry key="saml.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml-abstract-flow.xml" />
+                <entry key="saml1.sso.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml1/sso-abstract-flow.xml" />
+                <entry key="saml2.sso.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-abstract-flow.xml" />
+                <entry key="saml2.slo.front.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-front-abstract-flow.xml" />
         
                 <!-- SAML profile flows. -->
-                <entry key="Shibboleth/SSO" value="../system/flows/saml/saml1/sso-unsolicited-flow.xml" />
-                <entry key="SAML1/SOAP/AttributeQuery" value="../system/flows/saml/saml1/attribute-query-flow.xml" />
-                <entry key="SAML1/SOAP/ArtifactResolution" value="../system/flows/saml/saml1/artifact-resolution-flow.xml" />
-                <entry key="SAML2/POST/SSO" value="../system/flows/saml/saml2/sso-post-flow.xml" />
-                <entry key="SAML2/POST-SimpleSign/SSO" value="../system/flows/saml/saml2/sso-post-flow.xml" />
-                <entry key="SAML2/Redirect/SSO" value="../system/flows/saml/saml2/sso-redirect-flow.xml" />
-                <entry key="SAML2/Artifact/SSO" value="../system/flows/saml/saml2/sso-artifact-flow.xml" />
-                <entry key="SAML2/Unsolicited/SSO" value="../system/flows/saml/saml2/sso-unsolicited-flow.xml" />
-                <entry key="SAML2/SOAP/ECP" value="../system/flows/saml/saml2/sso-ecp-flow.xml" />
-                <entry key="SAML2/POST/SLO" value="../system/flows/saml/saml2/slo-post-flow.xml" />
-                <entry key="SAML2/POST-SimpleSign/SLO" value="../system/flows/saml/saml2/slo-post-flow.xml" />
-                <entry key="SAML2/Redirect/SLO" value="../system/flows/saml/saml2/slo-redirect-flow.xml" />
-                <entry key="SAML2/Artifact/SLO" value="../system/flows/saml/saml2/slo-artifact-flow.xml" />
-                <entry key="SAML2/SOAP/SLO" value="../system/flows/saml/saml2/slo-back-flow.xml" />
-                <entry key="SAML2/SOAP/AttributeQuery" value="../system/flows/saml/saml2/attribute-query-flow.xml" />
-                <entry key="SAML2/SOAP/ArtifactResolution" value="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
+                <entry key="Shibboleth/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml1/sso-unsolicited-flow.xml" />
+                <entry key="SAML1/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/saml/flows/saml1/attribute-query-flow.xml" />
+                <entry key="SAML1/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/saml/flows/saml1/artifact-resolution-flow.xml" />
+                <entry key="SAML2/POST/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-post-flow.xml" />
+                <entry key="SAML2/POST-SimpleSign/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-post-flow.xml" />
+                <entry key="SAML2/Redirect/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-redirect-flow.xml" />
+                <entry key="SAML2/Artifact/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-artifact-flow.xml" />
+                <entry key="SAML2/Unsolicited/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-unsolicited-flow.xml" />
+                <entry key="SAML2/SOAP/ECP" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-ecp-flow.xml" />
+                <entry key="SAML2/POST/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-post-flow.xml" />
+                <entry key="SAML2/POST-SimpleSign/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-post-flow.xml" />
+                <entry key="SAML2/Redirect/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-redirect-flow.xml" />
+                <entry key="SAML2/Artifact/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-artifact-flow.xml" />
+                <entry key="SAML2/SOAP/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-back-flow.xml" />
+                <entry key="SAML2/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/saml/flows/saml2/attribute-query-flow.xml" />
+                <entry key="SAML2/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/saml/flows/saml2/artifact-resolution-flow.xml" />
                 
                 <!-- Liberty IDWSF SSOS flow (for SAML 2 delegation) -->
-                <entry key="IDWSF/SSOS" value="../system/flows/saml/saml2/idwsf-ssos-flow.xml" />
+                <entry key="IDWSF/SSOS" value="classpath:/net/shibboleth/idp/saml/flows/saml2/idwsf-ssos-flow.xml" />
         
                 <!-- Main flow for authentication. -->
                 <entry key="authn.events" value="%{idp.home}/conf/authn/authn-events-flow.xml" />
@@ -133,13 +133,13 @@
                 <entry key="intercept/warning" value="classpath:/net/shibboleth/idp/profile/flows/intercept/warning-flow.xml" />
         
                 <!-- Inbound security processing of SAML messages, implemented as intercept flows. -->
-                <entry key="security-policy.abstract" value="../system/flows/saml/security-abstract-flow.xml" />
-                <entry key="intercept/security-policy/shibboleth-sso" value="../system/flows/saml/saml1/sso-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-sso" value="../system/flows/saml/saml2/sso-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-ecp" value="../system/flows/saml/saml2/ecp-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-slo" value="../system/flows/saml/saml2/slo-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-idwsf-ssos" value="../system/flows/saml/saml2/idwsf-ssos-security-flow.xml" />
-                <entry key="intercept/security-policy/saml-soap" value="../system/flows/saml/soap-security-flow.xml" />
+                <entry key="security-policy.abstract" value="classpath:/net/shibboleth/idp/saml/flows/security-abstract-flow.xml" />
+                <entry key="intercept/security-policy/shibboleth-sso" value="classpath:/net/shibboleth/idp/saml/flows/saml1/sso-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-sso" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-ecp" value="classpath:/net/shibboleth/idp/saml/flows/saml2/ecp-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-slo" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-idwsf-ssos" value="classpath:/net/shibboleth/idp/saml/flows/saml2/idwsf-ssos-security-flow.xml" />
+                <entry key="intercept/security-policy/saml-soap" value="classpath:/net/shibboleth/idp/saml/flows/soap-security-flow.xml" />
         
                 <!-- CAS protocol flows. -->
                 <entry key="cas.abstract" value="../system/flows/cas/cas-abstract-flow.xml" />
