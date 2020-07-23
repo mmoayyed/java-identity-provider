@@ -58,6 +58,5 @@
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
-    <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
-    <bean-import resource="../cas-abstract-beans.xml" />
+    <bean-import resource="classpath:/net/shibboleth/idp/cas/flows/cas-abstract-beans.xml" />    
 </flow>

@@ -21,6 +21,6 @@
         </on-entry>
     </end-state>
 
-    <bean-import resource="cas-beans.xml" />
+    <bean-import resource="cas-logoutprop-beans.xml" />
 
 </flow>

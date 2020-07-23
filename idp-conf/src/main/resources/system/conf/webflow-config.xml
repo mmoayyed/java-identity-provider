@@ -40,7 +40,7 @@
                 <entry key="PropagateLogout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-propagation-flow.xml" />
         
                 <!-- Logout propagation delegate flows. -->
-                <entry key="logoutprop/cas" value="../system/flows/logout/propagation/cas-flow.xml" />
+                <entry key="logoutprop/cas" value="classpath:/net/shibboleth/idp/cas/flows/logout/cas-logoutprop-flow.xml" />
                 <entry key="logoutprop/saml2" value="classpath:/net/shibboleth/idp/saml/flows/logout/saml2-logoutprop-flow.xml" />
         
                 <!-- Abstract flows underpinning SAML profiles. -->
@@ -142,15 +142,16 @@
                 <entry key="intercept/security-policy/saml-soap" value="classpath:/net/shibboleth/idp/saml/flows/soap-security-flow.xml" />
         
                 <!-- CAS protocol flows. -->
-                <entry key="cas.abstract" value="../system/flows/cas/cas-abstract-flow.xml" />
-                <entry key="cas.abstractValidate" value="../system/flows/cas/validate-abstract-flow.xml" />
-                <entry key="cas/login" value="../system/flows/cas/login/login-flow.xml" />
-                <entry key="cas/proxy" value="../system/flows/cas/proxy/proxy-flow.xml" />
-                <entry key="cas/serviceValidate" value="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
-                <entry key="cas/proxyValidate" value="../system/flows/cas/proxyValidate/proxyValidate-flow.xml" />
-                <entry key="cas/samlValidate" value="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
-                <entry key="cas/validate" value="../system/flows/cas/validate/validate-flow.xml" />
-                <entry key="cas/logout" value="../system/flows/logout/logout-flow.xml" />
+                <entry key="cas.abstract" value="classpath:/net/shibboleth/idp/cas/flows/cas-abstract-flow.xml" />
+                <entry key="cas.abstractValidate" value="classpath:/net/shibboleth/idp/cas/flows/validate-abstract-flow.xml" />
+                <entry key="cas/login" value="classpath:/net/shibboleth/idp/cas/flows/login-flow.xml" />
+                <entry key="cas/proxy" value="classpath:/net/shibboleth/idp/cas/flows/proxy-flow.xml" />
+                <entry key="cas/serviceValidate" value="classpath:/net/shibboleth/idp/cas/flows/serviceValidate-flow.xml" />
+                <entry key="cas/proxyValidate" value="classpath:/net/shibboleth/idp/cas/flows/proxyValidate-flow.xml" />
+                <entry key="cas/samlValidate" value="classpath:/net/shibboleth/idp/cas/flows/samlValidate-flow.xml" />
+                <entry key="cas/validate" value="classpath:/net/shibboleth/idp/cas/flows/validate-flow.xml" />
+                <!-- Dual mount of logout flow to CAS location. -->
+                <entry key="cas/logout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-flow.xml" />
         
                 <!-- Client storage flows. -->
                 <entry key="client-storage/read" value="classpath:/net/shibboleth/idp/session/flows/client-storage-read-flow.xml" />

@@ -107,6 +107,5 @@
         </on-entry>
     </end-state>
 
-    <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
-    <bean-import resource="../validate-abstract-beans.xml" />
+    <bean-import resource="classpath:/net/shibboleth/idp/cas/flows/validate-abstract-beans.xml" />
 </flow>
