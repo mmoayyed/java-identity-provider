@@ -154,10 +154,16 @@
 
 	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
         <dependency>
-	    <groupId>net.shibboleth.utilities</groupId>
-	    <artifactId>java-support</artifactId>
-	    <type>test-jar</type>
-	    <scope>test</scope>
+            <groupId>net.shibboleth.idp.plugin.scripting</groupId>
+            <artifactId>idp-plugin-nashorn-impl</artifactId>
+            <version>${nashorn.engine.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.idp.plugin.scripting</groupId>
+            <artifactId>idp-plugin-rhino-impl</artifactId>
+            <version>${rhino.engine.version}</version>
+            <scope>test</scope>
         </dependency>
 
 	<dependency>

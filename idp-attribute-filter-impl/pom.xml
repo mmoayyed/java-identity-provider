@@ -193,6 +193,14 @@
 	    <type>test-jar</type>
 	    <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth.idp.plugin.scripting</groupId>
+            <artifactId>idp-plugin-nashorn-impl</artifactId>
+            <version>${nashorn.engine.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
