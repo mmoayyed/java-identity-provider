@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 
 /**
  * Class to contain a processed form of the {@link Organization} suitable for display purposes. */
@@ -93,22 +94,26 @@ public class OrganizationUIInfo {
                 filter(nullLanguageString).
                 collect(Collectors.toUnmodifiableMap(
                         serviceName -> Locale.forLanguageTag(serviceName.getXMLLang()), 
-                        serviceName -> serviceName.getValue()));
+                        serviceName -> serviceName.getValue(),
+                        CollectionSupport.warningMergeFunction("OrganizationUIInfo OrganizationName", false)));
+
         displayNames = organization.
                 getDisplayNames().
                 stream().
                 filter(nullLanguageString).
                 collect(Collectors.toUnmodifiableMap(
                         description -> Locale.forLanguageTag(description.getXMLLang()), 
-                        description -> description.getValue()));
-        
+                        description -> description.getValue(),
+                        CollectionSupport.warningMergeFunction("OrganizationUIInfo DisplayNames", false)));
+
         urls = organization.
                 getURLs().
                 stream().
                 filter(nullLanguageURL).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
-                        dn -> dn.getURI()));
+                        dn -> dn.getURI(),
+                        CollectionSupport.warningMergeFunction("OrganizationUIInfo URL", false)));
     }
 
     /** 

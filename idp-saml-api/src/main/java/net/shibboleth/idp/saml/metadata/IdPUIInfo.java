@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 
 /**
  * Class to contain a processed form of the {@link UIInfo} suitable for display purposes. */
@@ -122,35 +123,43 @@ public class IdPUIInfo {
                 filter(nullLanguageString).
                 collect(Collectors.toUnmodifiableMap(
                         displayName -> Locale.forLanguageTag(displayName.getXMLLang()), 
-                        displayName -> displayName.getValue()));
+                        displayName -> displayName.getValue(),
+                        CollectionSupport.warningMergeFunction("IdpUIInfo DisplayName", false)));
         keywordList = uiInfo.
                 getKeywords().
                 stream().
                 filter(nullLanguageKeyword).
                 collect(Collectors.toUnmodifiableMap(
                         keywords -> Locale.forLanguageTag(keywords.getXMLLang()), 
-                        keywords -> keywords.getKeywords()));
+                        keywords -> keywords.getKeywords(),
+                        CollectionSupport.warningMergeFunction("IdpUIInfo Keyword", false)));
+
         descriptions = uiInfo.
                 getDescriptions().
                 stream().
                 filter(nullLanguageString).
                 collect(Collectors.toUnmodifiableMap(
                         description -> Locale.forLanguageTag(description.getXMLLang()), 
-                        description -> description.getValue()));
+                        description -> description.getValue(),
+                        CollectionSupport.warningMergeFunction("IdpUIInfo Descriptions", false)));
+
         informationURLs = uiInfo.
                 getInformationURLs().
                 stream().
                 filter(nullLanguageURL).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
-                        dn -> dn.getURI()));
+                        dn -> dn.getURI(),
+                        CollectionSupport.warningMergeFunction("IdpUIInfo InformationURL", false)));
+
         privacyStatementURLs = uiInfo.
                 getPrivacyStatementURLs().
                 stream().
                 filter(nullLanguageURL).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
-                        url -> url.getURI()));
+                        url -> url.getURI(),
+                        CollectionSupport.warningMergeFunction("IdpUIInfo PrivacyStatementURL", false)));
         
         final List<Logo> noLocaleLogo = new ArrayList<>();
         final Map<Locale, List<Logo>> withLocaleLogo = new HashMap<>();
