@@ -1,8 +1,6 @@
-<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" 
-                  xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
-                  xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-                  xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
-                  entityID="https://sp.example.org">
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" entityID="https://sp.example.org">
     <Extensions>
 	    <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
 	        <saml:Attribute Name="http://macedir.org/entity-category"
@@ -117,7 +115,11 @@ h+XNZ5oAql/cjrwDWw==
         <AssertionConsumerService Binding="https://www.apereo.org/cas/protocol/login" Location="https://localhost:8443/sp" index="12"/>
             
         <AttributeConsumingService isDefault="true" index="1">
+        
+            <ServiceName xml:lang="en">Name of Service</ServiceName>
             <ServiceName xml:lang="en">Service Name</ServiceName>
+            <ServiceDescription xml:lang="en">Lorem Ispum</ServiceDescription>
+            <ServiceDescription xml:lang="en">Ipsum Lorem</ServiceDescription>
             <RequestedAttribute FriendlyName="displayName"
                 Name="urn:mace:dir:attribute-def:displayName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri" />
             <RequestedAttribute FriendlyName="displayName" isRequired="true"
@@ -128,8 +130,11 @@ h+XNZ5oAql/cjrwDWw==
         
     </SPSSODescriptor>
     <Organization>
+        <OrganizationName xml:lang="en">TC</OrganizationName>
         <OrganizationName xml:lang="en">TSC</OrganizationName>
         <OrganizationDisplayName xml:lang="en">The Shibboleth Consortium</OrganizationDisplayName>
+        <OrganizationDisplayName xml:lang="en">The Shibboleth Consortium</OrganizationDisplayName>
+        <OrganizationURL xml:lang="en">http://shibboleth.net/</OrganizationURL>
         <OrganizationURL xml:lang="en">http://shibboleth.net/</OrganizationURL>
     </Organization>
     <ContactPerson contactType="support">
