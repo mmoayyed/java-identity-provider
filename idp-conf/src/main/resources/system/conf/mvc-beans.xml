@@ -91,8 +91,10 @@
         <property name="contentType" value="text/html;charset=utf-8" />
     </bean>
 
+    <!-- Note that non-file paths are passed through to Spring's DefaultResourceLoader, thus can be targeted classpath trees. -->
     <bean class="net.shibboleth.ext.spring.velocity.VelocityConfigurer">
-        <property name="resourceLoaderPath" value="#{'%{idp.views:%{idp.home}/views}'.trim()},%{idp.home}/system/views" />
+        <property name="resourceLoaderPath"
+            value="#{'%{idp.views:%{idp.home}/views}'.trim()},%{idp.home}/system/views,classpath:/net/shibboleth/idp/views" />
     </bean>
     
     <!-- Import any user defined beans or overrides for the MVC config. -->

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.shibboleth.idp</groupId>
+        <artifactId>idp-parent</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+        <relativePath>../idp-parent</relativePath>
+    </parent>
+
+    <name>Shibboleth IdP :: System Configuration</name>
+    <description>System Configuration Files</description>
+    <artifactId>idp-conf-impl</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <automatic.module.name>net.shibboleth.idp.conf.impl</automatic.module.name>
+    </properties>
+
+    <dependencies>
+        <!-- Compile Dependencies -->
+
+        <!-- Provided Dependencies -->
+
+        <!-- Runtime Dependencies -->
+        <!-- Supports Eclipse class lookup from within flow files. -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-authn-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-cas-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-saml-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-session-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-ui</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test Dependencies -->
+
+        <!-- Managed Dependencies -->
+    </dependencies>
+    
+</project>

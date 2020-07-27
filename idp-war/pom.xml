@@ -76,6 +76,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-conf-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-consent-api</artifactId>
             <version>${project.version}</version>
         </dependency>

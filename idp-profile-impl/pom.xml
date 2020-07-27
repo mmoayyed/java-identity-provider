@@ -113,19 +113,6 @@
         </dependency>
 
         <!-- Runtime Dependencies -->
-        <!-- Supports Eclipse class lookup from within flow files. -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-session-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-ui</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>

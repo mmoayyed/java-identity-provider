@@ -44,19 +44,20 @@
         <module>../idp-attribute-resolver-impl</module>
         <module>../idp-attribute-filter-impl</module>
         <module>../idp-cas-impl</module>
+        <module>../idp-consent-impl</module>
         <module>../idp-profile-impl</module>
-        <module>../idp-profile-spring</module>
         <module>../idp-saml-impl</module>
         <module>../idp-session-impl</module>
 
         <module>../idp-attribute-resolver-spring</module>
         <module>../idp-attribute-filter-spring</module>
+        <module>../idp-profile-spring</module>
 
-        <module>../idp-consent-impl</module>
         <module>../idp-war</module>
         <module>../idp-war-distribution</module>
         <module>../idp-installer</module>
         <module>../idp-conf</module>
+        <module>../idp-conf-impl</module>
         <module>../idp-distribution</module>
 
         <module>../idp-ui</module>

@@ -17,145 +17,145 @@
         <property name="sourceMap">
             <map>
                 <!-- Abstract base flow for admin flows. -->
-                <entry key="admin.abstract" value="classpath:/net/shibboleth/idp/admin/flows/admin-abstract-flow.xml"/>
+                <entry key="admin.abstract" value="classpath:/net/shibboleth/idp/flows/admin/admin-abstract-flow.xml"/>
 
                 <!-- Status flow (extra location is for backward compatibility). -->
-                <entry key="status" value="classpath:/net/shibboleth/idp/admin/flows/status-flow.xml" />
+                <entry key="status" value="classpath:/net/shibboleth/idp/flows/admin/status-flow.xml" />
 
                 <!-- Administrative and debugging flows. -->
-                <entry key="admin/hello" value="classpath:/net/shibboleth/idp/admin/flows/hello-flow.xml" />
-                <entry key="admin/resolvertest" value="classpath:/net/shibboleth/idp/admin/flows/resolvertest-flow.xml" />
-                <entry key="admin/reload-service" value="classpath:/net/shibboleth/idp/admin/flows/reload-service-flow.xml" />
-                <entry key="admin/reload-metadata" value="classpath:/net/shibboleth/idp/admin/flows/reload-metadata-flow.xml" />
-                <entry key="admin/lockout" value="classpath:/net/shibboleth/idp/admin/flows/lockout-flow.xml" />
-                <entry key="admin/mdquery" value="classpath:/net/shibboleth/idp/admin/flows/mdquery-flow.xml" />
-                <entry key="admin/metrics" value="classpath:/net/shibboleth/idp/admin/flows/metrics-flow.xml" />
-                <entry key="admin/storage" value="classpath:/net/shibboleth/idp/admin/flows/storage-flow.xml" />
-                <entry key="admin/unlock-keys" value="classpath:/net/shibboleth/idp/admin/flows/unlock-keys-flow.xml" />
+                <entry key="admin/hello" value="classpath:/net/shibboleth/idp/flows/admin/hello-flow.xml" />
+                <entry key="admin/resolvertest" value="classpath:/net/shibboleth/idp/flows/admin/resolvertest-flow.xml" />
+                <entry key="admin/reload-service" value="classpath:/net/shibboleth/idp/flows/admin/reload-service-flow.xml" />
+                <entry key="admin/reload-metadata" value="classpath:/net/shibboleth/idp/flows/admin/reload-metadata-flow.xml" />
+                <entry key="admin/lockout" value="classpath:/net/shibboleth/idp/flows/admin/lockout-flow.xml" />
+                <entry key="admin/mdquery" value="classpath:/net/shibboleth/idp/flows/admin/mdquery-flow.xml" />
+                <entry key="admin/metrics" value="classpath:/net/shibboleth/idp/flows/admin/metrics-flow.xml" />
+                <entry key="admin/storage" value="classpath:/net/shibboleth/idp/flows/admin/storage-flow.xml" />
+                <entry key="admin/unlock-keys" value="classpath:/net/shibboleth/idp/flows/admin/unlock-keys-flow.xml" />
                         
                 <!-- Proprietary logout flow. -->
-                <entry key="Logout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-flow.xml" />
+                <entry key="Logout" value="classpath:/net/shibboleth/idp/flows/logout/logout-flow.xml" />
         
                 <!-- Logout propagation driver flow. -->
-                <entry key="PropagateLogout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-propagation-flow.xml" />
+                <entry key="PropagateLogout" value="classpath:/net/shibboleth/idp/flows/logout/logout-propagation-flow.xml" />
         
                 <!-- Logout propagation delegate flows. -->
-                <entry key="logoutprop/cas" value="classpath:/net/shibboleth/idp/cas/flows/logout/cas-logoutprop-flow.xml" />
-                <entry key="logoutprop/saml2" value="classpath:/net/shibboleth/idp/saml/flows/logout/saml2-logoutprop-flow.xml" />
+                <entry key="logoutprop/cas" value="classpath:/net/shibboleth/idp/flows/cas/logout/cas-logoutprop-flow.xml" />
+                <entry key="logoutprop/saml2" value="classpath:/net/shibboleth/idp/flows/saml/logout/saml2-logoutprop-flow.xml" />
         
                 <!-- Abstract flows underpinning SAML profiles. -->
-                <entry key="saml.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml-abstract-flow.xml" />
-                <entry key="saml1.sso.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml1/sso-abstract-flow.xml" />
-                <entry key="saml2.sso.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-abstract-flow.xml" />
-                <entry key="saml2.slo.front.abstract" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-front-abstract-flow.xml" />
+                <entry key="saml.abstract" value="classpath:/net/shibboleth/idp/flows/saml/saml-abstract-flow.xml" />
+                <entry key="saml1.sso.abstract" value="classpath:/net/shibboleth/idp/flows/saml/saml1/sso-abstract-flow.xml" />
+                <entry key="saml2.sso.abstract" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-abstract-flow.xml" />
+                <entry key="saml2.slo.front.abstract" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-front-abstract-flow.xml" />
         
                 <!-- SAML profile flows. -->
-                <entry key="Shibboleth/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml1/sso-unsolicited-flow.xml" />
-                <entry key="SAML1/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/saml/flows/saml1/attribute-query-flow.xml" />
-                <entry key="SAML1/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/saml/flows/saml1/artifact-resolution-flow.xml" />
-                <entry key="SAML2/POST/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-post-flow.xml" />
-                <entry key="SAML2/POST-SimpleSign/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-post-flow.xml" />
-                <entry key="SAML2/Redirect/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-redirect-flow.xml" />
-                <entry key="SAML2/Artifact/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-artifact-flow.xml" />
-                <entry key="SAML2/Unsolicited/SSO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-unsolicited-flow.xml" />
-                <entry key="SAML2/SOAP/ECP" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-ecp-flow.xml" />
-                <entry key="SAML2/POST/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-post-flow.xml" />
-                <entry key="SAML2/POST-SimpleSign/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-post-flow.xml" />
-                <entry key="SAML2/Redirect/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-redirect-flow.xml" />
-                <entry key="SAML2/Artifact/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-artifact-flow.xml" />
-                <entry key="SAML2/SOAP/SLO" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-back-flow.xml" />
-                <entry key="SAML2/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/saml/flows/saml2/attribute-query-flow.xml" />
-                <entry key="SAML2/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/saml/flows/saml2/artifact-resolution-flow.xml" />
+                <entry key="Shibboleth/SSO" value="classpath:/net/shibboleth/idp/flows/saml/saml1/sso-unsolicited-flow.xml" />
+                <entry key="SAML1/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/flows/saml/saml1/attribute-query-flow.xml" />
+                <entry key="SAML1/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/flows/saml/saml1/artifact-resolution-flow.xml" />
+                <entry key="SAML2/POST/SSO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-post-flow.xml" />
+                <entry key="SAML2/POST-SimpleSign/SSO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-post-flow.xml" />
+                <entry key="SAML2/Redirect/SSO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-redirect-flow.xml" />
+                <entry key="SAML2/Artifact/SSO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-artifact-flow.xml" />
+                <entry key="SAML2/Unsolicited/SSO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-unsolicited-flow.xml" />
+                <entry key="SAML2/SOAP/ECP" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-ecp-flow.xml" />
+                <entry key="SAML2/POST/SLO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-post-flow.xml" />
+                <entry key="SAML2/POST-SimpleSign/SLO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-post-flow.xml" />
+                <entry key="SAML2/Redirect/SLO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-redirect-flow.xml" />
+                <entry key="SAML2/Artifact/SLO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-artifact-flow.xml" />
+                <entry key="SAML2/SOAP/SLO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-back-flow.xml" />
+                <entry key="SAML2/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/flows/saml/saml2/attribute-query-flow.xml" />
+                <entry key="SAML2/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/flows/saml/saml2/artifact-resolution-flow.xml" />
                 
                 <!-- Liberty IDWSF SSOS flow (for SAML 2 delegation) -->
-                <entry key="IDWSF/SSOS" value="classpath:/net/shibboleth/idp/saml/flows/saml2/idwsf-ssos-flow.xml" />
+                <entry key="IDWSF/SSOS" value="classpath:/net/shibboleth/idp/flows/saml/saml2/idwsf-ssos-flow.xml" />
         
                 <!-- Main flow for authentication. -->
                 <entry key="authn.events" value="%{idp.home}/conf/authn/authn-events-flow.xml" />
-                <entry key="authn.abstract" value="classpath:/net/shibboleth/idp/authn/flows/authn-abstract-flow.xml" />
-                <entry key="authn" value="classpath:/net/shibboleth/idp/authn/flows/authn-flow.xml" />
+                <entry key="authn.abstract" value="classpath:/net/shibboleth/idp/flows/authn/authn-abstract-flow.xml" />
+                <entry key="authn" value="classpath:/net/shibboleth/idp/flows/authn/authn-flow.xml" />
         
                 <!-- Login methods. -->
-                <entry key="authn/IPAddress" value="classpath:/net/shibboleth/idp/authn/flows/ipaddress-authn-flow.xml" />
-                <entry key="authn/RemoteUserInternal" value="classpath:/net/shibboleth/idp/authn/flows/remoteuser-internal-authn-flow.xml" />
-                <entry key="authn/Password" value="classpath:/net/shibboleth/idp/authn/flows/password-authn-flow.xml" />
-                <entry key="authn/RemoteUser" value="classpath:/net/shibboleth/idp/authn/flows/remoteuser-authn-flow.xml" />
-                <entry key="authn/X509" value="classpath:/net/shibboleth/idp/authn/flows/x509-authn-flow.xml" />
-                <entry key="authn/X509Internal" value="classpath:/net/shibboleth/idp/authn/flows/x509-internal-authn-flow.xml" />
-                <entry key="authn/SPNEGO" value="classpath:/net/shibboleth/idp/authn/flows/spnego-authn-flow.xml" />
-                <entry key="authn/External" value="classpath:/net/shibboleth/idp/authn/flows/external-authn-flow.xml" />
-                <entry key="authn/Duo" value="classpath:/net/shibboleth/idp/authn/flows/duo-authn-flow.xml" />
-                <entry key="authn/MFA" value="classpath:/net/shibboleth/idp/authn/flows/mfa-authn-flow.xml" />
-                <entry key="authn/Function" value="classpath:/net/shibboleth/idp/authn/flows/function-authn-flow.xml" />
-                <entry key="authn/SAML" value="classpath:/net/shibboleth/idp/saml/flows/authn/saml-authn-flow.xml" />
+                <entry key="authn/IPAddress" value="classpath:/net/shibboleth/idp/flows/authn/ipaddress-authn-flow.xml" />
+                <entry key="authn/RemoteUserInternal" value="classpath:/net/shibboleth/idp/flows/authn/remoteuser-internal-authn-flow.xml" />
+                <entry key="authn/Password" value="classpath:/net/shibboleth/idp/flows/authn/password-authn-flow.xml" />
+                <entry key="authn/RemoteUser" value="classpath:/net/shibboleth/idp/flows/authn/remoteuser-authn-flow.xml" />
+                <entry key="authn/X509" value="classpath:/net/shibboleth/idp/flows/authn/x509-authn-flow.xml" />
+                <entry key="authn/X509Internal" value="classpath:/net/shibboleth/idp/flows/authn/x509-internal-authn-flow.xml" />
+                <entry key="authn/SPNEGO" value="classpath:/net/shibboleth/idp/flows/authn/spnego-authn-flow.xml" />
+                <entry key="authn/External" value="classpath:/net/shibboleth/idp/flows/authn/external-authn-flow.xml" />
+                <entry key="authn/Duo" value="classpath:/net/shibboleth/idp/flows/authn/duo-authn-flow.xml" />
+                <entry key="authn/MFA" value="classpath:/net/shibboleth/idp/flows/authn/mfa-authn-flow.xml" />
+                <entry key="authn/Function" value="classpath:/net/shibboleth/idp/flows/authn/function-authn-flow.xml" />
+                <entry key="authn/SAML" value="classpath:/net/shibboleth/idp/flows/authn/saml-authn-flow.xml" />
           
                 <!-- One-off flow for discovery. -->
-                <entry key="authn/Discovery" value="classpath:/net/shibboleth/idp/authn/flows/discovery-flow.xml" />
+                <entry key="authn/Discovery" value="classpath:/net/shibboleth/idp/flows/authn/discovery-flow.xml" />
           
                 <!-- Main flow for subject c14n. -->
                 <entry key="c14n.events" value="%{idp.home}/conf/c14n/subject-c14n-events-flow.xml" />
-                <entry key="c14n.abstract" value="classpath:/net/shibboleth/idp/c14n/flows/subject-c14n-abstract-flow.xml" />
-                <entry key="c14n" value="classpath:/net/shibboleth/idp/c14n/flows/subject-c14n-flow.xml" />
+                <entry key="c14n.abstract" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-abstract-flow.xml" />
+                <entry key="c14n" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-flow.xml" />
         
                 <!-- Standard post-login C14N methods. -->
-                <entry key="c14n/simple" value="classpath:/net/shibboleth/idp/c14n/flows/simple-subject-c14n-flow.xml" />
-                <entry key="c14n/x500" value="classpath:/net/shibboleth/idp/c14n/flows/x500-subject-c14n-flow.xml" />
-                <entry key="c14n/attribute" value="classpath:/net/shibboleth/idp/c14n/flows/attribute-sourced-subject-c14n-flow.xml" />
+                <entry key="c14n/simple" value="classpath:/net/shibboleth/idp/flows/c14n/simple-subject-c14n-flow.xml" />
+                <entry key="c14n/x500" value="classpath:/net/shibboleth/idp/flows/c14n/x500-subject-c14n-flow.xml" />
+                <entry key="c14n/attribute" value="classpath:/net/shibboleth/idp/flows/c14n/attribute-sourced-subject-c14n-flow.xml" />
         
                 <!--
                 Standard SAML C14N methods, including one supporting legacy use of the attribute resolver.
                 These all map to the same flow, and they derive the bean ID of an action to run based on the
                 flow id after the slash.
                 -->
-                <entry key="c14n/SAML2Transient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2CryptoTransient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2Persistent" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2Transform" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML2ProxyTransform" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML1Transient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML1CryptoTransient" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/SAML1Transform" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
-                <entry key="c14n/LegacyPrincipalConnector" value="classpath:/net/shibboleth/idp/saml/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2Transient" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2CryptoTransient" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2Persistent" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2Transform" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML2ProxyTransform" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML1Transient" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML1CryptoTransient" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/SAML1Transform" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
+                <entry key="c14n/LegacyPrincipalConnector" value="classpath:/net/shibboleth/idp/flows/c14n/subject-c14n-saml-default-flow.xml" />
         
                 <!-- Main interceptor flow. -->
                 <entry key="intercept.events" value="%{idp.home}/conf/intercept/intercept-events-flow.xml" />
-                <entry key="intercept.abstract" value="classpath:/net/shibboleth/idp/profile/flows/intercept/intercept-abstract-flow.xml" />
-                <entry key="intercept" value="classpath:/net/shibboleth/idp/profile/flows/intercept/intercept-flow.xml" />
+                <entry key="intercept.abstract" value="classpath:/net/shibboleth/idp/flows/intercept/intercept-abstract-flow.xml" />
+                <entry key="intercept" value="classpath:/net/shibboleth/idp/flows/intercept/intercept-flow.xml" />
         
                 <!-- Built-in interceptor flows. -->
-                <entry key="intercept/terms-of-use" value="classpath:/net/shibboleth/idp/consent/flows/terms-of-use-flow.xml" />
-                <entry key="intercept/attribute-release" value="classpath:/net/shibboleth/idp/consent/flows/attribute-release-flow.xml" />
-                <entry key="intercept/attribute-release-query" value="classpath:/net/shibboleth/idp/consent/flows/attribute-release-query-flow.xml" />
-                <entry key="intercept/context-check" value="classpath:/net/shibboleth/idp/profile/flows/intercept/context-check-flow.xml" />
-                <entry key="intercept/expiring-password" value="classpath:/net/shibboleth/idp/profile/flows/intercept/expiring-password-flow.xml" />
-                <entry key="intercept/impersonate" value="classpath:/net/shibboleth/idp/profile/flows/intercept/impersonate-flow.xml" />
-                <entry key="intercept/external" value="classpath:/net/shibboleth/idp/profile/flows/intercept/external-flow.xml" />
-                <entry key="intercept/warning" value="classpath:/net/shibboleth/idp/profile/flows/intercept/warning-flow.xml" />
+                <entry key="intercept/terms-of-use" value="classpath:/net/shibboleth/idp/flows/intercept/terms-of-use-flow.xml" />
+                <entry key="intercept/attribute-release" value="classpath:/net/shibboleth/idp/flows/intercept/attribute-release-flow.xml" />
+                <entry key="intercept/attribute-release-query" value="classpath:/net/shibboleth/idp/flows/intercept/attribute-release-query-flow.xml" />
+                <entry key="intercept/context-check" value="classpath:/net/shibboleth/idp/flows/intercept/context-check-flow.xml" />
+                <entry key="intercept/expiring-password" value="classpath:/net/shibboleth/idp/flows/intercept/expiring-password-flow.xml" />
+                <entry key="intercept/impersonate" value="classpath:/net/shibboleth/idp/flows/intercept/impersonate-flow.xml" />
+                <entry key="intercept/external" value="classpath:/net/shibboleth/idp/flows/intercept/external-flow.xml" />
+                <entry key="intercept/warning" value="classpath:/net/shibboleth/idp/flows/intercept/warning-flow.xml" />
         
                 <!-- Inbound security processing of SAML messages, implemented as intercept flows. -->
-                <entry key="security-policy.abstract" value="classpath:/net/shibboleth/idp/saml/flows/security-abstract-flow.xml" />
-                <entry key="intercept/security-policy/shibboleth-sso" value="classpath:/net/shibboleth/idp/saml/flows/saml1/sso-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-sso" value="classpath:/net/shibboleth/idp/saml/flows/saml2/sso-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-ecp" value="classpath:/net/shibboleth/idp/saml/flows/saml2/ecp-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-slo" value="classpath:/net/shibboleth/idp/saml/flows/saml2/slo-security-flow.xml" />
-                <entry key="intercept/security-policy/saml2-idwsf-ssos" value="classpath:/net/shibboleth/idp/saml/flows/saml2/idwsf-ssos-security-flow.xml" />
-                <entry key="intercept/security-policy/saml-soap" value="classpath:/net/shibboleth/idp/saml/flows/soap-security-flow.xml" />
+                <entry key="security-policy.abstract" value="classpath:/net/shibboleth/idp/flows/saml/security-abstract-flow.xml" />
+                <entry key="intercept/security-policy/shibboleth-sso" value="classpath:/net/shibboleth/idp/flows/saml/saml1/sso-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-sso" value="classpath:/net/shibboleth/idp/flows/saml/saml2/sso-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-ecp" value="classpath:/net/shibboleth/idp/flows/saml/saml2/ecp-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-slo" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-security-flow.xml" />
+                <entry key="intercept/security-policy/saml2-idwsf-ssos" value="classpath:/net/shibboleth/idp/flows/saml/saml2/idwsf-ssos-security-flow.xml" />
+                <entry key="intercept/security-policy/saml-soap" value="classpath:/net/shibboleth/idp/flows/saml/soap-security-flow.xml" />
         
                 <!-- CAS protocol flows. -->
-                <entry key="cas.abstract" value="classpath:/net/shibboleth/idp/cas/flows/cas-abstract-flow.xml" />
-                <entry key="cas.abstractValidate" value="classpath:/net/shibboleth/idp/cas/flows/validate-abstract-flow.xml" />
-                <entry key="cas/login" value="classpath:/net/shibboleth/idp/cas/flows/login-flow.xml" />
-                <entry key="cas/proxy" value="classpath:/net/shibboleth/idp/cas/flows/proxy-flow.xml" />
-                <entry key="cas/serviceValidate" value="classpath:/net/shibboleth/idp/cas/flows/serviceValidate-flow.xml" />
-                <entry key="cas/proxyValidate" value="classpath:/net/shibboleth/idp/cas/flows/proxyValidate-flow.xml" />
-                <entry key="cas/samlValidate" value="classpath:/net/shibboleth/idp/cas/flows/samlValidate-flow.xml" />
-                <entry key="cas/validate" value="classpath:/net/shibboleth/idp/cas/flows/validate-flow.xml" />
+                <entry key="cas.abstract" value="classpath:/net/shibboleth/idp/flows/cas/cas-abstract-flow.xml" />
+                <entry key="cas.abstractValidate" value="classpath:/net/shibboleth/idp/flows/cas/validate-abstract-flow.xml" />
+                <entry key="cas/login" value="classpath:/net/shibboleth/idp/flows/cas/login-flow.xml" />
+                <entry key="cas/proxy" value="classpath:/net/shibboleth/idp/flows/cas/proxy-flow.xml" />
+                <entry key="cas/serviceValidate" value="classpath:/net/shibboleth/idp/flows/cas/serviceValidate-flow.xml" />
+                <entry key="cas/proxyValidate" value="classpath:/net/shibboleth/idp/flows/cas/proxyValidate-flow.xml" />
+                <entry key="cas/samlValidate" value="classpath:/net/shibboleth/idp/flows/cas/samlValidate-flow.xml" />
+                <entry key="cas/validate" value="classpath:/net/shibboleth/idp/flows/cas/validate-flow.xml" />
                 <!-- Dual mount of logout flow to CAS location. -->
-                <entry key="cas/logout" value="classpath:/net/shibboleth/idp/profile/flows/logout/logout-flow.xml" />
+                <entry key="cas/logout" value="classpath:/net/shibboleth/idp/flows/logout/logout-flow.xml" />
         
                 <!-- Client storage flows. -->
-                <entry key="client-storage/read" value="classpath:/net/shibboleth/idp/session/flows/client-storage-read-flow.xml" />
-                <entry key="client-storage/write" value="classpath:/net/shibboleth/idp/session/flows/client-storage-write-flow.xml" />
+                <entry key="client-storage/read" value="classpath:/net/shibboleth/idp/flows/client-storage/client-storage-read-flow.xml" />
+                <entry key="client-storage/write" value="classpath:/net/shibboleth/idp/flows/client-storage/client-storage-write-flow.xml" />
             </map>
         </property>
     </bean>
