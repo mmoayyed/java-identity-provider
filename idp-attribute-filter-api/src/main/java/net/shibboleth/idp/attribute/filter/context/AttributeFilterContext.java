@@ -41,6 +41,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -163,7 +164,8 @@ public final class AttributeFilterContext extends BaseContext {
         if (attributes != null) {
             prefilteredAttributes = attributes.
                     stream().
-                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, e -> e));
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, e -> e,
+                            CollectionSupport.warningMergeFunction("AttrtibuteFilterContextPrefiltered", true)));
         } else {
             prefilteredAttributes = Collections.emptyMap();
         }
@@ -193,7 +195,9 @@ public final class AttributeFilterContext extends BaseContext {
         if (attributes != null) {
             filteredAttributes = attributes.
                     stream().
-                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, e -> e));
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId,
+                            e -> e,
+                            CollectionSupport.warningMergeFunction("AttrtibuteFilterContextFiltered", true)));
         } else {
             filteredAttributes = Collections.emptyMap();
         }

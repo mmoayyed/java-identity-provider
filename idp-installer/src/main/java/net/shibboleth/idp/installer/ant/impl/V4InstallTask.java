@@ -33,6 +33,7 @@ import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.V4Install;
 import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -76,7 +77,9 @@ public class V4InstallTask extends Task {
                     stream().
                     filter(e -> System.getProperty(e.getKey()) == null).
                     filter(e -> e.getValue() instanceof String).
-                    collect(Collectors.toUnmodifiableMap(Entry::getKey, e-> (String) e.getValue())));
+                    collect(Collectors.toUnmodifiableMap(Entry::getKey,
+                            e-> (String) e.getValue(),
+                            CollectionSupport.warningMergeFunction("InstallerProperties", true))));
 
             final CurrentInstallStateImpl is;
             ip.initialize();

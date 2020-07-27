@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -75,7 +76,9 @@ public class StaticDataConnector extends AbstractDataConnector {
         attributes = newValues.
                 stream().
                 map(e -> Constraint.isNotNull(e, "non null Attribute in connector")).
-                collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, i -> i));
+                collect(Collectors.toUnmodifiableMap(IdPAttribute::getId,
+                        i -> i,
+                        CollectionSupport.warningMergeFunction("StaticDataConnector " + getId(), true)));
     }
 
     /** {@inheritDoc} */

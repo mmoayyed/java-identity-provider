@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -308,7 +309,8 @@ public final class AttributeResolutionContext extends BaseContext {
         Constraint.isNotNull(attributes, "Null attribute set cannot be inserted into a context");
         resolvedAttributes = attributes.
                 stream().
-                collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a));
+                collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a,
+                        CollectionSupport.warningMergeFunction("AttrtibuteResolutionContext", true)));
         return this;
     }
 

@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 
 /**
  * A {@link BaseContext} that tracks a set of attributes. Usually the tracked attributes are about a particular user and
@@ -71,7 +72,9 @@ public final class AttributeContext extends BaseContext {
         if (newAttributes != null) {
             attributes = newAttributes.
                     stream().
-                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a));
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId,
+                            a -> a,
+                            CollectionSupport.warningMergeFunction("AttrtibuteContext", true)));
         } else {
             attributes = Collections.emptyMap();
         }
@@ -96,7 +99,9 @@ public final class AttributeContext extends BaseContext {
         if (null != unfilteredAttributes) {
             unfilteredAttributes = newAttributes.
                     stream().
-                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId, a -> a));
+                    collect(Collectors.toUnmodifiableMap(IdPAttribute::getId,
+                            a -> a,
+                            CollectionSupport.warningMergeFunction("AttrtibuteContextUnfiltered", true)));
         } else {
             unfilteredAttributes = Collections.emptyMap();
         }
