@@ -63,7 +63,6 @@
     -->
     <util:list id="shibboleth.MessageSourceResources">
         <value>%{idp.home}/messages/messages</value>
-        <value>%{idp.home}/system/messages/messages</value>
     </util:list>
     
 </beans>

@@ -35,9 +35,19 @@
     <bean id="shibboleth.IdentifiableBeanPostProcessor"
         class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <!-- This extends the original user-space resource list with the classpath-embedded message tree. -->
+    <bean id ="ExtendedMessageSourceResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/messages/messages</value>
+            </util:list>
+        </property>
+    </bean>
+
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
             p:cacheSeconds="%{idp.message.cacheSeconds:300}"
-            p:basenames-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}"
+            p:basenames-ref="ExtendedMessageSourceResources"
             p:defaultEncoding="UTF-8" />
 
     <import resource="../../conf/global.xml" />
