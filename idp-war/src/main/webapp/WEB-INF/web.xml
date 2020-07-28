@@ -126,7 +126,7 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>${idp.home}/system/conf/mvc-beans.xml, ${idp.home}/system/conf/webflow-config.xml</param-value>
+            <param-value>classpath*:/META-INF/net/shibboleth/idp/mvc/preconfig.xml,${idp.home}/system/conf/mvc-beans.xml,${idp.home}/system/conf/webflow-config.xml,classpath*:/META-INF/net/shibboleth/idp/mvc/postconfig.xml</param-value>
         </init-param>
         <init-param>
             <param-name>contextClass</param-name>
