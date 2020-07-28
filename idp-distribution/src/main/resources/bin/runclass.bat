@@ -26,4 +26,4 @@ set LOCALCLASSPATH=%~dp0lib\*;%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\dist\web
 
 REM Go to it !
 
-%JAVACMD% -cp "%LOCALCLASSPATH%" -Dnet.shibboleth.idp.cli.baseURL=%IDP_BASE_URL% %*
+%JAVACMD% -cp "%LOCALCLASSPATH%" -Dnet.shibboleth.idp.cli.baseURL=%IDP_BASE_URL% -Dnet.shibboleth.idp.cli.idp.home=%~dp0.. %*
