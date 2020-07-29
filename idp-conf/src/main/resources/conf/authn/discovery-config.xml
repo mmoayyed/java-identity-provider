@@ -20,7 +20,7 @@
     <!-- Alternatively specify a Function<ProfileRequestContext,String> to return the URL. -->
     <!--
     <bean id="shibboleth.authn.discoveryURLStrategy"
-            parent="shibboleth.ContextFunction.Scripted" factory-method="inlineScript">
+            parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
         <constructor-arg>
             <value>
             <![CDATA[
