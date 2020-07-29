@@ -25,8 +25,6 @@ import java.util.List;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
@@ -35,7 +33,6 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 /**
  * This interface is exported (via the service API) by every IdP plugin.
  */
-@Beta
 public interface PluginDescription {
     
     /** Return the unique identifier for the plugin.  This name <em>MUST</em> be

@@ -26,14 +26,11 @@ import java.util.List;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.Beta;
-
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
  * A base class {@link PluginDescription} which defaults many common settings.
  */
-@Beta
 public abstract class AbstractPluginDescription implements PluginDescription {
     
     /** {@inheritDoc} */
