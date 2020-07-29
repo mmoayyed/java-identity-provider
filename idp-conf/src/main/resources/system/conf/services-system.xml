@@ -55,10 +55,7 @@
     </bean>
 
     <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
-            p:serviceConfigurations-ref="#{
- 	            getObject('%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()) != null
-                    ? '%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()
-                        : 'shibboleth.DefaultAttributeRegistryResources' }"
+            p:serviceConfigurations-ref="ExtendedAttributeRegistryResources"
 	        p:failFast="%{idp.service.attribute.registry.failFast:%{idp.service.failFast:false}}"
 	        p:reloadCheckDelay="%{idp.service.attribute.registry.checkInterval:PT0S}"
 	        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -69,27 +66,46 @@
 	           p:namingRegistry="#{'%{idp.service.attribute.registry.namingRegistry:shibboleth.DefaultNamingRegistry}'.trim()}" />
 	    </constructor-arg>
     </bean>
-
     <bean id ="shibboleth.DefaultAttributeRegistryResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
           p:firstList-ref="#{'%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim()}" >
         <property name="secondList">
             <util:list >
                 <value>%{idp.home}/conf/attribute-registry.xml</value>
-                <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedAttributeRegistryResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{
+                getObject('%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()) != null
+                    ? '%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()
+                        : 'shibboleth.DefaultAttributeRegistryResources' }" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/attribute-registry-system.xml</value>
             </util:list>
         </property>
     </bean>
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
-        p:serviceConfigurations-ref="#{'%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}'.trim()}"
+        p:serviceConfigurations-ref="ExtendedNameIdentifierGenerationResources"
         p:failFast="%{idp.service.nameidGeneration.failFast:%{idp.service.failFast:false}}"
         p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:PT0S}"
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedNameIdentifierGenerationResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{'%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}'.trim()}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/saml-nameid-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
-            p:serviceConfigurations-ref="#{'%{idp.service.relyingparty.resources:shibboleth.RelyingPartyResolverResources}'.trim()}"
+            p:serviceConfigurations-ref="ExtendedRelyingPartyResolverResources"
             p:failFast="%{idp.service.relyingparty.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:PT0S}"
             p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -100,10 +116,19 @@
                 c:serviceableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" />
         </constructor-arg>
     </bean>
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedRelyingPartyResolverResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{'%{idp.service.relyingparty.resources:shibboleth.RelyingPartyResolverResources}'.trim()}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/relying-party-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
             depends-on="shibboleth.AttributeRegistryService" 
-            p:serviceConfigurations-ref="#{'%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}'.trim()}"
+            p:serviceConfigurations-ref="ExtendedMetadataResolverResources"
             p:failFast="%{idp.service.metadata.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.metadata.checkInterval:PT0S}"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer"
@@ -113,14 +138,32 @@
             <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
         </constructor-arg>
     </bean>
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedMetadataResolverResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{'%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}'.trim()}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/metadata-providers-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         c:claz="net.shibboleth.utilities.java.support.security.AccessControlService" 
-        p:serviceConfigurations-ref="#{'%{idp.service.access.resources:shibboleth.AccessControlResources}'.trim()}"
+        p:serviceConfigurations-ref="ExtendedAccessControlResources"
         p:failFast="%{idp.service.access.failFast:%{idp.service.failFast:true}}"
         p:reloadCheckDelay="%{idp.service.access.checkInterval:PT0S}"
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedAccessControlResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList-ref="#{'%{idp.service.access.resources:shibboleth.AccessControlResources}'.trim()}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/access-control-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.ReloadableCASServiceRegistry" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
           c:claz="net.shibboleth.idp.cas.service.ServiceRegistry"
