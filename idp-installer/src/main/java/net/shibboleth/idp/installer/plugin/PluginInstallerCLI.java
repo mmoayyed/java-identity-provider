@@ -109,7 +109,6 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
     
     /** {@inheritDoc} */
     protected int doRun(final PluginInstallerArguments args) {
-        getLogger().warn("Starting");
         final int ret = super.doRun(args);
         if (ret != RC_OK) {
             return ret;
@@ -122,7 +121,8 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
                     return FileVisitResult.CONTINUE;
                 }
                 @Override 
-                public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult preVisitDirectory(final Path dir,
+                        final BasicFileAttributes attrs) throws IOException {
                     getLogger().warn("Dire {}",dir);
                     return FileVisitResult.CONTINUE;
                 }
@@ -133,19 +133,30 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
         } 
         return ret;
     }
+
+    /** Shim for CLI entry point: Allows the code to be run from a test.
+     *
+     * @return one of the predefines {@link AbstractCommandLine#RC_INIT},
+     * {@link AbstractCommandLine#RC_IO}, {@link AbstractCommandLine#RC_OK}
+     * or {@link AbstractCommandLine#RC_UNKNOWN}
+     *
+     * @param args arguments
+     */
+    public static int runMain(@Nonnull final String[] args) {
+        final PluginInstallerCLI cli = new PluginInstallerCLI();
+        cli.setIdpHome(StringSupport.trimOrNull(System.getProperty("net.shibboleth.idp.cli.idp.home")));
+        if (cli.getIdpHome() == null) {
+            return RC_INIT;
+        } else {
+            return cli.run(args);
+        }
+    }
     
     /**
      * CLI entry point.
      * @param args arguments
      */
     public static void main(@Nonnull final String[] args) {
-        final PluginInstallerCLI cli = new PluginInstallerCLI();
-        cli.setIdpHome(StringSupport.trimOrNull(System.getProperty("net.shibboleth.idp.cli.idp.home")));
-        if (cli.getIdpHome() == null) {
-            System.exit(RC_INIT);
-        } else {
-            System.exit(cli.run(args));
-        }
+        System.exit(runMain(args));
     }
-
 }

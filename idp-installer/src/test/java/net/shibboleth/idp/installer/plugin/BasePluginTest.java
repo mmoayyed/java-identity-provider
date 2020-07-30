@@ -71,16 +71,19 @@ public class BasePluginTest {
         }
         
         Files.walkFileTree(idpHome, new SimpleFileVisitor<Path>() {
-            /** {@inheritDoc} */
+            @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
+                log.trace("Deleted {}", file);
                 return FileVisitResult.CONTINUE;
             }
             
-            /** {@inheritDoc} */
+            @Override
             public FileVisitResult postVisitDirectory(Path directory, IOException exc) throws IOException {
                 try {
+                    log.trace("Deleting {}", directory);
                     Files.delete(directory);
+                    log.trace("Deleted {}", directory);
                 }
                 catch (final IOException foo) {
                     log.warn("Problem cleaning up {}",directory, foo);
