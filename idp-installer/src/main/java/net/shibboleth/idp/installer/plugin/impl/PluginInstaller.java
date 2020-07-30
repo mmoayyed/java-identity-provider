@@ -264,7 +264,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                        description = plugin;
                        return;
                    }
-                   log.debug("Did not match {}", pluginId);
+                   log.trace("Did not match {}", pluginId);
                }
            }
            log.error("Could not locate description for {} in distribution {}", pluginId, libDir);
@@ -494,7 +494,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 log.error("identity property file {} did not contain 'pluginid' property", propertyFile);
                 throw new BuildException("No property in ID file");
             }
-            setPluginId(id);
+            if (pluginId != null && !pluginId.equals(id)) {
+                log.error("Downloaded plugin id {} overriden by provided id {}", id, pluginId);
+            } else {
+                setPluginId(id);
+            }
         } catch (final IOException e) {
             log.error("Could not load plugin identity at {}", propertyFile, e);
             throw new BuildException(e);

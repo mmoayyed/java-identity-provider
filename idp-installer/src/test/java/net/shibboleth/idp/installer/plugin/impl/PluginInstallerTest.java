@@ -96,8 +96,9 @@ public class PluginInstallerTest extends BasePluginTest {
     }
 
     
-    @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
+    @Test(enabled = true) public void testUnpackTgz() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
+            inst.setPluginId("net.shibboleth.idp.plugin.rhino");
             inst.setIdpHome(getIdpHome());
             inst.setAcceptCert(loggingAcceptCert);
             inst.setAcceptDownload(loggingAcceptDownLoad);
