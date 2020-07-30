@@ -19,7 +19,6 @@ package net.shibboleth.idp.installer.plugin.impl;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -30,17 +29,17 @@ import java.util.function.Predicate;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.installer.plugin.BasePluginTest;
 import net.shibboleth.idp.plugin.AbstractPluginDescription;
 import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")
-public class PluginInstallerTest {
+public class PluginInstallerTest extends BasePluginTest {
 
     private final Logger log = LoggerFactory.getLogger(PluginInstallerTest.class);
     
@@ -64,10 +63,10 @@ public class PluginInstallerTest {
         }
     }
 
-    @Test(enabled = false) public void testListing() throws ComponentInitializationException, IOException {
+    @Test(enabled = true) public void testListing() throws ComponentInitializationException, IOException {
         
         try (final PluginInstaller inst = new PluginInstaller()) {
-            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setIdpHome(getIdpHome());
             inst.initialize();
             List<PluginDescription> plugins = inst.getInstalledPlugins();
             assertEquals(plugins.get(0).getPluginId(), "org.example.Plugin");
@@ -76,36 +75,38 @@ public class PluginInstallerTest {
     
     @Test(enabled = false) public void testUnpackZip() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
-            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setIdpHome(getIdpHome());
             inst.setAcceptCert(loggingAcceptCert);
             inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
-            final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\rhino-dist\\target");
-            inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-rhino-0.0.1-SNAPSHOT.zip");
+            final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-nashorn-dist/0.1.0/");
+            inst.installPlugin(where,"idp-plugin-nashorn-dist-0.1.0.zip");
         }
     }
     
-    @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
+    @Test(enabled = false) public void testUnpackZipFile() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
-            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setIdpHome(getIdpHome());
             inst.setAcceptCert(loggingAcceptCert);
             inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
-            final File f = new File("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\nashorn-dist\\target");
-            inst.installPlugin(f.toPath(),"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
+            final Path dir = Path.of("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\rhino-dist\\target");
+            inst.installPlugin(dir,"shibboleth-idp-plugin-rhino-0.1.0-SNAPSHOT.zip");
         }
     }
 
-    @Test(enabled = false) public void testDownload() throws ComponentInitializationException, IOException {
+    
+    @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
-            inst.setIdpHome(new ClassPathResource("idphome-test").getFile().toPath());
+            inst.setIdpHome(getIdpHome());
             inst.setAcceptCert(loggingAcceptCert);
             inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
-            final URL url = new URL("http://iis.steadingsoftware.net/plugins/");
-            inst.installPlugin(url,"shibboleth-idp-plugin-nashorn-0.0.1-SNAPSHOT.tar.gz");
+            final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.0/");
+            inst.installPlugin(where,"idp-plugin-rhino-dist-0.1.0.zip");
         }
     }
+
 
     public static class Wibble extends AbstractPluginDescription {
 
