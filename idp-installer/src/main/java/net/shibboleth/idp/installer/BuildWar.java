@@ -23,6 +23,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -101,9 +102,8 @@ public final class BuildWar extends AbstractInitializableComponent {
     private void overlayPluginWebapps(final Path parent, final Path to) throws BuildException {
         final FileSystem fs = parent.getFileSystem();
         final PathMatcher folderMatcher = fs.getPathMatcher("glob:edit-webapp-*");
-        try {
-            Files.list(parent).
-                filter(Files::isDirectory).
+        try (final Stream<Path> list = Files.list(parent)){
+            list.filter(Files::isDirectory).
                 filter(e -> folderMatcher.matches(e.getFileName())).
                 forEach(e -> overlayWebapp(e, to));
         } catch (final IOException e) {

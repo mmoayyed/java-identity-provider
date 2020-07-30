@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,8 +38,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -248,8 +251,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         final List<URL> urls = new ArrayList<>();
         final Path libDir = distribution.resolve("edit-webapp").resolve("WEB-INF").resolve("lib");
 
-        try {
-            for (final Path jar : Files.newDirectoryStream(libDir)) {
+        try (final DirectoryStream<Path> libDirPaths = Files.newDirectoryStream(libDir)){
+            for (final Path jar : libDirPaths) {
                 urls.add(jar.toUri().toURL());
             }
            try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
@@ -261,6 +264,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                        description = plugin;
                        return;
                    }
+                   log.debug("Did not match {}", pluginId);
                }
            }
            log.error("Could not locate description for {} in distribution {}", pluginId, libDir);
@@ -422,15 +426,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     }
                 }
             }
-            final Iterator<Path> contents = Files.newDirectoryStream(unpackDirectory).iterator();
-            if (!contents.hasNext()) {
-                log.error("No contents unpacked from {}", fullName);
-                throw new BuildException("Distro was empty");
-            }
-            distribution = contents.next();
-            if (contents.hasNext()) {
-                log.error("Too many packages in distributions {}", fullName);
-                throw new BuildException("Too many packages in distributions");
+            try (final DirectoryStream<Path> unpackDirStream = Files.newDirectoryStream(unpackDirectory)) {
+                final Iterator<Path> contents = unpackDirStream.iterator();
+                if (!contents.hasNext()) {
+                    log.error("No contents unpacked from {}", fullName);
+                    throw new BuildException("Distro was empty");
+                }
+                distribution = contents.next();
+                if (contents.hasNext()) {
+                    log.error("Too many packages in distributions {}", fullName);
+                    throw new BuildException("Too many packages in distributions");
+                }
             }
         } catch (final IOException e) {
             throw new BuildException(e);
@@ -546,21 +552,24 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     public List<PluginDescription> getInstalledPlugins() {
         try {
             final List<URL> urls = new ArrayList<>();
-            
-            for (final Path webApp : Files.newDirectoryStream(idpHome.resolve("dist"), "edit-webapp-*")) {
-                for (final Path jar : Files.newDirectoryStream(webApp.resolve("WEB-INF").resolve("lib"))) {
-                    urls.add(jar.toUri().toURL());
+
+            try (final DirectoryStream<Path> webAppList = 
+                    Files.newDirectoryStream(idpHome.resolve("dist"), "edit-webapp-*")) {
+                for (final Path webApp : webAppList) {
+                    try (final DirectoryStream<Path> webInfLibs =
+                            Files.newDirectoryStream(webApp.resolve("WEB-INF").resolve("lib"))) {
+                        for (final Path jar : webInfLibs) {
+                            urls.add(jar.toUri().toURL());
+                        }
+                    }
                 }
             }
-            
-           try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
-               
-               return ServiceLoader.load(PluginDescription.class, loader).
-                   stream().
-                   map(ServiceLoader.Provider::get).
-                   collect(Collectors.toList());
+            try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
+               try (final Stream<Provider<PluginDescription>> loaderStream =
+                       ServiceLoader.load(PluginDescription.class, loader).stream()) {
+                   return loaderStream.map(ServiceLoader.Provider::get).collect(Collectors.toList());
+               }
            }
-            
         } catch (final IOException e) {
             throw new BuildException(e);
         }
