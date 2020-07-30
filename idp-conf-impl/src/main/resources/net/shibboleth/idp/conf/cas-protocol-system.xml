@@ -82,6 +82,6 @@
 
     <util:list id="shibboleth.DefaultCASProxyTrustedCertificates" />
 
-    <import resource="../../conf/cas-protocol.xml" />
+    <import resource="${idp.home}/conf/cas-protocol.xml" />
 
 </beans>

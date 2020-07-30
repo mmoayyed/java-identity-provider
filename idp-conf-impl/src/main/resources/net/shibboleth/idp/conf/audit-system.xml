@@ -95,7 +95,7 @@
     The actual beans used are in user-space, but they inherit from the maps below. We have to use a
     MapFactoryBean instead of util:map because merging isn't supported by the util:map schema.
     -->
-    <import resource="../../conf/audit.xml"/>
+    <import resource="${idp.home}/conf/audit.xml"/>
 
     <bean id="shibboleth.DefaultFlowStartAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">

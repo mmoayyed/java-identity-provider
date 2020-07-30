@@ -12,8 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/admin/general-admin.xml" />
-    <import resource="../../conf/admin/metrics.xml" />
+    <import resource="${idp.home}/conf/admin/general-admin.xml" />
+    <import resource="${idp.home}/conf/admin/metrics.xml" />
     <import resource="conditional:${idp.home}/conf/admin/unlock-keys.xml" />
 
     <!-- Parent beans to default some of the flow boilerplate. -->

@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/intercept/profile-intercept.xml" />
+    <import resource="${idp.home}/conf/intercept/profile-intercept.xml" />
 
     <!-- Parent bean for intercept interceptor flows. -->
     <bean id="shibboleth.InterceptFlow" abstract="true"

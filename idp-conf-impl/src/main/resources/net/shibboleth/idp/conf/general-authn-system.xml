@@ -12,8 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-	<import resource="../../conf/authn/authn-comparison.xml" />
-	<import resource="../../conf/authn/general-authn.xml" />
+	<import resource="${idp.home}/conf/authn/authn-comparison.xml" />
+	<import resource="${idp.home}/conf/authn/general-authn.xml" />
 
     <!-- A parent bean to default some of the flow boilerplate. -->
 

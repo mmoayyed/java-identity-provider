@@ -80,6 +80,13 @@ public class IdPPropertiesApplicationContextInitializer
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
 
+        // TODO: Override default property replacement syntax.
+        // We can't do this now because it would break web.xml's use of ${idp.home}
+        // If we end up breaking web.xml later, I think we could force that in line.
+        // See IDP-1642
+        // applicationContext.getEnvironment().setPlaceholderPrefix("%{");
+        // applicationContext.getEnvironment().setPlaceholderSuffix("}");
+        
         final String searchLocation = selectSearchLocation(applicationContext);
         log.debug("Attempting to find '{}' at search location '{}'", getSearchTarget(), searchLocation);
 

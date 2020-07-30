@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/services.xml" />
+    <import resource="${idp.home}/conf/services.xml" />
 
     <!--
     These are beans that define reloadable services. The actual Spring resources that configure the
