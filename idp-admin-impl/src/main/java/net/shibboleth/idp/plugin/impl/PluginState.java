@@ -20,8 +20,8 @@ package net.shibboleth.idp.plugin.impl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -242,13 +242,19 @@ public class PluginState extends AbstractInitializableComponent {
     }
         
     /** {@inheritDoc} */
+    // CheckStyle: CyclomaticComplexity OFF
     protected void doInitialize() throws ComponentInitializationException {
         
         try {
             if (httpClient == null) {
                 httpClient = new HttpClientBuilder().buildClient();
             }
-            for (final URL url: plugin.getUpdateURLs()) {
+            final List<URL> urls = plugin.getUpdateURLs();
+            if (urls == null) {
+                log.error("Plugin {} was malformed", plugin.getPluginId());
+                throw new ComponentInitializationException("Could not locate information plugin"); 
+            }
+            for (final URL url: urls) {
                 final Resource propertyResource;
                 if ("file".equals(url.getProtocol())) {
                     // Kludge to allow classpath backed files
@@ -290,37 +296,7 @@ public class PluginState extends AbstractInitializableComponent {
             super.doInitialize();
         }
     }
-    
-    /** Get the current support level for this version.
-     * @return the level
-     */
-    public SupportLevel getSupportLevel() {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        return myVersionInfo.getSupportLevel();
-    }
-
-    /** Is this plugin supported with the current IdP?
-     * @return whether it is supported.
-     */
-    public boolean isSupportedWithIdPVersion() {
-        return isSupportedWithIdPVersion(PluginSupport.getIdPVersion());
-    }
-    
-    /** Is this plugin supported with this IdP version.
-     * @param idPVersion the version as a {@link String}
-     * @return whether it is supported.
-     */
-    public boolean isSupportedWithIdPVersion(final String idPVersion) {
-        return isSupportedWithIdPVersion(new PluginVersion(idPVersion));
-    }
-    
-    /** Is this plugin supported with this IdP version.
-     * @param idPVersion the version as a {@link PluginVersion}
-     * @return whether it is supported.
-     */
-    public boolean isSupportedWithIdPVersion(final PluginVersion idPVersion) {
-        return isSupportedWithIdPVersion(myVersionInfo, idPVersion);
-    }
+    // CheckStyle: CyclomaticComplexity ON
     
     /** Is the specified plugin supported with this IdP version.
      * @param pluginVersion the version if the plugin as a {@link PluginVersion}
@@ -340,21 +316,12 @@ public class PluginState extends AbstractInitializableComponent {
     }
     
     /** Is the specified plugin supported with this IdP version.
-     * @param pluginVersion the version if the plugin as a {@link PluginVersion}
-     * @param idPVersion the version if the IDP as a {@link String}
-     * @return whether it is supported.
-     */
-    public boolean isSupportedWithIdPVersion(final PluginVersion pluginVersion, final String idPVersion) {
-        return isSupportedWithIdPVersion(pluginVersion, new PluginVersion(idPVersion));
-    }
-        
-    /** Is the specified plugin supported with this IdP version.
      * Worker method for all 'isSupportedWith' classes.
      * @param pluginVersionInfo the version info to consider
      * @param idPVersion the version as a {@link PluginVersion}
      * @return whether it is supported.
      */
-    protected static boolean isSupportedWithIdPVersion(final VersionInfo pluginVersionInfo,
+    public static boolean isSupportedWithIdPVersion(final VersionInfo pluginVersionInfo,
             final PluginVersion idPVersion) {
         final int maxCompare = idPVersion.compareTo(pluginVersionInfo.getMaxSupported()); 
         
@@ -372,16 +339,23 @@ public class PluginState extends AbstractInitializableComponent {
         return false;
     }
     
+    /** Return the current state (from provided plugin).
+     * @return Returns the Current Info.
+     */
+    public VersionInfo getCurrentInfo() {
+        return myVersionInfo;
+    }
+    
     /** Return all announced versions.
      * @return the versions.
      */
-    @Nonnull @NotEmpty public Collection<PluginVersion> getAvailableVersions() {
+    @Nonnull @NotEmpty public Map<PluginVersion, VersionInfo> getAvailableVersions() {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        return versionInfo.keySet();
+        return versionInfo;
     }
     
     /** Encapsulation of the information about a given IdP version. */
-    protected static class VersionInfo {
+    public static class VersionInfo {
         
         /** Maximum version - this version is NOT SUPPORTED. */ 
         private final PluginVersion maxSupported; 
