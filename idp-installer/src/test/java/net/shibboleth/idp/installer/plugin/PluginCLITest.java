@@ -34,7 +34,7 @@ import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    @Test(enabled = true) public void TestCli() throws IOException {
+    @Test(enabled = true) public void testList() throws IOException {
         System.setProperty("net.shibboleth.idp.cli.idp.home",getIdpHome().toString());
         final Resource pluginInstaller = new ClassPathResource("conf/admin/plugin-installer.xml");
         final File plugin = getIdpHome().resolve("conf").resolve("admin").resolve("plugin-installer.xml").toFile();
@@ -45,7 +45,7 @@ public class PluginCLITest extends BasePluginTest {
             is.transferTo(os);
         }
     
-        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "--verbose"}), 
-                AbstractCommandLine.RC_OK);	
+        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "-fl"}),
+                AbstractCommandLine.RC_OK);
     }
 }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.Security;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -119,7 +120,7 @@ public class PluginInstallerTest extends BasePluginTest {
 
         /** {@inheritDoc} */
         public List<URL> getUpdateURLs() throws IOException {
-            return null;
+            return Collections.emptyList();
         }
 
         /** {@inheritDoc} */

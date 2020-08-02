@@ -17,25 +17,32 @@
 
 package net.shibboleth.idp.installer.plugin;
 
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
+import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.impl.PluginState;
+import net.shibboleth.idp.plugin.impl.PluginState.VersionInfo;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -48,7 +55,13 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
     
     /** Where the IdP is installed to. */
     @Nullable private Path idpHome;
+
+    /** A Plugin Installer to use. */
+    private PluginInstaller installer;
     
+    /** The injected HttpClient. */
+    private HttpClient httpClient;
+
     /**
      * Constrained Constructor.
      */
@@ -113,25 +126,101 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
         if (ret != RC_OK) {
             return ret;
         }
+        final Set<Entry<String, HttpClient>> clients =
+                getApplicationContext().getBeansOfType(HttpClient.class).entrySet();
+        if (clients.isEmpty()) {
+            log.debug("No HttpClient definitions found.");
+        } else {
+            final Entry<String, HttpClient> entry = clients.iterator().next();
+            httpClient = entry.getValue();
+            if (clients.size() > 1) {
+                log.warn("Multiple HttpClient beans found; Taking {}", entry.getKey());
+            } else {
+                log.debug("Selecting HttpClient: {}", entry.getKey());
+            }
+        }
+
         try {
-            Files.walkFileTree(getIdpHome().resolve("conf"), new SimpleFileVisitor<Path>() {
-                @Override 
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                    getLogger().warn("File {}",file);
-                    return FileVisitResult.CONTINUE;
-                }
-                @Override 
-                public FileVisitResult preVisitDirectory(final Path dir,
-                        final BasicFileAttributes attrs) throws IOException {
-                    getLogger().warn("Dire {}",dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (final IOException e) {
-            getLogger().error("oops", e);
+            constructPluginInstaller();
+            switch (args.getOperation()) {
+                case LIST:
+                    doList(args.getFullList(), args.getPluginId());
+                    break;
+
+                default:
+                    getLogger().error("Invalid operation");
+                    return RC_IO;
+            }
+
+        } catch (final ComponentInitializationException | BeansException e) {
+            getLogger().error("Plugin failed", e);
             return RC_IO;
         } 
         return ret;
+    }
+
+    /** Build the installer.
+     * @throws ComponentInitializationException as required*/
+    private void constructPluginInstaller() throws ComponentInitializationException {
+        installer= new PluginInstaller();
+        installer.setIdpHome(idpHome);
+        if (httpClient!= null) {
+            installer.setHttpClient(httpClient);
+        }
+        installer.initialize();
+    }
+
+    /** List all installed plugins (or just one if provided).
+     * @param fullList whether to do full deatils
+     * @param pluginId the pluginId or null.
+     */
+    private void doList(final boolean fullList, @Nullable final String pluginId) {
+        boolean list = false;
+        final List<PluginDescription> plugins = installer.getInstalledPlugins();
+        for (final PluginDescription plugin: plugins) {
+            if (pluginId == null || pluginId.equals(plugin.getPluginId())) {
+                list = true;
+                System.out.println(String.format("Plugin: %-22s\tCurrent Version: %d.%d.%d",
+                       plugin.getPluginId(),
+                       plugin.getMajorVersion(),plugin.getMinorVersion(), plugin.getPatchVersion()));
+                if (fullList) {
+                    printDetails(plugin);
+                }
+            }
+        }
+        if (!list) {
+            if (pluginId == null) {
+                System.out.println("No plugins installed");
+            } else {
+                System.out.println("Plugin " + pluginId + " not installed");
+            }
+        }
+    }
+
+    /** Print our more information about a plugin.
+     * @param plugin what we are interested in.
+     */
+    private void printDetails(final PluginDescription plugin) {
+        log.debug("Interrogating {} ", plugin.getPluginId());
+        final PluginState state =  new PluginState(plugin);
+        if (httpClient != null) {
+            state.setHttpClient(httpClient);
+        }
+        try {
+            state.initialize();
+        } catch (final ComponentInitializationException e) {
+            log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
+            return;
+        }
+        final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
+        System.out.println("\tVersions ");
+        for (final Entry<PluginVersion, VersionInfo> entry  : versions.entrySet()) {
+            System.out.println(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s",
+                    entry.getKey(),
+                    entry.getValue().getMinSupported(),
+                    entry.getValue().getMaxSupported(),
+                    entry.getValue().getSupportLevel()));
+        }
     }
 
     /** Shim for CLI entry point: Allows the code to be run from a test.
