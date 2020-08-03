@@ -164,26 +164,5 @@
         class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
     <bean id="shibboleth.PrincipalNameLookup.Session"
         class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
-    
-    <bean id="shibboleth.SignatureValidationConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    <bean id="shibboleth.SignatureSigningConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.SignatureSigningConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    <bean id="shibboleth.DecryptionConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.DecryptionConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    <bean id="shibboleth.EncryptionConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.EncryptionConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    <bean id="shibboleth.ClientTLSValidationConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.ClientTLSValidationConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    <bean id="shibboleth.SelfEncryptionConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.SelfEncryptionConfigurationLookupFunction"
-        p:selfConfiguration="#{getObject('shibboleth.SelfEncryptionConfiguration')}"
-        p:includeProfileDefaultConfiguration="%{idp.encryption.self.includeProfileDefaultConfiguration:false}"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    
+        
 </beans>

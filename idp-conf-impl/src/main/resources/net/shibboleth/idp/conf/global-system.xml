@@ -55,6 +55,7 @@
     <import resource="audit-system.xml" />
     <import resource="general-authn-system.xml" />
     <import resource="session-manager-system.xml" />
+    <import resource="security-system.xml" />
     <import resource="services-system.xml" />
     <import resource="saml-binding-config.xml" />
     <import resource="subject-c14n-system.xml" />
@@ -277,9 +278,6 @@
         class="org.opensaml.saml.common.binding.artifact.impl.StorageServiceSAMLArtifactMap"
         p:storageService-ref="#{'%{idp.artifact.StorageService:shibboleth.StorageService}'.trim()}" />
 
-    <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
-        class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy" />
-
     <bean id="shibboleth.StorageBackedAccountLockoutManager" abstract="true"
             class="net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager"
             p:storageService-ref="shibboleth.StorageService">
@@ -292,8 +290,6 @@
     <bean id="shibboleth.NonFailFastValidator"
         class="net.shibboleth.idp.attribute.resolver.dc.NonFailFastValidator" lazy-init="true" />
 
-    <!-- Parent beans for Signature/Encryption/TLS/HttpClientSecurity Configuration objects. -->
-
     <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="global.xml">
         <constructor-arg index="0">
             <map>
@@ -304,66 +300,7 @@
             </map>
         </constructor-arg>
     </bean>
-    
-    <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration"
-        p:includedAlgorithms="#{getObject('shibboleth.IncludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureWhitelist')}"
-        p:excludedAlgorithms="#{getObject('shibboleth.ExcludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureBlacklist')}" />
-    
-    <bean id="shibboleth.BasicClientTLSValidationConfiguration" abstract="true"
-        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration" />
-    
-    <bean id="shibboleth.BasicHttpClientSecurityConfiguration" abstract="true"
-        class="org.opensaml.security.httpclient.impl.BasicHttpClientSecurityConfiguration" />
-    
-    <bean id="shibboleth.BasicSignatureSigningConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
-        p:includedAlgorithms="#{getObject('shibboleth.IncludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureWhitelist')}"
-        p:excludedAlgorithms="#{getObject('shibboleth.ExcludedSignatureAlgorithms') ?: getObject('shibboleth.SignatureBlacklist')}" />
-    
-    <bean id="shibboleth.BasicEncryptionConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration"
-        p:includedAlgorithms="#{getObject('shibboleth.IncludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionWhitelist')}"
-        p:excludedAlgorithms="#{getObject('shibboleth.ExcludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionBlacklist')}" />
-
-    <bean id="shibboleth.BasicDecryptionConfiguration" abstract="true"
-        class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
-        p:includedAlgorithms="#{getObject('shibboleth.IncludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionWhitelist')}"
-        p:excludedAlgorithms="#{getObject('shibboleth.ExcludedEncryptionAlgorithms') ?: getObject('shibboleth.EncryptionBlacklist')}" />
-
-    <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
-    
-    <bean id="shibboleth.SignatureValidationParametersResolver"
-        class="org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver" />
-    <bean id="shibboleth.SignatureSigningParametersResolver"
-        class="org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver" />
-    <bean id="shibboleth.DecryptionParametersResolver"
-        class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
-    <bean id="shibboleth.EncryptionParametersResolver"
-        class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
-        c:resolver-ref="shibboleth.MetadataCredentialResolver" />
-    <bean id="shibboleth.ClientTLSValidationParametersResolver"
-        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
-    <bean id="shibboleth.HttpClientSecurityParametersResolver"
-        class="org.opensaml.security.httpclient.impl.BasicHttpClientSecurityParametersResolver" />
-
-    <!--
-    The beans below are primarily used by trust engines in relying-party-system.xml, but also in the
-    resolver for encryption parameters above.
-    -->
-
-    <bean id="shibboleth.MetadataCredentialResolver"
-        class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
-         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
-         p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
-    </bean>
-
-    <bean id="shibboleth.KeyInfoCredentialResolver"
-        class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap"
-        factory-method="buildBasicInlineKeyInfoCredentialResolver" />
-            
-    <!-- Back to non-deprecated beans. -->
-    
+        
     <!--
     This is a default client for embedded system use but should NOT be used by deployers OR
     within the IdP within any reloadable service child contexts.
