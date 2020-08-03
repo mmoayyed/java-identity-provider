@@ -19,6 +19,7 @@ package net.shibboleth.idp.installer.plugin;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Security;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
+import org.apache.tools.ant.BuildException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -121,10 +124,14 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
     }
     
     /** {@inheritDoc} */
+    //CheckStyle: CyclomaticComplexity OFF
     protected int doRun(final PluginInstallerArguments args) {
         final int ret = super.doRun(args);
         if (ret != RC_OK) {
             return ret;
+        }
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
         }
         final Set<Entry<String, HttpClient>> clients =
                 getApplicationContext().getBeansOfType(HttpClient.class).entrySet();
@@ -147,17 +154,35 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
                     doList(args.getFullList(), args.getPluginId());
                     break;
 
+                case INSTALLDIR:
+                    if (args.getPluginId() != null) {
+                        installer.setPluginId(args.getPluginId());
+                    }
+                    installer.installPlugin(args.getInputDirectory(), args.getInputFileName());
+                    break;
+
+                case INSTALLREMOTE:
+                    if (args.getPluginId() != null) {
+                        installer.setPluginId(args.getPluginId());
+                    }
+                    installer.installPlugin(args.getInputURL(), args.getInputFileName());
+                    break;
+
                 default:
                     getLogger().error("Invalid operation");
-                    return RC_IO;
+                    return RC_INIT;
             }
 
-        } catch (final ComponentInitializationException | BeansException e) {
-            getLogger().error("Plugin failed", e);
+        } catch (final BeansException e) {
+            getLogger().error("Plugin Install failed", e);
+            return RC_INIT;
+        } catch (final ComponentInitializationException | BuildException e) {
+            getLogger().error("Plugin Install failed:", e);
             return RC_IO;
-        } 
+        }
         return ret;
     }
+    //CheckStyle: CyclomaticComplexity OM
 
     /** Build the installer.
      * @throws ComponentInitializationException as required*/

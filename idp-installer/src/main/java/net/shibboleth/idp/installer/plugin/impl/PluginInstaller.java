@@ -84,7 +84,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private static List<String> disallowedPaths = List.of("dist", "system", "webapp");
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PluginInstaller.class);
+    @Nonnull
+    private static final Logger LOG = LoggerFactory.getLogger(PluginInstaller.class);
 
     /** Where we are installing to. */
     @NonnullAfterInit private Path idpHome;
@@ -171,11 +172,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     public void installPlugin(@Nonnull final Path base,
                               @Nonnull @NotEmpty final String fileName) throws BuildException {
         if (!Files.exists(base.resolve(fileName))) {
-            log.error("Could not find distribution {}", base.resolve(fileName));
+            LOG.error("Could not find distribution {}", base.resolve(fileName));
             throw new BuildException("Could not find distribution");
         }
         if (!Files.exists(base.resolve(fileName + ".asc"))) {
-            log.error("Could not find distribution {}", base.resolve(fileName + ".asc"));
+            LOG.error("Could not find distribution {}", base.resolve(fileName + ".asc"));
             throw new BuildException("Could not find signature for distribution");
         }
 
@@ -183,15 +184,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         setupPluginId();
         checkSignature(base, fileName);
         getDescription();
-        log.info("Installing Plugin {} version {}.{}.{}", pluginId,
+        LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 
         if (!description.getAdditionalPropertyFiles().isEmpty()) {
-            log.error("Additional property files not supported");
+            LOG.error("Additional property files not supported");
             throw new BuildException("Uninstallable plugin");
         }
         if (!description.getPropertyMerges().isEmpty()) {
-            log.error("Prroperty merges not supported");
+            LOG.error("Prroperty merges not supported");
             throw new BuildException("Uninstallable plugin");
         }
 
@@ -218,16 +219,16 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             for (final Pair<URL, Path> pair : description.getExternalFilePathsToCopy()) {
                 final Path to = idpHome.resolve(pair.getSecond());
                 if (Files.exists(to)) {
-                    log.warn("{} exists, not copied", to);
+                    LOG.warn("{} exists, not copied", to);
                     continue;
                 }
                 if (!acceptDownload.test(new Pair<>(pair.getFirst(), to))) {
-                    log.info("Did not download {} to {}", pair.getFirst(), to);
+                    LOG.info("Did not download {} to {}", pair.getFirst(), to);
                     continue;
                 }
                 buildHttpClient();
                 createParent(to);
-                log.debug("Copying from {} to {}", pair.getFirst(), to);
+                LOG.debug("Copying from {} to {}", pair.getFirst(), to);
                 final Resource from  = new HTTPResource(httpClient, pair.getFirst());
                 try (final InputStream in = new BufferedInputStream(from.getInputStream());
                      final OutputStream out =  new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
@@ -235,7 +236,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     in.transferTo(out);
 
                 } catch (final IOException e) {
-                    log.error("Could not copy from {} to {}",  from, to, e);
+                    LOG.error("Could not copy from {} to {}",  from, to, e);
                     throw new BuildException(e);
                 }
             }
@@ -259,18 +260,18 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
                final ServiceLoader<PluginDescription> plugins = ServiceLoader.load(PluginDescription.class, loader);
                for (final PluginDescription plugin:plugins) {
-                   log.debug("Found Service announcing itself as {}", plugin.getPluginId() );
+                   LOG.debug("Found Service announcing itself as {}", plugin.getPluginId() );
                    if (pluginId.equals(plugin.getPluginId())) {
                        description = plugin;
                        return;
                    }
-                   log.trace("Did not match {}", pluginId);
+                   LOG.trace("Did not match {}", pluginId);
                }
            }
-           log.error("Could not locate description for {} in distribution {}", pluginId, libDir);
+           LOG.error("Could not locate description for {} in distribution {}", pluginId, libDir);
            throw new BuildException("Could not locate PluginDescription");
         } catch (final IOException e) {
-            log.error("Could not get description of {} from {}", pluginId, libDir, e);
+            LOG.error("Could not get description of {} from {}", pluginId, libDir, e);
             throw new BuildException(e);
         }
     }
@@ -282,7 +283,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         for (final Path p : description.getFilePathsToCopy()) {
             for (final String disallowedPath : disallowedPaths) {
                 if (p.startsWith(disallowedPath)) {
-                    log.error("Path {} contained disallowed location", p);
+                    LOG.error("Path {} contained disallowed location", p);
                     throw new BuildException("Copy to banned location");
                 }
             }
@@ -290,22 +291,22 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             final Path from = distribution.resolve(p);
             final Path to = idpHome.resolve(p);
             if (Files.exists(to)) {
-                log.debug("File {} exists, skipping", to);
+                LOG.debug("File {} exists, skipping", to);
                 continue;
             }
             if (!Files.exists(from)) {
-                log.warn("Source File {} does not exists, skipping", from);
+                LOG.warn("Source File {} does not exists, skipping", from);
                 continue;
             }
             try {
                 createParent(to);
-                log.debug("Copying from {} to {}", from, to);
+                LOG.debug("Copying from {} to {}", from, to);
                 try (final InputStream in = new BufferedInputStream(new FileInputStream(from.toFile()));
                      final OutputStream out =  new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
                     in.transferTo(out);
                 }
             } catch (final IOException e) {
-                log.error("Could not copy from {} to {}",  from, to, e);
+                LOG.error("Could not copy from {} to {}",  from, to, e);
                 throw new BuildException(e);
             }
         }
@@ -319,13 +320,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void createParent(final Path file) throws IOException, BuildException {
         final Path parent = file.resolve("..");
         if (!Files.exists(parent)) {
-            log.debug("Creating parent directory {}", parent);
+            LOG.debug("Creating parent directory {}", parent);
             Files.createDirectories(parent);
         } else if (!Files.isDirectory(parent)) {
-            log.error("{} exists and is not a directory", parent);
+            LOG.error("{} exists and is not a directory", parent);
             throw new BuildException("Parent of target file was not a directory");
         } else {
-            log.trace("Parent directory {} existed", parent);
+            LOG.trace("Parent directory {} existed", parent);
         }  
     }
 
@@ -336,7 +337,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void installWebapp(final Path myWebApp) throws BuildException {
         final Path from = distribution.resolve("edit-webapp");
-        log.debug("Copying distribution from {} to {}", from, myWebApp);
+        LOG.debug("Copying distribution from {} to {}", from, myWebApp);
         final Copy copy = InstallerSupport.getCopyTask(from, myWebApp);
         copy.execute();
     }
@@ -354,7 +355,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             download(baseResource, fileName);
             download(baseResource, fileName + ".asc");
         } catch (final IOException e) {
-            log.error("Error in download", e);
+            LOG.error("Error in download", e);
             throw new BuildException(e);
         }
     }
@@ -362,11 +363,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Build the Http Client if it doesn't exist. */
     private void buildHttpClient() {
         if (httpClient == null) {
-            log.debug("No HttpClient built, creating default");
+            LOG.debug("No HttpClient built, creating default");
             try {
                 httpClient = new HttpClientBuilder().buildClient();
             } catch (final Exception e) {
-                log.error("Could not create HttpClient", e);
+                LOG.error("Could not create HttpClient", e);
                 throw new BuildException(e);
             }
         }
@@ -380,7 +381,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void download(final Resource baseResource, final String fileName) throws IOException {
         final Resource fileResource = baseResource.createRelativeResource(fileName);
         final Path filePath = downloadDirectory.resolve(fileName);
-        log.debug("Downloading from {} to {}", fileResource.getDescription(), filePath);
+        LOG.debug("Downloading from {} to {}", fileResource.getDescription(), filePath);
         try (final OutputStream fileOut = new BufferedOutputStream(
                 new FileOutputStream(filePath.toFile()))) {
             fileResource.getInputStream().transferTo(fileOut);
@@ -404,20 +405,20 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 ArchiveEntry entry = null;
                 while ((entry = inStream.getNextEntry()) != null) {
                     if (!inStream.canReadEntryData(entry)) {
-                        log.warn("Could not read next entry from {}", inStream);
+                        LOG.warn("Could not read next entry from {}", inStream);
                         continue;
                     }
                     final File output = unpackDirectory.resolve(entry.getName()).toFile();
-                    log.trace("Unpacking {} to {}", entry.getName(), output);
+                    LOG.trace("Unpacking {} to {}", entry.getName(), output);
                     if (entry.isDirectory()) {
                         if (!output.isDirectory() && !output.mkdirs()) {
-                            log.error("Failed to create directory {}", output);
+                            LOG.error("Failed to create directory {}", output);
                             throw new BuildException("failed to create unpacked directory");
                         }
                     } else {
                         final File parent = output.getParentFile();
                         if (!parent.isDirectory() && !parent.mkdirs()) {
-                            log.error("Failed to create parent directory {}", parent);
+                            LOG.error("Failed to create parent directory {}", parent);
                             throw new BuildException("failed to create unpacked directory");
                         }
                         try (OutputStream outStream = Files.newOutputStream(output.toPath())) {
@@ -429,12 +430,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             try (final DirectoryStream<Path> unpackDirStream = Files.newDirectoryStream(unpackDirectory)) {
                 final Iterator<Path> contents = unpackDirStream.iterator();
                 if (!contents.hasNext()) {
-                    log.error("No contents unpacked from {}", fullName);
+                    LOG.error("No contents unpacked from {}", fullName);
                     throw new BuildException("Distro was empty");
                 }
                 distribution = contents.next();
                 if (contents.hasNext()) {
-                    log.error("Too many packages in distributions {}", fullName);
+                    LOG.error("Too many packages in distributions {}", fullName);
                     throw new BuildException("Too many packages in distributions");
                 }
             }
@@ -451,14 +452,14 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private boolean isZip(final String fileName) throws BuildException {
         if (fileName.length() <= 7) {
-            log.error("Improbably small file name: {}", fileName);
+            LOG.error("Improbably small file name: {}", fileName);
             throw new BuildException("Improbably small file name");
         }
         if (".zip".equalsIgnoreCase(fileName.substring(fileName.length()-4))) {
             return true;
         }
         if (!".tar.gz".equalsIgnoreCase(fileName.substring(fileName.length()-7))) {
-            log.warn("FileName {} did not end with .zip or .tar.gz, assuming tar-gz", fileName);
+            LOG.warn("FileName {} did not end with .zip or .tar.gz, assuming tar-gz", fileName);
         }
         return false;
     }
@@ -483,7 +484,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void setupPluginId() throws BuildException {
         final File propertyFile = distribution.resolve("bootstrap").resolve("id.property").toFile();
         if (!propertyFile.exists()) {
-            log.error("Could not locate identity of plugin at {}", propertyFile);
+            LOG.error("Could not locate identity of plugin at {}", propertyFile);
             throw new BuildException("Could not locate identity of plugin");
         }
         try (final InputStream inStream = new BufferedInputStream(new FileInputStream(propertyFile))) {
@@ -491,16 +492,16 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             idProperties.load(inStream);
             final String id = StringSupport.trimOrNull(idProperties.getProperty("pluginid"));
             if (id == null) {
-                log.error("identity property file {} did not contain 'pluginid' property", propertyFile);
+                LOG.error("identity property file {} did not contain 'pluginid' property", propertyFile);
                 throw new BuildException("No property in ID file");
             }
             if (pluginId != null && !pluginId.equals(id)) {
-                log.error("Downloaded plugin id {} overriden by provided id {}", id, pluginId);
+                LOG.error("Downloaded plugin id {} overriden by provided id {}", id, pluginId);
             } else {
                 setPluginId(id);
             }
         } catch (final IOException e) {
-            log.error("Could not load plugin identity at {}", propertyFile, e);
+            LOG.error("Could not load plugin identity at {}", propertyFile, e);
             throw new BuildException(e);
         }
     }
@@ -519,10 +520,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             trust.initialize();
             final Signature sig = TrustStore.signatureOf(sigStream);
             if (!trust.contains(sig)) {
-                log.info("TrustStore does not contain signature {}", sig);
+                LOG.info("TrustStore does not contain signature {}", sig);
                 final File certs = distribution.resolve("bootstrap").resolve("keys.txt").toFile();
                 if (!certs.exists()) {
-                    log.info("No embedded keys file, signature check fails");
+                    LOG.info("No embedded keys file, signature check fails");
                     throw new BuildException("No Certificate found to check signiture o distribution");
                 }
                 try (final InputStream keysStream = new BufferedInputStream(
@@ -530,7 +531,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     trust.importCertificateFromStream(sig, keysStream, acceptCert);
                 }
                 if (!trust.contains(sig)) {
-                    log.info("Certificate not added to Trust Store");
+                    LOG.info("Certificate not added to Trust Store");
                     throw new BuildException("Could not check signature of distribution");
                 }
             }
@@ -538,13 +539,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             try (final InputStream distroStream = new BufferedInputStream(
                 new FileInputStream(base.resolve(fileName).toFile()))) {
                 if (!trust.checkSignature(distroStream, sig)) {
-                    log.info("Signature checked for {} failed", fileName);
+                    LOG.info("Signature checked for {} failed", fileName);
                     throw new BuildException("Signature check failed");
                 }
             }
 
         } catch (final ComponentInitializationException | IOException e) {
-            log.error("Could not manage truststore for [{}, {}] ", idpHome, pluginId, e);
+            LOG.error("Could not manage truststore for [{}, {}] ", idpHome, pluginId, e);
             throw new BuildException(e);
         }
     }
@@ -582,11 +583,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Delete a directory tree. 
      * @param directory what to delete
      */
-    private void deleteTree(@Nullable final Path directory) {
+    public static void deleteTree(@Nullable final Path directory) {
         if (directory == null || !Files.exists(directory)) {
             return;
         }
-        log.debug("Deleting directory {}", directory);
+        LOG.debug("Deleting directory {}", directory);
         try {
             Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override 
@@ -604,7 +605,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 }
             });
         } catch (final IOException e) {
-            log.error("Couldn't delete {}", directory, e);
+            LOG.error("Couldn't delete {}", directory, e);
         }
     }
     
