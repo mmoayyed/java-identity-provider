@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="shibboleth.Conditions.FALSE"
+        class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
+    <bean id="shibboleth.Conditions.TRUE"
+        class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
+    
+    <bean id="shibboleth.Conditions.AND"
+        class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="and" abstract="true" />
+    <bean id="shibboleth.Conditions.NOT"
+        class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="not" abstract="true" />
+    <bean id="shibboleth.Conditions.OR"
+        class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="or" abstract="true" />
+
+    <bean id="shibboleth.BiConditions.AND"
+        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="and" abstract="true" />
+    <bean id="shibboleth.BiConditions.NOT"
+        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="not" abstract="true" />
+    <bean id="shibboleth.BiConditions.OR"
+        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="or" abstract="true" />
+    
+    <bean id="shibboleth.Conditions.BrowserProfile"
+        class="org.opensaml.profile.logic.BrowserProfilePredicate" />
+    <bean id="shibboleth.Conditions.RelyingPartyId"
+        class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.Scripted"
+        class="net.shibboleth.idp.profile.logic.ScriptedPredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.Expression"
+        class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
+
+    <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
+    <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
+        class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
+        c:objectStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty" />
+
+    <!-- Parent bean for building predicates acting over a candidate c14n Subject based on proxy authn. -->
+    <bean id="shibboleth.Conditions.ProxyAuthentication" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean parent="shibboleth.Functions.Compose">
+                <constructor-arg name="g">
+                    <bean class="net.shibboleth.idp.authn.context.navigate.ProxyAuthenticationLookupFunction" />
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.SubjectCanonicalizationContext" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <!-- Parent bean for building custom predicates that act on the principal name of the Subject. -->
+    <bean id="shibboleth.Conditions.SubjectName" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean parent="shibboleth.Functions.Compose"
+                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        </constructor-arg>
+    </bean>
+    
+    
+    <bean id="shibboleth.Conditions.IssuingDelegatedAssertion"
+        class="net.shibboleth.idp.saml.saml2.profile.delegation.IssuingDelegatedAssertionPredicate" />
+    <bean id="shibboleth.Conditions.AllowedSAMLPresenters" abstract="true"
+        class="net.shibboleth.idp.saml.profile.config.logic.AllowedSAMLPresentersPredicate" />
+    
+</beans>

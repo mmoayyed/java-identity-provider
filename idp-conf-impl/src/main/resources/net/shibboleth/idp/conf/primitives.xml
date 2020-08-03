@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- Low-level helpers. -->
+
+    <bean id="shibboleth.Pair" class="net.shibboleth.utilities.java.support.collection.Pair" abstract="true" />
+    
+    <bean id="shibboleth.CommaDelimStringArray"
+        class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray" abstract="true" />
+            
+    <!-- Parent bean for indirecting a lookup into a managed/reloadable bean. -->
+    
+    <bean id="shibboleth.ManagedBean" abstract="true"
+        class="net.shibboleth.ext.spring.factory.ProxiedFactoryBean"
+        c:service-ref="shibboleth.ManagedBeanService" />
+
+    <!-- TrustEngine helpers. -->
+        
+    <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean" />
+    
+    <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean" />
+        
+    <bean id="shibboleth.X509TrustManager" abstract="true"
+        class="org.opensaml.security.trust.impl.TrustEngineX509TrustManager" />
+
+    <!-- Beans for user-visible metadata configuration usage. -->
+
+    <!-- Secondary indexing support -->
+    <bean id="shibboleth.Metadata.Index.SAMLArtifact" lazy-init="true"
+        class="org.opensaml.saml.metadata.resolver.index.impl.SAMLArtifactMetadataIndex" />
+
+    <!-- Note: By default this indexes all endpoints under all roles.
+         To index more selectively by role and endpoint name/type, use the predicate below. -->
+    <bean id="shibboleth.Metadata.Index.Endpoint" lazy-init="true"
+        class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex" />
+
+    <!-- By default this predicate selects no endpoints to index.
+         So this would typically be used only as a parent bean, with an added ctor param.
+         This would be a Map<QName, Set<QName>> (RoleDescriptor element/type -> Endpoint(s) element/type),
+         either as a single ctor param or as a named ctor param c:indexableTypes. -->
+    <bean id="shibboleth.Metadata.Index.Endpoint.Predicate.ByRoleAndEndpoint" lazy-init="true"
+        class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex.DefaultEndpointSelectionPredicate" />
+
+</beans>

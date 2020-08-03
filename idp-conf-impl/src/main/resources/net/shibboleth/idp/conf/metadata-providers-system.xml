@@ -45,4 +45,8 @@
         </property>
     </bean>
     
+    <!-- Metadata Query Protocol (MDQ) artifact support. -->
+    <bean id="shibboleth.Metadata.MDQ.URLBuilder.SAMLArtifact" lazy-init="true"
+        class="org.opensaml.saml.metadata.resolver.impl.SAMLArtifactURLBuilder" />
+    
 </beans>

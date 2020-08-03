@@ -17,6 +17,18 @@
     <alias alias="SOAPClient.SAML.HttpClient" name="SOAPClient.HttpClient" />
     
 
+    <!-- Security Configuration lookup -->
+
+    <bean id="shibboleth.MessageContext.SignatureValidationConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.messaging.SignatureValidationConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+    <bean id="shibboleth.MessageContext.SignatureSigningConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.messaging.SignatureSigningConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+    <bean id="shibboleth.MessageContext.HttpClientSecurityConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.messaging.HttpClientSecurityConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+
     <!-- SOAP client and pipeline factory definitions. -->
          
     <bean id="SOAPClient.SAML.LocatorMap" class="org.opensaml.soap.client.http.PipelineFactoryHttpSOAPClient">
