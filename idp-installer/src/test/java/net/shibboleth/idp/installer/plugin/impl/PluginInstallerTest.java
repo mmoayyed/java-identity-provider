@@ -18,6 +18,8 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,7 +27,9 @@ import java.nio.file.Path;
 import java.security.Security;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -69,8 +73,11 @@ public class PluginInstallerTest extends BasePluginTest {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
             inst.initialize();
-            List<PluginDescription> plugins = inst.getInstalledPlugins();
-            assertEquals(plugins.get(0).getPluginId(), "org.example.Plugin");
+            final Map<String, Object> result = inst.getInstalledPlugins().stream().collect(Collectors.toMap(PluginDescription::getPluginId,
+                    e->e));
+            
+            assertTrue(result.containsKey("org.example.Plugin"));
+            assertTrue(result.containsKey("net.shibboleth.plugin.test"));
         }
     }
     
