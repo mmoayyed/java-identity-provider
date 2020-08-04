@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.installer.plugin.impl;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
