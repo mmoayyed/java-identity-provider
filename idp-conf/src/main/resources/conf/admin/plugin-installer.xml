@@ -9,7 +9,7 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <!-- 
-    <bean id=" MyHttpClient" parent="shibboleth.HttpClientFactory"/>
-    --> 
+    <!--
+    <bean id="MyHttpClient" parent="shibboleth.HttpClientFactory"/>
+    -->
 </beans>

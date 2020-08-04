@@ -20,6 +20,7 @@ package net.shibboleth.idp.installer.plugin;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Security;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,8 +35,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
@@ -118,9 +117,9 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
     
     /** {@inheritDoc} */
     protected List<Resource> getAdditionalSpringResources() {
-        return List.of(
-                new ClassPathResource("net/shibboleth/idp/installer/plugin/patchResources.xml"),
-                new FileSystemResource(idpHome.resolve("conf").resolve("global.xml")));
+        return Collections.emptyList();
+        // return List.of(
+        //        new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
     
     /** {@inheritDoc} */
