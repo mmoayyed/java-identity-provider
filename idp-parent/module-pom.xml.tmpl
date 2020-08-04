@@ -30,5 +30,18 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <scm>
+        <connection>${shibboleth.scm.connection}java-identity-provider</connection>
+        <developerConnection>${shibboleth.scm.developerConnection}java-identity-provider</developerConnection>
+        <url>${shibboleth.scm.url}java-identity-provider.git</url>
+    </scm>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>
