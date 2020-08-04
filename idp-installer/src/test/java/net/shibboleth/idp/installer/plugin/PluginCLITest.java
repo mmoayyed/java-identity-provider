@@ -65,19 +65,19 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testLocal() {
+    @Test(enabled = true) public void testWrong() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "-i", "a"}),
                 AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
+    @Test(enabled = false, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
                     "-i", RHINO_DISTRO,
                     "-p", "net.shibboleth.idp.plugin.rhino"}),
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testRhinoLocal() {
+    @Test(enabled = false) public void testRhinoLocal() {
         Path unpack = null;
         try {
             unpack = Files.createTempDirectory("rhinoLocal");
