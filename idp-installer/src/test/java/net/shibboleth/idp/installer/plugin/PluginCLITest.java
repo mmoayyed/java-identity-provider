@@ -50,18 +50,11 @@ public class PluginCLITest extends BasePluginTest {
     @BeforeSuite public void setUp() throws IOException
     {
         System.setProperty("net.shibboleth.idp.cli.idp.home",getIdpHome().toString());
-        final Resource pluginInstaller = new ClassPathResource("conf/admin/plugin-installer.xml");
         plugin = getIdpHome().resolve("conf").resolve("admin").resolve("plugin-installer.xml").toFile();
-        plugin.createNewFile();
-        
-        try (final InputStream is = pluginInstaller.getInputStream();
-             final BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(plugin))) {
-            is.transferTo(os);
-        }
     }
 
     @Test(enabled = true) public void testList() throws IOException {
-        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "-fl"}),
+        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "-fl", } ),
                 AbstractCommandLine.RC_OK);
     }
 

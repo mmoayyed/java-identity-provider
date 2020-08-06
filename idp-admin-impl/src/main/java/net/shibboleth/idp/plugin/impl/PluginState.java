@@ -223,7 +223,7 @@ public class PluginState extends AbstractInitializableComponent {
         
         try {
             final Properties props = new Properties();
-            log.info("Loading properties from {}", propertyResource.getDescription());
+            log.debug("Loading properties from {}", propertyResource.getDescription());
             props.load(propertyResource.getInputStream());
             final String name = plugin.getPluginId() + PluginSupport.AVAILABLE_VERSIONS_PROPERTY_SUFFIX;
             final String availableVersions = StringSupport.trim(props.getProperty(name));
