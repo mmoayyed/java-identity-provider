@@ -43,9 +43,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 /**
  * Derivation of SWF-supplied resource factory for flow definitions.
  * 
- * <p>
- * This implementation overrides the behavior of the built-in factory with regard to handling absolute paths while still
- * supporting relative paths.
+ * <p>This implementation overrides the behavior of the built-in factory with regard to handling
+ * absolute paths while still supporting relative paths.</p>
  */
 public class FlowDefinitionResourceFactory {
 
@@ -90,19 +89,22 @@ public class FlowDefinitionResourceFactory {
         Constraint.isNotEmpty(path, "Flow path cannot be null or empty");
         Constraint.isNotEmpty(flowId, "Flow ID cannot be null or empty");
         
-        final Resource resource;
+        Resource resource;
         if (basePath == null || isAbsolute(path)) {
             resource = resourceLoader.getResource(path);
         } else {
-            try {
-                String localBasePath = basePath;
-                if (!localBasePath.endsWith(SLASH)) {
-                    // the basePath must end with a slash to create a relative resource
-                    localBasePath = basePath + SLASH;
+            resource = resourceLoader.getResource(path);
+            if (!resource.exists()) {
+                try {
+                    String localBasePath = basePath;
+                    if (!localBasePath.endsWith(SLASH)) {
+                        // the basePath must end with a slash to create a relative resource
+                        localBasePath = basePath + SLASH;
+                    }
+                    resource = resourceLoader.getResource(localBasePath).createRelative(path);
+                } catch (final IOException e) {
+                    throw new IllegalStateException("The base path cannot be resolved from '" + basePath + "'", e);
                 }
-                resource = resourceLoader.getResource(localBasePath).createRelative(path);
-            } catch (final IOException e) {
-                throw new IllegalStateException("The base path cannot be resolved from '" + basePath + "'", e);
             }
         }
         
