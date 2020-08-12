@@ -243,7 +243,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        recordSuccess();
+        recordSuccess(profileRequestContext);
         
         if (transcoderRegistry != null) {
             processAttributes(profileRequestContext);
