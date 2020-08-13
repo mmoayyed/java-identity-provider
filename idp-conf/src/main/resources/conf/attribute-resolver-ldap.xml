@@ -82,15 +82,19 @@
             expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
     </DataConnector>
 
-    <!-- DataConnector for pairwise-id (example depends on saml-nameid.properties). -->
-
+    <!--
+    DataConnector for pairwise-id (example depends in part on saml-nameid.properties).
+    Note that this relies on BASE32 encoding in accordance with the attribute definition.
+    Older uses of this plugin for legacy eduPersonTargetedID/NameID values may require
+    different settings.
+    -->
 <!-- 
     <DataConnector id="computed" xsi:type="ComputedId"
         excludeResolutionPhases="c14n/attribute"
 	    generatedAttributeID="computedId"
 	    salt="%{idp.persistentId.salt}"
 	    algorithm="%{idp.persistentId.algorithm:SHA}"
-        encoding="%{idp.persistentId.encoding:BASE32}">
+        encoding="BASE32">
 	    
         <InputDataConnector ref="myLDAP" attributeNames="%{idp.persistentId.sourceAttribute}" />
         
