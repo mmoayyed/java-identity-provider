@@ -111,7 +111,7 @@
 
     <bean id="PopulateInboundInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
-            p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.InboundFlowsLookupFunction" />
         </property>
@@ -229,7 +229,7 @@
 
     <bean id="PopulatePostAuthnInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
-            p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
         </property>
@@ -288,7 +288,7 @@
 
     <bean id="PopulateOutboundInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
-            p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.OutboundFlowsLookupFunction" />
         </property>

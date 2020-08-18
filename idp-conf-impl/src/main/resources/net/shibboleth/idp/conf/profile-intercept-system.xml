@@ -14,6 +14,12 @@
 
     <import resource="${idp.home}/conf/intercept/profile-intercept.xml" />
 
+    <!-- Management bean to collect and expose AuthenticationFlowDescriptors. -->
+    
+    <bean id="shibboleth.ProfileInterceptorFlowDescriptorManager"
+        class="net.shibboleth.idp.profile.interceptor.impl.ProfileInterceptorFlowDescriptorManager"
+        p:components="#{getObject('shibboleth.AvailableInterceptFlows')}" />
+
     <!-- Parent bean for intercept interceptor flows. -->
     <bean id="shibboleth.InterceptFlow" abstract="true"
         class="net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor" />
