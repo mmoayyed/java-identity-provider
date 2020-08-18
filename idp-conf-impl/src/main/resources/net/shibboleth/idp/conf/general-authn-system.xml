@@ -15,6 +15,12 @@
 	<import resource="${idp.home}/conf/authn/authn-comparison.xml" />
 	<import resource="${idp.home}/conf/authn/general-authn.xml" />
 
+    <!-- Management bean to collect and expose AuthenticationFlowDescriptors. -->
+    
+    <bean id="shibboleth.AuthenticationFlowDescriptorManager"
+        class="net.shibboleth.idp.authn.impl.AuthenticationFlowDescriptorManager"
+        p:components="#{getObject('shibboleth.AvailableAuthenticationFlows')}" />
+
     <!-- A parent bean to default some of the flow boilerplate. -->
 
     <bean id="shibboleth.AuthenticationFlow" abstract="true"
