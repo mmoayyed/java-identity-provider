@@ -73,15 +73,15 @@ public final class PluginVersion implements Comparable<PluginVersion>{
     public PluginVersion(final int maj, final int min, final int pat) throws NumberFormatException {
         major = maj;
         if (maj < 0 || maj >= MAX_VNO) {
-            throw new NumberFormatException("Improbably version number : " + maj);
+            throw new NumberFormatException("Improbable major version number : " + maj);
         }
         minor = min;
         if (min < 0 || min >= MAX_VNO) {
-            throw new NumberFormatException("Improbably version number : " + min);
+            throw new NumberFormatException("Improbable minor version number : " + min);
         }
         patch = pat;
         if (pat < 0 || pat >= MAX_VNO) {
-            throw new NumberFormatException("Improbably version number : " + pat);
+            throw new NumberFormatException("Improbable patch version number : " + pat);
         }
     }
 
@@ -123,7 +123,7 @@ public final class PluginVersion implements Comparable<PluginVersion>{
     private int parseValue(final String valueAsString) throws NumberFormatException{
         final int value = Integer.parseInt(valueAsString);
         if (value < 0 || value >= MAX_VNO) {
-            throw new NumberFormatException("Improbably version number : " + value);
+            throw new NumberFormatException("Improbable version number : " + value);
         }
         return value;
     }
