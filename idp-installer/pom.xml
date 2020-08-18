@@ -21,121 +21,136 @@
     </properties>
 
     <dependencies>
-        <!-- Compile Dependencies -->
-        <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-compress</artifactId>
-          <version>1.20</version>
-        </dependency>
-        
+        <!-- Provided Dependencies - All dependencies are provided, reflecting the fact that
+             IdP Distribution has to pull them together and all the installer stuff has a carefully
+             constructed classpath. -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-admin-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-admin-impl</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-spring</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.shibboleth.ext</groupId>
             <artifactId>spring-extensions</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.shibboleth.utilities</groupId>
             <artifactId>java-support</artifactId>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <scope>compile</scope><!-- normally runtime -->
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <scope>compile</scope><!-- normally runtime -->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-launcher</artifactId>
-            <scope>compile</scope><!-- normally runtime -->
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpg-jdk15on</artifactId>
             <version>${bouncycastle.version}</version>
+            <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
 	   </dependency>
 
        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- Provided Dependencies -->
-
-        <!-- Runtime Dependencies -->
-
+        <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+          <version>${commons.compress.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>

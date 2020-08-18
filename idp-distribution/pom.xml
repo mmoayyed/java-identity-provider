@@ -47,6 +47,22 @@
             <optional>true</optional>
             <scope>runtime</scope>
         </dependency>
+
+        <!--  For the installers -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+          <version>${commons.compress.version}</version>
+          <scope>runtime</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
@@ -172,6 +188,14 @@
                                 <artifactItem>
                                     <groupId>org.bouncycastle</groupId>
                                     <artifactId>bcpkix-jdk15on</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.bouncycastle</groupId>
+                                    <artifactId>bcpg-jdk15on</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-compress</artifactId>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.ant</groupId>
