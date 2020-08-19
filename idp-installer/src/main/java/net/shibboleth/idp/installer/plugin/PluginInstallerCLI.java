@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +45,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.idp.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Command line for Plugin Installation.
@@ -159,6 +161,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     private void constructPluginInstaller() throws ComponentInitializationException {
         installer= new PluginInstaller();
         installer.setIdpHome(getIdpHome());
+        installer.setAcceptCert(new TrustStoreQuery());
         if (httpClient!= null) {
             installer.setHttpClient(httpClient);
         }
@@ -241,5 +244,19 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     public static void main(@Nonnull final String[] args) {
         System.exit(runMain(args));
     }
+    
+    /** Predicate to ask the user if they want to install the trust store provided. */
+    private class TrustStoreQuery implements Predicate<String> {
 
+        /** {@inheritDoc} */
+        public boolean test(final String certString) {
+            String result = null;
+            while (result == null) {
+                System.console().printf("Accept this Certificate:\n%s [yN]", certString);
+                System.console().flush();
+                result  = StringSupport.trimOrNull(System.console().readLine());
+            }
+            return "y".equalsIgnoreCase(result.substring(0, 1));
+        }
+    }
 }
