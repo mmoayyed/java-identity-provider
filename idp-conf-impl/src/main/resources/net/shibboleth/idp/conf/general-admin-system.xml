@@ -12,9 +12,70 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="${idp.home}/conf/admin/general-admin.xml" />
+    <import resource="conditional:${idp.home}/conf/admin/general-admin.xml" />
     <import resource="${idp.home}/conf/admin/metrics.xml" />
     <import resource="conditional:${idp.home}/conf/admin/unlock-keys.xml" />
+
+    <!-- Management bean to collect and expose AdministrativeFlowDescriptors. -->
+    
+    <bean id="shibboleth.AdministrativeFlowDescriptorManager"
+        class="net.shibboleth.idp.admin.impl.AdministrativeFlowDescriptorManager"
+        p:components="#{getObject('shibboleth.AvailableAdminFlows')}" />
+
+    <!-- Built-in flow descriptors. -->
+    
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/status"
+        p:loggingId="%{idp.status.logging:Status}"
+        p:policyName="%{idp.status.accessPolicy:AccessByIPAddress}" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/reload-service-configuration"
+        p:loggingId="%{idp.reload.logging:Reload}"
+        p:policyName="%{idp.reload.accessPolicy:AccessByIPAddress}" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/reload-metadata"
+        p:loggingId="%{idp.reload.logging:Reload}"
+        p:policyName="%{idp.reload.accessPolicy:AccessByIPAddress}" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/resolvertest"
+        p:loggingId="%{idp.resolvertest.logging:ResolverTest}"
+        p:policyName="%{idp.resolvertest.accessPolicy:AccessByIPAddress}" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/mdquery"
+        p:loggingId="%{idp.mdquery.logging:MetadataQuery}"
+        p:policyName="%{idp.mdquery.accessPolicy:AccessByIPAddress}" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/metrics"
+        p:loggingId="%{idp.metrics.logging:Metrics}"
+        p:policyNameLookupStrategy-ref="shibboleth.metrics.AccessPolicyStrategy" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/hello"
+        p:loggingId="%{idp.hello.logging:Hello}"
+        p:policyName="%{idp.hello.accessPolicy:AccessByAdminUser}"
+        p:authenticated="true"
+        p:resolveAttributes="true" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/lockout-manager"
+        p:loggingId="%{idp.lockout.logging:Lockout}"
+        p:policyName="%{idp.lockout.accessPolicy:AccessDenied}" />
+
+    <bean parent="shibboleth.AdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/storage"
+        p:loggingId="%{idp.storage.logging:Storage}"
+        p:policyName="%{idp.storage.accessPolicy:AccessDenied}" />
+
+    <bean parent="shibboleth.OneTimeAdminFlow"
+        c:id="http://shibboleth.net/ns/profiles/unlock-keys"
+        p:loggingId="%{idp.unlock.logging:UnlockKeys}"
+        p:policyName="%{idp.unlock.accessPolicy:AccessDenied}"
+        p:authenticated="%{idp.unlock.authenticated:true}" />
 
     <!-- Parent beans to default some of the flow boilerplate. -->
 

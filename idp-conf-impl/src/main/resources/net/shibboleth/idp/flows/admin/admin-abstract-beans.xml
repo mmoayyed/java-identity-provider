@@ -36,7 +36,7 @@
     <bean id="InitializeAdministrativeProfileContextTree"
             class="net.shibboleth.idp.admin.impl.InitializeAdministrativeProfileContextTree" scope="prototype"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-            p:administrativeFlowDescriptor="#{@'shibboleth.AvailableAdminFlows'.?[id == @'shibboleth.AdminProfileId']}">
+            p:administrativeFlowDescriptor="#{@'shibboleth.AdministrativeFlowDescriptorManager'.getComponents().?[id == @'shibboleth.AdminProfileId']}">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>
