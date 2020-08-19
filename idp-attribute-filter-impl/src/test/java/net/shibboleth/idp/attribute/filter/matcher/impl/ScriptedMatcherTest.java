@@ -51,6 +51,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 /** {@link ScriptedMatcher} unit test. */
+@SuppressWarnings("javadoc")
 public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     /** A script that returns a set that contains the one of values the attribute. */

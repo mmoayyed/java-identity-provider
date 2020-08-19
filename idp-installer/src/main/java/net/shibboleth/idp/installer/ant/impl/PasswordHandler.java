@@ -47,18 +47,16 @@ public class PasswordHandler extends SecureInputHandler {
 
             // set up
             saveProps.replaceProperty(propertyName, password);
-
-            // save
-            final ByteArrayOutputStream saveStream = new ByteArrayOutputStream();
-            saveProps.store(saveStream);
-
-            // reload
             final Properties loadProps = new Properties();
-            final ByteArrayInputStream loadStream = new ByteArrayInputStream(saveStream.toByteArray());
-            saveStream.close();
-            loadProps.load(loadStream);
-            loadStream.close();
 
+            try (final ByteArrayOutputStream saveStream = new ByteArrayOutputStream()) {
+                saveProps.store(saveStream);
+    
+                // reload
+                try(final ByteArrayInputStream loadStream = new ByteArrayInputStream(saveStream.toByteArray())) {
+                    loadProps.load(loadStream);
+                }
+            }
             // test
             return password.equals(loadProps.getProperty(propertyName));
         } catch (final IOException e) {

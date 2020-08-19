@@ -115,6 +115,7 @@ public class SubjectDataConnectorTest {
         assertTrue(copy.getValues().contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
 
+    @SuppressWarnings("removal")
     @Test public void emptyOk() throws ComponentInitializationException, ResolutionException {
 
         final SubjectDataConnector defn = new SubjectDataConnector();
@@ -135,6 +136,7 @@ public class SubjectDataConnectorTest {
         assertTrue(results.isEmpty());
     }
 
+    @SuppressWarnings("removal")
     @Test(expectedExceptions=ResolutionException.class)
     public void emptyError() throws ComponentInitializationException, ResolutionException {
 

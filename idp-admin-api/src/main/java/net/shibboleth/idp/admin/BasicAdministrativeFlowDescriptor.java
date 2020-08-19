@@ -564,8 +564,8 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
                 @Positive final int w) {
             super(url, lang);
             
-            height = (int) Constraint.isGreaterThan(0, h, "Height must be greater than zero.");
-            width = (int) Constraint.isGreaterThan(0, w, "Width must be greater than zero.");
+            height = Constraint.isGreaterThan(0, h, "Height must be greater than zero.");
+            width = Constraint.isGreaterThan(0, w, "Width must be greater than zero.");
         }
 
         /**

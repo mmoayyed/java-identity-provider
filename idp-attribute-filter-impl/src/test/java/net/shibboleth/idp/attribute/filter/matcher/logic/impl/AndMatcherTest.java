@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link AndMatcher} unit test. */
+@SuppressWarnings("javadoc")
 public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @BeforeClass public void setup() throws Exception {

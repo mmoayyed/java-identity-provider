@@ -35,7 +35,7 @@ public class AuthenticationFlowDescriptorManager extends IdentifiedComponentMana
     /**
      * Constructor.
      *
-     * @param freeObjects
+     * @param freeObjects  free-standing objects
      */
     @Autowired
     public AuthenticationFlowDescriptorManager(

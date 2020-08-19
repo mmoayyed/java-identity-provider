@@ -190,6 +190,7 @@ public class AttributeResolverImplTest {
         assertEquals(context.getResolvedIdPAttributes().get("ad1"), attribute);
     }
 
+    @SuppressWarnings("removal")
     @Test public void resolveWithExports() throws Exception {
 
         final IdPAttribute attribute1 = new IdPAttribute("ad1");

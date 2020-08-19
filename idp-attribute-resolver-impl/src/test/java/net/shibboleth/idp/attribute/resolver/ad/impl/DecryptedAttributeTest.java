@@ -54,6 +54,7 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 /** Test for {@link DecryptedAttributeDefinition}. */
+@SuppressWarnings("javadoc")
 public class DecryptedAttributeTest {
 
     private static final String TEST_ATTRIBUTE_NAME = "decrypted";
