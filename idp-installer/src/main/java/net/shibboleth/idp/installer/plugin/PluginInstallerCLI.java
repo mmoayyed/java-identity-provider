@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.installer.plugin;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Security;
 import java.util.List;
 import java.util.Map;
@@ -34,33 +32,27 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
 import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.idp.plugin.impl.PluginState.VersionInfo;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Command line for Plugin Installation.
  */
-public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstallerArguments> {
+public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<PluginInstallerArguments> {
 
     /** Class logger. */
     @Nullable private Logger log;
     
-    /** Where the IdP is installed to. */
-    @Nullable private Path idpHome;
-
     /** A Plugin Installer to use. */
     private PluginInstaller installer;
     
@@ -71,33 +63,8 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
      * Constrained Constructor.
      */
     private PluginInstallerCLI() {
-        setIdpHome(StringSupport.trimOrNull(System.getProperty("net.shibboleth.idp.cli.idp.home")));
-        setContextInitializer(this.new Initializer());
+        super();
     }
-
-    /** Set where the IdP is installed to.
-     * @param home where
-     */
-    protected void setIdpHome(@Nullable final String home) {
-        if (home == null) {
-            getLogger().error("net.shibboleth.idp.cli.idp.home propert not send.  Could not find IdP Home directory");
-            return;
-        }
-        idpHome = Path.of(home);
-        
-        if (!Files.exists(idpHome) || !Files.isDirectory(idpHome)) {
-            getLogger().error("IdP Home Directory {} did not exist or was not a directory", idpHome);
-            idpHome = null;
-        }
-    }
-    
-    /** Return where the IdP is installed to.
-     * @return the home directory.
-     */
-    @Nullable protected Path getIdpHome() {
-        return idpHome;
-    }
-
 
     /** {@inheritDoc} */
     @Override
@@ -191,7 +158,7 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
      * @throws ComponentInitializationException as required*/
     private void constructPluginInstaller() throws ComponentInitializationException {
         installer= new PluginInstaller();
-        installer.setIdpHome(idpHome);
+        installer.setIdpHome(getIdpHome());
         if (httpClient!= null) {
             installer.setHttpClient(httpClient);
         }
@@ -275,20 +242,4 @@ public final class PluginInstallerCLI extends AbstractCommandLine<PluginInstalle
         System.exit(runMain(args));
     }
 
-    /**
-     * An {@link ApplicationContextInitializer} which knows about our idp.home.
-     */
-    private class Initializer extends IdPPropertiesApplicationContextInitializer {
-
-        /** {@inheritDoc} */
-        @Override @Nonnull public String selectSearchLocation(
-                @Nonnull final ConfigurableApplicationContext applicationContext) {
-            return idpHome.toString();
-        }
-
-        /** {@inheritDoc} */
-        @Override @Nonnull public String getSearchLocation() {
-            return idpHome.toString();
-        }
-    }
 }
