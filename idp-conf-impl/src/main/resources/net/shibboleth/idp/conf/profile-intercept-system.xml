@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="${idp.home}/conf/intercept/profile-intercept.xml" />
+    <import resource="conditional:${idp.home}/conf/intercept/profile-intercept.xml" />
 
     <!-- Management bean to collect and expose AuthenticationFlowDescriptors. -->
     
@@ -20,24 +20,31 @@
         class="net.shibboleth.idp.profile.interceptor.impl.ProfileInterceptorFlowDescriptorManager"
         p:components="#{getObject('shibboleth.AvailableInterceptFlows')}" />
 
+    <!-- Internal flow descriptors with defaulted settings. -->
+    <bean p:id="intercept/security-policy/shibboleth-sso" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/security-policy/saml2-sso" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/security-policy/saml2-ecp" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/security-policy/saml2-slo" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/security-policy/saml2-idwsf-ssos" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/security-policy/saml-soap" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/context-check" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/expiring-password" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/impersonate" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/external" parent="shibboleth.InterceptFlow" />
+    <bean p:id="intercept/warning" parent="shibboleth.InterceptFlow" />    
+    <bean p:id="intercept/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
+    <bean p:id="intercept/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow" />
+
     <!-- Parent bean for intercept interceptor flows. -->
     <bean id="shibboleth.InterceptFlow" abstract="true"
         class="net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor" />
 
-    <!-- Parent bean defining built-in interceptors used for SAML security policy handling. -->
+    <!--
+    Parent bean defining built-in interceptors, it's now solely for backward compatibility
+    with the old conf/profile-intercept.xml list merging approach. May be removed at some point.
+    -->
     <bean id="shibboleth.DefaultInterceptFlows"
-            class="org.springframework.beans.factory.config.ListFactoryBean" abstract="true">
-        <property name="sourceList">
-            <list>
-                <bean id="intercept/security-policy/shibboleth-sso" parent="shibboleth.InterceptFlow" />
-                <bean id="intercept/security-policy/saml2-sso" parent="shibboleth.InterceptFlow" />
-                <bean id="intercept/security-policy/saml2-ecp" parent="shibboleth.InterceptFlow" />
-                <bean id="intercept/security-policy/saml2-slo" parent="shibboleth.InterceptFlow" />
-                <bean id="intercept/security-policy/saml2-idwsf-ssos" parent="shibboleth.InterceptFlow" />
-                <bean id="intercept/security-policy/saml-soap" parent="shibboleth.InterceptFlow" />
-            </list>
-        </property>
-    </bean>
+        class="org.springframework.beans.factory.config.ListFactoryBean" abstract="true" />
 
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
