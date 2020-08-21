@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 
@@ -157,7 +158,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
         final HttpClientContext clientContext = HttpClientContext.create();
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
         setCASTLSTrustEngineCriteria(clientContext, uri, service);
-        final HttpResponse response;
+        HttpResponse response = null;
         try {
             log.debug("Attempting to validate CAS proxy callback URI {}", uri);
             final HttpGet request = new HttpGet(uri);
@@ -175,6 +176,14 @@ public class HttpClientProxyValidator implements ProxyValidator {
             throw new GeneralSecurityException("SSL connection error", e);
         } catch (final IOException e) {
             throw new GeneralSecurityException("IO error", e);
+        } finally {
+            if (response != null && CloseableHttpResponse.class.isInstance(response)) {
+                try {
+                    CloseableHttpResponse.class.cast(response).close();
+                } catch (IOException e) {
+                    log.debug("Error closing HttpResponse", e);
+                }
+            }
         }
     }
 
