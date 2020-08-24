@@ -38,7 +38,6 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.installer.plugin.BasePluginTest;
 import net.shibboleth.idp.plugin.AbstractPluginDescription;
 import net.shibboleth.idp.plugin.PluginDescription;
-import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")
@@ -53,9 +52,9 @@ public class PluginInstallerTest extends BasePluginTest {
         }
     };
 
-    private final Predicate<Pair<URL, Path>> loggingAcceptDownLoad = new  Predicate<>() {
-        public boolean test(Pair<URL, Path> what) {
-            log.debug("Accepting the download from {} to {}", what.getFirst(), what.getSecond());
+    private final Predicate<String> loggingAcceptDownLoad = new  Predicate<>() {
+        public boolean test(String what) {
+            log.debug("Accepting the download from {} ", what);
             return true;
         }
     };
@@ -86,6 +85,7 @@ public class PluginInstallerTest extends BasePluginTest {
             inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
             final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-nashorn-dist/0.1.0/");
+            inst.setPluginId("net.shibboleth.idp.plugin.nashorn");
             inst.installPlugin(where,"idp-plugin-nashorn-dist-0.1.0.zip");
         }
     }

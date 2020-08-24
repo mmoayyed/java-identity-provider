@@ -106,7 +106,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     @Nonnull private Predicate<String> acceptCert = Predicates.alwaysFalse();
 
     /** The callback before we download a file. */
-    @Nonnull private Predicate<Pair<URL,Path>> acceptDownload = Predicates.alwaysFalse();
+    @Nonnull private Predicate<String> acceptDownload = Predicates.alwaysFalse();
     
     /** The actual distribution. */
     private Path distribution;
@@ -138,7 +138,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Set the acceptCert predicate.
      * @param what what to set.
      */
-    public void setAcceptDownload(@Nonnull final Predicate<Pair<URL,Path>> what) {
+    public void setAcceptDownload(@Nonnull final Predicate<String> what) {
         acceptDownload  = Constraint.isNotNull(what, "Accept Download Predicate should be non-null");
     }
 
@@ -222,7 +222,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     LOG.warn("{} exists, not copied", to);
                     continue;
                 }
-                if (!acceptDownload.test(new Pair<>(pair.getFirst(), to))) {
+                if (!acceptDownload.test(pair.getFirst().toExternalForm())) {
                     LOG.info("Did not download {} to {}", pair.getFirst(), to);
                     continue;
                 }

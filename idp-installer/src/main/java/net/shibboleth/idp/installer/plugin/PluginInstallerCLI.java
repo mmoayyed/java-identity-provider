@@ -45,6 +45,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.idp.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -161,7 +162,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     private void constructPluginInstaller() throws ComponentInitializationException {
         installer= new PluginInstaller();
         installer.setIdpHome(getIdpHome());
-        installer.setAcceptCert(new TrustStoreQuery());
+        installer.setAcceptCert(new InstallerQuery("Accept this Certificate"));
+        installer.setAcceptDownload(new InstallerQuery("Download from"));
         if (httpClient!= null) {
             installer.setHttpClient(httpClient);
         }
@@ -244,15 +246,27 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     public static void main(@Nonnull final String[] args) {
         System.exit(runMain(args));
     }
-    
+
     /** Predicate to ask the user if they want to install the trust store provided. */
-    private class TrustStoreQuery implements Predicate<String> {
+    private static class InstallerQuery implements Predicate<String> {
+
+        /** What to say. */
+        @Nonnull
+        private final String promptText;
+
+        /**
+         * Constructor.
+         * @param text What to say before the prompt information
+         */
+        public InstallerQuery(@Nonnull final String text) {
+            promptText = Constraint.isNotNull(text, "Text should not be null");
+        }
 
         /** {@inheritDoc} */
         public boolean test(final String certString) {
             String result = null;
             while (result == null) {
-                System.console().printf("Accept this Certificate:\n%s [yN]", certString);
+                System.console().printf("%s:\n%s [yN] ", promptText, certString);
                 System.console().flush();
                 result  = StringSupport.trimOrNull(System.console().readLine());
             }
