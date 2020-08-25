@@ -239,12 +239,12 @@ public class RemoteUserAuthServlet extends HttpServlet {
             if (subjectAttribute != null) {
                 final Object subject = httpRequest.getAttribute(subjectAttribute);
                 if (subject != null && subject instanceof Subject) {
-                    log.debug("Java Subject extracted from attribute {}: {}", subjectAttribute, subject);
+                    log.debug("{}: Java Subject extracted from attribute {}: {}", key, subjectAttribute, subject);
                     httpRequest.setAttribute(ExternalAuthentication.SUBJECT_KEY, subject);
                     ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                     return;
                 }
-                log.info("Java Subject not found in attribute {}", subjectAttribute);
+                log.info("{}: Java Subject not found in attribute {}", key, subjectAttribute);
             }
             
             String username = null;
@@ -252,7 +252,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
             if (checkRemoteUser) {
                 username = httpRequest.getRemoteUser();
                 if (username != null && !username.isEmpty()) {
-                    log.debug("User identity extracted from REMOTE_USER: {}", username);
+                    log.debug("{}: User identity extracted from REMOTE_USER: {}", key, username);
                 }
             }
             
@@ -261,7 +261,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
                     final Object attr = httpRequest.getAttribute(s);
                     if (attr != null && !attr.toString().isEmpty()) {
                         username = attr.toString();
-                        log.debug("User identity extracted from attribute {}: {}", s, username);
+                        log.debug("{}: User identity extracted from attribute {}: {}", key, s, username);
                         break;
                     }
                 }
@@ -271,14 +271,14 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 for (final String s : checkHeaders) {
                     username = httpRequest.getHeader(s);
                     if (username != null && !username.isEmpty()) {
-                        log.debug("User identity extracted from header {}: {}", s, username);
+                        log.debug("{}: User identity extracted from header {}: {}", key, s, username);
                         break;
                     }
                 }
             }
             
             if (username == null) {
-                log.info("User identity not found in request");
+                log.info("{}: User identity not found in request", key);
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
             }
@@ -314,12 +314,12 @@ public class RemoteUserAuthServlet extends HttpServlet {
                             if (!Strings.isNullOrEmpty(method)) {
                                 final Principal p = getPrincipal(authnFlow, method);
                                 if (p != null) {
-                                    log.debug("Successfully processed authentication method from header {}: {}",
-                                            authnMethodHeader, method);
+                                    log.debug("{}: Successfully processed authentication method from header {}: {}",
+                                            key, authnMethodHeader, method);
                                     subject.getPrincipals().add(p);
                                 } else {
-                                    log.warn("Unable to locate a suitable Principal for authentication method " +
-                                            "from header {}: {}", authnMethodHeader, method);
+                                    log.warn("{}: Unable to locate a suitable Principal for authentication method " +
+                                            "from header {}: {}", key, authnMethodHeader, method);
                                 }
                             }
                         }
@@ -328,8 +328,8 @@ public class RemoteUserAuthServlet extends HttpServlet {
                         ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                         return;
                     }
-                    log.error("Unable to locate AuthenticationFlowDescriptor, can't process "
-                            + "authentication methods from header");
+                    log.error("{}: Unable to locate AuthenticationFlowDescriptor, can't process "
+                            + "authentication methods from header", key);
                 }
                 
                 httpRequest.setAttribute(ExternalAuthentication.PRINCIPAL_NAME_KEY, username);
