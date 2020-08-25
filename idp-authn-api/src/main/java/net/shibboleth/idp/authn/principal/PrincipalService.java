@@ -15,34 +15,37 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.admin.impl;
+package net.shibboleth.idp.authn.principal;
 
-import java.util.Collection;
+import java.security.Principal;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import net.shibboleth.ext.spring.util.IdentifiedComponentManager;
-import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
- * Manager of {@link AdministrativeFlowDescriptor} objects.
+ * Interface that provides services for a {@link Principal} of a given type.
  * 
- *  @since 4.1.0
+ * @param <T> principal type
+ * 
+ * @since 4.1.0
  */
-public class AdministrativeFlowDescriptorManager extends IdentifiedComponentManager<AdministrativeFlowDescriptor> {
+public interface PrincipalService<T extends Principal> extends IdentifiedComponent {
 
     /**
-     * Constructor.
-     *
-     * @param freeObjects  free-standing objects
+     * Get the type of object supported.
+     * 
+     * @return supported type
      */
-    @Autowired
-    public AdministrativeFlowDescriptorManager(
-            @Nullable @NonnullElements final Collection<AdministrativeFlowDescriptor> freeObjects) {
-        super(freeObjects);
-    }
-
+    @Nonnull Class<T> getType();
+    
+    /**
+     * Create a new instance of the appropriate type.
+     * 
+     * @param name principal name
+     * 
+     * @return new instance
+     */
+    @Nonnull T newInstance(@Nonnull @NotEmpty final String name);
 }

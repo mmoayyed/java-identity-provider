@@ -34,6 +34,8 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.principal.PrincipalService;
+import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -44,9 +46,11 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.PredicateSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
+import org.springframework.core.Ordered;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
@@ -62,7 +66,7 @@ import com.google.common.base.Predicates;
  */
 public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
         FlowDescriptor, PrincipalSupportingComponent, Predicate<ProfileRequestContext>,
-            StorageSerializer<AuthenticationResult> {
+            StorageSerializer<AuthenticationResult>, Ordered {
 
     /** Prefix convention for flow IDs. */
     @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "authn/";
@@ -70,6 +74,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Additional allowance for storage of result records to avoid race conditions during use. */
     @Nonnull public static final Duration STORAGE_EXPIRATION_OFFSET;
 
+    /** Spring auto-wiring order. */
+    private int order;
+    
     /** Whether this flow supports non-browser clients. */
     private boolean supportsNonBrowser;
     
@@ -98,6 +105,12 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     @Nonnull private Duration inactivityTimeout;
 
     /**
+     * Supported principals provided by delimited strings, for post-initialization override via
+     * {@link PrincipalServiceManager}.
+     */
+    @Nonnull private Set<String> stringBasedPrincipals;
+
+    /**
      * Supported principals, indexed by type, that the flow can produce. Implemented for the moment using the Subject
      * class for convenience to allow for class-based lookup in the {@link #getSupportedPrincipals} method.
      */
@@ -111,9 +124,13 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     
     /** Weighted sort oredering of custom Principals produced by flow(s). */
     @Nullable @NonnullElements private Map<Principal,Integer> principalWeightMap;
+    
+    /** Access to principal services. */
+    @Nullable private PrincipalServiceManager principalServiceManager;
 
     /** Constructor. */
     public AuthenticationFlowDescriptor() {
+        order = Ordered.LOWEST_PRECEDENCE;
         supportsNonBrowser = true;
         proxyRestrictionsEnforced = true;
         reuseCondition = new ProxyCountPredicate();
@@ -121,6 +138,21 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         activationCondition = Predicates.alwaysTrue();
         inactivityTimeout = Duration.ofMinutes(30);
         principalWeightMap = Collections.emptyMap();
+        stringBasedPrincipals = Collections.emptySet();
+    }
+    
+    /** {@inheritDoc} */
+    public int getOrder() {
+        return order;
+    }
+    
+    /**
+     * Set the order/priority value for the bean.
+     * 
+     * @param priority priority value
+     */
+    public void setOrder(final int priority) {
+        order = priority;
     }
     
     /**
@@ -379,15 +411,32 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /**
      * Set supported non-user-specific principals that the flow may produce when it operates.
      * 
-     * @param <T> a type of principal to add, if not generic
      * @param principals supported principals to add
      */
-    public <T extends Principal> void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<T> principals) {
+    public void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<Principal> principals) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(principals, "Principal collection cannot be null.");
 
         supportedPrincipals.getPrincipals().clear();
         supportedPrincipals.getPrincipals().addAll(Set.copyOf(principals));
+    }
+    
+    /**
+     * Set supported non-user-specific principals that the flow may produce when it operates.
+     * 
+     * <p>The principals must be prefixed by the ID of the relevant {@link PrincipalService} followed by a '/'.</p>
+     * 
+     * <p>Setting an empty list will leave any existing set unchanged. This is primarily provided to allow
+     * property-based override of an XML-based collection established with the previous method.</p>
+     * 
+     * @param principals supported principals to add
+     * 
+     * @since 4.1.0
+     */
+    public void setSupportedPrincipalsByString(@Nonnull @NonnullElements final Collection<String> principals) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        stringBasedPrincipals = Set.copyOf(StringSupport.normalizeStringCollection(principals));
     }
 
     /**
@@ -431,7 +480,20 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         principalWeightMap = map != null ? map : Collections.emptyMap();
-    }    
+    }
+    
+    /**
+     * Sets a {@link PrincipalServiceManager} to use for string-based principal processing.
+     * 
+     * @param manager manager to set
+     * 
+     * @since 4.0.1
+     */
+    public void setPrincipalServiceManager(@Nullable final PrincipalServiceManager manager) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        principalServiceManager = manager;
+    }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
@@ -439,6 +501,24 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
         if (resultSerializer == null) {
             throw new ComponentInitializationException("AuthenticationResult serializer cannot be null");
+        }
+        
+        if (!stringBasedPrincipals.isEmpty()) {
+            if (principalServiceManager == null) {
+                throw new ComponentInitializationException("PrincipalServiceManager cannot be null");
+            }
+            
+            supportedPrincipals.getPrincipals().clear();
+            
+            stringBasedPrincipals.forEach(v -> {
+                final int index = v.indexOf('/');
+                if (index > 1 && index < v.length() - 1) {
+                    final PrincipalService<?> psvc = principalServiceManager.byId(v.substring(0, index));
+                    if (psvc != null) {
+                        supportedPrincipals.getPrincipals().add(psvc.newInstance(v.substring(index + 1)));
+                    }
+                }
+            });
         }
     }
 

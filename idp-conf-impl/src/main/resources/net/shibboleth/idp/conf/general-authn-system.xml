@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
 	<import resource="${idp.home}/conf/authn/authn-comparison.xml" />
-	<import resource="${idp.home}/conf/authn/general-authn.xml" />
+	<import resource="conditional:${idp.home}/conf/authn/general-authn.xml" />
 
     <!-- Management bean to collect and expose AuthenticationFlowDescriptors. -->
     
@@ -21,17 +21,269 @@
         class="net.shibboleth.idp.authn.impl.AuthenticationFlowDescriptorManager"
         p:components="#{getObject('shibboleth.AvailableAuthenticationFlows')}" />
 
+    <!-- Defaulted flows. -->
+    
+    <bean p:id="authn/Password" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.Password.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.Password.nonBrowserSupported:true}"
+            p:passiveAuthenticationSupported="%{idp.authn.Password.passiveAuthenticationSupported:true}"
+            p:forcedAuthenticationSupported="%{idp.authn.Password.forcedAuthenticationSupported:true}"
+            p:proxyRestrictionsEnforced="%{idp.authn.Password.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.Password.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.Password.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.Password.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.Password.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.Password.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.Password.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.Password.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+    
+    <bean p:id="authn/IPAddress" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.IPAddress.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.IPAddress.nonBrowserSupported:true}"
+            p:passiveAuthenticationSupported="%{idp.authn.IPAddress.passiveAuthenticationSupported:true}"
+            p:forcedAuthenticationSupported="%{idp.authn.IPAddress.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.IPAddress.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.IPAddress.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.IPAddress.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.IPAddress.lifetime:PT60S}"
+            p:inactivityTimeout="%{idp.authn.IPAddress.inactivityTimeout:PT60S}"
+            p:reuseCondition-ref="#{'%{idp.authn.IPAddress.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.IPAddress.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipals">
+            <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
+        </property>
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.IPAddress.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean p:id="authn/Function" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.Function.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.Function.nonBrowserSupported:true}"
+            p:passiveAuthenticationSupported="%{idp.authn.Function.passiveAuthenticationSupported:true}"
+            p:forcedAuthenticationSupported="%{idp.authn.Function.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.Function.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.Function.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.Function.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.Function.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.Function.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.Function.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.Function.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.Function.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean p:id="authn/External" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.External.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.External.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.External.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.External.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.External.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.External.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.External.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.External.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.External.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.External.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.External.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.External.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+        
+    <bean p:id="authn/RemoteUser" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.RemoteUser.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.RemoteUser.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.RemoteUser.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.RemoteUser.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.RemoteUser.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.RemoteUser.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.RemoteUser.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.RemoteUser.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.RemoteUser.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.RemoteUser.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.RemoteUser.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.RemoteUser.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+    
+    <bean p:id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.RemoteUserInternal.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.RemoteUserInternal.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.RemoteUserInternal.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.RemoteUserInternal.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.RemoteUserInternal.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.RemoteUserInternal.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.RemoteUserInternal.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.RemoteUserInternal.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.RemoteUserInternal.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.RemoteUserInternal.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.RemoteUserInternal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.RemoteUserInternal.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean p:id="authn/SAML" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.SAML.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.SAML.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.SAML.passiveAuthenticationSupported:true}"
+            p:forcedAuthenticationSupported="%{idp.authn.SAML.forcedAuthenticationSupported:true}"
+            p:proxyRestrictionsEnforced="%{idp.authn.SAML.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.SAML.proxyScopingEnforced:true}"
+            p:discoveryRequired="%{idp.authn.SAML.discoveryRequired:true}"
+            p:lifetime="%{idp.authn.SAML.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.SAML.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.SAML.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.SAML.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.SAML.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+            
+    <bean id="authn/SPNEGO" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.SPNEGO.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.SPNEGO.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.SPNEGO.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.SPNEGO.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.SPNEGO.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.SPNEGO.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.SPNEGO.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.SPNEGO.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.SPNEGO.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.SPNEGO.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.SPNEGO.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipals">
+            <list>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos" />
+                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                    c:method="urn:ietf:rfc:1510" />
+            </list>
+        </property>
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.SPNEGO.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean id="authn/X509" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.X509.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.X509.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.X509.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.X509.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.X509.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.X509.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.X509.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.X509.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.X509.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.X509.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.X509.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipals">
+            <list>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:X509" />
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient" />
+                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                    c:method="urn:ietf:rfc:2246" />
+            </list>
+        </property>
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.X509.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean id="authn/X509Internal" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.X509Internal.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.X509Internal.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.X509Internal.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.X509Internal.forcedAuthenticationSupported:false}"
+            p:proxyRestrictionsEnforced="%{idp.authn.X509Internal.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.X509Internal.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.X509Internal.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.X509Internal.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.X509Internal.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.X509Internal.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.X509Internal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipals">
+            <list>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:X509" />
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient" />
+                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                    c:method="urn:ietf:rfc:2246" />
+            </list>
+        </property>
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.X509Internal.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean id="authn/Duo" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.Duo.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.Duo.nonBrowserSupported:false}"
+            p:passiveAuthenticationSupported="%{idp.authn.Duo.passiveAuthenticationSupported:false}"
+            p:forcedAuthenticationSupported="%{idp.authn.Duo.forcedAuthenticationSupported:true}"
+            p:proxyRestrictionsEnforced="%{idp.authn.Duo.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.Duo.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.Duo.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.Duo.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.Duo.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.Duo.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.Duo.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.Duo.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean id="authn/MFA" parent="shibboleth.AuthenticationFlow"
+            p:order="%{idp.authn.MFA.order:1000}"
+            p:nonBrowserSupported="%{idp.authn.MFA.nonBrowserSupported:true}"
+            p:passiveAuthenticationSupported="%{idp.authn.MFA.passiveAuthenticationSupported:true}"
+            p:forcedAuthenticationSupported="%{idp.authn.MFA.forcedAuthenticationSupported:true}"
+            p:proxyRestrictionsEnforced="%{idp.authn.MFA.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
+            p:proxyScopingEnforced="%{idp.authn.MFA.proxyScopingEnforced:false}"
+            p:discoveryRequired="%{idp.authn.MFA.discoveryRequired:false}"
+            p:lifetime="%{idp.authn.MFA.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
+            p:inactivityTimeout="%{idp.authn.MFA.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
+            p:reuseCondition-ref="#{'%{idp.authn.MFA.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:activationCondition-ref="#{'%{idp.authn.MFA.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+        <property name="supportedPrincipalsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.authn.MFA.supportedPrincipals:}'.trim()}" />
+        </property>
+    </bean>
+
     <!-- A parent bean to default some of the flow boilerplate. -->
 
     <bean id="shibboleth.AuthenticationFlow" abstract="true"
             class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
             p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
+            p:nonBrowserSupported="true"
             p:passiveAuthenticationSupported="false"
             p:forcedAuthenticationSupported="false"
-            p:nonBrowserSupported="true"
+            p:proxyRestrictionsEnforced="%{idp.authn.enforceProxyRestrictions:true}"
             p:lifetime="%{idp.authn.defaultLifetime:PT60M}"
             p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}"
-            p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}">
+            p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap') ?: getObject('shibboleth.DefaultAuthenticationPrincipalWeightMap')}"
+            p:principalServiceManager-ref="shibboleth.PrincipalServiceManager">
         <property name="supportedPrincipals">
             <list>
                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
@@ -43,6 +295,25 @@
             </list>
         </property>
     </bean>
+
+    <!-- Default weighting if not overridden. -->
+    <util:map id="shibboleth.DefaultAuthenticationPrincipalWeightMap">
+        <entry>
+            <key>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+            </key>
+            <value>1</value>
+        </entry>
+    </util:map>
+
+    <!-- PrincipalServiceManager bean for auto-registration of various features. -->
+    <bean id="shibboleth.PrincipalServiceManager" class="net.shibboleth.idp.authn.principal.PrincipalServiceManager" />
+    
+    <!-- Default PrincipalService beans. -->
+    <bean p:id="saml1" class="net.shibboleth.idp.saml.authn.principal.impl.AuthenticationMethodPrincipalService" />
+    <bean p:id="saml2classref" class="net.shibboleth.idp.saml.authn.principal.impl.AuthnContextClassRefPrincipalService" />
+    <bean p:id="saml2declref" class="net.shibboleth.idp.saml.authn.principal.impl.AuthnContextDeclRefPrincipalService" />
 
     <!-- Default list of custom Principal serializers; users can define their own list and merge it with this one. -->
     <bean id="shibboleth.DefaultPrincipalSerializers"

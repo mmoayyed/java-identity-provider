@@ -28,7 +28,9 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
- * Manager of {@link ProfileInterceptorFlowDescriptor} objects. 
+ * Manager of {@link ProfileInterceptorFlowDescriptor} objects.
+ * 
+ * @since 4.1.0
  */
 public class ProfileInterceptorFlowDescriptorManager
         extends IdentifiedComponentManager<ProfileInterceptorFlowDescriptor> {

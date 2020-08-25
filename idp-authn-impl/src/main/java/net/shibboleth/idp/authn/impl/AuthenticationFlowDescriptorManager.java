@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +28,9 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
- * Manager of {@link AuthenticationFlowDescriptor} objects. 
+ * Manager of {@link AuthenticationFlowDescriptor} objects.
+ * 
+ * @since 4.1.0
  */
 public class AuthenticationFlowDescriptorManager extends IdentifiedComponentManager<AuthenticationFlowDescriptor> {
 
@@ -39,7 +41,7 @@ public class AuthenticationFlowDescriptorManager extends IdentifiedComponentMana
      */
     @Autowired
     public AuthenticationFlowDescriptorManager(
-            @Nullable @NonnullElements final Collection<AuthenticationFlowDescriptor> freeObjects) {
+            @Nullable @NonnullElements final List<AuthenticationFlowDescriptor> freeObjects) {
         super(freeObjects);
     }
 
