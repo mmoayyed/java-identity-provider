@@ -23,7 +23,6 @@ import java.util.Collections;
 
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;

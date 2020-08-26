@@ -307,29 +307,79 @@
         </entry>
     </util:map>
 
-    <!-- PrincipalServiceManager bean for auto-registration of various features. -->
+    <bean id="shibboleth.GenericPrincipalSerializer" class="net.shibboleth.idp.authn.principal.GenericPrincipalSerializer"
+        p:symbolics="#{getObject('shibboleth.PrincipalSymbolics') ?: getObject('shibboleth.DefaultPrincipalSymbolics')}" />
+    
+    <!-- The serializer machinery injected into authentication flows by default. -->
+    <bean id="shibboleth.DefaultAuthenticationResultSerializer"
+        class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer"
+        c:_0-ref="shibboleth.PrincipalServiceManager"
+        c:_1-ref="shibboleth.GenericPrincipalSerializer" />
+
+    <!-- PrincipalServiceManager for auto-registration of PrincipalService beans. -->
     <bean id="shibboleth.PrincipalServiceManager" class="net.shibboleth.idp.authn.principal.PrincipalServiceManager" />
     
-    <!-- Default PrincipalService beans. -->
-    <bean p:id="saml1" class="net.shibboleth.idp.saml.authn.principal.impl.AuthenticationMethodPrincipalService" />
-    <bean p:id="saml2classref" class="net.shibboleth.idp.saml.authn.principal.impl.AuthnContextClassRefPrincipalService" />
-    <bean p:id="saml2declref" class="net.shibboleth.idp.saml.authn.principal.impl.AuthnContextDeclRefPrincipalService" />
+    <!-- Built-in PrincipalService beans. -->
 
-    <!-- Default list of custom Principal serializers; users can define their own list and merge it with this one. -->
-    <bean id="shibboleth.DefaultPrincipalSerializers"
-            class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.duo.impl.DuoPrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
-                    p:dataSealer="#{(systemProperties.contains('idp.sealer.storeResource') or systemProperties.contains('idp.sealer.keyStrategy')) ? getObject('shibboleth.DataSealer') : null}" />
-                <bean class="net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer" />                    
-                <bean class="net.shibboleth.idp.saml.authn.principal.impl.NameIDPrincipalSerializer" depends-on="shibboleth.OpenSAMLConfig" />
-            </list>
-        </property>
+    <bean p:id="saml1" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+        c:claz="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
+        c:serializer-ref="shibboleth.GenericPrincipalSerializer" />
+    <bean p:id="saml2" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+        c:claz="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
+        c:serializer-ref="shibboleth.GenericPrincipalSerializer" />
+    <bean p:id="saml2declref" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+        c:claz="net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal"
+        c:serializer-ref="shibboleth.GenericPrincipalSerializer" />
+
+    <bean p:id="nameid" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.saml.authn.principal.NameIDPrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.saml.authn.principal.impl.NameIDPrincipalSerializer"
+                depends-on="shibboleth.OpenSAMLConfig" />
+        </constructor-arg>
+    </bean>        
+    
+    <bean p:id="username" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.authn.principal.UsernamePrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
+        </constructor-arg>
+    </bean>
+
+    <bean p:id="password" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.authn.principal.PasswordPrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
+                p:dataSealer="#{(systemProperties.contains('idp.sealer.storeResource') or systemProperties.contains('idp.sealer.keyStrategy')) ? getObject('shibboleth.DataSealer') : null}" />
+        </constructor-arg>
+    </bean>
+
+    <bean p:id="duo" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.authn.duo.DuoPrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.duo.impl.DuoPrincipalSerializer" />
+        </constructor-arg>
+    </bean>
+
+    <bean p:id="ldap" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="org.ldaptive.jaas.LdapPrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
+        </constructor-arg>
+    </bean>
+
+    <bean p:id="attr" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.authn.principal.IdPAttributePrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
+        </constructor-arg>
+    </bean>
+
+    <bean p:id="proxy" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer" />
+        </constructor-arg>
     </bean>
     
     <!--
@@ -403,19 +453,6 @@
         </property>
     </bean>
     
-    <!-- The serializer machinery injected into authentication flows by default. -->
-    <bean id="shibboleth.DefaultAuthenticationResultSerializer"
-            class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer">
-        <property name="principalSerializers">
-            <ref bean="#{getObject('shibboleth.PrincipalSerializers') != null
-                ? 'shibboleth.PrincipalSerializers' : 'shibboleth.DefaultPrincipalSerializers'}" />
-        </property>
-        <property name="genericPrincipalSerializer.symbolics">
-            <ref bean="#{getObject('shibboleth.PrincipalSymbolics') != null
-                ? 'shibboleth.PrincipalSymbolics' : 'shibboleth.DefaultPrincipalSymbolics'}" />
-        </property>
-    </bean>
-
     <!-- Registry of comparison rules configured by deployer and injected into authentication flow. -->
     <bean id="shibboleth.AuthnComparisonRegistry"
             class="net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry"

@@ -38,8 +38,11 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
+import net.shibboleth.idp.authn.principal.GenericPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.GenericPrincipalService;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
+import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -47,6 +50,7 @@ import net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -77,12 +81,74 @@ public class DefaultAuthenticationResultSerializerTest {
     
     private static final long ACTIVITY = 1378827556778L;
     
+    private PrincipalServiceManager manager;
+    
     private DefaultAuthenticationResultSerializer serializer;
     
     private AuthenticationFlowDescriptor flowDescriptor;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
-        serializer = new DefaultAuthenticationResultSerializer();
+
+        final UsernamePrincipalSerializer upSerializer = new UsernamePrincipalSerializer();
+        upSerializer.initialize();
+        final GenericPrincipalService<UsernamePrincipal> upService =
+                new GenericPrincipalService<>(UsernamePrincipal.class, upSerializer);
+        upService.setId("username");
+        upService.initialize();
+
+        final LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
+        lpSerializer.initialize();
+        final GenericPrincipalService<LdapPrincipal> lpService =
+                new GenericPrincipalService<>(LdapPrincipal.class, lpSerializer);
+        lpService.setId("ldap");
+        lpService.initialize();
+
+        final IdPAttributePrincipalSerializer attrSerializer = new IdPAttributePrincipalSerializer();
+        attrSerializer.initialize();
+        final GenericPrincipalService<IdPAttributePrincipal> attrService =
+                new GenericPrincipalService<>(IdPAttributePrincipal.class, attrSerializer);
+        attrService.setId("attr");
+        attrService.initialize();
+
+        final ProxyAuthenticationPrincipalSerializer proxySerializer = new ProxyAuthenticationPrincipalSerializer();
+        proxySerializer.initialize();
+        final GenericPrincipalService<ProxyAuthenticationPrincipal> proxyService =
+                new GenericPrincipalService<>(ProxyAuthenticationPrincipal.class, proxySerializer);
+        proxyService.setId("proxy");
+        proxyService.initialize();
+
+        final ClassPathResource keystoreResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.jks");
+        final ClassPathResource versionResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.kver");
+
+        final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
+        strategy.setKeyAlias("secret");
+        strategy.setKeyPassword("kpassword");
+        strategy.setKeystorePassword("password");
+        strategy.setKeystoreResource(TestResourceConverter.of(keystoreResource));
+        strategy.setKeyVersionResource(TestResourceConverter.of(versionResource));
+
+        final DataSealer sealer = new DataSealer();
+        sealer.setKeyStrategy(strategy);
+
+        try {
+            strategy.initialize();
+            sealer.initialize();
+        } catch (ComponentInitializationException e) {
+            fail(e.getMessage());
+        }
+
+        final PasswordPrincipalSerializer pwSerializer = new PasswordPrincipalSerializer();
+        pwSerializer.setDataSealer(sealer);
+        pwSerializer.initialize();
+        final GenericPrincipalService<PasswordPrincipal> pwService = new GenericPrincipalService<>(PasswordPrincipal.class, pwSerializer);
+        pwService.setId("password");
+        pwService.initialize();
+        
+        manager = new PrincipalServiceManager(List.of(upService, pwService, lpService, attrService, proxyService));
+        
+        final GenericPrincipalSerializer generic = new GenericPrincipalSerializer();
+        generic.initialize();
+        serializer = new DefaultAuthenticationResultSerializer(manager, generic);
         flowDescriptor = new AuthenticationFlowDescriptor();
         flowDescriptor.setId("test");
         flowDescriptor.setResultSerializer(serializer);
@@ -181,32 +247,7 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testCreds() throws Exception {
-        final ClassPathResource keystoreResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.jks");
-        final ClassPathResource versionResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.kver");
-
-        final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
-        strategy.setKeyAlias("secret");
-        strategy.setKeyPassword("kpassword");
-        strategy.setKeystorePassword("password");
-        strategy.setKeystoreResource(TestResourceConverter.of(keystoreResource));
-        strategy.setKeyVersionResource(TestResourceConverter.of(versionResource));
-
-        final DataSealer sealer = new DataSealer();
-        sealer.setKeyStrategy(strategy);
-
-        try {
-            strategy.initialize();
-            sealer.initialize();
-        } catch (ComponentInitializationException e) {
-            fail(e.getMessage());
-        }
-
-        final PasswordPrincipalSerializer pwSerializer = new PasswordPrincipalSerializer();
-        pwSerializer.setDataSealer(sealer);
-        pwSerializer.initialize();
-        serializer.setPrincipalSerializers(Collections.singletonList(pwSerializer));
         serializer.initialize();
-        
         flowDescriptor.initialize();
         
         final AuthenticationResult result = createResult(flowDescriptor, new Subject());
@@ -232,8 +273,12 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testSymbolic() throws Exception {
-        serializer.getGenericPrincipalSerializer().setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
+        final GenericPrincipalSerializer generic = new GenericPrincipalSerializer();
+        generic.setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
+        generic.initialize();
+        serializer = new DefaultAuthenticationResultSerializer(manager, generic);
         serializer.initialize();
+        flowDescriptor.setResultSerializer(serializer);
         flowDescriptor.initialize();
         
         final AuthenticationResult result = createResult(flowDescriptor, new Subject());
@@ -264,8 +309,6 @@ public class DefaultAuthenticationResultSerializerTest {
     
 
     @Test public void testLdap() throws Exception {
-        final LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
-        serializer.setPrincipalSerializers(Collections.singletonList(lpSerializer));
         serializer.initialize();
         flowDescriptor.initialize();
         
@@ -306,8 +349,6 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testIdPAttribute() throws Exception {
-        final IdPAttributePrincipalSerializer attrSerializer = new IdPAttributePrincipalSerializer();
-        serializer.setPrincipalSerializers(Collections.singletonList(attrSerializer));
         serializer.initialize();
         flowDescriptor.initialize();
         
@@ -349,8 +390,6 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testProxyAuthentication() throws Exception {
-        final ProxyAuthenticationPrincipalSerializer proxySerializer = new ProxyAuthenticationPrincipalSerializer();
-        serializer.setPrincipalSerializers(Collections.singletonList(proxySerializer));
         serializer.initialize();
         flowDescriptor.initialize();
         

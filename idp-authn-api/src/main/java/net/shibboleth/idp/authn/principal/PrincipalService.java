@@ -21,7 +21,6 @@ import java.security.Principal;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
@@ -41,11 +40,9 @@ public interface PrincipalService<T extends Principal> extends IdentifiedCompone
     @Nonnull Class<T> getType();
     
     /**
-     * Create a new instance of the appropriate type.
+     * Get a serializer instance for this type of {@link Principal}.
      * 
-     * @param name principal name
-     * 
-     * @return new instance
+     * @return the serializer
      */
-    @Nonnull T newInstance(@Nonnull @NotEmpty final String name);
+    @Nonnull PrincipalSerializer<String> getSerializer();
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.principal.impl;
+package net.shibboleth.idp.authn.principal;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -48,7 +48,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 
-import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
@@ -57,6 +56,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Principal serializer for arbitrary principal types.
+ * 
+ * @since 4.1.0
  */
 @ThreadSafeAfterInit
 public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<String> {

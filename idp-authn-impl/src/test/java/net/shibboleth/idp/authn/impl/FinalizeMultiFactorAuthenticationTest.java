@@ -22,7 +22,6 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.authn.impl.FinalizeMultiFactorAuthentication;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;

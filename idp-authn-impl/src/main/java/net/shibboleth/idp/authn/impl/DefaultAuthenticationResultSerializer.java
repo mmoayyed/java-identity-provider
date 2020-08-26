@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,10 +47,11 @@ import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.GenericPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
+import net.shibboleth.idp.authn.principal.PrincipalService;
+import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.impl.AuthenticationResultPrincipalSerializer;
-import net.shibboleth.idp.authn.principal.impl.GenericPrincipalSerializer;
-import net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -95,6 +97,9 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     /** JSON reader factory. */
     @Nonnull private final JsonReaderFactory readerFactory;
 
+    /** Manager for principal services. */
+    @Nonnull private final PrincipalServiceManager principalServiceManager;
+
     /** Principal serializers. */
     @Nonnull @NonnullElements private Collection<PrincipalSerializer<String>> principalSerializers;
 
@@ -107,26 +112,42 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     /** Generic principal serializer for any unsupported principals. */
     @Nonnull private final GenericPrincipalSerializer genericSerializer;
 
-    /** Constructor. */
-    public DefaultAuthenticationResultSerializer() {
+    /**
+     * Constructor.
+     * 
+     * <p>This is mostly left to facilitate tests that can live with essentially no real
+     * serialization support.</p>
+     *
+     * @throws ComponentInitializationException if unable to instantiate internal defaults
+     */
+    public DefaultAuthenticationResultSerializer() throws ComponentInitializationException {
         generatorFactory = Json.createGeneratorFactory(null);
         readerFactory = Json.createReaderFactory(null);
         
         principalSerializers = Collections.emptyList();
         authnResultPrincipalSerializer = new AuthenticationResultPrincipalSerializer(this);
+        principalServiceManager = new PrincipalServiceManager(null);
         genericSerializer = new GenericPrincipalSerializer();
+        genericSerializer.initialize();
     }
-
-    /**
-     * Set the principal serializers used for principals found in the {@link AuthenticationResult}.
-     * 
-     * @param serializers principal serializers to use
-     */
-    public void setPrincipalSerializers(
-            @Nonnull @NonnullElements final Collection<PrincipalSerializer<String>> serializers) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        principalSerializers = List.copyOf(Constraint.isNotNull(serializers, "Serializers cannot be null"));
+    /** 
+     * Constructor.
+     * 
+     * @param manager {@link PrincipalServiceManager} to use
+     * @param defaultSerializer the default serializer to use
+     * 
+     * @since 4.1.0
+     */
+    public DefaultAuthenticationResultSerializer(@Nonnull final PrincipalServiceManager manager,
+            @Nonnull final GenericPrincipalSerializer defaultSerializer) {
+        generatorFactory = Json.createGeneratorFactory(null);
+        readerFactory = Json.createReaderFactory(null);
+        
+        principalSerializers = Collections.emptyList();
+        authnResultPrincipalSerializer = new AuthenticationResultPrincipalSerializer(this);
+        principalServiceManager = Constraint.isNotNull(manager, "PrincipalServiceManager cannot be null");
+        genericSerializer = Constraint.isNotNull(defaultSerializer, "Default serializer cannot be null");
     }
 
     /**
@@ -143,21 +164,21 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Override
     public void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        genericSerializer.initialize();
         authnResultPrincipalSerializer.initialize();
         
-        if (principalSerializers.isEmpty()) {
-            final PrincipalSerializer<String> ups = new UsernamePrincipalSerializer();
-            ups.initialize();
-            principalSerializers = List.of(ups, authnResultPrincipalSerializer);
+        final List<PrincipalSerializer<String>> serializers =
+                principalServiceManager.all()
+                    .stream()
+                    .map(PrincipalService::getSerializer)
+                    .collect(Collectors.toUnmodifiableList());
+        
+        if (serializers.isEmpty()) {
+            principalSerializers = List.of(authnResultPrincipalSerializer);
         } else {
-            final List<PrincipalSerializer<String>> copy = new ArrayList<>(principalSerializers);
+            final List<PrincipalSerializer<String>> copy = new ArrayList<>(serializers);
             copy.add(authnResultPrincipalSerializer);
             principalSerializers = List.copyOf(copy);
         }
-
     }
 
     /** {@inheritDoc} */
@@ -294,19 +315,26 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
      */
     private void serializePrincipal(@Nonnull final JsonGenerator generator, @Nonnull final Principal principal)
             throws IOException {
-        boolean serialized = false;
-        for (final PrincipalSerializer<String> serializer : principalSerializers) {
-            if (serializer.supports(principal)) {
-                try (final JsonReader reader =
-                        readerFactory.createReader(new StringReader(serializer.serialize(principal)))) {
-                    generator.write(reader.readObject());
-                }
-                serialized = true;
+
+        final String serializedForm;
+        
+        // This is a special case because the serializer here is a dedicated one.
+        if (authnResultPrincipalSerializer.supports(principal)) {
+            serializedForm = authnResultPrincipalSerializer.serialize(principal);
+        } else {
+            // Otherwise we just obtain the instance by class, or try the generic one.
+            final PrincipalService<?> principalService = principalServiceManager.byClass(principal.getClass());
+            if (principalService != null) {
+                serializedForm = principalService.getSerializer().serialize(principal);
+            } else if (genericSerializer.supports(principal)) {
+                serializedForm = genericSerializer.serialize(principal);
+            } else {
+                serializedForm = null;
             }
         }
-        if (!serialized && genericSerializer.supports(principal)) {
-            try (final JsonReader reader =
-                    readerFactory.createReader(new StringReader(genericSerializer.serialize(principal)))) {
+
+        if (serializedForm != null) {
+            try (final JsonReader reader = readerFactory.createReader(new StringReader(serializedForm))) {
                 generator.write(reader.readObject());
             }
         }

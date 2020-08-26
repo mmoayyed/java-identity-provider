@@ -21,15 +21,20 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * Manages and exposes instances of the {@link PrincipalService} interface.
@@ -37,6 +42,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  * @since 4.1.0
  */
 public class PrincipalServiceManager {
+    
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrincipalServiceManager.class);
     
     /** Service index by class. */
     @Nonnull @NonnullElements private final Map<Class<?>,PrincipalService<?>> classIndexedMap;
@@ -63,6 +71,15 @@ public class PrincipalServiceManager {
             idIndexedMap = Collections.emptyMap();
         }
     }
+    
+    /**
+     * Get all of the registered services.
+     * 
+     * @return all registered services
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<PrincipalService<?>> all() {
+        return List.copyOf(classIndexedMap.values());
+    }
 
     /**
      * Get a {@link PrincipalService} by type.
@@ -77,18 +94,39 @@ public class PrincipalServiceManager {
         if (service != null) {
             return service.getType().isAssignableFrom(claz) ? (PrincipalService<T>) service : null;
         }
+        
+        log.debug("No service found for Principal type '{}'", claz.getName());
         return null;
     }
     
     /**
-     * Get a {@link PrincipalService} by ID.
+     * Manufacture a {@link Principal} from a string of the format "type/value" where
+     * type matches the ID of a {@link PrincipalService} and the value is supplied to
+     * a single-arg String constructor if one exists.
      * 
-     * @param id identifier
+     * @param s the delimited form above
      * 
-     * @return named service, or null
+     * @return the new object or null
      */
-    @Nullable public PrincipalService<?> byId(@Nonnull @NotEmpty final String id) {
-        return idIndexedMap.get(id);
+    @Nullable public Principal principalFromString(@Nonnull @NotEmpty final String s) {
+        final int index = s.indexOf('/');
+        if (index > 1 && index < s.length() - 1) {
+            final PrincipalService<?> psvc = idIndexedMap.get(s.substring(0, index));
+            if (psvc != null) {
+                try {
+                    return psvc.getType().getConstructor(String.class).newInstance(s.substring(index + 1));
+                } catch (final ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+                    log.error("No suitable constructor available to create instance of '{}'",
+                            psvc.getType().getName(), e);
+                }
+            } else {
+                log.error("No PrincipalService registered under ID '{}'", s.substring(0, index));
+            }
+        } else {
+            log.error("Principal string was not in the expected format");
+        }
+        
+        return null;
     }
 
 }

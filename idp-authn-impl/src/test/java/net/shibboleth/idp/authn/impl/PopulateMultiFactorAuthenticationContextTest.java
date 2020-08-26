@@ -30,7 +30,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
-import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
