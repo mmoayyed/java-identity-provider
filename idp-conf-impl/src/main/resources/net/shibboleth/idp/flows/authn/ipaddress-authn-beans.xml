@@ -18,15 +18,15 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/authn/ipaddress-authn-config.xml" />
+    <import resource="conditional:%{idp.home}/conf/authn/ipaddress-authn-config.xml" />
     
     <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:trim="true"
-        p:transforms-ref="shibboleth.authn.IPAddress.Transforms" />
+        p:transforms="#{getObject('shibboleth.authn.IPAddress.Transforms')}" />
         
     <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
-        p:mappings-ref="shibboleth.authn.IPAddress.Mappings"
+        p:mappings="#{getObject('shibboleth.authn.IPAddress.Mappings')}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') ?: true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
 

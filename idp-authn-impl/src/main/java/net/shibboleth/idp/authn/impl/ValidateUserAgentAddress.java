@@ -88,14 +88,18 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
      * 
      * @param newMappings the IP range(s) to authenticate as particular principals
      */
-    public void setMappings(@Nonnull @NonnullElements final Map<String,Collection<IPRange>> newMappings) {
+    public void setMappings(@Nullable @NonnullElements final Map<String,Collection<IPRange>> newMappings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        mappings = new HashMap<>(newMappings.size());
-        for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
-            if (!Strings.isNullOrEmpty(e.getKey())) {
-                mappings.put(e.getKey(), List.copyOf(e.getValue()));
+        if (newMappings != null) {
+            mappings = new HashMap<>(newMappings.size());
+            for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
+                if (!Strings.isNullOrEmpty(e.getKey())) {
+                    mappings.put(e.getKey(), List.copyOf(e.getValue()));
+                }
             }
+        } else {
+            mappings = Collections.emptyMap();
         }
     }
     
