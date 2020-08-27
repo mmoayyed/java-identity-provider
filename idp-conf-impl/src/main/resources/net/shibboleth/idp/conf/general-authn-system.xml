@@ -364,6 +364,14 @@
         </constructor-arg>
     </bean>
 
+    <bean p:id="totp" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="net.shibboleth.idp.authn.principal.TOTPPrincipal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.SimplePrincipalSerializer"
+                c:claz="net.shibboleth.idp.authn.principal.TOTPPrincipal" c:name="TOTP" />
+        </constructor-arg>
+    </bean>
+
     <bean p:id="ldap" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
             c:claz="org.ldaptive.jaas.LdapPrincipal">
         <constructor-arg name="serializer">
