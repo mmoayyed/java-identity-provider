@@ -342,14 +342,16 @@
     <bean p:id="username" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
             c:claz="net.shibboleth.idp.authn.principal.UsernamePrincipal">
         <constructor-arg name="serializer">
-            <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
+            <bean class="net.shibboleth.idp.authn.principal.SimplePrincipalSerializer"
+                c:claz="net.shibboleth.idp.authn.principal.UsernamePrincipal" c:name="U" />
         </constructor-arg>
     </bean>
 
     <bean p:id="password" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
             c:claz="net.shibboleth.idp.authn.principal.PasswordPrincipal">
         <constructor-arg name="serializer">
-            <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
+            <bean class="net.shibboleth.idp.authn.principal.SealedPrincipalSerializer"
+                c:claz="net.shibboleth.idp.authn.principal.PasswordPrincipal" c:name="PW"
                 p:dataSealer="#{(systemProperties.contains('idp.sealer.storeResource') or systemProperties.contains('idp.sealer.keyStrategy')) ? getObject('shibboleth.DataSealer') : null}" />
         </constructor-arg>
     </bean>
@@ -357,7 +359,8 @@
     <bean p:id="duo" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
             c:claz="net.shibboleth.idp.authn.duo.DuoPrincipal">
         <constructor-arg name="serializer">
-            <bean class="net.shibboleth.idp.authn.duo.impl.DuoPrincipalSerializer" />
+            <bean class="net.shibboleth.idp.authn.principal.SimplePrincipalSerializer"
+                c:claz="net.shibboleth.idp.authn.duo.DuoPrincipal" c:name="DUO" />
         </constructor-arg>
     </bean>
 

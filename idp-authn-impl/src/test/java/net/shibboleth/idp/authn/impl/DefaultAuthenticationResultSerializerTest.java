@@ -44,13 +44,13 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
+import net.shibboleth.idp.authn.principal.SealedPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.SimplePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
-import net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer;
-import net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -87,9 +87,10 @@ public class DefaultAuthenticationResultSerializerTest {
     
     private AuthenticationFlowDescriptor flowDescriptor;
     
-    @BeforeMethod public void setUp() throws ComponentInitializationException {
+    @BeforeMethod public void setUp() throws ComponentInitializationException, NoSuchMethodException, SecurityException {
 
-        final UsernamePrincipalSerializer upSerializer = new UsernamePrincipalSerializer();
+        final SimplePrincipalSerializer<UsernamePrincipal> upSerializer =
+                new SimplePrincipalSerializer<>(UsernamePrincipal.class, "U");
         upSerializer.initialize();
         final GenericPrincipalService<UsernamePrincipal> upService =
                 new GenericPrincipalService<>(UsernamePrincipal.class, upSerializer);
@@ -137,10 +138,12 @@ public class DefaultAuthenticationResultSerializerTest {
             fail(e.getMessage());
         }
 
-        final PasswordPrincipalSerializer pwSerializer = new PasswordPrincipalSerializer();
+        final SealedPrincipalSerializer<PasswordPrincipal> pwSerializer =
+                new SealedPrincipalSerializer<>(PasswordPrincipal.class, "PW");
         pwSerializer.setDataSealer(sealer);
         pwSerializer.initialize();
-        final GenericPrincipalService<PasswordPrincipal> pwService = new GenericPrincipalService<>(PasswordPrincipal.class, pwSerializer);
+        final GenericPrincipalService<PasswordPrincipal> pwService =
+                new GenericPrincipalService<>(PasswordPrincipal.class, pwSerializer);
         pwService.setId("password");
         pwService.initialize();
         
