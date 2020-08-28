@@ -286,21 +286,7 @@
             </map>
         </constructor-arg>
     </bean>
-        
-    <!--
-    This is a default client for embedded system use but should NOT be used by deployers OR
-    within the IdP within any reloadable service child contexts.
-    -->
-    
-    <bean id="shibboleth.InternalHttpClient" parent="shibboleth.HttpClientFactory" lazy-init="true"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:PT1M}"
-        p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:PT1M}"
-        p:socketTimeout="%{idp.httpclient.socketTimeout:PT1M}" 
-        p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
-        p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}" />
-                
+
     <!-- Default Jackson ObjectMapper. -->
     
     <bean id="shibboleth.JSONObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
