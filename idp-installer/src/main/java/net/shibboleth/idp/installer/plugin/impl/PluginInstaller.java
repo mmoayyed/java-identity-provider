@@ -381,7 +381,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void download(final Resource baseResource, final String fileName) throws IOException {
         final Resource fileResource = baseResource.createRelativeResource(fileName);
         final Path filePath = downloadDirectory.resolve(fileName);
-        LOG.debug("Downloading from {} to {}", fileResource.getDescription(), filePath);
+        LOG.info("Downloading from {}", fileResource.getDescription());
+        LOG.debug("Downloading to {}", filePath);
         try (final OutputStream fileOut = new BufferedOutputStream(
                 new FileOutputStream(filePath.toFile()))) {
             fileResource.getInputStream().transferTo(fileOut);
