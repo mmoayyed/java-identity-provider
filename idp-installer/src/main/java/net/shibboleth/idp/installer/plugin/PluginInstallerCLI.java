@@ -18,6 +18,7 @@
 package net.shibboleth.idp.installer.plugin;
 
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,6 +42,7 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
 import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.idp.plugin.impl.PluginState.VersionInfo;
@@ -141,6 +143,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     installer.installPlugin(args.getInputURL(), args.getInputFileName());
                     break;
 
+                case UPDATE:
+                    doUpdate(args.getPluginId() , args.getUpdateVersion());
+                    break;
+
                 default:
                     getLogger().error("Invalid operation");
                     return RC_INIT;
@@ -196,6 +202,97 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             }
         }
     }
+
+    /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion)}.
+     * @param plugin The Plugin
+     * @param state all about the plugin
+     * @return the best version (or null)
+     */
+    @Nullable private PluginVersion getBestVersion(final PluginDescription plugin, final PluginState state) {
+
+        final String idpVersionString = net.shibboleth.idp.Version.getVersion();
+        final PluginVersion myVersion = new PluginVersion(plugin.getMajorVersion(),
+                plugin.getMinorVersion(), plugin.getPatchVersion());
+
+        final PluginVersion idPVersion;
+        if (idpVersionString == null) {
+            idPVersion = new PluginVersion(4,1,0);
+            log.error("Could not determine IdP Version.  Assuming 4.1.0");
+        } else {
+            idPVersion = new PluginVersion(idpVersionString);
+        }
+
+        final List<PluginVersion> availableVersions = new ArrayList<>(state.getAvailableVersions().keySet());
+        availableVersions.sort(null);
+        log.debug("Considering versions {}", availableVersions);
+
+        for (int i = availableVersions.size()-1; i >= 0; i--) {
+            final PluginVersion version = availableVersions.get(i);
+            if (version.compareTo(myVersion) <= 0) {
+                log.debug("Version {} is less than or the same as {}. All done", version, myVersion);
+                return null;
+            }
+            final VersionInfo versionInfo = state.getAvailableVersions().get(version);
+            if (versionInfo.getSupportLevel() != SupportLevel.Current) {
+                log.debug("Version {} has suppprt level {}, ignoring", version, versionInfo.getSupportLevel());
+                continue;
+            }
+            if (!state.isSupportedWithIdPVersion(version, idPVersion)) {
+                log.debug("Version {} is not supported with idpVersion {}", version, idPVersion);
+                continue;
+            }
+            log.debug("Version {} is supported with idpVersion {}", version, idPVersion);
+            if (state.getUpdateURL(version) == null || state.getUpdateBaseName(version) == null) {
+                log.debug("Version {} is does not have update information", version);
+                continue;
+            }
+            return version;
+        }
+        return null;
+    }
+
+    /** Update the plugin.
+     * @param pluginId the pluginId or null.
+     * @param pluginVersion (optionally) the version to update to.
+     */
+    private void doUpdate(@Nonnull final String pluginId, @Nullable final PluginVersion pluginVersion) {
+        final List<PluginDescription> plugins = installer.getInstalledPlugins();
+        for (final PluginDescription plugin: plugins) {
+            if (pluginId.equals(plugin.getPluginId())) {
+                log.debug("Interrogating {} ", plugin.getPluginId());
+                final PluginState state =  new PluginState(plugin);
+                if (httpClient != null) {
+                    state.setHttpClient(httpClient);
+                }
+                try {
+                    state.initialize();
+                } catch (final ComponentInitializationException e) {
+                    log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
+                    return;
+                }
+                final PluginVersion installVersion;
+                if (pluginVersion == null) {
+                    installVersion = getBestVersion(plugin, state);
+                    if (installVersion == null) {
+                        log.info("No Suitable update version available");
+                        break;
+                    }
+                } else {
+                    installVersion = pluginVersion;
+                    final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
+                    if (!versions.containsKey(installVersion)) {
+                        log.error("Specified version {} could not be found.  Available versions {}",
+                                installVersion, versions.keySet());
+                        return;
+                    }
+                }
+                // just use the tgz version - its an update so it should be jar files only
+                installer.installPlugin(state.getUpdateURL(installVersion),
+                        state.getUpdateBaseName(installVersion) + ".tar.gz");
+            }
+        }
+    }
+
 
     /** Print our more information about a plugin.
      * @param plugin what we are interested in.

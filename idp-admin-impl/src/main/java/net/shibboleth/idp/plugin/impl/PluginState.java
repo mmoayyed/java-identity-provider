@@ -176,12 +176,15 @@ public class PluginState extends AbstractInitializableComponent {
         if (myPluginVersion.equals(theVersion)) {
             myVersionInfo = info;
         }
-        final String downloadURL =  StringSupport.trimOrNull(
+        String downloadURL =  StringSupport.trimOrNull(
                 props.getProperty(plugin.getPluginId() + PluginSupport.DOWNLOAD_URL_INTERFIX + version));
         final String baseName =  StringSupport.trimOrNull(
                 props.getProperty(plugin.getPluginId() + PluginSupport.BASE_NAME_INTERFIX + version));
         if (baseName != null && downloadURL != null) {
             try {
+                if (!downloadURL.endsWith("/")) {
+                    downloadURL += "/";
+                }
                 final URL url = new URL(downloadURL);
                 downloadInfo.put(theVersion, new Pair<>(url, baseName));
                 log.trace("Plugin {}, version {} : Added download URL {}  baseName {} for {}",

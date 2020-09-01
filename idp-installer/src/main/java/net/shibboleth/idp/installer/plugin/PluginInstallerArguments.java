@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLineArguments;
+import net.shibboleth.idp.plugin.PluginVersion;
 
 /**
  * Arguments for Plugin Installer CLI.
@@ -55,6 +57,17 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
     /** What to install. */
     @Parameter(names= {"-i", "--input"})
     @Nullable private String input;
+
+    /** Update plugin Id. */
+    @Parameter(names= {"-u", "--update"})
+    @Nullable private String updatePluginId;
+
+    /** Force update version. */
+    @Parameter(names= {"-fu", "--force-update"})
+    @Nullable private String forceUpdateVersion;
+
+    /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
+    @Nullable private PluginVersion updateVersion;
 
     /** Decomposed input - name. */
     @Nullable private String inputName;
@@ -91,12 +104,18 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
 
     /** Get the digested parent URL.
      * @return Returns the digested parent URL.
+     *
+     * Only valid for {@link OperationType#INSTALLREMOTE}.
      */
     public URL getInputURL() {
         return inputURL;
     }
 
     /** Get the file Name.
+     *
+     * Only valid for {@link OperationType#INSTALLDIR}
+     * and {@link OperationType#INSTALLREMOTE}.
+     *
      * @return Returns the digested file Name.
      */
     public String getInputFileName() {
@@ -104,6 +123,9 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
     }
 
     /** Get the digested input directory.
+     *
+     * Only valid for {@link OperationType#INSTALLDIR}.
+     *
      * @return Returns the digested input directory.
      */
     public Path getInputDirectory() {
@@ -124,9 +146,15 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
         return list;
     }
 
+    /** Return the version to update to or null.
+     * @return the version or null
+     */
+    @Nullable public PluginVersion getUpdateVersion() {
+        return updateVersion;
+    }
+
     /**
      * Get operation to perform.
-     *
      * @return operation
      */
     @Nullable public OperationType getOperation() {
@@ -134,11 +162,23 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
     }
 
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     public void validate() throws IllegalArgumentException {
         super.validate();
 
-        if (getOtherArgs().size() > 2) {
-            throw new IllegalArgumentException("????");
+        final List<String> otherArgs = getOtherArgs();
+        if (otherArgs.size() > 1) {
+            final StringBuffer output = new StringBuffer().append('"');
+            for (int i = 2; i <= otherArgs.size() ; i++ ) {
+                output.append(otherArgs.get(i-1));
+                if (i == otherArgs.size()) {
+                    output.append('"');
+                } else {
+                    output.append(' ');
+                }
+            }
+            log.error("Unexpected extra arguments {}", output);
+            throw new IllegalArgumentException("Unexpected extra arguments");
         }
         if (list || fullList) {
             operation = OperationType.LIST;
@@ -146,14 +186,30 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
                 log.error("Cannot List and Install in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Install in the same operation.");
             }
-            return;
-        }
-        if (input != null) {
+            if (updatePluginId !=  null) {
+                log.error("Cannot List and Update in the same operation.");
+                throw new IllegalArgumentException("Cannot List and Update in the same operation.");
+            }
+        } else if (input != null) {
+            if (updatePluginId !=  null) {
+                log.error("Cannot Install and Update in the same operation.");
+                throw new IllegalArgumentException("Cannot List and Update in the same operation.");
+            }
             operation = decodeInput() ;
+        } else if (updatePluginId != null) {
+            pluginId = updatePluginId;
+            operation = OperationType.UPDATE;
+            if (forceUpdateVersion != null) {
+                updateVersion = new PluginVersion(forceUpdateVersion);
+            }
+        } else {
+            log.error("Missing qualifier. Options are : -l, -fl, -i, -u");
+            throw new IllegalArgumentException("Missing qualifier");
         }
     }
+    // Checkstyle: CyclomaticComplexity ON
 
-    /** Given an inout string, work out what the parts are.
+    /** Given an input string, work out what the parts are.
      * @return Whether this is a remote install or a local one.
      */
     private OperationType decodeInput() {
@@ -195,6 +251,9 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
         out.println(String.format("  %-22s %s", "-l, --list", "Brief Information of all installed plugins"));
         out.println(String.format("  %-22s %s", "-fl, --full-list", "Full details of all installed plugins"));
         out.println(String.format("  %-22s %s", "-i, --input <what>", "Install (file name or web address)"));
+        out.println(String.format("  %-22s %s", "-u, --update <what>", "update (plugin id)"));
+        out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
+                "force version to update to (requires -u)"));
         out.println();
     }
 

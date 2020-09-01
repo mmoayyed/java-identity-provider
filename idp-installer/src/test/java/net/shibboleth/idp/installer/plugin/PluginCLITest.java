@@ -18,7 +18,6 @@
 package net.shibboleth.idp.installer.plugin;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -43,7 +42,7 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    private final String RHINO_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.0/idp-plugin-rhino-dist-0.1.0.tar.gz";
+    private final String RHINO_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.2/idp-plugin-rhino-dist-0.1.2.tar.gz";
 
     private File plugin;
 
@@ -63,14 +62,27 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
+    @Test(enabled = true, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
                     "-i", RHINO_DISTRO,
                     "-p", "net.shibboleth.idp.plugin.rhino"}),
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testRhinoLocal() {
+    @Test(dependsOnMethods = {"testRhinoWeb"})  public void testUpdate() {
+        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
+                "-u", "net.shibboleth.idp.plugin.rhino"}),
+                AbstractCommandLine.RC_OK);
+    }
+
+    @Test(dependsOnMethods = {"testUpdate"})  public void testForceUpdate() {
+        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
+                "-u", "net.shibboleth.idp.plugin.rhino",
+                "-fu", "0.1.2" }),
+                AbstractCommandLine.RC_OK);
+    }
+
+    @Test(enabled = true) public void testRhinoLocal() throws Exception {
         Path unpack = null;
         try {
             unpack = Files.createTempDirectory("rhinoLocal");
@@ -85,18 +97,13 @@ public class PluginCLITest extends BasePluginTest {
                     final OutputStream out = new BufferedOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz.asc").toFile()))) {
                        in.transferTo(out);
                }
-            
-            assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
-                    "-p", "net.shibboleth.idp.plugin.rhino",
-                    "-i", unpack.resolve("rhino.tar.gz").toString()}),
-                    AbstractCommandLine.RC_IO);
+
+            final Path credentials = getIdpHome().resolve("credentials").resolve("net.shibboleth.idp.plugin.rhino");
+            Files.createDirectories(credentials);
             //
             // Populate the new key store
             //
-            final Path trustStorePath = getIdpHome().
-                    resolve("credentials").
-                    resolve("net.shibboleth.idp.plugin.rhino").
-                    resolve("truststore.asc");
+            final Path trustStorePath = credentials.resolve("truststore.asc");
             from = new ClassPathResource("credentials/truststore.asc");
             try (final InputStream in = from.getInputStream(); 
                     final OutputStream out = new BufferedOutputStream(new FileOutputStream(trustStorePath.toFile(), true))) {
@@ -109,8 +116,6 @@ public class PluginCLITest extends BasePluginTest {
                     "-i", unpack.resolve("rhino.tar.gz").toString(),
                     "-p", "net.shibboleth.idp.plugin.rhino"}),
                     AbstractCommandLine.RC_OK);
-        } catch (Exception e) {
-            fail("Failed" + e);
         } finally {
             if (unpack != null) {
                 PluginInstaller.deleteTree(unpack);
