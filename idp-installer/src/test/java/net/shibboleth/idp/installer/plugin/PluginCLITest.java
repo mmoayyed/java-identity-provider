@@ -19,7 +19,6 @@ package net.shibboleth.idp.installer.plugin;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +35,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.ext.spring.resource.HTTPResource;
+import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
@@ -89,12 +89,12 @@ public class PluginCLITest extends BasePluginTest {
             final HttpClient client = new HttpClientBuilder().buildClient();
             Resource from = new HTTPResource(client, RHINO_DISTRO);
             try (final InputStream in = from.getInputStream(); 
-                 final OutputStream out = new BufferedOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz").toFile()))) {
+                 final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz").toFile()))) {
                     in.transferTo(out);
             }
             from = new HTTPResource(client, RHINO_DISTRO + ".asc");
             try (final InputStream in = from.getInputStream(); 
-                    final OutputStream out = new BufferedOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz.asc").toFile()))) {
+                    final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz.asc").toFile()))) {
                        in.transferTo(out);
                }
 
@@ -106,7 +106,7 @@ public class PluginCLITest extends BasePluginTest {
             final Path trustStorePath = credentials.resolve("truststore.asc");
             from = new ClassPathResource("credentials/truststore.asc");
             try (final InputStream in = from.getInputStream(); 
-                    final OutputStream out = new BufferedOutputStream(new FileOutputStream(trustStorePath.toFile(), true))) {
+                    final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(trustStorePath.toFile(), true))) {
                 in.transferTo(out);
             }
             //

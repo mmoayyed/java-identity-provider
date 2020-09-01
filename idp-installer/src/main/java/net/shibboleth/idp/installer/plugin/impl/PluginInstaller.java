@@ -18,7 +18,6 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -63,6 +62,7 @@ import com.google.common.base.Predicates;
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -231,7 +231,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 LOG.debug("Copying from {} to {}", pair.getFirst(), to);
                 final Resource from  = new HTTPResource(httpClient, pair.getFirst());
                 try (final InputStream in = new BufferedInputStream(from.getInputStream());
-                     final OutputStream out =  new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
+                     final OutputStream out =  new ProgressReportingOutputStream(new FileOutputStream(to.toFile()))) {
 
                     in.transferTo(out);
 
@@ -302,7 +302,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 createParent(to);
                 LOG.debug("Copying from {} to {}", from, to);
                 try (final InputStream in = new BufferedInputStream(new FileInputStream(from.toFile()));
-                     final OutputStream out =  new BufferedOutputStream(new FileOutputStream(to.toFile()))) {
+                     final OutputStream out =  new ProgressReportingOutputStream(new FileOutputStream(to.toFile()))) {
                     in.transferTo(out);
                 }
             } catch (final IOException e) {
@@ -383,8 +383,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         final Path filePath = downloadDirectory.resolve(fileName);
         LOG.info("Downloading from {}", fileResource.getDescription());
         LOG.debug("Downloading to {}", filePath);
-        try (final OutputStream fileOut = new BufferedOutputStream(
-                new FileOutputStream(filePath.toFile()))) {
+        try (final OutputStream fileOut = new ProgressReportingOutputStream(new FileOutputStream(filePath.toFile()))) {
             fileResource.getInputStream().transferTo(fileOut);
         }
     }
