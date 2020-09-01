@@ -15,17 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.module.impl;
+package net.shibboleth.idp.module;
 
 import java.io.IOException;
-
-import net.shibboleth.idp.module.ModuleException;
-import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 
 /**
  * Test {@IdPModule} implementation.
  */
-public final class BadModule extends PropertyDrivenIdPModule {
+public final class TestModule extends PropertyDrivenIdPModule {
 
     /**
      * Constructor.
@@ -33,8 +30,8 @@ public final class BadModule extends PropertyDrivenIdPModule {
      * @throws ModuleException 
      * @throws IOException
      */
-    public BadModule() throws IOException, ModuleException {
-        super(BadModule.class);
+    public TestModule() throws IOException, ModuleException {
+        super(TestModule.class);
     }
 
 }

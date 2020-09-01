@@ -1,4 +1,4 @@
-package net.shibboleth.idp.module.impl;
+package net.shibboleth.idp.module;
 /*
  * Licensed to the University Corporation for Advanced Internet Development,
  * Inc. (UCAID) under one or more contributor license agreements.  See the
@@ -26,9 +26,7 @@ import java.util.ServiceLoader.Provider;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
-import net.shibboleth.idp.module.ModuleException;
 
 /**
  * Unit tests exercising module code.
@@ -54,11 +52,11 @@ public class IdPModuleTest {
         Assert.assertEquals(module.getResources().size(), 2);
         
         ModuleResource resource = resources.next();
-        Assert.assertEquals(resource.getSource(), "net/shibboleth/idp/module/impl/test.xml");
+        Assert.assertEquals(resource.getSource(), "net/shibboleth/idp/module/test.xml");
         Assert.assertEquals(resource.getDestination(), Path.of("conf/test.xml"));
         
         resource = resources.next();
-        Assert.assertEquals(resource.getSource(), "net/shibboleth/idp/module/impl/test.vm");
+        Assert.assertEquals(resource.getSource(), "net/shibboleth/idp/module/test.vm");
         Assert.assertEquals(resource.getDestination(), Path.of("views/test.vm"));
     }
 

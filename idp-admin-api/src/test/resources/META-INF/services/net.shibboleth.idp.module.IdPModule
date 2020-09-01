@@ -1,0 +1,3 @@
+net.shibboleth.idp.module.TestModule
+net.shibboleth.idp.module.BadModule
+net.shibboleth.idp.module.BadModule2
