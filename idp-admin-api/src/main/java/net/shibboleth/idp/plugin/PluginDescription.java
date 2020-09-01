@@ -46,6 +46,12 @@ public interface PluginDescription {
      */
     @Nonnull @NotEmpty public String getPluginId();
 
+    /** Return the list of file names to be appended to
+     * <code>idp.additional.properties</code>.
+     * @return The list of names, potentially empty.
+     */
+    @Nonnull public List<String> getAdditionalPropertyFiles();
+    
     /** Return the list of (idp.home) relative paths (of files, <em>not directories </em>) 
      * to copy from the distribution into the IdP installation.
      *
@@ -81,7 +87,22 @@ public interface PluginDescription {
      * @throws IOException if the resource construction failed.
      */
     @Nonnull @NonnullElements public List<URL> getUpdateURLs() throws IOException;
-       
+    
+    /** Return this properties that require list merging.  
+     * 
+     * <em>Not currently supported</em>
+     * 
+     * <p>Given
+     * an property called (say) <code>idp.service.foo</code> in file <code>services.property</code>
+     * and an init setting of <code>idp.service.foo.bar</code>, the output would be:</p>
+     * <pre> idp.service.foo = BEAN.idp.service.foo.plugin-id.net.shibboleth.foo
+     * idp.service.foo.OLD.plugin-id = shibboleth.AttributeFilterResources</pre>
+     *
+     * @return A list of pairs, the first element of the pair is the (relative) path of the property file
+     * and the second is a list of property names to edit within that file.
+     */
+    @Nonnull public List<Pair<Path, List<String>>> getPropertyMerges();
+    
     /** Return the major version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.

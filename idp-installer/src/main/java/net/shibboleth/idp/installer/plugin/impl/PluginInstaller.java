@@ -187,6 +187,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 
+        if (!description.getAdditionalPropertyFiles().isEmpty()) {
+            LOG.error("Additional property files not supported");
+            throw new BuildException("Uninstallable plugin");
+        }
+        if (!description.getPropertyMerges().isEmpty()) {
+            LOG.error("Prroperty merges not supported");
+            throw new BuildException("Uninstallable plugin");
+        }
+
         final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
         deleteTree(myWebApp);
         installWebapp(myWebApp);
