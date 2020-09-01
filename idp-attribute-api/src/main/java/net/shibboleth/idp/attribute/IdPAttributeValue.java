@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
  * only the head part of the value for getValue().
  * </p>
  */
-public interface IdPAttributeValue {
+public interface IdPAttributeValue extends Comparable<IdPAttributeValue> {
 
     /**
      * Get the native representation of the value of this attribute.
@@ -49,5 +49,11 @@ public interface IdPAttributeValue {
      * @return  a displayable value
      */
     @Nonnull @NotEmpty String getDisplayValue();
+    
+    /** {@inheritDoc} */
+    default int compareTo(IdPAttributeValue value) {
+        return getDisplayValue().compareTo(value.getDisplayValue());
+    }
+
     
 }
