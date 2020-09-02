@@ -6,12 +6,18 @@
 <%@ page import="java.util.Map.Entry" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="java.util.Optional" %>
+<%@ page import="java.util.ServiceLoader" %>
+<%@ page import="java.util.ServiceLoader.Provider" %>
 <%@ page import="java.time.Instant" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="org.springframework.core.env.Environment" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 <%@ page import="net.shibboleth.idp.Version" %>
 <%@ page import="com.codahale.metrics.MetricSet" %>
 <%@ page import="com.codahale.metrics.Gauge" %>
+<%@ page import="net.shibboleth.idp.module.IdPModule" %>
+<%@ page import="net.shibboleth.idp.module.ModuleContext" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl" %>
@@ -40,6 +46,16 @@ current_time: <%= dateTimeFormatter.format(now) %>
 uptime: <%= now.toEpochMilli() - startupTime.toEpochMilli() %> ms
 
 <%
+out.println("enabled modules: ");
+final ModuleContext moduleContext =
+    new ModuleContext(((Environment) request.getAttribute("environment")).getProperty("idp.home"));
+for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
+    if (module.isEnabled(moduleContext)) {
+        out.println("\t" + module.getId() + " (" + module.getName() + ")");
+    }
+}
+out.println();
+
 for (final ReloadableService service : (Collection<ReloadableService>) request.getAttribute("services")) {
     final Instant successfulReload = service.getLastSuccessfulReloadInstant();
     final Instant lastReload = service.getLastReloadAttemptInstant();

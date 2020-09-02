@@ -26,10 +26,13 @@ import javax.annotation.Nullable;
 import org.apache.http.client.HttpClient;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Information required to perform some module operations.
+ * 
+ * @since 4.1.0
  */
 public final class ModuleContext {
 
@@ -44,7 +47,16 @@ public final class ModuleContext {
     
     /** Output stream for sending output to the module consumer. */
     @Nullable private PrintStream messageStream;
-    
+
+    /**
+     * Constructor.
+     *
+     * @param home location of IdP install
+     */
+    public ModuleContext(@Nonnull @NotEmpty final String home) {
+        idpHome = Path.of(home);
+    }
+
     /**
      * Constructor.
      *
