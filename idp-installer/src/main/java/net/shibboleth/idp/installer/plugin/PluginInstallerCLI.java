@@ -317,11 +317,18 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
         System.out.println("\tVersions ");
         for (final Entry<PluginVersion, VersionInfo> entry  : versions.entrySet()) {
-            System.out.println(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s",
+            final String downLoadDetails;
+            if (state.getUpdateBaseName(entry.getKey()) == null || state.getUpdateURL(entry.getKey())==null ) {
+                downLoadDetails = " - No download available";
+            } else {
+                downLoadDetails = "";
+            }
+            System.out.println(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
                     entry.getKey(),
                     entry.getValue().getMinSupported(),
                     entry.getValue().getMaxSupported(),
-                    entry.getValue().getSupportLevel()));
+                    entry.getValue().getSupportLevel(),
+                    downLoadDetails));
         }
     }
 
