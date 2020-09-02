@@ -34,8 +34,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * An extension to {@link AbstractCommandLine} that understand that idp.home is set via a property
  * when called inside the IdP.
-
+ *
  * @param <T> argument object type
+ * 
+ * @since 4.1.0
  */
 public abstract class AbstractIdPHomeAwareCommandLine<T extends CommandLineArguments> extends AbstractCommandLine<T> {
 
@@ -55,19 +57,21 @@ public abstract class AbstractIdPHomeAwareCommandLine<T extends CommandLineArgum
      */
     protected void setIdpHome(@Nullable final String home) {
         if (home == null) {
-            getLogger().error("net.shibboleth.idp.cli.idp.home propert not send.  Could not find IdP Home directory");
+            getLogger().error("net.shibboleth.idp.cli.idp.home property not set, could not find IdP home directory");
             return;
         }
         idpHome = Path.of(home);
         
         if (!Files.exists(idpHome) || !Files.isDirectory(idpHome)) {
-            getLogger().error("IdP Home Directory {} did not exist or was not a directory", idpHome);
+            getLogger().error("IdP home directory '{}' did not exist or was not a directory", idpHome);
             idpHome = null;
         }
     }
     
-    /** Return where the IdP is installed to.
-     * @return the home directory.
+    /** 
+     * Gets IdP installation location.
+     * 
+     * @return the home directory
      */
     @Nullable protected Path getIdpHome() {
         return idpHome;
