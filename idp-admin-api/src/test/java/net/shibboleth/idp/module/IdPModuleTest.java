@@ -17,24 +17,40 @@ package net.shibboleth.idp.module;
  */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 
+import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
+import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
+import org.opensaml.security.trust.TrustEngine;
+import org.opensaml.security.trust.impl.ExplicitKeyTrustEngine;
+import org.opensaml.security.x509.BasicX509Credential;
+import org.opensaml.security.x509.X509Credential;
+import org.opensaml.security.x509.X509Support;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.io.ByteStreams;
+
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 
 /**
  * Unit tests exercising module code.
@@ -51,7 +67,7 @@ public class IdPModuleTest {
     private ModuleContext context;
     
     @BeforeMethod
-    public void setUp() throws IOException {
+    public void setUp() throws Exception {
         final ServiceLoader<IdPModule> loader = ServiceLoader.load(IdPModule.class);
         final Optional<Provider<IdPModule>> opt =
                 loader.stream().filter(p -> TestModule.class.equals(p.type())).findFirst();
@@ -61,6 +77,14 @@ public class IdPModuleTest {
         
         testHome = Files.createTempDirectory("test-idp-home-");
         context = new ModuleContext(testHome);
+        
+        final HttpClientBuilder builder = new HttpClientBuilder();
+        builder.setTLSSocketFactory(SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(true, false));
+        context.setHttpClient(builder.buildClient());
+        
+        final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
+        params.setTLSTrustEngine(buildExplicitKeyTrustEngine());
+        context.setHttpClientSecurityParameters(params);
     }
     
     @AfterMethod
@@ -92,7 +116,6 @@ public class IdPModuleTest {
     
     @Test
     public void testBadModules() {
-        
         final ServiceLoader<IdPModule> loader = ServiceLoader.load(IdPModule.class);
 
         Optional<Provider<IdPModule>> opt =
@@ -117,7 +140,6 @@ public class IdPModuleTest {
     
     @Test
     public void testModule() {
-        
         Assert.assertEquals(testModule.getId(), TestModule.class.getName());
         Assert.assertEquals(testModule.getName(), "Test module");
         Assert.assertEquals(testModule.getURL().toString(), "https://wiki.shibboleth.net/confluence/display/IDP4/Home");
@@ -130,7 +152,8 @@ public class IdPModuleTest {
         Assert.assertEquals(resource.getDestination(), Path.of("conf/test.xml"));
         
         resource = resources.next();
-        Assert.assertEquals(resource.getSource(), "/net/shibboleth/idp/module/test.vm");
+        Assert.assertEquals(resource.getSource(),
+                RepositorySupport.buildHTTPSResourceURL("java-identity-provider", "idp-admin-api/src/test/resources/net/shibboleth/idp/module/test.vm"));
         Assert.assertEquals(resource.getDestination(), Path.of("views/test.vm"));
     }
 
@@ -226,4 +249,12 @@ public class IdPModuleTest {
         Assert.assertEquals(vel, VEL_DATA);
     }
     
+    private static TrustEngine<? super X509Credential> buildExplicitKeyTrustEngine() throws URISyntaxException, CertificateException, IOException {
+        
+        final InputStream certStream = IdPModuleTest.class.getResourceAsStream("/net/shibboleth/idp/module/repo-entity.crt");
+        final X509Certificate entityCert = X509Support.decodeCertificate(ByteStreams.toByteArray(certStream));
+        final X509Credential entityCredential = new BasicX509Credential(entityCert);
+        return new ExplicitKeyTrustEngine(new StaticCredentialResolver(entityCredential));
+        
+    }
 }

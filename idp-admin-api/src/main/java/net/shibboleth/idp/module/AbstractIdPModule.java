@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -36,6 +38,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,12 +232,56 @@ public abstract class AbstractIdPModule implements IdPModule {
                 throws IOException {
             
             if (source.startsWith("https://") || source.startsWith("http://")) {
-                // TODO http
-                return null;
+                try {
+                    return connect(moduleContext, new URI(source));
+                } catch (final URISyntaxException e) {
+                    throw new IOException(e);
+                }
             }
             return getClass().getResourceAsStream(source);
         }
 
+        /**
+         * Connect to the given URI and return the HTTP response stream.
+         *
+         * @param moduleContext module context
+         * @param uri resource location
+         * 
+         * @return input stream of response
+         * 
+         * @throws IOException on errors
+         */
+        @Nonnull private InputStream connect(@Nonnull final ModuleContext moduleContext, @Nonnull final URI uri)
+                throws IOException {
+            
+            final HttpClientContext clientContext = HttpClientContext.create();
+            HttpClientSecuritySupport.marshalSecurityParameters(clientContext,
+                    moduleContext.getHttpClientSecurityParameters(), true);
+            HttpResponse response = null;
+            try {
+                log.debug("Module {} fetching HTTP resource {}", getId(), uri);
+                final HttpGet request = new HttpGet(uri);
+                response = moduleContext.getHttpClient().execute(request, clientContext);
+                HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new IOException("HTTP request was unsuccessful");
+                }
+                
+                // The response socket should be closed after the stream is closed.
+                final InputStream ret = response.getEntity().getContent();
+                response = null;
+                return ret;
+            } finally {
+                if (response != null && CloseableHttpResponse.class.isInstance(response)) {
+                    try {
+                        CloseableHttpResponse.class.cast(response).close();
+                    } catch (final IOException e) {
+                        log.debug("Error closing HttpResponse", e);
+                    }
+                }
+            }
+        }
+        
         /**
          * Access the destination as a stream.
          * 
