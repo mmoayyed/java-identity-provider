@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -34,6 +33,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -108,18 +108,23 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
-        final Set<Entry<String, HttpClient>> clients =
-                getApplicationContext().getBeansOfType(HttpClient.class).entrySet();
-        if (clients.isEmpty()) {
-            log.debug("No HttpClient definitions found.");
+
+        String clientName = args.getHttpClientName();
+        if (clientName == null) {
+            clientName = "shibboleth.InternalHttpClient";
+        }
+        final Object client;
+        try {
+            client = getApplicationContext().getBean(clientName);
+        } catch (final NoSuchBeanDefinitionException e) {
+            log.error("Could not locate an Http Client '{}'", clientName);
+            return RC_IO;
+        }
+        if (client instanceof HttpClient) {
+            httpClient = (HttpClient) client;
         } else {
-            final Entry<String, HttpClient> entry = clients.iterator().next();
-            httpClient = entry.getValue();
-            if (clients.size() > 1) {
-                log.warn("Multiple HttpClient beans found; Taking {}", entry.getKey());
-            } else {
-                log.debug("Selecting HttpClient: {}", entry.getKey());
-            }
+            log.error("Bean '{}' was a {}, not a {}", clientName, client.getClass(), HttpClient.class);
+            return RC_IO;
         }
 
         try {

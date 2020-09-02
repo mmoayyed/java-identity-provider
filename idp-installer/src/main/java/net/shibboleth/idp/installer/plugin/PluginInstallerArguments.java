@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,10 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
     /** Force update version. */
     @Parameter(names= {"-fu", "--force-update"})
     @Nullable private String forceUpdateVersion;
+
+    /** Name for the {@link HttpClient} . */
+    @Parameter(names= {"-h", "--http-client"})
+    @Nullable private String httpClientName;
 
     /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
     @Nullable private PluginVersion updateVersion;
@@ -161,6 +166,14 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
         return operation;
     }
 
+    /**
+     * Get bean name for the httpClient (if specified).
+     * @return the name or null
+     */
+    @Nullable public String getHttpClientName() {
+        return httpClientName;
+    }
+
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     public void validate() throws IllegalArgumentException {
@@ -254,6 +267,8 @@ public class PluginInstallerArguments extends AbstractCommandLineArguments {
         out.println(String.format("  %-22s %s", "-u, --update <what>", "update (plugin id)"));
         out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
                 "force version to update to (requires -u)"));
+        out.println(String.format("  %-22s %s", "-h, --http-client <bean ame>",
+                "use the named bean for http operations"));
         out.println();
     }
 
