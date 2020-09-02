@@ -20,15 +20,15 @@ package net.shibboleth.idp.module;
 import java.io.IOException;
 
 /**
- * Test {@IdPModule} implementation.
+ * Test {@link IdPModule} implementation.
  */
 public final class BadModule2 extends PropertyDrivenIdPModule {
 
     /**
      * Constructor.
      *  
-     * @throws ModuleException 
-     * @throws IOException
+     * @throws ModuleException on error
+     * @throws IOException on error
      */
     public BadModule2() throws IOException, ModuleException {
         super(BadModule2.class);
