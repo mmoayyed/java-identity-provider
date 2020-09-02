@@ -148,8 +148,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                         moduleProperties.getProperty(getId() + renumstr + MODULE_REPLACE_PROPERTY, "false"));
                 
                 final Path destPath = Path.of(dest);
-                if (dest.contains("..") || destPath.isAbsolute() || destPath.startsWith("/") ||
-                        destPath.startsWith("\\")) {
+                if (dest.contains("..") || destPath.isAbsolute() || destPath.startsWith("/")) {
                     throw new ModuleException("Module contained a suspect resource destination");
                 }
                 

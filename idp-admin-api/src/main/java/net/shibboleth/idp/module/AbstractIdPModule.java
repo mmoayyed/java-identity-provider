@@ -19,14 +19,16 @@ package net.shibboleth.idp.module;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -191,7 +193,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                             try (final OutputStream srcSink = OutputStream.nullOutputStream();
                                     final DigestOutputStream srcDigest = new DigestOutputStream(srcSink, digest)) {
                                 src.transferTo(srcDigest);
-                                return digest.digest().equals(destHash);
+                                return !Arrays.equals(destHash, digest.digest());
                             }
                         }
                         log.debug("Module {} resource {} does not exist at source", getId(), source);
@@ -241,9 +243,10 @@ public abstract class AbstractIdPModule implements IdPModule {
         @Nullable private InputStream getDestinationStream(@Nonnull final ModuleContext moduleContext)
                 throws IOException {
             final File destFile = moduleContext.getIdPHome().resolve(destination).toFile();
-            if (destFile.exists()) {
+            if (destFile.exists() && destFile.isFile() && destFile.canRead()) {
                 return new FileInputStream(destFile);
             }
+            
             return null;
         }
 
@@ -264,33 +267,33 @@ public abstract class AbstractIdPModule implements IdPModule {
                     throw new IOException("Source stream was null");
                 }
 
-                
-                final File destFile;
+                final Path destPath;
                 
                 if (hasChanged) {
                     if (isReplace()) {
-                        final File renamedFile = moduleContext.getIdPHome().resolve(destination).toFile();
-                        if (renamedFile.renameTo(new File(renamedFile.getPath() + ".idpsave"))) {
-                            log.info("Module {} preserved {}", getId(), renamedFile);
-                        } else {
-                            throw new ModuleException("Unable to rename " + renamedFile);
-                        }
-                        destFile = moduleContext.getIdPHome().resolve(destination).toFile();
+                        destPath = moduleContext.getIdPHome().resolve(destination);
+                        Files.copy(destPath, destPath.resolveSibling(destPath.getFileName() + ".idpsave"),
+                                StandardCopyOption.REPLACE_EXISTING);
+                        log.info("Module {} preserved {}", getId(), destPath);
                     } else {
-                        destFile = new File(moduleContext.getIdPHome().resolve(destination).toString() + ".idpnew");
+                        final Path basePath = moduleContext.getIdPHome().resolve(destination);
+                        destPath = basePath.resolveSibling(basePath.getFileName() + ".idpnew");
                     }
                     
                 } else {
-                    destFile = moduleContext.getIdPHome().resolve(destination).toFile();
+                    destPath = moduleContext.getIdPHome().resolve(destination);
+                }
+                
+                if (!destPath.startsWith(moduleContext.getIdPHome())) {
+                    log.error("Module {} attempted to create file outside of IdP installation: {}", getId(), destPath);
+                    throw new ModuleException("Module asked to create file outside of IdP installation");
                 }
 
-                try (final OutputStream destStream = new FileOutputStream(destFile)) {
-                    srcStream.transferTo(destStream);
-                    log.info("Module {} created {}", getId(), destFile);
-                }
-
+                Files.copy(srcStream, destPath, StandardCopyOption.REPLACE_EXISTING);
+                log.info("Module {} created {}", getId(), destPath);
+                
             } catch (final IOException e) {
-                log.error("Module {} unable to enable resource {}", getId(), source, e);
+                log.error("Module {} unable to enable resource {}", getId(), source);
                 throw new ModuleException(e);
             }
         }
@@ -307,21 +310,22 @@ public abstract class AbstractIdPModule implements IdPModule {
             
             final Path resolved = moduleContext.getIdPHome().resolve(destination);
             log.debug("Module {} resolved resource destination {}", getId(), resolved);
-            final File file = resolved.toFile();
-            if (file.exists()) {
-                if (clean) {
-                    log.info("Module {} removing resource {}", getId(), file);
-                    if (!file.delete()) {
-                        throw new ModuleException("Unable to remove resource " + file);
+            if (Files.exists(resolved)) {
+                try {
+                    if (clean) {
+                        log.info("Module {} removing resource {}", getId(), resolved);
+                        Files.delete(resolved);
+                    } else {
+                        log.info("Module {} backing up resource {}", getId(), resolved);
+                        Files.move(resolved, resolved.resolveSibling(resolved.getFileName() + ".idpsave"),
+                                StandardCopyOption.REPLACE_EXISTING);
                     }
-                } else {
-                    log.info("Module {} moving aside resource {}", getId(), file);
-                    if (!file.renameTo(new File(file.toString() + ".idpsave"))) {
-                        throw new ModuleException("Unable to rename resource " + file);
-                    }
+                } catch (final IOException e) {
+                    log.error("Module {} failed to disable {}", getId(), resolved);
+                    throw new ModuleException(e);
                 }
             } else {
-                log.info("Module {} resource {} missing, ignoring", getId(), file);
+                log.info("Module {} resource {} missing, ignoring", getId(), resolved);
             }
         }
         

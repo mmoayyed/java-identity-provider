@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
-import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -109,33 +108,6 @@ public interface IdPModule extends IdentifiedComponent {
      * @throws ModuleException if not successful 
      */
     void disable(@Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException;
-
-    /**
-     * Interface to information required to perform some module operations.
-     */
-    interface ModuleContext {
-
-        /**
-         * Gets software installation location.
-         * 
-         * @return install path
-         */
-        @Nonnull @NotEmpty Path getIdPHome();
-        
-        /**
-         * Gets an {@link HttpClient} instance to use if available.
-         * 
-         * @return HTTP client instance
-         */
-        @Nullable HttpClient getHttpClient();
-
-        /**
-         * Gets {@link HttpClient} security parameters, if any.
-         * 
-         * @return HTTP client security parameters to use
-         */
-        @Nullable HttpClientSecurityParameters getHttpClientSecurityParameters();
-    }
     
     /**
      * Interface to a resource managed by the module.
