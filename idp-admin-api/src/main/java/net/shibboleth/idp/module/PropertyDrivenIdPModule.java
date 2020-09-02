@@ -63,6 +63,12 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Suffix of property for resource replacement. */
     @Nonnull @NotEmpty public static final String MODULE_REPLACE_PROPERTY = ".replace";
 
+    /** Suffix of property for module post-enable message. */
+    @Nonnull @NotEmpty public static final String MODULE_POSTENABLE_PROPERTY = ".postenable";
+
+    /** Suffix of property for module post-disable message. */
+    @Nonnull @NotEmpty public static final String MODULE_POSTDISABLE_PROPERTY = ".postdisable";
+
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(PropertyDrivenIdPModule.class);
 
@@ -71,9 +77,6 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     
     /** Module name. */
     @Nonnull @NotEmpty private String moduleName;
-
-    /** Module description. */
-    @Nullable @NotEmpty private String moduleDesc;
 
     /** Module URL. */
     @Nullable private URL moduleURL;
@@ -126,7 +129,6 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
             moduleName = Constraint.isNotNull(
                     StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_NAME_PROPERTY)),
                     "Module name missing from properties");
-            moduleDesc = StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_DESC_PROPERTY));
             final String url = StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_URL_PROPERTY));
             if (url != null) {
                 moduleURL = new URL(url);
@@ -183,7 +185,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     
     /** {@inheritDoc} */
     @Nullable @NotEmpty public String getDescription() {
-        return moduleDesc;
+        return StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_DESC_PROPERTY));
     }
 
     /** {@inheritDoc} */
@@ -194,6 +196,32 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** {@inheritDoc} */
     public boolean isHttpClientRequired() {
         return requireHttpClient;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void enable(@Nullable final ModuleContext moduleContext) throws ModuleException {
+        super.enable(moduleContext);
+        
+        if (moduleContext.getMessageStream() != null) {
+            final String msg = moduleProperties.getProperty(getId() + MODULE_POSTENABLE_PROPERTY);
+            if (msg != null) {
+                moduleContext.getMessageStream().println(msg);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void disable(@Nullable final ModuleContext moduleContext, final boolean clean) throws ModuleException {
+        super.disable(moduleContext, clean);
+
+        if (moduleContext.getMessageStream() != null) {
+            final String msg = moduleProperties.getProperty(getId() + MODULE_POSTDISABLE_PROPERTY);
+            if (msg != null) {
+                moduleContext.getMessageStream().println(msg);
+            }
+        }
     }
 
 }

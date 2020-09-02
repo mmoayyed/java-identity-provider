@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.module;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
 
 import javax.annotation.Nonnull;
@@ -40,6 +41,9 @@ public final class ModuleContext {
     
     /** HTTP security parameters. */
     @Nullable private HttpClientSecurityParameters httpClientSecurityParams;
+    
+    /** Output stream for sending output to the module consumer. */
+    @Nullable private PrintStream messageStream;
     
     /**
      * Constructor.
@@ -95,4 +99,24 @@ public final class ModuleContext {
         httpClientSecurityParams = params;
     }
 
+    /**
+     * Gets the output stream to receive any instructioons or additional information after
+     * performing operations.
+     * 
+     * @return output stream, or null
+     */
+    @Nullable public PrintStream getMessageStream() {
+        return messageStream;
+    }
+    
+    /**
+     * Sets the output stream to receive any instructioons or additional information after
+     * performing operations.
+     * 
+     * @param stream output stream
+     */
+    public void setMessageStream(@Nullable final PrintStream stream) {
+        messageStream = stream;
+    }
+    
 }
