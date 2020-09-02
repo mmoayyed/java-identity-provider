@@ -34,6 +34,8 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
  * This interface is exported (via the service API) by every IdP module.
+ * 
+ * @since 4.1.0
  */
 public interface IdPModule extends IdentifiedComponent {
     

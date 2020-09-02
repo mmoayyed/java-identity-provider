@@ -55,6 +55,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * {@link IdPModule} base class implementing basic file management.
+ * 
+ * @since 4.1.0
  */
 public abstract class AbstractIdPModule implements IdPModule {
 

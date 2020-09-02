@@ -39,6 +39,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Implementation of {@link IdPModule} relying on Java {@link Properties}.
+ * 
+ * @since 4.1.0
  */
 public class PropertyDrivenIdPModule extends AbstractIdPModule {
 

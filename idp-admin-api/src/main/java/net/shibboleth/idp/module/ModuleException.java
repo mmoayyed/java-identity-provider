@@ -20,7 +20,11 @@ package net.shibboleth.idp.module;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-/** Module exception class. */
+/**
+ * Module exception class.
+ * 
+ * @since 4.1.0
+ */
 @ThreadSafe
 public class ModuleException extends Exception {
 
