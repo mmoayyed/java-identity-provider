@@ -48,7 +48,7 @@ public class PluginCLITest extends BasePluginTest {
 
     @BeforeSuite public void setUp() throws IOException
     {
-        System.setProperty("net.shibboleth.idp.cli.idp.home",getIdpHome().toString());
+        System.setProperty("idp.home",getIdpHome().toString());
         plugin = getIdpHome().resolve("conf").resolve("admin").resolve("plugin-installer.xml").toFile();
     }
 

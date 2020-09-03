@@ -32,13 +32,13 @@ import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
 
-import net.shibboleth.ext.spring.cli.AbstractCommandLineArguments;
+import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
 import net.shibboleth.idp.plugin.PluginVersion;
 
 /**
  * Arguments for Plugin Installer CLI.
  */
-public class PluginInstallerArguments extends AbstractCommandLineArguments {
+public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArguments {
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(PluginInstallerArguments.class);

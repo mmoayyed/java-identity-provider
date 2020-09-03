@@ -17,36 +17,40 @@
 
 package net.shibboleth.idp.cli;
 
-import javax.annotation.Nonnull;
+import java.io.PrintStream;
 
-import net.shibboleth.ext.spring.cli.AbstractCommandLine;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import javax.annotation.Nullable;
+
+import com.beust.jcommander.Parameter;
 
 /**
- * An extension to {@link AbstractCommandLine} that auto-adds our context initializer for idp.home
- * and property support.
- *
- * @param <T> argument object type
+ * An extension to {@link net.shibboleth.ext.spring.cli.AbstractCommandLineArguments}
+ * that allows idp.home override.
  * 
  * @since 4.1.0
  */
-public abstract class AbstractIdPHomeAwareCommandLine<T extends AbstractIdPHomeAwareCommandLineArguments>
-        extends AbstractCommandLine<T> {
+public abstract class AbstractIdPHomeAwareCommandLineArguments
+        extends net.shibboleth.ext.spring.cli.AbstractCommandLineArguments {
+
+    /** IdP location. */
+    @Parameter(names = "--home")
+    @Nullable private String idpHome;
     
-    /**
-     * Constructor.
+    /** 
+     * Gets the configured home location.
+     * 
+     * @return home location
      */
-    protected AbstractIdPHomeAwareCommandLine() {
+    @Nullable public String getIdPHome() {
+        return idpHome;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected int doRun(@Nonnull final T args) {
-        if (args.getIdPHome() != null) {
-            System.setProperty("idp.home", args.getIdPHome());
-        }
-        setContextInitializer(new IdPPropertiesApplicationContextInitializer());
-        return super.doRun(args);
+    public void printHelp(final PrintStream out) {
+        super.printHelp(out);
+        out.println(String.format("  --%-20s %s", "home",
+                "Sets idp.home if not installed to default location."));
+        out.println();
     }
-    
 }

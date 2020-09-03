@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.installer.plugin;
 
+import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +173,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @throws ComponentInitializationException as required*/
     private void constructPluginInstaller() throws ComponentInitializationException {
         installer= new PluginInstaller();
-        installer.setIdpHome(getIdpHome());
+        installer.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
         installer.setAcceptCert(new InstallerQuery("Accept this Certificate"));
         installer.setAcceptDownload(new InstallerQuery("Download from"));
         if (httpClient!= null) {
@@ -342,7 +343,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     public static int runMain(@Nonnull final String[] args) {
         final PluginInstallerCLI cli = new PluginInstallerCLI();
-        if (cli.getIdpHome() == null) {
+        if (System.getProperty("idp.home") == null) {
             return RC_INIT;
         }
         return cli.run(args);
