@@ -21,8 +21,7 @@
     The ranges provided MUST be CIDR network expressions. To specify a single address,
     add "/32" or "/128" for IPv4 or IPv6 respectively.
     -->
-
-
+    
     <util:map id="shibboleth.authn.IPAddress.Mappings">
         <!--
         <entry key="jdoe">
