@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.module;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +25,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -185,8 +184,8 @@ public abstract class AbstractIdPModule implements IdPModule {
          * @return true iff the resource has been changed
          */
         public boolean hasChanged(@Nonnull final ModuleContext moduleContext) {
+
             try (final InputStream dest = getDestinationStream(moduleContext)) {
-                
                 if (dest != null) {
                     final byte[] destHash;
                     
@@ -295,9 +294,14 @@ public abstract class AbstractIdPModule implements IdPModule {
          */
         @Nullable private InputStream getDestinationStream(@Nonnull final ModuleContext moduleContext)
                 throws IOException {
-            final File destFile = moduleContext.getIdPHome().resolve(destination).toFile();
-            if (destFile.exists() && destFile.isFile() && destFile.canRead()) {
-                return new FileInputStream(destFile);
+            
+            final Path destPath = moduleContext.getIdPHome().resolve(destination);
+            if (Files.exists(destPath)) {
+                try {
+                    return Files.newInputStream(destPath, StandardOpenOption.READ);
+                } catch (final IOException e) {
+                    log.error("Module {} unable to read destination resource {}", getId(), destPath, e);
+                }
             }
             
             return null;
@@ -365,7 +369,7 @@ public abstract class AbstractIdPModule implements IdPModule {
             log.debug("Module {} resolved resource destination {}", getId(), resolved);
             if (Files.exists(resolved)) {
                 try {
-                    if (clean) {
+                    if (clean || !hasChanged(moduleContext)) {
                         log.info("Module {} removing resource {}", getId(), resolved);
                         Files.delete(resolved);
                     } else {

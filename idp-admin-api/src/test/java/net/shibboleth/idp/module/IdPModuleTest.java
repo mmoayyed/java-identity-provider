@@ -182,17 +182,9 @@ public class IdPModuleTest {
         String vel = Files.readString(testHome.resolve("views/test.vm"));
         Assert.assertEquals(vel, VEL_DATA);
         
-        testModule.disable(context, true);
+        testModule.disable(context, false);
         Assert.assertEquals(testHome.resolve("conf").toFile().listFiles().length, 0);
         Assert.assertEquals(testHome.resolve("views").toFile().listFiles().length, 0);
-        
-        testModule.enable(context);
-        testModule.disable(context, false);
-        xml = Files.readString(testHome.resolve("conf/test.xml.idpsave"));
-        Assert.assertEquals(xml, XML_DATA);
-        
-        vel = Files.readString(testHome.resolve("views/test.vm.idpsave"));
-        Assert.assertEquals(vel, VEL_DATA);
     }
 
     @Test
