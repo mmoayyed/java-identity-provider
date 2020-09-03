@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.TreeSet;
@@ -212,6 +211,7 @@ public class IdPPropertiesApplicationContextInitializer
         }
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Load additional property sources.
      * 
@@ -236,7 +236,8 @@ public class IdPPropertiesApplicationContextInitializer
                 try (final Stream<Path> paths = Files.find(searchRoot, Integer.MAX_VALUE,
                         new BiPredicate<Path,BasicFileAttributes>() {
                                 public boolean test(final Path t, final BasicFileAttributes u) {
-                                    if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")) {
+                                    if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")
+                                            && !t.endsWith(Path.of(IDP_PROPERTIES))) {
                                         log.debug("Including auto-located properties in {}", t);
                                         return true;
                                     }
@@ -253,19 +254,20 @@ public class IdPPropertiesApplicationContextInitializer
         
         final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
         if (additionalSources != null) {
-            sources.addAll(Arrays.asList(additionalSources.split(",")));
+            final String[] split = additionalSources.split(",");
+            for (final String s : split) {
+                final String trimmedSource = StringSupport.trimOrNull(s);
+                if (trimmedSource != null) {
+                    sources.add(searchLocation + trimmedSource);
+                }
+            }
         }
         
         for (final String source : sources) {
-            final String trimmedSource = StringSupport.trimOrNull(source);
-            if (trimmedSource == null) {
-                continue;
-            }
-            log.debug("Attempting to load properties from resource '{}'", trimmedSource);
-            final String pathifiedSource = searchLocation + trimmedSource;
-            final Resource additionalResource = applicationContext.getResource(pathifiedSource);
+            log.debug("Attempting to load properties from resource '{}'", source);
+            final Resource additionalResource = applicationContext.getResource(source);
             if (additionalResource.exists()) {
-                log.debug("Found resource '{}' at search path '{}'", additionalResource, pathifiedSource);
+                log.debug("Found property resource '{}'", additionalResource);
                 if (loadProperties(properties, additionalResource) == null) {
                     if (isFailFast(applicationContext)) {
                         log.error("Unable to load properties from resource '{}'", additionalResource);
@@ -275,11 +277,12 @@ public class IdPPropertiesApplicationContextInitializer
                     continue;
                 }
             } else {
-                log.warn("Unable to find resource '{}'", additionalResource);
+                log.warn("Unable to find property resource '{}'", additionalResource);
             }
         }
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
     /**
      * Log property names and values at debug level, suppressing properties whose name matches 'password',
      * 'credential', 'secret', or 'salt'.
