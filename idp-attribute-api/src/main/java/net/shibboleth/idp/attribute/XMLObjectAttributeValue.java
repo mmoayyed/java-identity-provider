@@ -20,17 +20,25 @@ package net.shibboleth.idp.attribute;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+
 /** A {@link XMLObjectAttributeValue} value for an {@link net.shibboleth.idp.attribute.IdPAttribute}. */
 public final class XMLObjectAttributeValue implements IdPAttributeValue {
+
+    /** Log. */
+    private static final Logger LOG = LoggerFactory.getLogger(XMLObjectAttributeValue.class);
 
     /** Value of the attribute. */
     private final XMLObject value;
@@ -61,9 +69,15 @@ public final class XMLObjectAttributeValue implements IdPAttributeValue {
     @Override
     @Nonnull @NotEmpty public String getDisplayValue() {
         if (value instanceof NameIDType) {
-            return ((NameIDType) value).getValue();
+            final NameIDType valAsNameId = (NameIDType) value;
+            return valAsNameId.getValue();
         }
-        return "(XML data)";
+        try {
+            return SerializeSupport.nodeToString(XMLObjectSupport.marshall(value));
+        } catch (final MarshallingException e) {
+            LOG.error("Error while marshalling XMLObject value", e);
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

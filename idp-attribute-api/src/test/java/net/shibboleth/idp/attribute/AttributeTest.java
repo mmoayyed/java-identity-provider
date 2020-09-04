@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -24,18 +25,23 @@ import static org.testng.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.impl.EntityDescriptorBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** Unit test for {@link IdPAttribute} class. */
 @SuppressWarnings("javadoc")
-public class AttributeTest {
+public class AttributeTest extends OpenSAMLInitBaseTestCase{
 
     /** Tests that the attribute has its expected state after instantiation. */
     @Test public void instantiation() {
@@ -345,5 +351,47 @@ public class AttributeTest {
             //expected
         }
         new IdPAttribute("Check%for{deprecation");
+    }
+
+    @Test public void displayValues() {
+        final IdPAttributeValue stringVal = StringAttributeValue.valueOf("Stringval");
+        final IdPAttributeValue scopedVal = ScopedStringAttributeValue.valueOf("value", "scope");
+        final byte array[] = {1,2,3,4};
+        final IdPAttributeValue binary = ByteAttributeValue.valueOf(array);
+        final IdPAttributeValue nullEmpty = new EmptyAttributeValue(EmptyType.NULL_VALUE);
+        final IdPAttributeValue zeroEmpty = new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE);
+        final EntityDescriptor entity = (new EntityDescriptorBuilder()).buildObject();
+        entity.setEntityID("https://example.org");
+        final IdPAttributeValue xmlval = new XMLObjectAttributeValue(entity);
+
+        final List<IdPAttributeValue> inList = List.of(stringVal, scopedVal, binary, nullEmpty, zeroEmpty, xmlval, stringVal);
+        final HashSet<IdPAttributeValue> inHash = new HashSet<>(inList);
+        final ArrayList<IdPAttributeValue> sorted = new ArrayList<>(inList);
+        sorted.sort(null);
+        final ArrayList<IdPAttributeValue> sortedDedup = new ArrayList<>(inHash);
+        sortedDedup.sort(null);
+        assertEquals(inList.size()-1, inHash.size());
+        assertEquals(inList.size(), sorted.size());
+        assertEquals(sortedDedup.size(), inHash.size());
+
+        for (IdPAttributeValue v:inList) {
+            assertTrue(inHash.contains(v));
+        }
+        for (IdPAttributeValue v:sorted) {
+            assertTrue(inHash.contains(v));
+        }
+        for (IdPAttributeValue v:sortedDedup) {
+            assertTrue(inHash.contains(v));
+        }
+        int offset = 0;
+        for (int i = 0; i < sortedDedup.size(); i++) {
+            final String s = sorted.get(i+offset).getDisplayValue();
+            final String ds = sortedDedup.get(i).getDisplayValue();
+            if (!ds.equals(s)) {
+                assertEquals(s, sorted.get(i-1).getDisplayValue());
+                assertEquals(ds, sorted.get(i+1).getDisplayValue());
+                offset = 1;
+            }
+        }
     }
 }

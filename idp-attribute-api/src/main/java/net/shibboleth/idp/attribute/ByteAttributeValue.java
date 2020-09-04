@@ -22,15 +22,15 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.codec.binary.Hex;
+
+import com.google.common.base.MoreObjects;
+
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.apache.commons.codec.binary.Hex;
-
-import com.google.common.base.MoreObjects;
 
 /** A <code>byte[]</code> value for an {@link IdPAttribute}. */
 public final class ByteAttributeValue implements IdPAttributeValue {
@@ -62,7 +62,7 @@ public final class ByteAttributeValue implements IdPAttributeValue {
 
     /** {@inheritDoc} */
     @Override @Nonnull @NotEmpty public String getDisplayValue() {
-        return "(binary data)";
+        return toHex();
     }
 
     /**
