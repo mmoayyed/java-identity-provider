@@ -30,8 +30,8 @@ public final class IPAddress extends PropertyDrivenIdPModule {
     /**
      * Constructor.
      *  
-     * @throws ModuleException 
-     * @throws IOException
+     * @throws ModuleException on error
+     * @throws IOException on error
      */
     public IPAddress() throws IOException, ModuleException {
         super(IPAddress.class);
