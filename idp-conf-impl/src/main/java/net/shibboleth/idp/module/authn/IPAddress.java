@@ -19,11 +19,12 @@ package net.shibboleth.idp.module.authn;
 
 import java.io.IOException;
 
+import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 
 /**
- * {@IdPModule} implementation.
+ * {@link IdPModule} implementation.
  */
 public final class IPAddress extends PropertyDrivenIdPModule {
 
