@@ -343,9 +343,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     public static int runMain(@Nonnull final String[] args) {
         final PluginInstallerCLI cli = new PluginInstallerCLI();
-        if (System.getProperty("idp.home") == null) {
-            return RC_INIT;
-        }
+
         return cli.run(args);
     }
     
