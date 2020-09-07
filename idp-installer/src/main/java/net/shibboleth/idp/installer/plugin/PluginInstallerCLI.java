@@ -60,10 +60,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     @Nullable private Logger log;
     
     /** A Plugin Installer to use. */
-    private PluginInstaller installer;
+    @Nullable private PluginInstaller installer;
     
     /** The injected HttpClient. */
-    private HttpClient httpClient;
+    @Nullable private HttpClient httpClient;
 
     /**
      * Constrained Constructor.

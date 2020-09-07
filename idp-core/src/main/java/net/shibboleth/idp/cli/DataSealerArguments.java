@@ -21,6 +21,9 @@ import java.io.PrintStream;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -36,6 +39,9 @@ public class DataSealerArguments extends net.shibboleth.ext.spring.cli.AbstractC
     @Parameter(names = "--dataSealer")
     @Nullable private String dataSealerName;
 
+    /** The Log. */
+    @Nullable private Logger log;
+
     /** Operation enum. */
     public enum OperationType {
         /** Wrap/encrypt. */
@@ -46,7 +52,15 @@ public class DataSealerArguments extends net.shibboleth.ext.spring.cli.AbstractC
     
     /** Requested operation. */
     @Nullable private OperationType operation;
-    
+
+    /** {@inheritDoc} */
+    public Logger getLog() {
+        if (log == null) {
+            log = LoggerFactory.getLogger(DataSealerArguments.class);
+        }
+        return log;
+    }
+
     /**
      * Get name of {@link DataSealer} bean to access.
      * 
@@ -97,5 +111,4 @@ public class DataSealerArguments extends net.shibboleth.ext.spring.cli.AbstractC
         out.println(String.format("  --%-20s %s", "dataSealer", "Specifies a non-default DataSealer bean to use."));
         out.println();
     }
-
 }

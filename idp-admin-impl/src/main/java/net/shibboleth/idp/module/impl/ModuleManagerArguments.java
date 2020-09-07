@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
@@ -45,7 +44,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArguments {
 
     /** Logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ModuleManagerArguments.class);
+    @Nullable private Logger log;
 
     /** Brief info about installed modules. */
     @Parameter(names= {"-l", "--list"})
@@ -74,6 +73,14 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /** Name for the {@link HttpClientSecurityParameters} . */
     @Parameter(names= {"-s", "--http-security"})
     @Nullable @NotEmpty private String httpClientSecurityParametersName;
+
+    /** {@inheritDoc} */
+    public Logger getLog() {
+        if (log == null) {
+            log = LoggerFactory.getLogger(ModuleManagerArguments.class);
+        }
+        return log;
+    }
 
     /**
      * Are we doing a list?
@@ -148,7 +155,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
                 list = true;
             }
         } else if (list || fullList) {
-            log.error("Cannot list and enable/disable in the same operation");
+            getLog().error("Cannot list and enable/disable in the same operation");
             throw new IllegalArgumentException("Cannot list and enable/disable in the same operation.");
         }
     }
@@ -180,5 +187,4 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
                 "Use the named bean for HTTP security"));
         out.println();
     }
-
 }

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
@@ -41,7 +42,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArguments {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(PluginInstallerArguments.class);
+    @Nullable private Logger log;
 
     /** The PluginId - usually used to drive the update. */
     @Parameter(names= {"-p", "--pluginId"})
@@ -98,7 +99,15 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     };
 
     /** What to do. */
-    private OperationType operation = OperationType.UNKNOWN;
+    @Nonnull private OperationType operation = OperationType.UNKNOWN;
+
+    /** {@inheritDoc} */
+    public Logger getLog() {
+        if (log == null) {
+            log = LoggerFactory.getLogger(PluginInstallerArguments.class);
+        }
+        return log;
+    }
 
     /** Plugin Id (if specified).
      * @return {@link #pluginId}
@@ -177,6 +186,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     public void validate() throws IllegalArgumentException {
+        System.out.println("Validate");
         super.validate();
 
         final List<String> otherArgs = getOtherArgs();
@@ -190,22 +200,22 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
                     output.append(' ');
                 }
             }
-            log.error("Unexpected extra arguments {}", output);
+            getLog().error("Unexpected extra arguments {}", output);
             throw new IllegalArgumentException("Unexpected extra arguments");
         }
         if (list || fullList) {
             operation = OperationType.LIST;
             if (input !=  null) {
-                log.error("Cannot List and Install in the same operation.");
+                getLog().error("Cannot List and Install in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Install in the same operation.");
             }
             if (updatePluginId !=  null) {
-                log.error("Cannot List and Update in the same operation.");
+                getLog().error("Cannot List and Update in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Update in the same operation.");
             }
         } else if (input != null) {
             if (updatePluginId !=  null) {
-                log.error("Cannot Install and Update in the same operation.");
+                getLog().error("Cannot Install and Update in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Update in the same operation.");
             }
             operation = decodeInput() ;
@@ -216,7 +226,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
                 updateVersion = new PluginVersion(forceUpdateVersion);
             }
         } else {
-            log.error("Missing qualifier. Options are : -l, -fl, -i, -u");
+            getLog().error("Missing qualifier. Options are : -l, -fl, -i, -u");
             throw new IllegalArgumentException("Missing qualifier");
         }
     }
@@ -232,22 +242,22 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
                 final int i = input.lastIndexOf('/')+1;
                 inputURL = new URL(input.substring(0, i));
                 inputName = input.substring(i);
-                log.trace("Found URL: {}\t{}", inputDirectory, inputName);
+                getLog().trace("Found URL: {}\t{}", inputDirectory, inputName);
                 return OperationType.INSTALLREMOTE;
             }
         } catch (final MalformedURLException e) {
-            log.trace("urg");
+            getLog().trace("urg");
         }
         // Must be a file
         final File inputAsFile = new File(input);
         if (!inputAsFile.exists()) {
-            log.error("File {} does not exist", inputAsFile.getAbsolutePath());
+            getLog().error("File {} does not exist", inputAsFile.getAbsolutePath());
             throw new IllegalArgumentException("Input File does not exist");
         }
         final Path inputAsPath = Path.of(inputAsFile.getAbsolutePath());
         inputDirectory = inputAsPath.getParent();
         inputName = inputAsPath.getFileName().toString();
-        log.trace("Found File: {}\t{}", inputDirectory, inputName);
+        getLog().trace("Found File: {}\t{}", inputDirectory, inputName);
         return OperationType.INSTALLDIR;
     }
 
