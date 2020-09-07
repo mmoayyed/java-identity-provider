@@ -34,7 +34,8 @@
 
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" p:order="1" />
 
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" p:order="2" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" p:order="2" 
+        p:detectHandlerMethodsInAncestorContexts="true"/>
 
     <!-- HandlerAdapters: These aren't ordered. Add our WebFlow one, then the standard Spring MVC default ones. 
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
