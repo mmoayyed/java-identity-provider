@@ -29,7 +29,7 @@
     <bean id="ValidateFunctionResult" class="net.shibboleth.idp.authn.impl.ValidateFunctionResult" scope="prototype"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Function.addDefaultPrincipals') ?: true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.Function.resultCachingPredicate')}"
-        p:resultLookupStrategy="#{getObject('shibboleth.authn.Function.ResultLookupStrategy') ?: getObject('DefaultResultLookupStrategy')" />
+        p:resultLookupStrategy="#{getObject('shibboleth.authn.Function.ResultLookupStrategy') ?: getObject('DefaultResultLookupStrategy')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
