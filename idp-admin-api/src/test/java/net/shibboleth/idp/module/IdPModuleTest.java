@@ -140,7 +140,7 @@ public class IdPModuleTest {
     
     @Test
     public void testModule() {
-        Assert.assertEquals(testModule.getId(), TestModule.class.getName());
+        Assert.assertEquals(testModule.getId(), "idp.test");
         Assert.assertEquals(testModule.getName(), "Test module");
         Assert.assertEquals(testModule.getURL().toString(), "https://wiki.shibboleth.net/confluence/display/IDP4/Home");
         
