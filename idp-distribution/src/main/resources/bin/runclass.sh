@@ -4,6 +4,7 @@ declare LOCATION
 declare COMMAND
 declare JAVACMD
 declare LOCALCLASSPATH
+declare LIBDIR
 
 LOCATION=$(dirname $0)
 
@@ -49,4 +50,4 @@ if [ -n "$JAVA_HOME" ] ; then
   fi
 fi
 
-"$JAVACMD" '-classpath' "$LOCALCLASSPATH" -Dnet.shibboleth.idp.cli.baseURL=$IDP_BASE_URL -Dnet.shibboleth.idp.cli.idp.home=$LOCATION/.. "$@"
+"$JAVACMD" '-classpath' "$LOCALCLASSPATH" -Dnet.shibboleth.idp.cli.baseURL=$IDP_BASE_URL "$@"
