@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
@@ -75,7 +76,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     @Nullable @NotEmpty private String httpClientSecurityParametersName;
 
     /** {@inheritDoc} */
-    public Logger getLog() {
+    @Nonnull public Logger getLog() {
         if (log == null) {
             log = LoggerFactory.getLogger(ModuleManagerArguments.class);
         }

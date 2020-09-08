@@ -17,7 +17,13 @@
 
 package net.shibboleth.idp.module.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import javax.annotation.Nonnull;
@@ -31,9 +37,13 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.IdPModule.ModuleResource;
+import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -122,7 +132,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                 doManage(moduleContext, args);
             }
         } catch (final ModuleException e) {
-            System.out.println("FAILED");
+            System.out.println(ANSIColors.ANSI_RED + "[FAILED]" + ANSIColors.ANSI_RESET);
             System.out.println();
             return RC_INIT;
         }
@@ -144,10 +154,24 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                 System.out.println("\tName: " + module.getName());
                 System.out.println("\tDesc: " + module.getDescription());
                 System.out.println("\tHelp: " + module.getURL());
-                System.out.println("\tStatus: " + (module.isEnabled(moduleContext) ? "ENABLED" : "DISABLED"));
+                if (module.isEnabled(moduleContext)) {
+                    System.out.println("\tStatus: " + ANSIColors.ANSI_GREEN + "ENABLED" + ANSIColors.ANSI_RESET);
+                } else {
+                    System.out.println("\tStatus: " + ANSIColors.ANSI_RED + "DISABLED" + ANSIColors.ANSI_RESET);
+                }
+                final Collection<ModuleResource> resources = module.getResources();
+                resources.forEach(r -> {
+                    System.out.println("\tResource: (" + (r.isReplace() ? "  replace" : "noreplace") + ") " +
+                            r.getDestination());
+                });
             } else {
-                System.out.println("Module: " + module.getId() + ": " +
-                        (module.isEnabled(moduleContext) ? "ENABLED" : "DISABLED"));
+                if (module.isEnabled(moduleContext)) {
+                    System.out.println("Module: " + module.getId() +
+                            ANSIColors.ANSI_GREEN + " [ENABLED]" + ANSIColors.ANSI_RESET);
+                } else {
+                    System.out.println("Module: " + module.getId() +
+                            ANSIColors.ANSI_RED + " [DISABLED]" + ANSIColors.ANSI_RESET);
+                }
             }
             System.out.println();
         }
@@ -164,15 +188,74 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
     private void doManage(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args)
             throws ModuleException {
         for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
+            
+            final boolean enable;
             if (args.getEnableModuleIds().contains(module.getId())) {
-                System.out.print("Enabling " + module.getId() + "...");
-                module.enable(moduleContext);
-                System.out.println("OK");
+                enable = true;
             } else if (args.getDisableModuleIds().contains(module.getId())) {
-                System.out.print("Disabling " + module.getId() + "...");
-                module.disable(moduleContext, args.getClean());
-                System.out.println("OK");
+                enable = false;
+            } else {
+                continue;
             }
+            
+            try (final ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
+                System.out.println((enable ? "Enabling " : "Disabling ") + module.getId() + "...");
+                moduleContext.setMessageStream(new PrintStream(sink));
+                
+                final Map<ModuleResource,ResourceResult> results = enable ? module.enable(moduleContext) :
+                    module.disable(moduleContext, args.getClean());
+                results.forEach(this::doReportOperation);
+                
+                System.out.println(ANSIColors.ANSI_GREEN + "[OK]" + ANSIColors.ANSI_RESET);
+                System.out.println();
+                
+                final String msg = sink.toString(Charset.forName("UTF-8"));
+                moduleContext.setMessageStream(null);
+                if (!Strings.isNullOrEmpty(msg)) {
+                    System.out.println(msg);
+                    System.out.println();
+                }
+                
+            } catch (final IOException e) {
+                getLogger().error("I/O Error", e);
+            }
+        }
+    }
+    
+    /**
+     * Report on a resource result.
+     * 
+     * @param resource resource
+     * @param result result of operation
+     */
+    private void doReportOperation(@Nonnull final ModuleResource resource, @Nonnull final ResourceResult result) {
+        System.out.print("\t" + resource.getDestination());
+        switch (result) {
+            case CREATED:
+                System.out.println(" created");
+                break;
+                
+            case REPLACED:
+                System.out.println(" replaced, " + resource.getDestination() + ".idpsave created");
+                break;
+                
+            case ADDED:
+                System.out.println(".idpnew created");
+                break;
+                
+            case REMOVED:
+                System.out.println(" removed");
+                break;
+                
+            case SAVED:
+                System.out.println(" renamed to " + resource.getDestination() + ".idpsave");
+                break;
+                
+            case MISSING:
+                System.out.println(" missing, nothing to do");
+                break;
+                
+            default:
         }
     }
     

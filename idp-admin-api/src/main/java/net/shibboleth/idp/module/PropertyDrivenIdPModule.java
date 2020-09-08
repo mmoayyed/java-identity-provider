@@ -24,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -212,8 +214,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
 
     /** {@inheritDoc} */
     @Override
-    public void enable(@Nullable final ModuleContext moduleContext) throws ModuleException {
-        super.enable(moduleContext);
+    @Nonnull @NonnullElements public Map<ModuleResource,ResourceResult> enable(
+            @Nullable final ModuleContext moduleContext) throws ModuleException {
+        final Map<ModuleResource,ResourceResult> results = super.enable(moduleContext);
         
         if (moduleContext.getMessageStream() != null) {
             final String msg = moduleProperties.getProperty(getId() + MODULE_POSTENABLE_PROPERTY);
@@ -221,12 +224,15 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                 moduleContext.getMessageStream().println(msg);
             }
         }
+        
+        return results;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void disable(@Nullable final ModuleContext moduleContext, final boolean clean) throws ModuleException {
-        super.disable(moduleContext, clean);
+    @Nonnull @NonnullElements public Map<ModuleResource,ResourceResult> disable(
+            @Nullable final ModuleContext moduleContext, final boolean clean) throws ModuleException {
+        final Map<ModuleResource,ResourceResult> results = super.disable(moduleContext, clean);
 
         if (moduleContext.getMessageStream() != null) {
             final String msg = moduleProperties.getProperty(getId() + MODULE_POSTDISABLE_PROPERTY);
@@ -234,6 +240,8 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                 moduleContext.getMessageStream().println(msg);
             }
         }
+        
+        return results;
     }
 
 }

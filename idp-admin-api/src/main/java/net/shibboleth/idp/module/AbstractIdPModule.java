@@ -32,7 +32,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -112,25 +114,48 @@ public abstract class AbstractIdPModule implements IdPModule {
     }
     
     /** {@inheritDoc} */
-    public void enable(@Nonnull final ModuleContext moduleContext) throws ModuleException {
+    @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> enable(
+            @Nonnull final ModuleContext moduleContext) throws ModuleException {
         if (isHttpClientRequired() && moduleContext.getHttpClient() == null) {
             throw new ModuleException("HTTP client required but not available");
         }
         
         log.debug("Module {} enabling", getId());
-        for (final ModuleResource resource : moduleResources) {
-            ((BasicModuleResource) resource).enable(moduleContext);
+        
+        final Map<ModuleResource,ResourceResult> results;
+        
+        if (!moduleResources.isEmpty()) {
+            results = new HashMap<>(moduleResources.size());
+
+            for (final ModuleResource resource : moduleResources) {
+                results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
+            }
+        } else {
+            results = Collections.emptyMap();
         }
-        log.info("Module {} enabled", getId());
+        
+        log.debug("Module {} enabled", getId());
+        return results;
     }
 
     /** {@inheritDoc} */
-    public void disable(@Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
+    @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> disable(
+            @Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
         log.debug("Module {} disabling", getId());
-        for (final ModuleResource resource : moduleResources) {
-            ((BasicModuleResource) resource).disable(moduleContext, clean);
+
+        final Map<ModuleResource,ResourceResult> results;
+        
+        if (!moduleResources.isEmpty()) {
+            results = new HashMap<>(moduleResources.size());
+            for (final ModuleResource resource : moduleResources) {
+                results.put(resource, ((BasicModuleResource) resource).disable(moduleContext, clean));
+            }
+        } else {
+            results = Collections.emptyMap();
         }
-        log.info("Module {} disabled", getId());
+        
+        log.debug("Module {} disabled", getId());
+        return results;
     }
     
     /**
@@ -159,6 +184,20 @@ public abstract class AbstractIdPModule implements IdPModule {
             source = Constraint.isNotNull(StringSupport.trimOrNull(src), "Source cannot be null");
             destination = Constraint.isNotNull(dest, "Destination cannot be null");
             replace = shouldReplace;
+        }
+
+        /** {@inheritDoc} */
+        public int hashCode() {
+            return source.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean equals(final Object obj) {
+            if (obj instanceof ModuleResource) {
+                return source.equals(((ModuleResource) obj).getSource()) &&
+                        destination.equals(((ModuleResource) obj).getDestination());
+            }
+            return false;
         }
 
         /** {@inheritDoc} */
@@ -312,9 +351,11 @@ public abstract class AbstractIdPModule implements IdPModule {
          * 
          * @param moduleContext module context
          * 
+         * @return result of operation
+         * 
          * @throws ModuleException if an error occurs
          */
-        private void enable(@Nonnull final ModuleContext moduleContext) throws ModuleException {
+        @Nonnull private ResourceResult enable(@Nonnull final ModuleContext moduleContext) throws ModuleException {
             log.debug("Module {} enabling resource {}", getId(), source);
 
             final boolean hasChanged = hasChanged(moduleContext);
@@ -325,20 +366,24 @@ public abstract class AbstractIdPModule implements IdPModule {
                 }
 
                 final Path destPath;
+                final ResourceResult result;
                 
                 if (hasChanged) {
                     if (isReplace()) {
                         destPath = moduleContext.getIdPHome().resolve(destination);
                         Files.copy(destPath, destPath.resolveSibling(destPath.getFileName() + ".idpsave"),
                                 StandardCopyOption.REPLACE_EXISTING);
-                        log.info("Module {} preserved {}", getId(), destPath);
+                        log.debug("Module {} preserved {}", getId(), destPath);
+                        result = ResourceResult.REPLACED;
                     } else {
                         final Path basePath = moduleContext.getIdPHome().resolve(destination);
                         destPath = basePath.resolveSibling(basePath.getFileName() + ".idpnew");
+                        result = ResourceResult.ADDED;
                     }
                     
                 } else {
                     destPath = moduleContext.getIdPHome().resolve(destination);
+                    result = ResourceResult.CREATED;
                 }
                 
                 if (!destPath.startsWith(moduleContext.getIdPHome())) {
@@ -347,8 +392,8 @@ public abstract class AbstractIdPModule implements IdPModule {
                 }
 
                 Files.copy(srcStream, destPath, StandardCopyOption.REPLACE_EXISTING);
-                log.info("Module {} created {}", getId(), destPath);
-                
+                log.debug("Module {} created {}", getId(), destPath);
+                return result;
             } catch (final IOException e) {
                 log.error("Module {} unable to enable resource {}", getId(), source);
                 throw new ModuleException(e);
@@ -361,29 +406,38 @@ public abstract class AbstractIdPModule implements IdPModule {
          * @param moduleContext module context
          * @param clean true iff resource should be removed
          * 
+         * @return result of operation
+         * 
          * @throws ModuleException if an error occurs
          */
-        private void disable(@Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
+        @Nonnull private ResourceResult disable(@Nonnull final ModuleContext moduleContext, final boolean clean)
+                throws ModuleException {
             
+            final ResourceResult result;
             final Path resolved = moduleContext.getIdPHome().resolve(destination);
             log.debug("Module {} resolved resource destination {}", getId(), resolved);
             if (Files.exists(resolved)) {
                 try {
                     if (clean || !hasChanged(moduleContext)) {
-                        log.info("Module {} removing resource {}", getId(), resolved);
+                        log.debug("Module {} removing resource {}", getId(), resolved);
                         Files.delete(resolved);
+                        result = ResourceResult.REMOVED;
                     } else {
-                        log.info("Module {} backing up resource {}", getId(), resolved);
+                        log.debug("Module {} backing up resource {}", getId(), resolved);
                         Files.move(resolved, resolved.resolveSibling(resolved.getFileName() + ".idpsave"),
                                 StandardCopyOption.REPLACE_EXISTING);
+                        result = ResourceResult.SAVED;
                     }
                 } catch (final IOException e) {
                     log.error("Module {} failed to disable {}", getId(), resolved);
                     throw new ModuleException(e);
                 }
             } else {
-                log.info("Module {} resource {} missing, ignoring", getId(), resolved);
+                log.debug("Module {} resource {} missing, ignoring", getId(), resolved);
+                result = ResourceResult.MISSING;
             }
+            
+            return result;
         }
         
     }

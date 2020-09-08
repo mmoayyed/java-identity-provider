@@ -20,6 +20,7 @@ package net.shibboleth.idp.module;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,9 +95,12 @@ public interface IdPModule extends IdentifiedComponent {
      * 
      * @param moduleContext module context
      * 
+     * @return summary of resource results
+     * 
      * @throws ModuleException if not successful 
      */
-    void enable(@Nonnull final ModuleContext moduleContext) throws ModuleException;
+    @Nonnull @NonnullElements Map<ModuleResource,ResourceResult> enable(@Nonnull final ModuleContext moduleContext)
+            throws ModuleException;
 
     /**
      * Disable the module.
@@ -107,9 +111,12 @@ public interface IdPModule extends IdentifiedComponent {
      * @param clean if true, the module should attempt to fully remove traces of previous
      *  use in a potentially destructive fashion
      * 
+     * @return summary of resource results
+     * 
      * @throws ModuleException if not successful 
      */
-    void disable(@Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException;
+    @Nonnull @NonnullElements Map<ModuleResource,ResourceResult> disable(@Nonnull final ModuleContext moduleContext,
+            final boolean clean) throws ModuleException;
     
     /**
      * Interface to a resource managed by the module.
@@ -139,5 +146,26 @@ public interface IdPModule extends IdentifiedComponent {
          */
         public boolean isReplace();
     }
+ 
+    /** Resource management outcome. */
+    public enum ResourceResult {
+        /** Resource was created. */
+        CREATED,
+        
+        /** Resource was created and old resource saved. */
+        REPLACED,
+        
+        /** Resource was created alongside original. */
+        ADDED,
+        
+        /** Resource was removed. */
+        REMOVED,
+        
+        /** Old resource was preserved. */
+        SAVED,
+        
+        /** Resource was missing. */
+        MISSING,
+    };
     
 }
