@@ -134,6 +134,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                     System.out.println("\tResource: (" + (r.isReplace() ? "  replace" : "noreplace") + ") " +
                             r.getDestination());
                 });
+                System.out.println();
             } else {
                 if (module.isEnabled(moduleContext)) {
                     System.out.println("Module: " + module.getId() +
@@ -143,7 +144,6 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                             ANSIColors.ANSI_RED + " [DISABLED]" + ANSIColors.ANSI_RESET);
                 }
             }
-            System.out.println();
         }
     }
 

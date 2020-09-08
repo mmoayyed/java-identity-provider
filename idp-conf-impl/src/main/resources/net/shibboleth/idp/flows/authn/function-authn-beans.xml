@@ -18,12 +18,18 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/authn/function-authn-config.xml" />
-            
+    <import resource="conditional:%{idp.home}/conf/authn/function-authn-config.xml" />
+
+    <bean id="DefaultResultLookupStrategy" parent="shibboleth.Functions.Constant">
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+    </bean>
+
     <bean id="ValidateFunctionResult" class="net.shibboleth.idp.authn.impl.ValidateFunctionResult" scope="prototype"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Function.addDefaultPrincipals') ?: true}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.Function.resultCachingPredicate')}"
-        p:resultLookupStrategy-ref="shibboleth.authn.Function.ResultLookupStrategy" />
+        p:resultLookupStrategy="#{getObject('shibboleth.authn.Function.ResultLookupStrategy') ?: getObject('DefaultResultLookupStrategy')" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
