@@ -19,7 +19,6 @@ package net.shibboleth.idp.installer.plugin;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,39 +43,34 @@ public class PluginCLITest extends BasePluginTest {
     
     private final String RHINO_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.2/idp-plugin-rhino-dist-0.1.2.tar.gz";
 
-    private File plugin;
-
     @BeforeSuite public void setUp() throws IOException
     {
         System.setProperty("idp.home",getIdpHome().toString());
-        plugin = getIdpHome().resolve("conf").resolve("admin").resolve("plugin-installer.xml").toFile();
     }
 
     @Test(enabled = true) public void testList() throws IOException {
-        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "-fl", } ),
-                AbstractCommandLine.RC_OK);
+        assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }
 
     @Test(enabled = true) public void testWrong() {
-        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), "-i", "a"}),
-                AbstractCommandLine.RC_INIT);
+        assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }
 
     @Test(enabled = true, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
-            assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
+            assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", RHINO_DISTRO,
                     "-p", "net.shibboleth.idp.plugin.rhino"}),
                     AbstractCommandLine.RC_OK);
     }
 
     @Test(dependsOnMethods = {"testRhinoWeb"})  public void testUpdate() {
-        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
+        assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", "net.shibboleth.idp.plugin.rhino"}),
                 AbstractCommandLine.RC_OK);
     }
 
     @Test(dependsOnMethods = {"testUpdate"})  public void testForceUpdate() {
-        assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(),
+        assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", "net.shibboleth.idp.plugin.rhino",
                 "-fu", "0.1.2" }),
                 AbstractCommandLine.RC_OK);
@@ -112,7 +106,7 @@ public class PluginCLITest extends BasePluginTest {
             //
             // try again
             //
-            assertEquals(PluginInstallerCLI.runMain(new String[] { plugin.getAbsolutePath(), 
+            assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", unpack.resolve("rhino.tar.gz").toString(),
                     "-p", "net.shibboleth.idp.plugin.rhino"}),
                     AbstractCommandLine.RC_OK);
