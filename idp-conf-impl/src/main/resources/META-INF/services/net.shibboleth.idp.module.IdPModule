@@ -1,2 +1,3 @@
 net.shibboleth.idp.module.authn.impl.Function
 net.shibboleth.idp.module.authn.impl.IPAddress
+net.shibboleth.idp.module.authn.impl.RemoteUserInternal

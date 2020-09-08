@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
@@ -85,10 +85,10 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param attributes    list of request attributes to check
      */
-    public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
+    public void setCheckAttributes(@Nullable @NonnullElements final Collection<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkAttributes = new ArrayList<>(StringSupport.normalizeStringCollection(attributes));
+        checkAttributes = StringSupport.normalizeStringCollection(attributes);
     }
 
     /**
@@ -96,10 +96,10 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param headers list of request headers to check
      */
-    public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
+    public void setCheckHeaders(@Nullable @NonnullElements final Collection<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkHeaders = new ArrayList<>(StringSupport.normalizeStringCollection(headers));
+        checkHeaders = StringSupport.normalizeStringCollection(headers);
     }
     
     /** {@inheritDoc} */
