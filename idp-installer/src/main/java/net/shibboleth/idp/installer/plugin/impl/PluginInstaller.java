@@ -242,10 +242,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         }
 
         final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
+
+        InstallerSupport.setReadOnly(myWebApp, false);
         deleteTree(myWebApp);
         installWebapp(myWebApp);
         installFiles();
         downloadExternals();
+        InstallerSupport.setReadOnly(myWebApp, true);
 
         final BuildWar builder = new BuildWar(idpHome);
         try {
