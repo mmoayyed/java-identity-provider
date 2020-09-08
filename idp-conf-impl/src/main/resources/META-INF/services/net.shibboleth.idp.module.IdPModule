@@ -1,1 +1,1 @@
-net.shibboleth.idp.module.authn.IPAddress
+net.shibboleth.idp.module.authn.impl.IPAddress

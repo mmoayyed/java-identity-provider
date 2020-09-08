@@ -47,6 +47,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Default name of module properties resource. */
     @Nonnull @NotEmpty public static final String DEFAULT_RESOURCE = "module.properties";
 
+    /** Suffix of property for module ID. */
+    @Nonnull @NotEmpty public static final String MODULE_ID_PROPERTY = ".id";
+
     /** Suffix of property for module name. */
     @Nonnull @NotEmpty public static final String MODULE_NAME_PROPERTY = ".name";
 
@@ -76,7 +79,10 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
 
     /** Properties describing module. */
     @Nonnull private final Properties moduleProperties;
-    
+
+    /** Module ID. */
+    @Nonnull @NotEmpty private String moduleId;
+
     /** Module name. */
     @Nonnull @NotEmpty private String moduleName;
 
@@ -128,6 +134,10 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
 // Checkstyle: CyclomaticComplexity OFF
     protected void load() throws ModuleException {
         try {
+            moduleId = Constraint.isNotNull(
+                    StringSupport.trimOrNull(moduleProperties.getProperty(getClass().getName() + MODULE_ID_PROPERTY)),
+                    "Module ID missing from properties");
+            
             moduleName = Constraint.isNotNull(
                     StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_NAME_PROPERTY)),
                     "Module name missing from properties");
@@ -176,8 +186,8 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
 // Checkstyle: CyclomaticComplexity ON
     
     /** {@inheritDoc} */
-    public String getId() {
-        return getClass().getName();
+    @Nonnull @NotEmpty public String getId() {
+        return moduleId;
     }
 
     /** {@inheritDoc} */

@@ -15,8 +15,27 @@
  * limitations under the License.
  */
 
-/**
- * Authentication modules.
- */
+package net.shibboleth.idp.module.authn.impl;
 
-package net.shibboleth.idp.module.authn;
+import java.io.IOException;
+
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.idp.module.PropertyDrivenIdPModule;
+
+/**
+ * {@link IdPModule} implementation.
+ */
+public final class IPAddress extends PropertyDrivenIdPModule {
+
+    /**
+     * Constructor.
+     *  
+     * @throws ModuleException on error
+     * @throws IOException on error
+     */
+    public IPAddress() throws IOException, ModuleException {
+        super(IPAddress.class);
+    }
+
+}
