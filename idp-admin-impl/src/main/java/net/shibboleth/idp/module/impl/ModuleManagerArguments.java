@@ -25,8 +25,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.client.HttpClient;
-import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +33,6 @@ import com.beust.jcommander.Parameter;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
@@ -66,14 +63,6 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /** Clean when disabling. */
     @Parameter(names= {"-f", "--clean"})
     @Nullable private boolean clean;
-
-    /** Name for the {@link HttpClient} . */
-    @Parameter(names= {"-h", "--http-client"})
-    @Nullable @NotEmpty private String httpClientName;
-
-    /** Name for the {@link HttpClientSecurityParameters} . */
-    @Parameter(names= {"-s", "--http-security"})
-    @Nullable @NotEmpty private String httpClientSecurityParametersName;
 
     /** {@inheritDoc} */
     @Nonnull public Logger getLog() {
@@ -128,24 +117,6 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
         return clean;
     }
     
-    /**
-     * Get bean name for the {@link HttpClient} (if specified).
-     * 
-     * @return the name or null
-     */
-    @Nullable @NotEmpty public String getHttpClientName() {
-        return httpClientName;
-    }
-
-    /**
-     * Get bean name for the {@link HttpClientSecurityParameters} (if specified).
-     * 
-     * @return the name or null
-     */
-    @Nullable @NotEmpty public String getHttpClientSecurityParameterstName() {
-        return httpClientSecurityParametersName;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void validate() throws IllegalArgumentException {
@@ -177,15 +148,11 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
         out.println(String.format("  %-22s %s", "-al, --full-list",
                 "Full details on all installed modules"));
         out.println(String.format("  %-22s %s", "-e, --enable <id>",
-                "Enable module"));
+                "Enable module(s)"));
         out.println(String.format("  %-22s %s", "-u, --disable <id>",
-                "Disable module"));
+                "Disable module(s)"));
         out.println(String.format("  %-22s %s", "-f, --clean",
                 "Clean disabled files instead of preserving them"));
-        out.println(String.format("  %-22s %s", "-h, --http-client <bean name>",
-                "Use the named bean for HTTP operations"));
-        out.println(String.format("  %-22s %s", "-s, --http-security <bean name>",
-                "Use the named bean for HTTP security"));
         out.println();
     }
 }

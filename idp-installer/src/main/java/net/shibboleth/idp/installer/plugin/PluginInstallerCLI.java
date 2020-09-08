@@ -28,13 +28,11 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -47,6 +45,7 @@ import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.plugin.impl.PluginState;
 import net.shibboleth.idp.plugin.impl.PluginState.VersionInfo;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -61,9 +60,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     
     /** A Plugin Installer to use. */
     @Nullable private PluginInstaller installer;
-    
-    /** The injected HttpClient. */
-    @Nullable private HttpClient httpClient;
 
     /**
      * Constrained Constructor.
@@ -83,18 +79,18 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
     /** {@inheritDoc} */
     @Override
-    protected Class<PluginInstallerArguments> getArgumentClass() {
+    @Nonnull protected Class<PluginInstallerArguments> getArgumentClass() {
         return PluginInstallerArguments.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String getVersion() {
+    @Nullable protected String getVersion() {
         return Version.getVersion();
     }
     
     /** {@inheritDoc} */
-    protected List<Resource> getAdditionalSpringResources() {
+    @Nonnull @NonnullElements protected List<Resource> getAdditionalSpringResources() {
         return List.of(
                new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
@@ -102,30 +98,17 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** {@inheritDoc} */
     //CheckStyle: CyclomaticComplexity OFF
     protected int doRun(final PluginInstallerArguments args) {
+        
+        if (args.getHttpClientName() == null) {
+            args.setHttpClientName("shibboleth.InternalHttpClient");
+        }
+
         final int ret = super.doRun(args);
         if (ret != RC_OK) {
             return ret;
         }
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
-        }
-
-        String clientName = args.getHttpClientName();
-        if (clientName == null) {
-            clientName = "shibboleth.InternalHttpClient";
-        }
-        final Object client;
-        try {
-            client = getApplicationContext().getBean(clientName);
-        } catch (final NoSuchBeanDefinitionException e) {
-            log.error("Could not locate an Http Client '{}'", clientName);
-            return RC_IO;
-        }
-        if (client instanceof HttpClient) {
-            httpClient = (HttpClient) client;
-        } else {
-            log.error("Bean '{}' was a {}, not a {}", clientName, client.getClass(), HttpClient.class);
-            return RC_IO;
         }
 
         try {
@@ -176,8 +159,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         installer.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
         installer.setAcceptCert(new InstallerQuery("Accept this Certificate"));
         installer.setAcceptDownload(new InstallerQuery("Download from"));
-        if (httpClient!= null) {
-            installer.setHttpClient(httpClient);
+        if (getHttpClient()!= null) {
+            installer.setHttpClient(getHttpClient());
         }
         installer.initialize();
     }
@@ -267,8 +250,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             if (pluginId.equals(plugin.getPluginId())) {
                 log.debug("Interrogating {} ", plugin.getPluginId());
                 final PluginState state =  new PluginState(plugin);
-                if (httpClient != null) {
-                    state.setHttpClient(httpClient);
+                if (getHttpClient() != null) {
+                    state.setHttpClient(getHttpClient());
                 }
                 try {
                     state.initialize();
@@ -306,8 +289,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     private void printDetails(final PluginDescription plugin) {
         log.debug("Interrogating {} ", plugin.getPluginId());
         final PluginState state =  new PluginState(plugin);
-        if (httpClient != null) {
-            state.setHttpClient(httpClient);
+        if (getHttpClient() != null) {
+            state.setHttpClient(getHttpClient());
         }
         try {
             state.initialize();

@@ -21,11 +21,17 @@ import java.io.PrintStream;
 
 import javax.annotation.Nullable;
 
+import org.apache.http.client.HttpClient;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
+
 import com.beust.jcommander.Parameter;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An extension to {@link net.shibboleth.ext.spring.cli.AbstractCommandLineArguments}
- * that allows idp.home override.
+ * that allows idp.home override and includes HTTP client support.
  * 
  * @since 4.1.0
  */
@@ -36,6 +42,14 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
     @Parameter(names = "--home")
     @Nullable private String idpHome;
     
+    /** Name for the {@link HttpClient} . */
+    @Parameter(names= {"-hc", "--http-client"})
+    @Nullable @NotEmpty private String httpClientName;
+
+    /** Name for the {@link HttpClientSecurityParameters} . */
+    @Parameter(names= {"-hs", "--http-security"})
+    @Nullable @NotEmpty private String httpClientSecurityParametersName;
+    
     /** 
      * Gets the configured home location.
      * 
@@ -45,12 +59,43 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
         return idpHome;
     }
 
+    /**
+     * Get bean name for the {@link HttpClient} (if specified).
+     * 
+     * @return the name or null
+     */
+    @Nullable @NotEmpty public String getHttpClientName() {
+        return httpClientName;
+    }
+    
+    /**
+     * Set bean name for the {@link HttpClient}.
+     * 
+     * @param name bean name
+     */
+    public void setHttpClientName(@Nullable @NotEmpty final String name) {
+        httpClientName = StringSupport.trimOrNull(name);
+    }
+
+    /**
+     * Get bean name for the {@link HttpClientSecurityParameters} (if specified).
+     * 
+     * @return the name or null
+     */
+    @Nullable @NotEmpty public String getHttpClientSecurityParameterstName() {
+        return httpClientSecurityParametersName;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public void printHelp(final PrintStream out) {
         super.printHelp(out);
         out.println(String.format("  --%-20s %s", "home",
                 "Sets idp.home if not installed to default location."));
+        out.println(String.format("  %-22s %s", "-hc, --http-client",
+                "Use the named bean for HTTP operations"));
+        out.println(String.format("  %-22s %s", "-hs, --http-security",
+                "Use the named bean for HTTP security"));
         out.println();
     }
 }

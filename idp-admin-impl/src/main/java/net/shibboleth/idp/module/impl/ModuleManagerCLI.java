@@ -29,11 +29,8 @@ import java.util.ServiceLoader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.client.HttpClient;
-import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -58,12 +55,6 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
     /** Class logger. */
     @Nullable private Logger log;
     
-    /** The injected HttpClient. */
-    @Nullable private HttpClient httpClient;
-    
-    /** Injected security parameters. */
-    @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
-
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Logger getLogger() {
@@ -99,32 +90,11 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
             return ret;
         }
 
-        final String clientName = args.getHttpClientName() != null ? args.getHttpClientName() :
-            "shibboleth.InternalHttpClient";
-        try {
-            httpClient = getApplicationContext().getBean(clientName, HttpClient.class);
-        } catch (final NoSuchBeanDefinitionException e) {
-            log.error("Could not locate HttpClient '{}'", clientName);
-            return RC_IO;
-        }
-        
-        if (args.getHttpClientSecurityParameterstName() != null) {
-            try {
-                httpClientSecurityParameters =
-                        getApplicationContext().getBean(args.getHttpClientSecurityParameterstName(),
-                                HttpClientSecurityParameters.class);
-            } catch (final NoSuchBeanDefinitionException e) {
-                log.error("Could not locate HttpClientSecurityParameters '{}'",
-                        args.getHttpClientSecurityParameterstName());
-                return RC_IO;
-            }
-        }
-
         try {
             final ModuleContext moduleContext =
                     new ModuleContext(getApplicationContext().getEnvironment().getProperty("idp.home"));
-            moduleContext.setHttpClient(httpClient);
-            moduleContext.setHttpClientSecurityParameters(httpClientSecurityParameters);
+            moduleContext.setHttpClient(getHttpClient());
+            moduleContext.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
             
             if (args.getList() || args.getFullList()) {
                 doList(moduleContext, args.getFullList());

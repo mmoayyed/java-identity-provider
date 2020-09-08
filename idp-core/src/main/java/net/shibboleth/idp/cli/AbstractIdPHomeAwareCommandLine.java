@@ -18,6 +18,11 @@
 package net.shibboleth.idp.cli;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.http.client.HttpClient;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
@@ -33,10 +38,28 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 public abstract class AbstractIdPHomeAwareCommandLine<T extends AbstractIdPHomeAwareCommandLineArguments>
         extends AbstractCommandLine<T> {
     
+    /** The injected HttpClient. */
+    @Nullable private HttpClient httpClient;
+    
+    /** Injected security parameters. */
+    @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
+    
     /**
-     * Constructor.
+     * Gets the {@link HttpClient} to use.
+     * 
+     * @return the HTTP client to use
      */
-    protected AbstractIdPHomeAwareCommandLine() {
+    @Nullable public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    /**
+     * Gets the {@link HttpClientSecurityParameters} to use.
+     * 
+     * @return the HTTP client security parameters to use
+     */
+    @Nullable public HttpClientSecurityParameters getHttpClientSecurityParameters() {
+        return httpClientSecurityParameters;
     }
 
     /** {@inheritDoc} */
@@ -46,7 +69,34 @@ public abstract class AbstractIdPHomeAwareCommandLine<T extends AbstractIdPHomeA
             System.setProperty("idp.home", args.getIdPHome());
         }
         setContextInitializer(new IdPPropertiesApplicationContextInitializer());
-        return super.doRun(args);
+
+        final int rc = super.doRun(args);
+        if (rc != RC_OK) {
+            return rc;
+        }
+        
+        if (args.getHttpClientName() != null) {
+            try {
+                httpClient = getApplicationContext().getBean(args.getHttpClientName(), HttpClient.class);
+            } catch (final NoSuchBeanDefinitionException e) {
+                getLogger().error("Could not locate HttpClient '{}'", args.getHttpClientName());
+                return RC_IO;
+            }
+        }
+        
+        if (args.getHttpClientSecurityParameterstName() != null) {
+            try {
+                httpClientSecurityParameters =
+                        getApplicationContext().getBean(args.getHttpClientSecurityParameterstName(),
+                                HttpClientSecurityParameters.class);
+            } catch (final NoSuchBeanDefinitionException e) {
+                getLogger().error("Could not locate HttpClientSecurityParameters '{}'",
+                        args.getHttpClientSecurityParameterstName());
+                return RC_IO;
+            }
+        }
+        
+        return RC_OK;
     }
     
 }
