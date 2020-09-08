@@ -70,6 +70,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -118,6 +119,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param home Where we are working from
      */
     public void setIdpHome(@Nonnull final Path home) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idpHome = Constraint.isNotNull(home, "IdPHome should be non-null");
     }
 
@@ -147,6 +149,49 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     public void setHttpClient(final HttpClient what) {
         httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
+    }
+
+    /** Return the canonical path.
+     * @param from the path we get given
+     * @return the canonicalized one
+     * @throws IOException  as from {@link File#getCanonicalFile()}
+     */
+    private static Path canonicalPath(final Path from) throws IOException {
+        return from.toFile().getCanonicalFile().toPath();
+    }
+
+    /** Check that the provide path is inside {@link #idpHome}.
+     * @param to the path to check.
+     * @throws BuildException if it isn't
+     */
+    private void policeTo(final Path to) throws BuildException {
+        try {
+            final Path canonicalTo = canonicalPath(to);
+            if (!canonicalTo.startsWith(idpHome)) {
+                LOG.error("File destination {} ({}) was illegal (not inside {}", to, canonicalTo, idpHome);
+                throw new BuildException("Illegal file destination");
+            }
+        } catch (final IOException e) {
+            LOG.error("Error checking destination {}", to, e);
+            throw new BuildException(e);
+        }
+    }
+
+    /** Check that the provide path is inside {@link #distribution}.
+     * @param from the path to check.
+     * @throws BuildException if it isn't
+     */
+    private void policeFrom(final Path from) throws BuildException {
+        try {
+            final Path canonicalFrom = canonicalPath(from);
+            if (!canonicalFrom.startsWith(distribution)) {
+                LOG.error("File source {} ({}) was illegal (not inside {}", from, canonicalFrom, distribution);
+                throw new BuildException("Illegal file source");
+            }
+        } catch (final IOException e) {
+            LOG.error("Error checking destination {}", from, e);
+            throw new BuildException(e);
+        }
     }
 
     /** Install the plugin from the provided URL.  Involves downloading
@@ -218,6 +263,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         try {
             for (final Pair<URL, Path> pair : description.getExternalFilePathsToCopy()) {
                 final Path to = idpHome.resolve(pair.getSecond());
+                policeTo(to);
                 if (Files.exists(to)) {
                     LOG.warn("{} exists, not copied", to);
                     continue;
@@ -289,7 +335,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
 
             final Path from = distribution.resolve(p);
+            policeFrom(from);
             final Path to = idpHome.resolve(p);
+            policeTo(to);
             if (Files.exists(to)) {
                 LOG.debug("File {} exists, skipping", to);
                 continue;
@@ -433,7 +481,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     LOG.error("No contents unpacked from {}", fullName);
                     throw new BuildException("Distro was empty");
                 }
-                distribution = contents.next();
+                distribution = canonicalPath(contents.next());
                 if (contents.hasNext()) {
                     LOG.error("Too many packages in distributions {}", fullName);
                     throw new BuildException("Too many packages in distributions");
@@ -547,6 +595,19 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         } catch (final ComponentInitializationException | IOException e) {
             LOG.error("Could not manage truststore for [{}, {}] ", idpHome, pluginId, e);
             throw new BuildException(e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        if (idpHome == null) {
+            throw new ComponentInitializationException("Idp Home should be set");
+        }
+        try {
+            idpHome = canonicalPath(idpHome);
+        } catch (final IOException e) {
+            LOG.error("Could not canonicalize idp home", e);
+            throw new ComponentInitializationException(e);
         }
     }
 
