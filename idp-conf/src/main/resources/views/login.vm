@@ -90,7 +90,7 @@
             #end
 
             #foreach ($extFlow in $extendedAuthenticationFlows)
-              #if ($authenticationContext.isAcceptable($extFlow) and $extFlow.apply(profileRequestContext))
+              #if ($authenticationContext.isAcceptable($extFlow) and $extFlow.test(profileRequestContext))
                 <div class="form-element-wrapper">
                   <button class="form-element form-button" type="submit" name="_eventId_$extFlow.getId()">
                     #springMessageText("idp.login.$extFlow.getId().replace('authn/','')", $extFlow.getId().replace('authn/',''))
