@@ -186,7 +186,6 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     public void validate() throws IllegalArgumentException {
-        System.out.println("Validate");
         super.validate();
 
         final List<String> otherArgs = getOtherArgs();
