@@ -17,6 +17,7 @@
 <%@ page import="com.codahale.metrics.MetricSet" %>
 <%@ page import="com.codahale.metrics.Gauge" %>
 <%@ page import="net.shibboleth.idp.module.IdPModule" %>
+<%@ page import="net.shibboleth.idp.plugin.PluginDescription" %>
 <%@ page import="net.shibboleth.idp.module.ModuleContext" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
@@ -55,6 +56,13 @@ for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
     }
 }
 out.println();
+
+out.println("installed plugins: ");
+for (final PluginDescription plugin : ServiceLoader.load(PluginDescription.class)) {
+    out.println("\t" + plugin.getPluginId() + " Version " + plugin.getMajorVersion() + "." + plugin.getMinorVersion() + "." + plugin.getPatchVersion());
+}
+out.println();
+
 
 for (final ReloadableService service : (Collection<ReloadableService>) request.getAttribute("services")) {
     final Instant successfulReload = service.getLastSuccessfulReloadInstant();
