@@ -30,6 +30,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
+import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
+
 /**
  * set up state for testing.
  */
@@ -38,7 +41,7 @@ public class BasePluginTest {
 
     private static Logger log = LoggerFactory.getLogger(BasePluginTest.class);
     private static Path idpHome;
-    
+
     @BeforeSuite public void setupIdpHome() throws IOException {
         idpHome = Files.createTempDirectory("PluginTests");
         Path from = new ClassPathResource("idphome-test").getFile().toPath();
@@ -63,38 +66,16 @@ public class BasePluginTest {
             }
         });
     }
-    
+
     @AfterSuite public void teardownIdPHome() throws IOException {
-        
         if (idpHome == null) {
             return;
         }
-        
-        Files.walkFileTree(idpHome, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                log.trace("Deleted {}", file);
-                return FileVisitResult.CONTINUE;
-            }
-            
-            @Override
-            public FileVisitResult postVisitDirectory(Path directory, IOException exc) throws IOException {
-                try {
-                    log.trace("Deleting {}", directory);
-                    Files.delete(directory);
-                    log.trace("Deleted {}", directory);
-                }
-                catch (final IOException foo) {
-                    log.warn("Problem cleaning up {}",directory, foo);
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        InstallerSupport.setReadOnly(idpHome, false);
+        PluginInstaller.deleteTree(idpHome);
     }
 
     protected Path getIdpHome() {
         return idpHome;
     }
-
 }
