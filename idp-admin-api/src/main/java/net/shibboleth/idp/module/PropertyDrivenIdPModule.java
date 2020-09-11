@@ -49,9 +49,6 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Default name of module properties resource. */
     @Nonnull @NotEmpty public static final String DEFAULT_RESOURCE = "module.properties";
 
-    /** Suffix of property for module ID. */
-    @Nonnull @NotEmpty public static final String MODULE_ID_PROPERTY = ".id";
-
     /** Suffix of property for module name. */
     @Nonnull @NotEmpty public static final String MODULE_NAME_PROPERTY = ".name";
 
@@ -137,7 +134,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     protected void load() throws ModuleException {
         try {
             moduleId = Constraint.isNotNull(
-                    StringSupport.trimOrNull(moduleProperties.getProperty(getClass().getName() + MODULE_ID_PROPERTY)),
+                    StringSupport.trimOrNull(moduleProperties.getProperty(getClass().getName())),
                     "Module ID missing from properties");
             
             moduleName = Constraint.isNotNull(
