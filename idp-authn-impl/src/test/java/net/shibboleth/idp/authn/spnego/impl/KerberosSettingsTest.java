@@ -22,11 +22,10 @@ import static org.testng.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 public class KerberosSettingsTest {
 
@@ -51,22 +50,10 @@ public class KerberosSettingsTest {
     }
 
     @Test
-    public void testRequiredValues() throws ComponentInitializationException {
+    public void testRequiredValues() {
         settings.setRealms(realms);
 
-        settings.initialize();
-
         assertEquals(settings.getRealms(), realms);
-    }
-
-    @Test(expectedExceptions = ComponentInitializationException.class)
-    public void withoutMandatoryParameters_initialize_shouldThrowException() throws ComponentInitializationException {
-        settings.initialize();
-    }
-
-    @Test(expectedExceptions = ConstraintViolationException.class)
-    public void nullRealms_shouldThrowException() {
-        settings.setRealms(null);
     }
     
 }
