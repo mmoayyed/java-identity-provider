@@ -163,7 +163,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     }
     
     /**
-     * Get the error messages classified by specific error conditions.
+     * Get the error messages mapped to specific events.
+     * 
+     * <p>The map keys are the events and the values are the message collections.</p>
      * 
      * @return classified error message map
      */
@@ -173,20 +175,25 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     }
     
     /**
-     * Set the error messages indicating an unknown username.
+     * Set the error messages to map to specific events.
      * 
-     * @param messages the "unknown username" error messages to set
+     * <p>The map keys are the events and the values are the message collections.</p>
+     * 
+     * @param messages the error message / event mappings to set
      */
-    public void setClassifiedMessages(@Nonnull @NonnullElements final Map<String,Collection<String>> messages) {
+    public void setClassifiedMessages(@Nullable @NonnullElements final Map<String,Collection<String>> messages) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(messages, "Map of classified messages cannot be null");
-        
-        classifiedMessages = new LinkedHashMap<>();
-        for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
-            if (entry.getKey() != null && !entry.getKey().isEmpty()
-                    && entry.getValue() != null && !entry.getValue().isEmpty()) {
-                classifiedMessages.put(entry.getKey(), List.copyOf(entry.getValue()));
+
+        if (messages != null) {
+            classifiedMessages = new LinkedHashMap<>();
+            for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
+                if (entry.getKey() != null && !entry.getKey().isEmpty()
+                        && entry.getValue() != null && !entry.getValue().isEmpty()) {
+                    classifiedMessages.put(entry.getKey(), List.copyOf(entry.getValue()));
+                }
             }
+        } else {
+            classifiedMessages = Collections.emptyMap();
         }
     }
 

@@ -18,7 +18,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/authn/x509-internal-authn-config.xml" />
+    <import resource="conditional:%{idp.home}/conf/authn/x509-internal-authn-config.xml" />
     
     <bean id="ExtractX509CertificateFromRequest"
         class="net.shibboleth.idp.authn.impl.ExtractX509CertificateFromRequest" scope="prototype"

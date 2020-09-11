@@ -20,15 +20,15 @@
 
     <!-- Default strategy function to obtain the external path. -->
     <bean id="shibboleth.authn.X509.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
-        c:target-ref="shibboleth.authn.X509.externalAuthnPath" />
+        c:target="#{getObject('shibboleth.authn.X509.externalAuthnPath') ?: 'contextRelative:x509-prompt.jsp'}" />
 
-    <import resource="%{idp.home}/conf/authn/x509-authn-config.xml" />
+    <import resource="conditional:%{idp.home}/conf/authn/x509-authn-config.xml" />
 
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
         p:metricName="net.shibboleth.idp.authn.x509"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: true}"
-        p:classifiedMessages-ref="shibboleth.authn.X509.ClassifiedMessageMap"
+        p:classifiedMessages="#{getObject('shibboleth.authn.X509.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
