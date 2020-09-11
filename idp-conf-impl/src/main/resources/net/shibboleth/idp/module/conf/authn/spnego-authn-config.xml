@@ -12,21 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!--  General Configuration -->
-
-    <!--
-    Enforce running SPNEGO for all users, independent of user's autologin state.
-    TRUE means that SPNEGO login is always tried (if available).
-    FALSE means that SPNEGO login is run only if the user has enabled autologin.
-    -->
-    <util:constant id="shibboleth.authn.SPNEGO.EnforceRun" static-field="java.lang.Boolean.FALSE" />
-   
-    <!-- Kerberos Configuration-->
-
-    <!-- General Kerberos Settings -->
-    
-    <util:constant id="shibboleth.authn.SPNEGO.Krb5.RefreshConfig" static-field="java.lang.Boolean.FALSE" />
-
     <!--  Kerberos Service Principal(s) -->
     
     <!--
@@ -48,7 +33,7 @@
 
     <!--
     <bean id="shibboleth.authn.SPNEGO.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.edu$" />
+        c:_0="^(.+)@example\.org$" />
     -->
 
     <!--

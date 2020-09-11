@@ -20,16 +20,16 @@
 
     <!-- Default strategy function to obtain the external path. -->
     <bean id="shibboleth.authn.RemoteUser.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
-        c:target-ref="shibboleth.authn.RemoteUser.externalAuthnPath" />
+        c:target="#{getObject('shibboleth.authn.RemoteUser.externalAuthnPath') ?: 'contextRelative:Authn/RemoteUser'}" />
     
-    <import resource="%{idp.home}/conf/authn/remoteuser-authn-config.xml" />
+    <import resource="conditional:%{idp.home}/conf/authn/remoteuser-authn-config.xml" />
 
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
         p:metricName="net.shibboleth.idp.authn.remoteuser"
         p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: true}"
-        p:classifiedMessages-ref="shibboleth.authn.RemoteUser.ClassifiedMessageMap"
+        p:classifiedMessages="#{getObject('shibboleth.authn.RemoteUser.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"

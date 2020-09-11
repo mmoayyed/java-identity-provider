@@ -22,22 +22,20 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Kerberos settings for the SPNEGO authentication flow.
  */
-public class KerberosSettings extends AbstractInitializableComponent {
+public class KerberosSettings {
 
     /** Class name of JAAS LoginModule to acquire Kerberos credentials. */
     @Nonnull @NotEmpty private String loginModuleClassName;
@@ -60,8 +58,6 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * @param name name of login module class
      */
     public void setLoginModuleClassName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
         loginModuleClassName =
                 Constraint.isNotNull(StringSupport.trimOrNull(name), "Class name cannot be null or empty");
     }
@@ -81,8 +77,6 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * @param flag flag to set
      */
     public void setRefreshKrb5Config(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
         refreshKrb5Config = flag;
     }
 
@@ -100,10 +94,12 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * 
      * @param realms realms to set.
      */
-    public void setRealms(@Nonnull @NonnullElements final Collection<KerberosRealmSettings> realms) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        realmSettings = List.copyOf(Constraint.isNotNull(realms, "The realms collection cannot be null"));
+    public void setRealms(@Nullable @NonnullElements final Collection<KerberosRealmSettings> realms) {
+        if (realms != null) {
+            realmSettings = List.copyOf(realms);
+        } else {
+            realmSettings = Collections.emptyList();
+        }
     }
 
     /**
@@ -113,17 +109,6 @@ public class KerberosSettings extends AbstractInitializableComponent {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<KerberosRealmSettings> getRealms() {
         return realmSettings;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (realmSettings.isEmpty()) {
-            throw new ComponentInitializationException("Realm collection cannot be empty");
-        }
-        
     }
     
 }
