@@ -37,8 +37,18 @@
     <bean id="shibboleth.authn.Duo.UsernameLookupStrategy"
         class="net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy" />
 
+    <!-- Default message map. -->
+    <util:map id="shibboleth.authn.Duo.ClassifiedMessageMap">
+        <entry key="AccountLocked">
+            <list>
+                <value>locked_out</value>
+                <value>Your two-factor account is disabled.</value>
+            </list>
+        </entry>
+    </util:map>
+
     <!-- Can override one or more of the beans above. -->
-    <import resource="%{idp.home}/conf/authn/duo-authn-config.xml" />
+    <import resource="conditional:%{idp.home}/conf/authn/duo-authn-config.xml" />
 
     <alias name="shibboleth.authn.Duo.UsernameLookupStrategy" alias="CanonicalUsernameStrategy" />
 
@@ -72,15 +82,6 @@
         p:httpClient="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClient') ?: getObject('shibboleth.InternalHttpClient')}"
         p:httpClientSecurityParameters="#{getObject('shibboleth.authn.Duo.NonBrowser.HttpClientSecurityParameters')}" />
 
-    <util:map id="shibboleth.authn.Duo.DefaultClassifiedMessageMap">
-        <entry key="AccountLocked">
-            <list>
-                <value>locked_out</value>
-                <value>Your two-factor account is disabled.</value>
-            </list>
-        </entry>
-    </util:map>
-
     <bean id="ValidateDuoAuthAPI" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ValidateDuoAuthAPI"
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
@@ -88,7 +89,7 @@
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
         p:preauthAuthenticator-ref="DuoPreauthAuthenticator"
         p:authAuthenticator-ref="DuoAuthAuthenticator"
-        p:classifiedMessages="#{getObject('shibboleth.authn.Duo.ClassifiedMessageMap') ?: getObject('shibboleth.authn.Duo.DefaultClassifiedMessageMap')}"
+        p:classifiedMessages="#{getObject('shibboleth.authn.Duo.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}" />
 
 </beans>
