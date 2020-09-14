@@ -20,14 +20,14 @@
 
     <!-- Default strategy function to obtain the external path. -->
     <bean id="shibboleth.authn.External.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
-        c:target="#{getObject('shibboleth.authn.External.externalAuthnPath') ?: 'contextRelative:external.jsp'}" />
+        c:target="#{getObject('shibboleth.authn.External.externalAuthnPath') ?: '%{idp.authn.External.externalAuthnPath:contextRelative:external.jsp}'.trim()}" />
 
     <import resource="conditional:%{idp.home}/conf/authn/external-authn-config.xml" />
 
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
         p:matchExpression="#{getObject('shibboleth.authn.External.matchExpression')}"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.External.addDefaultPrincipals') ?: true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.External.addDefaultPrincipals') ?: %{idp.authn.External.addDefaultPrincipals:true}}"
         p:classifiedMessages="#{getObject('shibboleth.authn.External.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.External.resultCachingPredicate')}"
         c:filterService-ref="shibboleth.AttributeFilterService"

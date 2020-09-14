@@ -12,52 +12,19 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Check getRemoteUser() for identity (the typical case). -->
-    <util:constant id="shibboleth.authn.RemoteUser.checkRemoteUser" static-field="java.lang.Boolean.TRUE"/>
-
-    <!-- Populate one or both of the lists below to define HTTP headers or Servlet Attributes to check. -->
-    
-    <util:list id="shibboleth.authn.RemoteUser.checkHeaders">
-        <!--
-        <value>User-Identity</value>
-        -->
-    </util:list>
-
-    <util:list id="shibboleth.authn.RemoteUser.checkAttributes">
-        <!--
-        <value>User-Identity</value>
-        -->
-    </util:list>
-    
-    <!-- Simple transforms to apply to username before validation. -->
-    <util:constant id="shibboleth.authn.RemoteUser.Lowercase" static-field="java.lang.Boolean.FALSE"/>
-    <util:constant id="shibboleth.authn.RemoteUser.Uppercase" static-field="java.lang.Boolean.FALSE"/>
-    <util:constant id="shibboleth.authn.RemoteUser.Trim" static-field="java.lang.Boolean.TRUE"/>
+    <!-- Most settings are controlled with authn.properties -->
 
     <!-- Apply any regular expression replacement pairs before validation. -->
     <util:list id="shibboleth.authn.RemoteUser.Transforms">
         <!--
-        <bean parent="shibboleth.Pair" p:first="^(.+)@example\.edu$" p:second="$1" />
+        <bean parent="shibboleth.Pair" p:first="^(.+)@example\.org$" p:second="$1" />
         -->
     </util:list>
     
-    <!-- Uncomment/configure to install username allow set, deny set, and/or match expressions. -->
-    
-    <util:set id="shibboleth.authn.RemoteUser.allowedUsernames">
-        <!--
-        <value>goodguy</value>
-        -->
-    </util:set>
-
-    <util:set id="shibboleth.authn.RemoteUser.deniedUsernames">
-        <!--
-        <value>badguy</value>
-        -->
-    </util:set>
-    
+    <!-- Define if you want to apply a filtering expression. -->
     <!--
     <bean id="shibboleth.authn.RemoteUser.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.edu]$" />
+        c:_0="^(.+)@example\.org$" />
     -->
     
 </beans>

@@ -12,23 +12,13 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Servlet context-relative path to wherever your implementation lives. -->
-    <bean id="shibboleth.authn.External.externalAuthnPath" class="java.lang.String"
-        c:_0="contextRelative:external.jsp" />
-
     <!--
-    Default is to always use the path in the bean above. If you want to determine it
-    dynamically, define a bean called "shibboleth.authn.External.externalAuthnPathStrategy"
+    The idp.authn.External.externalAuthnPath property controls the default location to use.
+    For advanced cases, define a bean called "shibboleth.authn.External.externalAuthnPathStrategy"
     of type Function<ProfileRequestContext,String> that returns the path to use.
     -->
 
-    <!--
-    Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
-    You would normally only unset this if you plan to return a fully decorated Java Subject from your
-    external authentication source.
-    -->
-    <util:constant id="shibboleth.authn.External.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE" />
-
+    <!-- Define if you want to apply a filtering expression. -->
     <!--
     <bean id="shibboleth.authn.External.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
         c:_0="^(.+)@example\.edu]$" />

@@ -12,26 +12,16 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Servlet context-relative path to wherever your implementation lives. -->
-    <bean id="shibboleth.authn.RemoteUser.externalAuthnPath" class="java.lang.String"
-        c:_0="contextRelative:Authn/RemoteUser" />
-    
     <!--
-    Default is to always use the path in the bean above. If you want to determine it
-    dynamically, define a bean called "shibboleth.authn.RemoteUser.externalAuthnPathStrategy"
+    The idp.authn.RemoteUser.externalAuthnPath property controls the default location to use.
+    For advanced cases, define a bean called "shibboleth.authn.RemoteUser.externalAuthnPathStrategy"
     of type Function<ProfileRequestContext,String> that returns the path to use.
     -->
 
-    <!--
-    Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
-    You would normally only unset this if you plan to use the authnMethodHeader servlet parameter to
-    supply authentication method string(s) from the external authentication system.
-    -->
-    <util:constant id="shibboleth.authn.RemoteUser.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE" />
-
+    <!-- Define if you want to apply a filtering expression. -->
     <!--
     <bean id="shibboleth.authn.RemoteUser.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.edu]$" />
+        c:_0="^(.+)@example\.org$" />
     -->
 
     <!--
