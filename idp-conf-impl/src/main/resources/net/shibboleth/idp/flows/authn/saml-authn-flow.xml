@@ -7,7 +7,8 @@
 
     <on-start>
         <!-- If installed, this can bypass discovery. -->
-        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.SAML.discoveryFunction') ? opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.discoveryFunction').apply(opensamlProfileRequestContext)) : null" />
+        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.SAML.discoveryFunction') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.discoveryFunction') : PropertyDrivenDiscovery" result="flowScope.customDiscovery" />
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setAuthenticatingAuthority(customDiscovery.apply(opensamlProfileRequestContext))" />
     </on-start>
 
     <action-state id="Start">

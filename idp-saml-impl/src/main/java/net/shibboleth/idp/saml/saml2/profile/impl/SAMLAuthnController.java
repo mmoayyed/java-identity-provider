@@ -63,7 +63,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 4.0.0
  */
 @Controller
-@RequestMapping("%{idp.authn.saml.externalAuthnPath:/Authn/SAML2}")
+@RequestMapping("%{idp.authn.SAML.externalAuthnPath:/Authn/SAML2}")
 public class SAMLAuthnController extends AbstractInitializableComponent {
     
     /** Class logger. */
