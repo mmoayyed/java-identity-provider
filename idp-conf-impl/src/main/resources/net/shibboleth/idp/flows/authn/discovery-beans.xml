@@ -23,7 +23,7 @@
 
     <!-- Default strategy function to obtain the external path. -->
     <bean id="DefaultDiscoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
-        c:target="#{getObject('shibboleth.authn.discoveryURL') ?: %{idp.authn.discoveryURL:}}" />
+        c:target="#{getObject('shibboleth.authn.discoveryURL') ?: '%{idp.authn.discoveryURL:}'.trim()}" />
 
     <bean id="DiscoveryProfileRequestFunction" lazy-init="true"
         class="net.shibboleth.idp.authn.proxy.impl.DiscoveryProfileRequestFunction"
