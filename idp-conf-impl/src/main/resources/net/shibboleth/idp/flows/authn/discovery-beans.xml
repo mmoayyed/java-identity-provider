@@ -18,15 +18,16 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.discoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
-        c:target-ref="shibboleth.authn.discoveryURL" />
+    <!-- Legacy compatibility location to define strategy/location. -->
+    <import resource="conditional:%{idp.home}/conf/authn/discovery-config.xml" />
 
-    <import resource="%{idp.home}/conf/authn/discovery-config.xml" />
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="DefaultDiscoveryURLStrategy" parent="shibboleth.Functions.Constant" lazy-init="true"
+        c:target="#{getObject('shibboleth.authn.discoveryURL') ?: %{idp.authn.discoveryURL:}}" />
 
     <bean id="DiscoveryProfileRequestFunction" lazy-init="true"
         class="net.shibboleth.idp.authn.proxy.impl.DiscoveryProfileRequestFunction"
-        p:discoveryURLLookupStrategy-ref="shibboleth.authn.discoveryURLStrategy" />
+        p:discoveryURLLookupStrategy="#{getObject('shibboleth.authn.discoveryURLStrategy') ?: getObject('DefaultDiscoveryURLStrategy')}" />
 
     <!-- Action beans. -->
 
