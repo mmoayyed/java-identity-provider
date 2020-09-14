@@ -371,8 +371,11 @@ public abstract class AbstractIdPModule implements IdPModule {
                 if (hasChanged) {
                     if (isReplace()) {
                         destPath = moduleContext.getIdPHome().resolve(destination);
-                        Files.copy(destPath, destPath.resolveSibling(destPath.getFileName() + ".idpsave"),
-                                StandardCopyOption.REPLACE_EXISTING);
+                        final Path savedPath = destPath.resolveSibling(destPath.getFileName() + ".idpsave");
+                        if (savedPath.toFile().exists()) {
+                            throw new IOException(savedPath + " exists, aborting");
+                        }
+                        Files.copy(destPath, savedPath, StandardCopyOption.REPLACE_EXISTING);
                         log.debug("Module {} preserved {}", getId(), destPath);
                         result = ResourceResult.REPLACED;
                     } else {
