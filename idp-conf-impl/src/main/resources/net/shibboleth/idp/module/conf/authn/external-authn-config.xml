@@ -21,7 +21,7 @@
     <!-- Define if you want to apply a filtering expression. -->
     <!--
     <bean id="shibboleth.authn.External.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.edu]$" />
+        c:_0="^(.+)@example\.org$" />
     -->
 
     <!--

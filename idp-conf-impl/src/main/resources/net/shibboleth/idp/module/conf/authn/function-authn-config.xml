@@ -13,13 +13,6 @@
        default-destroy-method="destroy">
 
     <!--
-    Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
-    You would normally only unset this if you plan to return a completely constructed Subject from
-    your authentication function.
-    -->
-    <util:constant id="shibboleth.authn.Function.addDefaultPrincipals" static-field="java.lang.Boolean.TRUE" />
-    
-    <!--
     The entire flow depends on the execution of a function bean you supply. A pathological script example
     is below. The function may return a String, Principal, Subject, or a null to signal failure.
     -->
@@ -34,4 +27,5 @@
             </value>
         </constructor-arg>
     </bean>    
+
 </beans>

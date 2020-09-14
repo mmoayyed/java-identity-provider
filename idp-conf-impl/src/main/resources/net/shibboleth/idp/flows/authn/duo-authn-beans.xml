@@ -86,7 +86,7 @@
         class="net.shibboleth.idp.authn.duo.impl.ValidateDuoAuthAPI"
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
         p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: %{idp.authn.Duo.addDefaultPrincipals:true}}"
         p:preauthAuthenticator-ref="DuoPreauthAuthenticator"
         p:authAuthenticator-ref="DuoAuthAuthenticator"
         p:classifiedMessages="#{getObject('shibboleth.authn.Duo.ClassifiedMessageMap')}"
