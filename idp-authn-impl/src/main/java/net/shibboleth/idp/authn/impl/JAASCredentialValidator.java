@@ -220,7 +220,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
                 try {
                     loginConfigParameters = new URIParameter(loginConfigResource.getURI());
                 } catch (final IOException e) {
-                    throw new ComponentInitializationException("Unable to login configuration resource into URI", e);
+                    throw new ComponentInitializationException("Invalid login configuration resource", e);
                 }
             } else {
                 throw new ComponentInitializationException("No login configuration resource or parameters supplied");
