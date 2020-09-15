@@ -147,7 +147,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
     public void setKeytabPath(@Nullable final String path) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        keytabPath = path;
+        keytabPath = StringSupport.trimOrNull(path);
     }
     
     /** {@inheritDoc} */

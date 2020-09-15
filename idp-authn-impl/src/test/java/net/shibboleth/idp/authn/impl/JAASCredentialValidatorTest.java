@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.impl;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
-import java.security.URIParameter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +41,7 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URISupport;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -59,7 +59,9 @@ import com.unboundid.ldap.sdk.LDAPException;
 public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
-    
+
+    private static final String DATA_CLASSPATH = "/net/shibboleth/idp/authn/impl/";
+
     private JAASCredentialValidator validator;
     
     private ValidateCredentials action;
@@ -162,8 +164,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigParameters(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -191,10 +193,10 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 
         validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
-                Collections.<Principal>singletonList(new TestPrincipal("test2")))));
+                Collections.singletonList(new TestPrincipal("test2")))));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigParameters(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -231,8 +233,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         
         validator.initialize();
         action.initialize();
@@ -254,8 +255,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -278,8 +278,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigParameters(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -302,8 +302,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -334,8 +333,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
                 Collections.<Principal>singletonList(new TestPrincipal("test1")))));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -361,8 +359,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         validator.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         validator.initialize();
         
         action.initialize();
@@ -385,8 +382,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
-                + '/' + DATA_PATH + "jaas.config")));
+        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         validator.setMatchExpression(Pattern.compile(".+_THE_.+"));
         validator.initialize();
         

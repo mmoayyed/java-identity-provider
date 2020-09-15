@@ -3,6 +3,7 @@ net.shibboleth.idp.module.authn.impl.External
 net.shibboleth.idp.module.authn.impl.Function
 net.shibboleth.idp.module.authn.impl.IPAddress
 net.shibboleth.idp.module.authn.impl.MFA
+net.shibboleth.idp.module.authn.impl.Password
 net.shibboleth.idp.module.authn.impl.RemoteUser
 net.shibboleth.idp.module.authn.impl.RemoteUserInternal
 net.shibboleth.idp.module.authn.impl.SPNEGO

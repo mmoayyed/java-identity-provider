@@ -39,7 +39,6 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -108,10 +107,14 @@ public class ValidateCredentials extends AbstractValidationAction implements War
      * 
      * @param validators validators to use
      */
-    public void setValidators(@Nonnull @NonnullElements final List<CredentialValidator> validators) {
+    public void setValidators(@Nullable @NonnullElements final List<CredentialValidator> validators) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        credentialValidators = List.copyOf(Constraint.isNotNull(validators, "Validators list cannot be null"));
+        if (validators != null) {
+            credentialValidators = List.copyOf(validators);
+        } else {
+            credentialValidators = Collections.emptyList();
+        }
     }
     
     /**

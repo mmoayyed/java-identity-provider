@@ -44,9 +44,9 @@
         p:checkRemoteUser="#{getObject('shibboleth.authn.RemoteUser.checkRemoteUser') ?: %{idp.authn.RemoteUserInternal.checkRemoteUser:true}}"
         p:checkHeaders="#{getObject('shibboleth.authn.RemoteUser.checkHeaders')}"
         p:checkAttributes="#{getObject('shibboleth.authn.RemoteUser.checkAttributes')}"
-        p:lowercase="#{getObject('shibboleth.authn.RemoteUser.Lowercase') ?: %{idp.authn.RemoteUserInternal.Lowercase:false}}"
-        p:uppercase="#{getObject('shibboleth.authn.RemoteUser.Uppercase') ?: %{idp.authn.RemoteUserInternal.Uppercase:false}}"
-        p:trim="#{getObject('shibboleth.authn.RemoteUser.Trim') ?: %{idp.authn.RemoteUserInternal.Trim:true}}"
+        p:lowercase="#{getObject('shibboleth.authn.RemoteUser.Lowercase') ?: %{idp.authn.RemoteUserInternal.lowercase:false}}"
+        p:uppercase="#{getObject('shibboleth.authn.RemoteUser.Uppercase') ?: %{idp.authn.RemoteUserInternal.uppercase:false}}"
+        p:trim="#{getObject('shibboleth.authn.RemoteUser.Trim') ?: %{idp.authn.RemoteUserInternal.trim:true}}"
         p:transforms="#{getObject('shibboleth.authn.RemoteUser.Transforms')}" />
 
     <bean id="PropertyDrivenAllowList" parent="shibboleth.CommaDelimStringArray"

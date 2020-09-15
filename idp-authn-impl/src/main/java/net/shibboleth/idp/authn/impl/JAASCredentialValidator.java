@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.io.IOException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.security.URIParameter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,12 +48,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 /**
  * A password validator that authenticates against JAAS.
@@ -68,12 +73,18 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     
     /** Type of JAAS Configuration to instantiate. */
     @Nullable private String loginConfigType;
-    
+
+    /** JAAS configuration resource. */
+    @Nullable private Resource loginConfigResource;
+
     /** Type-specific configuration parameters. */
     @Nullable private Configuration.Parameters loginConfigParameters;
     
+    /** Holder for simple configurations defined by name. */
+    @Nullable @NonnullElements private Collection<String> loginConfigNames;
+    
     /** Application name(s) in JAAS configuration to use. */
-    @Nonnull private Collection<Pair<String,Subject>> loginConfigurations;
+    @Nonnull @NonnullElements private Collection<Pair<String,Subject>> loginConfigurations;
     
     /** Strategy function to dynamically derive the login config(s) to use. */
     @Nullable private Function<ProfileRequestContext,Collection<Pair<String,Subject>>> loginConfigStrategy;
@@ -81,7 +92,8 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     /** Constructor. */
     public JAASCredentialValidator() {
         // For compatibility with V2.
-        loginConfigurations = Collections.singletonList(new Pair<String,Subject>("ShibUserPassAuth", null));
+        loginConfigNames = Collections.singletonList("ShibUserPassAuth");
+        loginConfigurations = Collections.emptyList();
     }
     
     /**
@@ -114,14 +126,31 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     }
 
     /**
-     * Set the type-specific parameters of the JAAS {@link Configuration} to use.
+     * Set a URI to use as a JAAS configuration parameter.
      * 
-     * @param params the JAAS configuration parameters to use
+     * @param uri the JAAS configuration URI parameters to use
      */
-    public void setLoginConfigParameters(@Nullable final Configuration.Parameters params) {
+    public void setLoginConfigParameters(@Nullable final URI uri) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        loginConfigParameters = params;
+        if (uri != null) {
+            loginConfigParameters = new URIParameter(uri);
+        } else {
+            loginConfigParameters = null;
+        }
+    }
+
+    /**
+     * Set a login configuration resource to use.
+     * 
+     * @param resource resource to use
+     * 
+     * @since 4.1.0
+     */
+    public void setLoginConfigResource(@Nullable final Resource resource) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        loginConfigResource = resource;
     }
 
     /**
@@ -139,7 +168,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
                 final String trimmed = StringSupport.trimOrNull(config.getFirst());
                 if (trimmed != null) {
                     if (config.getSecond() == null || config.getSecond().isEmpty()) {
-                        loginConfigurations.add(new Pair<String,Subject>(trimmed, null));
+                        loginConfigurations.add(new Pair<>(trimmed, null));
                     } else {
                         final Subject subject = new Subject();
                         subject.getPrincipals().addAll(config.getSecond());
@@ -158,15 +187,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     public void setLoginConfigNames(@Nullable @NonnullElements final Collection<String> names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        if (names != null) {
-            loginConfigurations = new ArrayList<>(names.size());
-            for (final String name : names) {
-                final String trimmed = StringSupport.trimOrNull(name);
-                if (trimmed != null) {
-                    loginConfigurations.add(new Pair<String,Subject>(trimmed,null));
-                }
-            }
-        }
+        loginConfigNames = StringSupport.normalizeStringCollection(names);
     }
     
     /**
@@ -179,6 +200,33 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         loginConfigStrategy = strategy;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        // Deferred initialization of config by just names.
+        if (loginConfigStrategy == null && loginConfigurations.isEmpty()) {
+            loginConfigurations = new ArrayList<>(loginConfigNames.size());
+            for (final String name : loginConfigNames) {
+                loginConfigurations.add(new Pair<>(name, null));
+            }
+        }
+        
+        if (loginConfigType != null && loginConfigParameters == null) {
+            if (loginConfigResource != null) {
+                try {
+                    loginConfigParameters = new URIParameter(loginConfigResource.getURI());
+                } catch (final IOException e) {
+                    throw new ComponentInitializationException("Unable to login configuration resource into URI", e);
+                }
+            } else {
+                throw new ComponentInitializationException("No login configuration resource or parameters supplied");
+            }
+        }
+        
     }
     
     /** {@inheritDoc} */
