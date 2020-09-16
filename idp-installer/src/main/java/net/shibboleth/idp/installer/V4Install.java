@@ -447,11 +447,15 @@ public class V4Install extends AbstractInitializableComponent {
      */
     protected void reprotect() throws BuildException {
         InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("dist"), true);
-        InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("system"), true);
+        if (currentState.isSystemPresent()) {
+            InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("system"), true);
+        }
 
         if (installerProps.isSetGroupAndMode()) {
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("bin"), "755", "**/*.sh");
-            InstallerSupport.setMode(installerProps.getTargetDir().resolve("system"), "444", "**/*");
+            if (currentState.isSystemPresent()) {
+                InstallerSupport.setMode(installerProps.getTargetDir().resolve("system"), "444", "**/*");
+            }
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist"), "444", "**/*");
             if (currentState.getInstalledVersion() == null) {
                 InstallerSupport.setMode(installerProps.getTargetDir().resolve("credentials"),

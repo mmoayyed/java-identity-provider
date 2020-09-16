@@ -62,6 +62,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** Whether the LDAP properties file exists.*/
     private boolean ldapPropertiesPresent;
 
+    /** Whether system is present. */
+    private boolean systemPresent;
+
     /** Old Version. */
     private String oldVersion;
     
@@ -154,6 +157,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         super.doInitialize();
         idpPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("idp.properties"));
         ldapPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("ldap.properties"));
+        systemPresent = Files.exists(targetDir.resolve("system"));
         findPreviousVersion();
         setupPreviousProps();
 
@@ -199,5 +203,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     public List<Path> getPathsToBeDeleted() {
         return pathsToDelete;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSystemPresent() {
+        return systemPresent;
     }
 }

@@ -65,4 +65,13 @@ public interface CurrentInstallState extends InitializableComponent {
      * @return the list of paths.
      */
     @Nonnull List<Path> getPathsToBeDeleted();
+
+    /** If this is an upgrade were there files in %{idp.home}system?  If so then we need
+     * to copy the files in.  Otherwise not.
+     * For new installs this is false
+     * @return whether the old install has %{idp.home}\system
+     */
+    default boolean isSystemPresent() {
+        return true;
+    }
 }

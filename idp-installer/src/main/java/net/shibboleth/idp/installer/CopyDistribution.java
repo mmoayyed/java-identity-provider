@@ -139,6 +139,8 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     protected void copyBinDocSystem() {
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin");
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
-        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "system");
+        if (installState.isSystemPresent()) {
+            distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "system");
+        }
     }
 }
