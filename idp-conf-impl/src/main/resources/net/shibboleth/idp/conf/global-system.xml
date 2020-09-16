@@ -56,7 +56,7 @@
     <import resource="${idp.home}/conf/global.xml" />
     <import resource="${idp.home}/conf/errors.xml" />
     <import resource="audit-system.xml" />
-    <import resource="general-authn-system.xml" />
+    <import resource="authn-system.xml" />
     <import resource="session-manager-system.xml" />
     <import resource="security-system.xml" />
     <import resource="services-system.xml" />
@@ -64,7 +64,7 @@
     <import resource="subject-c14n-system.xml" />
     <import resource="profile-intercept-system.xml" />
     <import resource="cas-protocol-system.xml" />
-    <import resource="general-admin-system.xml" />
+    <import resource="admin-system.xml" />
     <import resource="primitives.xml" />
     <import resource="conditions.xml" />
     <import resource="functions.xml" />
