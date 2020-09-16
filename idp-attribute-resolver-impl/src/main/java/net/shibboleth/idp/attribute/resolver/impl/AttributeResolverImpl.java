@@ -384,7 +384,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
                 return;
             }
-            throw new ResolutionException("Previous resolve failed");
+            if (connector.isPropagateResolutionExceptions()) {
+                throw new ResolutionException("Previous resolve failed");
+            }
+            log.error("Data connector '{}' previously failed but was configured not to propagate");
+            return;
         }
 
         resolveDependencies(connector, resolutionContext);

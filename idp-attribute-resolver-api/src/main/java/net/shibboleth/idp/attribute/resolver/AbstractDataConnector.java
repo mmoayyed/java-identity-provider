@@ -167,7 +167,6 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         return exportAttributes;
     }
 
-
     /**
      * {@inheritDoc}
      * 

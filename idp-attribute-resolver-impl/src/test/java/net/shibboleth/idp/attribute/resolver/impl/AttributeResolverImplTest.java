@@ -336,7 +336,8 @@ public class AttributeResolverImplTest {
         resolver.resolveAttributes(context);
 
         assertTrue(context.getResolvedIdPAttributes().isEmpty());
-        log.debug("Logged Resolve fails");
+        context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
     }
 
     /**
@@ -494,13 +495,21 @@ public class AttributeResolverImplTest {
 
     /**
      * Test that resolve w/ dependencies returns the expected results.
-     * 
+     * @param propagate does the data connector propagate
+     * @param addNoRetryDelay Do we defer retry
+     * @param expectException do we?
      * @throws ComponentInitializationException if badness happens
      * @throws ResolutionException if badness happens in attribute resolution
      */
-    @Test public void resolveDataConnectorFail() throws ComponentInitializationException, ResolutionException {
+    private void resolveDataConnectorFail(final boolean propagate,
+            final boolean addNoRetryDelay,
+            final boolean expectException) throws ComponentInitializationException, ResolutionException {
         final MockDataConnector dc1 = new MockDataConnector("dc1", new HashMap<String, IdPAttribute>());
         dc1.setFailure(true);
+        dc1.setPropagateResolutionExceptions(propagate);
+        if (addNoRetryDelay) {
+            dc1.setNoRetryDelay(Duration.ofHours(1));
+        }
         dc1.initialize();
 
         final ResolverDataConnectorDependency dep1 = TestSources.makeDataConnectorDependency("dc1", null);
@@ -518,15 +527,40 @@ public class AttributeResolverImplTest {
         ad1.initialize();
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext();
+        AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-            fail();
+            assertFalse(expectException, "First Resolve fails");
+            assertTrue(context.getResolvedIdPAttributes().isEmpty());
         } catch (final ResolutionException e) {
-            //
-            // OK
+            assertTrue(expectException, "First Resolve fails");
+        }
+        context = new AttributeResolutionContext();
+        try {
+            resolver.resolveAttributes(context);
+            assertFalse(expectException, "Second Resolve fails");
+            assertTrue(context.getResolvedIdPAttributes().isEmpty());
+        } catch (final ResolutionException e) {
+            assertTrue(expectException, "Second Resolve fails");
         }
     }
+
+    @Test public void resolveDataConnectorFailDefault() throws ComponentInitializationException, ResolutionException {
+        resolveDataConnectorFail(true, false, true);
+    }
+
+    @Test public void resolveDataConnectorFailRetry() throws ComponentInitializationException, ResolutionException {
+        resolveDataConnectorFail(true, true, true);
+    }
+
+    @Test public void resolveDataConnectorFailPropagate() throws ComponentInitializationException, ResolutionException {
+        resolveDataConnectorFail(false, true, false);
+    }
+
+    @Test public void resolveDataConnectorFailPropagateRetry() throws ComponentInitializationException, ResolutionException {
+        resolveDataConnectorFail(false, true, false);
+    }
+
 
     @Test public void cachedDataConnectorDependency() throws ComponentInitializationException, ResolutionException {
         final MockDataConnector dc1 = new MockDataConnector("dc1", (Map<String, IdPAttribute>) null);
