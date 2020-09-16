@@ -394,6 +394,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                     throw new ModuleException("Module asked to create file outside of IdP installation");
                 }
 
+                Files.createDirectories(destPath.getParent());
                 Files.copy(srcStream, destPath, StandardCopyOption.REPLACE_EXISTING);
                 log.debug("Module {} created {}", getId(), destPath);
                 return result;

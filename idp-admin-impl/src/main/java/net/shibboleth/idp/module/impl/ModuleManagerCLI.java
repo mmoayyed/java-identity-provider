@@ -102,6 +102,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                 doManage(moduleContext, args);
             }
         } catch (final ModuleException e) {
+            System.out.println(e.getMessage());
             System.out.println(ANSIColors.ANSI_RED + "[FAILED]" + ANSIColors.ANSI_RESET);
             System.out.println();
             return RC_INIT;
