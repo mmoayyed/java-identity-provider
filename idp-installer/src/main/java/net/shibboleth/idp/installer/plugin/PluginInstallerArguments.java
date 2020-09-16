@@ -175,6 +175,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     public void validate() throws IllegalArgumentException {
         super.validate();
 
+        if (getHttpClientSecurityParameterstName() != null) {
+            getLog().error("-hs / --http-security ignored");
+        }
+
         final List<String> otherArgs = getOtherArgs();
         if (otherArgs.size() > 1) {
             final StringBuffer output = new StringBuffer().append('"');
