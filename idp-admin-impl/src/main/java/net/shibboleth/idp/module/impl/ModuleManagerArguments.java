@@ -35,6 +35,7 @@ import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Arguments for {@link IdPModule} management CLI.
@@ -48,9 +49,9 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     @Parameter(names= {"-l", "--list"})
     @Nullable private boolean list;
 
-    /** Detailed info about installed modules. */
-    @Parameter(names= {"-al", "--full-list"})
-    @Nullable private boolean fullList;
+    /** Detailed info about an installed module. */
+    @Parameter(names= {"-i", "--info"})
+    @Nullable @NonnullElements private List<String> infoModuleIds = new ArrayList<>();
 
     /** ID of module to enable. */
     @Parameter(names= {"-e", "--enable"})
@@ -82,12 +83,12 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     }
 
     /**
-     * Are we doing a full list?
+     * Gets the module IDs to report on.
      * 
-     * @return {@link #fullList}
+     * @return {@link #infoModuleIds}
      */
-    public boolean getFullList() {
-        return fullList;
+    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
+        return List.copyOf(StringSupport.normalizeStringCollection(infoModuleIds));
     }
     
     /**
@@ -96,7 +97,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * @return {@link #enableModuleIds}
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getEnableModuleIds() {
-        return List.copyOf(enableModuleIds);
+        return List.copyOf(StringSupport.normalizeStringCollection(enableModuleIds));
     }
     
     /**
@@ -105,7 +106,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * @return {@link #disableModuleIds}
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getDisableModuleIds() {
-        return List.copyOf(disableModuleIds);
+        return List.copyOf(StringSupport.normalizeStringCollection(disableModuleIds));
     }
 
     /**
@@ -122,13 +123,13 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     public void validate() throws IllegalArgumentException {
         super.validate();
 
-        if (enableModuleIds.isEmpty() && disableModuleIds.isEmpty()) {
-            if (!list && !fullList) {
+        if (getEnableModuleIds().isEmpty() && getDisableModuleIds().isEmpty()) {
+            if (getInfoModuleIds().isEmpty()) {
                 list = true;
             }
-        } else if (list || fullList) {
-            getLog().error("Cannot list and enable/disable in the same operation");
-            throw new IllegalArgumentException("Cannot list and enable/disable in the same operation.");
+        } else if (list || !getInfoModuleIds().isEmpty()) {
+            getLog().error("Cannot query and enable/disable in the same operation");
+            throw new IllegalArgumentException("Cannot query and enable/disable in the same operation.");
         }
     }
 
@@ -145,14 +146,15 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
         out.println();
         out.println(String.format("  %-22s %s", "-l, --list",
                 "Brief Information on all installed modules"));
-        out.println(String.format("  %-22s %s", "-al, --full-list",
-                "Full details on all installed modules"));
-        out.println(String.format("  %-22s %s", "-e, --enable <id>",
+        out.println(String.format("  %-22s %s", "-i, --info <id>[,<id>]",
+                "Full details on specific module(s)"));
+        out.println(String.format("  %-22s %s", "-e, --enable <id>[,<id>]",
                 "Enable module(s)"));
-        out.println(String.format("  %-22s %s", "-u, --disable <id>",
+        out.println(String.format("  %-22s %s", "-u, --disable <id>[,<id>]",
                 "Disable module(s)"));
         out.println(String.format("  %-22s %s", "-f, --clean",
                 "Clean disabled files instead of preserving them"));
         out.println();
     }
+
 }

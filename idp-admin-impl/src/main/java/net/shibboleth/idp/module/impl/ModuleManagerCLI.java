@@ -96,8 +96,8 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
             moduleContext.setHttpClient(getHttpClient());
             moduleContext.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
             
-            if (args.getList() || args.getFullList()) {
-                doList(moduleContext, args.getFullList());
+            if (args.getList() || !args.getInfoModuleIds().isEmpty()) {
+                doList(moduleContext, args);
             } else {
                 doManage(moduleContext, args);
             }
@@ -110,15 +110,15 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
     }
 
     /**
-     * List all modules.
+     * List/report on modules.
      * 
      * @param moduleContext context
-     * @param full whether to do a long list
+     * @param args arguments
      */
-    private void doList(@Nonnull final ModuleContext moduleContext, final boolean full) {
+    private void doList(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args) {
         
         for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
-            if (full) {
+            if (args.getInfoModuleIds().contains(module.getId())) {
                 System.out.println();
                 System.out.println("Module: " + module.getId());
                 System.out.println("\tName: " + module.getName());
@@ -135,7 +135,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                             r.getDestination());
                 });
                 System.out.println();
-            } else {
+            } else if (args.getInfoModuleIds().isEmpty()) {
                 if (module.isEnabled(moduleContext)) {
                     System.out.println("Module: " + module.getId() +
                             ANSIColors.ANSI_GREEN + " [ENABLED]" + ANSIColors.ANSI_RESET);
