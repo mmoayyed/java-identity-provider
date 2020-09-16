@@ -8,3 +8,6 @@ net.shibboleth.idp.module.authn.impl.RemoteUser
 net.shibboleth.idp.module.authn.impl.RemoteUserInternal
 net.shibboleth.idp.module.authn.impl.SPNEGO
 net.shibboleth.idp.module.authn.impl.X509
+
+net.shibboleth.idp.module.admin.impl.Hello
+net.shibboleth.idp.module.admin.impl.UnlockKeys
