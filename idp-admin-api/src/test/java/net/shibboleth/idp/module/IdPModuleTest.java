@@ -157,9 +157,14 @@ public class IdPModuleTest {
         Assert.assertEquals(resource.getDestination(), Path.of("views/test.vm"));
     }
 
-    @Test(expectedExceptions=ModuleException.class)
-    public void testEnableNoTree() throws ModuleException {
+    @Test
+    public void testEnableNoTree() throws ModuleException, IOException {
         testModule.enable(context);
+        String xml = Files.readString(testHome.resolve("conf/test.xml"));
+        Assert.assertEquals(xml, XML_DATA);
+        
+        String vel = Files.readString(testHome.resolve("views/test.vm"));
+        Assert.assertEquals(vel, VEL_DATA);
     }
 
     @Test
