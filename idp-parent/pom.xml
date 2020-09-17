@@ -99,7 +99,7 @@
     </repositories>
 
     <dependencies>
-	<!-- This file should contain NO additional dependencies.  See IDP-1620. -->
+    <!-- This file should contain NO additional dependencies.  See IDP-1620. -->
         <dependency>
             <groupId>${slf4j.groupId}</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -128,7 +128,7 @@
         used by all project modules. -->
     <dependencyManagement>
         <dependencies>
-	    <!-- Import Dependencies:  OpenSAML -->
+        <!-- Import Dependencies:  OpenSAML -->
             <dependency>
                 <groupId>${opensaml.groupId}</groupId>
                 <artifactId>opensaml-bom</artifactId>
@@ -194,11 +194,11 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-		<groupId>net.shibboleth.utilities</groupId>
-		<artifactId>java-support</artifactId>
-		<version>${java-support.version}</version>
-		<type>test-jar</type>
-		<scope>test</scope>
+                <groupId>net.shibboleth.utilities</groupId>
+                <artifactId>java-support</artifactId>
+                <version>${java-support.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>
@@ -242,6 +242,7 @@
                     <archive>
                         <manifestEntries>
                             <Automatic-Module-Name>${automatic.module.name}</Automatic-Module-Name>
+                            <Sealed>true</Sealed>
                         </manifestEntries>
                     </archive>
                 </configuration>
