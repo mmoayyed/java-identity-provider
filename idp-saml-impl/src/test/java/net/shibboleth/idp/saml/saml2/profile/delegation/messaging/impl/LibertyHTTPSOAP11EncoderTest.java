@@ -22,8 +22,8 @@ import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
 
+import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;

@@ -26,7 +26,7 @@ import java.time.Instant;
 
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;

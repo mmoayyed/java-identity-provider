@@ -47,7 +47,7 @@ import org.openliberty.xmltooling.disco.ProviderID;
 import org.openliberty.xmltooling.disco.SecurityContext;
 import org.openliberty.xmltooling.disco.ServiceType;
 import org.openliberty.xmltooling.soapbinding.Framework;
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.schema.XSAny;

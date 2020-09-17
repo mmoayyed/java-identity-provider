@@ -32,9 +32,9 @@ import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.profile.action.ActionTestingSupport;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.testing.ActionTestingSupport;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

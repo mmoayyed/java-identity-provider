@@ -24,7 +24,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 
 import java.util.List;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 

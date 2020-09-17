@@ -21,7 +21,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import java.time.Instant;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;

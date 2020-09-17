@@ -129,12 +129,12 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-	</dependency>
+        </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -191,6 +191,7 @@
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- TODO: this is only needed for some X.509 resources in the tests -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
@@ -213,27 +214,27 @@
             <scope>test</scope>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-	    <groupId>net.shibboleth.utilities</groupId>
-	    <artifactId>java-support</artifactId>
-	    <type>test-jar</type>
-	    <scope>test</scope>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
 
-	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
+    <!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
         <dependency>
             <groupId>net.shibboleth.idp.plugin.scripting</groupId>
             <artifactId>idp-plugin-nashorn-impl</artifactId>
             <version>${nashorn.engine.version}</version>
             <scope>test</scope>
-	</dependency>
-	<dependency>
+        </dependency>
+        <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
             <version>${graalvm.version}</version>
@@ -241,9 +242,9 @@
         </dependency>
 
         <dependency>
-	    <groupId>org.graalvm.sdk</groupId>
-	    <artifactId>graal-sdk</artifactId>
-	    <version>${graalvm.version}</version>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -22,7 +22,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Locale;
 
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.testng.annotations.Test;

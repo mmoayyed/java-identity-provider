@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.xmlobject.impl;
 
-import org.opensaml.core.xml.XMLObjectProviderBaseTestCase;
+import org.opensaml.core.testing.XMLObjectProviderBaseTestCase;
 import org.opensaml.core.xml.schema.XSBooleanValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

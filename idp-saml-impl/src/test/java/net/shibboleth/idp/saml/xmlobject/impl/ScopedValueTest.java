@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.xmlobject.impl;
 
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 
-import org.opensaml.core.xml.XMLObjectProviderBaseTestCase;
+import org.opensaml.core.testing.XMLObjectProviderBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

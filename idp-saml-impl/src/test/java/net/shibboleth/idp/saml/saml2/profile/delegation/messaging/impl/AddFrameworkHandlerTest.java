@@ -21,8 +21,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.openliberty.xmltooling.soapbinding.Framework;
 import org.opensaml.messaging.handler.MessageHandlerException;
-import org.opensaml.soap.SOAPMessagingBaseTestCase;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
+import org.opensaml.soap.testing.SOAPMessagingBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

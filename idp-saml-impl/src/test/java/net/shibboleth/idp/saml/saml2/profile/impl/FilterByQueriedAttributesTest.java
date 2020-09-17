@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collection;
 import java.util.List;
 
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AttributeQuery;

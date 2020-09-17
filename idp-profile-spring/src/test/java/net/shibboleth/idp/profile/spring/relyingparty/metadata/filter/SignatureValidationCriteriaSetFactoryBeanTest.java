@@ -24,8 +24,8 @@ import java.util.List;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;

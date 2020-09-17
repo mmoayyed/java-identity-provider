@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.action.EventIds;

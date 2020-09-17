@@ -21,18 +21,38 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.script.ScriptException;
 
 import org.apache.http.HttpStatus;
-import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolverTest;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
+import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
+import org.opensaml.security.trust.TrustEngine;
+import org.opensaml.security.trust.impl.ExplicitKeyTrustEngine;
+import org.opensaml.security.x509.BasicX509Credential;
+import org.opensaml.security.x509.PKIXValidationInformation;
+import org.opensaml.security.x509.X509Credential;
+import org.opensaml.security.x509.X509Support;
+import org.opensaml.security.x509.impl.BasicPKIXValidationInformation;
+import org.opensaml.security.x509.impl.BasicX509CredentialNameEvaluator;
+import org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator;
+import org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine;
+import org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.io.ByteStreams;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -113,12 +133,12 @@ public class HTTPDataConnectorTest {
     @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
             throws Exception {
         final HttpClientBuilder clientBuilder = new HttpClientBuilder();
-        clientBuilder.setTLSSocketFactory(HTTPMetadataResolverTest.buildSocketFactory());
+        clientBuilder.setTLSSocketFactory(buildSocketFactory());
         connector.setHttpClient(clientBuilder.buildClient());
 
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
         params.setTLSProtocols(Collections.singleton("SSLv3"));
-        params.setTLSTrustEngine(HTTPMetadataResolverTest.buildExplicitKeyTrustEngine("repo-entity.crt"));
+        params.setTLSTrustEngine(buildExplicitKeyTrustEngine("repo-entity.crt"));
         connector.setHttpClientSecurityParameters(params);
 
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
@@ -347,5 +367,32 @@ public class HTTPDataConnectorTest {
         connector.resolve(context);
         assertTrue(cache.size() == 0);
     }
+
+    public static TrustEngine<? super X509Credential> buildPKIXTrustEngine(String cert, String name, boolean nameCheckEnabled) throws URISyntaxException, CertificateException, IOException {
+        final InputStream certStream = FileBackedHTTPMetadataResolver.class.getResourceAsStream((SCRIPT_PATH + cert));
+        final X509Certificate rootCert = X509Support.decodeCertificate(ByteStreams.toByteArray(certStream));
+        final PKIXValidationInformation info = new BasicPKIXValidationInformation(Collections.singletonList(rootCert), null, 5);
+        final Set<String> trustedNames = name != null ? Collections.singleton(name) : Collections.emptySet();
+        final StaticPKIXValidationInformationResolver resolver = new StaticPKIXValidationInformationResolver(Collections.singletonList(info), trustedNames);
+        return new PKIXX509CredentialTrustEngine(resolver,
+                new CertPathPKIXTrustEvaluator(),
+                (nameCheckEnabled ? new BasicX509CredentialNameEvaluator() : null));
+    }
+
+    public static TrustEngine<? super X509Credential> buildExplicitKeyTrustEngine(String cert) throws URISyntaxException, CertificateException, IOException {
+        
+        final InputStream certStream = FileBackedHTTPMetadataResolver.class.getResourceAsStream(SCRIPT_PATH + cert);
+        final X509Certificate entityCert = X509Support.decodeCertificate(ByteStreams.toByteArray(certStream));
+        final X509Credential entityCredential = new BasicX509Credential(entityCert);
+        return new ExplicitKeyTrustEngine(new StaticCredentialResolver(entityCredential));
+        
+    }
+
+    public static LayeredConnectionSocketFactory buildSocketFactory() {
+        return buildSocketFactory(true);
+    }
     
+    public static LayeredConnectionSocketFactory buildSocketFactory(boolean supportTrustEngine) {
+        return SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(supportTrustEngine, false);
+    }
 }

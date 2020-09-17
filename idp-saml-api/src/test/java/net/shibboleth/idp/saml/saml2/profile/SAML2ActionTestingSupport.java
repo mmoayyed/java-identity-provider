@@ -40,7 +40,7 @@ import org.opensaml.messaging.context.BaseContext;
  * Helper methods for creating/testing SAML 2 objects within profile action tests. When methods herein refer to mock
  * objects they are always objects that have been created via Mockito unless otherwise noted.
  */
-public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport {
+public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.testing.SAML2ActionTestingSupport {
 
     /**
      * Builds a {@link RelyingPartyContext} that is a child of the given parent context. The build subcontext contains:

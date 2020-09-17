@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;

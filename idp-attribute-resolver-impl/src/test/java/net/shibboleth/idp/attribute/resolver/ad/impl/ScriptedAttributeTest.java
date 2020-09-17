@@ -38,7 +38,7 @@ import javax.script.ScriptException;
 import javax.security.auth.Subject;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
