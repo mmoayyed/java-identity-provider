@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 import javax.annotation.Nonnull;
@@ -118,32 +120,39 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
      */
     private void doList(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args) {
         
-        for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
-            if (args.getInfoModuleIds().contains(module.getId())) {
-                System.out.println();
-                System.out.println("Module: " + module.getId());
-                System.out.println("\tName: " + module.getName());
-                System.out.println("\tDesc: " + module.getDescription());
-                System.out.println("\tHelp: " + module.getURL());
-                if (module.isEnabled(moduleContext)) {
-                    System.out.println("\tStatus: " + ANSIColors.ANSI_GREEN + "ENABLED" + ANSIColors.ANSI_RESET);
-                } else {
-                    System.out.println("\tStatus: " + ANSIColors.ANSI_RED + "DISABLED" + ANSIColors.ANSI_RESET);
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+        
+        while (modules.hasNext()) {
+            try {
+                final IdPModule module = modules.next();
+                if (args.getInfoModuleIds().contains(module.getId())) {
+                    System.out.println();
+                    System.out.println("Module: " + module.getId());
+                    System.out.println("\tName: " + module.getName());
+                    System.out.println("\tDesc: " + module.getDescription());
+                    System.out.println("\tHelp: " + module.getURL());
+                    if (module.isEnabled(moduleContext)) {
+                        System.out.println("\tStatus: " + ANSIColors.ANSI_GREEN + "ENABLED" + ANSIColors.ANSI_RESET);
+                    } else {
+                        System.out.println("\tStatus: " + ANSIColors.ANSI_RED + "DISABLED" + ANSIColors.ANSI_RESET);
+                    }
+                    final Collection<ModuleResource> resources = module.getResources();
+                    resources.forEach(r -> {
+                        System.out.println("\tResource: (" + (r.isReplace() ? "  replace" : "noreplace") + ") " +
+                                r.getDestination());
+                    });
+                    System.out.println();
+                } else if (args.getInfoModuleIds().isEmpty()) {
+                    if (module.isEnabled(moduleContext)) {
+                        System.out.println("Module: " + module.getId() +
+                                ANSIColors.ANSI_GREEN + " [ENABLED]" + ANSIColors.ANSI_RESET);
+                    } else {
+                        System.out.println("Module: " + module.getId() +
+                                ANSIColors.ANSI_RED + " [DISABLED]" + ANSIColors.ANSI_RESET);
+                    }
                 }
-                final Collection<ModuleResource> resources = module.getResources();
-                resources.forEach(r -> {
-                    System.out.println("\tResource: (" + (r.isReplace() ? "  replace" : "noreplace") + ") " +
-                            r.getDestination());
-                });
-                System.out.println();
-            } else if (args.getInfoModuleIds().isEmpty()) {
-                if (module.isEnabled(moduleContext)) {
-                    System.out.println("Module: " + module.getId() +
-                            ANSIColors.ANSI_GREEN + " [ENABLED]" + ANSIColors.ANSI_RESET);
-                } else {
-                    System.out.println("Module: " + module.getId() +
-                            ANSIColors.ANSI_RED + " [DISABLED]" + ANSIColors.ANSI_RESET);
-                }
+            } catch (final ServiceConfigurationError e) {
+                System.out.println("ServiceConfigurationError: " + e.getMessage());
             }
         }
     }
@@ -158,37 +167,44 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
      */
     private void doManage(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args)
             throws ModuleException {
-        for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
-            
-            final boolean enable;
-            if (args.getEnableModuleIds().contains(module.getId())) {
-                enable = true;
-            } else if (args.getDisableModuleIds().contains(module.getId())) {
-                enable = false;
-            } else {
-                continue;
-            }
-            
-            try (final ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
-                System.out.println((enable ? "Enabling " : "Disabling ") + module.getId() + "...");
-                moduleContext.setMessageStream(new PrintStream(sink));
-                
-                final Map<ModuleResource,ResourceResult> results = enable ? module.enable(moduleContext) :
-                    module.disable(moduleContext, args.getClean());
-                results.forEach(this::doReportOperation);
-                
-                System.out.println(ANSIColors.ANSI_GREEN + "[OK]" + ANSIColors.ANSI_RESET);
-                System.out.println();
-                
-                final String msg = sink.toString(Charset.forName("UTF-8"));
-                moduleContext.setMessageStream(null);
-                if (!Strings.isNullOrEmpty(msg)) {
-                    System.out.println(msg);
-                    System.out.println();
+        
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+        
+        while (modules.hasNext()) {
+            try {
+                final IdPModule module = modules.next();
+                final boolean enable;
+                if (args.getEnableModuleIds().contains(module.getId())) {
+                    enable = true;
+                } else if (args.getDisableModuleIds().contains(module.getId())) {
+                    enable = false;
+                } else {
+                    continue;
                 }
                 
-            } catch (final IOException e) {
-                getLogger().error("I/O Error", e);
+                try (final ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
+                    System.out.println((enable ? "Enabling " : "Disabling ") + module.getId() + "...");
+                    moduleContext.setMessageStream(new PrintStream(sink));
+                    
+                    final Map<ModuleResource,ResourceResult> results = enable ? module.enable(moduleContext) :
+                        module.disable(moduleContext, args.getClean());
+                    results.forEach(this::doReportOperation);
+                    
+                    System.out.println(ANSIColors.ANSI_GREEN + "[OK]" + ANSIColors.ANSI_RESET);
+                    System.out.println();
+                    
+                    final String msg = sink.toString(Charset.forName("UTF-8"));
+                    moduleContext.setMessageStream(null);
+                    if (!Strings.isNullOrEmpty(msg)) {
+                        System.out.println(msg);
+                        System.out.println();
+                    }
+                    
+                } catch (final IOException e) {
+                    getLogger().error("I/O Error", e);
+                }
+            } catch (final ServiceConfigurationError e) {
+                System.out.println("ServiceConfigurationError: " + e.getMessage());
             }
         }
     }
