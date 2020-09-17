@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
-import net.shibboleth.ext.spring.service.MockApplicationContext;
+import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;

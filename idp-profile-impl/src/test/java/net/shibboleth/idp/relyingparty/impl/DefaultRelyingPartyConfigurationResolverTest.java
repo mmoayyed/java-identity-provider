@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import net.shibboleth.ext.spring.service.MockApplicationContext;
+import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

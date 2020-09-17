@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.service.MockApplicationContext;
+import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;

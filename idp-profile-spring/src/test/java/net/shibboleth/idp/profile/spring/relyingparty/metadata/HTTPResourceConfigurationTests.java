@@ -32,7 +32,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
-import net.shibboleth.ext.spring.resource.ResourceTestHelper;
+import net.shibboleth.ext.spring.testing.ResourceTestHelper;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
