@@ -29,7 +29,7 @@ import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
 @SuppressWarnings("javadoc")
 public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {

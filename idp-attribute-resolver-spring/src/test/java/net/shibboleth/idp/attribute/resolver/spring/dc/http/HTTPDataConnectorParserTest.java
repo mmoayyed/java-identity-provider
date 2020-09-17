@@ -46,7 +46,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.http.impl.HTTPDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.http.impl.HTTPDataConnectorParser;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
 /** Test for {@link HTTPDataConnectorParser}. */
 @SuppressWarnings("javadoc")

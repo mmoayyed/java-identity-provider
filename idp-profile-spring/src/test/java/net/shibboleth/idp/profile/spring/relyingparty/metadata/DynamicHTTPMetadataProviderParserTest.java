@@ -42,8 +42,8 @@ import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
 @SuppressWarnings("javadoc")
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {

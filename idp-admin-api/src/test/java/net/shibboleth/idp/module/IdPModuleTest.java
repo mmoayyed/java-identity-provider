@@ -50,7 +50,7 @@ import com.google.common.io.ByteStreams;
 
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
 /**
  * Unit tests exercising module code.

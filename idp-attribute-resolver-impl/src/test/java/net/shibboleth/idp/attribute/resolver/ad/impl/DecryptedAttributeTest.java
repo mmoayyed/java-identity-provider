@@ -48,10 +48,10 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
-import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
+import net.shibboleth.utilities.java.support.test.resource.TestResourceConverter;
 
 /** Test for {@link DecryptedAttributeDefinition}. */
 @SuppressWarnings("javadoc")

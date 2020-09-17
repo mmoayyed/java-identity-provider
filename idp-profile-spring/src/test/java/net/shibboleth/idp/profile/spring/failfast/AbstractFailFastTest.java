@@ -40,8 +40,8 @@ import org.testng.annotations.Ignore;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
 /**
  * Base class for testing metadata providers.

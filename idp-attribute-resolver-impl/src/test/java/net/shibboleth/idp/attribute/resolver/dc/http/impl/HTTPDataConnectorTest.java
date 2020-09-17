@@ -43,7 +43,7 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.TestCache;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 /**

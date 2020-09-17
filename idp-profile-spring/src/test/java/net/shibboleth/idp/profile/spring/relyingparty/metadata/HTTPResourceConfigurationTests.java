@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.ext.spring.resource.ResourceTestHelper;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 
 /**
  * This test mirrors the online documentation for the HTTPResource as well as the inline example in services.xml.

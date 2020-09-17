@@ -24,9 +24,9 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
+import net.shibboleth.utilities.java.support.test.resource.TestResourceConverter;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
