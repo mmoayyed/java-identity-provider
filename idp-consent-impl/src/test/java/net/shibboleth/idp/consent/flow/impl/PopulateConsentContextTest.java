@@ -19,7 +19,7 @@ package net.shibboleth.idp.consent.flow.impl;
 
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 

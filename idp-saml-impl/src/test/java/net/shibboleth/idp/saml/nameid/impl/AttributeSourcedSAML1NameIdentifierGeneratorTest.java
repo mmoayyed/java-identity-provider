@@ -37,8 +37,8 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** Unit test for {@link AttributeSourcedSAML1NameIdentifierGenerator}. */

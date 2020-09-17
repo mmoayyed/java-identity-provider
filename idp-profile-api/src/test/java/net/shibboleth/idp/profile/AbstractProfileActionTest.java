@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile;
 
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 import org.opensaml.profile.context.PreviousEventContext;

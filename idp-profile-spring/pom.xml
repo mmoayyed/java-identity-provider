@@ -118,32 +118,32 @@
             <artifactId>java-support</artifactId>
         </dependency>
 
-	<dependency>
-	    <groupId>commons-codec</groupId>
-	    <artifactId>commons-codec</artifactId>
-	</dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.cryptacular</groupId>
+            <artifactId>cryptacular</artifactId>
+        </dependency>
 
-	<dependency>
-	    <groupId>org.apache.httpcomponents</groupId>
-	    <artifactId>httpclient</artifactId>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.bouncycastle</groupId>
-	    <artifactId>bcprov-jdk15on</artifactId>
-	</dependency>
-
-	<dependency>
-	    <groupId>org.cryptacular</groupId>
-	    <artifactId>cryptacular</artifactId>
-	</dependency>
-
-	<dependency>
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-	</dependency>
+        </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -206,14 +206,14 @@
             <scope>test</scope>
         </dependency>
 
-	<!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
+        <!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
         <dependency>
             <groupId>net.shibboleth.idp.plugin.scripting</groupId>
             <artifactId>idp-plugin-nashorn-impl</artifactId>
             <version>${nashorn.engine.version}</version>
             <scope>test</scope>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
             <version>${graalvm.version}</version>
@@ -221,9 +221,9 @@
         </dependency>
 
         <dependency>
-	    <groupId>org.graalvm.sdk</groupId>
-	    <artifactId>graal-sdk</artifactId>
-	    <version>${graalvm.version}</version>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
 

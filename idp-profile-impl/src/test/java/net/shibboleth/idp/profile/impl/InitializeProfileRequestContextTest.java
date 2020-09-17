@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.RequestContextBuilder;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 
 /** Unit test for {@link InitializeProfileRequestContext}. */
 public class InitializeProfileRequestContextTest {

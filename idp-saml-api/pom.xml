@@ -88,22 +88,22 @@
             <artifactId>spring-webflow</artifactId>
         </dependency>
 
-	<dependency>
-	    <groupId>net.shibboleth.ext</groupId>
-	    <artifactId>spring-extensions</artifactId>
-	</dependency>
+        <dependency>
+            <groupId>net.shibboleth.ext</groupId>
+            <artifactId>spring-extensions</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>net.shibboleth.utilities</groupId>
             <artifactId>java-support</artifactId>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-	</dependency>
+        </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -140,7 +140,7 @@
         </dependency>
 
         <!-- Needed despite what dependency:analyze says -->
-	<dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
-	    <scope>test</scope>
+        <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>

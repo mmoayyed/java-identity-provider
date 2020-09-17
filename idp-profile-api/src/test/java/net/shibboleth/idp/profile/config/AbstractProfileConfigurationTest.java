@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.config;
 
-import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
+import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;

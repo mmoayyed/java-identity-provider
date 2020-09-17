@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;

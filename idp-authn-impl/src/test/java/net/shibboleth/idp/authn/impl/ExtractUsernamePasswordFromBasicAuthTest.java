@@ -29,7 +29,7 @@ import com.google.common.net.HttpHeaders;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 /** {@link ExtractUsernamePasswordFromBasicAuth} unit test. */
 public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthenticationContextTest {

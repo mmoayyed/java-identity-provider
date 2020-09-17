@@ -35,7 +35,7 @@ import net.shibboleth.idp.authn.context.AuthenticationWarningContext;
 import net.shibboleth.idp.authn.context.LDAPResponseContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 import org.ldaptive.DefaultConnectionFactory;

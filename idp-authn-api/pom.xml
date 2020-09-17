@@ -55,12 +55,12 @@
             <artifactId>java-support</artifactId>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-	</dependency>
+        </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -98,7 +98,7 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-	<!-- This one is required even tho dependency:analyze says not -->
+        <!-- This one is required even tho dependency:analyze says not -->
         <dependency>
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
@@ -120,8 +120,8 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-	
-	<dependency>
+    
+        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>

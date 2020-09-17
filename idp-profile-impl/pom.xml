@@ -96,12 +96,12 @@
             <artifactId>spring-webflow</artifactId>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-	</dependency>
+        </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -197,17 +197,17 @@
             <scope>test</scope>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-	    <groupId>net.shibboleth.utilities</groupId>
-	    <artifactId>java-support</artifactId>
-	    <type>test-jar</type>
-	    <scope>test</scope>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

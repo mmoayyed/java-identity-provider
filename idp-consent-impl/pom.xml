@@ -61,16 +61,16 @@
         </dependency>
 
         <dependency>
-        	<groupId>org.cryptacular</groupId>
-        	<artifactId>cryptacular</artifactId>
+            <groupId>org.cryptacular</groupId>
+            <artifactId>cryptacular</artifactId>
         </dependency>
         <dependency>
-        	<groupId>${spring.groupId}</groupId>
-        	<artifactId>spring-context</artifactId>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-        	<groupId>${spring-webflow.groupId}</groupId>
-        	<artifactId>spring-webflow</artifactId>
+            <groupId>${spring-webflow.groupId}</groupId>
+            <artifactId>spring-webflow</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->
@@ -124,17 +124,17 @@
             <scope>test</scope>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-	    <groupId>net.shibboleth.utilities</groupId>
-	    <artifactId>java-support</artifactId>
-	    <type>test-jar</type>
-	    <scope>test</scope>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

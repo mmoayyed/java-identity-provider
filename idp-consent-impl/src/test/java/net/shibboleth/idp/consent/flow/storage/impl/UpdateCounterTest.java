@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.consent.flow.storage.impl;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
-
 import org.opensaml.storage.StorageRecord;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 /** {@link UpdateCounter} unit test. */
 public class UpdateCounterTest extends AbstractConsentStorageActionTest {

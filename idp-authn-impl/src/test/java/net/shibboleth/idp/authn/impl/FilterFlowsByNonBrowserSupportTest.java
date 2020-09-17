@@ -18,7 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;

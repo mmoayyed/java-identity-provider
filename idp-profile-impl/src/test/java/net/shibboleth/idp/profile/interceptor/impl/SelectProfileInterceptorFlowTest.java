@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
-import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;

@@ -40,7 +40,7 @@ import net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl;
 import net.shibboleth.idp.authn.impl.ValidateExternalAuthentication;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.test.service.MockReloadableService;

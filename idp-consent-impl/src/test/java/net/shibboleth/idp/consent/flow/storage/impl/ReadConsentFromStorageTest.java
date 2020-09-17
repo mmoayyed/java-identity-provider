@@ -19,7 +19,7 @@ package net.shibboleth.idp.consent.flow.storage.impl;
 
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.webflow.execution.Event;

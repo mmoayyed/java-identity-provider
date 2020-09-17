@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.testing;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

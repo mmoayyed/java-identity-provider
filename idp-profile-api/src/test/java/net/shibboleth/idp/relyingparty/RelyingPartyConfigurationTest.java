@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.google.common.base.Predicates;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;

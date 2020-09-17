@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.testing;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;

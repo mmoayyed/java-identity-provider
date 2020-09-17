@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 /** {@link TransitionMultiFactorAuthentication} unit test. */
 public class TransitionMultiFactorAuthenticationTest extends BaseMultiFactorAuthenticationContextTest {
