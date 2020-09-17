@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.testing.TestSources;
 
 import org.opensaml.messaging.context.BaseContext;
 

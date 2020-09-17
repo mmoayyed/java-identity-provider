@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.util.Arrays;

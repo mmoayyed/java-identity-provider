@@ -50,7 +50,7 @@ import net.shibboleth.idp.attribute.resolver.dc.rdbms.FormatExecutableStatementB
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.ResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.TemplatedExecutableStatementBuilder;
-import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;

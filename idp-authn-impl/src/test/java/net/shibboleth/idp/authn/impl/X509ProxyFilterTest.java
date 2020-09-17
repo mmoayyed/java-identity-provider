@@ -31,6 +31,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+
 /** {@link X509ProxyFilter} unit test. */
 public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
     

@@ -132,10 +132,10 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-    <!-- Provided Dependencies -->
-
-    <!-- Runtime Dependencies -->
-    <!-- Test Dependencies -->
+        <!-- Provided Dependencies -->
+    
+        <!-- Runtime Dependencies -->
+        <!-- Test Dependencies -->
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -145,13 +145,13 @@
             <scope>test</scope>
         </dependency>
 
-    <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>idp-attribute-resolver-api</artifactId>
-        <version>${project.version}</version>
-        <type>test-jar</type>
-        <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-resolver-api</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-impl</artifactId>

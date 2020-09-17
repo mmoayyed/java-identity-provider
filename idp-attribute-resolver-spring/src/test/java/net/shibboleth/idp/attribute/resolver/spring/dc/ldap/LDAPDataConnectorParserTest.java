@@ -91,7 +91,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMapping
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
-import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.testing.TestSources;
 
 
 /** Test for {@link LDAPDataConnectorParser}. */

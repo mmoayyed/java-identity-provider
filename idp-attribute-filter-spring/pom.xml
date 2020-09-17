@@ -152,7 +152,7 @@
             <scope>test</scope>
         </dependency>
 
-    <!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
+        <!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
         <dependency>
             <groupId>net.shibboleth.idp.plugin.scripting</groupId>
             <artifactId>idp-plugin-nashorn-impl</artifactId>

@@ -58,7 +58,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.ParameterizedExecutableSear
 import net.shibboleth.idp.attribute.resolver.dc.ldap.SearchResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.TemplatedExecutableSearchFilterBuilder;
-import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;

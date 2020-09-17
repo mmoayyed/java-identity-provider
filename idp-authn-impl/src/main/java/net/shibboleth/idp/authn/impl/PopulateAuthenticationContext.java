@@ -73,7 +73,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
     
     /** Constructor. */
-    PopulateAuthenticationContext() {
+    public PopulateAuthenticationContext() {
         availableFlows = Collections.emptyList();
         potentialFlows = Collections.emptyList();
         activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();

@@ -47,7 +47,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.ExecutableSearchFilter;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.ParameterizedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.SearchResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMappingStrategy;
-import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")

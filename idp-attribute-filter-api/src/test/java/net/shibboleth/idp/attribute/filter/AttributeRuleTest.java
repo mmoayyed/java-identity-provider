@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter;
 
+import net.shibboleth.idp.attribute.filter.testing.MockMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
