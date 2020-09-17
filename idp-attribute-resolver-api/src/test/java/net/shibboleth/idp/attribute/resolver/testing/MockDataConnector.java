@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver;
+package net.shibboleth.idp.attribute.resolver.testing;
 
 import java.util.Collections;
 import java.util.Map;
@@ -26,6 +26,10 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

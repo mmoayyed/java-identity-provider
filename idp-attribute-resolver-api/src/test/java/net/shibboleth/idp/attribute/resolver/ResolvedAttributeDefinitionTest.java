@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.testing.MockStaticAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 

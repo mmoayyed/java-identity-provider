@@ -32,8 +32,8 @@ import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.springframework.webflow.execution.Event;

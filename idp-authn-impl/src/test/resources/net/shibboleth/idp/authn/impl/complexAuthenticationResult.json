@@ -1,1 +1,1 @@
-{"id":"test","ts":1378827849463,"princ":[{"U":"bob"},{"typ":"net.shibboleth.idp.authn.principal.TestPrincipal","nam":"foo"},{"typ":"net.shibboleth.idp.authn.principal.TestPrincipal","nam":"bar"}]}
+{"id":"test","ts":1378827849463,"princ":[{"U":"bob"},{"typ":"net.shibboleth.idp.authn.testing.TestPrincipal","nam":"foo"},{"typ":"net.shibboleth.idp.authn.testing.TestPrincipal","nam":"bar"}]}

@@ -17,24 +17,30 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
-import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
+import net.shibboleth.idp.attribute.resolver.testing.MockAttributeDefinition;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
@@ -73,7 +79,7 @@ public class ResolveAttributesTest {
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("resolver", definitions, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -107,7 +113,7 @@ public class ResolveAttributesTest {
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("resolver", definitions, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -170,7 +176,7 @@ public class ResolveAttributesTest {
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null);
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("resolver", definitions, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -206,4 +212,16 @@ public class ResolveAttributesTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
     }
     
+    public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
+            @Nullable final Collection<AttributeDefinition> definitions,
+            @Nullable final Collection<DataConnector> connectors) {
+        final AttributeResolverImpl result = new AttributeResolverImpl();
+        result.setId(resolverId);
+        
+        result.setAttributeDefinitions(definitions == null ? Collections.EMPTY_LIST : definitions);
+        result.setDataConnectors(connectors == null ? Collections.EMPTY_LIST : connectors);
+        result.setApplicationContext(new MockApplicationContext());
+        return result;
+    }
+
 }

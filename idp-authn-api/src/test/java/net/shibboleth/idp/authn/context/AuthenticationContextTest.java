@@ -26,7 +26,7 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
-import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.authn.testing.TestPrincipal;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

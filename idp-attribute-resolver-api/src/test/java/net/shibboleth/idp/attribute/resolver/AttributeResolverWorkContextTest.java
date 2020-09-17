@@ -24,6 +24,9 @@ import java.util.Map;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.attribute.resolver.testing.MockAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.testing.MockDataConnector;
+import net.shibboleth.idp.attribute.resolver.testing.MockStaticDataConnector;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

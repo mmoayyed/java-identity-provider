@@ -36,7 +36,6 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.ProxiedRequesterPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;

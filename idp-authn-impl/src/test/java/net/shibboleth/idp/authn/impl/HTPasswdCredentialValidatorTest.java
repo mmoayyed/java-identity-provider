@@ -32,9 +32,9 @@ import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.springframework.core.io.ClassPathResource;

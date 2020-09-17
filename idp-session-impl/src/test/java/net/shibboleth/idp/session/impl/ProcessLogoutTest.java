@@ -34,6 +34,7 @@ import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
+import net.shibboleth.idp.session.impl.testing.SessionManagerBaseTestCase;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;

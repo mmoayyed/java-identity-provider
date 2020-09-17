@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.plugin;
+package net.shibboleth.idp.plugin.impl.testing;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
+
+import net.shibboleth.idp.plugin.AbstractPluginDescription;
 
 /**
  *

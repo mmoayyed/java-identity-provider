@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver;
+package net.shibboleth.idp.attribute.resolver.testing;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

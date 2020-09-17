@@ -20,10 +20,10 @@ package net.shibboleth.idp.authn.impl;
 import java.security.Principal;
 import java.util.Collections;
 
-import net.shibboleth.idp.authn.config.MockAuthenticationProfileConfiguration;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.authn.testing.MockAuthenticationProfileConfiguration;
+import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.context.ProfileRequestContext;

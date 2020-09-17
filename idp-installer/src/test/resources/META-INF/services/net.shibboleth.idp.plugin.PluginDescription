@@ -1,1 +1,1 @@
-net.shibboleth.idp.plugin.TestPlugin
+net.shibboleth.idp.plugin.impl.testing.TestPlugin

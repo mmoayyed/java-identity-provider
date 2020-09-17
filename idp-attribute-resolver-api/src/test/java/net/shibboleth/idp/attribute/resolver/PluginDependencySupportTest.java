@@ -26,6 +26,9 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.attribute.resolver.testing.MockStaticAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.testing.MockStaticDataConnector;
+import net.shibboleth.idp.attribute.resolver.testing.ResolverTestSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

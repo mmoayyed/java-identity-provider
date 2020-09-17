@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.principal;
+package net.shibboleth.idp.authn.testing;
 
 import java.security.Principal;
 

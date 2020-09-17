@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.session.impl;
+package net.shibboleth.idp.session.impl.testing;
 
 import java.time.Duration;
 
@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 
 import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.CookieManager;
