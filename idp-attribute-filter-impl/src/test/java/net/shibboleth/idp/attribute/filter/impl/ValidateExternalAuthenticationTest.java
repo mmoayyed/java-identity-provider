@@ -42,8 +42,8 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.MockReloadableService;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;

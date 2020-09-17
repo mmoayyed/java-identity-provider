@@ -43,7 +43,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.idp.saml.saml1.profile.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.MockReloadableService;
+import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
