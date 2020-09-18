@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")

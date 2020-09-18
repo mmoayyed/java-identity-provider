@@ -25,8 +25,8 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueRegexpMatcher;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.impl.AttributeValueRegexMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

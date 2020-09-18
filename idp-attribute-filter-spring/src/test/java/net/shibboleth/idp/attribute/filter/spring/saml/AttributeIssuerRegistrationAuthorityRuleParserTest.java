@@ -25,8 +25,8 @@ import java.util.Set;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeIssuerRegistrationAuthorityPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerRegistrationAuthorityRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

@@ -15,22 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.policy;
+/**
+ * Testing utility classes.
+ */
 
-import static org.testng.Assert.assertEquals;
-
-import org.testng.annotations.Test;
-
-import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PrincipalNamePolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-@SuppressWarnings("javadoc")
-public class PrincipalNameRuleParserTest extends BaseAttributeFilterParserTest {
-
-    @Test public void policy() throws ComponentInitializationException {
-
-        PrincipalNamePolicyRule arRule = (PrincipalNamePolicyRule) getPolicyRule("principalName.xml");
-        assertEquals(arRule.getMatchString(), "jsmith");
-    }
-}
+package net.shibboleth.idp.attribute.filter.spring.testing;

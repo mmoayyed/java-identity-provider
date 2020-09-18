@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.DirectionPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**

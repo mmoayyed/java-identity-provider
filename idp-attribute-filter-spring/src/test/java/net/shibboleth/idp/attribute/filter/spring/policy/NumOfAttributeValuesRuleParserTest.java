@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.NumOfAttributeValuesPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring;
+package net.shibboleth.idp.attribute.filter.spring.testing;
 
 import static org.testng.Assert.assertEquals;
 

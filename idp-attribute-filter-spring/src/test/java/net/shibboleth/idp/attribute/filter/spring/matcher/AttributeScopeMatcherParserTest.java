@@ -24,8 +24,8 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeStringMatcher;
-import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.idp.attribute.filter.spring.matcher.impl.AttributeScopeMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
