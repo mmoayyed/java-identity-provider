@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute;
 
-import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
