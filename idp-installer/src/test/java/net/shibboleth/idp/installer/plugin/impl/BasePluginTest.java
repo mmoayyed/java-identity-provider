@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin;
+package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

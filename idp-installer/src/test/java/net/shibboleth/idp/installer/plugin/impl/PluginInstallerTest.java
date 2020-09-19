@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.installer.plugin.BasePluginTest;
 import net.shibboleth.idp.plugin.AbstractPluginDescription;
 import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin;
+package net.shibboleth.idp.installer.plugin.impl;
 
 import static org.testng.Assert.assertEquals;
 
@@ -36,6 +36,7 @@ import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
+import net.shibboleth.idp.installer.plugin.impl.PluginInstallerCLI;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
 @SuppressWarnings("javadoc")

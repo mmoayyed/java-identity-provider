@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin;
+package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.File;
 import java.io.PrintStream;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin;
+package net.shibboleth.idp.installer.plugin.impl;
 
 import java.nio.file.Path;
 import java.security.Security;
@@ -39,7 +39,6 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
-import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
 import net.shibboleth.idp.plugin.PluginDescription;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
