@@ -31,7 +31,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import net.shibboleth.idp.installer.InstallerSupport;
-import net.shibboleth.idp.installer.plugin.impl.PluginInstaller;
 
 /**
  * set up state for testing.
