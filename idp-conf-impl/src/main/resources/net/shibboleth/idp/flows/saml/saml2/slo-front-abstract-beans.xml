@@ -69,8 +69,7 @@
     <bean id="PopulateMultiRPContextFromLogoutContext"
         class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
         p:activationCondition="%{idp.logout.elaboration:false}"
-        p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
-        p:sessionTypeProtocolMap="#{getObject('shibboleth.SessionTypeProtocolMap') ?: getObject('shibboleth.DefaultSessionTypeProtocolMap')}" />
+        p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver" />
 
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"

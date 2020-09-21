@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -30,13 +27,13 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -64,6 +61,7 @@ import org.slf4j.LoggerFactory;
  * @post If (ProfileRequestContext.getSubcontext(LogoutContext.class) != null,
  *  then ProfileRequestContext.getSubcontext(MultiRelyingPartyContext.class) != null
  */
+@SuppressWarnings("removal")
 public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileAction {
     
     /** Label for {@link MultiRelyingPartyContext} entries. */
@@ -78,9 +76,6 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     /** Lookup function for {@link LogoutContext}. */
     @Nonnull private Function<ProfileRequestContext,LogoutContext> logoutContextLookupStrategy;
     
-    /** Map of {@link SPSession} subtypes to SAML metadata protocol constants. */
-    @Nonnull private Map<Class<? extends SPSession>,String> sessionTypeProtocolMap;
-    
     /** Role to resolve metadata for. */
     @NonnullAfterInit private QName role; 
     
@@ -90,7 +85,6 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     /** Constructor. */
     public PopulateMultiRPContextFromLogoutContext() {
         logoutContextLookupStrategy = new ChildContextLookup<>(LogoutContext.class);
-        sessionTypeProtocolMap = Collections.emptyMap();
         role = SPSSODescriptor.DEFAULT_ELEMENT_NAME;
     }
 
@@ -114,27 +108,6 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         logoutContextLookupStrategy = Constraint.isNotNull(strategy, "LogoutContext lookup strategy cannot be null");
-    }
-    
-    /**
-     * Set the map of {@link SPSession} subtypes to SAML metadata protocol constants.
-     * 
-     * @param map map to set
-     */
-    public void setSessionTypeProtocolMap(@Nonnull final Map<Class<? extends SPSession>,String> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(map, "Session type to protocol map cannot be null");
-        
-        sessionTypeProtocolMap = new HashMap<>(map.size());
-        
-        for (final Map.Entry<Class<? extends SPSession>,String> entry : map.entrySet()) {
-            if (entry.getKey() != null) {
-                final String trimmed = StringSupport.trimOrNull(entry.getValue());
-                if (trimmed != null) {
-                    sessionTypeProtocolMap.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
     }
     
     /**
@@ -193,7 +166,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
             
             ProtocolCriterion protocolCriterion = null;
             final SPSession spSession = logoutCtx.getSessions(relyingPartyId).iterator().next();
-            final String protocol = sessionTypeProtocolMap.get(spSession.getClass());
+            final String protocol = spSession instanceof SPSessionEx ? ((SPSessionEx) spSession).getProtocol() : null;
             if (protocol != null) {
                 protocolCriterion = new ProtocolCriterion(protocol);
             }

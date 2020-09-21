@@ -25,12 +25,14 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -40,7 +42,8 @@ import net.shibboleth.utilities.java.support.xml.SerializeSupport;
  * Extends a {@link BasicSPSession} with SAML 2.0 information required for
  * reverse lookup in the case of a logout. 
  */
-public class SAML2SPSession extends BasicSPSession {
+@SuppressWarnings("removal")
+public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
 
     /** The NameID asserted to the SP. */
     @Nonnull private final NameID nameID;
@@ -91,6 +94,11 @@ public class SAML2SPSession extends BasicSPSession {
     @Override
     @Nullable public String getSPSessionKey() {
         return nameID.getValue();
+    }
+
+    /** {@inheritDoc} */
+    @Nullable @NotEmpty public String getProtocol() {
+        return SAMLConstants.SAML20P_NS;
     }
 
     /** {@inheritDoc} */

@@ -53,24 +53,6 @@
 
     <bean id="shibboleth.DefaultSPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry" />
     
-    
-    <bean id="shibboleth.DefaultSessionTypeProtocolMap"
-            class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="#{T(net.shibboleth.idp.saml.session.SAML1SPSession)}">
-                    <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
-                </entry>
-                <entry key="#{T(net.shibboleth.idp.saml.session.SAML2SPSession)}">
-                    <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
-                </entry>
-                <entry key="#{T(net.shibboleth.idp.cas.session.impl.CASSPSession)}">
-                    <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
             depends-on="shibboleth.OpenSAMLConfig"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"

@@ -20,8 +20,11 @@ package net.shibboleth.idp.cas.session.impl;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
 import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -31,7 +34,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  *
  * @author Marvin S. Addison
  */
-public class CASSPSession extends BasicSPSession {
+@SuppressWarnings("removal")
+public class CASSPSession extends BasicSPSession implements SPSessionEx {
 
     /** Validated ticket that started the SP session. */
     @Nonnull @NotEmpty private final String ticket;
@@ -67,8 +71,14 @@ public class CASSPSession extends BasicSPSession {
         return ticket;
     }
 
+    /** {@inheritDoc} */
+    @Nullable @NotEmpty public String getProtocol() {
+        return AbstractProtocolConfiguration.PROTOCOL_URI;
+    }
+
     @Override
     public String toString() {
         return "CASSPSession: " + getId() + " via " + ticket;
     }
+    
 }

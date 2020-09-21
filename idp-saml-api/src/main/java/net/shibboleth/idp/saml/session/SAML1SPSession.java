@@ -20,15 +20,20 @@ package net.shibboleth.idp.saml.session;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.opensaml.saml.common.xml.SAMLConstants;
 
 import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Marker subtype for a SAML 1 session, adds no actual information other than its identity as
  * a SAML 1 session. 
  */
-public class SAML1SPSession extends BasicSPSession {
+@SuppressWarnings("removal")
+public class SAML1SPSession extends BasicSPSession implements SPSessionEx {
     
     /**
      * Constructor.
@@ -40,6 +45,11 @@ public class SAML1SPSession extends BasicSPSession {
     public SAML1SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
             @Nonnull final Instant expiration) {
         super(id, creation, expiration);
+    }
+
+    /** {@inheritDoc} */
+    @Nullable @NotEmpty public String getProtocol() {
+        return SAMLConstants.SAML11P_NS;
     }
 
 }
