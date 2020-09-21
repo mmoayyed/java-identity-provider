@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:c="http://www.springframework.org/schema/c"
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
@@ -77,15 +78,15 @@
 
     </util:list>
 	
-    <util:map id="DefaultNamingRegistry">
-        <entry key="#{T(org.opensaml.saml.saml2.core.Attribute)}">
+    <bean id="SAML2NamingFunction" class="net.shibboleth.idp.attribute.transcoding.BasicNamingFunction"
+            c:claz="org.opensaml.saml.saml2.core.Attribute">
+        <constructor-arg name="function">
             <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
-        </entry>
-    </util:map>
-
+        </constructor-arg>
+    </bean>
 
     <bean id="AttributeTranscoderRegistry" class="net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl"
-        p:namingRegistry-ref="DefaultNamingRegistry"
+        p:namingRegistry-ref="SAML2NamingFunction"
         p:transcoderRegistry-ref="DefaultAttributeRegistry" />
 	
 </beans>

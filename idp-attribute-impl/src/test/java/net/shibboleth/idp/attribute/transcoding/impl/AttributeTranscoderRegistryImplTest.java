@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.testng.Assert.*;
 import org.testng.annotations.AfterClass;
@@ -40,9 +41,10 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry.NamingFunction;
+import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
-import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -58,7 +60,13 @@ public class AttributeTranscoderRegistryImplTest {
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
         
-        registry.setNamingRegistry(Collections.singletonMap(Pair.class, (Pair<?,?> p) -> "{Pair}" + p.getFirst().toString()));
+        final NamingFunction nf = new BasicNamingFunction<>(Pair.class,
+                new Function<Pair,String>() {
+                    public String apply(final Pair p) {
+                        return "{Pair}" + p.getFirst().toString();
+                    }
+            });
+        registry.setNamingRegistry(Collections.singletonList(nf));
         
         final PairTranscoder transcoder = new PairTranscoder();
         transcoder.initialize();

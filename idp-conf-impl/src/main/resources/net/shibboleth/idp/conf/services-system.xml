@@ -62,8 +62,7 @@
 	        p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
 	    <constructor-arg name="claz" value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
 	    <constructor-arg name="strategy">
-	       <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy"
-	           p:namingRegistry="#{'%{idp.service.attribute.registry.namingRegistry:shibboleth.DefaultNamingRegistry}'.trim()}" />
+	       <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy" />
 	    </constructor-arg>
     </bean>
     <bean id ="shibboleth.DefaultAttributeRegistryResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"

@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:context="http://www.springframework.org/schema/context"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:util="http://www.springframework.org/schema/util"
         xmlns:p="http://www.springframework.org/schema/p"
         xmlns:c="http://www.springframework.org/schema/c"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
         default-init-method="initialize"
         default-destroy-method="destroy">
-        
-    <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" p:failFast="true"
-        p:reloadCheckDelay="0">
 
-        <constructor-arg name="claz"
-            value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
-        <constructor-arg name="strategy">
-            <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy"
-                p:id="shibboleth.AttributeRegistryService"
-                p:namingRegistry="DefaultNamingRegistry" />
+    <!-- Needed to allow for auto-wiring of descriptors and other componnents. -->
+    <context:annotation-config />
+        
+    <bean id="SAML2NamingFunction" class="net.shibboleth.idp.attribute.transcoding.BasicNamingFunction"
+            c:claz="org.opensaml.saml.saml2.core.Attribute">
+        <constructor-arg name="function">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
         </constructor-arg>
+    </bean>
+    
+    <bean id="RegistryServiceStrategy" class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy"
+        p:id="shibboleth.AttributeRegistryService" />
+
+    <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+            c:claz="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry"
+            c:strategy-ref="RegistryServiceStrategy"
+            p:failFast="true"
+            p:reloadCheckDelay="0">
         <property name="serviceConfigurations">
             <util:list>
                 <value>net/shibboleth/idp/saml/impl/metadata/attribute-registry.xml</value>

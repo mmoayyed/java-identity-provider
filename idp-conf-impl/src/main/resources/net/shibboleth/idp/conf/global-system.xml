@@ -105,6 +105,7 @@
                 <value>idp.authn.resolveAttribute</value>
                 <value>idp.nameid.saml1.legacyGenerator</value>
                 <value>idp.nameid.saml2.legacyGenerator</value>
+                <value>idp.service.attribute.registry.namingRegistry</value>
             </list>
         </property>
     </bean>
@@ -328,23 +329,26 @@
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
 
-    <!-- Default attribute mapping support for new registry service, exposed here for extension use. -->
-            
-    <bean id="shibboleth.DefaultNamingRegistry"
-            class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="#{T(org.opensaml.saml.saml2.core.Attribute)}">
-                    <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
-                </entry>
-                <entry key="#{T(org.opensaml.saml.saml1.core.AttributeDesignator)}">
-                    <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder.NamingFunction" />
-                </entry>
-                <entry key="#{T(net.shibboleth.idp.cas.attribute.Attribute)}">
-                    <bean class="net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder.NamingFunction" />
-                </entry>
-            </map>
-        </property>
+    <!-- Default attribute mapping support for registry service, exposed here for extension use. -->
+
+    <bean id="shibboleth.RegistryNamingFunction" abstract="true"
+        class="net.shibboleth.idp.attribute.transcoding.BasicNamingFunction" />
+
+    <!-- Built-in naming functions. -->
+    <bean parent="shibboleth.RegistryNamingFunction" c:claz="org.opensaml.saml.saml2.core.Attribute">
+        <constructor-arg name="function">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
+        </constructor-arg>    
+    </bean>
+    <bean parent="shibboleth.RegistryNamingFunction" c:claz="org.opensaml.saml.saml1.core.AttributeDesignator">
+        <constructor-arg name="function">
+            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTranscoder.NamingFunction" />
+        </constructor-arg>    
+    </bean>
+    <bean parent="shibboleth.RegistryNamingFunction" c:claz="net.shibboleth.idp.cas.attribute.Attribute">
+        <constructor-arg name="function">
+            <bean class="net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder.NamingFunction" />
+        </constructor-arg>    
     </bean>
 
  </beans>

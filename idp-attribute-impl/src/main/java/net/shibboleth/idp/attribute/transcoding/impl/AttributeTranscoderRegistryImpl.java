@@ -90,22 +90,18 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
     /**
      * Installs registry of naming functions mapped against the types of objects they support.
      * 
-     * @param registry map of types to naming functions
+     * @param registry collection of naming functions for indexing
      */
-    public void setNamingRegistry(@Nonnull @NonnullElements final Map<Class<?>,Function<?,String>> registry) {
+    public void setNamingRegistry(@Nullable @NonnullElements final Collection<NamingFunction<?>> registry) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         namingFunctionRegistry.clear();
         
-        if (registry == null) {
-            return;
+        if (registry != null) {
+            registry.forEach(nf -> {
+                namingFunctionRegistry.put(nf.getType(), nf.getFunction());
+                });
         }
-        
-        registry.forEach((k,v) -> {
-            if (k != null && v != null) {
-                namingFunctionRegistry.put(k, v);
-            }
-        });
     }
 
     /**

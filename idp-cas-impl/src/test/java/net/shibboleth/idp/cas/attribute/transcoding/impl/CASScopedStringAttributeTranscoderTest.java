@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
@@ -67,8 +68,8 @@ public class CASScopedStringAttributeTranscoderTest {
         final CASScopedStringAttributeTranscoder transcoder = new CASScopedStringAttributeTranscoder();
         transcoder.initialize();
         
-        registry.setNamingRegistry(Collections.singletonMap(transcoder.getEncodedType(),
-                new AbstractCASAttributeTranscoder.NamingFunction()));
+        registry.setNamingRegistry(Collections.singletonList(
+                new BasicNamingFunction<>(transcoder.getEncodedType(), new AbstractCASAttributeTranscoder.NamingFunction())));
         
         final Map<String,Object> ruleset1 = new HashMap<>();
         ruleset1.put(AttributeTranscoderRegistry.PROP_ID, ATTR_ID);

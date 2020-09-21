@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
@@ -91,8 +92,8 @@ public class SAML2ScopedStringAttributeTranscoderTest extends OpenSAMLInitBaseTe
         final SAML2ScopedStringAttributeTranscoder transcoder = new SAML2ScopedStringAttributeTranscoder();
         transcoder.initialize();
         
-        registry.setNamingRegistry(Collections.singletonMap(transcoder.getEncodedType(),
-                new AbstractSAML2AttributeTranscoder.NamingFunction()));
+        registry.setNamingRegistry(Collections.singletonList(
+                new BasicNamingFunction<>(transcoder.getEncodedType(), new AbstractSAML2AttributeTranscoder.NamingFunction())));
         
         final Map<String,Object> ruleset1 = new HashMap<>();
         ruleset1.put(AttributeTranscoderRegistry.PROP_ID, ATTR_NAME);

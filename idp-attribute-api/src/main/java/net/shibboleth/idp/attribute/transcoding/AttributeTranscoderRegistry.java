@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.transcoding;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -107,5 +108,29 @@ public interface AttributeTranscoderRegistry extends IdentifiedComponent {
      */
     @Nonnull @NonnullElements @Unmodifiable <T> Collection<TranscodingRule> getTranscodingRules(
             @Nonnull final T from);
+
+    /**
+     * Interface to a naming function that allows an object to be turned into a unique string name.
+     * 
+     * @param <T> type of object
+     * 
+     * @since 4.1.0
+     */
+    interface NamingFunction<T> {
         
+        /**
+         * Gets the type of object supported.
+         * 
+         * @return object type
+         */
+        @Nonnull Class<T> getType();
+        
+        /**
+         * Gets the function that produces a name for an input object.
+         * 
+         * @return naming function
+         */
+        @Nonnull Function<T,String> getFunction();
+    }
+
 }

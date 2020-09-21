@@ -19,7 +19,8 @@ package net.shibboleth.idp.attribute.transcoding.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -27,15 +28,16 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry.NamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -49,24 +51,30 @@ public class AttributeRegistryServiceStrategy extends AbstractIdentifiableInitia
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRegistryServiceStrategy.class);
 
     /** Name of bean to supply naming function registry property. */
-    @Nullable @NotEmpty private String namingRegistry;
+    @Nullable @NonnullElements private Collection<NamingFunction<?>> namingRegistry;
     
     /**
-     * Set the name of the bean providing the {@link AttributeTranscoderRegistryImpl#setNamingRegistry(Map)} value.
+     * Sets the collection of {@link NamingFunction}s to install into the registry.
      * 
-     * @param beanName name of bean of type {@link Map}
+     * <p>This is done for auto-wiring exposure since plugins may be supplying additional functions
+     * outside the registry's own service context.</p>
+     * 
+     * @param namingFunctions collection of functions to install
      */
-    public void setNamingRegistry(@Nullable @NotEmpty final String beanName) {
+    @Autowired
+    public void setNamingRegistry(@Nullable @NonnullElements final Collection<NamingFunction<?>> namingFunctions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        namingRegistry = StringSupport.trimOrNull(beanName);
+        if (namingFunctions != null) {
+            namingRegistry = List.copyOf(namingFunctions);
+        } else {
+            namingRegistry = Collections.emptyList();
+        }
     }
     
     /** {@inheritDoc} */
     @Nullable public ServiceableComponent<AttributeTranscoderRegistry> apply(
             @Nullable final ApplicationContext appContext) {
-
-        final Map<Class<?>,Function<?,String>> namingRegistryBean = appContext.getBean(namingRegistry, Map.class);
         
         final Collection<TranscodingRule> mappingBeans = appContext.getBeansOfType(TranscodingRule.class).values();
         final Collection<TranscodingRuleLoader> loaderBeans =
@@ -83,7 +91,7 @@ public class AttributeRegistryServiceStrategy extends AbstractIdentifiableInitia
         final AttributeTranscoderRegistryImpl registry = new AttributeTranscoderRegistryImpl();
         registry.setId(getId());
         registry.setApplicationContext(appContext);
-        registry.setNamingRegistry(namingRegistryBean);
+        registry.setNamingRegistry(namingRegistry);
         registry.setTranscoderRegistry(holder);
 
         try {

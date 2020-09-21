@@ -21,12 +21,6 @@
     <bean id="SAML2XMLObjectTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder" />
 
-    <util:map id="DefaultNamingRegistry">
-        <entry key="#{T(org.opensaml.saml.saml2.core.Attribute)}">
-            <bean class="net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder.NamingFunction" />
-        </entry>
-    </util:map>
-        
     <bean id="shibboleth.TranscodingRuleLoader"
         class="net.shibboleth.idp.attribute.transcoding.impl.TranscodingRuleLoader"
         c:dir="net/shibboleth/idp/saml/impl/metadata/rules" />

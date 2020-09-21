@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder;
 import net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor;
@@ -67,7 +68,8 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         
         final AttributeTranscoderRegistryImpl registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
-        registry.setNamingRegistry(Collections.singletonMap(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction()));
+        registry.setNamingRegistry(Collections.singletonList(
+                new BasicNamingFunction<>(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction())));
         registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
         

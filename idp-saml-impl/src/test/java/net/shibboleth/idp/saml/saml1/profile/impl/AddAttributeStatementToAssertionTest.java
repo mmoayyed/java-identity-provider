@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -98,8 +99,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
         
-        registry.setNamingRegistry(Collections.singletonMap(AttributeDesignator.class,
-                new AbstractSAML1AttributeTranscoder.NamingFunction()));
+        registry.setNamingRegistry(Collections.singletonList(
+                new BasicNamingFunction<>(AttributeDesignator.class, new AbstractSAML1AttributeTranscoder.NamingFunction())));
 
         final SAML1StringAttributeTranscoder transcoder = new SAML1StringAttributeTranscoder();
         transcoder.initialize();
@@ -197,9 +198,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
         localregistry.setId("test");
         
-        localregistry.setNamingRegistry(Collections.singletonMap(AttributeDesignator.class,
-                new AbstractSAML1AttributeTranscoder.NamingFunction()));
-        
+        localregistry.setNamingRegistry(Collections.singletonList(
+                new BasicNamingFunction<>(AttributeDesignator.class, new AbstractSAML1AttributeTranscoder.NamingFunction())));
+
         final MockSAML1StringAttributeTranscoder transcoder = new MockSAML1StringAttributeTranscoder();
         transcoder.initialize();
         
@@ -238,8 +239,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
         localregistry.setId("test");
         
-        localregistry.setNamingRegistry(Collections.singletonMap(AttributeDesignator.class,
-                new AbstractSAML1AttributeTranscoder.NamingFunction()));
+        localregistry.setNamingRegistry(Collections.singletonList(
+                new BasicNamingFunction<>(AttributeDesignator.class, new AbstractSAML1AttributeTranscoder.NamingFunction())));
 
         final MockSAML1StringAttributeTranscoder transcoder = new MockSAML1StringAttributeTranscoder();
         transcoder.initialize();
