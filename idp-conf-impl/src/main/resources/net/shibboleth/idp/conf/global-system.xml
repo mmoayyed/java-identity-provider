@@ -244,8 +244,6 @@
 
     <!--
     Default list of ClientStorageService plugins needed for injection into storage read/write flows.
-    Declared here for compatibility with pre-3.2 installs that don't declare this list inside
-    session-manager.xml
     -->
     <bean id="shibboleth.DefaultClientStorageServices" lazy-init="true"
             class="org.springframework.beans.factory.config.ListFactoryBean">
