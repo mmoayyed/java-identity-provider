@@ -76,19 +76,27 @@
             p:IDGenerator-ref="shibboleth.SessionIDGenerator"
             p:SPSessionSerializerRegistry="#{getObject('shibboleth.SPSessionSerializerRegistry') ?: getObject('shibboleth.DefaultSPSessionSerializerRegistry')}" />
 
+    <!-- Management bean to collect and expose LogoutPropagationFlowDescriptors. -->
+    
+    <bean id="shibboleth.LogoutPropagationFlowDescriptorManager"
+        class="net.shibboleth.idp.session.impl.LogoutPropagationFlowDescriptorManager"
+        p:components="#{getObject('shibboleth.LogoutPropagationFlows')}" />
+
     <!-- Built-in logout propagation flows. -->
 
+    <!-- These bean IDs have to be set (vs. just p:id) because the original config ref'd them. -->
+
     <bean id="logoutprop/cas" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
-          c:_0="#{ T(net.shibboleth.idp.cas.session.impl.CASSPSession) }" />
+          c:_0="net.shibboleth.idp.cas.session.impl.CASSPSession" />
 
     <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
-          c:_0="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
+          c:_0="net.shibboleth.idp.saml.session.SAML2SPSession" />
 
     <!-- Selector function used in logout-propagation UI and logout-propagation driver flow -->
 
-    <bean id="shibboleth.LogoutPropagationFlowSelector"
+    <bean id="shibboleth.LogoutPropagationFlowSelector" depends-on="shibboleth.LogoutPropagationFlowDescriptorManager"
           class="net.shibboleth.idp.session.logic.LogoutPropagationFlowDescriptorSelector"
-          c:flows-ref="shibboleth.LogoutPropagationFlows" />
+          c:flows="#{@'shibboleth.LogoutPropagationFlowDescriptorManager'.getComponents()}" />
 
     <!-- The import is at the bottom to avoid a depends-on in a user-editable file. -->
     <import resource="${idp.home}/conf/session-manager.xml" />
