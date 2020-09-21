@@ -34,22 +34,12 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 public abstract class AbstractPluginDescription implements PluginDescription {
     
     /** {@inheritDoc} */
-    @Nonnull public List<String> getAdditionalPropertyFiles() {
-        return Collections.emptyList();
-    }
-    
-    /** {@inheritDoc} */
     @Nonnull public List<Path> getFilePathsToCopy() {
         return Collections.emptyList();
     }
     
     /** {@inheritDoc} */
     @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException {
-        return Collections.emptyList();
-    }
-
-    /** {@inheritDoc} */
-    @Nonnull public List<Pair<Path, List<String>>> getPropertyMerges() {
         return Collections.emptyList();
     }
     
