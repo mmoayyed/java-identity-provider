@@ -13,7 +13,7 @@
           depends-on="shibboleth.OpenSAMLConfig"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
           p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-          p:authenticationFlowDescriptors="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents().?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
+          p:authenticationFlowDescriptors="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents().?[id matches 'authn/(' + '%{idp.authn.flows:Password}'.trim() + ')']}"
           p:cookieManager-ref="shibboleth.CookieManager"
           p:storageService-ref="shibboleth.StorageService"
           p:consistentAddress="%{idp.session.consistentAddress:true}"
