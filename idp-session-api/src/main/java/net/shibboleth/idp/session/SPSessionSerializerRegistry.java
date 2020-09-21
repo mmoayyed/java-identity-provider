@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.session;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +27,9 @@ import javax.annotation.Nullable;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -48,7 +50,22 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
 
     /** Constructor. */
     public SPSessionSerializerRegistry() {
-        registry = Collections.emptyMap();
+        this(null);
+    }
+    
+    /**
+     * Constructor.
+     *
+     * @param serializers auto-wired serializer entries
+     * 
+     * @since 4.1.0
+     */
+    @Autowired
+    public SPSessionSerializerRegistry(@Nullable @NonnullElements final Collection<Entry<?>> serializers) {
+        registry = new HashMap<>();
+        if (serializers != null) {
+            serializers.forEach(e -> registry.put(e.getType(), e.getSerializer()));
+        }
     }
     
     /**
@@ -61,7 +78,6 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Map cannot be null");
         
-        registry = new HashMap<>(map.size());
         for (final Map.Entry<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> entry
                 : map.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {
@@ -89,6 +105,52 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
         }
         log.debug("Registry failed to locate StorageSerializer for SPSession type '{}'", type);
         return null;
+    }
+
+    /**
+     * Wrapper type for auto-wiring serializers.
+     * 
+     * @param <T> session type
+     * 
+     * @since 4.1.0
+     */
+    public static class Entry<T extends SPSession> {
+        
+        /** Session type. */
+        @Nonnull private final Class<T> sessionType;
+        
+        /** Serializer. */
+        @Nonnull private final StorageSerializer<T> serializer;
+        
+        /**
+         * Constructor.
+         *
+         * @param claz session type
+         * @param object serializer
+         */
+        public Entry(@Nonnull @ParameterName(name="claz") final Class<T> claz,
+                @Nullable @ParameterName(name="object") final StorageSerializer<T> object) {
+            sessionType = Constraint.isNotNull(claz, "Session type cannot be null");
+            serializer = object;
+        }
+        
+        /**
+         * Gets session type.
+         * 
+         * @return session type
+         */
+        @Nonnull Class<T> getType() {
+            return sessionType;
+        }
+        
+        /**
+         * Gets {@link StorageSerializer}.
+         * 
+         * @return serializer
+         */
+        @Nullable StorageSerializer<T> getSerializer() {
+            return serializer;
+        }
     }
 
 }

@@ -16,31 +16,43 @@
         class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="%{idp.session.idSize:32}" />
 
-    <bean id="shibboleth.DefaultSPSessionSerializerRegistry"
-            class="net.shibboleth.idp.session.SPSessionSerializerRegistry">
-        <property name="mappings">
-            <map>
-                <entry key="#{ T(net.shibboleth.idp.session.BasicSPSession) }">
-                    <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer"
-                        c:offset="%{idp.session.slop:PT0S}" />
-                </entry>
-                <entry key="#{ T(net.shibboleth.idp.saml.session.SAML1SPSession) }">
-                    <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionSerializer"
-                        c:offset="%{idp.session.slop:PT0S}" />
-                </entry>
-                <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
-                    <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer"
-                        c:offset="%{idp.session.slop:PT0S}"
-                        p:parserPool-ref="shibboleth.ParserPool"
-                        depends-on="shibboleth.OpenSAMLConfig" />
-                </entry>
-                <entry key="#{T(net.shibboleth.idp.cas.session.impl.CASSPSession)}">
-                    <bean class="net.shibboleth.idp.cas.session.impl.CASSPSessionSerializer"
-                        c:offset="%{idp.session.slop:PT0S}" />
-                </entry>
-            </map>
-        </property>
+    <!-- SPSession serializers. -->
+    
+    <bean id="shibboleth.SPSessionSerializer" abstract="true"
+        class="net.shibboleth.idp.session.SPSessionSerializerRegistry.Entry" />
+
+    <bean parent="shibboleth.SPSessionSerializer" c:claz="net.shibboleth.idp.session.BasicSPSession">
+        <constructor-arg name="object">
+            <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer"
+                c:offset="%{idp.session.slop:PT0S}" />
+        </constructor-arg>
     </bean>
+
+    <bean parent="shibboleth.SPSessionSerializer" c:claz="net.shibboleth.idp.saml.session.SAML1SPSession">
+        <constructor-arg name="object">
+            <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionSerializer"
+                c:offset="%{idp.session.slop:PT0S}" />
+        </constructor-arg>
+    </bean>
+
+    <bean parent="shibboleth.SPSessionSerializer" c:claz="net.shibboleth.idp.saml.session.SAML2SPSession">
+        <constructor-arg name="object">
+            <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer"
+                c:offset="%{idp.session.slop:PT0S}"
+                p:parserPool-ref="shibboleth.ParserPool"
+                depends-on="shibboleth.OpenSAMLConfig" />
+        </constructor-arg>
+    </bean>
+
+    <bean parent="shibboleth.SPSessionSerializer" c:claz="net.shibboleth.idp.cas.session.impl.CASSPSession">
+        <constructor-arg name="object">
+            <bean class="net.shibboleth.idp.cas.session.impl.CASSPSessionSerializer"
+                c:offset="%{idp.session.slop:PT0S}" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.DefaultSPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry" />
+    
     
     <bean id="shibboleth.DefaultSessionTypeProtocolMap"
             class="org.springframework.beans.factory.config.MapFactoryBean">
