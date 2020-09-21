@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.

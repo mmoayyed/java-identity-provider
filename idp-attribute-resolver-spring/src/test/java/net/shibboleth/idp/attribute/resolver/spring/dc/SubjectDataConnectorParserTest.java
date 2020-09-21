@@ -25,8 +25,8 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.dc.impl.SubjectDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.SubjectDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 
 /**
  * test for {@link SubjectDataConnectorParser}

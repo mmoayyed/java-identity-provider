@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")

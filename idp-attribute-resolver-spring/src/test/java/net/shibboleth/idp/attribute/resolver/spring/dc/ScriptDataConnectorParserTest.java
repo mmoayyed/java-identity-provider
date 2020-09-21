@@ -32,8 +32,8 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

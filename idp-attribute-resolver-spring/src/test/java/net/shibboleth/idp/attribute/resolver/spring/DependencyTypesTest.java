@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 
 @SuppressWarnings("javadoc")
 public class DependencyTypesTest extends BaseAttributeDefinitionParserTest {

@@ -22,8 +22,8 @@ import static org.testng.Assert.assertNull;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
 
 /**

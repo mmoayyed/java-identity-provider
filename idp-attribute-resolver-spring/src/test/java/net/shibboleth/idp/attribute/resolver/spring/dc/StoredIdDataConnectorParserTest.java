@@ -35,9 +35,9 @@ import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIdDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RDBMSDataConnectorParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
