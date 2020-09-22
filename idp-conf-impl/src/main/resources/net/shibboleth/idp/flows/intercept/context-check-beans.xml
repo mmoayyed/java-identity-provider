@@ -18,6 +18,9 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/intercept/context-check-intercept-config.xml" />
+    <!-- Default to be overridden by config. -->
+    <bean id="shibboleth.context-check.Condition" parent="shibboleth.Conditions.TRUE" />
+
+    <import resource="conditional:%{idp.home}/conf/intercept/context-check-intercept-config.xml" />
 
 </beans>

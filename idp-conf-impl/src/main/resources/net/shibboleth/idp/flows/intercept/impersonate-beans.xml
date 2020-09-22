@@ -18,20 +18,21 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/intercept/impersonate-intercept-config.xml" />
+    <!-- Legacy config. -->
+    <import resource="conditional:%{idp.home}/conf/intercept/impersonate-intercept-config.xml" />
 
     <bean id="CheckGeneralAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyName-ref="shibboleth.impersonate.GeneralPolicy"
+        p:policyName="#{getObject('shibboleth.impersonate.GeneralPolicy') ?: '%{idp.impersonate.generalPolicy:GeneralImpersonationPolicy}'.trim()}"
         p:operation="impersonate" />
 
     <bean id="CheckSpecificAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyName-ref="shibboleth.impersonate.SpecificPolicy"
+        p:policyName="#{getObject('shibboleth.impersonate.SpecificPolicy') ?: '%{idp.impersonate.specificPolicy:SpecificImpersonationPolicy}'.trim()}"
         p:operation="impersonate"
         p:resourceLookupStrategy-ref="FlowScopePrincipalLookup" />
 
