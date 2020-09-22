@@ -14,11 +14,16 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/intercept/consent-intercept-config.xml" />
+    <!-- Default audit format. -->
+    <util:map id="DefaultAuditFormattingMap">
+        <entry key="Shibboleth-Consent-Audit" value="#{'%{idp.consent.terms-of-use.auditFormat:%T|%SP|%e|%u|%CCI|%CCV|%CCA}'.trim()}" />
+    </util:map>
+
+    <import resource="conditional:%{idp.home}/conf/intercept/consent-intercept-config.xml" />
 
     <bean id="TermsOfUseConsentFunction"
         class="net.shibboleth.idp.consent.logic.impl.MessageSourceConsentFunction"
-        p:consentKeyLookupStrategy-ref="shibboleth.consent.terms-of-use.Key"
+        p:consentKeyLookupStrategy="#{getObject('shibboleth.consent.terms-of-use.Key') ?: getObject('shibboleth.RelyingPartyIdLookup.Simple')}"
         p:consentValueMessageCodeSuffix="%{idp.consent.terms-of-use.consentValueMessageCodeSuffix:.text}" />
 
     <bean id="IsConsentRequiredPredicate"
@@ -44,7 +49,7 @@
     <bean id="shibboleth.consent.UserAndTermsStorageKey"
         class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey"
-        c:functionB-ref="shibboleth.consent.terms-of-use.Key" />
+        c:functionB="#{getObject('shibboleth.consent.terms-of-use.Key') ?: getObject('shibboleth.RelyingPartyIdLookup.Simple')}" />
 
     <!--
     Function to return the storage key of the index record containing all storage keys
@@ -65,7 +70,7 @@
 
     <bean id="TermsOfUseAuditFormattingMapParser"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
-        c:_0-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
+        c:_0="#{getObject('shibboleth.consent.terms-of-use.AuditFormattingMap') ?: getObject('DefaultAuditFormattingMap')}" />
 
     <!-- Action beans -->
     
@@ -101,7 +106,7 @@
 
     <bean id="WriteConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap"
+        p:formattingMap="#{getObject('shibboleth.consent.terms-of-use.AuditFormattingMap') ?: getObject('DefaultAuditFormattingMap')}"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />

@@ -163,7 +163,7 @@
     replacements that shrink the size of results saved to client-side storage such as cookies.
     -->
     <bean id="shibboleth.consent.DefaultAttributeSymbolics"
-        class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <!-- Attribute resolver core schema attributes -->

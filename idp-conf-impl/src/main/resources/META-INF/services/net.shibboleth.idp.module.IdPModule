@@ -12,6 +12,7 @@ net.shibboleth.idp.module.authn.impl.X509
 net.shibboleth.idp.module.admin.impl.Hello
 net.shibboleth.idp.module.admin.impl.UnlockKeys
 
+net.shibboleth.idp.module.intercept.impl.Consent
 net.shibboleth.idp.module.intercept.impl.ContextCheck
 net.shibboleth.idp.module.intercept.impl.ExpiringPassword
 net.shibboleth.idp.module.intercept.impl.Impersonate

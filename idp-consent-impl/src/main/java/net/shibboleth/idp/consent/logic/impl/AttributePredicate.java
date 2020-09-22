@@ -60,7 +60,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * 
      * @param prompted prompted attribute IDs
      */
-    public void setPromptedAttributeIds(@Nonnull @NonnullElements final Collection<String> prompted) {
+    public void setPromptedAttributeIds(@Nullable @NonnullElements final Collection<String> prompted) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         promptedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(prompted));
@@ -71,7 +71,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * 
      * @param ignored ignored attribute IDs
      */
-    public void setIgnoredAttributeIds(@Nonnull @NonnullElements final Collection<String> ignored) {
+    public void setIgnoredAttributeIds(@Nullable @NonnullElements final Collection<String> ignored) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         ignoredAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(ignored));
