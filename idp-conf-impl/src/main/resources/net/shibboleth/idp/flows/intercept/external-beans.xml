@@ -20,8 +20,9 @@
 
     <!-- Default strategy function to obtain the external path. -->
     <bean id="shibboleth.intercept.externalPathStrategy" parent="shibboleth.Functions.Constant"
-        c:target-ref="shibboleth.intercept.externalPath" />
+        c:target="#{getObject('shibboleth.intercept.externalPath') ?: '%{idp.intercept.External.externalPath:contextRelative:intercept.jsp}'.trim()}" />
 
-    <import resource="%{idp.home}/conf/intercept/external-intercept-config.xml" />
+    <!-- Legacy compatibility. -->
+    <import resource="conditional:%{idp.home}/conf/intercept/external-intercept-config.xml" />
 
 </beans>
