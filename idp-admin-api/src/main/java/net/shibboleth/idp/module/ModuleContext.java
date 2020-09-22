@@ -19,6 +19,9 @@ package net.shibboleth.idp.module;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale.LanguageRange;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +29,10 @@ import javax.annotation.Nullable;
 import org.apache.http.client.HttpClient;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -44,6 +50,9 @@ public final class ModuleContext {
     
     /** HTTP security parameters. */
     @Nullable private HttpClientSecurityParameters httpClientSecurityParams;
+    
+    /** Language expressions to use for i18n. */
+    @Nonnull @NonnullElements private List<LanguageRange> languageRanges;
     
     /** Output stream for sending output to the module consumer. */
     @Nullable private PrintStream messageStream;
@@ -109,6 +118,28 @@ public final class ModuleContext {
      */
     public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
         httpClientSecurityParams = params;
+    }
+    
+    /**
+     * Gets the language ranges to use for i18n.
+     * 
+     * @return language ranges
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<LanguageRange> getLanguageRanges() {
+        return languageRanges;
+    }
+    
+    /**
+     * Sets the language ranges to use for i18n.
+     * 
+     * @param ranges language ranges
+     */
+    public void setLanguageRanges(@Nullable @NonnullElements final List<LanguageRange> ranges) {
+        if (ranges != null) {
+            languageRanges = List.copyOf(ranges);
+        } else {
+            languageRanges = Collections.emptyList();
+        }
     }
 
     /**

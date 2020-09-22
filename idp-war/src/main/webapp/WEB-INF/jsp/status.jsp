@@ -52,7 +52,7 @@ final ModuleContext moduleContext =
     new ModuleContext(((Environment) request.getAttribute("environment")).getProperty("idp.home"));
 for (final IdPModule module : ServiceLoader.load(IdPModule.class)) {
     if (module.isEnabled(moduleContext)) {
-        out.println("\t" + module.getId() + " (" + module.getName() + ")");
+        out.println("\t" + module.getId() + " (" + module.getName(moduleContext) + ")");
     }
 }
 out.println();

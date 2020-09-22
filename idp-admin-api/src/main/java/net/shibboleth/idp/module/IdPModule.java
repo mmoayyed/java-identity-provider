@@ -43,16 +43,20 @@ public interface IdPModule extends IdentifiedComponent {
     /**
      * Gets module name.
      * 
+     * @param moduleContext optional context for supplying i18n input
+     * 
      * @return a human-readable name for the module
      */
-    @Nonnull @NotEmpty String getName();
+    @Nonnull @NotEmpty String getName(@Nullable final ModuleContext moduleContext);
     
     /**
      * Gets module description.
      * 
+     * @param moduleContext optional context for supplying i18n input
+     * 
      * @return a human-readable description for the module
      */
-    @Nullable @NotEmpty String getDescription();
+    @Nullable @NotEmpty String getDescription(@Nullable final ModuleContext moduleContext);
 
     /**
      * Gets module URL.

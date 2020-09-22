@@ -24,6 +24,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,6 +35,8 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -73,6 +78,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Suffix of property for module post-disable message. */
     @Nonnull @NotEmpty public static final String MODULE_POSTDISABLE_PROPERTY = ".postdisable";
 
+    /** Suffix of property for module languages. */
+    @Nonnull @NotEmpty public static final String MODULE_LANGS_PROPERTY = ".langs";
+
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(PropertyDrivenIdPModule.class);
 
@@ -87,6 +95,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
 
     /** Module URL. */
     @Nullable private URL moduleURL;
+    
+    /** Available message locales. */
+    @Nonnull @NonnullElements private List<String> locales;
     
     /** Whether to require an HTTP client. */
     private boolean requireHttpClient;
@@ -113,6 +124,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      */
     public PropertyDrivenIdPModule(@Nonnull final InputStream inputStream)
             throws IOException, ModuleException {
+        locales = Collections.emptyList();
         moduleProperties = new Properties();
         moduleProperties.load(inputStream);
         load();
@@ -126,6 +138,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      * @throws ModuleException if the module is not in a valid state
      */
     public PropertyDrivenIdPModule(@Nonnull final Properties properties) throws ModuleException {
+        locales = Collections.emptyList();
         moduleProperties = Constraint.isNotNull(properties, "Properties cannot be null");
         load();
     }
@@ -144,6 +157,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
             if (url != null) {
                 moduleURL = new URL(url);
             }
+            
+            locales = StringSupport.stringToList(
+                    moduleProperties.getProperty(getId() + MODULE_LANGS_PROPERTY, ""), ", ");
             
             final Collection<BasicModuleResource> resources = new ArrayList<>();
             
@@ -190,12 +206,30 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NotEmpty public String getName() {
+    @Nonnull @NotEmpty public String getName(@Nullable final ModuleContext moduleContext) {
+        
+        if (moduleContext != null) {
+            final String best = Locale.lookupTag(moduleContext.getLanguageRanges(), locales);
+            if (best != null && !best.equals(locales.get(0))) {
+                return moduleProperties.getProperty(getId() + MODULE_NAME_PROPERTY + "." + best, moduleName);
+            }
+        }
         return moduleName;
     }
     
     /** {@inheritDoc} */
-    @Nullable @NotEmpty public String getDescription() {
+    @Nullable @NotEmpty public String getDescription(@Nullable final ModuleContext moduleContext) {
+
+        if (moduleContext != null) {
+            final String best = Locale.lookupTag(moduleContext.getLanguageRanges(), locales);
+            if (best != null && !best.equals(locales.get(0))) {
+                final String desc = moduleProperties.getProperty(getId() + MODULE_DESC_PROPERTY + "." + best);
+                if (!Strings.isNullOrEmpty(desc)) {
+                    return desc;
+                }
+            }
+        }
+        
         return StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_DESC_PROPERTY));
     }
 
@@ -216,7 +250,18 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
         final Map<ModuleResource,ResourceResult> results = super.enable(moduleContext);
         
         if (moduleContext.getMessageStream() != null) {
-            final String msg = moduleProperties.getProperty(getId() + MODULE_POSTENABLE_PROPERTY);
+            
+            String msg = null;
+            
+            final String best = Locale.lookupTag(moduleContext.getLanguageRanges(), locales);
+            if (best != null && !best.equals(locales.get(0))) {
+                msg = moduleProperties.getProperty(getId() + MODULE_POSTENABLE_PROPERTY + "." + best);
+            }
+            
+            if (msg == null) {
+                msg = moduleProperties.getProperty(getId() + MODULE_POSTENABLE_PROPERTY);
+            }
+            
             if (msg != null) {
                 moduleContext.getMessageStream().println(msg);
             }
@@ -232,7 +277,18 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
         final Map<ModuleResource,ResourceResult> results = super.disable(moduleContext, clean);
 
         if (moduleContext.getMessageStream() != null) {
-            final String msg = moduleProperties.getProperty(getId() + MODULE_POSTDISABLE_PROPERTY);
+            
+            String msg = null;
+            
+            final String best = Locale.lookupTag(moduleContext.getLanguageRanges(), locales);
+            if (best != null && !best.equals(locales.get(0))) {
+                msg = moduleProperties.getProperty(getId() + MODULE_POSTDISABLE_PROPERTY + "." + best);
+            }
+            
+            if (msg == null) {
+                msg = moduleProperties.getProperty(getId() + MODULE_POSTDISABLE_PROPERTY);
+            }
+
             if (msg != null) {
                 moduleContext.getMessageStream().println(msg);
             }

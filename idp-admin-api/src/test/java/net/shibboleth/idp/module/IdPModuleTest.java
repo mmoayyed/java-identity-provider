@@ -28,6 +28,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
+import java.util.Locale.LanguageRange;
 import java.util.Optional;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
@@ -141,7 +142,7 @@ public class IdPModuleTest {
     @Test
     public void testModule() {
         Assert.assertEquals(testModule.getId(), "idp.test");
-        Assert.assertEquals(testModule.getName(), "Test module");
+        Assert.assertEquals(testModule.getName(null), "Test module");
         Assert.assertEquals(testModule.getURL().toString(), "https://wiki.shibboleth.net/confluence/display/IDP4/Home");
         
         final Iterator<ModuleResource> resources = testModule.getResources().iterator();
@@ -155,6 +156,18 @@ public class IdPModuleTest {
         Assert.assertEquals(resource.getSource(),
                 RepositorySupport.buildHTTPSResourceURL("java-identity-provider", "idp-admin-api/src/test/resources/net/shibboleth/idp/module/test.vm"));
         Assert.assertEquals(resource.getDestination(), Path.of("views/test.vm"));
+        
+        context.setLanguageRanges(LanguageRange.parse("fr, de"));
+        Assert.assertEquals(testModule.getName(context), "Test module (French)");
+
+        context.setLanguageRanges(LanguageRange.parse("de, en"));
+        Assert.assertEquals(testModule.getName(context), "Test module (German)");
+
+        context.setLanguageRanges(LanguageRange.parse("en, de"));
+        Assert.assertEquals(testModule.getName(context), "Test module");
+
+        context.setLanguageRanges(LanguageRange.parse("en, en-GB"));
+        Assert.assertEquals(testModule.getName(context), "Test module");
     }
 
     @Test

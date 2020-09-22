@@ -97,6 +97,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                     new ModuleContext(getApplicationContext().getEnvironment().getProperty("idp.home"));
             moduleContext.setHttpClient(getHttpClient());
             moduleContext.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
+            moduleContext.setLanguageRanges(args.getLanguageRanges());
             
             if (args.getList() || !args.getInfoModuleIds().isEmpty()) {
                 doList(moduleContext, args);
@@ -128,8 +129,8 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                 if (args.getInfoModuleIds().contains(module.getId())) {
                     System.out.println();
                     System.out.println("Module: " + module.getId());
-                    System.out.println("\tName: " + module.getName());
-                    System.out.println("\tDesc: " + module.getDescription());
+                    System.out.println("\tName: " + module.getName(moduleContext));
+                    System.out.println("\tDesc: " + module.getDescription(moduleContext));
                     System.out.println("\tHelp: " + module.getURL());
                     if (module.isEnabled(moduleContext)) {
                         System.out.println("\tStatus: " + ANSIColors.ANSI_GREEN + "ENABLED" + ANSIColors.ANSI_RESET);
