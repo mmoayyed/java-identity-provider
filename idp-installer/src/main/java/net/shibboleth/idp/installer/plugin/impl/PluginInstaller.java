@@ -250,6 +250,26 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         builder.execute();
     }
 
+    /** Remove the jars for this plugin and rebuild the war.
+     * @throws BuildException if badness occurs. */
+    public void removeJars() throws BuildException {
+        final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
+        if (!Files.exists(myWebApp)) {
+            LOG.error("Plugin {} had no jars installed.", pluginId);
+            return;
+        }
+        InstallerSupport.setReadOnly(myWebApp, false);
+        deleteTree(myWebApp);
+        final BuildWar builder = new BuildWar(idpHome);
+        try {
+            builder.initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new BuildException(e);
+        }
+        builder.execute();
+        LOG.info("Removed resources for {} from the war", pluginId);
+    }
+
     /** Download any files that should not be shipped.
      * @throws BuildException if badness is detected.
      */

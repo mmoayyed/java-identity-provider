@@ -76,7 +76,17 @@ public class PluginInstallerTest extends BasePluginTest {
             assertTrue(result.containsKey("net.shibboleth.plugin.test"));
         }
     }
-    
+
+    @Test(enabled = true, dependsOnMethods ={"testListing", }) public void testRemove() throws ComponentInitializationException, IOException
+    {
+        try (final PluginInstaller inst = new PluginInstaller()) {
+            inst.setIdpHome(getIdpHome());
+            inst.setPluginId("org.example.Plugin");
+            inst.initialize();
+            inst.removeJars();
+        }
+    }
+
     @Test(enabled = false) public void testUnpackZip() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());

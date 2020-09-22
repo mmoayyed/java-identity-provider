@@ -66,6 +66,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** Force update version. */
     @Parameter(names= {"-fu", "--force-update"})
     @Nullable private String forceUpdateVersion;
+ 
+    /** Id to remove. */
+    @Parameter(names= {"-r", "--remove-jars"})
+    @Nullable private String removeId;
 
     /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
     @Nullable private PluginVersion updateVersion;
@@ -89,6 +93,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         INSTALLDIR,
         /** Install from the web. */
         INSTALLREMOTE,
+        /** Remove jars from dist - web-ing. */
+        REMOVEJARS,
         /** Unknown. */
         UNKNOWN
     };
@@ -195,26 +201,33 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         }
         if (list || fullList) {
             operation = OperationType.LIST;
-            if (input !=  null) {
-                getLog().error("Cannot List and Install in the same operation.");
-                throw new IllegalArgumentException("Cannot List and Install in the same operation.");
+            if (input !=  null || removeId != null) {
+                getLog().error("Cannot List and Install or Remove in the same operation.");
+                throw new IllegalArgumentException("Cannot List and Install or Remove in the same operation.");
             }
-            if (updatePluginId !=  null) {
-                getLog().error("Cannot List and Update in the same operation.");
-                throw new IllegalArgumentException("Cannot List and Update in the same operation.");
+            if (updatePluginId !=  null || removeId != null) {
+                getLog().error("Cannot List and Update or Remove in the same operation.");
+                throw new IllegalArgumentException("Cannot List and Update or Remove in the same operation.");
             }
         } else if (input != null) {
-            if (updatePluginId !=  null) {
-                getLog().error("Cannot Install and Update in the same operation.");
-                throw new IllegalArgumentException("Cannot List and Update in the same operation.");
+            if (updatePluginId !=  null || removeId != null) {
+                getLog().error("Cannot Install and Update or Remove in the same operation.");
+                throw new IllegalArgumentException("Cannot List and Update or Remove in the same operation.");
             }
             operation = decodeInput() ;
         } else if (updatePluginId != null) {
+            if (removeId != null) {
+                getLog().error("Cannot Update and Remove in the same operation.");
+                throw new IllegalArgumentException("Cannot Update and Remove in the same operation.");
+            }
             pluginId = updatePluginId;
             operation = OperationType.UPDATE;
             if (forceUpdateVersion != null) {
                 updateVersion = new PluginVersion(forceUpdateVersion);
             }
+        } else if (removeId != null) {
+            pluginId = removeId;
+            operation = OperationType.REMOVEJARS;
         } else {
             getLog().error("Missing qualifier. Options are : -l, -fl, -i, -u");
             throw new IllegalArgumentException("Missing qualifier");
@@ -264,9 +277,12 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-l, --list", "Brief Information of all installed plugins"));
         out.println(String.format("  %-22s %s", "-fl, --full-list", "Full details of all installed plugins"));
         out.println(String.format("  %-22s %s", "-i, --input <what>", "Install (file name or web address)"));
-        out.println(String.format("  %-22s %s", "-u, --update <what>", "update (plugin id)"));
+        out.println(String.format("  %-22s %s", "-u, --update <PluginId>", "update"));
         out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
                 "force version to update to (requires -u)"));
+        out.println(String.format("  %-22s %s", "-r, --remove-jars <PluginId>",
+                "remove any installed jars (and other resources) from the war file. \n" + 
+                "\t\t\tDOES NOT UNDO any other installation"));
         out.println();
     }
 

@@ -110,8 +110,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             Security.addProvider(new BouncyCastleProvider());
         }
 
-        try {
-            constructPluginInstaller();
+        try (final PluginInstaller inst = new PluginInstaller()){
+            constructPluginInstaller(inst);
+
             switch (args.getOperation()) {
                 case LIST:
                     doList(args.getFullList(), args.getPluginId());
@@ -135,6 +136,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     doUpdate(args.getPluginId() , args.getUpdateVersion());
                     break;
 
+                case REMOVEJARS:
+                    installer.setPluginId(args.getPluginId());
+                    installer.removeJars();
+                    break;
+
                 default:
                     getLogger().error("Invalid operation");
                     return RC_INIT;
@@ -152,16 +158,52 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     //CheckStyle: CyclomaticComplexity OM
 
     /** Build the installer.
-     * @throws ComponentInitializationException as required*/
-    private void constructPluginInstaller() throws ComponentInitializationException {
-        installer= new PluginInstaller();
-        installer.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
-        installer.setAcceptCert(new InstallerQuery("Accept this Certificate"));
-        installer.setAcceptDownload(new InstallerQuery("Download from"));
+     * @param inst the newly created installed
+     * @throws ComponentInitializationException as required
+     */
+    private void constructPluginInstaller(final PluginInstaller inst) throws ComponentInitializationException {
+        inst.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
+        inst.setAcceptCert(new InstallerQuery("Accept this Certificate"));
+        inst.setAcceptDownload(new InstallerQuery("Download from"));
         if (getHttpClient()!= null) {
-            installer.setHttpClient(getHttpClient());
+            inst.setHttpClient(getHttpClient());
         }
-        installer.initialize();
+        inst.initialize();
+        installer = inst;
+    }
+    
+    /** Print our more information about a plugin.
+     * Helper method for {@link #doList(boolean, String)}
+     * @param plugin what we are interested in.
+     */
+    private void printDetails(final PluginDescription plugin) {
+        log.debug("Interrogating {} ", plugin.getPluginId());
+        final PluginState state =  new PluginState(plugin);
+        if (getHttpClient() != null) {
+            state.setHttpClient(getHttpClient());
+        }
+        try {
+            state.initialize();
+        } catch (final ComponentInitializationException e) {
+            log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
+            return;
+        }
+        final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
+        System.out.println("\tVersions ");
+        for (final Entry<PluginVersion, VersionInfo> entry  : versions.entrySet()) {
+            final String downLoadDetails;
+            if (state.getUpdateBaseName(entry.getKey()) == null || state.getUpdateURL(entry.getKey())==null ) {
+                downLoadDetails = " - No download available";
+            } else {
+                downLoadDetails = "";
+            }
+            System.out.println(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
+                    entry.getKey(),
+                    entry.getValue().getMinSupported(),
+                    entry.getValue().getMaxSupported(),
+                    entry.getValue().getSupportLevel(),
+                    downLoadDetails));
+        }
     }
 
     /** List all installed plugins (or just one if provided).
@@ -278,40 +320,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 installer.installPlugin(state.getUpdateURL(installVersion),
                         state.getUpdateBaseName(installVersion) + ".tar.gz");
             }
-        }
-    }
-
-
-    /** Print our more information about a plugin.
-     * @param plugin what we are interested in.
-     */
-    private void printDetails(final PluginDescription plugin) {
-        log.debug("Interrogating {} ", plugin.getPluginId());
-        final PluginState state =  new PluginState(plugin);
-        if (getHttpClient() != null) {
-            state.setHttpClient(getHttpClient());
-        }
-        try {
-            state.initialize();
-        } catch (final ComponentInitializationException e) {
-            log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
-            return;
-        }
-        final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
-        System.out.println("\tVersions ");
-        for (final Entry<PluginVersion, VersionInfo> entry  : versions.entrySet()) {
-            final String downLoadDetails;
-            if (state.getUpdateBaseName(entry.getKey()) == null || state.getUpdateURL(entry.getKey())==null ) {
-                downLoadDetails = " - No download available";
-            } else {
-                downLoadDetails = "";
-            }
-            System.out.println(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
-                    entry.getKey(),
-                    entry.getValue().getMinSupported(),
-                    entry.getValue().getMaxSupported(),
-                    entry.getValue().getSupportLevel(),
-                    downLoadDetails));
         }
     }
 
