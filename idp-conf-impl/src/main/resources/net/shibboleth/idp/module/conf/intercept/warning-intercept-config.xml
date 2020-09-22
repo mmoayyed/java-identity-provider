@@ -42,8 +42,5 @@
         </entry>
         -->
     </util:map>
-
-    <!-- Prefix of cookie name to track when user was last warned. -->
-    <bean id="shibboleth.warning.NotifyCookiePrefix" class="java.lang.String" c:_0="shib_idp_warn_" />
     
 </beans>

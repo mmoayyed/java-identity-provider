@@ -18,11 +18,17 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <import resource="%{idp.home}/conf/intercept/warning-intercept-config.xml" />
+    <!-- Empty map to override in config file. -->
+    <util:map id="shibboleth.warning.ConditionMap" />
+
+    <!-- Prefix of cookie name to track when user was last warned. -->
+    <bean id="shibboleth.warning.NotifyCookiePrefix" class="java.lang.String" c:_0="shib_idp_warn_" />
+
+    <import resource="conditional:%{idp.home}/conf/intercept/warning-intercept-config.xml" />
 
     <!-- Simplifies flow definition expressions. -->
     <alias name="shibboleth.warning.ConditionMap" alias="WarningConditionMap" />
-    <alias name="shibboleth.PersistentCookieManager" alias="WarningCookieManager" />
     <alias name="shibboleth.warning.NotifyCookiePrefix" alias="WarningCookiePrefix" />
+    <alias name="shibboleth.PersistentCookieManager" alias="WarningCookieManager" />
     
 </beans>
