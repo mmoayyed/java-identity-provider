@@ -16,7 +16,7 @@
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
     
     <import resource="common-beans.xml" />
-    <import resource="%{idp.home}/conf/intercept/consent-intercept-config.xml" />
+    <import resource="conditional:%{idp.home}/conf/intercept/consent-intercept-config.xml" />
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
