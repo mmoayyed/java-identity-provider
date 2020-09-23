@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.plugin.impl.testing;
+package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.IOException;
 import java.net.URL;

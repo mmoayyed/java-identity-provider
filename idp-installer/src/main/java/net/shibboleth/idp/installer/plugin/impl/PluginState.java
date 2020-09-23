@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.plugin.impl;
+package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
