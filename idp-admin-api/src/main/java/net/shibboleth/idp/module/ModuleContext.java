@@ -64,6 +64,7 @@ public final class ModuleContext {
      */
     public ModuleContext(@Nonnull @NotEmpty final String home) {
         idpHome = Path.of(home);
+        languageRanges = Collections.emptyList();
     }
 
     /**
