@@ -33,6 +33,8 @@
     <util:list id ="shibboleth.AttributeFilterResources">
         <value>classpath:/test/test-attribute-filter-cas.xml</value>
     </util:list>
+    
+    <alias name="encodingTicketService" alias="shibboleth.CASTicketService" />
 
     <bean id="shibboleth.CASServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
