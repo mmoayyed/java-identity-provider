@@ -71,10 +71,9 @@
     <util:list id="testbed.MetadataResolverResources">
         <value>%{idp.home}/conf/metadata-providers.xml</value>
         <value>%{idp.home}/conf/metadata-filters.xml</value>
-        <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
     </util:list>
     
-        <bean id="testbed.JDBCDataSource" class="org.hsqldb.jdbc.JDBCDataSource">
+    <bean id="testbed.JDBCDataSource" class="org.hsqldb.jdbc.JDBCDataSource">
         <property name="url" value="jdbc:hsqldb:mem:Mock" />
         <property name="user" value="SA" />
         <property name="password" value="" />
