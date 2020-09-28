@@ -157,6 +157,9 @@ public class IdPModuleTest {
                 RepositorySupport.buildHTTPSResourceURL("java-identity-provider", "idp-admin-api/src/test/resources/net/shibboleth/idp/module/test.vm"));
         Assert.assertEquals(resource.getDestination(), Path.of("views/test.vm"));
         
+        // Test with no ranges.
+        Assert.assertEquals(testModule.getName(context), "Test module");
+        
         context.setLanguageRanges(LanguageRange.parse("fr, de"));
         Assert.assertEquals(testModule.getName(context), "Test module (French)");
 

@@ -74,6 +74,7 @@ public final class ModuleContext {
      */
     public ModuleContext(@Nonnull final Path home) {
         idpHome = Constraint.isNotNull(home, "IdP home path cannot be null");
+        languageRanges = Collections.emptyList();
     }
     
     /**
