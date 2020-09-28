@@ -17,3 +17,5 @@ net.shibboleth.idp.module.intercept.impl.ContextCheck
 net.shibboleth.idp.module.intercept.impl.ExpiringPassword
 net.shibboleth.idp.module.intercept.impl.Impersonate
 net.shibboleth.idp.module.intercept.impl.Warning
+
+net.shibboleth.idp.module.profile.impl.CAS

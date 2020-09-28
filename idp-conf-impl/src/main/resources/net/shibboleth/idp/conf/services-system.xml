@@ -166,24 +166,36 @@
 
     <bean id="shibboleth.ReloadableCASServiceRegistry" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
           c:claz="net.shibboleth.idp.cas.service.ServiceRegistry"
-          p:serviceConfigurations-ref="#{
-            getObject('%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()) != null
-                ? '%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()
-                : 'shibboleth.DefaultCASServiceRegistryResources' }"
+          p:serviceConfigurations="#{getObject('%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()) ?:
+                getObject('shibboleth.DefaultCASServiceRegistryResources')}"
           p:failFast="%{idp.service.cas.registry.failFast:%{idp.service.failFast:false}}"
           p:reloadCheckDelay="%{idp.service.cas.registry.checkInterval:PT0S}"
           p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
           p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
+    
+    <!-- This default populates the service with an empty CAS registry as a substitute for a real config. -->
     <util:list id="shibboleth.DefaultCASServiceRegistryResources">
-        <value>%{idp.home}/conf/cas-protocol.xml</value>
+        <bean class="net.shibboleth.ext.spring.resource.ConditionalResource" c:wrapped="%{idp.home}/conf/cas-protocol.xml">
+            <property name="defaultContent">
+                <value>
+                <![CDATA[
+                    <beans xmlns="http://www.springframework.org/schema/beans"
+                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+                           default-init-method="initialize"
+                           default-destroy-method="destroy">
+                        <bean id="reloadableServiceRegistry" class="net.shibboleth.idp.cas.service.PatternServiceRegistry" />
+                    </beans>
+                ]]>
+                </value>
+            </property>
+        </bean>
     </util:list>
 
     <bean id="shibboleth.ManagedBeanService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
             c:claz="org.springframework.context.ApplicationContext"
-            p:serviceConfigurations-ref="#{
-                getObject('%{idp.service.managedBean.resources:shibboleth.ManagedBeanResources}'.trim()) != null
-                    ? '%{idp.service.managedBean.resources:shibboleth.ManagedBeanResources}'.trim()
-                    : 'shibboleth.DefaultManagedBeanResources' }"
+            p:serviceConfigurations="#{getObject('%{idp.service.managedBean.resources:shibboleth.ManagedBeanResources}'.trim()) ?:
+                getObject('shibboleth.DefaultManagedBeanResources')}"
             p:failFast="%{idp.service.managedBean.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.managedBean.checkInterval:PT0S}"
             p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -193,7 +205,7 @@
         </constructor-arg>
     </bean>
     <util:list id="shibboleth.DefaultManagedBeanResources">
-        <value>conditional:%{idp.home}/conf/managed-beans.xml</value>
+        <value>%{idp.home}/conf/managed-beans.xml</value>
     </util:list>
 
     <!--
