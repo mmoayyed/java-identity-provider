@@ -27,7 +27,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -35,6 +34,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 /**
  * An action that processes settings from a supplied {@link AdministrativeFlowDescriptor} to prepare
@@ -121,7 +121,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
         
         final RelyingPartyUIContext uiCtx = rpCtx.getSubcontext(RelyingPartyUIContext.class, true);
         uiCtx.setRPUInfo(flowDescriptor.getUIInfo());
-        uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(getHttpServletRequest()));
+        uiCtx.setBrowserLanguageRanges(HttpServletSupport.getLanguageRange(getHttpServletRequest()));
         
         if (null != fallbackLanguages) {
             uiCtx.setFallbackLanguages(fallbackLanguages);

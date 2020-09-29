@@ -30,18 +30,19 @@
 
     <!-- Default configuration, with default settings applied for all profiles. -->
 
-    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
+    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty.MDDriven">
         <property name="profileConfigurations">
             <list>
-                <bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />
-                <ref bean="SAML1.AttributeQuery" />
-                <ref bean="SAML1.ArtifactResolution" />
-                <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" p:encryptAssertions="false" p:encryptAttributes="false"/>
-                <ref bean="SAML2.ECP" />
-                <ref bean="SAML2.Logout" />
-                <ref bean="SAML2.AttributeQuery" />
-                <ref bean="SAML2.ArtifactResolution" />
-                <ref bean="Liberty.SSOS" />
+                <ref bean="CAS.LoginConfiguration.MDDriven" />
+                <ref bean="CAS.ValidateConfiguration.MDDriven" />
+                <ref bean="Shibboleth.SSO.MDDriven" />
+                <ref bean="SAML1.AttributeQuery.MDDriven" />
+                <ref bean="SAML1.ArtifactResolution.MDDriven" />
+                <ref bean="SAML2.SSO.MDDriven" />
+                <ref bean="SAML2.ECP.MDDriven" />
+                <ref bean="SAML2.Logout.MDDriven" />
+                <ref bean="SAML2.AttributeQuery.MDDriven" />
+                <ref bean="SAML2.ArtifactResolution.MDDriven" />
             </list>
         </property>
     </bean>
