@@ -15,7 +15,13 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <import resource="%{idp.home}/conf/c14n/attribute-sourced-subject-c14n-config.xml" />
+    <!-- Property-driven defaults to be overridden. -->
+    <bean id="shibboleth.c14n.attribute.AttributesToResolve" parent="shibboleth.CommaDelimStringArray"
+        c:_0="#{'%{idp.c14n.attribute.attributesToResolve:}'.trim()}" />
+    <bean id="shibboleth.c14n.attribute.AttributeSourceIds" parent="shibboleth.CommaDelimStringArray"
+        c:_0="#{'%{idp.c14n.attribute.attributeSourceIds:}'.trim()}" />
+
+    <import resource="conditional:%{idp.home}/conf/c14n/attribute-sourced-subject-c14n-config.xml" />
 
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
@@ -35,9 +41,9 @@
     <bean id="AttributeSourcedSubjectCanonicalization"
         class="net.shibboleth.idp.authn.impl.AttributeSourcedSubjectCanonicalization" scope="prototype"
         p:attributeSourceIds-ref="shibboleth.c14n.attribute.AttributeSourceIds"
-        p:lowercase-ref="shibboleth.c14n.attribute.Lowercase"
-        p:uppercase-ref="shibboleth.c14n.attribute.Uppercase"
-        p:trim-ref="shibboleth.c14n.attribute.Trim"
-        p:transforms-ref="shibboleth.c14n.attribute.Transforms" />
+        p:lowercase="#{getObject('shibboleth.c14n.attribute.Lowercase') ?: %{idp.c14n.attribute.lowercase:false}}"
+        p:uppercase="#{getObject('shibboleth.c14n.attribute.Uppercase') ?: %{idp.c14n.attribute.uppercase:false}}"
+        p:trim="#{getObject('shibboleth.c14n.attribute.Trim') ?: %{idp.c14n.attribute.trim:true}}"
+        p:transforms="#{getObject('shibboleth.c14n.attribute.Transforms')}" />
     
 </beans>

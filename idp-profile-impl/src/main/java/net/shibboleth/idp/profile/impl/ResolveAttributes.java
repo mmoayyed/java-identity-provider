@@ -198,8 +198,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
-        attributesLookupStrategy = FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                StringSupport.normalizeStringCollection(attributeIds));
+        attributesLookupStrategy = FunctionSupport.constant(StringSupport.normalizeStringCollection(attributeIds));
     }
     
     /**

@@ -34,7 +34,6 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.cryptacular.x509.dn.Attribute;
@@ -101,10 +100,14 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * 
      * @param types types to search for
      */
-    public void setSubjectAltNameTypes(@Nonnull @NonnullElements final List<Integer> types) {
+    public void setSubjectAltNameTypes(@Nullable @NonnullElements final List<Integer> types) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        subjectAltNameTypes = List.copyOf(Constraint.isNotNull(types, "Type list cannot be null"));
+        if (types != null) {
+            subjectAltNameTypes = List.copyOf(types);
+        } else {
+            subjectAltNameTypes = Collections.emptyList();
+        }
     }
 
     /**
@@ -112,11 +115,10 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * 
      * @param ids RDN OIDs to search for
      */
-    public void setObjectIds(@Nonnull @NonnullElements final List<String> ids) {
+    public void setObjectIds(@Nullable @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        objectIds = List.copyOf(StringSupport.normalizeStringCollection(
-                Constraint.isNotNull(ids, "OID list cannot be null")));
+        objectIds = List.copyOf(StringSupport.normalizeStringCollection(ids));
     }
     
     /** {@inheritDoc} */

@@ -108,15 +108,18 @@ public abstract class AbstractSubjectCanonicalizationAction
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String, String>> newTransforms) {
+    public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String, String>> newTransforms) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
-        
-        transforms = new ArrayList<>();
-        for (final Pair<String,String> p : newTransforms) {
-            final Pattern pattern = Pattern.compile(StringSupport.trimOrNull(p.getFirst()));
-            transforms.add(new Pair<>(pattern, Constraint.isNotNull(
-                    StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
+
+        if (newTransforms != null) {
+            transforms = new ArrayList<>();
+            for (final Pair<String,String> p : newTransforms) {
+                final Pattern pattern = Pattern.compile(StringSupport.trimOrNull(p.getFirst()));
+                transforms.add(new Pair<>(pattern, Constraint.isNotNull(
+                        StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
+            }
+        } else {
+            transforms = Collections.emptyList();
         }
     }
 
@@ -227,11 +230,7 @@ public abstract class AbstractSubjectCanonicalizationAction
             s = s.toUpperCase();
         }
 
-        if (transforms.isEmpty()) {
-            return s;
-        }
-        
-        for (final Pair<Pattern,String> p : transforms) {            
+        for (final Pair<Pattern,String> p : transforms) {
             final Matcher m = p.getFirst().matcher(s);
             log.debug("{} applying replacement expression '{}' against input '{}'", getLogPrefix(),
                     p.getFirst().pattern(), s);

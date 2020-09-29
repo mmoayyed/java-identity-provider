@@ -12,7 +12,16 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="%{idp.home}/conf/c14n/x500-subject-c14n-config.xml" />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <!-- Property-driven defaults to be overridden. -->
+    <bean id="shibboleth.c14n.x500.SubjectAltNameTypes" parent="shibboleth.CommaDelimStringArray"
+        c:_0="#{'%{idp.c14n.x500.subjectAltNameTypes:}'.trim()}" />
+    <bean id="shibboleth.c14n.x500.ObjectIDs" parent="shibboleth.CommaDelimStringArray"
+        c:_0="#{'%{idp.c14n.x500.objectIDs:}'.trim()}" />
+
+    <import resource="conditional:%{idp.home}/conf/c14n/x500-subject-c14n-config.xml" />
 
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
@@ -21,9 +30,9 @@
         class="net.shibboleth.idp.authn.impl.X500SubjectCanonicalization" scope="prototype"
         p:subjectAltNameTypes-ref="shibboleth.c14n.x500.SubjectAltNameTypes"
         p:objectIds-ref="shibboleth.c14n.x500.ObjectIDs"
-        p:lowercase-ref="shibboleth.c14n.x500.Lowercase"
-        p:uppercase-ref="shibboleth.c14n.x500.Uppercase"
-        p:trim-ref="shibboleth.c14n.x500.Trim"
-        p:transforms-ref="shibboleth.c14n.x500.Transforms" />
+        p:lowercase="#{getObject('shibboleth.c14n.x500.Lowercase') ?: %{idp.c14n.x500.lowercase:false}}"
+        p:uppercase="#{getObject('shibboleth.c14n.x500.Uppercase') ?: %{idp.c14n.x500.uppercase:false}}"
+        p:trim="#{getObject('shibboleth.c14n.x500.Trim') ?: %{idp.c14n.x500.trim:true}}"
+        p:transforms="#{getObject('shibboleth.c14n.x500.Transforms')}" />
     
 </beans>
