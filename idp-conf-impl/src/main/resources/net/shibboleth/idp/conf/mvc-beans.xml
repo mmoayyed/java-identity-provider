@@ -23,6 +23,16 @@
             </list>
         </property>
     </bean>
+        <mvc:interceptors xmlns:mvc="http://www.springframework.org/schema/mvc">
+  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+    <property name="paramName" value="lang"/>
+  </bean>
+</mvc:interceptors>
+<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+  <property name="defaultLocale" value="en"/>
+</bean>
+
+    
     
     <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0"
             p:flowRegistry-ref="flowRegistry">

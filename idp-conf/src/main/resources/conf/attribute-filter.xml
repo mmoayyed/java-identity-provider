@@ -21,19 +21,9 @@
 	<AttributeFilterPolicy id="Per-Attribute-singleValued">
 	    <PolicyRequirementRule xsi:type="ANY" />
 	 
-	    <AttributeRule attributeID="eduPersonPrincipalName">
-	        <PermitValueRule xsi:type="EntityAttributeExactMatch"
-	            attributeName="http://shibboleth.net/ns/attributes/releaseAllValues"
-	            attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-	            attributeValue="eduPersonPrincipalName" />
-	    </AttributeRule>
+	    <AttributeRule attributeID="eduPersonPrincipalName" permitAny="true"/> 
 	 
-	    <AttributeRule attributeID="mail">
-	        <PermitValueRule xsi:type="EntityAttributeExactMatch"
-	            attributeName="http://shibboleth.net/ns/attributes/releaseAllValues"
-	            attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-	            attributeValue="mail" />
-	    </AttributeRule>
+	    <AttributeRule attributeID="mail" permitAny="true"/> 
 	</AttributeFilterPolicy>
 
     <!--

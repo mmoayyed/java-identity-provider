@@ -33,7 +33,6 @@
     <util:set id="shibboleth.ExcludedEncryptionAlgorithms">
     </util:set>
     -->
-
     <!--
     If you need to define and inject custom Java object(s) into the various views used throughout the
     system (errors, login, logout, etc.), you can uncomment and define the bean below to be of any
