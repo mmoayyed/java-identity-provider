@@ -29,9 +29,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -57,7 +57,7 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
     public AbstractAttributeDisplayFunction(@Nonnull final HttpServletRequest request,
             @Nullable final List<String> defaultLanguages) {
 
-        languageRange = HttpServletSupport.getLanguageRange(request);
+        languageRange = SpringSupport.getLanguageRange(request);
         if (defaultLanguages == null || defaultLanguages.isEmpty()) {
             defaultLanguageRange = Collections.emptyList();
         } else {
