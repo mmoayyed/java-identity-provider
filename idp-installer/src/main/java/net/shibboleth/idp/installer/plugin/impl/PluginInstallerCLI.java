@@ -168,6 +168,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             inst.setAcceptCert(new InstallerQuery("Accept this Certificate"));
             inst.setAcceptDownload(new InstallerQuery("Download from"));
         }
+        inst.setTrustore(args.getTruststore());
         if (getHttpClient()!= null) {
             inst.setHttpClient(getHttpClient());
         }

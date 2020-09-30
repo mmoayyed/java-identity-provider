@@ -142,5 +142,11 @@ public class TrustStoreTest {
         ts.setPluginId(pluginId);
         ts.initialize();
         assertTrue(ts.contains(signature));
+
+        ts = new TrustStore();
+        ts.setIdpHome(dir);
+        ts.setTrustStore(dir.resolve("credentials").resolve(pluginId).resolve("truststore.asc").toString());
+        ts.setPluginId(pluginId);
+        ts.initialize();
     }
 }

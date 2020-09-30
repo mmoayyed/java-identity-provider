@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
@@ -64,6 +65,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     /** Where the IdP is installed.  */
     @NonnullAfterInit private Path idpHome;
     
+    /** Explicit path to trust store.  */
+    @NonnullAfterInit private String explicitTrustStore;
+
     /** The plugin this is the trust store for. */
     @NonnullAfterInit private String pluginId;
 
@@ -93,6 +97,14 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idpHome = what;
     }
+
+    /** Set explicitTrustStore.
+    * @param what The value to set.
+    */
+   public void setTrustStore(@Nullable final String what) {
+       ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+       explicitTrustStore = what;
+   }
 
     /** Return a store loaded from the supplied stream.
      *
@@ -294,36 +306,52 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-                
-        if (idpHome == null) {
-            throw new ComponentInitializationException("IdP home not set up");
-        }
-        
+
         if (pluginId == null) {
             throw new ComponentInitializationException("Plugin Id not set up");
         }
-        
-        if (!Files.exists(idpHome)) {
-            throw new ComponentInitializationException("IdP home '" + idpHome + "' does not exist");
-        }
 
-        try {
-            final Path parent = idpHome.resolve("credentials").resolve(pluginId);
-            if (!Files.exists(parent)) {
-                log.info("Plugin {}: Trust store folder does not exist, creating", pluginId);
-                Files.createDirectories(parent);
-            }
-            store = parent.resolve("truststore.asc");
-            backup = parent.resolve("truststore.asc.backup");
+        if (explicitTrustStore != null) {
+            store = Path.of(explicitTrustStore);
             if (!Files.exists(store)) {
-                log.info("Plugin {}: Trust store does not exist, creating", pluginId);
-                createNewStore();
-            } else {
-                log.debug("Plugin {}: Trust store exists, loading", pluginId);
-                loadStore();
+                log.error("Trust store {} does not exist", explicitTrustStore);
+                throw new ComponentInitializationException("Supplied trust store does not exist.");
             }
-        } catch (final IOException e) {
-            throw new ComponentInitializationException(e);
+            backup = Path.of(explicitTrustStore + ".backup");
+            log.debug("Plugin {}: Loading explicit truststore {}", pluginId, explicitTrustStore);
+            try {
+                loadStore();
+            } catch (final IOException e) {
+                log.error("Plugin {}: Could not load explicit trust store {}", pluginId, explicitTrustStore, e);
+                throw new ComponentInitializationException(e);
+            }
+        } else {
+            if (idpHome == null) {
+                throw new ComponentInitializationException("IdP home not set up");
+            }
+
+            if (!Files.exists(idpHome)) {
+                throw new ComponentInitializationException("IdP home '" + idpHome + "' does not exist");
+            }
+
+            try {
+                final Path parent = idpHome.resolve("credentials").resolve(pluginId);
+                if (!Files.exists(parent)) {
+                    log.info("Plugin {}: Trust store folder does not exist, creating", pluginId);
+                    Files.createDirectories(parent);
+                }
+                store = parent.resolve("truststore.asc");
+                backup = parent.resolve("truststore.asc.backup");
+                if (!Files.exists(store)) {
+                    log.info("Plugin {}: Trust store does not exist, creating", pluginId);
+                    createNewStore();
+                } else {
+                    log.debug("Plugin {}: Trust store exists, loading", pluginId);
+                    loadStore();
+                }
+            } catch (final IOException e) {
+                throw new ComponentInitializationException(e);
+            }
         }
     }
     

@@ -63,6 +63,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-i", "--input"})
     @Nullable private String input;
 
+    /** Truststore to use for sining. */
+    @Parameter(names= {"--truststore"})
+    @Nullable private String truststore;
+
     /** Update plugin Id. */
     @Parameter(names= {"-u", "--update"})
     @Nullable private String updatePluginId;
@@ -119,6 +123,13 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
      */
     @Nullable public String getPluginId() {
         return pluginId;
+    }
+
+    /** get TrustStore (if specified).
+     * @return {@link #truststore}
+     */
+    @Nullable public String getTruststore() {
+        return truststore;
     }
 
     /** Get the digested parent URL.
@@ -296,6 +307,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
                 "remove any installed jars (and other resources) from the war file. \n" + 
                 "\t\t\tDOES NOT UNDO any other installation"));
         out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
+        out.println(String.format("  %-22s %s", "--truststore <path>",
+                "Explicit location to look for keys (should exist but may be empty"));
         out.println();
     }
 

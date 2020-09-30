@@ -109,14 +109,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** The callback before we download a file. */
     @Nonnull private Predicate<String> acceptDownload = Predicates.alwaysFalse();
-    
+
     /** The actual distribution. */
     private Path distribution;
+    
+    /** Where to get the keys from if not defaulted. */
+    private String truststore;
 
     /** What to use to download things. */
     private HttpClient httpClient;
 
-    /** set IdP Home.
+    /** Set IdP Home.
      * @param home Where we are working from
      */
     public void setIdpHome(@Nonnull final Path home) {
@@ -124,11 +127,18 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         idpHome = Constraint.isNotNull(home, "IdPHome should be non-null");
     }
 
-    /** Set the plugin in.
-     * @param id The pluginId to set.
+    /** Set the plugin id.
+     * @param id what to set.
      */
     public void setPluginId(@Nonnull @NotEmpty final String id) {
         pluginId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Plugin id should be be non-null");
+    }
+
+    /** Set the truststore.
+     * @param loc what set.
+     */
+    public void setTrustore(@Nullable final String loc) {
+        truststore = StringSupport.trimOrNull(loc);
     }
 
     /** Set the acceptCert predicate.
@@ -586,6 +596,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 new FileInputStream(base.resolve(fileName + ".asc").toFile()))) {
             final TrustStore trust = new TrustStore();
             trust.setIdpHome(idpHome);
+            trust.setTrustStore(truststore);
             trust.setPluginId(pluginId);
             trust.initialize();
             final Signature sig = TrustStore.signatureOf(sigStream);
