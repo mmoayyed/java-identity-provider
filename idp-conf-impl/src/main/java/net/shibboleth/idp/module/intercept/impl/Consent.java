@@ -21,12 +21,12 @@ import java.io.IOException;
 
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleException;
-import net.shibboleth.idp.module.PropertyDrivenIdPModule;
+import net.shibboleth.idp.module.impl.CoreIdPModule;
 
 /**
  * {@link IdPModule} implementation.
  */
-public final class Consent extends PropertyDrivenIdPModule {
+public final class Consent extends CoreIdPModule {
 
     /**
      * Constructor.

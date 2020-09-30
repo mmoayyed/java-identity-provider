@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.module;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
@@ -63,7 +62,7 @@ public interface IdPModule extends IdentifiedComponent {
      * 
      * @return a URL for obtaining additional information about the module
      */
-    @Nullable URL getURL();
+    @Nullable @NotEmpty String getURL();
     
     /**
      * Gets whether module enablement requires access to an {@link HttpClient}.

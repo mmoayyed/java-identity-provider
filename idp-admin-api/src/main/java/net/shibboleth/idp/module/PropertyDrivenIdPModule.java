@@ -19,8 +19,6 @@ package net.shibboleth.idp.module;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,7 +92,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     @Nonnull @NotEmpty private String moduleName;
 
     /** Module URL. */
-    @Nullable private URL moduleURL;
+    @Nullable @NotEmpty private String moduleURL;
     
     /** Available message locales. */
     @Nonnull @NonnullElements private List<String> locales;
@@ -153,10 +151,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
             moduleName = Constraint.isNotNull(
                     StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_NAME_PROPERTY)),
                     "Module name missing from properties");
-            final String url = StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_URL_PROPERTY));
-            if (url != null) {
-                moduleURL = new URL(url);
-            }
+            moduleURL = StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_URL_PROPERTY));
             
             locales = StringSupport.stringToList(
                     moduleProperties.getProperty(getId() + MODULE_LANGS_PROPERTY, ""), ", ");
@@ -194,7 +189,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
             resources.forEach(
                     r -> log.debug("Module {}: Resource {} -> {} ({})",
                             getId(), r.getSource(), r.getDestination(), r.isReplace() ? "replace" : "noreplace"));
-        } catch (final ConstraintViolationException | MalformedURLException e) {
+        } catch (final ConstraintViolationException e) {
             throw new ModuleException(e);
         }
     }
@@ -234,8 +229,17 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     }
 
     /** {@inheritDoc} */
-    @Nullable public URL getURL() {
+    @Nullable @NotEmpty public String getURL() {
         return moduleURL;
+    }
+    
+    /**
+     * Set the module URL.
+     * 
+     * @param url URL to set
+     */
+    public void setURL(@Nullable @NotEmpty final String url) {
+        moduleURL = StringSupport.trimOrNull(url);
     }
     
     /** {@inheritDoc} */
