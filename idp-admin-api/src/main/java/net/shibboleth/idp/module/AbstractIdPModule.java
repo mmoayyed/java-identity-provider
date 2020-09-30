@@ -32,7 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -103,14 +103,14 @@ public abstract class AbstractIdPModule implements IdPModule {
         for (final ModuleResource resource : moduleResources) {
             final Path resolved = moduleContext.getIdPHome().resolve(resource.getDestination());
             log.debug("Module {}: resolved resource destination {}", getId(), resolved);
-            if (resolved.toFile().exists()) {
-                log.debug("Module {}: resource destination {} exists, module is enabled", getId(), resolved);
-                return true;
+            if (!resolved.toFile().exists()) {
+                log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
+                return false;
             }
         }
         
-        log.debug("Module {} is not enabled", getId());
-        return false;
+        log.debug("Module {} is enabled", getId());
+        return true;
     }
     
     /** {@inheritDoc} */
@@ -125,7 +125,7 @@ public abstract class AbstractIdPModule implements IdPModule {
         final Map<ModuleResource,ResourceResult> results;
         
         if (!moduleResources.isEmpty()) {
-            results = new HashMap<>(moduleResources.size());
+            results = new LinkedHashMap<>(moduleResources.size());
 
             for (final ModuleResource resource : moduleResources) {
                 results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
@@ -146,7 +146,7 @@ public abstract class AbstractIdPModule implements IdPModule {
         final Map<ModuleResource,ResourceResult> results;
         
         if (!moduleResources.isEmpty()) {
-            results = new HashMap<>(moduleResources.size());
+            results = new LinkedHashMap<>(moduleResources.size());
             for (final ModuleResource resource : moduleResources) {
                 results.put(resource, ((BasicModuleResource) resource).disable(moduleContext, clean));
             }
