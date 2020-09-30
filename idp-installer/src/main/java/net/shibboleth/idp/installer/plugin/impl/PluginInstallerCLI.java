@@ -110,11 +110,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
 
         try (final PluginInstaller inst = new PluginInstaller()){
-            constructPluginInstaller(inst);
+            constructPluginInstaller(inst, args);
 
             switch (args.getOperation()) {
                 case LIST:
-                    doList(args.getFullList(), args.getPluginId());
+                    doList(args.isFullList(), args.getPluginId());
                     break;
 
                 case INSTALLDIR:
@@ -158,12 +158,16 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
     /** Build the installer.
      * @param inst the newly created installed
+     * @param args the arguments
      * @throws ComponentInitializationException as required
      */
-    private void constructPluginInstaller(final PluginInstaller inst) throws ComponentInitializationException {
+    private void constructPluginInstaller(final PluginInstaller inst,
+            final PluginInstallerArguments args) throws ComponentInitializationException {
         inst.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
-        inst.setAcceptCert(new InstallerQuery("Accept this Certificate"));
-        inst.setAcceptDownload(new InstallerQuery("Download from"));
+        if (!args.isUnattended()) {
+            inst.setAcceptCert(new InstallerQuery("Accept this Certificate"));
+            inst.setAcceptDownload(new InstallerQuery("Download from"));
+        }
         if (getHttpClient()!= null) {
             inst.setHttpClient(getHttpClient());
         }

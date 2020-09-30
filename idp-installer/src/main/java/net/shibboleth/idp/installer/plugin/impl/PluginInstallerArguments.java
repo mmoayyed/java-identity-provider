@@ -47,6 +47,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-p", "--pluginId"})
     @Nullable private String pluginId;
 
+    /** Suppress Prompts. */
+    @Parameter(names= {"--noPrompt"})
+    @Nullable private boolean noPrompt;
+
     /** Brief info about installed plugins. */
     @Parameter(names= {"-l", "--list"})
     @Nullable private boolean list;
@@ -150,16 +154,24 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** Are we doing a full List?
      * @return {@link #fullList}
      */
-    public boolean getFullList() {
+    public boolean isFullList() {
         return fullList;
     }
 
     /** Are we doing a List?
      * @return {@link #list}
      */
-    public boolean getList() {
+    public boolean isList() {
         return list;
     }
+
+    /** Are we doing an unattended install?
+     * @return {@link #list}
+     */
+    public boolean isUnattended() {
+        return noPrompt;
+    }
+
 
     /** Return the version to update to or null.
      * @return the version or null
@@ -283,6 +295,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-r, --remove-jars <PluginId>",
                 "remove any installed jars (and other resources) from the war file. \n" + 
                 "\t\t\tDOES NOT UNDO any other installation"));
+        out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
         out.println();
     }
 
