@@ -66,15 +66,20 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
         final ProxyTicket ptA = createProxyTicket(pgtA, "proxiedByA");
         final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA);
         final ProxyTicket ptB = createProxyTicket(pgtB, "proxiedByB");
-        final TicketValidationRequest request = new TicketValidationRequest("proxiedByB", ptB.getId());
+        final ProxyGrantingTicket pgtC = createProxyGrantingTicket(ptB);
+        final ProxyTicket ptC = createProxyTicket(pgtC, "proxiedByC");
+        final TicketValidationRequest request = new TicketValidationRequest("proxiedByC", ptC.getId());
         final TicketValidationResponse response = new TicketValidationResponse();
 
-        // Remove first proxy-granting ticket to break chain
-        ticketService.removeProxyGrantingTicket(pgtA.getId());
+        // Remove second proxy-granting ticket to break chain
+        // NOTE: Cannot remove root PGT when using EncodingTicketService because there's nothing to remove.
+        // We use a chain of 3 here so that we can remove the second link, which should pass regardless of
+        // TicketService implementation.
+        ticketService.removeProxyGrantingTicket(pgtB.getId());
 
         final RequestContext context = new TestContextBuilder(ProxyConfiguration.PROFILE_ID)
                 .addProtocolContext(request, response)
-                .addTicketContext(ptB)
+                .addTicketContext(ptC)
                 .build();
         assertEquals(action.execute(context).getId(), ProtocolError.BrokenProxyChain.name());
     }

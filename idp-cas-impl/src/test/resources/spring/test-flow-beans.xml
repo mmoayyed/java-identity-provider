@@ -62,8 +62,15 @@
           p:IDGenerator-ref="shibboleth.SessionIDGenerator" />
 
     <bean id="shibboleth.CASTicketService"
-          class="net.shibboleth.idp.cas.ticket.impl.SimpleTicketService"
-          c:service-ref="shibboleth.StorageService" />
+          class="net.shibboleth.idp.cas.ticket.impl.EncodingTicketService"
+          c:service-ref="shibboleth.StorageService"
+          c:sealer-ref="encodedTicketSealer" />
+
+    <bean id="encodedTicketSealer" lazy-init="true"
+          class="net.shibboleth.utilities.java.support.security.DataSealer"
+          p:keyStrategy-ref="keyStrategy" />
+
+    <bean id="keyStrategy" class="net.shibboleth.idp.cas.flow.impl.AbstractFlowActionTest.MockDataSealerKeyStrategy" />
 
     <bean id="shibboleth.CASServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -24,6 +26,7 @@ import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
@@ -62,13 +65,16 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testTicketExpired() throws Exception {
-        final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
+        final int ticketTTLMillis = 10;
+        final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, Instant.now(), "Password");
+        final ServiceTicket ticket = ticketService.createServiceTicket(
+            generateServiceTicketId(), Instant.now().plusMillis(ticketTTLMillis), TEST_SERVICE, state, false);
         final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
-        // Remove the ticket prior to validation to simulate expiration
-        ticketService.removeServiceTicket(ticket.getId());
+        // Wait briefly to let ticket expire
+        Thread.sleep(ticketTTLMillis + 5);
         assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.TicketExpired.name());
     }
 

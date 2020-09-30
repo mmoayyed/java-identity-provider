@@ -40,15 +40,16 @@ import org.slf4j.LoggerFactory;
  * Ticket service that uses two different strategies for ticket persistence:
  *
  * <ol>
- *     <li>Service tickets and proxy tickets are persisted by serializing ticket data and encrypting it into the opaque
- *     part of the ticket ID using a {@link DataSealer}.</li>
- *     <li>Proxy-granting tickets are persisted using a {@link StorageService}.</li>
+ *     <li>Service tickets, proxy tickets, and root proxy-granting tickets are persisted by serializing
+ *     ticket data and encrypting it into the opaque part of the ticket ID using a {@link DataSealer}.</li>
+ *     <li>Chained proxy-granting tickets are persisted using a {@link StorageService}.</li>
  * </ol>
  *
- * <p><strong>NOTE:</strong> The service tickets and proxy tickets produced by this component do not support one-time
- * use. More precisely, {@link #removeServiceTicket(String)} and {@link #removeProxyTicket(String)} simply return a
- * decoded ticket and do not invalidate the ticket in any way. Since there is no backing store for those types of
- * tickets, they can be reused until one of the following conditions is met:
+ * <p><strong>NOTE:</strong> The service tickets, proxy tickets, and root proxy-granting tickets produced by
+ * this component do not support one-time use. More precisely, {@link #removeServiceTicket(String)} and
+ * {@link #removeProxyTicket(String)} simply return a decoded ticket and do not invalidate the ticket in any way.
+ * Since there is no backing store for those types of  tickets, they can be reused until one of the following
+ * conditions is met:
  *
  * <ol>
  *     <li>The value of {@link Ticket#getExpirationInstant()} is exceeded.</li>
@@ -56,6 +57,7 @@ import org.slf4j.LoggerFactory;
  * </ol>
  *
  * @author Marvin S. Addison
+ * @author Paul B. Henson
  * @since 3.3.0
  */
 public class EncodingTicketService extends AbstractTicketService {
@@ -65,6 +67,9 @@ public class EncodingTicketService extends AbstractTicketService {
 
     /** Default proxy ticket prefix. */
     public static final String PROXY_TICKET_PREFIX = "PT";
+
+    /** Default proxy granting ticket prefix. */
+    public static final String PROXY_GRANTING_TICKET_PREFIX = "PGT-E";
 
     /** Non-null marker value for unused ServiceTicket#id field and storage context name. */
     private static final String NOT_USED = "na";
@@ -84,6 +89,9 @@ public class EncodingTicketService extends AbstractTicketService {
     @NotEmpty
     private String proxyTicketPrefix = PROXY_TICKET_PREFIX;
 
+    /** Proxy granting ticket prefix. */
+    @NotEmpty
+    private String proxyGrantingTicketPrefix = PROXY_GRANTING_TICKET_PREFIX;
 
     /**
      * Creates a new instance.
@@ -107,12 +115,22 @@ public class EncodingTicketService extends AbstractTicketService {
     }
 
     /**
-     * Sets the proxy ticket prefix. Default is PGT.
+     * Sets the proxy ticket prefix. Default is PT.
      *
      * @param prefix Proxy ticket prefix.
      */
     public void setProxyTicketPrefix(final String prefix) {
         proxyTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
+    }
+
+    /**
+     * Sets the proxy granting ticket prefix. Default is PGT-E. Note that this MUST be distinct from
+     * the proxy granting ticket prefix used for regular proxy-granting ticket identifiers.
+     *
+     * @param prefix Proxy granting ticket prefix.
+     */
+    public void setProxyGrantingTicketPrefix(final String prefix) {
+        proxyGrantingTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
     }
 
     @Override
@@ -161,6 +179,42 @@ public class EncodingTicketService extends AbstractTicketService {
     @Override
     public ProxyTicket removeProxyTicket(final @Nonnull String id) {
         return decode(ProxyTicket.class, id, proxyTicketPrefix);
+    }
+
+    @Nullable
+    @Override
+    public ProxyGrantingTicket createProxyGrantingTicket(
+            @Nonnull final String id,
+            @Nonnull final Instant expiry,
+            @Nonnull final ServiceTicket serviceTicket) {
+        Constraint.isNotNull(serviceTicket, "ServiceTicket cannot be null");
+        final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
+                NOT_USED,
+                serviceTicket.getService(),
+                Constraint.isNotNull(expiry, "Expiry cannot be null"),
+                null);
+        pgt.setTicketState(serviceTicket.getTicketState());
+        return encode(ProxyGrantingTicket.class, pgt, proxyGrantingTicketPrefix);
+    }
+
+    @Nullable
+    @Override
+    public ProxyGrantingTicket fetchProxyGrantingTicket(@Nonnull final String id) {
+        Constraint.isNotNull(id, "Id cannot be null");
+        if (id.startsWith(proxyGrantingTicketPrefix + "-")) {
+            return decode(ProxyGrantingTicket.class, id, proxyGrantingTicketPrefix);
+        }
+        return super.fetchProxyGrantingTicket(id);
+    }
+
+    @Override
+    @Nullable
+    public ProxyGrantingTicket removeProxyGrantingTicket(@Nonnull final String id) {
+        Constraint.isNotNull(id, "Id cannot be null");
+        if (id.startsWith(proxyGrantingTicketPrefix + "-")) {
+            return decode(ProxyGrantingTicket.class, id, proxyGrantingTicketPrefix);
+        }
+        return super.removeProxyGrantingTicket(id);
     }
 
     /**

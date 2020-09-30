@@ -17,10 +17,15 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.security.KeyException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.SecretKeySpec;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
@@ -31,6 +36,8 @@ import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.security.DataSealerKeyStrategy;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -136,5 +143,29 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     @BeforeSuite
     public void initOpenSAML() throws InitializationException {
         InitializationService.initialize();
+    }
+
+    /**
+     * Test implementation of {@link DataSealerKeyStrategy} that emits a static key for all inquiries.
+     */
+    public static class MockDataSealerKeyStrategy implements DataSealerKeyStrategy {
+        /** Static key. */
+        private final SecretKey key;
+
+        public MockDataSealerKeyStrategy() {
+            final byte[] bytes = new byte[32];
+            new SecureRandom().nextBytes(bytes);
+            key = new SecretKeySpec(bytes, "AES");
+        }
+
+        @Override
+        public Pair<String, SecretKey> getDefaultKey() throws KeyException {
+            return new Pair<>("default", key);
+        }
+
+        @Override
+        public SecretKey getKey(final String s) throws KeyException {
+            return key;
+        }
     }
 }

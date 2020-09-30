@@ -34,6 +34,7 @@
           c:useHex="false"
           c:pad="#{ T(java.lang.Integer).valueOf(45).byteValue() }" />
 
+    <!-- TODO: Change to encodingTicketService for 5.0 -->
     <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
 
     <bean id="proxyHttpClient" parent="shibboleth.InternalHttpClient"

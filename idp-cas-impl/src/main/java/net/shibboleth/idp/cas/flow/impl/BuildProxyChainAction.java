@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -99,8 +100,8 @@ public class BuildProxyChainAction
         String pgtId = pt.getPgtId();
         do {
             pgt = casTicketService.fetchProxyGrantingTicket(pgtId);
-            if (pgt == null) {
-                log.debug("{} PGT {} not found", getLogPrefix(), pgtId);
+            if (pgt == null || Instant.now().isAfter(pgt.getExpirationInstant())) {
+                log.debug("{} PGT {} {}", getLogPrefix(), pgtId, pgt == null ? "not found" : "expired");
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.BrokenProxyChain.event(this));
                 return;
             }

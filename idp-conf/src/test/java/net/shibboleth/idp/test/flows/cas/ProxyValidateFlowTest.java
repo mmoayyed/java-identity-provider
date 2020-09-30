@@ -25,6 +25,7 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.idp.cas.ticket.impl.EncodingTicketService;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -142,13 +144,38 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     @Test
     public void testFailureBrokenProxyChain() throws Exception {
         final String principal = "john";
+        final int pgtTTLMillis = 20;
         final IdPSession session = sessionManager.createSession(principal);
-        final ProxyTicket ticket = createProxyTicket(session.getId(), principal);
+        final ServiceTicket st = ticketService.createServiceTicket(
+            new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
+            Instant.now().plusSeconds(5),
+            "https://service.example.org/",
+            new TicketState(session.getId(), principal, Instant.now(), "Password"),
+            false);
+        final ProxyGrantingTicket pgt1 = ticketService.createProxyGrantingTicket(
+            new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
+            Instant.now().plusMillis(pgtTTLMillis),
+            st);
+        final ProxyTicket pt1 = ticketService.createProxyTicket(
+            new TicketIdentifierGenerationStrategy("PT", 25).generateIdentifier(),
+            Instant.now().plusSeconds(5),
+            pgt1,
+            "https://proxy1.example.org/");
+        final ProxyGrantingTicket pgt2 = ticketService.createProxyGrantingTicket(
+            new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
+            Instant.now().plusSeconds(3600),
+            pt1);
+        final ProxyTicket pt2 = ticketService.createProxyTicket(
+            new TicketIdentifierGenerationStrategy("PT", 25).generateIdentifier(),
+            Instant.now().plusSeconds(5),
+            pgt2,
+            "https://proxy2.example.org/");
 
-        ticketService.removeProxyGrantingTicket(ticket.getPgtId());
+        externalContext.getMockRequestParameterMap().put("service", pt2.getService());
+        externalContext.getMockRequestParameterMap().put("ticket", pt2.getId());
 
-        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
-        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
+        // Wait for PGT#1 to expire
+        Thread.sleep(pgtTTLMillis + 5);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 

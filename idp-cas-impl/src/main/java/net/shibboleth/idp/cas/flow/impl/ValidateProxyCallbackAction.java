@@ -24,6 +24,7 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import org.apache.http.client.utils.URIBuilder;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -138,11 +139,19 @@ public class ValidateProxyCallbackAction
 
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-
-        final IdentifierGenerationStrategy pgtGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
-        final ProxyIdentifiers proxyIds = new ProxyIdentifiers(
-                securityConfig.getIdGenerator().generateIdentifier(),
-                pgtGenerator.generateIdentifier());
+        final IdentifierGenerationStrategy pgtGenerator = securityConfig.getIdGenerator();
+        final IdentifierGenerationStrategy pgtIOUGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
+        final Instant expiration = Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
+        final String pgtId = pgtGenerator.generateIdentifier();
+        final ProxyGrantingTicket pgt;
+        if (ticket instanceof ServiceTicket) {
+            pgt = casTicketService.createProxyGrantingTicket(pgtId, expiration, (ServiceTicket) ticket);
+        } else {
+            pgt = casTicketService.createProxyGrantingTicket(pgtId, expiration, (ProxyTicket) ticket);
+        }
+        // The ID of the proxy-granting ticket MAY be different from the generated value above.
+        // ALWAYS use the value from the ticket object.
+        final ProxyIdentifiers proxyIds = new ProxyIdentifiers(pgt.getId(), pgtIOUGenerator.generateIdentifier());
         final URI proxyCallbackUri;
         try {
             proxyCallbackUri = new URIBuilder(request.getPgtUrl())
@@ -158,16 +167,10 @@ public class ValidateProxyCallbackAction
         try {
             log.debug("{} Attempting proxy authentication to {}", getLogPrefix(), proxyCallbackUri);
             proxyValidator.validate(profileRequestContext, proxyCallbackUri);
-            final Instant expiration =
-                    Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
-            if (ticket instanceof ServiceTicket) {
-                casTicketService.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ServiceTicket) ticket);
-            } else {
-                casTicketService.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ProxyTicket) ticket);
-            }
             response.setPgtIou(proxyIds.getPgtIou());
         } catch (final Exception e) {
             log.warn("{} Proxy authentication failed for {}", getLogPrefix(), request.getPgtUrl(), e);
+            casTicketService.removeProxyGrantingTicket(pgt.getId());
             ActionSupport.buildEvent(profileRequestContext,
                     ProtocolError.ProxyCallbackAuthenticationFailure.event(this));
         }

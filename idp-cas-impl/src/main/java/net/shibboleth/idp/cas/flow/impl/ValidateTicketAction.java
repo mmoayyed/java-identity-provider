@@ -129,7 +129,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             return;
         }
 
-        if (ticket == null || ticket.getExpirationInstant().isBefore(Instant.now())) {
+        if (ticket == null || Instant.now().isAfter(ticket.getExpirationInstant())) {
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketExpired.event(this));
             return;
         }

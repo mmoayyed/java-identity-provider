@@ -166,6 +166,31 @@ public class EncodingTicketServiceTest {
         assertNull(ticketService.removeProxyTicket("PT-123"));
     }
 
+    @Test
+    public void testCreateFetchRemoveEncodedProxyGrantingTicket() {
+        final String principal = "aleph";
+        final String serviceUrl = "https://www.example.com/pgt1/";
+        final ServiceTicket st = ticketService.createServiceTicket(
+            String.valueOf(System.currentTimeMillis()),
+            Instant.now().plusSeconds(5),
+            serviceUrl,
+            newState(principal),
+            true);
+        final Instant expiry = Instant.now().plusSeconds(3600);
+        final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket("notused", expiry, st);
+        assertTrue(pgt.getId().startsWith("PGT-E-"));
+        final ProxyGrantingTicket pgt2 = ticketService.fetchProxyGrantingTicket(pgt.getId());
+        assertNotNull(pgt2);
+        assertEquals(pgt2.getService(), serviceUrl);
+        assertEquals(pgt2.getTicketState().getPrincipalName(), principal);
+        final ProxyGrantingTicket pgt3 = ticketService.removeProxyGrantingTicket(pgt.getId());
+        assertNotNull(pgt3);
+        assertEquals(pgt3.getService(), serviceUrl);
+        assertEquals(pgt3.getTicketState().getPrincipalName(), principal);
+        // Removing encoded tickets is the same as fetching so they are still available (no backing storage)
+        assertNotNull(ticketService.fetchProxyGrantingTicket(pgt.getId()));
+    }
+
     private TicketState newState(final String principal) {
         return new TicketState(sessionIdGenerator.generateIdentifier(), principal,
                 Instant.now().truncatedTo(ChronoUnit.MILLIS), "authn/Password");
