@@ -212,7 +212,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
             final StringBuilder builder = new StringBuilder("Signature:\t").
                     append(sigForCert.toString()).
                     append("\nFingerPrint:\t").
-                    append(new String(Hex.encode(cert.getFingerprint())));
+                    append((new String(Hex.encode(cert.getFingerprint()))).toUpperCase());
             final Iterator<String> namesIterator = cert.getUserIDs();
             while (namesIterator.hasNext()) {
                 builder.append("\nUsername:\t").append(namesIterator.next());
