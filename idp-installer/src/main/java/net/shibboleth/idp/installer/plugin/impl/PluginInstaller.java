@@ -35,6 +35,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
@@ -319,6 +320,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
            try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
 
                final ServiceLoader<PluginDescription> plugins = ServiceLoader.load(PluginDescription.class, loader);
+               final Optional<PluginDescription> first = plugins.findFirst();
+               if (first.isEmpty()) {
+                   LOG.error("No Plugin services found in plugin distribution");
+                   throw new BuildException("No Plugin services found in plugin distribution");
+               }
                for (final PluginDescription plugin:plugins) {
                    LOG.debug("Found Service announcing itself as {}", plugin.getPluginId() );
                    if (pluginId.equals(plugin.getPluginId())) {
@@ -327,8 +333,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                    }
                    LOG.trace("Did not match {}", pluginId);
                }
+               LOG.error("Looking in plugin distibution for a plugin called {}, but found a plugin called {}.", 
+                      pluginId, first.get().getPluginId());
            }
-           LOG.error("Could not locate description for {} in distribution {}", pluginId, libDir);
            throw new BuildException("Could not locate PluginDescription");
         } catch (final IOException e) {
             LOG.error("Could not get description of {} from {}", pluginId, libDir, e);
@@ -546,7 +553,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void setupPluginId() throws BuildException {
         final File propertyFile = distribution.resolve("bootstrap").resolve("id.property").toFile();
         if (!propertyFile.exists()) {
-            LOG.error("Could not locate identity of plugin at {}", propertyFile);
+            LOG.error("Could not locate identity of plugin. "
+                    + "Identity file 'bootstrap/id.property' not present in plugin distribution.");
             throw new BuildException("Could not locate identity of plugin");
         }
         try (final InputStream inStream = new BufferedInputStream(new FileInputStream(propertyFile))) {
@@ -554,7 +562,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             idProperties.load(inStream);
             final String id = StringSupport.trimOrNull(idProperties.getProperty("pluginid"));
             if (id == null) {
-                LOG.error("identity property file {} did not contain 'pluginid' property", propertyFile);
+                LOG.error("Identity property file 'bootstrap/id.property' did not contain 'pluginid' property");
                 throw new BuildException("No property in ID file");
             }
             if (pluginId != null && !pluginId.equals(id)) {
@@ -563,7 +571,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 setPluginId(id);
             }
         } catch (final IOException e) {
-            LOG.error("Could not load plugin identity at {}", propertyFile, e);
+            LOG.error("Could not load plugin identity file 'bootstrap/id.property'", e);
             throw new BuildException(e);
         }
     }
