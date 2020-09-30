@@ -361,13 +361,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
         /** {@inheritDoc} */
         public boolean test(final String certString) {
-            String result = null;
-            while (result == null) {
-                System.console().printf("%s:\n%s [yN] ", promptText, certString);
-                System.console().flush();
-                result  = StringSupport.trimOrNull(System.console().readLine());
-            }
-            return "y".equalsIgnoreCase(result.substring(0, 1));
+            System.console().printf("%s:\n%s [yN] ", promptText, certString);
+            System.console().flush();
+            final String result  = StringSupport.trimOrNull(System.console().readLine());
+            return result != null && "y".equalsIgnoreCase(result.substring(0, 1));
         }
     }
 }
