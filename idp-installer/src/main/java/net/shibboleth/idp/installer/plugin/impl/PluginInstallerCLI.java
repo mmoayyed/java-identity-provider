@@ -40,7 +40,7 @@ import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
-import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -180,7 +180,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * Helper method for {@link #doList(boolean, String)}
      * @param plugin what we are interested in.
      */
-    private void printDetails(final PluginDescription plugin) {
+    private void printDetails(final IdPPlugin plugin) {
         log.debug("Interrogating {} ", plugin.getPluginId());
         final PluginState state =  new PluginState(plugin);
         if (getHttpClient() != null) {
@@ -216,8 +216,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     private void doList(final boolean fullList, @Nullable final String pluginId) {
         boolean list = false;
-        final List<PluginDescription> plugins = installer.getInstalledPlugins();
-        for (final PluginDescription plugin: plugins) {
+        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
+        for (final IdPPlugin plugin: plugins) {
             if (pluginId == null || pluginId.equals(plugin.getPluginId())) {
                 list = true;
                 System.out.println(String.format("Plugin: %-22s\tCurrent Version: %d.%d.%d",
@@ -242,7 +242,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param state all about the plugin
      * @return the best version (or null)
      */
-    @Nullable private PluginVersion getBestVersion(final PluginDescription plugin, final PluginState state) {
+    @Nullable private PluginVersion getBestVersion(final IdPPlugin plugin, final PluginState state) {
 
         final String idpVersionString = net.shibboleth.idp.Version.getVersion();
         final PluginVersion myVersion = new PluginVersion(plugin.getMajorVersion(),
@@ -290,8 +290,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param pluginVersion (optionally) the version to update to.
      */
     private void doUpdate(@Nonnull final String pluginId, @Nullable final PluginVersion pluginVersion) {
-        final List<PluginDescription> plugins = installer.getInstalledPlugins();
-        for (final PluginDescription plugin: plugins) {
+        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
+        for (final IdPPlugin plugin: plugins) {
             if (pluginId.equals(plugin.getPluginId())) {
                 log.debug("Interrogating {} ", plugin.getPluginId());
                 final PluginState state =  new PluginState(plugin);

@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.plugin.AbstractPluginDescription;
-import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.AbstractIdPPlugin;
+import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")
@@ -69,7 +69,7 @@ public class PluginInstallerTest extends BasePluginTest {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
             inst.initialize();
-            final Map<String, Object> result = inst.getInstalledPlugins().stream().collect(Collectors.toMap(PluginDescription::getPluginId,
+            final Map<String, Object> result = inst.getInstalledPlugins().stream().collect(Collectors.toMap(IdPPlugin::getPluginId,
                     e->e));
             
             assertTrue(result.containsKey("org.example.Plugin"));
@@ -124,7 +124,7 @@ public class PluginInstallerTest extends BasePluginTest {
     }
 
 
-    public static class Wibble extends AbstractPluginDescription {
+    public static class Wibble extends AbstractIdPPlugin {
 
         /** {@inheritDoc} */
         public String getPluginId() {

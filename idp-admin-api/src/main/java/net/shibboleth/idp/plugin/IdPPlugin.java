@@ -27,13 +27,12 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
  * This interface is exported (via the service API) by every IdP plugin.
  */
-public interface PluginDescription {
+public interface IdPPlugin {
     
     /** Return the unique identifier for the plugin.  This name <em>MUST</em> be
      * <ul>
@@ -44,7 +43,7 @@ public interface PluginDescription {
      *
      * @return The id of this plugin.
      */
-    @Nonnull @NotEmpty public String getPluginId();
+    @Nonnull @NotEmpty String getPluginId();
 
     /** Return the list of (idp.home) relative paths (of files, <em>not directories </em>) 
      * to copy from the distribution into the IdP installation.
@@ -59,7 +58,7 @@ public interface PluginDescription {
      *
      * @return The list of paths.
      */
-    @Nonnull public List<Path> getFilePathsToCopy();
+    @Nonnull @NonnullElements List<Path> getFilePathsToCopy();
     
     /** <p>Return the list of files <em>not directories </em> to get from 'external'
      * sources. This allows external content to be downloaded during installation.</p>
@@ -72,7 +71,7 @@ public interface PluginDescription {
      * @return The list.
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException;
+    @Nonnull @NonnullElements List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException;
 
     /** Return the places to look for information for this plugin package.
      * The format of the (property) file at this location is fixed.
@@ -80,27 +79,26 @@ public interface PluginDescription {
      * @return Zero or more URLs
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull @NonnullElements public List<URL> getUpdateURLs() throws IOException;
+    @Nonnull @NonnullElements List<URL> getUpdateURLs() throws IOException;
     
     /** Return the major version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.
      * @return The major version.
      */
-    @Positive public int getMajorVersion();
+    @Nonnegative int getMajorVersion();
 
     /** Return the minor version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.
      * @return The minor version.
      */
-    @Nonnegative public int getMinorVersion();
+    @Nonnegative int getMinorVersion();
     
     /** Return The patch version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.
      * @return The patch version.
      */
-    @Nonnegative public int getPatchVersion();
-    
+    @Nonnegative int getPatchVersion();
 }

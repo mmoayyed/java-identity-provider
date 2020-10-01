@@ -65,7 +65,7 @@ import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
-import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -102,7 +102,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private Path downloadDirectory;
     
     /** The plugin's story about itself. */
-    private PluginDescription description;
+    private IdPPlugin description;
 
     /** The callback before we install a certificate into the TrustStore. */
     @Nonnull private Predicate<String> acceptCert = Predicates.alwaysFalse();
@@ -316,7 +316,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         }
     }
 
-    /** Get hold of the {@link PluginDescription} for this plugin.
+    /** Get hold of the {@link IdPPlugin} for this plugin.
      * @throws BuildException if badness is happens.
      */
     private void getDescription() throws BuildException {
@@ -329,13 +329,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
            try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
 
-               final ServiceLoader<PluginDescription> plugins = ServiceLoader.load(PluginDescription.class, loader);
-               final Optional<PluginDescription> first = plugins.findFirst();
+               final ServiceLoader<IdPPlugin> plugins = ServiceLoader.load(IdPPlugin.class, loader);
+               final Optional<IdPPlugin> first = plugins.findFirst();
                if (first.isEmpty()) {
                    LOG.error("No Plugin services found in plugin distribution");
                    throw new BuildException("No Plugin services found in plugin distribution");
                }
-               for (final PluginDescription plugin:plugins) {
+               for (final IdPPlugin plugin:plugins) {
                    LOG.debug("Found Service announcing itself as {}", plugin.getPluginId() );
                    if (pluginId.equals(plugin.getPluginId())) {
                        description = plugin;
@@ -648,7 +648,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * Return a list of the installed plugins.
      * @return All the plugins.
      */
-    public List<PluginDescription> getInstalledPlugins() {
+    public List<IdPPlugin> getInstalledPlugins() {
         try {
             final List<URL> urls = new ArrayList<>();
 
@@ -664,8 +664,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 }
             }
             try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
-               try (final Stream<Provider<PluginDescription>> loaderStream =
-                       ServiceLoader.load(PluginDescription.class, loader).stream()) {
+               try (final Stream<Provider<IdPPlugin>> loaderStream =
+                       ServiceLoader.load(IdPPlugin.class, loader).stream()) {
                    return loaderStream.map(ServiceLoader.Provider::get).collect(Collectors.toList());
                }
            }

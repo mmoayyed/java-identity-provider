@@ -24,12 +24,12 @@ import java.util.List;
 
 import org.springframework.core.io.ClassPathResource;
 
-import net.shibboleth.idp.plugin.AbstractPluginDescription;
+import net.shibboleth.idp.plugin.AbstractIdPPlugin;
 
 /**
  *
  */
-public class TestPlugin extends AbstractPluginDescription {
+public class TestPlugin extends AbstractIdPPlugin {
 
     /** {@inheritDoc} */
     @Override

@@ -29,22 +29,22 @@ import net.shibboleth.idp.Version;
  */
 public final class PluginSupport {
     
-    /** Property Name suffix for available versions inside {@link PluginDescription#getUpdateURLs()}. */
+    /** Property Name suffix for available versions inside {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String AVAILABLE_VERSIONS_PROPERTY_SUFFIX = ".versions";
 
-    /** Property Name for Download directory {@link PluginDescription#getUpdateURLs()}. */
+    /** Property Name for Download directory {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String DOWNLOAD_URL_INTERFIX = ".downloadURL.";
 
-    /** Property Name for download name {@link PluginDescription#getUpdateURLs()}. */
+    /** Property Name for download name {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String BASE_NAME_INTERFIX = ".baseName.";
 
-    /** Property Name for max supported IdP version inside inside {@link PluginDescription#getUpdateURLs()}. */
+    /** Property Name for max supported IdP version inside inside {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String MAX_IDP_VERSION_INTERFIX = ".idpVersionMax.";
 
-    /** Property Name for minimum supported IdP version inside inside {@link PluginDescription#getUpdateURLs()}. */
+    /** Property Name for minimum supported IdP version inside inside {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String MIN_IDP_VERSION_INTERFIX = ".idpVersionMin.";
 
-    /** Property Name for support level inside inside {@link PluginDescription#getUpdateURLs()}. */
+    /** Property Name for support level inside inside {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String SUPPORT_LEVEL_INTERFIX = ".supportLevel.";
 
     /** Value for support level pointed to by {@link #SUPPORT_LEVEL_INTERFIX}.*/

@@ -36,7 +36,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
-import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
@@ -60,7 +60,7 @@ public class PluginState extends AbstractInitializableComponent {
     private static final Pattern SPACE_CONTAINING = Pattern.compile("\\s+");
 
     /** The plug in in question. */
-    @Nonnull private final PluginDescription plugin;
+    @Nonnull private final IdPPlugin plugin;
     
     /** The version of this plugin. */
     @Nonnull private final PluginVersion myPluginVersion;
@@ -85,7 +85,7 @@ public class PluginState extends AbstractInitializableComponent {
      *
      * @param description what we are talking about.
      */
-    public PluginState(@Nonnull final PluginDescription description) {
+    public PluginState(@Nonnull final IdPPlugin description) {
         plugin = Constraint.isNotNull(description, "Plugin must not be null");
         myPluginVersion = new PluginVersion(plugin.getMajorVersion(), 
                 plugin.getMinorVersion(), plugin.getPatchVersion());

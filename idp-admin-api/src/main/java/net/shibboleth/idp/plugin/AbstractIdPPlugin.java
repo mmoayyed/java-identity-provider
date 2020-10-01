@@ -26,20 +26,21 @@ import java.util.List;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
- * A base class {@link PluginDescription} which defaults many common settings.
+ * A base class implementing {@link IdPPlugin} that defaults common settings.
  */
-public abstract class AbstractPluginDescription implements PluginDescription {
+public abstract class AbstractIdPPlugin implements IdPPlugin {
     
     /** {@inheritDoc} */
-    @Nonnull public List<Path> getFilePathsToCopy() {
+    @Nonnull @NonnullElements public List<Path> getFilePathsToCopy() {
         return Collections.emptyList();
     }
     
     /** {@inheritDoc} */
-    @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException {
+    @Nonnull @NonnullElements public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException {
         return Collections.emptyList();
     }
     
@@ -47,4 +48,5 @@ public abstract class AbstractPluginDescription implements PluginDescription {
     @Nonnegative public int getPatchVersion() {
         return 0;
     }
+
 }

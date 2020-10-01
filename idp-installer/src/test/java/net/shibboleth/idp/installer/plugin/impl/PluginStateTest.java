@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.plugin.PluginDescription;
+import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -47,7 +47,7 @@ public class PluginStateTest {
     @Test
     public void testSimple() throws ComponentInitializationException {
 
-        final PluginDescription simple = new TestPlugin();
+        final IdPPlugin simple = new TestPlugin();
         
         final PluginState state = new PluginState(simple);
         
@@ -88,7 +88,7 @@ public class PluginStateTest {
     @Test
     public void testMulti() throws IOException, Exception {
 
-        final PluginDescription simple = new TestPlugin() {
+        final IdPPlugin simple = new TestPlugin() {
             @Override
             public java.util.List<URL> getUpdateURLs() {
                 try {
