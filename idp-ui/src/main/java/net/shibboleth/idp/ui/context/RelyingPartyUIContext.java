@@ -227,6 +227,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @deprecated use {@link #setBrowserLanguageRanges(List)}
      * @return this context
      */
+    @Deprecated(since="4.0.0", forRemoval=true)
     @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
         Constraint.isNotNull(languages, "Language List cannot be null");
         // The replacement was created in V4.0
