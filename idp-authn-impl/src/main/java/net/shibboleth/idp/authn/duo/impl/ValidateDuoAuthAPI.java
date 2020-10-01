@@ -204,13 +204,13 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
             log.info("{} No DuoAuthenticationContext available", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "No DuoAuthenticationContext context available",
                     AuthnEventIds.INVALID_AUTHN_CTX);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return false;
         } else if (duoContext.getFactor() == null) {
             log.info("{} No factor set in DuoAuthenticationContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "No Duo factor set in DuoAuthenticationContext",
                     AuthnEventIds.REQUEST_UNSUPPORTED);
-            recordFailure();
+            recordFailure(profileRequestContext);
             return false;
         }
 
@@ -239,7 +239,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
             if (DuoAuthAPI.DUO_PREAUTH_RESULT_ALLOW.equals(preAuthResult)) {
                 // User in bypass mode; treat as authenticated.
                 log.info("{} Duo pre-authentication (bypass) succeeded for '{}'", getLogPrefix(), username);
-                recordSuccess();
+                recordSuccess(profileRequestContext);
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 return;
             }
@@ -251,7 +251,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
                 handleError(profileRequestContext, authenticationContext,
                         String.format("%s:%s:%s", preAuthResult, username, preAuthResponse.getStatusMessage()),
                         AuthnEventIds.ACCOUNT_ERROR);
-                recordFailure();
+                recordFailure(profileRequestContext);
                 return;
             }
             
@@ -275,7 +275,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
                             username, duoContext.getDeviceID());
                     handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                             AuthnEventIds.INVALID_CREDENTIALS);
-                    recordFailure();
+                    recordFailure(profileRequestContext);
                     return;
                 }
             }
@@ -291,20 +291,20 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
             if (DuoAuthAPI.DUO_AUTH_RESULT_ALLOW.equals(authResult)) {
                 log.info("{} Duo authentication succeeded for '{}' (Factor: {}, Device: {})", getLogPrefix(), username,
                         duoContext.getFactor(), duoContext.getDeviceID());
-                recordSuccess();
+                recordSuccess(profileRequestContext);
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else if (DuoAuthAPI.DUO_AUTH_RESULT_DENY.equals(authResult)) {
                 log.info("{} Duo authentication failed for '{}'", getLogPrefix(), username);
                 handleError(profileRequestContext, authenticationContext, authenticationResponse.getStatus(),
                         AuthnEventIds.INVALID_CREDENTIALS);
-                recordFailure();
+                recordFailure(profileRequestContext);
             } else {
                 throw new DuoWebException("Unexpected authentication response");
             }
         } catch (final DuoWebException e) {
             log.error("{} Duo AuthAPI access failed for '{}'", getLogPrefix(), username, e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-            recordFailure();
+            recordFailure(profileRequestContext);
         }
     }
     // CheckStyle: CyclomaticComplexity|MethodLength|ReturnCount OFF
