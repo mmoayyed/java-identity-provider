@@ -102,4 +102,5 @@ public interface PluginDescription {
      * @return The patch version.
      */
     @Nonnegative public int getPatchVersion();
+    
 }
