@@ -47,35 +47,35 @@ public class PluginCLITest extends BasePluginTest {
         System.setProperty("idp.home",getIdpHome().toString());
     }
 
-    @Test(enabled = true) public void testList() throws IOException {
+    @Test(enabled = false) public void testList() throws IOException {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testWrong() {
+    @Test(enabled = false) public void testWrong() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
+    @Test(enabled = false, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", RHINO_DISTRO,
                     "-p", "net.shibboleth.idp.plugin.rhino"}),
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testRhinoWeb"})  public void testUpdate() {
+    @Test(enabled = false, dependsOnMethods = {"testRhinoWeb"})  public void testUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", "net.shibboleth.idp.plugin.rhino"}),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testUpdate"})  public void testForceUpdate() {
+    @Test(enabled = false, dependsOnMethods = {"testUpdate"})  public void testForceUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", "net.shibboleth.idp.plugin.rhino",
                 "-fu", "0.1.3" }),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testRhinoLocal() throws Exception {
+    @Test(enabled = false) public void testRhinoLocal() throws Exception {
         Path unpack = null;
         try {
             unpack = Files.createTempDirectory("rhinoLocal");

@@ -64,7 +64,7 @@ public class PluginInstallerTest extends BasePluginTest {
         }
     }
 
-    @Test(enabled = true) public void testListing() throws ComponentInitializationException, IOException {
+    @Test(enabled = false) public void testListing() throws ComponentInitializationException, IOException {
         
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
@@ -77,7 +77,7 @@ public class PluginInstallerTest extends BasePluginTest {
         }
     }
 
-    @Test(enabled = true, dependsOnMethods ={"testListing", }) public void testRemove() throws ComponentInitializationException, IOException
+    @Test(enabled = false, dependsOnMethods ={"testListing", }) public void testRemove() throws ComponentInitializationException, IOException
     {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
