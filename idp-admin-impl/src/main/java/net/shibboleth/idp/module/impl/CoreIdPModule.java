@@ -27,7 +27,7 @@ import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
- * Implementation base class for {@IdPModules} that live within the core code
+ * Implementation base class for {@IdPModule} that lives within the core code
  * and whose documentation URLs will float with the IdP's own.
  * 
  */
