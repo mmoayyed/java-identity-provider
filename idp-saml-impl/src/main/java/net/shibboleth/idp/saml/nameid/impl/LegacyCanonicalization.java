@@ -38,6 +38,7 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
  * 
  * @deprecated
  */
+@Deprecated
 public class LegacyCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Class logger. */
