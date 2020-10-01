@@ -124,7 +124,7 @@ public class DecryptedAttributeTest {
      * Test when dependent on a data connector.
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
-     * @throws DataSealerException 
+     * @throws DataSealerException if encryption fails
      */
     @Test public void dataConnector() throws ComponentInitializationException, DataSealerException {
 
@@ -176,7 +176,7 @@ public class DecryptedAttributeTest {
      * Test when dependent on another attribute.
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
-     * @throws DataSealerException 
+     * @throws DataSealerException if encryption fails
      */
     @Test public void attribute() throws ComponentInitializationException, DataSealerException {
 
