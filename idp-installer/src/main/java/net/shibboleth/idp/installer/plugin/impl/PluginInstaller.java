@@ -33,11 +33,14 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.ServiceLoader.Provider;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -65,6 +68,8 @@ import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -243,6 +248,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 
+        checkRequiredModules();
+        
         final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
 
         InstallerSupport.setReadOnly(myWebApp, false);
@@ -350,6 +357,40 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         } catch (final IOException e) {
             LOG.error("Could not get description of {} from {}", pluginId, libDir, e);
             throw new BuildException(e);
+        }
+    }
+    
+    /**
+     * Police that required modules for plugin installation are enabled.
+     * 
+     * @throws BuildException if any required modules are missing or disabled
+     */
+    private void checkRequiredModules() throws BuildException {
+        
+        // TODO: maybe this belongs in the CLI rather than the utility class?
+        // OTOH if the update process is recoverable then a failed update
+        // should rollback the uninstall of the original...
+        
+        final ModuleContext moduleContext = new ModuleContext(idpHome);
+        final Set<String> requiredModules = new HashSet<>(description.getRequiredModules());
+        
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+        while (modules.hasNext() && !requiredModules.isEmpty()) {
+            try {
+                final IdPModule module = modules.next();
+                if (requiredModules.contains(module.getId())) {
+                    if (module.isEnabled(moduleContext)) {
+                        requiredModules.remove(module.getId());
+                    }
+                }
+            } catch (final ServiceConfigurationError e) {
+                LOG.error("Unable to instantiate IdPModule", e);
+            }
+        }
+        
+        if (!requiredModules.isEmpty()) {
+            LOG.warn("Required modules are missing or disabled: {}", requiredModules);
+            throw new BuildException("One or more required modules are not enabled");
         }
     }
 
