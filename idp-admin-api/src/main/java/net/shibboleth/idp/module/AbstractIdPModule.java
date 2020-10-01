@@ -157,7 +157,26 @@ public abstract class AbstractIdPModule implements IdPModule {
         log.debug("Module {} disabled", getId());
         return results;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof IdPModule && getId().equals(((IdPModule) obj).getId());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
     
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "IdPModule " + getId();
+    }
+
     /**
      * Models a specific resource managed by a module.
      */

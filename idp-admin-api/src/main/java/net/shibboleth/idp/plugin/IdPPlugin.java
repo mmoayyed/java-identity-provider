@@ -21,10 +21,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -101,4 +103,26 @@ public interface IdPPlugin {
      * @return The patch version.
      */
     @Nonnegative int getPatchVersion();
+    
+    /**
+     * Get the IDs of any {@link IdPModule}s required for installation of this plugin.
+     * 
+     * @return module IDs that are required
+     */
+    @Nonnull @NonnullElements Set<String> getRequiredModules();
+
+    /**
+     * Get the modules to enable after plugin installation or upgrade.
+     * 
+     * @return modules to enable
+     */
+    @Nonnull @NonnullElements Set<IdPModule> getEnableOnInstall();
+
+    /**
+     * Get the modules to disable after plugin removal.
+     * 
+     * @return modules to disable
+     */
+    @Nonnull @NonnullElements Set<IdPModule> getDisableOnRemoval();
+
 }

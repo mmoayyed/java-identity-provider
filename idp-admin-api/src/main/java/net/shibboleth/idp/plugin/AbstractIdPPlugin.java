@@ -22,10 +22,12 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
@@ -47,6 +49,40 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
     /** {@inheritDoc} */
     @Nonnegative public int getPatchVersion() {
         return 0;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements public Set<String> getRequiredModules() {
+        return Collections.emptySet();
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements public Set<IdPModule> getEnableOnInstall() {
+        return Collections.emptySet();
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements public Set<IdPModule> getDisableOnRemoval() {
+        return Collections.emptySet();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof IdPModule && getPluginId().equals(((IdPPlugin) obj).getPluginId());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return getPluginId().hashCode();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "IdPPlugin " + getPluginId();
     }
 
 }
