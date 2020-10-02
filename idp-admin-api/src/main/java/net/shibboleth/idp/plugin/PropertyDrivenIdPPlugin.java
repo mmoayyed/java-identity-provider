@@ -143,11 +143,9 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
         
         for (Integer urlnum = 1; ; ++urlnum) {
             
-            String urlstr = pluginProperties.getProperty(PLUGIN_URL_PROPERTY + urlnum.toString());
+            final String urlstr = pluginProperties.getProperty(PLUGIN_URL_PROPERTY + urlnum.toString());
             if (urlstr == null) {
                 break;
-            } else if (urlstr.startsWith("/")) {
-                urlstr = getUpdatePrefix() + urlstr;
             }
             
             try {
@@ -156,6 +154,8 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
                 log.error("Unable to convert property value '{}' to URL", urlstr, e);
             }
         }
+        
+        urls.addAll(getDefaultUpdateURLs());
         
         updateURLs = List.copyOf(urls);
         
@@ -201,12 +201,11 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
     }
     
     /**
-     * Gets the default update URL prefix for any relative update locations.
+     * Provides default update locations to use.
      * 
-     * @return update URL prefix
+     * @return default update locations
+     * @throws PluginException 
      */
-    @Nonnull protected String getUpdatePrefix() {
-        return "";
-    }
+    @Nonnull @NonnullElements protected abstract List<URL> getDefaultUpdateURLs() throws PluginException;
     
 }
