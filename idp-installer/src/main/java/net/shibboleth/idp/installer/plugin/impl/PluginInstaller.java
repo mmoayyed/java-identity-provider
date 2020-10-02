@@ -602,27 +602,27 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if badness is detected.
      */
     private void setupPluginId() throws BuildException {
-        final File propertyFile = distribution.resolve("bootstrap").resolve("id.property").toFile();
+        final File propertyFile = distribution.resolve("bootstrap").resolve("plugin.properties").toFile();
         if (!propertyFile.exists()) {
             LOG.error("Could not locate identity of plugin. "
-                    + "Identity file 'bootstrap/id.property' not present in plugin distribution.");
+                    + "Identity file 'bootstrap/plugin.properties' not present in plugin distribution");
             throw new BuildException("Could not locate identity of plugin");
         }
         try (final InputStream inStream = new BufferedInputStream(new FileInputStream(propertyFile))) {
             final Properties idProperties = new Properties();
             idProperties.load(inStream);
-            final String id = StringSupport.trimOrNull(idProperties.getProperty("pluginid"));
+            final String id = StringSupport.trimOrNull(idProperties.getProperty("plugin.id"));
             if (id == null) {
-                LOG.error("Identity property file 'bootstrap/id.property' did not contain 'pluginid' property");
-                throw new BuildException("No property in ID file");
+                LOG.error("Identity file 'bootstrap/plugin.properties' did not contain 'plugin.id' property");
+                throw new BuildException("No property in bootstrap/plugin.properties file");
             }
             if (pluginId != null && !pluginId.equals(id)) {
-                LOG.error("Downloaded plugin id {} overriden by provided id {}", id, pluginId);
+                LOG.error("Downloaded plugin id {} conflicts with provided id {}", id, pluginId);
             } else {
                 setPluginId(id);
             }
         } catch (final IOException e) {
-            LOG.error("Could not load plugin identity file 'bootstrap/id.property'", e);
+            LOG.error("Could not load plugin identity file 'bootstrap/plugin.properties'", e);
             throw new BuildException(e);
         }
     }
