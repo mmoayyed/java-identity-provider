@@ -29,12 +29,32 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
  * A base class implementing {@link IdPPlugin} that defaults common settings.
+ * 
+ * @since 4.1.0
  */
 public abstract class AbstractIdPPlugin implements IdPPlugin {
+    
+    /** Modules to enable on install. */
+    @Nonnull @NonnullElements private Set<IdPModule> enableModules;
+
+    /** Modules to disable on removal. */
+    @Nonnull @NonnullElements private Set<IdPModule> disableModules;
+
+    /** Constructor. */
+    public AbstractIdPPlugin() {
+        enableModules = Collections.emptySet();
+        disableModules = Collections.emptySet();
+    }
+    
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String getPluginId() {
+        return getClass().getPackageName();
+    }
     
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public List<Path> getFilePathsToCopy() {
@@ -58,12 +78,30 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Set<IdPModule> getEnableOnInstall() {
-        return Collections.emptySet();
+        return enableModules;
+    }
+    
+    /**
+     * Set the modules to enable on install.
+     * 
+     * @param modules modules to enable
+     */
+    protected void setEnableOnInstall(@Nonnull @NonnullElements final Set<IdPModule> modules) {
+        enableModules = Set.copyOf(modules);
     }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Set<IdPModule> getDisableOnRemoval() {
-        return Collections.emptySet();
+        return disableModules;
+    }
+
+    /**
+     * Set the modules to disable on removal.
+     * 
+     * @param modules modules to disable
+     */
+    protected void setDisableOnRemoval(@Nonnull @NonnullElements final Set<IdPModule> modules) {
+        disableModules = Set.copyOf(modules);
     }
 
     /** {@inheritDoc} */
