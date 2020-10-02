@@ -123,13 +123,14 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
         
         pluginId = StringSupport.trimOrNull(pluginProperties.getProperty(PLUGIN_ID_PROPERTY));
         
-        String version = StringSupport.trimOrNull(pluginProperties.getProperty(PLUGIN_VERSION_PROPERTY));
+        String version = getClass().getPackage().getImplementationVersion();
         if (version == null) {
-            version = getClass().getPackage().getImplementationVersion();
-        }
-        
-        if (version == null) {
-            throw new PluginException("No plugin version property or package attribute available");
+            version = StringSupport.trimOrNull(pluginProperties.getProperty(PLUGIN_VERSION_PROPERTY));
+            if (version == null) {
+                throw new PluginException("No plugin version property or package attribute available");
+            }
+        } else {
+            log.debug("Ignoring plugin version property in favor of package manifest");
         }
         
         try {
