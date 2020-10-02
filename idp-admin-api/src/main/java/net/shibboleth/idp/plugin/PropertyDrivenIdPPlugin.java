@@ -206,6 +206,8 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
      * @return default update locations
      * @throws PluginException 
      */
-    @Nonnull @NonnullElements protected abstract List<URL> getDefaultUpdateURLs() throws PluginException;
+    @Nonnull @NonnullElements protected List<URL> getDefaultUpdateURLs() throws PluginException {
+        return Collections.emptyList();
+    }
     
 }
