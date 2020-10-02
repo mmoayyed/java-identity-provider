@@ -27,7 +27,7 @@ import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
- * Implementation base class for {@IdPModule} that is shipped in a plugin
+ * Implementation base class for {@link IdPModule} that is shipped in a plugin
  * produced by the Shibboleth Project ourselves and for which the documentation
  * will be in the wiki in a fixed location.
  * 
