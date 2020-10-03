@@ -272,7 +272,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
                 return OperationType.INSTALLREMOTE;
             }
         } catch (final MalformedURLException e) {
-            getLog().trace("urg");
+            // It's OK
         }
         // Must be a file
         final File inputAsFile = new File(input);

@@ -111,7 +111,7 @@ public class PluginCLITest extends BasePluginTest {
                     AbstractCommandLine.RC_OK);
         } finally {
             if (unpack != null) {
-                PluginInstaller.deleteTree(unpack);
+                PluginInstallerSupport.deleteTree(unpack);
             }
         }
     }

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,11 +28,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,8 +39,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.Set;
 import java.util.ServiceLoader.Provider;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,7 +56,6 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +69,7 @@ import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -123,6 +122,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** What to use to download things. */
     private HttpClient httpClient;
+ 
+    /** Files that were copied - to handle rollback. */
+    @Nonnull private List<Path> copiedFiles = new ArrayList<>();
 
     /** Set IdP Home.
      * @param home Where we are working from
@@ -167,22 +169,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
     }
 
-    /** Return the canonical path.
-     * @param from the path we get given
-     * @return the canonicalized one
-     * @throws IOException  as from {@link File#getCanonicalFile()}
-     */
-    private static Path canonicalPath(final Path from) throws IOException {
-        return from.toFile().getCanonicalFile().toPath();
-    }
-
     /** Check that the provide path is inside {@link #idpHome}.
      * @param to the path to check.
      * @throws BuildException if it isn't
      */
     private void policeTo(final Path to) throws BuildException {
         try {
-            final Path canonicalTo = canonicalPath(to);
+            final Path canonicalTo = PluginInstallerSupport.canonicalPath(to);
             if (!canonicalTo.startsWith(idpHome)) {
                 LOG.error("File destination {} ({}) was illegal (not inside {}", to, canonicalTo, idpHome);
                 throw new BuildException("Illegal file destination");
@@ -199,7 +192,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void policeFrom(final Path from) throws BuildException {
         try {
-            final Path canonicalFrom = canonicalPath(from);
+            final Path canonicalFrom = PluginInstallerSupport.canonicalPath(from);
             if (!canonicalFrom.startsWith(distribution)) {
                 LOG.error("File source {} ({}) was illegal (not inside {}", from, canonicalFrom, distribution);
                 throw new BuildException("Illegal file source");
@@ -252,12 +245,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         
         final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
 
-        InstallerSupport.setReadOnly(myWebApp, false);
-        deleteTree(myWebApp);
+        uninstallOld(myWebApp);
         installWebapp(myWebApp);
         installFiles();
         downloadExternals();
         InstallerSupport.setReadOnly(myWebApp, true);
+        saveCopiedFiles();
 
         final BuildWar builder = new BuildWar(idpHome);
         try {
@@ -276,8 +269,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.error("Plugin {} had no jars installed.", pluginId);
             return;
         }
-        InstallerSupport.setReadOnly(myWebApp, false);
-        deleteTree(myWebApp);
+        uninstallOld(myWebApp);
         final BuildWar builder = new BuildWar(idpHome);
         try {
             builder.initialize();
@@ -457,9 +449,45 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void installWebapp(final Path myWebApp) throws BuildException {
         final Path from = distribution.resolve("edit-webapp");
-        LOG.debug("Copying distribution from {} to {}", from, myWebApp);
-        final Copy copy = InstallerSupport.getCopyTask(from, myWebApp);
-        copy.execute();
+        if (PluginInstallerSupport.detectDuplicates(from, myWebApp)) {
+            throw new BuildException("Install would overwrite filess");
+        }
+        PluginInstallerSupport.copyWithLogging(from, myWebApp, copiedFiles);
+    }
+
+    /** Uninstall the old version of the plugin.
+     * @param myWebApp where to delete */
+    private void uninstallOld(final Path myWebApp) {
+        InstallerSupport.setReadOnly(myWebApp, false);
+        PluginInstallerSupport.deleteTree(myWebApp);
+    }
+
+    /** Stream the copy list to a property file and empty it.
+     * @throws BuildException If we hit an IO exception
+     */
+    private void saveCopiedFiles() throws BuildException {
+        try {
+            final Path parent = idpHome.resolve("dist").resolve("plugin-contents");
+            Files.createDirectories(parent);
+            final Properties props = new Properties(1+copiedFiles.size());
+            props.setProperty("idp.plugin.version",
+                    new PluginVersion(description.getMajorVersion(),
+                            description.getMinorVersion(),
+                            description.getPatchVersion()).toString());
+            int count = 1;
+            for (final Path p: copiedFiles) {
+                props.setProperty("idp.plugin.file."+Integer.toString(count++),
+                        PluginInstallerSupport.canonicalPath(p).toString());
+            }
+            final File outFile = parent.resolve(pluginId).toFile();
+            try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
+                props.store(out, "Files Copied "  + Instant.now());
+            }
+            copiedFiles = new ArrayList<>();
+        } catch (final IOException e) {
+            LOG.error("Error saving list of copied files.", e);
+            throw new BuildException(e);
+        }
     }
 
     /** Method to download a zip file to the {{@link #downloadDirectory}.
@@ -553,7 +581,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     LOG.error("No contents unpacked from {}", fullName);
                     throw new BuildException("Distro was empty");
                 }
-                distribution = canonicalPath(contents.next());
+                distribution = PluginInstallerSupport.canonicalPath(contents.next());
                 if (contents.hasNext()) {
                     LOG.error("Too many packages in distributions {}", fullName);
                     throw new BuildException("Too many packages in distributions");
@@ -602,27 +630,27 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if badness is detected.
      */
     private void setupPluginId() throws BuildException {
-        final File propertyFile = distribution.resolve("bootstrap").resolve("plugin.properties").toFile();
+        final File propertyFile = distribution.resolve("bootstrap").resolve("id.property").toFile();
         if (!propertyFile.exists()) {
             LOG.error("Could not locate identity of plugin. "
-                    + "Identity file 'bootstrap/plugin.properties' not present in plugin distribution");
+                    + "Identity file 'bootstrap/id.property' not present in plugin distribution.");
             throw new BuildException("Could not locate identity of plugin");
         }
         try (final InputStream inStream = new BufferedInputStream(new FileInputStream(propertyFile))) {
             final Properties idProperties = new Properties();
             idProperties.load(inStream);
-            final String id = StringSupport.trimOrNull(idProperties.getProperty("plugin.id"));
+            final String id = StringSupport.trimOrNull(idProperties.getProperty("pluginid"));
             if (id == null) {
-                LOG.error("Identity file 'bootstrap/plugin.properties' did not contain 'plugin.id' property");
-                throw new BuildException("No property in bootstrap/plugin.properties file");
+                LOG.error("Identity property file 'bootstrap/id.property' did not contain 'pluginid' property");
+                throw new BuildException("No property in ID file");
             }
             if (pluginId != null && !pluginId.equals(id)) {
-                LOG.error("Downloaded plugin id {} conflicts with provided id {}", id, pluginId);
+                LOG.error("Downloaded plugin id {} overriden by provided id {}", id, pluginId);
             } else {
                 setPluginId(id);
             }
         } catch (final IOException e) {
-            LOG.error("Could not load plugin identity file 'bootstrap/plugin.properties'", e);
+            LOG.error("Could not load plugin identity file 'bootstrap/id.property'", e);
             throw new BuildException(e);
         }
     }
@@ -678,7 +706,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new ComponentInitializationException("Idp Home should be set");
         }
         try {
-            idpHome = canonicalPath(idpHome);
+            idpHome = PluginInstallerSupport.canonicalPath(idpHome);
         } catch (final IOException e) {
             LOG.error("Could not canonicalize idp home", e);
             throw new ComponentInitializationException(e);
@@ -715,39 +743,20 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         }
     }
     
-    /** Delete a directory tree. 
-     * @param directory what to delete
-     */
-    public static void deleteTree(@Nullable final Path directory) {
-        if (directory == null || !Files.exists(directory)) {
-            return;
-        }
-        LOG.debug("Deleting directory {}", directory);
-        try {
-            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
-                @Override 
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-                @Override 
-                public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
-                    if (exc != null) {
-                        throw exc;
-                    }
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (final IOException e) {
-            LOG.error("Couldn't delete {}", directory, e);
-        }
-    }
-    
     /** {@inheritDoc} */
     public void close() {
-        deleteTree(downloadDirectory);
-        deleteTree(unpackDirectory);
+        PluginInstallerSupport.deleteTree(downloadDirectory);
+        PluginInstallerSupport.deleteTree(unpackDirectory);
+        for (final Path p : copiedFiles) {
+            try {
+                if (Files.exists(p)) {
+                    Files.delete(p);
+                }
+            } catch (final IOException e) {
+                p.toFile().deleteOnExit();
+                LOG.warn("Failed to delete {}", p, e);
+            }
+        }
     }
     
 }

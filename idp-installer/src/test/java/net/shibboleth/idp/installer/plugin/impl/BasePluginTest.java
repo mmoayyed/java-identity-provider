@@ -71,7 +71,7 @@ public class BasePluginTest {
             return;
         }
         InstallerSupport.setReadOnly(idpHome, false);
-        PluginInstaller.deleteTree(idpHome);
+        PluginInstallerSupport.deleteTree(idpHome);
     }
 
     protected Path getIdpHome() {
