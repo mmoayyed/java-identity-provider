@@ -65,7 +65,12 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
     @Nonnull @NonnullElements public Set<IdPModule> getEnableOnInstall() {
         return enableModules;
     }
-    
+
+    /** {@inheritDoc} */
+    public String getLicenseFileLocation() {
+        return null;
+    }
+
     /**
      * Set the modules to enable on install.
      * 

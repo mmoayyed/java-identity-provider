@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.installer.plugin.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
@@ -140,6 +143,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     installer.removeJars();
                     break;
 
+                case OUTPUTLICENSE:
+                    outputLicense(args.getPluginId());
+                    break;
+
                 default:
                     getLogger().error("Invalid operation");
                     return RC_INIT;
@@ -176,6 +183,17 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         installer = inst;
     }
     
+    /** Emit the line to System.out or the log if not present.
+     * @param message what to emit.
+     */
+    private void outOrLog(final String message) {
+        if (System.out != null) {
+            System.out.println(message);
+        } else {
+            log.info("{}", message);
+        }
+    }
+    
     /** Print our more information about a plugin.
      * Helper method for {@link #doList(boolean, String)}
      * @param plugin what we are interested in.
@@ -193,7 +211,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             return;
         }
         final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
-        System.out.println("\tVersions ");
+        outOrLog("\tVersions ");
         for (final Entry<PluginVersion, VersionInfo> entry  : versions.entrySet()) {
             final String downLoadDetails;
             if (state.getUpdateBaseName(entry.getKey()) == null || state.getUpdateURL(entry.getKey())==null ) {
@@ -201,13 +219,46 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             } else {
                 downLoadDetails = "";
             }
-            System.out.println(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
+            outOrLog(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
                     entry.getKey(),
                     entry.getValue().getMinSupported(),
                     entry.getValue().getMaxSupported(),
                     entry.getValue().getSupportLevel(),
                     downLoadDetails));
         }
+    }
+
+    /** Print the license file for the specified plugin.
+     * @param pluginId what to list
+     */
+    private void outputLicense(@Nonnull final String pluginId) {
+        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
+        for (final IdPPlugin plugin: plugins) {
+            if (pluginId.equals(plugin.getPluginId())) {
+                final String location = plugin.getLicenseFileLocation();
+                if (location == null) {
+                    log.error("Plugin {} has no license", pluginId);
+                    return;
+                }
+                final Resource loc = new ClassPathResource(location);
+                if (!loc.exists()) {
+                    log.error("Plugin {} license could not be found at {}", pluginId, location);
+                    return;
+                }
+                outOrLog(String.format("License for %s", plugin));
+                try (final BufferedReader reader = new BufferedReader(new InputStreamReader(loc.getInputStream()))) {
+                    String line = reader.readLine();
+                    while (line != null) {
+                        outOrLog(line);
+                        line = reader.readLine();
+                    }
+                } catch (final IOException e) {
+                    log.error("Failed to output license", e);
+                }
+                return;
+            }
+        }
+        log.error("Plugin {} not installed", pluginId);
     }
 
     /** List all installed plugins (or just one if provided).
@@ -220,7 +271,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         for (final IdPPlugin plugin: plugins) {
             if (pluginId == null || pluginId.equals(plugin.getPluginId())) {
                 list = true;
-                System.out.println(String.format("Plugin: %-22s\tCurrent Version: %d.%d.%d",
+                outOrLog(String.format("Plugin: %-22s\tCurrent Version: %d.%d.%d",
                        plugin.getPluginId(),
                        plugin.getMajorVersion(),plugin.getMinorVersion(), plugin.getPatchVersion()));
                 if (fullList) {
@@ -230,9 +281,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         if (!list) {
             if (pluginId == null) {
-                System.out.println("No plugins installed");
+                outOrLog("No plugins installed");
             } else {
-                System.out.println("Plugin " + pluginId + " not installed");
+                outOrLog("Plugin " + pluginId + " not installed");
             }
         }
     }

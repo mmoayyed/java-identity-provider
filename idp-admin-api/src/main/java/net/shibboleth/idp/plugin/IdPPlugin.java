@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -76,6 +77,12 @@ public interface IdPPlugin {
      */
     @Nonnegative int getPatchVersion();
     
+    /** Return the classpath location of the license file to emit
+     * when --license is specified.
+     * @return the location
+     */
+    @Nullable String getLicenseFileLocation();
+
     /**
      * Get the IDs of any {@link IdPModule}s required for installation of this plugin.
      * 

@@ -59,6 +59,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-fl", "--full-list"})
     @Nullable private boolean fullList;
 
+    /** List License. */
+    @Parameter(names= {"--license"})
+    @Nullable private String license;
+
     /** What to install. */
     @Parameter(names= {"-i", "--input"})
     @Nullable private String input;
@@ -103,6 +107,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         INSTALLREMOTE,
         /** Remove jars from dist - web-ing. */
         REMOVEJARS,
+        /** Print the license file to System.out. */
+        OUTPUTLICENSE,
         /** Unknown. */
         UNKNOWN
     };
@@ -251,6 +257,9 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         } else if (removeId != null) {
             pluginId = removeId;
             operation = OperationType.REMOVEJARS;
+        } else if (license != null) {
+            pluginId = license;
+            operation = OperationType.OUTPUTLICENSE;
         } else {
             getLog().error("Missing qualifier. Options are : -l, -fl, -i, -u");
             throw new IllegalArgumentException("Missing qualifier");

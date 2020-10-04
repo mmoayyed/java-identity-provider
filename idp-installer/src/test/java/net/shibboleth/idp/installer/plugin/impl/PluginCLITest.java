@@ -47,6 +47,10 @@ public class PluginCLITest extends BasePluginTest {
         System.setProperty("idp.home",getIdpHome().toString());
     }
 
+    @Test(enabled = true) public void testLicense() {
+        assertEquals(PluginInstallerCLI.runMain(new String[] { "--license", "net.shibboleth.plugin.test"} ), AbstractCommandLine.RC_OK);
+    }
+    
     @Test(enabled = false) public void testList() throws IOException {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }

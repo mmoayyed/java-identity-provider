@@ -56,6 +56,9 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
     /** Property for plugin version. */
     @Nonnull @NotEmpty public static final String PLUGIN_VERSION_PROPERTY = "plugin.version";
 
+    /** Property for plugin license. */
+    @Nonnull @NotEmpty public static final String PLUGIN_LICENSE_PROPERTY = "plugin.license";
+
     /** Prefix of property for plugin update URL. */
     @Nonnull @NotEmpty public static final String PLUGIN_URL_PROPERTY = "plugin.url.";
 
@@ -183,6 +186,12 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
     @Override
     @Nonnull @NonnullElements public Set<String> getRequiredModules() {
         return requiredModules;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable public String getLicenseFileLocation() {
+        return pluginProperties.getProperty(PLUGIN_LICENSE_PROPERTY);
     }
 
     /** {@inheritDoc} */

@@ -34,7 +34,6 @@ public class TestPlugin extends AbstractIdPPlugin {
     /** {@inheritDoc} */
     @Override
     public String getPluginId() {
-        // TODO Auto-generated method stub
         return "net.shibboleth.plugin.test";
     }
 
@@ -47,6 +46,11 @@ public class TestPlugin extends AbstractIdPPlugin {
         } catch (IOException e) {
             return Collections.EMPTY_LIST;
         }
+    }
+    
+    /** {@inheritDoc} */
+    public String getLicenseFileLocation() {
+        return "/net/shibboleth/idp/plugin/test.license";
     }
 
     /** {@inheritDoc} */
