@@ -72,7 +72,6 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -85,9 +84,6 @@ import net.shibboleth.utilities.java.support.resource.Resource;
  *  The class where the heavy lifting of managing a plugin happens. 
  */
 public final class PluginInstaller extends AbstractInitializableComponent implements AutoCloseable {
-
-    /** Where we cannot install. */
-    private static List<String> disallowedPaths = List.of("dist", "system", "webapp");
 
     /** Class logger. */
     @Nonnull
@@ -169,40 +165,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
     }
 
-    /** Check that the provide path is inside {@link #idpHome}.
-     * @param to the path to check.
-     * @throws BuildException if it isn't
-     */
-    private void policeTo(final Path to) throws BuildException {
-        try {
-            final Path canonicalTo = PluginInstallerSupport.canonicalPath(to);
-            if (!canonicalTo.startsWith(idpHome)) {
-                LOG.error("File destination {} ({}) was illegal (not inside {}", to, canonicalTo, idpHome);
-                throw new BuildException("Illegal file destination");
-            }
-        } catch (final IOException e) {
-            LOG.error("Error checking destination {}", to, e);
-            throw new BuildException(e);
-        }
-    }
-
-    /** Check that the provide path is inside {@link #distribution}.
-     * @param from the path to check.
-     * @throws BuildException if it isn't
-     */
-    private void policeFrom(final Path from) throws BuildException {
-        try {
-            final Path canonicalFrom = PluginInstallerSupport.canonicalPath(from);
-            if (!canonicalFrom.startsWith(distribution)) {
-                LOG.error("File source {} ({}) was illegal (not inside {}", from, canonicalFrom, distribution);
-                throw new BuildException("Illegal file source");
-            }
-        } catch (final IOException e) {
-            LOG.error("Error checking destination {}", from, e);
-            throw new BuildException(e);
-        }
-    }
-
     /** Install the plugin from the provided URL.  Involves downloading
      *  the file and then doing a {@link #installPlugin(Path, String)}.
      * @param baseURL where we get the files from
@@ -247,8 +209,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
         uninstallOld(myWebApp);
         installWebapp(myWebApp);
-        installFiles();
-        downloadExternals();
         InstallerSupport.setReadOnly(myWebApp, true);
         saveCopiedFiles();
 
@@ -278,41 +238,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         }
         builder.execute();
         LOG.info("Removed resources for {} from the war", pluginId);
-    }
-
-    /** Download any files that should not be shipped.
-     * @throws BuildException if badness is detected.
-     */
-    private void downloadExternals() throws BuildException {
-        try {
-            for (final Pair<URL, Path> pair : description.getExternalFilePathsToCopy()) {
-                final Path to = idpHome.resolve(pair.getSecond());
-                policeTo(to);
-                if (Files.exists(to)) {
-                    LOG.warn("{} exists, not copied", to);
-                    continue;
-                }
-                if (!acceptDownload.test(pair.getFirst().toExternalForm())) {
-                    LOG.info("Did not download {} to {}", pair.getFirst(), to);
-                    continue;
-                }
-                buildHttpClient();
-                createParent(to);
-                LOG.debug("Copying from {} to {}", pair.getFirst(), to);
-                final Resource from  = new HTTPResource(httpClient, pair.getFirst());
-                try (final InputStream in = new BufferedInputStream(from.getInputStream());
-                     final OutputStream out =  new ProgressReportingOutputStream(new FileOutputStream(to.toFile()))) {
-
-                    in.transferTo(out);
-
-                } catch (final IOException e) {
-                    LOG.error("Could not copy from {} to {}",  from, to, e);
-                    throw new BuildException(e);
-                }
-            }
-        } catch (final IOException e) {
-            throw new BuildException(e);
-        }
     }
 
     /** Get hold of the {@link IdPPlugin} for this plugin.
@@ -384,62 +309,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.warn("Required modules are missing or disabled: {}", requiredModules);
             throw new BuildException("One or more required modules are not enabled");
         }
-    }
-
-    /** Copy the files the distribution tells us to.
-     * @throws BuildException if badness is happens.
-     */
-    private void installFiles() throws BuildException {
-        for (final Path p : description.getFilePathsToCopy()) {
-            for (final String disallowedPath : disallowedPaths) {
-                if (p.startsWith(disallowedPath)) {
-                    LOG.error("Path {} contained disallowed location", p);
-                    throw new BuildException("Copy to banned location");
-                }
-            }
-
-            final Path from = distribution.resolve(p);
-            policeFrom(from);
-            final Path to = idpHome.resolve(p);
-            policeTo(to);
-            if (Files.exists(to)) {
-                LOG.debug("File {} exists, skipping", to);
-                continue;
-            }
-            if (!Files.exists(from)) {
-                LOG.warn("Source File {} does not exists, skipping", from);
-                continue;
-            }
-            try {
-                createParent(to);
-                LOG.debug("Copying from {} to {}", from, to);
-                try (final InputStream in = new BufferedInputStream(new FileInputStream(from.toFile()));
-                     final OutputStream out =  new ProgressReportingOutputStream(new FileOutputStream(to.toFile()))) {
-                    in.transferTo(out);
-                }
-            } catch (final IOException e) {
-                LOG.error("Could not copy from {} to {}",  from, to, e);
-                throw new BuildException(e);
-            }
-        }
-    }
-
-    /** If the parent dir of the provided path doesn't exist, create it.
-     * @param file where the file will go
-     * @throws IOException if the directory couldn't be created
-     * @throws BuildException if the parent wasnt a directory
-     */
-    private void createParent(final Path file) throws IOException, BuildException {
-        final Path parent = file.resolve("..");
-        if (!Files.exists(parent)) {
-            LOG.debug("Creating parent directory {}", parent);
-            Files.createDirectories(parent);
-        } else if (!Files.isDirectory(parent)) {
-            LOG.error("{} exists and is not a directory", parent);
-            throw new BuildException("Parent of target file was not a directory");
-        } else {
-            LOG.trace("Parent directory {} existed", parent);
-        }  
     }
 
     /** Copy the webapp folder from the distribution to the per plugin

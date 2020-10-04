@@ -19,7 +19,6 @@ package net.shibboleth.idp.plugin;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
  * This interface is exported (via the service API) by every IdP plugin.
@@ -48,34 +46,6 @@ public interface IdPPlugin {
      * @return The id of this plugin.
      */
     @Nonnull @NotEmpty String getPluginId();
-
-    /** Return the list of (idp.home) relative paths (of files, <em>not directories </em>) 
-     * to copy from the distribution into the IdP installation.
-     *
-     * <em>Not currently supported</em>
-     * 
-     * <p>These files are copied non-destructively (if the file already exists
-     * then it is not copied).  Some paths are disallowed (for instance dist and system).
-     * Directories are created if needed</p>
-     * <p>
-     * The dist folder is always copied, so no files from it should be included.</p>
-     *
-     * @return The list of paths.
-     */
-    @Nonnull @NonnullElements List<Path> getFilePathsToCopy();
-    
-    /** <p>Return the list of files <em>not directories </em> to get from 'external'
-     * sources. This allows external content to be downloaded during installation.</p>
-     *
-     * <p>The first part of the pair is the source URL,
-     * the second is a path relative to idp.home.  These can include files
-     * going to dist\edit-webapp in which case the path is expected to have the
-     * plugin id appended. Sub directories are created if needed</p>
-     *
-     * @return The list.
-     * @throws IOException if the resource construction failed.
-     */
-    @Nonnull @NonnullElements List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException;
 
     /** Return the places to look for information for this plugin package.
      * The format of the (property) file at this location is fixed.

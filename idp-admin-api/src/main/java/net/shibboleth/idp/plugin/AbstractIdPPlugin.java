@@ -17,11 +17,7 @@
 
 package net.shibboleth.idp.plugin;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnegative;
@@ -30,7 +26,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
  * A base class implementing {@link IdPPlugin} that defaults common settings.
@@ -50,22 +45,12 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
         enableModules = Collections.emptySet();
         disableModules = Collections.emptySet();
     }
-    
+
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getPluginId() {
         return getClass().getPackageName();
     }
-    
-    /** {@inheritDoc} */
-    @Nonnull @NonnullElements public List<Path> getFilePathsToCopy() {
-        return Collections.emptyList();
-    }
-    
-    /** {@inheritDoc} */
-    @Nonnull @NonnullElements public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException {
-        return Collections.emptyList();
-    }
-    
+
     /** {@inheritDoc} */
     @Nonnegative public int getPatchVersion() {
         return 0;
