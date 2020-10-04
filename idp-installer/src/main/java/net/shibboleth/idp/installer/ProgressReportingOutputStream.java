@@ -48,7 +48,7 @@ public class ProgressReportingOutputStream extends BufferedOutputStream {
     }
 
     /** {@inheritDoc} */
-    public void write(final byte[] b, final int off, final int len) throws IOException {
+    public synchronized void write(final byte[] b, final int off, final int len) throws IOException {
         super.write(b, off, len);
         written += len;
         if (written > PROGRESS_EVERY) {
