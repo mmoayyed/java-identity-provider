@@ -56,7 +56,6 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -288,7 +287,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return a list of the installed contents, may be empty if
      * nothing is installed or the plugin didn't install anything.
      */
-    @NotNull public List<String> getInstalledContents() {
+    @Nonnull public List<String> getInstalledContents() {
         loadCopiedFiles();
         return installedContents;
     }

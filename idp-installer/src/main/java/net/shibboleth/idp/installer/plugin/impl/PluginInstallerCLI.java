@@ -33,7 +33,6 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -297,7 +296,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** List the contents for the detailed plugin.
      * @param pluginId the pluginId
      */
-    private void doContentList(@NotNull final String pluginId) {
+    private void doContentList(@Nonnull final String pluginId) {
         final List<IdPPlugin> plugins = installer.getInstalledPlugins();
         IdPPlugin thePlugin = null;
         for (final IdPPlugin plugin: plugins) {
