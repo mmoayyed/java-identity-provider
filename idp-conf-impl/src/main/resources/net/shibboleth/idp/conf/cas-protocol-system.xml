@@ -32,7 +32,9 @@
           c:lineLength="0"
           c:lineSeparator="#{null}"
           c:useHex="false"
-          c:pad="#{ T(java.lang.Integer).valueOf(45).byteValue() }" />
+          c:padding="#{ T(java.lang.Integer).valueOf(45).byteValue() }"
+          c:decodingPolicy="#{ T(org.apache.commons.codec.CodecPolicy).STRICT }"
+    />
 
     <!-- TODO: Change to encodingTicketService for 5.0 -->
     <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
