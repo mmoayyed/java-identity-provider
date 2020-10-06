@@ -83,6 +83,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-r", "--remove-jars"})
     @Nullable private String removeId;
 
+    /** Contents to list. */
+    @Parameter(names= {"-cl", "--contents-list"})
+    @Nullable private String contentsList;
+
     /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
     @Nullable private PluginVersion updateVersion;
 
@@ -109,6 +113,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         REMOVEJARS,
         /** Print the license file to System.out. */
         OUTPUTLICENSE,
+        /** List the contents for the plugin. */
+        LISTCONTENTS,
         /** Unknown. */
         UNKNOWN
     };
@@ -260,8 +266,11 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         } else if (license != null) {
             pluginId = license;
             operation = OperationType.OUTPUTLICENSE;
+        } else if (contentsList != null){
+            pluginId = contentsList;
+            operation = OperationType.LISTCONTENTS;
         } else {
-            getLog().error("Missing qualifier. Options are : -l, -fl, -i, -u");
+            getLog().error("Missing qualifier. Options are : -l, -fl, -cl, -i, -u, -r, --license");
             throw new IllegalArgumentException("Missing qualifier");
         }
     }
@@ -308,6 +317,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println();
         out.println(String.format("  %-22s %s", "-l, --list", "Brief Information of all installed plugins"));
         out.println(String.format("  %-22s %s", "-fl, --full-list", "Full details of all installed plugins"));
+        out.println(String.format("  %-22s %s", "-cl, --contents-list", "Details of what was installed"));
         out.println(String.format("  %-22s %s", "-i, --input <what>", "Install (file name or web address)"));
         out.println(String.format("  %-22s %s", "-u, --update <PluginId>", "update"));
         out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
@@ -315,9 +325,11 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-r, --remove-jars <PluginId>",
                 "remove any installed jars (and other resources) from the war file. \n" + 
                 "\t\t\tDOES NOT UNDO any other installation"));
+        out.println(String.format("  %-22s %s", "--license <pluginid>",
+                "Output all licenses for this plugin"));
         out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
         out.println(String.format("  %-22s %s", "--truststore <path>",
-                "Explicit location to look for keys (should exist but may be empty"));
+                "Explicit location to look for keys (should exist but may be an empty file)"));
         out.println();
     }
 

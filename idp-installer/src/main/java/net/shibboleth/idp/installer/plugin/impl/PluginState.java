@@ -87,8 +87,7 @@ public class PluginState extends AbstractInitializableComponent {
      */
     public PluginState(@Nonnull final IdPPlugin description) {
         plugin = Constraint.isNotNull(description, "Plugin must not be null");
-        myPluginVersion = new PluginVersion(plugin.getMajorVersion(), 
-                plugin.getMinorVersion(), plugin.getPatchVersion());
+        myPluginVersion = new PluginVersion(plugin);
     }
     
     /** Get the base URL for this version.

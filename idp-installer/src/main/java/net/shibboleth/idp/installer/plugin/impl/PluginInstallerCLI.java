@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -145,6 +146,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
                 case OUTPUTLICENSE:
                     outputLicense(args.getPluginId());
+                    break;
+
+                case LISTCONTENTS:
+                    installer.setPluginId(args.getPluginId());
+                    doContentList(args.getPluginId());
                     break;
 
                 default:
@@ -287,6 +293,48 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             }
         }
     }
+    
+    /** List the contents for the detailed plugin.
+     * @param pluginId the pluginId
+     */
+    private void doContentList(@NotNull final String pluginId) {
+        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
+        IdPPlugin thePlugin = null;
+        for (final IdPPlugin plugin: plugins) {
+            if (pluginId.equals(plugin.getPluginId())) {
+                thePlugin = plugin;
+                break;
+            }
+        }
+
+        final String fromContentsVersion =  installer.getVersionFromContents();
+        final List<String> contents = installer.getInstalledContents();
+        if (thePlugin == null) {
+            log.warn("Plugin was not installed {}", pluginId);
+            if (fromContentsVersion != null) {
+                log.error("Plugin {} not installed, but contents found.", pluginId);
+                log.debug("{}", contents);
+            } else {
+                return;
+            }
+        } else if (fromContentsVersion == null) {
+            log.error("Plugin {} found, but no contents listed", pluginId);
+            return;
+        }
+        final String installedVersion = new PluginVersion(thePlugin).toString();
+        if (!fromContentsVersion.equals(installedVersion)) {
+            log.error("Installed version of Plugin {} ({}) does not match contents ({})", 
+                    pluginId, installedVersion, fromContentsVersion);
+        }
+        if (contents.isEmpty()) {
+            log.info("No Contents");
+        } else {
+            for (final String s: contents) {
+                outOrLog(String.format("%s", s));
+            }
+        }
+    }
+
 
     /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion)}.
      * @param plugin The Plugin
@@ -296,8 +344,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     @Nullable private PluginVersion getBestVersion(final IdPPlugin plugin, final PluginState state) {
 
         final String idpVersionString = net.shibboleth.idp.Version.getVersion();
-        final PluginVersion myVersion = new PluginVersion(plugin.getMajorVersion(),
-                plugin.getMinorVersion(), plugin.getPatchVersion());
+        final PluginVersion myVersion = new PluginVersion(plugin);
 
         final PluginVersion idPVersion;
         if (idpVersionString == null) {

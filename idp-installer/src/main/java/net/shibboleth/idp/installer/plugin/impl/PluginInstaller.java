@@ -56,6 +56,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +122,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
  
     /** Files that were copied - to handle rollback. */
     @Nonnull private List<Path> copiedFiles = new ArrayList<>();
+
+    /** What was installed - this is setup by {@link #loadCopiedFiles()}. */
+    @Nullable private List<String> installedContents;
+
+    /** The version from the contents file, or null if it isn't loaded. */
+    @Nullable private String installedVersionFromContents;
 
     /** Set IdP Home.
      * @param home Where we are working from
@@ -276,7 +283,24 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new BuildException(e);
         }
     }
-    
+
+    /** What files were installed to webapp for this plugin?
+     * @return a list of the installed contents, may be empty if
+     * nothing is installed or the plugin didn't install anything.
+     */
+    @NotNull public List<String> getInstalledContents() {
+        loadCopiedFiles();
+        return installedContents;
+    }
+
+    /** return the version that the contents page thinks is installed.
+     * @return the version, or null if it is not found.
+     */
+    @Nullable public String getVersionFromContents() {
+        loadCopiedFiles();
+        return installedVersionFromContents;
+    }
+
     /**
      * Police that required modules for plugin installation are enabled.
      * 
@@ -340,9 +364,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             Files.createDirectories(parent);
             final Properties props = new Properties(1+copiedFiles.size());
             props.setProperty("idp.plugin.version",
-                    new PluginVersion(description.getMajorVersion(),
-                            description.getMinorVersion(),
-                            description.getPatchVersion()).toString());
+                    new PluginVersion(description).toString());
             int count = 1;
             for (final Path p: copiedFiles) {
                 props.setProperty("idp.plugin.file."+Integer.toString(count++),
@@ -356,6 +378,37 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         } catch (final IOException e) {
             LOG.error("Error saving list of copied files.", e);
             throw new BuildException(e);
+        }
+    }
+
+    /** Load the contents for this plugin from the properties file used during
+     * installation.
+     * @throws BuildException if the load fails
+     */
+    private void loadCopiedFiles() throws BuildException {
+        if (installedContents != null) {
+            return;
+        }
+        final Path parent = idpHome.resolve("dist").resolve("plugin-contents");
+        final Properties props = new Properties();
+        final File inFile = parent.resolve(pluginId).toFile();
+        if (!inFile.exists()) {
+            LOG.error("Contents file for plugin {} ({}) does not exist", pluginId, inFile.getAbsolutePath());
+            return;
+        }
+        try (final BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(inFile))) {
+            props.load(inStream);
+        } catch (final IOException e) {
+            LOG.error("Error loading list of copied files from {}.", inFile, e);
+            throw new BuildException(e);
+        }
+        installedContents = new ArrayList<>(props.size());
+        installedVersionFromContents = StringSupport.trimOrNull(props.getProperty("idp.plugin.version"));
+        int count = 1;
+        String val = props.getProperty("idp.plugin.file."+Integer.toString(count++));
+        while (val != null) {
+            installedContents.add(val);
+            val = props.getProperty("idp.plugin.file."+Integer.toString(count++));
         }
     }
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.plugin;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -62,6 +64,16 @@ public final class PluginVersion implements Comparable<PluginVersion>{
         }
     }
     
+    /**
+     * Constructor.
+     *
+     * @param plugin what to get the version of.
+     * @throws NumberFormatException if the values are out of range
+     */
+    public PluginVersion(@Nonnull final IdPPlugin plugin) throws NumberFormatException {
+        this(plugin.getMajorVersion(), plugin.getMinorVersion(), plugin.getPatchVersion());
+    }
+
     /**
      * Constructor.
      *
