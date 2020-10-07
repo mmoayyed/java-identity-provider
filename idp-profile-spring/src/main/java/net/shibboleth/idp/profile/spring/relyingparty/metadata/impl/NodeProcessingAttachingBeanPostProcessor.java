@@ -31,6 +31,7 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
 
@@ -45,19 +46,31 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
  * This is done to ensure that other components function correctly, such as the PKIX trust engine and predicates that
  * depend on group information.
  * </p>
+ * 
+ * <p>The constructor will auto-wire all free-standing beans, but the property setter can override these.</p>
  */
 public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcessor, Ordered {
 
     /** The processors to install. */
     @Nonnull @NonnullElements private List<MetadataNodeProcessor> nodeProcessors;
-    
-    /** Constructor. */
-    public NodeProcessingAttachingBeanPostProcessor() {
-        nodeProcessors = Collections.emptyList();
+
+    /**
+     * Constructor.
+     *
+     * @param processors auto-wired processors to install
+     */
+    @Autowired
+    public NodeProcessingAttachingBeanPostProcessor(
+            @Nullable @NonnullElements final Collection<MetadataNodeProcessor> processors) {
+        if (processors != null) {
+            nodeProcessors = List.copyOf(processors);
+        } else {
+            nodeProcessors = Collections.emptyList();
+        }
     }
     
     /**
-     * Set the {@link MetadataNodeProcessor} instances to auto-attach.
+     * Set the {@link MetadataNodeProcessor} instances to auto-attach instead of the auto-wired set.
      * 
      * @param processors processors to auto-attach
      * 
@@ -65,9 +78,8 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
      */
     public void setNodeProcessors(@Nullable @NonnullElements final Collection<MetadataNodeProcessor> processors) {
         if (processors != null) {
+            // Replace auto-wired set.
             nodeProcessors = List.copyOf(processors);
-        } else {
-            nodeProcessors = Collections.emptyList();
         }
     }
 
@@ -78,6 +90,10 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
     
     /** {@inheritDoc} */
     @Override public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
+        
+        if (nodeProcessors.isEmpty()) {
+            return bean;
+        }
         
         // Do not attach to beans which just include other ones.
         if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver) {

@@ -12,22 +12,23 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <context:annotation-config />
+
     <!-- BeanPostProcessors that auto-install MetadataFilters for internal use. -->
     
     <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ByReferenceFilterBeanPostProcessor"
         p:enabled="%{idp.service.metadata.enableByReferenceFilters:true}" />
     
     <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
-        p:nodeProcessors="#{getObject('shibboleth.MetadataNodeProcessors') ?: getObject('shibboleth.DefaultMetadataNodeProcessors')}" />
-        
-    <util:list id="shibboleth.DefaultMetadataNodeProcessors">
-        <bean class="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" />
-        <bean class="net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor" />
-        <bean class="net.shibboleth.idp.saml.metadata.impl.ScopesNodeProcessor" />
-        <bean class="net.shibboleth.idp.saml.metadata.impl.UIInfoNodeProcessor" />
-        <bean class="net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor"
-            c:_0-ref="shibboleth.AttributeRegistryService" />
-    </util:list>
+        p:nodeProcessors="#{getObject('shibboleth.MetadataNodeProcessors')}" />
+
+    <!-- Default NodeProcessors to auto-wire. -->
+    <bean class="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" />
+    <bean class="net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor" />
+    <bean class="net.shibboleth.idp.saml.metadata.impl.ScopesNodeProcessor" />
+    <bean class="net.shibboleth.idp.saml.metadata.impl.UIInfoNodeProcessor" />
+    <bean class="net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor"
+        c:_0-ref="shibboleth.AttributeRegistryService" />
     
     <!-- Signature Validation Criteria  -->
     
