@@ -12,6 +12,25 @@
        default-destroy-method="destroy">
 
     <!--
+    This is a map used to "weight" particular methods above others if the IdP has to randomly select one
+    to insert into a SAML authentication statement. The typical use shown below is to bias the IdP in favor
+    of expressing the SAML 2 PasswordProtectedTransport class over the more vanilla Password class on the
+    assumption that the IdP doesn't accept passwords via an insecure channel. This map never causes the IdP
+    to violate its matching rules if an RP requests a particular value; it only matters when nothing specific
+    is chosen. Anything not in the map has a weight of zero.
+    -->
+    
+    <util:map id="shibboleth.AuthenticationPrincipalWeightMap">
+        <entry>
+            <key>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+            </key>
+            <value>1</value>
+        </entry>
+    </util:map>
+    
+    <!--
     These beans can be used in the AuthnComparisonRules map below instead of the defaults to
     support more advanced matching rules. The top example shows how to configure a matching rule,
     in this case a rule that the two listed classes are "better" than the password class.
