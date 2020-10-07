@@ -74,21 +74,7 @@ public final class PluginInstallerSupport {
         }
         LOG.debug("Deleting directory {}", directory);
         try {
-            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
-                @Override 
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-                @Override 
-                public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
-                    if (exc != null) {
-                        throw exc;
-                    }
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+            Files.walkFileTree(directory, new DeletingVisitor());
         } catch (final IOException e) {
             LOG.error("Couldn't delete {}", directory, e);
         }
@@ -162,7 +148,7 @@ public final class PluginInstallerSupport {
             to = toDir;
         }
         
-        @Override 
+        @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
             final Path relFile = from.relativize(file);
             final Path toFile = to.resolve(relFile);
@@ -215,7 +201,7 @@ public final class PluginInstallerSupport {
             return FileVisitResult.CONTINUE;
         };
 
-        @Override 
+        @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
             final Path relFile = from.relativize(file);
             final Path toFile = to.resolve(relFile);
@@ -235,4 +221,34 @@ public final class PluginInstallerSupport {
         }
     }
 
+    /**
+     * A @{link {@link FileVisitor} which deletes files.
+     */
+    private static final class DeletingVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            try {
+                Files.delete(file);
+            } catch (final IOException e) {
+                LOG.error("Could not delete {}", file.toAbsolutePath(), e);
+                file.toFile().deleteOnExit();
+                // and carry on
+            }
+            return FileVisitResult.CONTINUE;
+        }
+        @Override
+        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+            if (exc != null) {
+                throw exc;
+            }
+            try {
+                Files.delete(dir);
+            } catch (final IOException e) {
+                LOG.error("Could not delete {}", dir.toAbsolutePath(), e);
+                dir.toFile().deleteOnExit();
+                // and carry on
+            }
+            return FileVisitResult.CONTINUE;
+        }
+    }
 }

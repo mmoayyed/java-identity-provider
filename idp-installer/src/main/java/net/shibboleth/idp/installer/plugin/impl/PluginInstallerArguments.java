@@ -80,8 +80,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Nullable private String forceUpdateVersion;
  
     /** Id to remove. */
-    @Parameter(names= {"-r", "--remove-jars"})
-    @Nullable private String removeId;
+    @Parameter(names= {"-r", "--uninstall", "--remove"})
+    @Nullable private String uninstallId;
 
     /** Contents to list. */
     @Parameter(names= {"-cl", "--contents-list"})
@@ -109,8 +109,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         INSTALLDIR,
         /** Install from the web. */
         INSTALLREMOTE,
-        /** Remove jars from dist - web-ing. */
-        REMOVEJARS,
+        /** Uninstall plugin. */
+        UNINSTALL,
         /** Print the license file to System.out. */
         OUTPUTLICENSE,
         /** List the contents for the plugin. */
@@ -236,22 +236,22 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         }
         if (list || fullList) {
             operation = OperationType.LIST;
-            if (input !=  null || removeId != null) {
+            if (input !=  null || uninstallId != null) {
                 getLog().error("Cannot List and Install or Remove in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Install or Remove in the same operation.");
             }
-            if (updatePluginId !=  null || removeId != null) {
+            if (updatePluginId !=  null || uninstallId != null) {
                 getLog().error("Cannot List and Update or Remove in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Update or Remove in the same operation.");
             }
         } else if (input != null) {
-            if (updatePluginId !=  null || removeId != null) {
+            if (updatePluginId !=  null || uninstallId != null) {
                 getLog().error("Cannot Install and Update or Remove in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Update or Remove in the same operation.");
             }
             operation = decodeInput() ;
         } else if (updatePluginId != null) {
-            if (removeId != null) {
+            if (uninstallId != null) {
                 getLog().error("Cannot Update and Remove in the same operation.");
                 throw new IllegalArgumentException("Cannot Update and Remove in the same operation.");
             }
@@ -260,9 +260,9 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
             if (forceUpdateVersion != null) {
                 updateVersion = new PluginVersion(forceUpdateVersion);
             }
-        } else if (removeId != null) {
-            pluginId = removeId;
-            operation = OperationType.REMOVEJARS;
+        } else if (uninstallId != null) {
+            pluginId = uninstallId;
+            operation = OperationType.UNINSTALL;
         } else if (license != null) {
             pluginId = license;
             operation = OperationType.OUTPUTLICENSE;
@@ -322,8 +322,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-u, --update <PluginId>", "update"));
         out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
                 "force version to update to (requires -u)"));
-        out.println(String.format("  %-22s %s", "-r, --remove-jars <PluginId>",
-                "remove any installed jars (and other resources) from the war file. \n" + 
+        out.println(String.format("  %-22s %s", "-r, --remove, --uninstall <PluginId>",
+                "Uninstall plugin from the war file. \n" +
                 "\t\t\tDOES NOT UNDO any other installation"));
         out.println(String.format("  %-22s %s", "--license <pluginid>",
                 "Output all licenses for this plugin"));

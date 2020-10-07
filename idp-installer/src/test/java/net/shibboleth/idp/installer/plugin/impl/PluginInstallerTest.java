@@ -83,7 +83,7 @@ public class PluginInstallerTest extends BasePluginTest {
             inst.setIdpHome(getIdpHome());
             inst.setPluginId("org.example.Plugin");
             inst.initialize();
-            inst.removeJars();
+            inst.uninstall();
         }
     }
 

@@ -138,9 +138,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     doUpdate(args.getPluginId() , args.getUpdateVersion());
                     break;
 
-                case REMOVEJARS:
+                case UNINSTALL:
                     installer.setPluginId(args.getPluginId());
-                    installer.removeJars();
+                    installer.uninstall();
                     break;
 
                 case OUTPUTLICENSE:
@@ -184,6 +184,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         if (getHttpClient()!= null) {
             inst.setHttpClient(getHttpClient());
         }
+        inst.setModuleContextSecurityParams(getHttpClientSecurityParameters());
         inst.initialize();
         installer = inst;
     }
@@ -237,33 +238,31 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param pluginId what to list
      */
     private void outputLicense(@Nonnull final String pluginId) {
-        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
-        for (final IdPPlugin plugin: plugins) {
-            if (pluginId.equals(plugin.getPluginId())) {
-                final String location = plugin.getLicenseFileLocation();
-                if (location == null) {
-                    log.error("Plugin {} has no license", pluginId);
-                    return;
-                }
-                final Resource loc = new ClassPathResource(location);
-                if (!loc.exists()) {
-                    log.error("Plugin {} license could not be found at {}", pluginId, location);
-                    return;
-                }
-                outOrLog(String.format("License for %s", plugin));
-                try (final BufferedReader reader = new BufferedReader(new InputStreamReader(loc.getInputStream()))) {
-                    String line = reader.readLine();
-                    while (line != null) {
-                        outOrLog(line);
-                        line = reader.readLine();
-                    }
-                } catch (final IOException e) {
-                    log.error("Failed to output license", e);
-                }
-                return;
-            }
+        final IdPPlugin plugin = installer.getInstalledPlugin(pluginId);
+        if (plugin == null) {
+            log.error("Plugin {} not installed", pluginId);
+            return;
         }
-        log.error("Plugin {} not installed", pluginId);
+        final String location = plugin.getLicenseFileLocation();
+        if (location == null) {
+            log.error("Plugin {} has no license", pluginId);
+            return;
+        }
+        final Resource loc = new ClassPathResource(location);
+        if (!loc.exists()) {
+            log.error("Plugin {} license could not be found at {}", pluginId, location);
+            return;
+        }
+        outOrLog(String.format("License for %s", plugin));
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(loc.getInputStream()))) {
+            String line = reader.readLine();
+            while (line != null) {
+                outOrLog(line);
+                line = reader.readLine();
+            }
+        } catch (final IOException e) {
+            log.error("Failed to output license", e);
+        }
     }
 
     /** List all installed plugins (or just one if provided).
@@ -297,14 +296,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param pluginId the pluginId
      */
     private void doContentList(@Nonnull final String pluginId) {
-        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
-        IdPPlugin thePlugin = null;
-        for (final IdPPlugin plugin: plugins) {
-            if (pluginId.equals(plugin.getPluginId())) {
-                thePlugin = plugin;
-                break;
-            }
-        }
+        final IdPPlugin thePlugin = installer.getInstalledPlugin(pluginId);
 
         final String fromContentsVersion =  installer.getVersionFromContents();
         final List<String> contents = installer.getInstalledContents();
@@ -387,41 +379,41 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param pluginVersion (optionally) the version to update to.
      */
     private void doUpdate(@Nonnull final String pluginId, @Nullable final PluginVersion pluginVersion) {
-        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
-        for (final IdPPlugin plugin: plugins) {
-            if (pluginId.equals(plugin.getPluginId())) {
-                log.debug("Interrogating {} ", plugin.getPluginId());
-                final PluginState state =  new PluginState(plugin);
-                if (getHttpClient() != null) {
-                    state.setHttpClient(getHttpClient());
-                }
-                try {
-                    state.initialize();
-                } catch (final ComponentInitializationException e) {
-                    log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
-                    return;
-                }
-                final PluginVersion installVersion;
-                if (pluginVersion == null) {
-                    installVersion = getBestVersion(plugin, state);
-                    if (installVersion == null) {
-                        log.info("No Suitable update version available");
-                        break;
-                    }
-                } else {
-                    installVersion = pluginVersion;
-                    final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
-                    if (!versions.containsKey(installVersion)) {
-                        log.error("Specified version {} could not be found.  Available versions {}",
-                                installVersion, versions.keySet());
-                        return;
-                    }
-                }
-                // just use the tgz version - its an update so it should be jar files only
-                installer.installPlugin(state.getUpdateURL(installVersion),
-                        state.getUpdateBaseName(installVersion) + ".tar.gz");
+        final IdPPlugin plugin = installer.getInstalledPlugin(pluginId);
+        if (plugin == null) {
+            log.error("Plugin {} was not installed", pluginId);
+            return;
+        }
+        log.debug("Interrogating {} ", plugin.getPluginId());
+        final PluginState state =  new PluginState(plugin);
+        if (getHttpClient() != null) {
+            state.setHttpClient(getHttpClient());
+        }
+        try {
+            state.initialize();
+        } catch (final ComponentInitializationException e) {
+            log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
+            return;
+        }
+        final PluginVersion installVersion;
+        if (pluginVersion == null) {
+            installVersion = getBestVersion(plugin, state);
+            if (installVersion == null) {
+                log.info("No Suitable update version available");
+                return;
+            }
+        } else {
+            installVersion = pluginVersion;
+            final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
+            if (!versions.containsKey(installVersion)) {
+                log.error("Specified version {} could not be found.  Available versions {}",
+                        installVersion, versions.keySet());
+                return;
             }
         }
+        // just use the tgz version - its an update so it should be jar files only
+        installer.installPlugin(state.getUpdateURL(installVersion),
+                state.getUpdateBaseName(installVersion) + ".tar.gz");
     }
 
     /** Shim for CLI entry point: Allows the code to be run from a test.

@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -56,6 +57,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +70,7 @@ import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
+import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -128,6 +131,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** The version from the contents file, or null if it isn't loaded. */
     @Nullable private String installedVersionFromContents;
 
+    /** The Module Context. */
+    @NonnullAfterInit private ModuleContext moduleContext;
+
+    /** The securiotyParams for the module context. */
+    private HttpClientSecurityParameters securityParams;
+
     /** Set IdP Home.
      * @param home Where we are working from
      */
@@ -167,8 +176,16 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Set the httpClient.
      * @param what what to set.
      */
-    public void setHttpClient(final HttpClient what) {
+    public void setHttpClient(@Nonnull final HttpClient what) {
         httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
+    }
+
+    /** Set the Module Context security parameters.
+     * @param params what to set.
+     */
+    public void setModuleContextSecurityParams(@Nullable final HttpClientSecurityParameters params) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        securityParams =  params;
     }
 
     /** Install the plugin from the provided URL.  Involves downloading
@@ -229,13 +246,40 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Remove the jars for this plugin and rebuild the war.
      * @throws BuildException if badness occurs. */
-    public void removeJars() throws BuildException {
-        final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
-        if (!Files.exists(myWebApp)) {
-            LOG.error("Plugin {} had no jars installed.", pluginId);
-            return;
+    public void uninstall() throws BuildException {
+
+        String moduleId = null;
+        description = getInstalledPlugin(pluginId);
+        if (description == null) {
+            LOG.warn("Description for {} not found", pluginId);
+        } else {
+            try (final RollbackPluginInstall rollback = new RollbackPluginInstall(moduleContext)){
+                for (final IdPModule module: description.getDisableOnRemoval()) {
+                    moduleId = module.getId();
+                    module.disable(moduleContext, true);
+                    rollback.getModulesDisabled().add(module);
+                }
+                rollback.completed();
+            } catch (final ModuleException e) {
+                LOG.error("Uninstalling {}. Could not disable {}", pluginId, moduleId, e);
+                LOG.error("Fix this and rerun");
+                throw new BuildException(e);
+            }
         }
-        uninstallOld(myWebApp);
+        for (final String content: getInstalledContents()) {
+            final Path p = Path.of(content);
+            if (!Files.exists(p)) {
+                continue;
+            }
+            try {
+                InstallerSupport.setReadOnly(p, false);
+                Files.deleteIfExists(p);
+            } catch (final IOException e) {
+                LOG.warn("Could not delete {}, deferring the delete", content, e);
+                p.toFile().deleteOnExit();
+            }
+        }
+
         final BuildWar builder = new BuildWar(idpHome);
         try {
             builder.initialize();
@@ -311,7 +355,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         // OTOH if the update process is recoverable then a failed update
         // should rollback the uninstall of the original...
         
-        final ModuleContext moduleContext = new ModuleContext(idpHome);
         final Set<String> requiredModules = new HashSet<>(description.getRequiredModules());
         
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
@@ -393,6 +436,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         final File inFile = parent.resolve(pluginId).toFile();
         if (!inFile.exists()) {
             LOG.error("Contents file for plugin {} ({}) does not exist", pluginId, inFile.getAbsolutePath());
+            installedContents = Collections.emptyList();
             return;
         }
         try (final BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(inFile))) {
@@ -431,10 +475,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Build the Http Client if it doesn't exist. */
     private void buildHttpClient() {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (httpClient == null) {
             LOG.debug("No HttpClient built, creating default");
             try {
                 httpClient = new HttpClientBuilder().buildClient();
+                moduleContext.setHttpClient(httpClient);
             } catch (final Exception e) {
                 LOG.error("Could not create HttpClient", e);
                 throw new BuildException(e);
@@ -632,6 +678,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.error("Could not canonicalize idp home", e);
             throw new ComponentInitializationException(e);
         }
+        moduleContext = new ModuleContext(idpHome);
+        moduleContext.setHttpClientSecurityParameters(securityParams);
+        moduleContext.setHttpClient(httpClient);
     }
 
     /**
@@ -663,7 +712,22 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new BuildException(e);
         }
     }
-    
+
+    /** Find the {@link IdPPlugin} with the provided Id.
+     * @param name what to find
+     * @return the {@link IdPPlugin} or null if not found.
+     */
+    @Nullable public IdPPlugin getInstalledPlugin(@Nonnull final String name) {
+        Constraint.isNotNull(name, "Plugin Name must not be null");
+        final List<IdPPlugin> plugins = getInstalledPlugins();
+        for (final IdPPlugin plugin: plugins) {
+            if (name.equals(plugin.getPluginId())) {
+                return plugin;
+            }
+        }
+        return null;
+    }
+
     /** {@inheritDoc} */
     public void close() {
         PluginInstallerSupport.deleteTree(downloadDirectory);
@@ -671,6 +735,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         for (final Path p : copiedFiles) {
             try {
                 if (Files.exists(p)) {
+                    InstallerSupport.setReadOnly(p, false);
                     Files.delete(p);
                 }
             } catch (final IOException e) {
