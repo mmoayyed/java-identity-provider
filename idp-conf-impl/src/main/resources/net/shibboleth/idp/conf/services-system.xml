@@ -75,10 +75,8 @@
     </bean>
     <!-- Auto-append system config file to resource set. -->
     <bean id ="ExtendedAttributeRegistryResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
-          p:firstList-ref="#{
-                getObject('%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()) != null
-                    ? '%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()
-                        : 'shibboleth.DefaultAttributeRegistryResources' }" >
+          p:firstList="#{getObject('%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()) ?:
+                getObject('shibboleth.DefaultAttributeRegistryResources')}" >
         <property name="secondList">
             <util:list >
                 <value>classpath:/net/shibboleth/idp/conf/attribute-registry-system.xml</value>
